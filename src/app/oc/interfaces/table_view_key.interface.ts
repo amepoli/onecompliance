@@ -29,6 +29,11 @@ export interface TableViewKey { // as per API specification
         onSuccessActionKeymap?:{
             source: string,
             destination: string
+        }[],
+        keyToCheck?: string,
+        navigationConditions?: {
+            ifValue: string,
+            newTarget: string
         }[]
     },
     format: {

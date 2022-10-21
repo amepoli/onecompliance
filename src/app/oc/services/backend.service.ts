@@ -26,6 +26,7 @@ export class BackendService {
   private googleApiName = appData.lambdas.google_api.apiName;
   private regulatApiName = appData.lambdas.regulat.apiName;
   private regulatVPCApiName = appData.lambdas.regulat_VPC.apiName;
+  private calendarApiName = appData.lambdas.calendar.apiName;
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -296,7 +297,7 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.emailApiName, this.myPutPostInit));
   }
 
-  
+
   sendEmail(subject: string, header: string, footer: string, company: string, sender: string, to: string, cc: string, ccn: string): Observable<any> {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { company: company };
@@ -382,7 +383,7 @@ export class BackendService {
     this.myPutPostInit.queryStringParameters = { request_type: 'getEmailsByCodiceAzienda' };
     this.myPutPostInit.body = { codiceAzienda, authToken };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.googleApiName, this.myPutPostInit));
-  
+
   }
 
   loadChangesToken(authToken: any, changes_type: string) {
@@ -482,7 +483,7 @@ export class BackendService {
 
   getGoogleDriveFolderNameByAnagrafica(company: string, id_anagrafica: string, username: string, id_risorsa: string, id_sondaggio: string, codice_part: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { request_type: 'getGoogleDriveFolderNameByAnagrafica', company: company, id_anagrafica: id_anagrafica, username: username, id_risorsa: id_risorsa, id_sondaggio: id_sondaggio, codice_part: codice_part};
+    this.myGetInit.queryStringParameters = { request_type: 'getGoogleDriveFolderNameByAnagrafica', company: company, id_anagrafica: id_anagrafica, username: username, id_risorsa: id_risorsa, id_sondaggio: id_sondaggio, codice_part: codice_part };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 
@@ -503,7 +504,7 @@ export class BackendService {
   associateEmails(input: any, codiceAzienda) {
     this.amplifyService.auth();
     this.myPutPostInit.queryStringParameters = { request_type: 'associateEmails' };
-    this.myPutPostInit.body = {input, codiceAzienda};
+    this.myPutPostInit.body = { input, codiceAzienda };
     return from(this.amplifyService.api().post(this.apiName, '/' + this.attachApiName, this.myPutPostInit));
   }
 
@@ -527,7 +528,7 @@ export class BackendService {
 
   getAmlScan(company: string, connected_registries: any, checkId: string, dynamoUser: string, isLightScan: boolean): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { company: company, connected_registries: JSON.stringify(connected_registries), checkId: checkId, dynamoUser: dynamoUser, isLightScan: isLightScan};
+    this.myGetInit.queryStringParameters = { company: company, connected_registries: JSON.stringify(connected_registries), checkId: checkId, dynamoUser: dynamoUser, isLightScan: isLightScan };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.regulatApiName, this.myGetInit));
   }
 
@@ -544,6 +545,12 @@ export class BackendService {
       this.myGetInit.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
     }
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
+  }
+
+  getCalendarEvents(company: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { company: company };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.calendarApiName, this.myGetInit));
   }
 
 }

@@ -118,7 +118,7 @@ exports.handler = async (event, context) => {
     let keys = queryParams['keys'] ? JSON.parse(queryParams['keys']) : null;
     const entryName = queryParams['entry_name'];
     const checksum = queryParams['checksum'];
-    const md5Checksum =  (queryParams['md5_checksum'] == undefined) ? null : queryParams['md5_checksum'];
+    const md5Checksum = (queryParams['md5_checksum'] == undefined) ? null : queryParams['md5_checksum'];
     const request_type = queryParams['request_type'];
     const contentsPrefix = queryParams['contents_prefix'];
     const company = queryParams['company'];
@@ -183,6 +183,7 @@ exports.handler = async (event, context) => {
 
     let client, body;
     let decnames = [];
+    let countFile;
 
     const date = getDateFormat();
 
@@ -222,12 +223,12 @@ exports.handler = async (event, context) => {
             const id_risorsa = queryParams['id_risorsa'];
             const id_sondaggio = queryParams['id_sondaggio'];
             const codice_part = queryParams['codice_part'];
-            
-            const username = queryParams['username'];            
+
+            const username = queryParams['username'];
             client = await pool.connect();
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
             let query = '';
-            if(id_sondaggio) {
+            if (id_sondaggio) {
                 query = `select entrasp.anagrafica_folder_name_and_sub_folders(cg.codice_azienda_erogante, an.id_anagrafica, '${username}', idsondaggio=>snd.id_sondaggio)
                 from entrasp.sondaggi snd
                 inner join entrasp.centri_gestionali cg on snd.id_centro_gest=cg.id_centro_gest and snd.codice_part=cg.codice_part
@@ -237,13 +238,13 @@ exports.handler = async (event, context) => {
                 and cg.codice_azienda_erogante is not null;`;
             }
             else {
-                query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}', '${username}', ${id_risorsa ? "'" + id_risorsa + "'":  "null"});`;
+                query = `select * from entrasp.anagrafica_folder_name_and_sub_folders('${company}', '${id_anagrafica}', '${username}', ${id_risorsa ? "'" + id_risorsa + "'" : "null"});`;
             }
             console.log('running query: ', query);
             let response = await client.query(query);
             let folderNames = null;
             console.log('response', response.rows);
-            if(response && response.rows) {
+            if (response && response.rows) {
                 folderNames = response.rows;
             }
             body = { result: 'OK', response: folderNames };
@@ -257,7 +258,7 @@ exports.handler = async (event, context) => {
             let response = await client.query(query);
             let folderNames = null;
             console.log('response', response.rows);
-            
+
             body = { result: 'OK', response: response };
         }
         else if (requestType === "anagraficheToBeUpdated") {
@@ -269,9 +270,9 @@ exports.handler = async (event, context) => {
             let response = await client.query(query);
             let folderNames = null;
             console.log('response', response.rows);
-            
+
             body = { result: 'OK', response: response };
-            
+
         }
         else if (requestType === "associateEmails") {
             let jsonBody = event.body ? JSON.parse(event.body) : {};
@@ -364,6 +365,29 @@ exports.handler = async (event, context) => {
                     }
                 }
                 body = { result: 'OK', list: decnames };
+            } else if (requestType === 'getCountAttachList') {
+
+                idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
+                provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
+                if (bus_object == 'cdms_risorse_revisioni') {
+                    query = `select count(*) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr} and id_argomento_stato=4035;`;
+                    response = await client.query(query);
+                    console.log(query, response);
+                    countFile = response['rows'][0];
+                } else if (bus_object == 'cdms_risorse') {
+                    query = `select count(*) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and id_argomento_stato=4035;`;
+                    response = await client.query(query);
+                    console.log(query, response);
+                    countFile = response['rows'][0];
+                } else {
+                    query = `select count(*) from entrasp.cdms_risorse_oggetti a inner join entrasp.cdms_risorse_revisioni b on a.codice_azienda=b.codice_azienda
+                        and a.id_risorsa=b.id_risorsa and a.prog_revisione=b.prog_revisione where a.codice_azienda='${company}' AND a.nome_business_object='${bus_object}'
+                        AND a.chiave='${chiave}' and b.id_argomento_stato=4035;`;
+                    response = await client.query(query);
+                    console.log(query, response);
+                    countFile = response['rows'][0];
+                }
+                body = { result: 'OK', countFile: countFile };
             } else if (requestType === 'updateFile') {
                 //console.log('requestType: updateFile');       //NO more in this requestType from OneCompliance
                 // fill postgresql tables
@@ -583,7 +607,7 @@ exports.handler = async (event, context) => {
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
 
-                                body = { result: 'OK'};
+                                body = { result: 'OK' };
                             }
                             catch (e) {
                                 console.log(e);
@@ -624,9 +648,9 @@ exports.handler = async (event, context) => {
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
 
-                                 //INSERISCO ASSOCIAZIONE RISORSA/CEGE
+                                //INSERISCO ASSOCIAZIONE RISORSA/CEGE
                                 query = `insert into entrasp.cdms_risorse_destinatari (codice_azienda, id_risorsa, codice_part, id_centro_gest)
-                                select '${company}', ${idFlowInfo1}, (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}'), ${idCentroGest} ON CONFLICT DO NOTHING;`;     
+                                select '${company}', ${idFlowInfo1}, (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}'), ${idCentroGest} ON CONFLICT DO NOTHING;`;
                                 console.log(query);
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
@@ -661,7 +685,7 @@ exports.handler = async (event, context) => {
                         response = await client.query(query);
                         const nextId = response['rows'][0]['id_risorsa'];
                         console.log(JSON.stringify(response));
-                       
+
                         query = `insert into entrasp.cdms_risorse (codice_azienda, id_risorsa, id_argomento_tipo_allegato, id_anagrafica, descrizione, descrizione_breve)
                         select '${company}', ${nextId}, ${idArgAll}, ${idAnagrafica}, 
                         entrasp.argomenti_descr( ${idArgAll}), entrasp.argomenti_descr_breve( ${idArgAll});`; // tolto --> id_centro_gest,    +    ${idCentroGest}, 
@@ -671,7 +695,7 @@ exports.handler = async (event, context) => {
 
                         //INSERISCO ASSOCIAZIONE RISORSA/CEGE
                         query = `insert into entrasp.cdms_risorse_destinatari (codice_azienda, id_risorsa, codice_part, id_centro_gest)
-                        select '${company}', ${nextId}, (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}'), ${idCentroGest};`;     
+                        select '${company}', ${nextId}, (SELECT codice_part FROM entrasp.aziende WHERE codice_azienda='${company}'), ${idCentroGest};`;
                         console.log(query);
                         response = await client.query(query);
                         console.log(JSON.stringify(response));

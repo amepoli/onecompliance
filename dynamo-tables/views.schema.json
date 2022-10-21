@@ -901,6 +901,32 @@
                                         }
                                     }
                                 }
+                            },
+                            "keyToCheck": {
+                                "type": "string",
+                                "description": "M: Field of table_keys to check",
+                                "required": [
+                                    "navigationConditions"
+                                ]
+                            },
+                            "navigationConditions": {
+                                "type": "array",
+                                "description": "M: Conditions to check",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "ifValue",
+                                        "newTarget"
+                                    ],
+                                    "ifValue": {
+                                        "type": "string",
+                                        "description": "M: Value to check, if equals to keyToCheck then navigate"
+                                    },
+                                    "newTarget": {
+                                        "type": "string",
+                                        "description": "M: Target to navigate if the ifValue is equals to keyToCheck"
+                                    }
+                                }
                             }
                         }
                     },
@@ -2359,7 +2385,12 @@
                                                 },
                                                 "syncMode": {
                                                     "type": "string",
-                                                    "enum": ["full", "driveToS3", "s3ToDrive", "none"],
+                                                    "enum": [
+                                                        "full",
+                                                        "driveToS3",
+                                                        "s3ToDrive",
+                                                        "none"
+                                                    ],
                                                     "description": "?: sync mode. Default value is full"
                                                 }
                                             }

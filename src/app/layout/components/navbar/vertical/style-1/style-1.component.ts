@@ -169,4 +169,8 @@ export class NavbarVerticalStyle1Component implements OnInit, OnDestroy
     gotoHome() {
         HelperService.redirectTo(this._router, `/oc/homepage`);
     }
+
+    gotoCalendar() {
+        HelperService.redirectTo(this._router, `/oc/calendar`);
+    }
 }

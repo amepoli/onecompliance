@@ -36,7 +36,7 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "SELECT mvr.flag_sezioni, '€global_username€' as username, mdt.titolo as titolo_modello_test, snd.id_sondaggio_parent, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+      "queryString": "SELECT mvr.flag_sezioni, '€global_username€' as username, mdt.flag_mostra_punteggi, mdt.titolo as titolo_modello_test, snd.id_sondaggio_parent, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
     },
     {
       "operation": "delete",
@@ -555,6 +555,23 @@
       "readOnly": true
     },
     {
+      "isHidden": true,
+      "readOnly": true,
+      "isPrimary": false,
+      "key": "flag_mostra_punteggi",
+      "sameOrigin": false,
+      "label": "flag_mostra_punteggi",
+      "outputEvent": {
+        "eventName": "event_flag_mostra_punteggi",
+        "eventTrigger": "load"
+      },
+      "newLine": true,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      }
+    },
+    {
       "autoGenerate": true,
       "format": {
         "dataType": "number",
@@ -595,6 +612,14 @@
           "actionType": "query",
           "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$) as id_somministrazione_succ;",
           "outputEventWhenComplete": "sondaggi_somministrati_reload"
+        },
+        {
+          "eventName": "event_flag_mostra_punteggi",
+          "actionType": "hide",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
         }
       ],
       "label": "# Sondaggio",
@@ -1187,6 +1212,14 @@
           "values": [],
           "actionType": "query",
           "queryFunct": "select punteggio_description FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+        },
+        {
+          "eventName": "event_flag_mostra_punteggi",
+          "actionType": "hide",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
         }
       ],
       "size": 2
@@ -1217,6 +1250,14 @@
           "values": [],
           "actionType": "query",
           "queryFunct": "select ris_percentuale FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+        },
+        {
+          "eventName": "event_flag_mostra_punteggi",
+          "actionType": "hide",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
         }
       ],
       "size": 2.1
@@ -1256,6 +1297,14 @@
           "values": [],
           "actionType": "query",
           "queryFunct": "select giudizio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+        },
+        {
+          "eventName": "event_flag_mostra_punteggi",
+          "actionType": "hide",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
         }
       ],
       "size": 1.75
@@ -1281,6 +1330,14 @@
           "condition": "none",
           "values": [],
           "queryFunct": "select entrasp.aggiorna_sondaggi_pre_loading($codice_azienda$, $id_sondaggio$);"
+        },
+        {
+          "eventName": "event_flag_mostra_punteggi",
+          "actionType": "hide",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
         }
       ]
     },
@@ -1635,6 +1692,15 @@
       "label": "Con giudizio manuale",
       "newLine": false,
       "queryCond": "ss.pct_da_manuale is not null"
+    },
+    {
+      "fieldName": "flag_progetto_null",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Senza Progetto",
+      "newLine": false,
+      "queryCond": "snd.id_sondaggio not in (select id_sondaggio from entrasp.progetti_fasi where codice_azienda=snd.codice_azienda and id_sondaggio is not null)"
     },
     {
       "fieldName": "flag_contratti_null",

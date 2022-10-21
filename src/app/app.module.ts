@@ -33,6 +33,7 @@ import { HomepageModule } from './oc/homepage/homepage.module';
 import { HomepageTabModule } from './oc/homepage-tab/homepage-tab.module';
 import { ToolbarElementsModule } from './oc/toolbar-elements/toolbar-elements.module';
 import { ExplorerModule } from './oc/explorer/explorer.module';
+import { CalendarModule } from './oc/calendar/calendar.module';
 
 const appRoutes: Routes = [];
 
@@ -89,6 +90,7 @@ const appRoutes: Routes = [];
         // zee modules
         HomepageModule,
         HomepageTabModule,
+        CalendarModule,
         ToolbarElementsModule,
         ExplorerModule,
         

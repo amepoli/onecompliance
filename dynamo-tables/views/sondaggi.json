@@ -23,7 +23,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select snd2.id_sondaggio as id_sondaggio_precedente,snd.id_sondaggio,snd.id_contratto,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria,snd.id_sondaggio_parent, snd.id_modello_test,snd.id_modello_test_vr,snd.sondaggio_completato, snd.giudizio,snd.titolo, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione,substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr left JOIN entrasp.sondaggi snd2 on snd.codice_azienda=snd2.codice_azienda and snd.id_sondaggio=snd2.id_sondaggio_succ inner join entrasp.modelli_test mt on mvr.codice_azienda=mt.codice_azienda and mvr.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$ and ((snd.data_prevista<=CURRENT_DATE+365 or snd.data_prevista is null) or (snd.data_esecuzione<=CURRENT_DATE+100)) and $P{mask_condition}"
+            "queryString": "select pf.id_progetto, snd2.id_sondaggio as id_sondaggio_precedente,snd.id_sondaggio,snd.id_contratto,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria,snd.id_sondaggio_parent, snd.id_modello_test,snd.id_modello_test_vr,snd.sondaggio_completato, snd.giudizio,snd.titolo, snd.codice_azienda, snd.id_centro_gest, snd.data_prevista, snd.data_comp, snd.data_esecuzione,substring(entrasp.object_descriptions_from_sondaggio(snd.codice_azienda, snd.id_sondaggio), 1, 150) as sondaggio_su, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale,entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr left JOIN entrasp.sondaggi snd2 on snd.codice_azienda=snd2.codice_azienda and snd.id_sondaggio=snd2.id_sondaggio_succ inner join entrasp.modelli_test mt on mvr.codice_azienda=mt.codice_azienda and mvr.id_modello_test=mt.id_modello_test left join entrasp.progetti_fasi pf on snd.codice_azienda=pf.codice_azienda and snd.id_sondaggio=pf.id_sondaggio where snd.codice_azienda=$codice_azienda$ and ((snd.data_prevista<=CURRENT_DATE+365 or snd.data_prevista is null) or (snd.data_esecuzione<=CURRENT_DATE+100)) and $P{mask_condition}"
         },
         {
             "operation": "selectForm",
@@ -646,6 +646,11 @@
                         "icon": "find_replace",
                         "label": "Cambia modello verifica",
                         "outputEventName": "modello_verifica_change_show"
+                    },
+                    {
+                        "icon": "group_work",
+                        "label": "Inserisci partecipanti al corso",
+                        "outputEventName": "participants_insert"
                     }
                 ]
             },
@@ -769,6 +774,14 @@
                             "syncMode": "s3ToDrive"
                         }
                     }
+                },
+                {
+                    "eventName": "participants_insert",
+                    "actionType": "query",
+                    "queryFunct": "entrasp.partecipanti_corso_insert($codice_azienda$, $id_sondaggio$)",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "survey_reload"
                 }
             ],
             "isHidden": false,
@@ -2108,6 +2121,22 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_sondaggio",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "sondaggi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
             "label": "#",
             "width": "5%",
             "style": [
@@ -2128,7 +2157,7 @@
             "isPrimary": false,
             "key": "data_comp",
             "label": "Data Competenza",
-            "width": "7%"
+            "width": "6%"
         },
         {
             "format": {
@@ -2138,7 +2167,7 @@
             "isPrimary": false,
             "key": "data_prevista",
             "label": "Data Prevista",
-            "width": "7%"
+            "width": "6%"
         },
         {
             "format": {
@@ -2173,11 +2202,39 @@
         },
         {
             "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "hasLevel": true,
+            "label": "Id Prog.",
+            "width": "6%",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "progetti",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_progetti",
+                        "destination": "id_progetti"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
                 "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
+            "width": "15%",
             "label": "Titolo"
         },
         {
@@ -2188,7 +2245,7 @@
             "isPrimary": false,
             "key": "sondaggio_su",
             "label": "Oggetto del Sondaggio",
-            "width": "18%",
+            "width": "17%",
             "style": [
                 {
                     "value": "*",

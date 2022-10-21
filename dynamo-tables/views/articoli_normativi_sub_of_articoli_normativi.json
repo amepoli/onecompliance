@@ -6,7 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectForm",
-      "queryString": "select (id_testo_normativo_rif, codice_articolo_normativo_rif) as articolo_testo_normativo_rif from entrasp.articoli_normativi_rif where id_testo_normativo=$id_testo_normativo$ and codice_articolo_normativo=$codice_articolo_normativo$",
+      "queryString": "select (id_testo_normativo_rif, codice_articolo_normativo_rif) as articolo_testo_normativo_rif from entrasp.articoli_normativi_rif where id_articolo_normativo=$id_articolo_normativo$",
       "type": "postProcessing"
     }
   ],
@@ -130,7 +130,7 @@
       "key": "testo_normativo",
       "label": "Testo normativo",
       "width": "20%",
-      "queryFunct": "entrasp.testi_normativi_rif_descr(id_testo_normativo_rif)"
+      "queryFunct": "entrasp.testi_normativi_rif_descr(id_articolo_normativo_rif)"
     },
     {
       "format": {
@@ -141,7 +141,23 @@
       "key": "articolo_testo_normativo_rif",
       "label": "Articolo normativo (foglia)",
       "width": "35%",
-      "queryFunct": "entrasp.articoli_normativi_cod_rub(id_articolo_normativo_rif)"
+      "queryFunct": "entrasp.articoli_normativi_cod_rub(id_articolo_normativo_rif)",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "articoli_normativi",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_articolo_normativo",
+            "destination": "id_articolo_normativo"
+          }
+        ]
+      }
     },
     {
       "format": {
@@ -197,17 +213,8 @@
       },
       "isHidden": true,
       "isPrimary": true,
-      "key": "id_testo_normativo",
-      "label": "id_testo_normativo"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_articolo_normativo",
-      "label": "codice_articolo_normativo"
+      "key": "id_articolo_normativo",
+      "label": "id_articolo_normativo"
     },
     {
       "format": {

@@ -27,6 +27,9 @@ import { Subject } from 'rxjs';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { CalendarEventDialogComponent } from '../dialogs/calendar-event.dialog/calendar-event.dialog.component';
+import { CalendarService } from '../services/calendar.service';
+import { AuthService } from '../services';
+import { CalendarEventDetails } from '../interfaces';
 
 
 // const colors: Record<string, EventColor> = {
@@ -90,9 +93,24 @@ export class CalendarComponent  implements OnInit{
     
     selectedDay?: SelectedDay = null;
     
-    ngOnInit() {
-        this.curMoment = moment();
-        this.calculateCur();
+    isLoading: boolean = true;
+
+    async ngOnInit() {
+        let _this = this;
+
+        _this.isLoading = true;
+        
+        // try {
+        //     const response = await _this._calendarService.getCalendarEvents(_this._authService.getCurrentCompany()).toPromise();
+        //     console.log(response);
+            _this.curMoment = moment();
+            _this.calculateCur();
+            _this.isLoading = false;
+        // }
+        // catch(e){
+        //     _this.isLoading = false;
+        //     console.log(e);
+        // };
     }
 
     calculateCur() {
@@ -215,12 +233,14 @@ export class CalendarComponent  implements OnInit{
         }
     }
 
-    constructor(public calendarEventDialog: MatDialog
+    constructor(private _calendarEventDialog: MatDialog,
+        private _calendarService: CalendarService,
+        private _authService: AuthService
     ) {}
 
     showCalendarEventDialog() {
         const _this = this;
-        const data = {
+        const data: CalendarEventDetails = {
             title: 'Demo event 1',
             calendar: "Predefined",
             startDate: "22 October, 2022",
@@ -231,7 +251,7 @@ export class CalendarComponent  implements OnInit{
             description: "This is a demo event"
         }
         // Pop-up example
-        const dialogRef = _this.calendarEventDialog.open(CalendarEventDialogComponent, {
+        const dialogRef = _this._calendarEventDialog.open(CalendarEventDialogComponent, {
             width: '640px',
             height: '840px',
             data: data
