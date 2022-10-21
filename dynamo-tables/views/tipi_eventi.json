@@ -150,6 +150,38 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"viewType": "menu",
+				"menuOptions": [
+					{
+						"icon": "content_copy",
+						"label": "Duplica",
+						"outputEventName": "duplica_progetto"
+					}
+				]
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "more_vert",
+			"key": "contratti_actions",
+			"label": "",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 0.6,
+			"inputEvents": [
+				{
+					"eventName": "duplica_progetto",
+					"condition": "none",
+					"values": [],
+					"actionType": "query",
+					"queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
+					"outputEventWhenComplete": "navigate_to_new_scadenza"
+				}
+			]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo;",
 				"options": [],
 				"viewType": "combobox",
@@ -650,6 +682,22 @@
 		{
 			"viewType": "form",
 			"formActionType": "stopEvent"
+		}
+	],
+	"inputEvents": [
+		{
+			"actionTarget": {
+				"name": "tipi_eventi",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "id_argomento",
+						"destination": "id_argomento"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "navigate_to_new_tipo_evento"
 		}
 	]
 }
