@@ -1,0 +1,774 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "contracts_preanalysis",
+	"inheritsFrom": "contracts_investment",
+	"businessObjectName": "contratti",
+	"origin": "entrasp.contratti",
+	"dashboardTables": [
+		"dashboard_contracts_investment"
+	],
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
+		},
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+		},
+		{
+			"operation": "update",
+			"type": "postProcessing",
+			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+		},
+		{
+			"operation": "insert",
+			"type": "postProcessing",
+			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+		}
+	],
+	"outputEvents": [
+		{
+			"eventName": "onSaveContratto",
+			"eventTrigger": "onSave"
+		},
+		{
+			"eventName": "onLoadContratto",
+			"eventTrigger": "onReload"
+		}
+	],
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "codice_azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": true,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": true,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "ID Contratto",
+			"key": "id_contratto",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false,
+			"size": 1.2
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Cliente",
+			"key": "id_cliente",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 3
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "select distinct id_argomento as id, descrizione_breve as name from entrasp.argomenti where id_argomento in (select id_argomento_descendants from entrasp.descendants_of_argomento(5408)) and id_argomento not in(5408,5402,3526) order by descrizione_breve",
+				"options": [],
+				"viewType": "combobox",
+				"validations": [
+					{
+						"message": "Inserire un argomento!",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_argomento_contratto",
+			"label": "Tipo Contratto",
+			"newLine": false,
+			"readOnly": false,
+			"size": 2.6
+		},
+		
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number",
+				"value": "1"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_tipo_contratto",
+			"label": "",
+			"newLine": false,
+			"readOnly": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "N. Contratto",
+			"key": "numero_contratto",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 1.4
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Inserire uno stato!",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"outputEvent": {
+				"eventName": "contratto_change_stato",
+				"eventTrigger": "select"
+			},
+			"inputEvents": [
+				{
+					"eventName": "contratto_change_stato",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "background_color",
+					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_CONTRATTI' and codice=$stato$"
+				},
+				{
+					"eventName": "onSaveContratto",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "background_color",
+					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_CONTRATTI' and codice=$stato$"
+				},
+				{
+					"eventName": "onLoadContratto",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "background_color",
+					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_CONTRATTI' and codice=$stato$"
+				}
+			],
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "stato",
+			"label": "Stato",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.4
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "menu",
+				"menuOptions": [
+					{
+						"icon": "stacked_line_chart",
+						"label": "Crea progetto",
+						"outputEventName": "progetto_create"
+					}
+				]
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "more_vert",
+			"key": "contratti_actions",
+			"label": "",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 0.6,
+			"inputEvents": [
+				{
+					"eventName": "progetto_create",
+					"condition": "none",
+					"values": [],
+					"actionType": "query",
+					"queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
+					"outputEventWhenComplete": "navigate_to_new_progetto"
+				}
+			]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Descrizione",
+			"key": "descrizione",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', ragione_sociale) as name from entrasp.anagrafiche_vr an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and codice_ruolo= 'FONDO';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Fondo Gestito",
+			"key": "id_strumento_finanziario",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_stipulazione",
+			"label": "Data Stipula",
+			"newLine": false,
+			"size": 2,
+			"readOnly": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_contratto_da",
+			"label": "Data Contratto Da",
+			"newLine": false,
+			"size": 2,
+			"readOnly": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_contratto_a",
+			"label": "Data Contratto a",
+			"newLine": false,
+			"size": 2,
+			"readOnly": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "combobox",
+				"options": [],
+				"dataType": "text",
+				"comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
+			},
+			"label": "Giudizio Appropriatezza",
+			"key": "giudizio",
+			"readOnly": true,
+			"queryFunct": "entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)",
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"label": "Data Cessazione",
+			"key": "data_cessazione",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 4,
+			"outputEvent": {
+				"eventName": "expiry_date_change",
+				"eventTrigger": "change"
+			}
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "close_contract",
+			"buttonIcon": "lock",
+			"label": "Chiudi Contratto",
+			"readOnly": true,
+			"sameOrigin": false,
+			"newLine": false,
+			"size": 1,
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"attributeFuncts": [],
+			"outputEvent": {
+				"eventName": "close_contract",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"eventName": "close_contract",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "UPDATE entrasp.contratti SET data_cessazione='£data_cessazione£', stato='C' WHERE id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$",
+					"successMessage": "Contratto chiuso",
+					"outputEventWhenComplete": "survey_reload"
+				},
+				{
+					"eventName": "expiry_date_change",
+					"actionType": "readOnly",
+					"condition": "equalTo",
+					"values": [
+						null
+					]
+				}
+			]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_progetto",
+			"key": "id_progetto",
+			"readOnly": false,
+			"isHidden": true,
+			"sameOrigin": false,
+			"isPrimary": false,
+			"newLine": true
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"width": "5%",
+			"key": "id_contratto",
+			"label": "#"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "codice_azienda"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "11%",
+			"isPrimary": false,
+			"key": "numero_contratto",
+			"label": "N. Contratto",
+			"style": [
+				{
+					"value": "*",
+					"background_color": "lightblue",
+					"text_align": "center",
+					"font_weight": "590"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_cliente",
+			"label": "Cliente",
+			"width": "0%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "cliente",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
+			"label": "Cliente",
+			"width": "29%",
+			"style": [
+				{
+					"value": "*",
+					"font_size": "medium",
+					"font_weight": "590"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "13%",
+			"key": "id_argomento_contratto",
+			"queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_contratto)",
+			"label": "Tipo Contratto"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_strumento_finanziario",
+			"label": "id_strumento_finanziario"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "fondo_gestito",
+			"width": "13%",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario)",
+			"label": "Strum.fin.sottoscritto/acquistato"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_stipulazione",
+			"width": "8%",
+			"label": "Data Stipula"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_cessazione",
+			"width": "8%",
+			"label": "Data Cessazione"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descr_stato",
+			"label": "Stato",
+			"style": [
+				{
+					"value": "Cessato",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "In Scadenza",
+					"font_color": "MistyRose",
+					"font_weight": "500",
+					"background_color": "MediumPurple",
+					"text_align": "center"
+				},
+				{
+					"value": "Attivo",
+					"font_color": "white",
+					"font_weight": "500",
+					"background_color": "royalblue",
+					"text_align": "center"
+				}
+			],
+			"sameOrigin": false
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"label": "Giudizio Appropriatezza",
+			"width": "8%",
+			"key": "giudizio",
+			"queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
+			"isHidden": false,
+			"style": [
+				{
+					"value": "Appropriato",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "Adeguato",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "Non Appropriato",
+					"font_color": "DarkRed",
+					"font_weight": "500",
+					"background_color": "orange",
+					"text_align": "center"
+				},
+				{
+					"value": "Non Adeguato",
+					"font_color": "DarkRed",
+					"font_weight": "500",
+					"background_color": "orange",
+					"text_align": "center"
+				},
+				{
+					"value": "Non Giudicabile",
+					"font_color": "grey",
+					"font_weight": "500",
+					"background_color": "gainsboro",
+					"text_align": "center"
+				}
+			],
+			"isPrimary": false
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"queryFunct": "entrasp.anagrafica_key(id_cliente, codice_azienda, '|')",
+			"key": "object_key",
+			"label": "object_key"
+		}
+	],
+	"subTables": [
+		{
+			"label": "Profilazioni Associate",
+			"entryKey": "sondaggi_sub_of_contracts_investment",
+			"keys": [
+				{
+					"parent": "id_contratto",
+					"son": "id_contratto"
+				},
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			]
+		},
+		{
+			"label": "Files associati",
+			"entryKey": "attachments_sub_of_contratti",
+			"keys": [
+				{
+					"parent": "id_contratto",
+					"son": "id_contratto"
+				},
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			]
+		},
+		{
+			"label": "Progetti associati",
+			"entryKey": "progetti_sub_of_contratti",
+			"keys": [
+				{
+					"parent": "id_contratto",
+					"son": "id_contratto"
+				},
+				{
+					"parent": "codice_azienda",
+					"son": "codice_azienda"
+				}
+			]
+		}
+	],
+	"search_keys": [
+		{
+			"fieldName": "id_anagrafica_s",
+			"format": {
+				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Cliente",
+			"newLine": false,
+			"queryCond": "id_cliente=$id_anagrafica_s$"
+		},
+		{
+			"fieldName": "nome_rs",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Nome/Cognome/Ragione Sociale",
+			"newLine": false,
+			"queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
+		},
+		{
+			"fieldName": "tipi_contratto_s",
+			"format": {
+				"comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (5402,3526)",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Tipo Contratti",
+			"newLine": true,
+			"queryCond": "id_argomento_contratto='€tipi_contratto_s€'"
+		},
+		{
+			"fieldName": "numero_contratto_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Numero Contratto",
+			"newLine": false,
+			"queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
+		},
+		{
+			"fieldName": "stato",
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Stato",
+			"newLine": false,
+			"queryCond": "cnt.stato='€stato€'"
+		},
+		{
+			"fieldName": "id_strumento_fin_s",
+			"format": {
+				"comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Fondo/strumento finanziario",
+			"newLine": false,
+			"queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
+		},
+		{
+			"format": {
+				"viewType": "combobox",
+				"options": [],
+				"dataType": "text",
+				"comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
+			},
+			"label": "Giudizio Appropriatezza",
+			"fieldName": "giudizio_s",
+			"newLine": true,
+			"queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$"
+		},
+		{
+			"fieldName": "profilazioni_n",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Senza Profilazioni Aml",
+			"newLine": false,
+			"queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
+		},
+		{
+			"fieldName": "no_progetto",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Aperti senza progetto associato",
+			"newLine": false,
+			"queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
+		}
+	],
+	"hideActions": [
+		{
+			"tableActionType": "quick-add",
+			"viewType": "table"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "attachments"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "add"
+		}
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by id_contratto desc limit 100"
+	},
+	"inputEvents": [
+		{
+			"actionType": "reload",
+			"eventName": "survey_reload"
+		},
+		{
+			"actionTarget": {
+				"name": "progetti",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_progetto",
+						"destination": "id_progetto"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "navigate_to_new_progetto"
+		}
+	]
+}
