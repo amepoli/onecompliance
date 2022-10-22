@@ -1,0 +1,160 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "contracts_type_conflict",
+  "origin": "entrasp.argomenti_argomenti",
+  "businessObjectName": "argomenti_argomenti",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select *, true as delete_argomenti_father, entrasp.argomenti_descr(id_argomento_son) as ruolo_a, entrasp.argomenti_descr(id_argomento_father) as ruolo_b,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_relazione=45758"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=5408 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento_son",
+      "label": "Ruolo A",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=5408 order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento_father",
+      "label": "Ruolo B",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "label": "Note",
+      "key": "note",
+      "readOnly": false,
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number",
+        "value": "45758"
+      },
+      "label": "id_argomento_relazione",
+      "key": "id_argomento_relazione",
+      "readOnly": false,
+      "isHidden": true,
+      "isPrimary": false,
+      "newLine": false
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "6%",
+      "queryFunct": "select true",
+      "key": "delete_argomenti_father",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "delete_icon"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "argomenti_sub_of_argomenti_father",
+        "viewType": "form",
+        "query": "delete from entrasp.argomenti_argomenti where id_argomento_son=£id_argomento_son£ and id_argomento_father=£id_argomento_father£",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "id_argomento_son",
+            "destination": "id_argomento_son"
+          },
+          {
+            "source": "id_argomento_father",
+            "destination": "id_argomento_father"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_son",
+      "label": "id_argomento_son"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_argomento_father",
+      "label": "id_argomento_father"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ruolo_a",
+      "label": "Ruolo A"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ruolo_b",
+      "label": "Ruolo B"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "label": "Note"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    }
+  ]
+}
