@@ -4,14 +4,19 @@
 	"inheritsFrom": "contracts_investment",
 	"businessObjectName": "contratti",
 	"origin": "entrasp.contratti",
-	"dashboardTables": [
+	"define": {
+        "is_hidden_conflicts": "false",
+		"is_hidden_mifid": "true",
+		"label_controparte": "Cliente/Fornitore"
+    },
+		"dashboardTables": [
 		"dashboard_contracts_investment"
 	],
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select $id_contratto_principale$ as id_contratto_principale, cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(cnt.id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda inner join entrasp.contratti cnt2 on cnt.codice_azienda=cnt2.codice_azienda and cnt.id_cliente=cnt2.id_cliente and cnt.id_contratto!=cnt2.id_contratto where cnt2.id_contratto=$id_contratto_principale$ and cnt.codice_azienda=$codice_azienda$"
+			"queryString": "select $id_contratto_principale$ as id_contratto_principale, entrasp.rischio_conflitto(cnt.codice_azienda, cnt.id_contratto, cnt2.id_contratto), cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(cnt.id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda inner join entrasp.contratti cnt2 on cnt.codice_azienda=cnt2.codice_azienda and cnt.id_cliente=cnt2.id_cliente and cnt.id_contratto!=cnt2.id_contratto where cnt2.id_contratto=$id_contratto_principale$ and cnt.codice_azienda=$codice_azienda$"
 		},
 		{
 			"operation": "update",
@@ -367,50 +372,6 @@
 			"sameOrigin": false,
 			"isPrimary": false,
 			"newLine": true
-		}
-	],
-	"subTables": [
-		{
-			"label": "Profilazioni Associate",
-			"entryKey": "sondaggi_sub_of_contracts_investment",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Files associati",
-			"entryKey": "attachments_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Progetti associati",
-			"entryKey": "progetti_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
 		}
 	]
 }

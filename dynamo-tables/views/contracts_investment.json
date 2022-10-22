@@ -6,6 +6,11 @@
 	"dashboardTables": [
 		"dashboard_contracts_investment"
 	],
+	"define": {
+        "is_hidden_conflicts": "true",
+		"is_hidden_mifid": "false",
+		"label_controparte": "Cliente"
+    },
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
@@ -73,7 +78,7 @@
 				"options": [],
 				"viewType": "combobox"
 			},
-			"label": "Cliente",
+			"label": "$P{label_controparte}",
 			"key": "id_cliente",
 			"readOnly": false,
 			"isHidden": false,
@@ -102,8 +107,7 @@
 			"newLine": false,
 			"readOnly": false,
 			"size": 2.6
-		},
-		
+		},		
 		{
 			"autoGenerate": false,
 			"format": {
@@ -124,7 +128,7 @@
 				"viewType": "input",
 				"dataType": "text"
 			},
-			"label": "N. Contratto",
+			"label": "N.Contratto",
 			"key": "numero_contratto",
 			"readOnly": false,
 			"isHidden": false,
@@ -416,7 +420,7 @@
 			"width": "11%",
 			"isPrimary": false,
 			"key": "numero_contratto",
-			"label": "N. Contratto",
+			"label": "N.Contratto",
 			"style": [
 				{
 					"value": "*",
@@ -433,7 +437,7 @@
 			"isHidden": true,
 			"isPrimary": false,
 			"key": "id_cliente",
-			"label": "Cliente",
+			"label": "$P{label_controparte}",
 			"width": "0%"
 		},
 		{
@@ -444,8 +448,8 @@
 			"isPrimary": false,
 			"key": "cliente",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
-			"label": "Cliente",
-			"width": "29%",
+			"label": "$P{label_controparte}",
+			"width": "24%",
 			"style": [
 				{
 					"value": "*",
@@ -546,7 +550,7 @@
 			"width": "8%",
 			"key": "giudizio",
 			"queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
-			"isHidden": false,
+			"isHidden": "$Q{is_hidden_mifid}",
 			"style": [
 				{
 					"value": "Appropriato",
@@ -595,6 +599,31 @@
 			"queryFunct": "entrasp.anagrafica_key(id_cliente, codice_azienda, '|')",
 			"key": "object_key",
 			"label": "object_key"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": "$Q{is_hidden_conflicts}",
+			"isPrimary": false,
+			"key": "rischio_conflitto",
+			"label": "Rischio conflitto",
+			"style": [
+				{
+					"value": "*",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "Potenziale conflitto",
+					"font_color": "white",
+					"font_weight": "500",
+					"background_color": "DarkRed",
+					"text_align": "center"
+				}
+			]
 		}
 	],
 	"subTables": [
@@ -649,7 +678,7 @@
 				"options": [],
 				"viewType": "combobox"
 			},
-			"label": "Cliente",
+			"label": "$P{label_controparte}",
 			"newLine": false,
 			"queryCond": "id_cliente=$id_anagrafica_s$"
 		},
