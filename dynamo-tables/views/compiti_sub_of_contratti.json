@@ -1,0 +1,81 @@
+{
+  "$schema": "../views.schema.json",
+  "inheritsFrom": "compiti",
+  "entryKey": "compiti_sub_of_contratti",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "preProcessing",
+      "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
+    },
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select distinct case when cmp.stato !='C' then true else false end as check,cmp.codice_compito,entrasp.argomenti_descr_breve_no_num(cmp.id_argomento_priorita) as priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies,entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, cmp.codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp inner join entrasp.compiti_rif_bo cbo on cmp.codice_compito=cbo.codice_compito and cmp.codice_azienda=cbo.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cbo.id_contratto=$id_contratto$"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "UPDATE entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda and cmp.codice_part is null"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda and cmp.codice_part is null"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+    },
+    {
+      "operation": "update",
+      "type": "postProcessing",
+      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+    },
+    {
+      "operation": "startEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+    },
+    {
+      "operation": "stopEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+    }
+  ],
+  "define": {
+    "is_hidden_compiti": "false",
+    "is_hidden_compiti_consultant": "true",
+    "label_data": "Data Segnalazione",
+    "label_codice_compito": "Codice",
+    "label_codice": "Codice Segnalazione",
+    "label_codice_parent": "Codice Segnalazione Parent"
+  },
+  "hideActions": [
+    {
+      "viewType": "table",
+      "tableActionType": "add"
+    },
+    {
+      "viewType": "table",
+      "tableActionType": "quick-add"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "add"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "attachments"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "import_export"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "share"
+    }
+  ]
+}
