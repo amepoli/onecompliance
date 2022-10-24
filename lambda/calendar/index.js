@@ -1,4 +1,3 @@
-const { query } = require('@angular/animations');
 const Pool = require('pg-pool');
 const pool = new Pool({
     host: 'HOST_NAME',
