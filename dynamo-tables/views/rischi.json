@@ -37,6 +37,18 @@
       "operation": "update",
       "type": "postProcessing",
       "queryString": "update entrasp.rischi set intensita_singola_pre = $intensita_singola_pre$ ,probabilita_pre = $probabilita_pre$ where codice_azienda=$codice_azienda$ and codice_rischio = $codice_rischio$"
+    },
+    {
+      "operation": "insert",
+      "type": "preCheck",
+      "queryString": "select codice_rischio from entrasp.rischi WHERE codice='£codice£' and codice_azienda=$codice_azienda$",
+      "messageNotNull": "Il codice proposto è già stata utilizzata per un altro rischio: prego verificare o attribuire codice diverso"
+    },
+    {
+      "operation": "update",
+      "type": "preCheck",
+      "queryString": "select codice_rischio from entrasp.rischi WHERE codice='£codice£' and codice_rischio!=$codice_rischio$ and codice_azienda=$codice_azienda$",
+      "messageNotNull": "Il codice proposto è già stata utilizzata per un altro rischio: prego verificare o attribuire codice diverso"
     }
   ],
   "messages": [
