@@ -16,11 +16,7 @@ if [ -f ./index.js.ori ]; then
     exit 0
 fi
 
-LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.zabbix.lambdaName"`
-
-DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
-DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
-DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
+LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.calendar.lambdaName"`
 
 DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
 HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
@@ -28,7 +24,6 @@ USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
 SCHEMA=`cat ../../${1}.json | jq -r ".postgres.schema"`
 
-FUNCTIONNAME=`cat ../../${1}.json | jq -r ".lambdas.utf_encoder.functionName"`
 REGION="eu-central-1"
 
 #replace Variables
