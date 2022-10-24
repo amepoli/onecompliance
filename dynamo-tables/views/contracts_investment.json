@@ -7,12 +7,12 @@
 		"dashboard_contracts_investment"
 	],
 	"define": {
-        "is_hidden_conflicts": "true",
+		"is_hidden_conflicts": "true",
 		"is_hidden_mifid": "false",
 		"is_hidden_invisible_field": "true",
 		"label_id_controparte": "ID Cliente",
 		"label_controparte": "Cliente"
-    },
+	},
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
@@ -109,7 +109,7 @@
 			"newLine": false,
 			"readOnly": false,
 			"size": 2.5
-		},		
+		},
 		{
 			"autoGenerate": false,
 			"format": {
@@ -200,13 +200,11 @@
 						"icon": "stacked_line_chart",
 						"label": "Crea progetto",
 						"outputEventName": "progetto_create"
-					
 					},
 					{
 						"icon": "warning",
 						"label": "Gestisci conflitto/attività",
 						"outputEventName": "compito_create_from_contratto"
-					
 					}
 				]
 			},
@@ -228,14 +226,14 @@
 					"queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
 					"outputEventWhenComplete": "navigate_to_new_progetto"
 				},
-                {
-                    "eventName": "compito_create_from_contratto",
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.compiti_rif_bo_insert('contratti', coalesce($descrizione$,entrasp.argomenti_codice_descr_breve($id_argomento_contratto$)||entrasp.anagrafiche_vr_dati_identificativi('€codice_part€', $id_cliente$), 'cnt'||$id_contratto$,'' ), $codice_azienda$, idcontratto=>$id_contratto$) as codice_compito_created",
-                    "condition": "none",
-                    "values": [],
-                    "outputEventWhenComplete": "to_compito_created"
-                }
+				{
+					"eventName": "compito_create_from_contratto",
+					"actionType": "query",
+					"queryFunct": "select entrasp.compiti_rif_bo_insert('contratti', coalesce($descrizione$,entrasp.argomenti_codice_descr_breve($id_argomento_contratto$)||entrasp.anagrafiche_vr_dati_identificativi('€codice_part€', $id_cliente$), 'cnt'||$id_contratto$,'' ), $codice_azienda$, idcontratto=>$id_contratto$) as codice_compito_created",
+					"condition": "none",
+					"values": [],
+					"outputEventWhenComplete": "to_compito_created"
+				}
 			]
 		},
 		{
@@ -865,22 +863,22 @@
 			"eventName": "navigate_to_new_progetto"
 		},
 		{
-            "actionTarget": {
-                "name": "compiti",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "codice_compito_created",
-                        "destination": "codice_compito"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "to_compito_created"
-        }
+			"actionTarget": {
+				"name": "compiti",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "codice_compito_created",
+						"destination": "codice_compito"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "to_compito_created"
+		}
 	]
 }
