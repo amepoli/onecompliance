@@ -28,7 +28,7 @@ import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { CalendarEventDialogComponent } from '../dialogs/calendar-event.dialog/calendar-event.dialog.component';
 import { CalendarService } from '../services/calendar.service';
-import { AuthService } from '../services';
+import { AuthService, ConsoleLoggerService } from '../services';
 import { CalendarEventDetails } from '../interfaces';
 
 
@@ -47,11 +47,21 @@ import { CalendarEventDetails } from '../interfaces';
 //     },
 // };
 
+interface EventInputResponse {
+    object_name: string; //: "sondaggi",
+    object_id: string; //: "101",
+    titolo: string; //: "Prg. 11 Processo di adeguamento a fini privacy - Alba Claudio Snc  Minimaxi Abbigliamento 0-18 - Alba Claudio (Minimaxi Abbigliamento)",
+    descrizione: string; //: "Predisposizione regolamento aziendale (ruoli, policy trattamento dati, utilizzo dispositivi aziendali, etc.)\n\n",
+    data_inizio: any; //: "2018-06-23T00:00:00.000Z",
+    data_fine: Date; //: "2018-06-23T00:00:00.000Z",
+    event_color: string; //: "green"
+}
+
 interface CalendarDayInfo {
     today: boolean;
     selected: boolean;
     day: number;
-    numEvents: number;
+    events: EventInputResponse[];
 }
 
 interface SelectedDay {
@@ -63,6 +73,14 @@ interface SelectedDay {
     events: any[];
 }
 
+enum EventTiming {
+    start,
+    end,
+    inProgress
+};
+
+const colors = ['red', 'green', 'blue', 'yellow', 'pink', 'cyan'];
+
 @Component({
     selector: 'calendar-view',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +90,14 @@ interface SelectedDay {
     templateUrl: 'calendar.component.html',
 })
 export class CalendarComponent  implements OnInit{
+    
+    constructor(
+        private _calendarEventDialog: MatDialog,
+        private _calendarService: CalendarService,
+        private _authService: AuthService,
+        private _console: ConsoleLoggerService
+    ) {}
+
     daysOfWeek: string[] = [
         "Monday",
         "Tuesday",
@@ -82,7 +108,7 @@ export class CalendarComponent  implements OnInit{
         "Sunday",
     ];
 
-    data: CalendarDayInfo[][] = [];
+    calendarDays: CalendarDayInfo[][] = [];
 
     curMoment = moment();
     curMonth = 0;
@@ -93,27 +119,47 @@ export class CalendarComponent  implements OnInit{
     
     selectedDay?: SelectedDay = null;
     
-    isLoading: boolean = true;
+    isLoading: boolean = false;
 
-    async ngOnInit() {
+    data: EventInputResponse[] = null;
+
+    ngOnInit() {
         let _this = this;
 
         _this.isLoading = true;
         
-        // try {
-        //     const response = await _this._calendarService.getCalendarEvents(_this._authService.getCurrentCompany()).toPromise();
-        //     console.log(response);
-            _this.curMoment = moment();
-            _this.calculateCur();
+        try {
+            let subscription = _this._calendarService.getCalendarEvents(_this._authService.getCurrentCompany()).subscribe(
+                response => {
+                    
+                    if(response.result === 'OK' && response.data && response.data.rows) {
+                        _this.data = response.data.rows
+                        .map(x => {
+                            let res: EventInputResponse = x;
+                            res.data_fine = res.data_fine? new Date(res.data_fine): null; //res.data_fine.split("T")[0]: "";
+                            return res;
+                        });
+                        _this.curMoment = moment();
+                        _this.calculate();
+                    }
+                    _this.isLoading = false;
+                    subscription.unsubscribe();
+                    subscription = null;
+                },
+                error => {
+                    _this.isLoading = false;
+                    console.log(error);
+                    subscription.unsubscribe();
+                    subscription = null;
+                }
+            );
+        }
+        catch(e){
             _this.isLoading = false;
-        // }
-        // catch(e){
-        //     _this.isLoading = false;
-        //     console.log(e);
-        // };
+        };
     }
 
-    calculateCur() {
+    calculate() {
         this.curMonth = this.curMoment.month();
         this.curYear = this.curMoment.year();
         this.curMonthName = this.curMoment.format('MMMM');
@@ -124,19 +170,19 @@ export class CalendarComponent  implements OnInit{
 
     goToToday() {
         this.curMoment = moment();
-        this.calculateCur();
+        this.calculate();
     }
 
     goToNextMonth() {
         this.clearSelection();
         this.curMoment.add(1, 'month');
-        this.calculateCur();
+        this.calculate();
     }
 
     goToPreviousMonth() {
         this.clearSelection();
         this.curMoment.subtract(1, 'month');
-        this.calculateCur();
+        this.calculate();
     }
 
     createDaysMap() {
@@ -156,6 +202,18 @@ export class CalendarComponent  implements OnInit{
         let curDayOfWeek = 0;
         let curWeekOfMonth = 0;
 
+        // let allEvents = this.data;
+        // .map(x => {
+        //     let res: EventInputResponse = x;
+        //     res.data_inizio = res.data_inizio? moment(res.data_inizio): null; //res.data_inizio.split("T")[0]: "";
+        //     res.data_fine = res.data_fine? moment(res.data_fine): null; //res.data_fine.split("T")[0]: "";
+        //     return res;
+        // });
+        // .filter((x: any) => {
+        //         return parseInt(x.data_inizio.split("-")[0]) == this.curYear && parseInt(x.data_inizio.split("-")[1]) == this.curMonth + 1; 
+        // });
+        // console.log(allEvents);
+            
         for(let i = 1; i < startingDayMoment.isoWeekday(); i++) {
             newData[curWeekOfMonth].push(null);
             curDayOfWeek++;
@@ -166,10 +224,41 @@ export class CalendarComponent  implements OnInit{
                 curWeekOfMonth++;
                 curDayOfWeek = 0;
             }
+            
+            let dayDate = new Date(`${this.curYear}-${this.curMonth + 1}-${i+1}T00:00:00.000Z`);
+
+            let events = this.data.filter(x => {
+                if(!x.data_fine) {
+                    return false;
+                }
+                else {
+                    return x.data_fine.getFullYear() == dayDate.getFullYear() && x.data_fine.getMonth() == dayDate.getMonth() && x.data_fine.getDate() == dayDate.getDate();
+                }
+                // else if(x.data_inizio && !x.data_fine) {
+                //     return false;
+                // }                
+                // if((!x.data_inizio || moment(x.data_inizio).isSame(dayDate) || moment(x.data_inizio).isBefore(dayDate)) 
+                // && (!x.data_fine || moment(x.data_fine).isSame(dayDate) || moment(x.data_fine).isAfter(dayDate))){
+                //     return true;
+                // }
+                // else{
+                //     return false;
+                // }
+            });
+            // .map((x, i) => {
+            //     const dayEvent: EventInfo = {
+            //         eventColor: x.event_color,
+            //         eventInfo: x,
+            //         eventTiming: EventTiming.start
+            //     }
+            //     return dayEvent;
+            // });
+            
+            //2018-06-23T00:00:00.000Z
             newData[curWeekOfMonth].push({
                 today: isCurMonthSame && today.date() == i+1,
                 day: i + 1,
-                numEvents: 0,
+                events: events,
                 selected: false
             });
             curDayOfWeek++;
@@ -180,10 +269,10 @@ export class CalendarComponent  implements OnInit{
             curDayOfWeek++;
         }
 
-        this.data = newData;
+        this.calendarDays = newData;
     }
 
-    loadDayEvent(dayOfWeek: number, dayOfMonth: number, week: number) {
+    loadDayEvents(dayOfWeek: number, dayOfMonth: number, week: number) {
         if(!this.selectedDay ||
             this.selectedDay.year != this.curYear || 
             this.selectedDay.month != this.curMonth ||
@@ -199,26 +288,24 @@ export class CalendarComponent  implements OnInit{
                 week: week, //this.getWeekByDay(day),
                 month: this.curMonth,
                 year: this.curYear,
-                events: [
-                    {name: "Event 1"},
-                    {name: "Event 2"}
-                ]
+                events: this.calendarDays[week][dayOfWeek].events
             }
-            this.data[week][dayOfWeek].selected = true;
+            this.calendarDays[week][dayOfWeek].selected = true;
         }
         else {
             this.clearSelection();
         }
         
+        // this.showCalendarEventDialog();
+    }
 
-        console.log(this.selectedDay);
-
-        this.showCalendarEventDialog();
+    showDayEvent(event: EventInputResponse) {
+        this.showCalendarEventDialog(event);
     }
 
     getWeekByDay(day: number) {
         let weekNum = -1;
-        this.data.forEach((curWeek, i) => {
+        this.calendarDays.forEach((curWeek, i) => {
             if(curWeek.filter(x => x && x.day == day).length > 0) {
                 weekNum = i;
             }
@@ -228,27 +315,24 @@ export class CalendarComponent  implements OnInit{
 
     clearSelection() {
         if(this.selectedDay) {
-            this.data[this.selectedDay.week][this.selectedDay.dayOfWeek].selected = false;
+            this.calendarDays[this.selectedDay.week][this.selectedDay.dayOfWeek].selected = false;
             this.selectedDay = null;
         }
     }
 
-    constructor(private _calendarEventDialog: MatDialog,
-        private _calendarService: CalendarService,
-        private _authService: AuthService
-    ) {}
-
-    showCalendarEventDialog() {
+    showCalendarEventDialog(event: EventInputResponse) {
         const _this = this;
         const data: CalendarEventDetails = {
-            title: 'Demo event 1',
+            title: event.titolo,
             calendar: "Predefined",
-            startDate: "22 October, 2022",
-            endDate: "24 October, 2022",
+            startDate: event.data_inizio? new Date(event.data_inizio).toDateString(): "",
+            endDate: event.data_fine? event.data_fine.toDateString(): "",
             organizer: "Zee",
             attachment: "https://auditft.it/",
             participants: ["Zee", "Davide", "Amedeo", "Nicola"],
-            description: "This is a demo event"
+            description: event.descrizione,
+            object_id: event.object_id,
+            object_name: event.object_name
         }
         // Pop-up example
         const dialogRef = _this._calendarEventDialog.open(CalendarEventDialogComponent, {
