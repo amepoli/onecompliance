@@ -403,25 +403,25 @@
             "outputEvent": {
                 "eventName": "date_time_begin_edit",
                 "eventTrigger": "change"
-              },
-              "inputEvents": [
+            },
+            "inputEvents": [
                 {
-                  "eventName": "date_time_begin_edit",
-                  "actionType": "query",
-                  "queryFunct": "select entrasp.sondaggio_durata($codice_azienda$, $id_sondaggio$, nullif(replace('£data_rilevazione_da£', 'null',''), '')::timestamp with time zone, nullif(replace('£data_rilevazione_a£', 'null',''), '')::timestamp with time zone);",
-                  "outputEventWhenComplete": "reload_durata",
-                  "condition": "none",
-                  "values": []
+                    "eventName": "date_time_begin_edit",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.sondaggio_durata($codice_azienda$, $id_sondaggio$, nullif(replace('£data_rilevazione_da£', 'null',''), '')::timestamp with time zone, nullif(replace('£data_rilevazione_a£', 'null',''), '')::timestamp with time zone);",
+                    "outputEventWhenComplete": "reload_durata",
+                    "condition": "none",
+                    "values": []
                 },
                 {
-                  "eventName": "date_time_end_edit",
-                  "actionType": "query",
-                  "queryFunct": "select entrasp.sondaggio_durata($codice_azienda$, $id_sondaggio$, nullif(replace('£data_rilevazione_da£', 'null',''), '')::timestamp with time zone, nullif(replace('£data_rilevazione_a£', 'null',''), '')::timestamp with time zone);",
-                  "outputEventWhenComplete": "reload_durata",
-                  "condition": "none",
-                  "values": []
+                    "eventName": "date_time_end_edit",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.sondaggio_durata($codice_azienda$, $id_sondaggio$, nullif(replace('£data_rilevazione_da£', 'null',''), '')::timestamp with time zone, nullif(replace('£data_rilevazione_a£', 'null',''), '')::timestamp with time zone);",
+                    "outputEventWhenComplete": "reload_durata",
+                    "condition": "none",
+                    "values": []
                 }
-              ],
+            ],
             "size": 1.5
         },
         {
@@ -439,7 +439,7 @@
             "outputEvent": {
                 "eventName": "date_time_end_edit",
                 "eventTrigger": "change"
-              },
+            },
             "size": 2
         },
         {
@@ -628,7 +628,6 @@
             "sameOrigin": false,
             "size": 0.4
         },
-       
         {
             "autoGenerate": false,
             "format": {
@@ -756,7 +755,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "select mvr.id_modello_test_vr as id, mvr.id_modello_test_vr as name from entrasp.modelli_test_vr mvr inner join entrasp.sondaggi snd on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ order by mvr.id_modello_test_vr;",
+                "comboQuery": "select mvr.id_modello_test_vr as id, mvr.id_modello_test_vr as name from entrasp.modelli_test_vr mvr inner join entrasp.sondaggi snd on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=£id_sondaggio£ order by mvr.id_modello_test_vr;",
                 "options": [],
                 "viewType": "combobox"
             },
@@ -1077,7 +1076,7 @@
             "readOnly": true,
             "size": 0
         },
-       {
+        {
             "autoGenerate": false,
             "format": {
                 "dataType": "number",
@@ -1979,7 +1978,7 @@
     "formRowProperties": [
         {
             "propertyType": "readOnly",
-            "queryString": "select case when (stato='C' or (entrasp.sondaggio_belongs_user((€global_id_anagrafiche€)::text, $id_sondaggio$, $codice_azienda$)=false and '€global_profile€'!='admin')) then 'true' else 'false' end as label from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select case when (stato='C' or (entrasp.sondaggio_belongs_user(id_sondaggio, $codice_azienda$, '€global_username€')=false and '€global_profile€'!='admin')) then 'true' else 'false' end as label from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio= entrasp.evaluate_given_field_null('id_sondaggio', '$id_sondaggio$')"
         }
     ],
     "hideActions": [
@@ -1992,12 +1991,12 @@
             "viewType": "form"
         },
         {
-            "tableActionType": "add",
-            "viewType": "table"
-        },
-        {
             "formActionType": "quick-add",
             "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
         },
         {
             "tableActionType": "quick-add",
