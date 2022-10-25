@@ -6,7 +6,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test in (9, 50, 51, 58);"
+            "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test in ($P{lista_id_tipi_modelli_test});"
         },
         {
             "type": "main",
@@ -46,6 +46,11 @@
             "messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
         }
     ],
+    "define": {
+		"label_crea_sondaggio": "Crea profilazione",
+        "lista_id_tipi_modelli_test": "9, 50, 51, 58",
+        "tipo_sondaggio": "profilazione cliente"
+	},
     "messages": [
         {
             "viewType": "form",
@@ -187,7 +192,7 @@
             "width": "12%",
             "queryFunct": "select true",
             "key": "create_somministrazione",
-            "label": "Crea Profilazione",
+            "label": "$P{label_crea_sondaggio}",
             "isButton": true,
             "style": [
                 {
@@ -198,6 +203,17 @@
             "buttonAction": {
                 "target": "sondaggi_somministrati",
                 "viewType": "form",
+                "keyToCheck": "id_tipo_modello_test",
+                "navigationConditions": [
+					{
+						"ifValue": "52",
+						"newTarget": "lessons"
+					},
+                    {
+						"ifValue": "5",
+						"newTarget": "lessons"
+					}
+				],
                 "action": "query",
                 "query": "select codaz as codice_azienda, idsnd as new_id_sondaggio, idss as new_id_somministrazione from entrasp.crea_singola_verifica('£codice_azienda£', £id_modello_test£)",
                 "keymap": [
@@ -212,8 +228,8 @@
                 ],
                 "confirmAction": true,
                 "confirmMessage": {
-                    "title": "Nuova verifica",
-                    "text": "Si vuole creare una nuova verifica/ profilazione?"
+                    "title": "Nuova $P{tipo_sondaggio}",
+                    "text": "Si vuole creare una nuova $P{tipo_sondaggio}?"
                 },
                 "onSuccessAction": "navigate",
                 "onSuccessActionKeymap": [

@@ -1,12 +1,12 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "modelli_valutazione_fornitori",
-    "inheritsFrom": "modelli_test_vr",
+    "inheritsFrom": "profiling_models",
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_argomento, mtvr.id_risultato, mt.titolo, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$ and (mt.id_filtro_selezione=9 or id_argomento in (363, 548, 3408, 3407,3409,3411,3412));"
+            "queryString": "SELECT true as create_somministrazione, mt.id_tipo_modello_test, mt.codice_azienda, mt.id_modello_test, mt.id_argomento, mtvr.id_risultato, mt.titolo, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$ and (mt.id_filtro_selezione=9 or id_argomento in (363, 548, 3408, 3407,3409,3411,3412));"
         },
         {
             "type": "main",
@@ -46,6 +46,11 @@
             "messageNotNull": "Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
         }
     ],
+    "define": {
+		"label_crea_sondaggio": "Crea profilazione",
+        "lista_id_tipi_modelli_test": "9, 50, 51, 58",
+        "tipo_sondaggio": "valutazione fornitore"
+	},
     "messages": [
         {
             "viewType": "form",
