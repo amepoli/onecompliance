@@ -107,15 +107,15 @@ Everything you see below is just for the demo, you don't need to include it in y
 -->
 
 <div class="full-width">
-
-    <ng-container *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center; background-color: #fafafa;">
+    {{calendarDays[0][0]}}
+    <ng-container *ngIf="isLoading || !calendarDays || !calendarDays.length" style="display: flex; justify-content: center; align-items: center; background-color: #fafafa;">
         <div align="center" style="margin-top: 25vh">
             <mat-progress-spinner color="primary" mode="indeterminate" class="mfa-spinner">
             </mat-progress-spinner>
         </div>
     </ng-container>
 
-    <ng-container *ngIf="!isLoading">
+    <ng-container *ngIf="!isLoading && calendarDays && calendarDays.length > 0">
         <div class="calendar-component" >
             <div style="display: flex;">
                 <div style="flex: 1; text-align: center;">
@@ -135,11 +135,11 @@ Everything you see below is just for the demo, you don't need to include it in y
                 </ng-container>
             </div>
 
-            <ng-container *ngFor="let row of data; let w = index">
+            <ng-container *ngFor="let row of calendarDays; let w = index">
                 <div class="calendar-flex-row">
                     <ng-container *ngFor="let day of row; let d = index">
                         <ng-container *ngIf="day">
-                            <div [ngClass]="'day-of-week-base ' + (day.selected? 'day-of-week-selected': day.today? 'day-of-week-today': 'day-of-week-not-selected')" (click)="loadDayEvent(d, day.day, w)"><strong>{{day.day}}</strong></div>
+                            <div [ngClass]="'day-of-week-base ' + (day.selected? 'day-of-week-selected': day.today? 'day-of-week-today': 'day-of-week-not-selected')" (click)="loadDayEvents(d, day.day, w)"><strong>{{day.day}}</strong></div>
                         </ng-container>
                         <ng-container *ngIf="!day">
                             <div class="day-of-week-base"></div>
@@ -149,7 +149,11 @@ Everything you see below is just for the demo, you don't need to include it in y
                 <ng-container *ngIf="selectedDay && selectedDay.week == w">
                     <div class="event-panel" [style.height.px]="(selectedDay.events.length * 32)">
                         <ng-container *ngFor="let event of selectedDay.events">
-                            <p class="event-item">{{event.name}}</p>
+                            <div class="event-item">
+                                <i class="event-dot" [style.background-color]="event.event_color"></i>
+                                <p class="event-title">{{event.titolo}}</p>
+                                <mat-icon class="event-open-link" (click)="showDayEvent(event)">event</mat-icon>
+                            </div>
                         </ng-container>
                     </div>
                 </ng-container>
