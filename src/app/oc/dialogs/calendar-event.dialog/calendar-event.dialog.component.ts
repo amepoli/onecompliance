@@ -2,6 +2,8 @@ import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDest
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { AuthService, ConsoleLoggerService, DialogService, EncryptionService, ToastService } from 'app/oc/services';
+import { DataSharingService } from 'app/oc/services/data_sharing.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'calendar-event.dialog',
@@ -22,7 +24,9 @@ export class CalendarEventDialogComponent implements OnInit, AfterViewInit, OnDe
         private _dialogService: DialogService,
         private _authService: AuthService,
         private _toastService: ToastService,
-        private _console: ConsoleLoggerService) {
+        private _console: ConsoleLoggerService,
+        private _dataSharingService: DataSharingService,
+        private router: Router) {
         
     }
 
@@ -38,8 +42,17 @@ export class CalendarEventDialogComponent implements OnInit, AfterViewInit, OnDe
         });
     }
 
-    updateEvent() {
+    gotoObject() {
+        /// TODO: Implement object primary key logic
+        /*
+        let keys: object = {
+            id_sondaggio: this.data.object_id
+        };
 
+        this._dataSharingService.setData('homepageSearchKeys', keys);
+        this.router.navigate([`/oc/main-table/${this.data.object_name}`]);
+        this.dialogRef.close();
+        */
     }
     
 }
