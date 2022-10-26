@@ -275,7 +275,7 @@
                                 "actionType": "query",
                                 "condition": "none",
                                 "values": [],
-                                "queryFunct": "delete from entrasp.risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ returning 1; update entrasp.sondaggi snd set id_modello_test=mvr.id_modello_test, id_modello_test_vr=mvr.id_modello_test_vr from entrasp.modelli_test_vr mvr where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and mvr.codice_azienda=$codice_azienda$ and mvr.id_modello_test=£id_modello_test_new£ and mvr.id_modello_test_vr=(select max(mvr2.id_modello_test_vr) from entrasp.modelli_test_vr mvr2 where mvr2.id_modello_test=£id_modello_test_new£ and mvr2.codice_azienda=mvr.codice_azienda) returning 1;",
+                                "queryFunct": "SELECT entrasp.edit_modello_test_on_sondaggio($codice_azienda$, $id_sondaggio$, £id_modello_test_new£);",
                                 "successMessage": "Done!",
                                 "outputEventWhenComplete": "survey_reload"
                             }
