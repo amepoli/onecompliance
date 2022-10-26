@@ -839,7 +839,7 @@
 				"viewType": "checkbox",
 				"value": "0"
 			},
-			"label": "Progetti con verifiche incomplete",
+			"label": "Con verifiche incomplete",
 			"newLine": false,
 			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where pf.codice_azienda=$codice_azienda$ and (ss.somministrazione_completata!='Completo' or snd.sondaggio_completato!='Completo') and pf.id_sondaggio is not null)"
 		},
@@ -849,9 +849,19 @@
 				"viewType": "checkbox",
 				"value": "0"
 			},
-			"label": "Progetti con verifiche confermate",
+			"label": "Con verifiche confermate",
 			"newLine": false,
 			"queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where pf.codice_azienda=$codice_azienda$ and snd.stato ='A' and pf.id_sondaggio is not null)"
+		},
+		{
+			"fieldName": "progetti_no_contratto",
+			"format": {
+				"viewType": "checkbox",
+				"value": "0"
+			},
+			"label": "Senza contratto",
+			"newLine": false,
+			"queryCond": "id_contratto is null"
 		},
 		{
 			"fieldName": "data_comp",
