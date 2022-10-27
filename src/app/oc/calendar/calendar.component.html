@@ -139,7 +139,17 @@ Everything you see below is just for the demo, you don't need to include it in y
                 <div class="calendar-flex-row">
                     <ng-container *ngFor="let day of row; let d = index">
                         <ng-container *ngIf="day">
-                            <div [ngClass]="'day-of-week-base ' + (day.selected? 'day-of-week-selected': day.today? 'day-of-week-today': 'day-of-week-not-selected')" (click)="loadDayEvents(d, day.day, w)"><strong>{{day.day}}</strong></div>
+                            <div [ngClass]="'day-of-week-base ' + (day.selected? 'day-of-week-selected': day.today? 'day-of-week-today': 'day-of-week-not-selected')" (click)="loadDayEvents(d, day.day, w)">
+                                <div class="day-of-week-content">
+                                    <strong>{{day.day}}</strong>
+                                    <ng-container *ngIf="day.events && day.events.length > 0">
+                                        <div class="day-of-week-events">
+                                            <div class="day-of-week-event-dot" *ngFor="let day_event of day.events" [style.background-color]="day_event.event_color">
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
                         </ng-container>
                         <ng-container *ngIf="!day">
                             <div class="day-of-week-base"></div>

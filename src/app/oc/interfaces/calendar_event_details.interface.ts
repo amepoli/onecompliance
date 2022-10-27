@@ -7,6 +7,6 @@ export interface CalendarEventDetails {
     attachment:  string;
     participants:  string[];
     description: string;
-    object_name: string; //: "sondaggi",
-    object_id: string; //: "101",
+    object_name: any; //: "sondaggi",
+    object_id: string; //: {"id_sondaggio": "130", "codice_azienda": "DEMO"},
 }

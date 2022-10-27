@@ -49,7 +49,7 @@ import { CalendarEventDetails } from '../interfaces';
 
 interface EventInputResponse {
     object_name: string; //: "sondaggi",
-    object_id: string; //: "101",
+    object_id: string; //: {"id_sondaggio": "130", "codice_azienda": "DEMO"},
     titolo: string; //: "Prg. 11 Processo di adeguamento a fini privacy - Alba Claudio Snc  Minimaxi Abbigliamento 0-18 - Alba Claudio (Minimaxi Abbigliamento)",
     descrizione: string; //: "Predisposizione regolamento aziendale (ruoli, policy trattamento dati, utilizzo dispositivi aziendali, etc.)\n\n",
     data_inizio: any; //: "2018-06-23T00:00:00.000Z",
