@@ -9,7 +9,7 @@ import { PubSubService } from 'app/oc/services';
   <div align="center" [ngStyle]="{'display': 'inline-block', 'width': '100%'}" [style.padding-top]="'15px'">
     <button mat-raised-button color="primary" [disabled]="field.readonly" [matMenuTriggerFor]="matMenu1"
     [style.width]="'100%'" [style.height.px]="'64'" [style.border-radius]="'4px'" [style.background-color]="'#00008B'" [style.color]="field.style && field.style.font_color? field.style.font_color: null"
-    [style.padding]="'0px'" [style.border]="'0.1px solid #144FB7'">
+    [style.padding]="'0px'" [style.border]="'0.1px solid #144FB7'" [matTooltip]="field.tooltip">
       {{field.label}}<mat-icon>{{field.buttonIcon}}</mat-icon>
     </button>
     <mat-menu #matMenu1="matMenu">
