@@ -1,44 +1,12 @@
 const AWS = require('aws-sdk');
-// const parseDBF = require('parsedbf');
 AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
-const separator_in = ';';
-const separator_out = '~';
+const separator_out = ';';
 
-const modes = {
-    CSV: "CSV", encodeOnly: "encodeOnly"
-};
-
-const stuff_to_replace = [
-    {
-        in: separator_in,
-        out: separator_out
-    },
-    {
-        in: '"',
-        out: ''
-    },
-];
-
-const output_file = '_out';
-
-const default_files_in = ['MOVIMENTI_kyc_coll.CSV'];
-const default_files_out = default_files_in.map(file => file.replace('.CSV', output_file + '.CSV').replace('.csv', output_file + '.csv'));
-const default_folders = ['batch/finint/upload'];
-const default_bucket = 'BUCKET_NAME';
-
-function filterFiles(files, fileNames) {
-    return files.filter(file => {
-        let keep = false;
-        fileNames.forEach(fileName => {
-            if (file.toLowerCase().includes(fileName.toLowerCase())) {
-                keep = true;
-            }
-        });
-        return keep;
-    });
-}
+const default_file_out = 'test_csv_creator.csv';
+const default_folder = 'batch/test';
+const bucket = 'BUCKET_NAME';
 
 async function getFilesList(folder = default_folders[0], bucket = default_bucket) {
     const s3ParamsGetFilesList = {
@@ -216,7 +184,6 @@ async function deleteFiles(files, bucket = default_bucket) {
     }
 }
 
-
 async function processFiles(filesIn, filesOut, bucket = default_bucket) {
     await filesIn.reduce(async (promise, srcFile, i) => {
         // This line will wait for the last async function to finish.
@@ -285,17 +252,18 @@ async function start(folders = default_folders, inFileNames = default_files_in, 
 }
 
 async function processQueryParams(queryParams) {
+
     let bucket = queryParams.bucket ? queryParams.bucket : default_bucket;
-    let files_in = queryParams.file_in ? [queryParams.file_in] : default_files_in;
-    let files_out = queryParams.file_out ? [queryParams.file_out] : default_files_out;
-    let folders = queryParams.folder ? [queryParams.folder] : default_folders;
-    let mode = queryParams.mode ? queryParams.mode : modes.CSV;
-    await start(folders, files_in, files_out, bucket, mode);
+    let files_out = queryParams.file_out ? queryParams.file_out : default_files_out;
+    let folder = queryParams.folder ? queryParams.folder : default_folders;
+    
+    //await start(folders, files_in, files_out, bucket, mode);
 }
 
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
+    
     console.log(queryParams);
 
     let body = { result: 'OK' };
@@ -306,20 +274,6 @@ exports.handler = async (event, context) => {
     else {
         await start();
     }
-
-    // let dbfData = await readDBFFile(queryParams['company'], queryParams['file']);
-    // if (dbfData) {
-    //     let csvData = createCSV(dbfData);
-    //     if (csvData) {
-    //         body = { result: 'OK', data: csvData }
-    //     }
-    //     else {
-    //         body = { result: 'KO', reason: 'DBF File not found or invalid!', data: null }
-    //     }
-    // }
-    // else {
-    //     body = { result: 'KO', reason: 'DBF File not found or invalid!', data: null }
-    // }
 
     return {
         "isBase64Encoded": false,
