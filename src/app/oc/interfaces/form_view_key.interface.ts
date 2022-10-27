@@ -23,6 +23,7 @@ export interface FormViewKey { // as per API specification
     };
     key: string;
     label: string;
+    tooltip?: string;
     subKeys?: [
         {
             key: string,

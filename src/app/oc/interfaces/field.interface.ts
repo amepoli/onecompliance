@@ -58,6 +58,7 @@ export interface FieldConfig {
   table?: string;
   label?: string;
   name?: string;
+  tooltip?: string;
   index?: number;
   inputType?: string;
   readonly?: boolean;

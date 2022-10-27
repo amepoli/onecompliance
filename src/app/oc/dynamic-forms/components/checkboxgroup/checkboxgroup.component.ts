@@ -8,7 +8,7 @@ import { PubSubService } from 'app/oc/services';
   template: `
     <div *ngIf="field.isVisible != false">
       <div [ngStyle]="{'width': '100%'}" [formGroup]="group" *ngFor="let item of field.options; let i = index" >
-        <mat-checkbox [disabled]="field.readonly || readOnlyPage" [checked]="selection[i]" (change)="onCheck(i, $event.checked)"></mat-checkbox>
+        <mat-checkbox [disabled]="field.readonly || readOnlyPage" [checked]="selection[i]" (change)="onCheck(i, $event.checked)" [matTooltip]="field.tooltip"></mat-checkbox>
         <label class="checkboxgroup-label-padding">{{item.name}}</label>
       </div>
     </div>

@@ -43,16 +43,10 @@ export class CalendarEventDialogComponent implements OnInit, AfterViewInit, OnDe
     }
 
     gotoObject() {
-        /// TODO: Implement object primary key logic
-        /*
-        let keys: object = {
-            id_sondaggio: this.data.object_id
-        };
-
-        this._dataSharingService.setData('homepageSearchKeys', keys);
+        this._dataSharingService.setData('homepageSearchKeys', this.data.object_id);
         this.router.navigate([`/oc/main-table/${this.data.object_name}`]);
         this.dialogRef.close();
-        */
+        
     }
     
 }
