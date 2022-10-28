@@ -1664,6 +1664,17 @@
             "queryCond": "snd.id_sondaggio=$id_sondaggio$"
         },
         {
+            "fieldName": "id_sondaggio_succ_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Sond. Succ.",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "snd.id_sondaggio_succ=$id_sondaggio_succ_s$"
+        },
+        {
             "fieldName": "id_tipo_modello_test",
             "format": {
                 "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test;",
@@ -1672,7 +1683,7 @@
             },
             "label": "Tipo modello verifica",
             "newLine": false,
-            "size": 3.5,
+            "size": 2,
             "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
         },
         {
@@ -1683,19 +1694,18 @@
             },
             "label": "Lista id modelli verifica",
             "newLine": false,
-            "size": 2.5,
+            "size": 2,
             "queryCond": "snd.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
         },
         {
-            "fieldName": "data_comp",
+            "fieldName": "object_description",
             "format": {
-                "dataType": "date",
+                "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Data Competenza",
+            "label": "Campione Oggetto del Sondaggio",
             "newLine": true,
-            "size": 2.5,
-            "queryCond": "snd.data_comp='€data_comp€'"
+            "queryCond": "snd.id_sondaggio in(select id_sondaggio from entrasp.sondaggi_somministrati ss where UPPER(ss.object_description) like '%'||UPPER('€object_description€')||'%')"
         },
         {
             "fieldName": "data_esec_prevista_min",
@@ -1734,8 +1744,19 @@
                 "viewType": "input"
             },
             "label": "Data Esecuzione entro il",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "snd.data_esecuzione<='€data_esec_max€'"
+        },
+        {
+            "fieldName": "data_comp",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Competenza",
+            "newLine": true,
+            "size": 2.5,
+            "queryCond": "snd.data_comp='€data_comp€'"
         },
         {
             "fieldName": "id_centro_gest",
@@ -1782,14 +1803,15 @@
             "queryCond": "snd.sondaggio_completato='€completo€'"
         },
         {
-            "fieldName": "object_description",
+            "fieldName": "parola_search",
             "format": {
                 "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Campione Oggetto del Sondaggio",
-            "newLine": false,
-            "queryCond": "snd.id_sondaggio in(select id_sondaggio from entrasp.sondaggi_somministrati ss where UPPER(ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+            "label": "Parola chiave",
+            "newLine": true,
+            "size": 4,
+            "queryCond": "(upper(mt.titolo) like '%'||upper('€parola_search€')||'%' or upper(snd.descrizione) like '%'||upper('€parola_search€')||'%' or upper(snd.titolo) like '%'||upper('€parola_search€')||'%')"
         },
         {
             "fieldName": "no_progect_associated",
@@ -1809,21 +1831,11 @@
                 "viewType": "checkbox"
             },
             "label": "Senza somministrazione",
-            "newLine": true,
+            "newLine": false,
             "size": 1,
             "queryCond": "id_sondaggio not in(select id_sondaggio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$)"
         },
-        {
-            "fieldName": "parola_search",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Parola chiave",
-            "newLine": false,
-            "size": 4,
-            "queryCond": "(upper(mt.titolo) like '%'||upper('€parola_search€')||'%' or upper(snd.descrizione) like '%'||upper('€parola_search€')||'%' or upper(snd.titolo) like '%'||upper('€parola_search€')||'%')"
-        },
+      
         {
             "fieldName": "flag_ultimo_modello_test",
             "format": {
