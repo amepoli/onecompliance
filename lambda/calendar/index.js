@@ -53,6 +53,10 @@ exports.handler = async (event) => {
     FROM entrasp.riunioni 
     WHERE codice_azienda='${company}'
     --AND EXTRACT (YEAR FROM data_riunione)||'-'||EXTRACT (YEAR FROM data_riunione) = SUBSTR(CURRENT_DATE::varchar,0,8)
+    UNION
+	SELECT 'scadenziario' as object_name, ('{"codice_azienda":"'||codice_azienda||'", "codice_compito":"'||codice_compito||'"}')::jsonb as object_id, titolo as titolo, entrasp.argomenti_descr(id_argomento_tipo_evento) as descrizione, data_segnalazione as data_inizio, foreseen_date as data_fine, 'red' as event_color
+	FROM entrasp.compiti 
+	WHERE codice_azienda='${company}' AND id_tipo_segnalazione=701 AND foreseen_date IS NOT null
     LIMIT 365; 
     `;
 
