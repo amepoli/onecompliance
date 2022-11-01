@@ -17,6 +17,7 @@ import { DynamicFormsModule} from '../../dynamic-forms/dynamic-forms.module';
 import { FormViewModule } from '../form/form-view.module';
 import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
 import { TableMultiselectToolbarModule } from '../table-multiselect-toolbar/table-multiselect-toolbar.module';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
     declarations: [TableViewComponent],
@@ -34,6 +35,7 @@ import { TableMultiselectToolbarModule } from '../table-multiselect-toolbar/tabl
         MatIconModule,
         MatButtonModule,
         MatCheckboxModule,
+        MatTooltipModule,
         DynamicFormsModule,
         FormViewModule,
         TableMultiselectToolbarModule,

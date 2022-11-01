@@ -644,6 +644,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             }
             fieldValue = {
                 label: field.label,
+                tooltip: field.tooltip,
                 name: field.fieldName,
                 value: null,
                 type: field.format.viewType,
@@ -681,6 +682,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 return {
                     fieldName: x.fieldName,
                     label: x.label,
+                    tooltip: x.tooltip,
                     checked: (x.format.value == 'true' || x.format.value == true || x.format.value == '1' || x.format.value == 1) ? true: false
                 };
             });
