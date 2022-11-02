@@ -49,7 +49,7 @@
                 <div style="display: flex; flex-direction: row;">
                     <div *ngFor="let toggle of searchToggles; let i = index">
                         <mat-slide-toggle [color]="'primary'" [checked]="toggle.checked"
-                            (change)="updateSearchToggle(i, $event.checked)" style="margin: 6px;">
+                            (change)="updateSearchToggle(i, $event.checked)" style="margin: 6px;" [matTooltip]="toggle.tooltip">
                             {{toggle.label}}
                         </mat-slide-toggle>
                     </div>
@@ -91,7 +91,7 @@
 
                 <mat-menu #advancedImportMenu="matMenu" [overlapTrigger]="false">
 
-                    <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)">
+                    <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)" [matTooltip]="item.tooltip">
                         <mat-icon>format_align_justify</mat-icon>
                         <span>{{item.label}}</span>
                     </button>
@@ -146,7 +146,7 @@
 
                 <mat-menu #advancedCsvMenu="matMenu" [overlapTrigger]="false">
 
-                    <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)">
+                    <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)" [matTooltip]="item.tooltip">
                         <mat-icon>format_align_justify</mat-icon>
                         <span>{{item.label}}</span>
                     </button>
@@ -154,7 +154,7 @@
                 </mat-menu>
                 <mat-menu #advancedExcelMenu="matMenu" [overlapTrigger]="false">
 
-                    <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedExcel(item)">
+                    <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedExcel(item)" [matTooltip]="item.tooltip">
                         <mat-icon>format_align_justify</mat-icon>
                         <span>{{item.label}}</span>
                     </button>
@@ -196,8 +196,8 @@
                                 <mat-header-cell class="table-column"
                                     [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
                                     [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef mat-sort-header
-                                    [hidden]="entry.isHidden">
-                                    {{entry.label}}
+                                    [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
+                                   {{entry.label}}
                                 </mat-header-cell>
                             </ng-container>
                             <ng-container *ngIf="entry.isSelectCheckbox">
@@ -205,7 +205,7 @@
                                     <mat-checkbox (change)="$event ? masterToggle() : null"
                                         [checked]="selection.hasValue() && isAllSelected()"
                                         [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                        [aria-label]="checkboxLabel()">
+                                        [aria-label]="checkboxLabel()" [matTooltip]="entry.tooltip">
                                     </mat-checkbox>
                                 </mat-header-cell>
                             </ng-container>

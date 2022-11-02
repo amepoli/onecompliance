@@ -7,6 +7,7 @@ export interface TableViewKey { // as per API specification
     hasLevel?: boolean;
     key: string;
     label: string;
+    tooltip?: string;
     queryFunct?: string;
     isButton?: boolean;
     isCheckbox?: boolean;
