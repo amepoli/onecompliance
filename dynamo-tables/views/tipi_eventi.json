@@ -527,13 +527,13 @@
 		{
 			"fieldName": "argomento_s",
 			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} where arg.flag_classificazione=true order by descrizione",
+				"comboQuery": "SELECT distinct arg.id_argomento AS id, arg.descrizione||'-'||arg.id_argomento AS name from entrasp.argomenti_argomenti aa inner join entrasp.argomenti_eventi ae on aa.id_argomento_son=ae.id_argomento inner join entrasp.argomenti arg on aa.id_argomento_father=arg.id_argomento where id_argomento_father!=$P{id_argomento_father} order by arg.descrizione||'-'||arg.id_argomento",
 				"options": [],
 				"viewType": "combobox"
 			},
 			"label": "Argomento padre",
 			"newLine": false,
-			"queryCond": "array[arg.id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$), 1)"
+			"queryCond": "arg.id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$argomento_s$)"
 		},
 		{
 			"fieldName": "tipo_int_s",
