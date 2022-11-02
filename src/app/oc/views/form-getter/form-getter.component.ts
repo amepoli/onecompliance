@@ -852,16 +852,31 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         // If it's %value%, put in values variables
                         if (key.sender.includes('%value%')) {
                             senderValue = value.data;
-                            if (senderValue != null && Array.isArray(senderValue)) {  // check if it is an array (checkbox group)
-                                matchingValues = false;
-                                for (let k = 0; k < senderValue.length; k++) { // at least one array value matches
-                                    const element = senderValue[k];
-                                    if (element == receiverValue) {
-                                        matchingValues = true;
+                            const equalNotEqualEntry: any = formKeys.find(x => x.label === 'equal_notequal');
+                            const equalNotEqualValue = equalNotEqualEntry ? equalNotEqualEntry.value : 'equal_notequal';
+                            if (equalNotEqualValue === 'notEqualTo') {
+                                if (senderValue != null && Array.isArray(senderValue)) {  // check if it is an array (checkbox group)
+                                    for (let k = 0; k < senderValue.length; k++) { // at least one array value matches
+                                        const element = senderValue[k];
+                                        if (element == receiverValue) {
+                                            matchingValues = false;
+                                        }
                                     }
+                                } else if (senderValue == null || senderValue == receiverValue) {
+                                    matchingValues = false;
                                 }
-                            } else if (senderValue == null || senderValue != receiverValue) {
-                                matchingValues = false;
+                            } else { //value.valueSet.equal_notequal === 'equalTo'
+                                if (senderValue != null && Array.isArray(senderValue)) {  // check if it is an array (checkbox group)
+                                    matchingValues = false;
+                                    for (let k = 0; k < senderValue.length; k++) { // at least one array value matches
+                                        const element = senderValue[k];
+                                        if (element == receiverValue) {
+                                            matchingValues = true;
+                                        }
+                                    }
+                                } else if (senderValue == null || senderValue != receiverValue) {
+                                    matchingValues = false;
+                                }
                             }
                         }
                         else {  // compare keys
