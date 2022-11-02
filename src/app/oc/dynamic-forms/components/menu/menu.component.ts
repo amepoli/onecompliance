@@ -13,7 +13,7 @@ import { PubSubService } from 'app/oc/services';
       {{field.label}}<mat-icon>{{field.buttonIcon}}</mat-icon>
     </button>
     <mat-menu #matMenu1="matMenu">
-      <ng-container *ngFor="let item of field.menuOptions">
+      <ng-container *ngFor="let item of filteredMenuOptions">
           <button mat-menu-item (click)="onClick(item)">
             <span>
               <mat-icon>{{item.icon}}</mat-icon>
@@ -46,6 +46,8 @@ export class MenuComponent implements OnInit {
 
   selection = [];
 
+  filteredMenuOptions: MenuOption[] = [];
+
 
   constructor(private pubSubService: PubSubService) { }
   ngOnInit() {
@@ -58,6 +60,13 @@ export class MenuComponent implements OnInit {
       const selected = (_this.field.value.indexOf(option.id)) > -1 ? 1 : 0;
       _this.selection.push(selected);
     });
+
+    if(_this.field.menuOptions != null && _this.field.menuOptions.length > 0) {
+      _this.filteredMenuOptions = _this.field.menuOptions.filter(x => !x.isHidden);
+    }
+    else {
+      _this.filteredMenuOptions = [];
+    }
 
     // _this.field.options.map(x => {
     //   return { id: x.id, checked: false }
