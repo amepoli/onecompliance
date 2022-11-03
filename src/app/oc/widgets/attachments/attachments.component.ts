@@ -17,6 +17,7 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
 
     @Input("entryName") entryName: string;    
     @Input("keys") keys: any;
+    @Input("tooltip") tooltip: any;
     @Output() onClick = new EventEmitter<boolean>();
     @Output() onSave: EventEmitter<boolean> = new EventEmitter<boolean>();
 

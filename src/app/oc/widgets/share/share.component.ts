@@ -11,6 +11,7 @@ import { FormViewComponent } from '../../views/form/form-view.component';
 })
 export class ShareComponent {
 
+    @Input() tooltip: string;
     @Output() onClick = new EventEmitter<any>();
 
     userdata: any;

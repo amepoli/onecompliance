@@ -14,7 +14,7 @@ import { PubSubService } from 'app/oc/services';
     </button>
     <mat-menu #matMenu1="matMenu">
       <ng-container *ngFor="let item of filteredMenuOptions">
-          <button mat-menu-item (click)="onClick(item)">
+          <button mat-menu-item (click)="onClick(item)" [matTooltip]="item.tooltip">
             <span>
               <mat-icon>{{item.icon}}</mat-icon>
             </span>{{item.label}}

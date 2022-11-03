@@ -3,6 +3,7 @@ export interface MenuOption {
   icon: string;
   label: string;
   isHidden?: boolean;
+  tooltip?: string;  
   confirmAction?: boolean;
   confirmActionMessage?: string;
   reloadOnSuccess?: boolean;
