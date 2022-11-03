@@ -15,6 +15,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ShareComponent } from './share.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
     imports: [
@@ -34,6 +35,7 @@ import { ShareComponent } from './share.component';
         MatProgressSpinnerModule,
         MatBadgeModule,
         MatDialogModule,
+        MatTooltipModule
     ],
     exports: [
         ShareComponent,
