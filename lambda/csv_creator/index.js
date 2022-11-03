@@ -4,9 +4,12 @@ const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
 const separator_out = ';';
 
-const default_file_out = 'test_csv_creator.csv';
+const bucket_name = 'BUCKET_NAME';
+const default_bucket = 'gorico2-migration';
+const default_company = 'DEMO';
 const default_folder = 'batch/test';
-const bucket = 'BUCKET_NAME';
+const default_file_out = 'test_csv_creator.csv';
+
 
 async function getFilesList(folder = default_folders[0], bucket = default_bucket) {
     const s3ParamsGetFilesList = {
@@ -218,7 +221,7 @@ async function encodeText(fileIn, fileOut, bucket = default_bucket) {
     }
 }
 
-async function start(folders = default_folders, inFileNames = default_files_in, outFileNames = default_files_out, bucket = default_bucket, mode = modes.CSV) {
+async function start(bucket = default_bucket, company = default_company, folder = default_folder, file_out = default_file_out) {
     if(mode == modes.encodeOnly) {
         try {
             console.log("Encoding text...");
@@ -253,11 +256,12 @@ async function start(folders = default_folders, inFileNames = default_files_in, 
 
 async function processQueryParams(queryParams) {
 
-    let bucket = queryParams.bucket ? queryParams.bucket : default_bucket;
-    let files_out = queryParams.file_out ? queryParams.file_out : default_files_out;
-    let folder = queryParams.folder ? queryParams.folder : default_folders;
+    let bucket = bucket_name ? bucket_name : default_bucket; //queryParams.bucket ? queryParams.bucket : default_bucket;
+    let company = queryParams.company ? queryParams.company : default_company;
+    let folder = queryParams.folder ? queryParams.folder : default_folder;
+    let file_out = queryParams.file_out ? queryParams.file_out : default_file_out;
     
-    //await start(folders, files_in, files_out, bucket, mode);
+    await start(bucket, company, folder, file_out);
 }
 
 exports.handler = async (event, context) => {
