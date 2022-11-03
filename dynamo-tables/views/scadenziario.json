@@ -7,11 +7,11 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select entrasp.giudizio_scadenza(foreseen_date::date, stato) as stato, (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, foreseen_date, data_chiusura, titolo, id_argomento_tipo_evento, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, codice_compito_parent, id_sondaggio, id_tipo_segnalazione, entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest) as descr_centro_gest from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701 AND foreseen_date IS NOT null"
+            "queryString": "select entrasp.giudizio_scadenza(foreseen_date::date, stato) as stato, (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, data_competenza, foreseen_date, data_chiusura, id_argomento_tipo_evento, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, codice_compito_parent, id_sondaggio, id_tipo_segnalazione, entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest) as descr_centro_gest, entrasp.argomenti_descr_breve(id_argomento_tipo_evento) as titolo from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701 AND foreseen_date IS NOT null"
         },
         {
             "operation": "insert",
-            "queryString": "SELECT entrasp.crea_evento('€global_codice_azienda€', $id_argomento_tipo_evento$, $data_segnalazione$::date, null, $titolo$, null, $id_responsabile$, $id_centro_gest$) as id_argomento;",
+            "queryString": "SELECT entrasp.crea_evento('€global_codice_azienda€', $id_argomento_tipo_evento$, $data_segnalazione$::date, null, $titolo$, null, $id_responsabile$, $id_centro_gest$, datarif=>$data_competenza$) as id_argomento;",
             "type": "main"
         },
         {
@@ -165,7 +165,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT distinct arg.id_argomento AS id, arg.codice||'-'||arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_son in (select entrasp.descendants_of_argomento(45417,2)) AND id_argomento_son NOT in (SELECT id_argomento_son FROM entrasp.argomenti_argomenti WHERE id_argomento_father IN (select * FROM entrasp.descendants_of_argomento(45417,1) WHERE descendants_of_argomento != 45417) ) and id_argomento_son != 45417 and entrasp.is_son_of_or_not(arg.id_argomento,(SELECT id_argomento FROM entrasp.aziende WHERE codice_azienda='€global_codice_azienda€')) AND (SELECT CASE WHEN arg.codice_azienda IS NULL THEN TRUE WHEN arg.codice_azienda='€global_codice_azienda€' THEN TRUE ELSE FALSE END);",
+                "comboQuery": "SELECT distinct arg.id_argomento AS id, arg.codice||'-'||arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_eventi ae ON arg.id_argomento=ae.id_argomento;",
                 "options": [],
                 "viewType": "combobox",
                 "validations": [
@@ -188,18 +188,11 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "viewType": "input",
-                "validations": [
-                    {
-                        "name": "required",
-                        "message": "Inserire una data di riferimento",
-                        "validator": "Validators.required"
-                    }
-                ]
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_segnalazione",
+            "key": "data_competenza",
             "label": "Data di Riferimento",
             "newLine": false,
             "readOnly": false,
@@ -341,12 +334,31 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "foreseen_date",
-            "label": "Data",
-            "width": "13%",
+            "label": "Data scadenza",
+            "width": "8%",
             "style": [
                 {
                     "value": "*",
                     "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_size": "medium",
+                    "font_weight": "599"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_competenza",
+            "label": "Data riferimento",
+            "width": "8%",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightpink",
                     "text_align": "center",
                     "font_size": "medium",
                     "font_weight": "599"
@@ -360,8 +372,9 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
-            "label": "Descrizone",
-            "width": "51%",
+            "label": "Descrizione",
+            "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_evento)",
+            "width": "45%",
             "style": [
                 {
                     "value": "*",
@@ -369,6 +382,32 @@
                     "font_weight": "500"
                 }
             ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "width": "6%",
+            "label": "id_sondaggio",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "sondaggi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+					{
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    }
+                ]
+            }
         },
         {
             "format": {
@@ -390,15 +429,6 @@
             "key": "id_argomento_tipo_evento",
             "label": "Argomento Evento",
             "width": "7%"
-        },
-        {
-            "format": {
-                "dataType": "date"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "data_segnalazione",
-            "label": "Data Riferimento"
         },
         {
             "format": {
@@ -478,15 +508,6 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "codice_compito_parent",
-            "label": ""
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_sondaggio",
             "label": ""
         },
         {

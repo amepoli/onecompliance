@@ -20,17 +20,17 @@
 		},
 		{
 			"operation": "selectForm",
-			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, true as fake, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante, ae.id_argomento_tipo_allegato FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
+			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, true as fake, a.descrizione_breve, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.data_riferimento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante, ae.id_argomento_tipo_allegato FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
 			"type": "main"
 		},
 		{
 			"operation": "insert",
-			"queryString": "select entrasp.argomenti_eventi_insert($descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_insert($descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$, $data_riferimento$) as id_argomento;",
 			"type": "main"
 		},
 		{
 			"operation": "update",
-			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$) as id_argomento;",
+			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$, $data_riferimento$) as id_argomento;",
 			"type": "main"
 		},
 		{
@@ -168,7 +168,7 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true,
+			"newLine": false,
 			"size": 4
 		},
 		{
@@ -350,7 +350,7 @@
 			"label": "Numero intervalli",
 			"newLine": false,
 			"readOnly": false,
-			"size": 3.25,
+			"size": 2.5,
 			"inputEvents": [
 				{
 					"actionType": "hide",
@@ -374,7 +374,7 @@
 			"label": "Data evento (L' anno è indifferente)",
 			"newLine": false,
 			"readOnly": false,
-			"size": 3.25,
+			"size": 2,
 			"inputEvents": [
 				{
 					"actionType": "show",
@@ -385,6 +385,20 @@
 					]
 				}
 			]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_riferimento",
+			"label": "Data riferimento (L' anno è indifferente)",
+			"newLine": false,
+			"readOnly": false,
+			"size": 2
 		},
 		{
 			"autoGenerate": false,
