@@ -467,11 +467,6 @@
                         "outputEventName": "associa_progetto_show"
                     },
                     {
-                        "icon": "add",
-                        "label": "Dati preliminari verifica",
-                        "outputEventName": "sondaggi_ulteriori_elementi"
-                    },
-                    {
                         "icon": "launch",
                         "label": "Riepilogo risultati",
                         "outputEventName": "check_existence_riepilogo_risultati"
@@ -483,22 +478,22 @@
                     },
                     {
                         "icon": "lock_open",
-                        "label": "Riapri Verifica",
+                        "label": "Riapri Lezione",
                         "outputEventName": "sondaggi_reopen"
                     },
                     {
                         "icon": "content_copy",
-                        "label": "Duplica sondaggio",
+                        "label": "Duplica lezione",
                         "outputEventName": "sondaggi_button_duplica"
                     },
                     {
                         "icon": "pending_actions",
-                        "label": "Pianifica serie sondaggi",
+                        "label": "Pianifica serie lezione",
                         "outputEventName": "to_sondaggi_replan"
                     },
                     {
                         "icon": "delete",
-                        "label": "Cancella risposte del sondaggio",
+                        "label": "Cancella le risposte fornite",
                         "outputEventName": "answers_delete"
                     },
                     {
@@ -507,19 +502,19 @@
                         "outputEventName": "ricalcola_punteggi"
                     },
                     {
-                        "icon": "search",
-                        "label": "OneKYC",
-                        "outputEventName": "get_aml_scans"
-                    },
-                    {
                         "icon": "sync",
-                        "label": "Sync.folder.sondaggio",
+                        "label": "Sync.folder.lezione",
                         "outputEventName": "get_drive_folder_contents"
                     },
                     {
                         "icon": "find_replace",
-                        "label": "Cambia modello verifica",
+                        "label": "Cambia modello lezione",
                         "outputEventName": "modello_verifica_change_show"
+                    },
+                    {
+                        "icon": "group_work",
+                        "label": "Inserisci partecipanti al corso",
+                        "outputEventName": "participants_insert"
                     }
                 ]
             },
@@ -577,31 +572,6 @@
                     "outputEventWhenComplete": "survey_reload"
                 },
                 {
-                    "eventName": "get_aml_scans",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
-                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        },
-                        "actionOnYes": {
-                            "actionType": "regulat_api",
-                            "regulatAPIParams": {
-                                "actionType": "get_aml_scans",
-                                "surveyParams": {
-                                    "codice_azienda": "codice_azienda",
-                                    "id_sondaggio": "id_sondaggio",
-                                    "dynamo_user": "username"
-                                }
-                            }
-                        }
-                    }
-                },
-                {
                     "eventName": "get_drive_folder_contents",
                     "actionType": "google_api",
                     "condition": "none",
@@ -616,6 +586,14 @@
                             "syncMode": "s3ToDrive"
                         }
                     }
+                },
+                {
+                    "eventName": "participants_insert",
+                    "actionType": "query",
+                    "queryFunct": "entrasp.partecipanti_corso_insert($codice_azienda$, $id_sondaggio$)",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "survey_reload"
                 }
             ],
             "isHidden": false,
