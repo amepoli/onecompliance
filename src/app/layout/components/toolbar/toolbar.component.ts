@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,6 +24,7 @@ import { NavigationService } from 'app/oc/services/navigation.service';
 import { ConsoleLoggerService } from 'app/oc/services/console_logger.service';
 import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/oc/interfaces';
 import { HelperService, TimeTrackerService } from 'app/oc/services';
+import { MatButton } from '@angular/material/button';
 
 @Component({
     selector: 'toolbar',
@@ -58,6 +59,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     hideActions: string[] = []; // Hide Actions
 
     messages: MessageElement[] = []; // Messages
+
+    reportsLazyLoadingListening: boolean = false;
+    isReportsLoading = false;
+
+    @ViewChild('getReportButton') getReportButton: MatButton;
+
 
     // Private
     private _unsubscribeAll: Subject<any>;
@@ -165,6 +172,19 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
         _this._reportService.onReportsLoaded.subscribe((data) => {
             _this.reportList = data.reports;
+            _this.reportsLazyLoadingListening = false;
+            _this.isReportsLoading = false;
+            if(_this.reportList && _this.reportList.length > 0 && _this._reportService.isLazyLoadingEnabled) {
+                setTimeout(() => {
+                    this.getReportButton._elementRef.nativeElement.click();
+                }, 100);
+            }
+
+        });
+
+        _this._reportService.lazyLoadingListening.subscribe((data) => {
+            _this.reportList = [];
+            _this.reportsLazyLoadingListening = true;
         });
 
         _this._importExportService.onImportListLoaded.subscribe((data) => {
@@ -295,6 +315,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     gotoDashboard(): void {
         this.router.navigate(['/oc/dashboard', {table: this.dashboardTables}]);
+    }
+
+    getReportListLazyLoaded(): void {
+        this.isReportsLoading = true;
+        this._reportService.requestLazyReload();
     }
 
     getReportList(): void {

@@ -101,7 +101,12 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     _this.tabKeys = event.tabKeys;
                     _this.n_attach = 0;
                     //_this.getAttachList();
-                    _this.getReportList();
+                    if(!_this._reportService.isLazyLoadingEnabled) {
+                        _this.getReportList();
+                    }
+                    else {
+                        _this._reportService.prepareLazyLoad(this.tableData.entryName);
+                    }
 
                 } else if (event.eventType === 'updateData' && !_this.isQuickAdd) {  // child received the actual data, now time to populate subtables
                     let tabs: TabType[];
