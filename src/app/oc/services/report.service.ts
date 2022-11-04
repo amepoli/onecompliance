@@ -17,6 +17,11 @@ import { HelperService } from './helper.service';
 })
 export class ReportService // implements Resolve<any>
 {
+    // Reports lazy loading
+    isLazyLoadingEnabled = true;
+    lazyLoadingEntryName: string;
+
+
     // local data
     private _currentData: ReportList = {
         entryName: "",
@@ -37,6 +42,10 @@ export class ReportService // implements Resolve<any>
     // Event Emitter for getting report requests
     public getReportRequested: EventEmitter<string> = new EventEmitter();
 
+    // Event Emitter for clear requests
+    public lazyLoadingListening: EventEmitter<any> = new EventEmitter();
+
+    
 
     /**
      * Constructor
@@ -164,4 +173,16 @@ export class ReportService // implements Resolve<any>
             this.getReportRequested.emit(alias);
         }
     }
+
+    prepareLazyLoad(entryName: string) {
+        this.lazyLoadingEntryName = entryName;
+        this.lazyLoadingListening.emit(true);
+    }
+
+    requestLazyReload() {
+        if(this.lazyLoadingEntryName) {
+            this.requestReload(this.lazyLoadingEntryName);
+        }
+    }
+
 }

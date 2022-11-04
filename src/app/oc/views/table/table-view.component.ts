@@ -178,16 +178,21 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             // Check if it is main table
             if (!_this.isTabMode) {
                 // Load main table data
-                this.loadData();
+                _this.loadData();
 
-                // Request to load reports
-                // _this._pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list' });
-                _this._reportService.requestReload(_this.tableData.entryName);
-                // _this._importExportService.requestReload(_this.tableData.entryName);
+                if(!_this._reportService.isLazyLoadingEnabled) {
+                    // Request to load reports
+                    // _this._pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list' });
+                    _this._reportService.requestReload(_this.tableData.entryName);
+                    // _this._importExportService.requestReload(_this.tableData.entryName);
+                }
+                else {
+                    _this._reportService.prepareLazyLoad(_this.tableData.entryName);
+                }
             }
 
             if (_this.isTabMode && _this.isCurTab) {
-                this.loadData();
+                _this.loadData();
             }
         }
         else if (changes.isCurTab) {
@@ -196,7 +201,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             _this._console.table({ change: 'isCurTab', tableData: _this.tableData ? true : false, isTabMode: _this.isTabMode, isCurTab: _this.isCurTab });
 
             if (_this.isTabMode && _this.isCurTab) {
-                this.loadData();
+                _this.loadData();
             }
 
         }

@@ -49,16 +49,27 @@
                 <span> Dashboard</span>
             </button> -->
 
-            <button [disabled]="!reportList || !reportList.length" mat-button [matMenuTriggerFor]="report_menu"
-                (click)="getReportList()" matTooltip="Print">
-                <mat-icon>print</mat-icon>
-            </button>
-
-            <mat-menu #report_menu="matMenu">
-                <ng-container *ngFor="let item of reportList">
-                    <button mat-menu-item (click)="getReport(item)">{{item.descrizione}}</button>
-                </ng-container>
-            </mat-menu>
+            <ng-container *ngIf="reportsLazyLoadingListening && !isReportsLoading">
+                <button mat-button (click)="getReportListLazyLoaded()" matTooltip="Load Reports">
+                    <mat-icon>print</mat-icon>
+                </button>
+            </ng-container>
+            <ng-container *ngIf="reportsLazyLoadingListening && isReportsLoading">
+                <mat-progress-spinner color="primary" mode="indeterminate" [diameter]="40" >
+                </mat-progress-spinner>
+            </ng-container>
+            <ng-container *ngIf="!reportsLazyLoadingListening && !isReportsLoading">
+                <button  #getReportButton [disabled]="!reportList || !reportList.length" mat-button [matMenuTriggerFor]="report_menu"
+                    (click)="getReportList()" matTooltip="Print">
+                    <mat-icon>print</mat-icon>
+                </button>
+    
+                <mat-menu #report_menu="matMenu">
+                    <ng-container *ngFor="let item of reportList">
+                        <button mat-menu-item (click)="getReport(item)">{{item.descrizione}}</button>
+                    </ng-container>
+                </mat-menu>
+            </ng-container>
 
             <!-- <div *ngIf="!hideActions.includes('import_export')"> -->
 
