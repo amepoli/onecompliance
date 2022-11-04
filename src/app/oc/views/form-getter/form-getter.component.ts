@@ -1175,9 +1175,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                 _this.generalSubscriptions.push(subscription);
             }
-            if (event.outputEventWhenComplete != null) {
+            /* if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
-            }
+            } */
         } else if ((event.actionType === 'update' || event.actionType === 'update_style') && conditionMet) {
             if (event.updateFunct != null && keyListener != null) {
                 const childrenArray = _this.formArray.toArray();
