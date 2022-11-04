@@ -318,7 +318,12 @@
 			"format": {
 				"viewType": "menu",
 				"menuOptions": [
-					{
+					 {
+						"icon": "stacked_line_chart",
+						"label": "Crea progetto",
+						"outputEventName": "progetto_create"
+					},
+                    {
 						"icon": "sync",
 						"label": "Sync.doc.controparte",
 						"outputEventName": "get_drive_folder_contents"
@@ -364,7 +369,15 @@
 					"googleAPIParams": {
 						"actionType": "get_emails_by_codice_azienda"
 					}
-				}
+				},
+                {
+                    "eventName": "progetto_create",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, null, $id_anagrafica$);",
+                    "outputEventWhenComplete": "navigate_to_new_progetto"
+                }
 			]
 		},
         {
@@ -1252,7 +1265,25 @@
         {
             "actionType": "reload",
             "eventName": "formReload"
-        }
+        },
+		{
+			"actionTarget": {
+				"name": "progetti",
+				"type": "form",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_progetto",
+						"destination": "id_progetto"
+					}
+				]
+			},
+			"actionType": "navigate",
+			"eventName": "navigate_to_new_progetto"
+		}
     ],
     "hideActions": [
         {
