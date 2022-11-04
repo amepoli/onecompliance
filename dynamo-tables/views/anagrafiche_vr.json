@@ -419,7 +419,7 @@
                             "viewType": "combobox",
                             "options": [],
                             "dataType": "text",
-                            "comboQuery": "select codice as id,codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'"
+                            "comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'"
                         },
                         "label": "Sesso",
                         "key": "sesso",
@@ -427,7 +427,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "queryFunct": "SELECT sesso from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "size": 1,
+                        "size": 0.8,
                         "newLine": false
                     },
                     {
@@ -475,6 +475,36 @@
                         "label": "Azienda Fatturante Di Default",
                         "newLine": true,
                         "size": 2,
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "nascita_data",
+                        "label": "Data di Nascita",
+                        "newLine": false,
+                        "size": 3,
+                        "queryFunct": "SELECT nascita_data from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "nascita_luogo",
+                        "label": "Luogo di Nascita",
+                        "newLine": true,
+                        "size": 7,
+                        "queryFunct": "SELECT nascita_luogo from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false
                     },
                     {
@@ -690,7 +720,7 @@
             "label": "Indirizzo",
             "newLine": false,
             "readOnly": false,
-            "size": 3
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -718,7 +748,7 @@
             "label": "Località",
             "newLine": false,
             "readOnly": false,
-            "size": 2.8
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -741,6 +771,23 @@
             "newLine": false,
             "readOnly": false,
             "size": 0.8
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_nazione AS id, concat (cod_banca_italia, '-' ,descrizione) AS name FROM entrasp.nazioni"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_nazione",
+            "label": "Nazione",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -810,8 +857,56 @@
                 "background_color": "#25599C",
                 "font_color": "white"
             },
-            "readOnly": false,
+            "readOnly": true,
             "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT cod_sae AS id, concat (cod_sae, '-' ,descrizione) AS name FROM entrasp.sae"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cod_sae",
+            "label": "SAE",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.3
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_ateco AS id, descrizione AS name FROM entrasp.ateco"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_ateco",
+            "label": "ATECO",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.3
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cab_comune",
+            "label": "CAB Comune di residenza",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.3
         },
         {
             "autoGenerate": false,
