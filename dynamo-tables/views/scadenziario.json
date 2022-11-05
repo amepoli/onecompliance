@@ -11,7 +11,7 @@
         },
         {
             "operation": "insert",
-            "queryString": "SELECT entrasp.crea_evento('€global_codice_azienda€', $id_argomento_tipo_evento$, $data_segnalazione$::date, null, $titolo$, null, $id_responsabile$, $id_centro_gest$, datarif=>$data_competenza$) as id_argomento;",
+            "queryString": "SELECT entrasp.crea_evento('€global_codice_azienda€', $id_argomento_tipo_evento$, coalesce($foreseen_date$::date, $data_competenza$), null, $titolo$, null, $id_responsabile$, $id_centro_gest$, datarif=>$data_competenza$) as id_argomento;",
             "type": "main"
         },
         {
@@ -69,6 +69,20 @@
             "isPrimary": true,
             "key": "codice_compito",
             "label": "# Evento",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
             "newLine": false,
             "readOnly": true,
             "size": 1
@@ -566,6 +580,21 @@
                 {
                     "parent": "codice_compito",
                     "son": "codice_compito"
+                }
+            ]
+        },
+        {
+            "entryKey": "seleziona_campione",
+            "label": "Sotto-controlli associati",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
                 }
             ]
         }
