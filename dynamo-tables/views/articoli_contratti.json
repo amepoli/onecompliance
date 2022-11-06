@@ -23,9 +23,9 @@
 				"viewType": "combobox",
 				"dataType": "text",
 				"options": [],
-				"comboQuery": "select id_articolo as id, concat(id_articolo, ' - ', titolo, codice_azienda) as name from entrasp.articoli"
+				"comboQuery": "select id_articolo as id, concat(id_articolo, ' - ', titolo) as name from entrasp.articoli where codice_azienda=$codice_azienda$"
 			},
-			"label": "modulo",
+			"label": "# modulo/articolo",
 			"key": "id_articolo",
 			"readOnly": false,
 			"isHidden": false,
@@ -94,7 +94,14 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
-				"dataType": "number"
+				"dataType": "number",
+				"validations": [
+                    {
+                        "message": "Necessario specificare il costo",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
 			},
 			"label": "Costo runnning",
 			"key": "costo",
@@ -199,7 +206,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"queryFunct": "entrasp.articoli_titolo(id_articolo)",
+			"queryFunct": "entrasp.articoli_titolo(codice_azienda, id_articolo)",
 			"width": "35%",
 			"isInputButton": true,
             "buttonAction": {
@@ -210,6 +217,10 @@
                     {
                         "source": "id_articolo",
                         "destination": "id_articolo"
+                    },
+					{
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
                     }
                 ]
             },
