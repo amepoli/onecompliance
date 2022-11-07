@@ -180,7 +180,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                 // Load main table data
                 _this.loadData();
 
-                if(!_this._reportService.isLazyLoadingEnabled) {
+                if(!_this._reportService.isLazyLoadingEnabled || _this._reportService.cache[_this.tableData.entryName]) {
                     // Request to load reports
                     // _this._pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list' });
                     _this._reportService.requestReload(_this.tableData.entryName);

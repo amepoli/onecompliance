@@ -21,10 +21,12 @@ export class ReportService // implements Resolve<any>
     isLazyLoadingEnabled = true;
     lazyLoadingEntryName: string;
 
+    public cache = {};
 
     // local data
     private _currentData: ReportList = {
         entryName: "",
+        lazyLoaded: false,
         reports: []
     };
 
@@ -64,7 +66,7 @@ export class ReportService // implements Resolve<any>
 
     ) {
         // Set the defaults
-        this.onReportsLoaded = new BehaviorSubject({ entryName: "", reports: [] });
+        this.onReportsLoaded = new BehaviorSubject({ entryName: "", lazyLoaded: false, reports: [] });
 
     }
 
@@ -112,58 +114,90 @@ export class ReportService // implements Resolve<any>
     getReports(entryName: string, company: string, keys: any, isForm: boolean) {
         let _this = this;
 
-        if (entryName == 'dashboard') {
+        // If alread in cache, return it
+        if(_this.cache[entryName]) {
             // Reset stored data
-            _this._currentData = {
-                entryName: entryName,
-                reports: []
-            };
+            _this._currentData = _this.cache[entryName];
 
             // now give results back to the requester
             _this.onReportsLoaded.next(_this._currentData);
         }
         else {
-            _this._backendService.getReportList(entryName, company, keys, isForm).subscribe(
-                response => {
-                    _this._console.log(response);
-                    if (response.result === 'OK') {
-                        // Store data locally
-                        _this._currentData = {
-                            entryName: entryName,
-                            reports: response.list
-                        };
-
-                        // now give results back to the requester
-                        _this.onReportsLoaded.next(_this._currentData);
+            if (entryName == 'dashboard') {
+                // Reset stored data
+                _this._currentData = {
+                    entryName: entryName,
+                    lazyLoaded: _this.isLazyLoadingEnabled,
+                    reports: []
+                };
+    
+                // Save in cache
+                _this.cache[entryName] = _this._currentData;
+                            
+                // now give results back to the requester
+                _this.onReportsLoaded.next(_this._currentData);
+            }
+            else {
+                _this._backendService.getReportList(entryName, company, keys, isForm).subscribe(
+                    response => {
+                        _this._console.log(response);
+                        if (response.result === 'OK') {
+                            // Store data locally
+                            _this._currentData = {
+                                entryName: entryName,
+                                lazyLoaded: _this.isLazyLoadingEnabled,
+                                reports: response.list
+                            };
+    
+                            // Save in cache
+                            _this.cache[entryName] = _this._currentData;
+    
+                            // now give results back to the requester
+                            _this.onReportsLoaded.next(_this._currentData);
+                        }
+                        else {
+                            // Reset stored data
+                            _this._currentData = {
+                                entryName: entryName,
+                                lazyLoaded: _this.isLazyLoadingEnabled,
+                                reports: []
+                            };
+    
+                            // Save in cache
+                            _this.cache[entryName] = _this._currentData;
+    
+                            // now give results back to the requester
+                            _this.onReportsLoaded.next(_this._currentData);
+    
+                            // Show error snackbar
+                            _this._toastService.showErrorToast(response.reason);
+                        }
+                    },
+                    error => {
+                        // Error occured!
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showErrorToast("An error occured!", error);
+    
                     }
-                    else {
-                        // Reset stored data
-                        _this._currentData = {
-                            entryName: entryName,
-                            reports: []
-                        };
-
-                        // now give results back to the requester
-                        _this.onReportsLoaded.next(_this._currentData);
-
-                        // Show error snackbar
-                        _this._toastService.showErrorToast(response.reason);
-                    }
-                },
-                error => {
-                    // Error occured!
-                    _this._dialogService.closeDialog();
-                    _this._toastService.showErrorToast("An error occured!", error);
-
-                }
-            );
+                );
+            }
         }
     }
 
     requestReload(entryName) {
+        let _this = this;
+        
         // Request only if we already don't have the reports for this entryName
-        if (this._currentData.entryName !== entryName) {
-            this.reloadRequested.emit(entryName);
+        if(_this.cache[entryName]) {
+            // Save in cache
+            _this.cache[entryName].lazyLoaded = false;
+            _this._currentData = _this.cache[entryName];
+            
+            // now give results back to the requester
+            _this.onReportsLoaded.next(_this._currentData);
+        }
+        else if (_this._currentData.entryName !== entryName) {
+            _this.reloadRequested.emit(entryName);
         }
     }
 
