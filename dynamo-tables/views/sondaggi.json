@@ -603,6 +603,11 @@
                         "outputEventName": "sondaggi_reopen"
                     },
                     {
+                        "icon": "add_to_queue",
+                        "label": "Integra verifiche del sondaggio",
+                        "outputEventName": "sondaggio_integra"
+                    },
+                    {
                         "icon": "content_copy",
                         "label": "Duplica sondaggio",
                         "outputEventName": "sondaggi_button_duplica"
@@ -690,6 +695,24 @@
                         "actionOnYes": {
                             "actionType": "query",
                             "queryFunct": "delete from entrasp.risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;"
+                        }
+                    }
+                },
+                {
+                    "eventName": "sondaggio_integra",
+                    "actionType": "show_message",
+                    "outputEventWhenComplete": "survey_reload",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler integrare/aggiungere automaticamente verifiche al sondaggio?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.somministrazione_mono_domanda($codice_azienda$, $id_sondaggio$);"
                         }
                     }
                 },
