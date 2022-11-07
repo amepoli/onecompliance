@@ -1636,9 +1636,13 @@ async function getProfileData(profile) {
     };
     let data = await dynamo.get(profileParams).promise();
 
+    //console.log('Start overrideTable()');
     data = await helperFuncts.overrideTable('PROFILES_NAME', data.Item, dynamo);
+    //console.log('End overrideTable()');
 
+    //console.log('Start includeTable()');
     data = await helperFuncts.includeTable('PROFILES_NAME', data, dynamo);
+    //console.log('End includeTable()');
 
     return data;
 }
@@ -1961,11 +1965,17 @@ exports.handler = async (event, context) => {
     
     var company = queryParams['company'];
 
+    //console.log('Start getProfile()');
     const profile = await getProfile(userid, company);
+    //console.log('End getProfile()');
 
+    //console.log('Start getProfileData()');
     const profileData = await getProfileData(profile);
+    //console.log('End getProfileData()');
 
+    //console.log('Start isAuthorized()');
     var authorized = (isHomepage || isHomepageTab || isCompanyChangeQuery)? true: (isAuthorized(queryParams.entry_name, profileData));
+    //console.log('End isAuthorized()');
 
     if (!authorized) {
         console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
