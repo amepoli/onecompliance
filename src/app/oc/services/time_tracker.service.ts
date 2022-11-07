@@ -67,15 +67,15 @@ export class TimeTrackerService {
                                     
                                     if(!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
                                         status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours? status.data.elapsed_time.hours: 0) + ':' +
-                                        HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) + ':' +
-                                        HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0)
+                                        HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) //+ ':' +
+                                        // HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0) 
                                         
                                         _this.lastStatusUpdate = Date.now();
                                         _this.lastStatus = status;
                                         _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
                                         _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
-                                        _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
-                                        _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
+                                        //_this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
+                                        //_this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
                                         
                                         _this.statusUpdated.emit(status);
             
@@ -208,8 +208,8 @@ export class TimeTrackerService {
                 }
                 
                 currentStatus.elapsedTime = HelperService.getTwoDigitText(currentStatus.data.elapsed_time.hours? currentStatus.data.elapsed_time.hours: 0) + ':' +
-                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.minutes? currentStatus.data.elapsed_time.minutes: 0) + ':' +
-                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.seconds? currentStatus.data.elapsed_time.seconds: 0)                
+                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.minutes? currentStatus.data.elapsed_time.minutes: 0) //+ ':' +
+                                //HelperService.getTwoDigitText(currentStatus.data.elapsed_time.seconds? currentStatus.data.elapsed_time.seconds: 0)                
                 _this.statusUpdated.emit(currentStatus);
             }
             else {
