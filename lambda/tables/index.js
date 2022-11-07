@@ -1965,17 +1965,17 @@ exports.handler = async (event, context) => {
     
     var company = queryParams['company'];
 
-    //console.log('Start getProfile()');
+    console.log('Start getProfile()');
     const profile = await getProfile(userid, company);
-    //console.log('End getProfile()');
+    console.log('End getProfile()');
 
-    //console.log('Start getProfileData()');
+    console.log('Start getProfileData()');
     const profileData = await getProfileData(profile);
-    //console.log('End getProfileData()');
+    console.log('End getProfileData()');
 
-    //console.log('Start isAuthorized()');
+    console.log('Start isAuthorized()');
     var authorized = (isHomepage || isHomepageTab || isCompanyChangeQuery)? true: (isAuthorized(queryParams.entry_name, profileData));
-    //console.log('End isAuthorized()');
+    console.log('End isAuthorized()');
 
     if (!authorized) {
         console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
