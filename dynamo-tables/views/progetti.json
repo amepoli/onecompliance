@@ -15,26 +15,6 @@
 			"queryString": "select (€global_id_anagrafiche€)::text as user_companies,codice_azienda,data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=prg.codice_azienda and cmp.id_progetto=prg.id_progetto limit 1), prg.codice_azienda) from entrasp.progetti prg where codice_azienda='€global_codice_azienda€';"
 		},
 		{
-			"operation": "selectForm",
-			"type": "preProcessing",
-			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, $id_progetto$);"
-		},
-		{
-			"operation": "selectForm",
-			"type": "preProcessing",
-			"queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) from entrasp.sondaggi_somministrati ss inner join entrasp.progetti_fasi pf on ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio where ss.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$;"
-		},
-		{
-			"operation": "selectForm",
-			"type": "preProcessing",
-			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$"
-		},
-		{
-			"operation": "selectForm",
-			"type": "postProcessing",
-			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
-		},
-		{
 			"operation": "delete",
 			"type": "main",
 			"queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
