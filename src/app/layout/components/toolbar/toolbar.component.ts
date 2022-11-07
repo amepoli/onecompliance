@@ -174,7 +174,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
             _this.reportList = data.reports;
             _this.reportsLazyLoadingListening = false;
             _this.isReportsLoading = false;
-            if(_this.reportList && _this.reportList.length > 0 && _this._reportService.isLazyLoadingEnabled) {
+            if(_this.reportList && _this.reportList.length > 0 && _this._reportService.isLazyLoadingEnabled && data.lazyLoaded) {
                 setTimeout(() => {
                     this.getReportButton._elementRef.nativeElement.click();
                 }, 100);
