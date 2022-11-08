@@ -22,7 +22,8 @@ export class TimeTrackerService {
     public lastStatus: TimeTrackerStatus;
     public lastStatusUpdate: number;
 
-    public isTrStarted = true;
+    public isTrStarted : boolean = true;
+    public fromOtherPlaces : boolean = false;
 
     /**
      * Constructor
@@ -45,10 +46,11 @@ export class TimeTrackerService {
         
         let _this = this;
         
-        if (_this.isTrStarted) {
+        if (_this.isTrStarted || _this.fromOtherPlaces) {
             const userName = _this._authService.getUsername();
             const dateTimeNow = HelperService.getFormattedDateTime((new Date()).toString(), _this._timezoneService.timezoneInfo.utc_offset);
             const company = _this._authService.getCurrentCompany();
+            _this.fromOtherPlaces = false;
 
             if (userName && dateTimeNow && company) {
                 if (_this.lastStatus) {
