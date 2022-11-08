@@ -53,7 +53,7 @@ export class TimeTrackerComponent implements DoCheck, AfterViewInit, OnDestroy {
     
     ngAfterViewInit() {
         // this.checkTimerStatus();
-        setInterval(() => this.checkTimerStatus(), 60000);
+        setInterval(() => this.checkTimerStatus(), 1000);
     }
 
     checkTimerStatus() {

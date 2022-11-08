@@ -58,6 +58,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     isAuthorized: boolean = true;
     viewKeys: FormViewKey[]; // view form fields as specified by the backend
     formRowProperties: any[];
+    businessObjectName: string = null;
 
     currentKeys: any; // relevant keys passed by the parent component 
 
@@ -261,6 +262,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
                     }
+                    _this.businessObjectName = params.businessObjectName;
 
                     // Load Hide actions if available
                     _this.hideActions = _this._navigationService.getFormHideActions(params.hideActions);
