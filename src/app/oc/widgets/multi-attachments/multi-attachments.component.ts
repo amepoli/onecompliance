@@ -71,7 +71,7 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
         // Pop-up example
         const dialogRef = _this.attachDialog.open(MultiAttachmentsDialogComponent, {
             width: '1280px',
-            data: { entryName: _this.entryName, keys: _this.keys }
+            data: { entryName: _this.entryName, keys: _this.keys, businessObjectName: this.businessObjectName}
         });
 
         _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
@@ -85,7 +85,7 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
         //console.table(_this.keys);
         
         if(_this.keys && _this.entryName) {
-                    const subscription = _this.backendService.getAttachList(_this.entryName, _this.authService.getCurrentCompany(_this.keys), _this.keys).subscribe(
+                    const subscription = _this.backendService.getAttachList(_this.entryName, _this.authService.getCurrentCompany(_this.keys), _this.keys, _this.businessObjectName).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {

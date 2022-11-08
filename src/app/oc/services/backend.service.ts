@@ -130,9 +130,9 @@ export class BackendService {
     return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
 
-  getAttachList(entryName: string, company: string, keys: any): Observable<any> {
+  getAttachList(entryName: string, company: string, keys: any, businessObjectName: string): Observable<any> {
     this.amplifyService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys) };
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), businessObjectName: businessObjectName};
     return from(this.amplifyService.api().get(this.apiName, '/' + this.attachApiName, this.myGetInit));
   }
 

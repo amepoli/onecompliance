@@ -455,7 +455,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     getAttachList() {
         const _this = this;
         //console.table(_this.currentKeys);
-        const subscription = _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys).subscribe(
+        const subscription = _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, _this.formGetter.businessObjectName).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {

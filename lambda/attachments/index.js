@@ -117,6 +117,7 @@ exports.handler = async (event, context) => {
 
     let keys = queryParams['keys'] ? JSON.parse(queryParams['keys']) : null;
     const entryName = queryParams['entry_name'];
+    const businessObjectName = queryParams['businessObjectName'];
     const checksum = queryParams['checksum'];
     const md5Checksum = (queryParams['md5_checksum'] == undefined) ? null : queryParams['md5_checksum'];
     const request_type = queryParams['request_type'];
@@ -297,7 +298,13 @@ exports.handler = async (event, context) => {
         }
         else {
             //console.log('IN: else of getFileURL');    //often here
-            const bus_object = await tableName2BusinessObject(entryName);
+            let bus_object=businessObjectName;
+
+            console.log ('*** bus_object *** --> ',bus_object);
+
+            if (!bus_object) {
+                bus_object = await tableName2BusinessObject(entryName);
+            }
 
             client = await pool.connect();
 
