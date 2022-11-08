@@ -7,7 +7,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select entrasp.giudizio_scadenza(foreseen_date::date, stato) as stato, (select case when compiti.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=compiti.codice_azienda and s.id_sondaggio=compiti.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, data_competenza, foreseen_date, data_chiusura, id_argomento_tipo_evento, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, codice_compito_parent, id_sondaggio, id_tipo_segnalazione, entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest) as descr_centro_gest, entrasp.argomenti_descr_breve(id_argomento_tipo_evento) as titolo from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701 AND foreseen_date IS NOT null"
+            "queryString": "select cmp.titolo as tit_compito, entrasp.giudizio_scadenza(foreseen_date::date, stato) as stato, (select case when cmp.id_sondaggio is null then false when (select stato from entrasp.sondaggi s where s.codice_azienda=cmp.codice_azienda and s.id_sondaggio=cmp.id_sondaggio) != 'C' then true else false end) as check, '' as fake,codice_azienda, codice_compito, data_segnalazione, data_competenza, foreseen_date, data_chiusura, id_argomento_tipo_evento, entrasp.argomenti_descr(id_argomento_tipo_evento) as descr_tipo_evento, codice_compito_parent, id_sondaggio, id_tipo_segnalazione, entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest) as descr_centro_gest, entrasp.argomenti_descr_breve(id_argomento_tipo_evento) as titolo from entrasp.compiti cmp where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=701 AND foreseen_date IS NOT null"
         },
         {
             "operation": "insert",
@@ -109,7 +109,21 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
-            "label": "Descrizione",
+            "label": "Tipo scadenza",
+            "newLine": false,
+            "readOnly": false,
+            "size": 6
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Tipo scadenza",
             "newLine": false,
             "readOnly": false,
             "size": 6
@@ -404,10 +418,27 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "tit_compito",
+            "label": "Descrizione",
+            "width": "20%",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "500"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "titolo",
             "label": "Descrizione",
             "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_evento)",
-            "width": "34%",
+            "width": "14%",
             "style": [
                 {
                     "value": "*",
