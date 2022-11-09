@@ -15,7 +15,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_azienda,id_scan,id_anagrafica,id_somministrazione,dynamo_user,date_of_scan,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_anagrafica) as descr_anagrafica,entrasp.onekyc_describe_aml_scan_data(scan_data) as descr_scan_data from imports.aml_scans where codice_azienda='€global_codice_azienda€'"
+      "queryString": "select codice_azienda,id_scan,id_anagrafica,id_somministrazione,dynamo_user,date_of_scan,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_anagrafica) as descr_anagrafica,entrasp.onekyc_describe_aml_scan_data(scan_data) as descr_scan_data, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type from imports.aml_scans where codice_azienda='€global_codice_azienda€'"
     }
   ],
   "table_keys": [
@@ -58,8 +58,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_somministrazione",
-      "label": "# Somministrazione",
-      "width": "10%"
+      "label": "# Verifica",
+      "width": "8%"
     },
     {
       "format": {
@@ -81,7 +81,7 @@
       "isPrimary": false,
       "key": "descr_scan_data",
       "label": "Risultato",
-      "width": "50%"
+      "width": "46%"
     },
     {
       "format": {
@@ -92,7 +92,7 @@
       "isPrimary": false,
       "key": "dynamo_user",
       "label": "User",
-      "width": "10%"
+      "width": "12%"
     },
     {
       "format": {
@@ -103,7 +103,18 @@
       "isPrimary": false,
       "key": "date_of_scan",
       "label": "Data",
-      "width": "10%"
+      "width": "7%"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "value": ""
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "scan_type",
+      "label": "Tipo",
+      "width": "7%"
     }
   ],
   "restrictions": {
