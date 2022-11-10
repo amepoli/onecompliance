@@ -2,6 +2,22 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
+const Pool = require('pg-pool');
+const pool = new Pool({
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
+    user: 'USER_NAME',
+    password: 'PASSWORD',
+    port: 5432,
+    max: 1,
+    min: 0,
+    idleTimeoutMillis: 300000,
+    connectionTimeoutMillis: 1000
+});
+
+var dataToWrite;
+var fs = require('fs');
+
 const separator_out = ';';
 
 const bucket_name = 'BUCKET_NAME';
@@ -9,6 +25,7 @@ const default_bucket = 'gorico2-migration';
 const default_company = 'DEMO';
 const default_folder = 'batch/test';
 const default_file_out = 'test_csv_creator.csv';
+const default_query = 'SELECT 1';
 
 
 async function getFilesList(folder = default_folders[0], bucket = default_bucket) {
@@ -221,37 +238,28 @@ async function encodeText(fileIn, fileOut, bucket = default_bucket) {
     }
 }
 
-async function start(bucket = default_bucket, company = default_company, folder = default_folder, file_out = default_file_out) {
-    if(mode == modes.encodeOnly) {
-        try {
-            console.log("Encoding text...");
-            let srcFile = (folders[0] + '/' + inFileNames[0]).replace('//', '/');
-            let destFile = (folders[0] + '/' + outFileNames[0]).replace('//', '/');
-            await encodeText(srcFile, destFile, bucket);
-            console.log("Encoding text complete!");
-        }
-        catch(e) {
-            console.log("Encode text error: " + e);
-        }
-    }
-    else {
-        await folders.reduce(async (promise, folder) => {
-            // This line will wait for the last async function to finish.
-            // The first iteration uses an already resolved Promise
-            // so, it will immediately continue.
-            await promise;
+async function start(bucket = default_bucket, company = default_company, folder = default_folder, file_out = default_file_out, queryToRun = default_query) {
     
-            let files = await getFilesList(folder);
-            if (files && files.length) {
-                let inFiles = filterFiles(files, inFileNames);
-                let outFiles = outFileNames.map(file => (folder + '/' + file).replace('//', '/'));
-                console.log("Input files: ", inFiles);
-                console.log("Output files: ", outFiles);
-                await deleteFiles(outFiles, bucket);
-                await processFiles(inFiles, outFiles, bucket);
+    let s3ParamsGetList;
+
+    await pool
+        .query(queryToRun)
+        .then(res =>
+
+            s3ParamsGetList = {
+                Bucket: bucket,
+                Key: folder + file_out
             }
-        }, Promise.resolve());
-    }
+
+            /* fs.writeFile('form-tracking/formList.csv', dataToWrite, 'utf8', function (err) {
+                if (err) {
+                    console.log('Some error occured - file either not saved or corrupted file saved.');
+                } else {
+                    console.log('It\'s saved!');
+                }
+            }) */
+        )
+        .catch(err => console.error('Error executing query', err.stack));
 }
 
 async function processQueryParams(queryParams) {
@@ -260,8 +268,9 @@ async function processQueryParams(queryParams) {
     let company = queryParams.company ? queryParams.company : default_company;
     let folder = queryParams.folder ? queryParams.folder : default_folder;
     let file_out = queryParams.file_out ? queryParams.file_out : default_file_out;
+    let queryToRun = queryParams.query ? queryParams.query : default_query;
     
-    await start(bucket, company, folder, file_out);
+    await start(bucket, company, folder, file_out, queryToRun);
 }
 
 exports.handler = async (event, context) => {
