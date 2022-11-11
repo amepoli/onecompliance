@@ -1453,6 +1453,10 @@
             {
                 "label": "Template anagrafiche per import",
                 "queryString": "select 'Rossi srl' as ragione_sociale, 'ROSSISRL' as codice_cliente, '061124' as partita_iva, 'RSSMRO' as codice_fiscale, '(CLI/FOR/DIP/RSRSA/FONDO)' as ruolo, '(P/E)' as tipo_soggetto, 'Mario' as nome, 'Rossi' as cognome "
+            },
+            {
+                "label": "Anomalie Clientela",
+                "queryString": "select distinct (an.id_anagrafica), avr.codice, avr.ragione_sociale, 'Clienti persone giuridiche senza titolare effettivo' as tipo_anomalia, 'senza titolare effettivo e  da clientela' as parametri from entrasp.anagrafiche_id an inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.contratti cnt on avr.codice_part=cnt.codice_part and avr.id_anagrafica=cnt.id_cliente inner join entrasp.ruoli_anagrafiche ru on an.codice_part=ru.codice_part and an.id_anagrafica=ru.id_anagrafica where an.id_anagrafica not in(select id_anagrafica from entrasp.connessioni_anagrafiche where codice_part=$codice_azienda$ and codice_ruolo in ('TIEF') and id_anagrafica is not null) and an.tipo_soggetto='E' and an.codice_part=$codice_azienda$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) and ru.codice_ruolo='CLI' and cnt.stato!='C' group by an.id_anagrafica, avr.codice, avr.ragione_sociale, tipo_anomalia, parametri order by an.id_anagrafica"
             }
         ]
     }
