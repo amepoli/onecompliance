@@ -1915,7 +1915,7 @@ exports.handler = async (event, context) => {
     const queryParams = event.queryStringParameters;
 
     const method = event.httpMethod;
-
+    
     // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
     // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
     const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
@@ -1965,13 +1965,37 @@ exports.handler = async (event, context) => {
     
     var company = queryParams['company'];
 
-    console.log('Start getProfile()');
-    const profile = await getProfile(userid, company);
-    console.log('End getProfile()');
+    const getProfileDataOnly = (queryParams['get_profile_data_only'] === '1');
 
-    console.log('Start getProfileData()');
-    const profileData = await getProfileData(profile);
-    console.log('End getProfileData()');
+    let profileData = null;
+
+    let contentType = event.headers['content-type'] || event.headers['Content-Type'];
+
+    if(contentType && contentType.length > 24) {
+        profileData = JSON.parse(Buffer.from(contentType, 'base64'));
+        console.log('Loaded profile Data: ', profileData);
+    }
+    else {
+        console.log('Start getProfile()');
+        const profile = await getProfile(userid, company);
+        console.log('End getProfile()');
+    
+        console.log('Start getProfileData()');
+        profileData = await getProfileData(profile);
+        console.log('End getProfileData()');
+    }
+
+    if(getProfileDataOnly) {
+        console.log('Returning with ProfileData!');
+        return {
+            "isBase64Encoded": false,
+            "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            // "statusCode": 403,
+            // "error": "Not Authorized"
+            "statusCode": 200,
+            "body": JSON.stringify({ result: 'OK', profileData: profileData })
+        };
+    }
 
     console.log('Start isAuthorized()');
     var authorized = (isHomepage || isHomepageTab || isCompanyChangeQuery)? true: (isAuthorized(queryParams.entry_name, profileData));
