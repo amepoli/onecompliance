@@ -44,6 +44,15 @@ export class BackendService {
     }
   };
 
+  setProfileData(profileData) {
+    this.myGetInit.headers = {
+      'Content-Type': profileData
+    }
+    this.myPutPostInit.headers = {
+      'Content-Type': profileData
+    }
+  }
+
   dashboardKeys = null; // bridge keys between dashboard view and main table view
 
   constructor(private amplifyService: AmplifyService) {
@@ -66,6 +75,12 @@ export class BackendService {
     this.amplifyService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys) };
     return from(this.amplifyService.api().get(this.apiName, '/' + this.viewsApiName, this.myGetInit));
+  }
+
+  getProfileData(company: string): Observable<any> {
+    this.amplifyService.auth();
+    this.myGetInit.queryStringParameters = { entry_name: '', company: company, get_profile_data_only: 1 };
+    return from(this.amplifyService.api().get(this.apiName, '/' + this.tablesApiName, this.myGetInit));
   }
 
   getData(entryName: string, company: string, keys: any, search_keys: any, isForm: boolean, isNew: boolean, dashboardIndex: number, isExcel: boolean): Observable<any> {
