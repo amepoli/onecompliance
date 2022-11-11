@@ -26,9 +26,9 @@ const default_company = 'DEMO';
 const default_folder = 'test';
 const default_file_out = 'test_csv_creator.csv';
 
-//const default_query = 'SELECT 1 as one,2 as two,3 as three UNION SELECT 4 as FOUR,5 as FIVE,6 as SIX';
+const default_query = 'SELECT 1 AS one,2 AS two,3 AS three';
 
-const default_query = `select
+/* const default_query = `select
 'FININTSGR' AS ENTITA_SEGNALANTE,
 CURRENT_DATE::date::varchar AS DATA_SEGNALAZIONE,
 'NDG_ENTITA' AS NDG_ENTITA,
@@ -45,13 +45,11 @@ ss.data_esecuzione::date::varchar AS DATA_CALC_RISCHIO
  left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and cnt.id_contratto=coalesce(ss.id_contratto,snd.id_contratto)
  where ss.codice_azienda='FININTSGR'
  and ((ss.codice_azienda='FININTSGR' and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '100 days' or ss.data_esecuzione is not null)) 
-	  or (ss.codice_azienda='FININTSGR' and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null)) 
+      or (ss.codice_azienda='FININTSGR' and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null)) 
  AND (split_part(ss.object_key, '|', 2)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='FININTSGR' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='FININT' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='FININTSGR' and cntx.id_cliente is not null))) AND ss.somministrazione_completata='Completo' order by ss.id_somministrazione desc;
-`;
+ `; */
 
-function createCSV(data) {
-    return new ObjectsToCsv(data);
-}
+var csvFile = '';
 
 async function writeFileToS3(key, data, bucket = bucket_name) {
     console.log('Writing File to s3');
@@ -66,61 +64,59 @@ async function writeFileToS3(key, data, bucket = bucket_name) {
 
 async function start(bucket = default_bucket, company = default_company, folder = default_folder, file_out = default_file_out, queryToRun = default_query, separator_out = default_separator_out) {
 
-    client = await pool.connect();
+    let response
 
-    console.log('running query: ', queryToRun);
-    let response = await client.query(queryToRun);
-    console.log('response: ', response);
+    try {
 
-    await client.release();
+        client = await pool.connect();
 
-    var csvFile = '';
+        console.log('running query: ', queryToRun);
+        response = await client.query(queryToRun);
+        //console.log('response: ', response);
 
-    if (response.rows && response.rows.length) {
-        // Create query keys 
-        let property = Object.keys(response.rows[0]);
-       
-        for (let i = 0; i < property.length; i++) {
-        
-            csvFile += property[i] + (separator_out);
+        await client.release();
 
-        }
-
-        csvFile += "\r\n";
-        
-        for (let i = 0; i < response.rows.length; i++) {
-           
-            //console.log('properties', property);
-
-            for (let j = 0; j < property.length; j++) {
-
-                //console.log('property', property[j]);
-                //console.log('field', response.rows[i][property[j]]);
-
-                csvFile += response.rows[i][property[j]] + (";");
-
-            }
-            if (i < response.rows.length - 1) {
-                csvFile += "\r\n";
-            }
-        }
+    } catch (e) {
+        console.error(e);
     }
 
-    console.log('csv: \r\n', csvFile);
+    try {
+        if (response && response.rows && response.rows.length) {
+
+            let property = Object.keys(response.rows[0]);
+
+            for (let i = 0; i < property.length; i++) {
+                csvFile += property[i] + (separator_out);
+            }
+
+            csvFile += "\r\n";
+
+            for (let i = 0; i < response.rows.length; i++) {
+                for (let j = 0; j < property.length; j++) {
+                    csvFile += response.rows[i][property[j]] + (";");
+                }
+                if (i < response.rows.length - 1) {
+                    csvFile += "\r\n";
+                }
+            }
+
+            console.log('csvFile: ', csvFile);
+
+        }
+    } catch (e) {
+        console.error(e);
+    }
+
+    //console.log('csv: \r\n', csvFile);
 
     let s3ParamsPutObj = {
         Bucket: bucket,
-        Key: "batch/"+company+"/"+folder+"/"+file_out,
+        Key: "batch/" + company + "/" + folder + "/" + file_out,
         Body: csvFile,
         ContentType: 'text/csv'
     };
 
-    console.log('s3ParamsPutObj:', s3ParamsPutObj);
-
-    var saveResult = await s3.putObject(s3ParamsPutObj).promise();
-
-    // Return the CSV file as string:
-    //console.log('SaveResult:', saveResult);
+    await s3.putObject(s3ParamsPutObj).promise();
 
 }
 
