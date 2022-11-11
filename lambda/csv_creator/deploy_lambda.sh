@@ -18,15 +18,10 @@ fi
 
 LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.csv_creator.lambdaName"`
 
-DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
-DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
-DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
-
 DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
 HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
 USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
-
 BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.csv_creator.s3.bucket"`
 
 #replace Variables
@@ -36,9 +31,6 @@ sed -i -e "s/DB_NAME/${DBNAME}/g" index.js
 sed -i -e "s/HOST_NAME/${HOSTNAME}/g" index.js
 sed -i -e "s/USER_NAME/${USERNAME}/g" index.js
 sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
-sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
-sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
-sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
 sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
 
 rm index.js-e
