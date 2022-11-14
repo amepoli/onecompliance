@@ -1850,12 +1850,13 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
     let entry_keys = entry_params.form_keys;
     let returnValue = {
         query: null,
-        error: null
+        error: null,
+        preCheckQueries: []
     }
 
     let predefinedInsert = false;
     let predefinedIsInsertQuery = null;
-    let preCheckQueries = [];
+    // let preCheckQueries = [];
 
     if (entry_keys == null) {
         returnValue.error = "Something wrong with provided data";
@@ -1871,7 +1872,8 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
             } else if ((query.type === "main") && (query.operation === "isInsert")) {
                 predefinedIsInsertQuery = replaceKeys(query.queryString, keys, keyTypes);
             } else if ((query.type === "preCheck") && ((query.operation === "insert") || (query.operation === "update"))) {
-                preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
+                returnValue.preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
+                // preCheckQueries.push({ message: query.messageNotNull, query: replaceKeys(query.queryString, keys, keyTypes), operation: query.operation });
             }
         });
     }
@@ -1885,7 +1887,7 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
         return returnValue
     }
 
-    queryString.preCheckQueries = preCheckQueries;
+    // queryString.preCheckQueries = preCheckQueries;
     return returnValue;
 }
 
@@ -2304,7 +2306,7 @@ exports.handler = async (event, context) => {
                 }
 
                 // Check if there are errors in the insertion/update data
-                let preErrors = await processPreCheck(queryString, client, newRecord ? "insert" : "update");
+                let preErrors = await processPreCheck(insertCheck, client, newRecord ? "insert" : "update");
                 // Return if there are errors in insertion
                 if (preErrors.length > 0) {
                     await client.release();
