@@ -1,0 +1,91 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "operazioni_aui_da_registrare",
+  "inheritsFrom": "registrazioni_operazioni_aui",
+  "predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select id_operazione, codice_azienda,codice_part,data_op,id_causale, importo from entrasp.operazioni where codice_azienda=$codice_azienda$"
+		}
+  ],
+  "table_multiselection_actions": [
+    {
+        "viewType": "menu",
+        "key": "menureg_op",
+        "label": "Actions",
+        "icon": "more_vert",
+        "menuOptions": [
+          {
+              "key": "unifica",
+              "icon": "merge_type",
+              "label": "Unifica modelli verifica",
+              "query": "select 1",
+              "confirmAction": true,
+              "reloadOnSuccess": true,
+              "confirmActionMessage": "Unificare i modelli di verifica selezionati?"
+          }
+        
+        
+        ]
+    }
+],
+ 
+  "table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"key": "id_operazione",
+			"label": "ID"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "codice_azienda"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "codice_part",
+			"label": "codice_part"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"label": "Data Oper.",
+			"key": "data_op",
+			"isHidden": false,
+			"isPrimary": false
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"label": "Causale Analitica",
+			"key": "id_causale",
+			"queryFunct": "entrasp.causali_codice_descr (id_causale)",
+			"isHidden": false,
+			"isPrimary": false
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"label": "Importo",
+			"key": "importo",
+			"isHidden": false,
+			"isPrimary": false
+		}
+	]
+}

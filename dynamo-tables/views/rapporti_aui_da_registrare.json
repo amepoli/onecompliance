@@ -1,0 +1,332 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "rapporti_aui_da_registrare",
+  "inheritsFrom": "registrazioni_rapporti_aui",
+  "predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select rra.id_registrazione_rapp, cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda left join entrasp.registrazioni_rapporti_aui rra on cnt.codice_azienda=rra.codice_azienda and cnt.id_contratto=rra.id_contratto where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
+		}
+  ],
+  "define": {
+		"is_hidden_conflicts": "true",
+		"is_hidden_mifid": "true",
+		"is_hidden_invisible_field": "true",
+		"label_id_controparte": "ID Cliente",
+		"label_controparte": "Cliente"
+	},
+  "table_multiselection_actions": [
+    {
+        "viewType": "menu",
+        "key": "menureg",
+        "label": "Actions",
+        "icon": "more_vert",
+        "menuOptions": [
+          {
+              "key": "unifica",
+              "icon": "merge_type",
+              "label": "Unifica modelli verifica",
+              "query": "select 1",
+              "confirmAction": true,
+              "reloadOnSuccess": true,
+              "confirmActionMessage": "Unificare i modelli di verifica selezionati?"
+          }
+        
+        
+        ]
+    }
+],
+
+  "table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"sameOrigin": false,
+			"key": "id_contratto_principale",
+			"label": "id_contratto_principale"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"width": "5%",
+			"key": "id_contratto",
+			"label": "#"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "codice_azienda"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "11%",
+			"isPrimary": false,
+			"key": "numero_contratto",
+			"label": "N.Contratto",
+			"style": [
+				{
+					"value": "*",
+					"background_color": "lightblue",
+					"text_align": "center",
+					"font_weight": "590"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_cliente",
+			"label": "$P{label_controparte}",
+			"width": "0%"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "cliente",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
+			"label": "$P{label_controparte}",
+			"width": "24%",
+			"style": [
+				{
+					"value": "*",
+					"font_size": "medium",
+					"font_weight": "590"
+				}
+			]
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "13%",
+			"key": "id_argomento_contratto",
+			"queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_contratto)",
+			"label": "Tipo Contratto"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_strumento_finanziario",
+			"label": "id_strumento_finanziario"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "fondo_gestito",
+			"width": "13%",
+			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario)",
+			"label": "Strum.fin.sottoscritto/acquistato"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_stipulazione",
+			"width": "8%",
+			"label": "Data Stipula"
+		},
+		{
+			"format": {
+				"dataType": "date"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_cessazione",
+			"width": "8%",
+			"label": "Data Cessazione"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "descr_stato",
+			"label": "Stato",
+			"style": [
+				{
+					"value": "Cessato",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "In Scadenza",
+					"font_color": "MistyRose",
+					"font_weight": "500",
+					"background_color": "MediumPurple",
+					"text_align": "center"
+				},
+				{
+					"value": "Attivo",
+					"font_color": "white",
+					"font_weight": "500",
+					"background_color": "royalblue",
+					"text_align": "center"
+				}
+			],
+			"sameOrigin": false
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"label": "Giudizio Appropriatezza",
+			"width": "8%",
+			"key": "giudizio",
+			"queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
+			"isHidden": "$Q{is_hidden_mifid}",
+			"style": [
+				{
+					"value": "Appropriato",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "Adeguato",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "Non Appropriato",
+					"font_color": "DarkRed",
+					"font_weight": "500",
+					"background_color": "orange",
+					"text_align": "center"
+				},
+				{
+					"value": "Non Adeguato",
+					"font_color": "DarkRed",
+					"font_weight": "500",
+					"background_color": "orange",
+					"text_align": "center"
+				},
+				{
+					"value": "Non Giudicabile",
+					"font_color": "grey",
+					"font_weight": "500",
+					"background_color": "gainsboro",
+					"text_align": "center"
+				}
+			],
+			"isPrimary": false
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"label": "",
+			"width": "8%",
+			"key": "hidden_field",
+			"sameOrigin": false,
+			"isHidden": "$Q{is_hidden_invisible_field}",
+			"isPrimary": false
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"queryFunct": "entrasp.anagrafica_key(id_cliente, codice_azienda, '|')",
+			"key": "object_key",
+			"label": "object_key"
+		},
+    {
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "5%",
+			"key": "id_registrazione_rapp",
+			"label": "N. Registrazione Aui",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        }
+      ],
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "registrazioni_rapp",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_registrazione_rapp",
+            "destination": "registrazione_rapp"
+          }
+        ]
+      }
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": "$Q{is_hidden_conflicts}",
+			"isPrimary": false,
+			"key": "rischio_conflitto",
+			"label": "Rischio conflitto",
+			"style": [
+				{
+					"value": "*",
+					"font_color": "PaleGreen",
+					"font_weight": "500",
+					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "Potenziale conflitto",
+					"font_color": "white",
+					"font_weight": "500",
+					"background_color": "DarkRed",
+					"text_align": "center"
+				}
+			]
+		}
+	]
+
+
+
+ 
+}
