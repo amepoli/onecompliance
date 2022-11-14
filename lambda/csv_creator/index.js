@@ -62,7 +62,7 @@ async function writeFileToS3(key, data, bucket = bucket_name) {
     await s3.putObject(params).promise();
 }
 
-async function start(bucket = default_bucket, company = default_company, folder = default_folder, file_out = default_file_out, queryToRun = default_query, separator_out = default_separator_out) {
+async function start(bucket = bucket, company = default_company, folder = default_folder, file_out = default_file_out, queryToRun = default_query, separator_out = default_separator_out) {
 
     let response
 
@@ -93,7 +93,7 @@ async function start(bucket = default_bucket, company = default_company, folder 
 
             for (let i = 0; i < response.rows.length; i++) {
                 for (let j = 0; j < property.length; j++) {
-                    csvFile += response.rows[i][property[j]] + (";");
+                    csvFile += response.rows[i][property[j]] + (separator_out);
                 }
                 if (i < response.rows.length - 1) {
                     csvFile += "\r\n";
@@ -118,6 +118,9 @@ async function start(bucket = default_bucket, company = default_company, folder 
 
     await s3.putObject(s3ParamsPutObj).promise();
 
+    //To delete the history, wtf??
+    csvFile = '';
+
 }
 
 async function processQueryParams(queryParams) {
@@ -127,8 +130,10 @@ async function processQueryParams(queryParams) {
     let folder = queryParams.folder ? queryParams.folder : default_folder;
     let file_out = queryParams.file_out ? queryParams.file_out : default_file_out;
     let queryToRun = queryParams.query ? queryParams.query : default_query;
+    let separator_out = queryParams.separator_out ? queryParams.separator_out : default_separator_out;
+    
+    await start(bucket, company, folder, file_out, queryToRun, separator_out);
 
-    await start(bucket, company, folder, file_out, queryToRun);
 }
 
 exports.handler = async (event, context) => {
