@@ -1,44 +1,46 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "rapporti_aui_da_registrare",
-  "inheritsFrom": "registrazioni_rapporti_aui",
-  "predefinedQueries": [
+	"$schema": "../views.schema.json",
+	"entryKey": "rapporti_aui_da_registrare",
+	"inheritsFrom": "registrazioni_rapporti_aui",
+	"predefinedQueries": [
 		{
 			"operation": "selectTable",
 			"type": "main",
 			"queryString": "select rra.id_registrazione_rapp, cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda left join entrasp.registrazioni_rapporti_aui rra on cnt.codice_azienda=rra.codice_azienda and cnt.id_contratto=rra.id_contratto where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
+		},
+		{
+			"operation": "selectForm",
+			"type": "main",
+			"queryString": "select ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario, ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, ct.data_stipulazione as data_apertura,ct.data_cessazione as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta, an.codice as ndg_rapporto, '01' as tipo_soggetto, avr.data_inizio_validita, avr.data_fine_validita, an.codice as ndg_soggetto, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso as sesso_soggetto,avr.codice_fiscale as cod_fiscale_soggetto, an.nascita_data as data_nascita_soggetto,an.nascita_luogo as comune_paese_nascita_soggetto, avr.indirizzo as indirizzo_residenza, avr.comune as comune_residenza_soggetto, naz.cod_banca_italia as paese_residenza_soggetto, ate.cod_ateco_sintetico as ateco_soggetto, sae.cod_sae as sae_soggetto from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento inner join entrasp.ateco ate on avr.id_ateco=ate.id_ateco inner join entrasp.sae sae on avr.cod_sae=sae.cod_sae inner join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
 		}
-  ],
-  "define": {
+	],
+	"define": {
 		"is_hidden_conflicts": "true",
 		"is_hidden_mifid": "true",
 		"is_hidden_invisible_field": "true",
 		"label_id_controparte": "ID Cliente",
 		"label_controparte": "Cliente"
 	},
-  "table_multiselection_actions": [
-    {
-        "viewType": "menu",
-        "key": "menureg",
-        "label": "Actions",
-        "icon": "more_vert",
-        "menuOptions": [
-          {
-              "key": "unifica",
-              "icon": "merge_type",
-              "label": "Unifica modelli verifica",
-              "query": "select 1",
-              "confirmAction": true,
-              "reloadOnSuccess": true,
-              "confirmActionMessage": "Unificare i modelli di verifica selezionati?"
-          }
-        
-        
-        ]
-    }
-],
-
-  "table_keys": [
+	"table_multiselection_actions": [
+		{
+			"viewType": "menu",
+			"key": "menureg",
+			"label": "Actions",
+			"icon": "more_vert",
+			"menuOptions": [
+				{
+					"key": "unifica",
+					"icon": "merge_type",
+					"label": "Unifica modelli verifica",
+					"query": "select 1",
+					"confirmAction": true,
+					"reloadOnSuccess": true,
+					"confirmActionMessage": "Unificare i modelli di verifica selezionati?"
+				}
+			]
+		}
+	],
+	"table_keys": [
 		{
 			"format": {
 				"dataType": "number"
@@ -267,7 +269,7 @@
 			"key": "object_key",
 			"label": "object_key"
 		},
-    {
+		{
 			"format": {
 				"dataType": "number"
 			},
@@ -276,28 +278,28 @@
 			"width": "5%",
 			"key": "id_registrazione_rapp",
 			"label": "N. Registrazione Aui",
-      "style": [
-        {
-          "value": "*",
-          "text_align": "center"
-        }
-      ],
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "registrazioni_rapp",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_registrazione_rapp",
-            "destination": "registrazione_rapp"
-          }
-        ]
-      }
+			"style": [
+				{
+					"value": "*",
+					"text_align": "center"
+				}
+			],
+			"isInputButton": true,
+			"buttonAction": {
+				"target": "registrazioni_rapp",
+				"viewType": "form",
+				"action": "navigate",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_registrazione_rapp",
+						"destination": "id_registrazione_rapp"
+					}
+				]
+			}
 		},
 		{
 			"format": {
@@ -324,9 +326,11 @@
 				}
 			]
 		}
+	],
+	"hideActions": [
+		{
+			"viewType": "form",
+			"formActionType": "attachments"
+		}
 	]
-
-
-
- 
 }

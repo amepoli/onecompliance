@@ -6,7 +6,12 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select id_operazione, codice_azienda,codice_part,data_op,id_causale, importo from entrasp.operazioni where codice_azienda=$codice_azienda$"
+			"queryString": "select roa.id_registrazione_op, op.id_operazione, op.codice_azienda,op.codice_part,op.data_op,op.id_causale, op.importo from entrasp.operazioni op left join entrasp.registrazioni_operazioni_aui roa on op.codice_azienda=roa.codice_azienda and op.id_operazione=roa.id_operazione where op.codice_azienda=$codice_azienda$"
+		},
+    {
+			"operation": "selectForm",
+			"type": "main",
+			"queryString": "select ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario, ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,az.cab_comune_filiale, az.comune_filiale, az.provincia_filiale, op.data_op as data_operazione, ca.codice_causale as causale_analitica, op.segno,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta, op.importo as importo_euro, op.importo_contanti, ct.numero_contratto as identificativo_rapporto,'01' as tipo_soggetto, an.codice as ndg_soggetto, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso as sesso_soggetto,avr.codice_fiscale as cod_fiscale_soggetto, an.nascita_data as data_nascita_soggetto,an.nascita_luogo as comune_paese_nascita_soggetto, avr.comune as comune_residenza_soggetto, avr.cab_comune as cab_comune_residenza_soggetto, ate.cod_ateco_sintetico as ateco_soggetto, sae.cod_sae as sae_soggetto, (select codice from entrasp.anagrafiche_id where codice_part='DEMO' and id_anagrafica=op.id_anagrafica_esecutore) as ndg_esecutore, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_esecutore)as cognome_nome_esecutore, (select codice_fiscale from entrasp.anagrafiche_vr where codice_part='DEMO' and id_anagrafica=op.id_anagrafica_esecutore) as cod_fiscale_esecutore, (select nascita_data from entrasp.anagrafiche_id where codice_part='DEMO' and id_anagrafica=op.id_anagrafica_esecutore) as data_nascita_esecutore, (select nascita_luogo from entrasp.anagrafiche_id where codice_part='DEMO' and id_anagrafica=op.id_anagrafica_esecutore) as comune_paese_nascita_esecutore, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_beneficiario)as cognome_nome_rag_sociale_ben, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='DEMO' and avr.id_anagrafica=op.id_anagrafica_beneficiario) as paese_ordinante_beneficiario, (select cab_comune from entrasp.anagrafiche_vr where codice_part='DEMO' and id_anagrafica=op.id_anagrafica_beneficiario) as cab_ordinante_beneficiario, (select comune from entrasp.anagrafiche_vr where codice_part='DEMO' and id_anagrafica=op.id_anagrafica_beneficiario) as comune_ordinante_beneficiario, (select codice from entrasp.anagrafiche_id where codice_part='DEMO' and id_anagrafica=op.id_anagrafica_ctp) as codice_intermediario_ctp, (select ragione_sociale from entrasp.anagrafiche_vr where codice_part='DEMO' and id_anagrafica=op.id_anagrafica_ctp) as denominazione_intermediario_ctp, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='DEMO' and avr.id_anagrafica=op.id_anagrafica_ctp) as paese_intermediario_ctp, op.cab_ordinante as cab_intermediario_cpt, op.iban_rapp_ctp as iban_rapporto_cpt from entrasp.operazioni op inner join entrasp.contratti ct on op.codice_azienda=ct.codice_azienda and op.id_contratto=ct.id_contratto inner join entrasp.causali_analitiche ca on op.id_causale=ca.id_causale inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.ateco ate on avr.id_ateco=ate.id_ateco inner join entrasp.sae sae on avr.cod_sae=sae.cod_sae inner join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where op.codice_azienda=$codice_azienda$ and op.id_operazione=$id_operazione$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
 		}
   ],
   "table_multiselection_actions": [
@@ -86,6 +91,38 @@
 			"key": "importo",
 			"isHidden": false,
 			"isPrimary": false
+		},
+    {
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"width": "5%",
+			"key": "id_registrazione_op",
+			"label": "Operazione Aui",
+			"style": [
+				{
+					"value": "*",
+					"text_align": "center"
+				}
+			],
+			"isInputButton": true,
+			"buttonAction": {
+				"target": "registrazioni_op",
+				"viewType": "form",
+				"action": "navigate",
+				"keymap": [
+					{
+						"source": "codice_azienda",
+						"destination": "codice_azienda"
+					},
+					{
+						"source": "id_registrazione_op",
+						"destination": "id_registrazione_op"
+					}
+				]
+			}
 		}
 	]
 }
