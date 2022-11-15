@@ -182,11 +182,23 @@ exports.handler = async (event, context) => {
 
     try {
 
-        const profile = await getProfile(userid, company);
+        let profileData = null;
 
-        console.log(profile);
+        let contentType = event.headers['content-type'] || event.headers['Content-Type'];
+    
+        if(contentType && contentType.length > 24) {
+            profileData = JSON.parse(Buffer.from(contentType, 'base64'));
+            console.log('Loaded profile Data: ', profileData);
+        }
+        else {
+            console.log('Start getProfile()');
+            profileData = await getProfile(userid, company);
+            console.log('End getProfile()');        
+        }
 
-        if (profile == null) {
+        console.log(profileData);
+
+        if (profileData == null) {
             return {
                 "isBase64Encoded": false,
                 "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
@@ -203,9 +215,9 @@ exports.handler = async (event, context) => {
 
         data = replaceJSONParams(data,data.define)
         
-        data = processPermissions(data, profile, entry_name);
-        data['profileHideActions'] = getProfileHideActions(entry_name, profile);
-        externalUpdate = getExternalSource(entry_name, profile);
+        data = processPermissions(data, profileData, entry_name);
+        data['profileHideActions'] = getProfileHideActions(entry_name, profileData);
+        externalUpdate = getExternalSource(entry_name, profileData);
 
     } catch (e) {
         console.log(e);
