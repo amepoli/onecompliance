@@ -11,7 +11,7 @@
 		{
 			"operation": "selectForm",
 			"type": "main",
-			"queryString": "select ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario, ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, ct.data_stipulazione as data_apertura,ct.data_cessazione as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta, an.codice as ndg_rapporto, '01' as tipo_soggetto, avr.data_inizio_validita, avr.data_fine_validita, an.codice as ndg_soggetto, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso as sesso_soggetto,avr.codice_fiscale as cod_fiscale_soggetto, an.nascita_data as data_nascita_soggetto,an.nascita_luogo as comune_paese_nascita_soggetto, avr.indirizzo as indirizzo_residenza, avr.comune as comune_residenza_soggetto, naz.cod_banca_italia as paese_residenza_soggetto, ate.cod_ateco_sintetico as ateco_soggetto, sae.cod_sae as sae_soggetto from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento inner join entrasp.ateco ate on avr.id_ateco=ate.id_ateco inner join entrasp.sae sae on avr.cod_sae=sae.cod_sae inner join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
+			"queryString": "select an.id_anagrafica, ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario, ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, ct.data_stipulazione as data_apertura,ct.data_cessazione as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta, an.codice as ndg_rapporto, '01' as tipo_soggetto, avr.data_inizio_validita, avr.data_fine_validita, an.codice as ndg_soggetto, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso as sesso_soggetto,avr.codice_fiscale as cod_fiscale_soggetto, an.nascita_data as data_nascita_soggetto,an.nascita_luogo as comune_paese_nascita_soggetto, avr.indirizzo as indirizzo_residenza, avr.comune as comune_residenza_soggetto, naz.cod_banca_italia as paese_residenza_soggetto, ate.cod_ateco_sintetico as ateco_soggetto, sae.cod_sae as sae_soggetto from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento inner join entrasp.ateco ate on avr.id_ateco=ate.id_ateco inner join entrasp.sae sae on avr.cod_sae=sae.cod_sae inner join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
 		}
 	],
 	"define": {
@@ -326,6 +326,23 @@
 				}
 			]
 		}
+	],
+	"subTables": [
+		{
+			"entryKey": "connessioni_anagrafiche_sub_rapp_aui_da_registrare",
+			"isHidden": false,
+			"keys": [
+			    {
+				  "parent": "id_anagrafica",
+				  "son": "id_anagrafica"
+			    },
+			    {
+				  "parent": "codice_part",
+				  "son": "codice_part"
+			    }
+			],
+			"label": "Anagrafiche connesse"
+		  }
 	],
 	"hideActions": [
 		{
