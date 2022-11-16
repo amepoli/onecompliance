@@ -45,12 +45,12 @@ export class BackendService {
   };
 
   setProfileData(profileData) {
-    this.myGetInit.headers = {
-      'Content-Type': profileData
-    }
-    this.myPutPostInit.headers = {
-      'Content-Type': profileData
-    }
+    // this.myGetInit.headers = {
+    //   'Content-Type': profileData
+    // }
+    // this.myPutPostInit.headers = {
+    //   'Content-Type': profileData
+    // }
   }
 
   dashboardKeys = null; // bridge keys between dashboard view and main table view
