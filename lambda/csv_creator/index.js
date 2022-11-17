@@ -28,27 +28,6 @@ const default_file_out = 'test_csv_creator.csv';
 
 const default_query = 'SELECT 1 AS one,2 AS two,3 AS three';
 
-/* const default_query = `select
-'FININTSGR' AS ENTITA_SEGNALANTE,
-CURRENT_DATE::date::varchar AS DATA_SEGNALAZIONE,
-'NDG_ENTITA' AS NDG_ENTITA,
-'NDG_GRUPPO' AS NDG_GRUPPO,
-entrasp.pep_yn(ss.codice_azienda, ss.id_somministrazione) AS PEP,
-entrasp.classe_rischio(snd.giudizio) as CLASSE_RISCHIO_VER,
-ss.punteggio_ottenuto AS P_CLASSE_RISCHIO_VER,
-entrasp.tipo_verifica(snd.giudizio) AS TIPO_VERIFICA,
-ss.data_esecuzione::date::varchar AS DATA_CALC_RISCHIO
- from entrasp.sondaggi_somministrati ss 
- inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio 
- inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr 
- inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test 
- left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and cnt.id_contratto=coalesce(ss.id_contratto,snd.id_contratto)
- where ss.codice_azienda='FININTSGR'
- and ((ss.codice_azienda='FININTSGR' and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '100 days' or ss.data_esecuzione is not null)) 
-      or (ss.codice_azienda='FININTSGR' and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null)) 
- AND (split_part(ss.object_key, '|', 2)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='FININTSGR' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='FININT' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='FININTSGR' and cntx.id_cliente is not null))) AND ss.somministrazione_completata='Completo' order by ss.id_somministrazione desc;
- `; */
-
 var csvFile = '';
 
 async function writeFileToS3(key, data, bucket = bucket_name) {
@@ -68,13 +47,20 @@ async function start(bucket = bucket, company = default_company, folder = defaul
 
     try {
 
-        client = await pool.connect();
+       /*  client = await pool.connect();
 
         console.log('running query: ', queryToRun);
         response = await client.query(queryToRun);
         //console.log('response: ', response);
 
-        await client.release();
+        await client.release(); */
+
+        await pool
+        .query(queryToRun)
+        .then(res => response = res)
+        .catch(err => console.error('Error executing query', err.stack))
+
+        console.log(response);
 
     } catch (e) {
         console.error(e);
