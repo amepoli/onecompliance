@@ -12,7 +12,7 @@
 		"is_hidden_unifica_all": "true",
 		"id_argomento_bigger_than": "and true",
 		"id_argomento_father_s2": "44987",
-		"label_argomento_s2": "Livello di controllo"	
+		"label_argomento_s2": "Livello di controllo"
 	},
 	"predefinedQueries": [
 		{
@@ -25,7 +25,7 @@
 			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{array_argomenti_father_da_aggiungere}) as id_argomento;",
 			"type": "main"
 		},
-		{	
+		{
 			"operation": "update",
 			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)",
 			"type": "postProcessing"
@@ -126,48 +126,37 @@
 			"isPrimary": false,
 			"newLine": true
 		}
-		],
-		"subTables": [
-			{
-				"entryKey": "argomenti_sub_of_argomenti_father_sterile",
-				"keys": [
-					{
-						"parent": "id_argomento",
-						"son": "id_argomento_son"
-					}
-				],
-				"label": "Argomenti padre"
-			},
-			{
-				"entryKey": "argomenti_sub_of_argomenti_son",
-				"keys": [
-					{
-						"parent": "id_argomento",
-						"son": "id_argomento_father"
-					}
-				],
-				"label": "Argomenti figli"
-			},
-			{
-				"entryKey": "argomenti_articoli_normativi",
-				"keys": [
-					{
-						"parent": "id_argomento",
-						"son": "id_argomento"
-					}
-				],
-				"label": "Articoli normativi"
-			},
-			{
-				"entryKey": "cpl_trattamenti_dati_sub_of_finalita",
-				"keys": [
-					{
-						"parent": "id_argomento",
-						"son": "id_argomento_finalita"
-					}
-				],
-				"label": "Trattamenti dati associati"
-			}
-		]
-		
+	],
+	"subTables": [
+		{
+			"entryKey": "cpl_trattamenti_dati_sub_of_argomenti",
+			"keys": [
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento"
+				}
+			],
+			"label": "Trattamenti dati"
+		},
+		{
+			"entryKey": "argomenti_articoli_normativi",
+			"keys": [
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento"
+				}
+			],
+			"label": "Articoli normativi"
+		},
+		{
+			"entryKey": "cpl_trattamenti_dati_sub_of_finalita",
+			"keys": [
+				{
+					"parent": "id_argomento",
+					"son": "id_argomento_finalita"
+				}
+			],
+			"label": "Trattamenti dati associati"
+		}
+	]
 }
