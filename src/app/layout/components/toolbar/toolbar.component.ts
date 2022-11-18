@@ -249,26 +249,29 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     setCompany(company: string, fromInterface: boolean): void {
         let _this = this;
-
-        _this.currentCompany = company;
-        // update the user infos and left menu 
-        _this._authService.updateUserInfo(company);
-        if (fromInterface) {
-            // reload the main page 
-            this.router.navigate(['/login']);
-        }
-
         
-        setTimeout(() => {
+        if(company) {
+            _this.currentCompany = company;
+            // update the user infos and left menu 
+            _this._authService.updateUserInfo(company);
+            if (fromInterface) {
+                // reload the main page 
+                this.router.navigate(['/login']);
+            }
+    
             let getProfileDataSubscription = _this._backendService.getProfileData(company).subscribe(x => {
                 getProfileDataSubscription.unsubscribe();
                 _this._backendService.setProfileData( Buffer.from(JSON.stringify(x.profileData)).toString('base64'));
                 let runCompanyChangeQuerySubscription = _this._backendService.runCompanyChangeQuery(company).subscribe( response => {
                     runCompanyChangeQuerySubscription.unsubscribe();
                     setTimeout(() => _this._timeTrackerService.checkStatus(), 1000);
+                }, error => {
+                    // console.log(error);
                 });
+            }, error => {
+                // console.log(error);
             });
-        }, 1000);
+        }
 
         
     }
