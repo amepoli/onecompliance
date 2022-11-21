@@ -15,7 +15,11 @@ const queryOnCompanyChange = `COMPANY_QUERY`;
 
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
-const dynamo = new AWS.DynamoDB.DocumentClient();
+
+const AmazonDaxClient = require('amazon-dax-client');
+const dax = new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' });
+const dynamo = new AWS.DynamoDB.DocumentClient({ service: dax });
+
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
 const excel = require('node-excel-export');
@@ -1969,23 +1973,13 @@ exports.handler = async (event, context) => {
 
     const getProfileDataOnly = (queryParams['get_profile_data_only'] === '1');
 
-    let profileData = null;
+    console.log('Start getProfile()');
+    const profile = await getProfile(userid, company);
+    console.log('End getProfile()');
 
-    let contentType = event.headers['content-type'] || event.headers['Content-Type'];
-
-    if(contentType && contentType.length > 24) {
-        profileData = JSON.parse(Buffer.from(contentType, 'base64'));
-        console.log('Loaded profile Data: ', profileData);
-    }
-    else {
-        console.log('Start getProfile()');
-        const profile = await getProfile(userid, company);
-        console.log('End getProfile()');
-    
-        console.log('Start getProfileData()');
-        profileData = await getProfileData(profile);
-        console.log('End getProfileData()');
-    }
+    console.log('Start getProfileData()');
+    const profileData = await getProfileData(profile);
+    console.log('End getProfileData()');
 
     if(getProfileDataOnly) {
         console.log('Returning with ProfileData!');
