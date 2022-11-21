@@ -1,6 +1,9 @@
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
-const dynamo = new AWS.DynamoDB.DocumentClient();
+
+const AmazonDaxClient = require('amazon-dax-client');
+const dax = new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' });
+const dynamo = new AWS.DynamoDB.DocumentClient({ service: dax });
 
 const helperFuncts = require('./helperFuncts');
 
@@ -182,20 +185,10 @@ exports.handler = async (event, context) => {
 
     try {
 
-        let profileData = null;
-
-        let contentType = event.headers['content-type'] || event.headers['Content-Type'];
-    
-        if(contentType && contentType.length > 24) {
-            profileData = JSON.parse(Buffer.from(contentType, 'base64'));
-            console.log('Loaded profile Data: ', profileData);
-        }
-        else {
-            console.log('Start getProfile()');
-            profileData = await getProfile(userid, company);
-            console.log('End getProfile()');        
-        }
-
+        console.log('Start getProfile()');
+        const profileData = await getProfile(userid, company);
+        console.log('End getProfile()');        
+        
         console.log(profileData);
 
         if (profileData == null) {

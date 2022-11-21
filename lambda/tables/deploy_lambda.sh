@@ -22,7 +22,7 @@ DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
 DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
 DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
 DYN_HOMEPAGESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.homepages.tableName"`
-
+DAX_ENDPOINT='auroradaxcluster.l9tyig.dax-clusters.eu-central-1.amazonaws.com'
 
 DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
 HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
@@ -43,6 +43,7 @@ sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
 sed -i -e "s/HOMEPAGES_NAME/${DYN_HOMEPAGESNAME}/g" index.js
+sed -i -e "s/DAX_ENDPOINT/${DAX_ENDPOINT}/g" index.js
 
 
 sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js

@@ -261,7 +261,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     
             let getProfileDataSubscription = _this._backendService.getProfileData(company).subscribe(x => {
                 getProfileDataSubscription.unsubscribe();
-                _this._backendService.setProfileData( Buffer.from(JSON.stringify(x.profileData)).toString('base64'));
                 let runCompanyChangeQuerySubscription = _this._backendService.runCompanyChangeQuery(company).subscribe( response => {
                     runCompanyChangeQuerySubscription.unsubscribe();
                     setTimeout(() => _this._timeTrackerService.checkStatus(), 1000);
