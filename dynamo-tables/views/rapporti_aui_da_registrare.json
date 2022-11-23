@@ -7,24 +7,19 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select rra.id_registrazione_rapp, cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente as id_anagrafica, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda left join entrasp.registrazioni_rapporti_aui rra on cnt.codice_azienda=rra.codice_azienda and cnt.id_contratto=rra.id_contratto where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408,2)) AND cnt.stato='A' "
+			"queryString": "select rra.id_registrazione_rapp, cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente as id_anagrafica, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda left join entrasp.registrazioni_rapporti_aui rra on cnt.codice_azienda=rra.codice_azienda and cnt.id_contratto=rra.id_contratto where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408,2)) AND cnt.stato='A' order by cnt.id_contratto desc"
 		},
 		{
 			"operation": "selectForm",
 			"type": "main",
-			"queryString": "select an.id_anagrafica, ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario,ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, ct.data_stipulazione as data_apertura,ct.data_cessazione as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta,an.codice as ndg_rapporto,'01' as tipo_soggetto, ct.data_stipulazione as data_inizio_validita, ct.data_cessazione as data_fine_validita, an.codice as ndg_soggetto, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo,  avr.annotazioni_interne,avr.indirizzo, avr.codice_comune, avr.codice_nazione, ate.id_ateco, sae.cod_sae from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$;"
-		},
-		{
-			"operation": "isInsert",
-			"type": "main",
-			"queryString": "select true as true;"
+			"queryString": "select an.id_anagrafica, ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario,ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, ct.data_stipulazione as data_apertura,ct.data_cessazione as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta,an.codice as ndg_rapporto,'01' as tipo_soggetto, ct.data_stipulazione as data_inizio_validita, ct.data_cessazione as data_fine_validita, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo,  avr.annotazioni_interne,avr.indirizzo, avr.codice_comune, avr.codice_nazione, ate.id_ateco, sae.cod_sae from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$;"
 		},
 		{
 			"operation": "insert",
-			"type": "main",
-			"queryString": "select true as true;"
+			"type": "preCheck",
+			"queryString": "select 1 as one",
+			"messageNotNull": "Foo Foos Foo"
 		}
-
 	],
 	"define": {
 		"is_hidden_conflicts": "true",
@@ -199,10 +194,53 @@
 			"isPrimary": false,
 			"key": "identificativo_rapporto",
 			"label": "Identificativo Rapporto",
-			"size": 3.3,
-			"newLine": true,
+			"size": 2.8,
+			"newLine": false,
 			"readOnly": true
 		},
+		{
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "group_work",
+                        "label": "Registra in AUI",
+                        "outputEventName": "register"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "register",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+						"messageTitle": "Registra in AUI",
+                        "messageText": "Sei sicuro di voler registrare definitivamente il rapporto e le anagrafiche connesse?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select SBAGLIATO DA SBAGLIATO"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select SBAGLIATO DA SBAGLIATO"
+                        }
+                    },
+					"successMessage": "Fatto"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "rapporti_da_registrare_actions",
+            "label": "",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.4
+        },
 		{
 			"format": {
 				"dataType": "text",
@@ -227,14 +265,7 @@
 			"autoGenerate": false,
 			"format": {
 				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
+				"viewType": "input"
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -242,7 +273,8 @@
 			"label": "Codice Filiale",
 			"size": 3.3,
 			"newLine": false,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -263,7 +295,8 @@
 			"label": "Data Apertura Rapporto",
 			"size": 3.3,
 			"newLine": false,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -284,7 +317,8 @@
 			"label": "Tipo di Rapporto",
 			"size": 1.65,
 			"newLine": false,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -305,7 +339,8 @@
 			"label": "Codice Valuta",
 			"size": 1.65,
 			"newLine": true,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -319,7 +354,8 @@
 			"label": "CAB Filiale",
 			"size": 3.3,
 			"newLine": false,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -333,7 +369,8 @@
 			"label": "Data Chiusura Rapporto",
 			"size": 3.3,
 			"newLine": false,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -354,7 +391,8 @@
 			"label": "NDG",
 			"size": 3.3,
 			"newLine": true,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"format": {
@@ -453,7 +491,8 @@
 			"label": "Data Inizio Validità",
 			"size": 3.3,
 			"newLine": true,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -523,7 +562,8 @@
 			"label": "Data Fine Validità",
 			"size": 3.3,
 			"newLine": true,
-			"readOnly": true
+			"readOnly": true,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
@@ -540,7 +580,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "ndg_soggetto",
+			"key": "codice",
 			"label": "NDG",
 			"size": 3.3,
 			"newLine": false,
@@ -620,7 +660,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "cod_fiscale",
+			"key": "codice_fiscale",
 			"label": "Codice Fiscale Soggetto",
 			"size": 3.3,
 			"newLine": false,
@@ -690,7 +730,14 @@
 				"viewType": "combobox",
 				"options": [],
 				"dataType": "text",
-				"comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'"
+				"comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'",
+				"validations": [
+					{
+						"message": "Campo Obbligatorio",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -790,7 +837,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": true,
-			"width": "5%",
+			"width": "3%",
 			"key": "id_contratto",
 			"label": "#"
 		},
@@ -876,7 +923,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "fondo_gestito",
-			"width": "13%",
+			"width": "15%",
 			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario)",
 			"label": "Strum.fin.sottoscritto/acquistato"
 		},
@@ -1008,7 +1055,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"width": "5%",
+			"width": "8%",
 			"key": "id_registrazione_rapp",
 			"label": "N. Registrazione Aui",
 			"style": [
@@ -1079,44 +1126,44 @@
 	],
 	"hideActions": [
 		{
-		  "tableActionType": "add",
-		  "viewType": "table"
+			"tableActionType": "add",
+			"viewType": "table"
 		},
 		{
 			"tableActionType": "quick-add",
 			"viewType": "table"
-		  },
-		{
-		  "viewType": "form",
-		  "formActionType": "startEvent"
 		},
 		{
-		  "viewType": "form",
-		  "formActionType": "stopEvent"
+			"viewType": "form",
+			"formActionType": "startEvent"
 		},
 		{
-		  "viewType": "form",
-		  "formActionType": "import_export"
+			"viewType": "form",
+			"formActionType": "stopEvent"
 		},
 		{
-		  "viewType": "form",
-		  "formActionType": "share"
+			"viewType": "form",
+			"formActionType": "import_export"
 		},
 		{
-		  "viewType": "form",
-		  "formActionType": "attachments"
+			"viewType": "form",
+			"formActionType": "share"
 		},
 		{
-		  "viewType": "form",
-		  "formActionType": "multi-attachments"
+			"viewType": "form",
+			"formActionType": "attachments"
 		},
 		{
-		  "viewType": "form",
-		  "formActionType": "documentation"
+			"viewType": "form",
+			"formActionType": "multi-attachments"
 		},
 		{
-		  "viewType": "form",
-		  "formActionType": "delete"
+			"viewType": "form",
+			"formActionType": "documentation"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "delete"
 		}
-	  ]
+	]
 }
