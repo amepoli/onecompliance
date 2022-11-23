@@ -86,43 +86,4 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     return group;
   }
 
-  /* kycTech() {
-    const _this = this;
-    if (_this.importDataSource === 'kyctech') {
-      _this._dialogService.showLoadingDialog('Connecting to Regulat.io', 'Please wait...');
-      _this.subscriptions.push(_this.backendService.KycTech(0).subscribe( // get the number of records
-        result => {
-          _this._console.log(result);
-          _this._dialogService.closeDialog();
-          _this._dialogService.showLoadingDialog('Retrieving records from Regulat.io', 'Please wait...');
-          if (result.result === 'OK') {
-            _this.subscriptions.push(_this.backendService.KycTech(result.numRecords).subscribe(
-              innerResult => {
-                _this._console.log(innerResult);
-                if (innerResult.result === 'OK') {
-                  _this.loadData();
-                  _this._dialogService.closeDialog();
-                  _this._toastService.showSuccessToast('Successfully updated!'); // show success toast} else {
-                  _this._dialogService.closeDialog();
-                  _this._toastService.showErrorToast('An error occured!');
-                }
-              },
-              innerError => {
-                _this._dialogService.closeDialog();
-                _this._toastService.showErrorToast('An error occured!');
-              }
-            ));
-          } else {
-            _this._dialogService.closeDialog();
-            _this._toastService.showErrorToast('An error occured!');
-          }
-        },
-        error => {
-          _this._dialogService.closeDialog();
-          _this._toastService.showErrorToast('An error occured!');
-        }
-      ));
-    }
-  } */
-
 }
