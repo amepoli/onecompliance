@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageView, TabType, TabViewKey } from 'app/oc/interfaces';
 import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService } from 'app/oc/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
+import { exit } from 'process';
 
 type savingStateType = 'save' | 'saving' | 'done';
 
@@ -187,7 +188,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     isFormValid() {
-        let isValid = true;
+        let notValidField;
         if (this.formGetter.formArray && this.formGetter.formArray.length) {
             this.formGetter.formArray.forEach(form => {
 
@@ -198,14 +199,13 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                 // }
 
                 form.fields.forEach(field => {
-                    if (field.isVisible) {
-                        if (form.form.get(field.name) && !form.form.get(field.name).valid) {
-                            form.form.get(field.name).markAsTouched({ onlySelf: false });
-                            isValid = false;
-                        }
+                    if (field.isVisible && form.form.get(field.name) && !form.form.get(field.name).valid) {
+                        form.form.get(field.name).markAsTouched({ onlySelf: false });
+                        //isValid = false;
+                        notValidField = field.label; 
+                        return;
                     }
                 });
-
                 // if (!isValid) {
                 //     // Highlight all empty required fields
                 //     Object.keys(form.form.controls).forEach(field => {
@@ -216,7 +216,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
             });
         }
-        return isValid;
+        return notValidField;
     }
 
     navigationToViewHome(values, data) {
@@ -245,7 +245,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     onSave() {
         let _this = this;
-        if (_this.isFormValid()) {
+        let notValidField = JSON.stringify(_this.isFormValid());
+        if (!notValidField) {
             // notify parent, which will take care of propagating to siblings if needed 
             _this.sendEvent.emit({ eventType: 'gotSave' });
             // get the form data, assuming there is only one form
@@ -332,7 +333,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             _this.subscriptions.push(subscription);
         }
         else {
-            _this._toastService.showErrorToast("Form is not valid!");
+            _this._toastService.showWarningToast("Form is not valid", "Please check "+ notValidField, 5000, true);
         }
     }
 

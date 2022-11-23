@@ -116,8 +116,27 @@ export class ToastService {
      * @param timeOut
      * @param tapToDismiss
      */
-     showInfoToast(title: string, text: string = "", timeOut: number = this._toastrTheme.timeOut, tapToDismiss: boolean = this._toastrTheme.tapToDismiss) {
+    showInfoToast(title: string, text: string = "", timeOut: number = this._toastrTheme.timeOut, tapToDismiss: boolean = this._toastrTheme.tapToDismiss) {
         this.toastr.info(
+            text,
+            title,
+            {
+                timeOut: timeOut,
+                tapToDismiss: tapToDismiss
+            }
+        );
+    }
+
+    /**
+     * Show Success Snackbar Toast
+     *
+     * @param title
+     * @param text
+     * @param timeOut
+     * @param tapToDismiss
+     */
+    showWarningToast(title: string, text: string = "", timeOut: number = this._toastrTheme.timeOut, tapToDismiss: boolean = this._toastrTheme.tapToDismiss) {
+        this.toastr.warning(
             text,
             title,
             {
@@ -135,10 +154,10 @@ export class ToastService {
      * @param timeOut
      * @param tapToDismiss
      */
-    showErrorToast(title: string, text: string = "", timeOut: number = this._toastrTheme.timeOut, tapToDismiss: boolean = this._toastrTheme.tapToDismiss) {
+    showErrorToast(title: string = "An error occured!", text: string = "", timeOut: number = this._toastrTheme.timeOut, tapToDismiss: boolean = this._toastrTheme.tapToDismiss) {
         this.toastr.error(
-            "An error occured!",
-            "",
+            text,
+            title,
             {
                 timeOut: timeOut,
                 tapToDismiss: tapToDismiss
