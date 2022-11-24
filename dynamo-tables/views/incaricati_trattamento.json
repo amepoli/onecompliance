@@ -6,7 +6,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select *, entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) as prog_vr, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) as incaricato from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro in(select cg.id_gruppo_lavoro from entrasp.centri_gestionali cg inner join entrasp.cpl_trattamenti_centri_gestionali tdcg on cg.codice_part=tdcg.codice_part and cg.id_centro_gest=tdcg.id_centro_gest inner join entrasp.cpl_trattamenti_dati td on tdcg.id_trattamento_dati=td.id_trattamento_dati and tdcg.codice_azienda=td.codice_azienda where td.codice_azienda='€global_codice_azienda€') and codice_part='€global_codice_part€'"
+            "queryString": "select distinct glm.id_anagrafica, glm.codice_part, true as delete_incaricati_trattamento, '€global_codice_azienda€' as codice_azienda, entrasp.anagrafiche_vr_max(glm.codice_part, glm.id_anagrafica) as prog_vr, entrasp.anagrafiche_id_codcognnome(glm.codice_part,glm.id_anagrafica) as incaricato from entrasp.gruppi_lavoro_membri glm where '€global_codice_azienda€'||'-'||glm.codice_part||'-'||glm.id_anagrafica in(select ra.codice_azienda||'-'||ra.codice_part||'-'||ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_azienda='€global_codice_azienda€' and ra.codice_ruolo='RSRSA') and glm.id_gruppo_lavoro in(select cg.id_gruppo_lavoro from entrasp.centri_gestionali cg inner join entrasp.cpl_trattamenti_centri_gestionali tdcg on cg.codice_part=tdcg.codice_part and cg.id_centro_gest=tdcg.id_centro_gest inner join entrasp.cpl_trattamenti_dati td on tdcg.id_trattamento_dati=td.id_trattamento_dati and tdcg.codice_azienda=td.codice_azienda where td.codice_azienda='€global_codice_azienda€') and glm.codice_part='€global_codice_part€'"
         }
     ],
     "form_keys": [
@@ -84,6 +84,45 @@
     "table_keys": [
         {
             "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_incaricati_trattamento",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "delete_icon"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "incaricati_trattamento",
+                "viewType": "form",
+                "query": "delete from entrasp.ruoli_anagrafiche where codice_part='£codice_part£' AND codice_azienda='£codice_azienda£' AND codice_ruolo='RSRSA' AND id_anagrafica=£id_anagrafica£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
                 "dataType": "text"
             },
             "isHidden": true,
@@ -93,23 +132,12 @@
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "isHidden": true,
-            "isPrimary": true,
-            "key": "id_gruppo_lavoro",
-            "label": "Gruppo lavoro"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "prog_vr",
-            "label": "prog_vr",
-            "queryFunct": "entrasp.anagrafiche_vr_max(codice_part, id_anagrafica)",
-            "sameOrigin": false
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
         },
         {
             "format": {
@@ -171,6 +199,6 @@
         }
     ],
     "restrictions": {
-        "preventNavigationToForm": false
+        "preventNavigationToForm": true
     }
 }
