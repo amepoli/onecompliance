@@ -316,20 +316,23 @@ exports.handler = async (event, context) => {
 
             keys = Object.assign({ 'codice_azienda': company }, keys);
 
-            // Let's run query to get keys arrangement
-            query = `select * from entrasp.grc_listacampiditabella_pk('${bus_object}')`;
-            response = await client.query(query);
-            console.log('Query keys: ', query, ' response ', response, ' keys ', keys);
-            if (response.rows && response.rows.length && response.rows[0].grc_listacampiditabella_pk) {
-                // Create query keys 
-                let queryKeys = response.rows[0].grc_listacampiditabella_pk.split(' ').join('').split(',');
-                if (queryKeys != null) {
-                    chiave = keys[queryKeys[0]];
-                    //HACK: getting specific ID from specific view (cdms_risorse). 
-                    //To attach a file to specific "idrisorsa"(the one below) of that view 
-                    idrisorsa = (bus_object == 'cdms_risorse') ? keys[queryKeys[1]] : -1;
-                    for (let i = 1; i < queryKeys.length; i++) {
-                        chiave = chiave + '^' + keys[queryKeys[i]];
+            //HACK: getting specific ID from specific view attachments_tbd.
+            if (bus_object != 'uploadFile') {
+                // Let's run query to get keys arrangement
+                query = `select * from entrasp.grc_listacampiditabella_pk('${bus_object}')`;
+                response = await client.query(query);
+                console.log('Query keys: ', query, ' response ', response, ' keys ', keys);
+                if (response.rows && response.rows.length && response.rows[0].grc_listacampiditabella_pk) {
+                    // Create query keys 
+                    let queryKeys = response.rows[0].grc_listacampiditabella_pk.split(' ').join('').split(',');
+                    if (queryKeys != null) {
+                        chiave = keys[queryKeys[0]];
+                        //HACK: getting specific ID from specific view (cdms_risorse). 
+                        //To attach a file to specific "idrisorsa"(the one below) of that view 
+                        idrisorsa = (bus_object == 'cdms_risorse') ? keys[queryKeys[1]] : -1;
+                        for (let i = 1; i < queryKeys.length; i++) {
+                            chiave = chiave + '^' + keys[queryKeys[i]];
+                        }
                     }
                 }
             }
@@ -340,6 +343,17 @@ exports.handler = async (event, context) => {
                 provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
                 if (bus_object == 'cdms_risorse_revisioni') {
                     query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr} and id_argomento_stato=4035;`;
+                    response = await client.query(query);
+                    console.log(query, response);
+                    let ids = response['rows'].map(f => f['prog_revisione']);
+                    for (let i = 0; i < ids.length; i++) {      //PER OGNI REVISIONE ALLEGATA A QUEST'OGGETTO
+                        query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${ids[i]} and id_argomento_stato=4035;`;
+                        response = await client.query(query);
+                        console.log(query, response);
+                        decnames.push(response['rows'][0]);
+                    }
+                } else if (bus_object == 'uploadFile') {
+                    query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and id_argomento_stato=4035;`;
                     response = await client.query(query);
                     console.log(query, response);
                     let ids = response['rows'].map(f => f['prog_revisione']);
@@ -475,6 +489,87 @@ exports.handler = async (event, context) => {
                     console.log(JSON.stringify(response));
 
                     body = { result: 'OK' };
+                } else if (bus_object == 'uploadFile') {
+                    idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
+                    provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
+                    datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
+                    
+                    query = `select id_argomento_stato from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr};`;
+                    console.log(query);
+                    response = await client.query(query);
+                    let stato = response.rows[0].id_argomento_stato;
+                    console.log(stato, 'stato');
+
+                    if (stato && stato != '4035') {
+
+                        query = `update entrasp.cdms_risorse_revisioni set data_creazione='${date}',  file_id='${filename}', revisore='${requestBody.autore}',
+                        client_file_name='d'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', content_type='${requestBody.content_type}', dimensione=${requestBody.dimensione},
+                        checksum_sha1='${checksum}', id_argomento_stato=4035, descrizione=coalesce(${requestBody.descrizione}::varchar,descrizione), data_ultima_revisione=current_date, 
+                        ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica), id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
+                        where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr} and id_argomento_stato != 4035;`;
+                        console.log(query);
+                        response = await client.query(query);
+
+                    } else {
+
+                        const object = await s3.getObject(s3ParamsGetList).promise();
+                        const actualChecksum = shasum.update(object.Body).digest('hex');
+                        console.log(checksum, actualChecksum);
+                        if (checksum === actualChecksum) { // file correctly uploaded
+                            dimensione = (requestBody.dimensione == undefined) ? null : requestBody.dimensione;
+                            descrizione = (requestBody.descrizione == undefined) ? null : requestBody.descrizione;
+                            idodg = (requestBody.id_odg == undefined) ? null : requestBody.id_odg;
+                            idriu = (requestBody.id_riunione == undefined) ? null : requestBody.id_riunione;
+                            datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
+                            //Prendo il massimo prog_revisione
+                            query = `select max(prog_revisione) as prog_revisione from entrasp.cdms_risorse_revisioni where id_risorsa=${idris} and codice_azienda='${company}';`;
+                            console.log(query);
+                            response = await client.query(query);
+                            const nextProgRevisione = (response.rows && response.rows[0]) ? response['rows'][0]['prog_revisione'] : 0;
+                            query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
+                                    revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
+                                    values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
+                                    '${requestBody.autore}', 'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
+                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}', '${md5Checksum}');`;
+                            console.log(query);
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
+
+                            query = `insert into entrasp.cdms_risorse_oggetti (codice_azienda, id_risorsa, prog_revisione, nome_business_object, chiave) 
+                                    SELECT '${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1, nome_business_object, chiave
+                                    FROM entrasp.cdms_risorse_oggetti WHERE codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr};`;
+                            console.log(query);
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
+
+
+                            //HACK: exception in case of bus_object="cdms_risorse"
+                            /*idrisorsa = (idrisorsa == -1) ? idFlowInfo1 : idrisorsa;*/
+                            query = `select entrasp.after_lambda_attachments('${company}',  ${idris/* orsa */});`;
+                            console.log(query);
+                            //??? tolgo await
+                            response = await client.query(query);
+                            console.log(JSON.stringify(response));
+
+
+                            body = { result: 'OK' };
+                        } else { // wrong checksum 
+                            body = { result: 'KO', reason: 'Error with file checksum' };
+                        }
+
+                    }
+
+                    /* //HACK: exception in case of bus_object="cdms_risorse"
+                    idrisorsa = (idrisorsa == -1) ? idris : idrisorsa; */
+
+                    query = `select entrasp.after_lambda_attachments('${company}',  ${idris/*orsa*/});`; //, ${requestBody.prog_revisione});`;
+                    console.log(query);
+                    //??? tolgo await
+                    response = await client.query(query);
+                    console.log(JSON.stringify(response));
+
+                    body = { result: 'OK' };
+
                 } else if (bus_object == 'cdms_risorse') {
                     idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
                     idana = (keys['id_anagrafica'] == undefined) ? null : keys['id_anagrafica'];
