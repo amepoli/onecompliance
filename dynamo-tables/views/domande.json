@@ -33,6 +33,23 @@
       "operation": "delete",
       "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$)",
       "type": "main"
+    },
+    {
+      "operation": "isInsert",
+      "queryString": "select $id_domanda$ is null as label;",
+      "type": "main"
+  },
+    {
+      "operation": "update",
+      "type": "preCheck",
+      "queryString": "select id_domanda from entrasp.domande where descrizione='£descrizione£' and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_domanda!=$id_domanda$",
+      "messageNotNull": "La stessa domanda (stesse parole) è già stata formulata all'interno del modello di verifica. Inserire elemento di differenziazione!"
+    },
+    {
+      "operation": "insert",
+      "type": "preCheck",
+      "queryString": "select id_domanda from entrasp.domande where upper(trim(descrizione))=upper(trim('£descrizione£')) and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+      "messageNotNull": "La stessa domanda (stesse parole) è già stata formulata all'interno del modello di verifica. Inserire elemento di differenziazione!"
     }
   ],
   "orderBy": {
