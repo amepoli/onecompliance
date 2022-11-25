@@ -2,6 +2,7 @@
   "$schema": "../views.schema.json",
   "entryKey": "attachments_tbd",
   "inheritsFrom": "attachments",
+  "businessObjectName": "uploadFile",
   "define": {
     "isHiddenDownload": "true",
     "jsonFileDelFlussoInformativo": "attachments_sub_of_attachments_tbd",
@@ -143,20 +144,6 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "size": 3,
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "viewType": "input",
         "dataType": "text"
       },
@@ -166,7 +153,7 @@
       "label": "Documento",
       "queryFunct": "select descrizione as name from entrasp.argomenti arg where arg.id_argomento=id_argomento_tipo_allegato",
       "newLine": false,
-      "size": 2.5,
+      "size": 4,
       "readOnly": true
     },
     {
@@ -179,7 +166,7 @@
       "isPrimary": false,
       "key": "anagrafica",
       "label": "relativo a",
-      "size": 1,
+      "size": 2.5,
       "newLine": false,
       "readOnly": true
     },
@@ -223,7 +210,7 @@
       "isPrimary": false,
       "key": "rev_id_argomento_stato",
       "size": 1.5,
-      "label": "Stato Caricamento",
+      "label": "Stato Documento",
       "readOnly": false,
       "newLine": false
     },
@@ -401,9 +388,23 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione",
+      "size": 9.6,
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
       "key": "note",
       "label": "Note",
-      "size": 10,
+      "size": 9.6,
       "newLine": false,
       "readOnly": false
     }
@@ -431,7 +432,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "width": "4%",
       "key": "id_risorsa",
@@ -441,7 +442,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "width": "4%",
       "key": "prog_revisione",
@@ -453,19 +454,15 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "descrizione",
-      "width": "30%",
-      "label": "Descrizione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
       "key": "tipo_allegato",
-      "width": "15%",
-      "label": "Documento"
+      "width": "22%",
+      "label": "Documento",
+      "style": [
+        {
+          "value": "*",
+          "font_size": "medium"
+        }
+      ]
     },
     {
       "format": {
@@ -474,9 +471,19 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "anagrafica",
-      "width": "13%",
-      "label": "relativo a",
+      "width": "20%",
+      "label": "Relativo a",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "width": "25%",
+      "label": "Descrizione Aggiuntiva"
     },
     {
       "format": {
@@ -487,46 +494,6 @@
       "width": "0%",
       "key": "revisore",
       "label": "Utente"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_stato",
-      "width": "8%",
-      "label": "Stato",
-      "style": [
-        {
-          "value": "Non Richiesto",
-          "font_color": "grey",
-          "font_weight": "500",
-          "background_color": "gainsboro",
-          "text_align": "center"
-        },
-        {
-          "value": "Da definire",
-          "font_color": "MistyRose",
-          "font_weight": "500",
-          "background_color": "MediumPurple",
-          "text_align": "center"
-        },
-        {
-          "value": "Da Allegare",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
-        },
-        {
-          "value": "Allegato",
-          "font_color": "PaleGreen",
-          "font_weight": "500",
-          "background_color": "Green",
-          "text_align": "center"
-        }
-      ]
     },
     {
       "format": {
@@ -567,7 +534,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_rif",
-      "width": "6%",
+      "width": "7%",
       "label": "Riferimento da"
     },
     {
@@ -589,6 +556,46 @@
       "key": "data_scadenza",
       "width": "6%",
       "label": "Scadenza"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descr_stato",
+      "width": "6%",
+      "label": "Stato",
+      "style": [
+        {
+          "value": "Non Richiesto",
+          "font_color": "grey",
+          "font_weight": "500",
+          "background_color": "gainsboro",
+          "text_align": "center"
+        },
+        {
+          "value": "Da definire",
+          "font_color": "MistyRose",
+          "font_weight": "500",
+          "background_color": "MediumPurple",
+          "text_align": "center"
+        },
+        {
+          "value": "Da Allegare",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
+          "value": "Allegato",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        }
+      ]
     },
     {
       "format": {
@@ -872,6 +879,44 @@
       "label": "Da allegare",
       "newLine": false,
       "queryCond": "a.id_argomento_stato in(4034)"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "import_export",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "documentation",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "attachments"
     }
   ]
 }
