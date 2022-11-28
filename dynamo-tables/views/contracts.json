@@ -9,10 +9,11 @@
 	],
 	"define": {
         "is_hidden_conflicts": "true",
-		"is_hidden_mifid": "true",
 		"is_hidden_invisible_field": "false",
-		"label_id_controparte": "Id Cli/For",
-		"label_controparte": "Cliente/Fornitore"
+		"label_id_controparte": "Cliente/Fornitore",
+		"label_controparte": "Cliente/Fornitore",
+		"is_hidden_mifid": "true",
+		"size_with_or_without_mifid": "3.14"
     },
 	"predefinedQueries": [
 		{
@@ -23,17 +24,7 @@
 		{
 			"operation": "update",
 			"type": "postProcessing",
-			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
 			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
-		},
-		{
-			"operation": "insert",
-			"type": "postProcessing",
-			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
 		}
 	],
 	"subTables": [
