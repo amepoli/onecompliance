@@ -585,7 +585,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else {
                     // Show error snackbar
-                    _this._toastService.showErrorToast("Error " + JSON.stringify(result.reason.code),'',5000,true);
+                    _this._toastService.showErrorToast("Error " + JSON.stringify(result.reason.code) + JSON.stringify(result.reason.detail),'',5000,true);
                 }
                 _this.isAddingNew = false;
             },
@@ -1173,7 +1173,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             //console.table(result);
 
                             _this._console.log(result);
-                            _this._toastService.showErrorToast("Error " + JSON.stringify(result.reason.code),'',5000,true);
+                            _this._toastService.showErrorToast("Error " + JSON.stringify(result.reason.code)  + JSON.stringify(result.reason.detail),'',5000,true);
                         }
                     });
 
@@ -1393,7 +1393,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                                 else {
                                     _this._console.table(result);
-                                    _this._toastService.showErrorToast("Error " + JSON.stringify(result.reason.code),'',5000,true);
+                                    _this._toastService.showErrorToast("Error " + JSON.stringify(result.reason.code) + JSON.stringify(result.reason.detail),'',5000,true);
                                 }
                             });
 
