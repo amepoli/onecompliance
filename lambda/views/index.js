@@ -3,7 +3,7 @@ AWS.config.update({ region: 'eu-central-1' });
 
 const AmazonDaxClient = require('amazon-dax-client');
 const dax = new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' });
-const dynamo = new AWS.DynamoDB.DocumentClient({ service: dax });
+const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED? dax: null });
 
 const helperFuncts = require('./helperFuncts');
 
@@ -11,47 +11,6 @@ const queryKeys = ['badgeQuery', 'queryString', 'query', 'comboQuery',
                    'queryFunct', 'insertUpdateFunct', 'conditionQuery',
                    'onSuccessQuery', 'querySuffixes'];
 
-
-async function getProfile(userid, company) {
-
-    var userParams = {
-        TableName: 'USERS_NAME',
-        Key: {
-            userid: userid
-        }
-    };
-
-    var profile;
-
-    var data = await dynamo.get(userParams).promise();
-    data = data.Item;
-    if (data != null) {
-        let companies = data.companies;
-        if (company != null) {
-            companies.forEach(c => {
-                if (c.name === company) { // found user's profile
-                    profile = c.profile;
-                }
-            });
-        }
-    }
-
-    if (profile != null) {
-        var profileParams = {
-            TableName: 'PROFILES_NAME',
-            Key: {
-                name: profile
-            }
-        };
-        let permissions = await dynamo.get(profileParams).promise();
-
-        profile = await helperFuncts.overrideTable('PROFILES_NAME', permissions.Item, dynamo);
-
-        profile = await helperFuncts.includeTable('PROFILES_NAME', profile, dynamo);
-    }
-
-    return profile;
-}
 
 function processPermissions(data, profile, entry_name) {
 
@@ -185,12 +144,10 @@ exports.handler = async (event, context) => {
 
     try {
 
-        console.log('Start getProfile()');
-        const profileData = await getProfile(userid, company);
-        console.log('End getProfile()');        
+        const profile = await helperFuncts.getProfile(dynamo, 'USERS_NAME', userid, company);
         
-        console.log(profileData);
-
+        const profileData = await helperFuncts.getProfileData(dynamo, 'PROFILES_NAME', 'MERGED_PROFILESNAME', profile);
+        
         if (profileData == null) {
             return {
                 "isBase64Encoded": false,

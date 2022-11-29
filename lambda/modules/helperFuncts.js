@@ -2,7 +2,10 @@ var functions = {
     setGlobalVariables: _setGlobalVariables,
     getCodicePart: _getCodicePart,
     overrideTable: _overrideTable,
-    includeTable: _includeTable
+    includeTable: _includeTable,
+    getProfile: _getProfile,
+    getProfileData: _getProfileData,
+    refreshMergedProfileData: _refreshMergedProfileData
 };
 
 module.exports = functions;
@@ -112,7 +115,7 @@ function customizer(objValue, srcValue) {
     if (Array.isArray(objValue)) {
       return objValue.concat(srcValue);
     }
-  }
+}
 
 async function _includeTable(dynamoTable,jsonEntry,dynamo) {
     
@@ -160,4 +163,115 @@ async function _includeTable(dynamoTable,jsonEntry,dynamo) {
 
     return jsonEntry; 
 
+}
+
+
+async function _getProfile(dynamo, usersTable, userid, company) {
+
+    var userParams = {
+        TableName: usersTable,
+        Key: {
+            userid: userid
+        }
+    };
+
+    var profile;
+
+    var data = await dynamo.get(userParams).promise();
+    data = data.Item;
+    if (data != null) {
+        let companies = data.companies;
+        if (company != null) {
+            companies.forEach(c => {
+                if (c.name === company) { // found user's profile
+                    profile = c.profile;
+                }
+            });
+        }
+    }
+    return profile;
+}
+
+async function _getProfileData(dynamo, profilesTable, mergeProfilesTable, profile) {
+    
+    const useCache = true;
+    
+    if(useCache) {
+        var mergedProfileParams = {
+            TableName: mergeProfilesTable,
+            Key: {
+                name: profile
+            }
+        };
+    
+        let mergedProfileData = await dynamo.get(mergedProfileParams).promise();
+        if(mergedProfileData && mergedProfileData.Item && mergedProfileData.Item.data) {
+            return mergedProfileData.Item.data;
+        }
+    }
+    
+    var profileParams = {
+        TableName: profilesTable,
+        Key: {
+            name: profile
+        }
+    };
+    let data = await dynamo.get(profileParams).promise();
+
+    //console.log('Start overrideTable()');
+    data = await _overrideTable(profilesTable, data.Item, dynamo);
+    //console.log('End overrideTable()');
+
+    //console.log('Start includeTable()');
+    data = await _includeTable(profilesTable, data, dynamo);
+    //console.log('End includeTable()');
+    
+    if(useCache) {
+        //Save new merged_profile
+        const DynamoParams = {
+            TableName: mergeProfilesTable,
+            Item: {
+                name: profile,
+                data: data
+            }
+        };
+
+        await dynamo.put(DynamoParams).promise();
+    }
+
+    return data;
+}
+
+async function _refreshMergedProfileData(dynamo, profilesTable, mergeProfilesTable, profile) {
+    
+    var profileParams = {
+        TableName: profilesTable,
+        Key: {
+            name: profile
+        }
+    };
+    let data = await dynamo.get(profileParams).promise();
+
+    console.log('Read profile: ', JSON.stringify(data.Item));
+
+    //console.log('Start overrideTable()');
+    data = await _overrideTable(profilesTable, data.Item, dynamo);
+    //console.log('End overrideTable()');
+
+    //console.log('Start includeTable()');
+    data = await _includeTable(profilesTable, data, dynamo);
+    //console.log('End includeTable()');
+    
+    //Save new merged_profile
+    const DynamoParams = {
+        TableName: mergeProfilesTable,
+        Item: {
+            name: profile,
+            data: data
+        }
+    };
+
+    await dynamo.put(DynamoParams).promise();
+    
+    return data;
 }

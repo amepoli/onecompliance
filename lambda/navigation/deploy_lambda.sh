@@ -20,8 +20,12 @@ LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.menu.lambdaName"`
 
 DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
 DYN_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
+DYN_MERGED_PROFILESNAME=`cat ../../${1}.json | jq -r ".dynamoTables.merged_profiles.tableName"`
 DYN_VIEWSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.views.tableName"`
 DYN_NAVIGATIONNAME=`cat ../../${1}.json | jq -r ".dynamoTables.navigation.tableName"`
+
+DAX_ENDPOINT=`cat ../../${1}.json | jq -r ".dax.endpoint"`
+DAX_ENABLED=`cat ../../${1}.json | jq -r ".dax.enabled"`
 
 DBNAME=`cat ../../${1}.json | jq -r ".postgres.dbName"`
 HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
@@ -37,8 +41,12 @@ sed -i -e "s/USER_NAME/${USERNAME}/g" index.js
 sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
+sed -i -e "s/MERGED_PROFILESNAME/${DYN_MERGED_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
 sed -i -e "s/NAVIGATION_NAME/${DYN_NAVIGATIONNAME}/g" index.js
+
+sed -i -e "s/DAX_ENDPOINT/${DAX_ENDPOINT}/g" index.js
+sed -i -e "s/DAX_ENABLED/${DAX_ENABLED}/g" index.js
 
 rm index.js-e
 

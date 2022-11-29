@@ -31,6 +31,7 @@ if [ $# -eq 2 ]
 fi   
 
 TABLENAME=`cat ../../${1}.json | jq -r ".dynamoTables.profiles.tableName"`
+LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.menu.lambdaName"`
 
 if [ $? -ne 0 ]
   then
@@ -66,3 +67,19 @@ dynamo_files=(dynamo-input/*.json)
 for d in "${dynamo_files[@]}"; do
     aws dynamodb batch-write-item --request-items file://$d  
 done
+
+if [ $# -eq 2 ]
+  then
+    echo "Going to align "${2}" on "${LAMBDANAME}
+      aws lambda invoke \
+        --function-name ${LAMBDANAME} \
+        --cli-binary-format raw-in-base64-out \
+        --payload  '{ "Records": [ { "dynamodb": { "Keys": { "name": { "S": "'${2}'"}}}}]}' \
+        result.json
+    echo "Merged profile updated!"
+  else
+    echo "Merged profile not updated!"
+fi   
+
+
+
