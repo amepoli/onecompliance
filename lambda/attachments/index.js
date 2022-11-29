@@ -535,9 +535,10 @@ exports.handler = async (event, context) => {
                             const nextProgRevisione = (response.rows && response.rows[0]) ? response['rows'][0]['prog_revisione'] : 0;
                             query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
                                     revisore, client_file_name, content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
-                                    values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
+                                    select '${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                     '${requestBody.autore}', 'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', '${requestBody.content_type}', ${dimensione}, 
-                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}', '${md5Checksum}');`;
+                                    '${checksum}', ${idriu}, ${idodg}, 4035, descrizione, data_rif, '${date}', '${date}', '${md5Checksum}'
+                                    FROM entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr};`;
                             console.log(query);
                             response = await client.query(query);
                             console.log(JSON.stringify(response));
