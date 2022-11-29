@@ -298,9 +298,9 @@ exports.handler = async (event, context) => {
         }
         else {
             //console.log('IN: else of getFileURL');    //often here
-            let bus_object=businessObjectName;
+            let bus_object = businessObjectName;
 
-            console.log ('*** bus_object *** --> ',bus_object);
+            console.log('*** bus_object *** --> ', bus_object);
 
             if (!bus_object) {
                 bus_object = await tableName2BusinessObject(entryName);
@@ -353,7 +353,14 @@ exports.handler = async (event, context) => {
                         decnames.push(response['rows'][0]);
                     }
                 } else if (bus_object == 'uploadFile') {
-                    query = `select * from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and id_argomento_stato=4035;`;
+                    query = `SELECT crr.prog_revisione 
+                    FROM entrasp.cdms_risorse_revisioni crr 
+                    INNER JOIN entrasp.cdms_risorse_oggetti cro USING (codice_azienda, id_risorsa, prog_revisione)
+                    WHERE crr.codice_azienda='${company}' 
+                    AND crr.id_risorsa=${idris} AND crr.id_argomento_stato=4035 
+                    AND cro.nome_business_object||'-'||cro.chiave IN(SELECT cro.nome_business_object||'-'||cro.chiave 
+                    FROM entrasp.cdms_risorse_revisioni crr INNER JOIN entrasp.cdms_risorse_oggetti cro USING (codice_azienda, id_risorsa, prog_revisione)
+                    WHERE codice_azienda='${company}' AND id_risorsa=${idris} AND prog_revisione=${provr});`;
                     response = await client.query(query);
                     console.log(query, response);
                     let ids = response['rows'].map(f => f['prog_revisione']);
@@ -493,7 +500,7 @@ exports.handler = async (event, context) => {
                     idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
                     provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
                     datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
-                    
+
                     query = `select id_argomento_stato from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr};`;
                     console.log(query);
                     response = await client.query(query);
