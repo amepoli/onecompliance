@@ -1,6 +1,9 @@
 const AWS = require('aws-sdk');
 AWS.config.update({region: 'eu-central-1'});
-const dynamo = new AWS.DynamoDB.DocumentClient();
+const AmazonDaxClient = require('amazon-dax-client');
+const dax = new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' });
+const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED? dax: null });
+
 
 const helperFuncts = require('./helperFuncts');
 
@@ -48,81 +51,71 @@ function getMenuWithPermissions(menu, permissions) {
     return filteredMenu;
 }
 
+function performMergedProfileUpdate(records) {
+
+}
+
 exports.handler = async (event, context) => {
     
-    const queryParams = event.queryStringParameters;
-
-    const codice_azienda = JSON.parse(queryParams['keys']).codice_azienda;
-
-    const method = event.httpMethod;
-    
-    // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
-    // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
-    const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
-    // const userid = '4e7e947c-7810-4e30-b6ca-a1579f9ccfd6';  // test only 
-    
-    console.log('queryParams: ', queryParams, ' userid: ', userid, ' codice_azienda: ', codice_azienda);
-
-    var userParams = {
-        TableName: 'USERS_NAME',
-        Key: {
-            userid: userid
-        }
-    };
-
-    var menuParams = {
-        TableName: 'NAVIGATION_NAME',
-        Key: {
-            name: 'gorico'
-        }
-    };
-
-    var profileParams = {
-        TableName: 'PROFILES_NAME',
-        Key: {
-            name: 'dummy'
-        }
-    };
-
     let body = {};
 
-    let profile;
+    console.log('Event:', JSON.stringify(event));
+    if(Object.keys(event).includes('Records')) {
+        let result = [];
 
-    try {
-        var data = await dynamo.get(userParams).promise();
-        data = data.Item;
-        if (data != null) {
-            let companies = data.companies;
-            if (codice_azienda != null) {
-                companies.forEach(c => {
-                    if (c.name === codice_azienda) { // found user's profile
-                        profile = c.profile;
+        for(const record of event['Records']) {
+            const profile = record['dynamodb']['Keys']['name']['S'];
+            console.log('Checking for profile: ', profile);
+            const profileData = await helperFuncts.refreshMergedProfileData(dynamo, 'PROFILES_NAME', 'MERGED_PROFILESNAME', profile);
+            if(profileData) {
+                result.push('Refresh profile succeded for : ' + profile);
+            }
+            else {
+                result.push('Refresh profile failure for : ' + profile);
+            }
+        }
+
+        body = {result: 'OK', result: result };
+        
+        console.log('Trigger succeeded with: ', JSON.stringify(result));
+
+    }
+    else {
+        const queryParams = event.queryStringParameters;
+
+        const codice_azienda = JSON.parse(queryParams['keys']).codice_azienda;
+
+        const method = event.httpMethod;
+        
+        // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
+        // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
+        const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+        // const userid = '4e7e947c-7810-4e30-b6ca-a1579f9ccfd6';  // test only 
+        
+        console.log('queryParams: ', queryParams, ' userid: ', userid, ' codice_azienda: ', codice_azienda);
+
+        const profile = await helperFuncts.getProfile(dynamo, 'USERS_NAME', userid, codice_azienda);
+        
+        if (profile != null) {
+            const profileData = await helperFuncts.getProfileData(dynamo, 'PROFILES_NAME', 'MERGED_PROFILESNAME', profile);
+            if (profileData != null) {
+                var menuParams = {
+                    TableName: 'NAVIGATION_NAME',
+                    Key: {
+                        name: 'gorico'
                     }
-                });
-            }   
+                };
+                let menu = await dynamo.get(menuParams).promise();
+                menu = getMenuWithPermissions(menu.Item.menu, profileData.menu);
+                body = {result: 'OK', menu: menu };
+            } else {
+                body = {result: 'KO', reason:'Cannot find user\'s profile'};
+            }
         } else {
             body = {result: 'KO', reason:'Cannot find the user'};
         }
-        if (profile != null) {
-            profileParams.Key.name = profile;
-            let permissions = await dynamo.get(profileParams).promise();
-
-            permissions = await helperFuncts.overrideTable('PROFILES_NAME', permissions.Item, dynamo);
-
-            permissions = await helperFuncts.includeTable('PROFILES_NAME', permissions, dynamo);
-
-            if (permissions != null) {
-                let menu = await dynamo.get(menuParams).promise();
-                menu = getMenuWithPermissions(menu.Item.menu, permissions.menu);
-                body = {result: 'OK', menu: menu };
-            }
-        } else {
-            body = {result: 'KO', reason:'Cannot find user\'s profile'};
-        }
-    } catch (e) {
-       console.log(e);
-       body = { result: 'KO', reason: 'Database error'};
     }
+    
     
     return {
         "isBase64Encoded": false,

@@ -18,7 +18,7 @@ AWS.config.update({ region: 'eu-central-1' });
 
 const AmazonDaxClient = require('amazon-dax-client');
 const dax = new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' });
-const dynamo = new AWS.DynamoDB.DocumentClient({ service: dax });
+const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED? dax: null });
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
@@ -1604,54 +1604,6 @@ async function processFormActionQuery(formActionType, queryString, keys, client)
     }
 }
 
-async function getProfile(userid, company) {
-
-    var userParams = {
-        TableName: 'USERS_NAME',
-        Key: {
-            userid: userid
-        }
-    };
-
-    var profile;
-
-    var data = await dynamo.get(userParams).promise();
-    data = data.Item;
-    if (data != null) {
-        let companies = data.companies;
-        if (company != null) {
-            companies.forEach(c => {
-                if (c.name === company) { // found user's profile
-                    profile = c.profile;
-                }
-            });
-        }
-    }
-    return profile;
-}
-
-async function getProfileData(profile) {
-
-    var profileParams = {
-        TableName: 'PROFILES_NAME',
-        Key: {
-            name: profile
-        }
-    };
-    let data = await dynamo.get(profileParams).promise();
-
-    //console.log('Start overrideTable()');
-    data = await helperFuncts.overrideTable('PROFILES_NAME', data.Item, dynamo);
-    //console.log('End overrideTable()');
-
-    //console.log('Start includeTable()');
-    data = await helperFuncts.includeTable('PROFILES_NAME', data, dynamo);
-    //console.log('End includeTable()');
-
-    return data;
-}
-
-
 function isAuthorized(entry_name, profileData) {
 
     let allowed;
@@ -1971,31 +1923,21 @@ exports.handler = async (event, context) => {
     
     var company = queryParams['company'];
 
-    const getProfileDataOnly = (queryParams['get_profile_data_only'] === '1');
+    const profile = await helperFuncts.getProfile(dynamo, 'USERS_NAME', userid, company);
 
-    console.log('Start getProfile()');
-    const profile = await getProfile(userid, company);
-    console.log('End getProfile()');
+    const profileData = await helperFuncts.getProfileData(dynamo, 'PROFILES_NAME', 'MERGED_PROFILESNAME', profile);
 
-    console.log('Start getProfileData()');
-    const profileData = await getProfileData(profile);
-    console.log('End getProfileData()');
-
-    if(getProfileDataOnly) {
-        console.log('Returning with ProfileData!');
+    if (profileData == null) {
         return {
             "isBase64Encoded": false,
             "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-            // "statusCode": 403,
-            // "error": "Not Authorized"
             "statusCode": 200,
-            "body": JSON.stringify({ result: 'OK', profileData: profileData })
+            "body": JSON.stringify({ result: 'KO', reason: 'Error, is user authorized?' })
         };
     }
 
-    console.log('Start isAuthorized()');
+    
     var authorized = (isHomepage || isHomepageTab || isCompanyChangeQuery)? true: (isAuthorized(queryParams.entry_name, profileData));
-    console.log('End isAuthorized()');
 
     if (!authorized) {
         console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
