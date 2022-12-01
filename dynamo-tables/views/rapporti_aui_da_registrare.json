@@ -12,7 +12,7 @@
 		{
 			"operation": "selectForm",
 			"type": "main",
-			"queryString": "select an.id_anagrafica, ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario,ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, ct.data_stipulazione as data_apertura,ct.data_cessazione as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta,an.codice as ndg_rapporto,'01' as tipo_soggetto, ct.data_stipulazione as data_inizio_validita, ct.data_cessazione as data_fine_validita, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo,  avr.annotazioni_interne,avr.indirizzo, avr.codice_comune, avr.codice_nazione, ate.id_ateco, sae.cod_sae from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$;"
+			"queryString": "select an.id_anagrafica, ct.codice_azienda, ct.codice_part, ct.id_contratto,arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario,ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, ct.data_stipulazione as data_apertura,ct.data_cessazione as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta,an.codice as ndg_rapporto,'01' as tipo_soggetto, ct.data_stipulazione as data_inizio_validita, ct.data_cessazione as data_fine_validita, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo,  avr.annotazioni_interne,avr.indirizzo, avr.codice_comune, avr.codice_nazione, ate.id_ateco, sae.cod_sae from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$;"
 		},
 		{
 			"operation": "insert",
@@ -219,13 +219,13 @@
                     "message": {
 						"messageTitle": "Registra in AUI",
                         "messageText": "Sei sicuro di voler registrare definitivamente il rapporto e le anagrafiche connesse?",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.aui_registra_rapporto($codice_azienda$, $id_contratto$)"
-                        },
                         "actionOnYes": {
                             "actionType": "query",
                             "queryFunct": "select entrasp.aui_registra_rapporto($codice_azienda$, $id_contratto$)"
+                        },
+						"actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
                         }
                     },
 					"successMessage": "Fatto"
