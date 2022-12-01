@@ -114,7 +114,7 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
                 }
                 else {
                     // Show error snackbar
-                    _this._toastService.showErrorToast(result.reason);
+                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
                 }
             });
             _this.subscriptions.push(subscription);

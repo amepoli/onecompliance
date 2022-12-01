@@ -160,7 +160,9 @@ export class ToastService {
             title,
             {
                 timeOut: timeOut,
-                tapToDismiss: tapToDismiss
+                tapToDismiss: tapToDismiss,
+                progressBar: true,
+                progressAnimation: this._toastrTheme.progressAnimation
             }
         );
     }

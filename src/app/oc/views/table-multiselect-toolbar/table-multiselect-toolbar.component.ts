@@ -69,12 +69,12 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                                 }
                             }
                             else {
-                                _this._toastService.showErrorToast(result);
+                                _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
                             }
                             subscription.unsubscribe();
                         },
                         error => {
-                            _this._toastService.showErrorToast(error);
+                            _this._toastService.showErrorToast("Error ",JSON.stringify(error));
                             subscription.unsubscribe();
                             console.error(error);
                         }
@@ -118,7 +118,7 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                                 }
                             }
                             else {
-                                _this._toastService.showErrorToast(result);
+                                _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
                             }
                             subscription.unsubscribe();
                         },

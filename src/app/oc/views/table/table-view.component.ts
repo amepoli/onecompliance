@@ -374,13 +374,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 else {
                     _this.isLoading = false;
                     // Show error snackbar
-                    _this._toastService.showErrorToast(result.reason);
+                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
                 }
             },
             error => {
                 _this.isLoading = false;
                 // Show error snackbar
-                _this._toastService.showErrorToast(error);
+                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
             }
         ));
         // Calculate table height
@@ -417,7 +417,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             },
             error => {
                 _this.isLoading = false;
-                _this._toastService.showErrorToast(error);
+                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
             })); 
        }
      
@@ -470,7 +470,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     }
                     else {
                         // Show error snackbar
-                        _this._toastService.showErrorToast(results.reason);
+                        _this._toastService.showErrorToast("Error ",JSON.stringify(results.reason.detail));
                     }
                 }
 
@@ -478,7 +478,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             },
             error => {
                 _this.isLoading = false;
-                _this._toastService.showErrorToast(error);
+                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
             }));
 
         // Calculate table height
@@ -992,7 +992,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
                 else {
                     // Show error snackbar
-                    _this._toastService.showErrorToast(result.reason);
+                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
                 }
             },
             error => {
