@@ -255,6 +255,13 @@ exports.handler = async (event) => {
                 let query = "";
                 let response;
 
+                query = `INSERT INTO imports.aml_scans (codice_azienda,id_scan,id_anagrafica,scan_data, date_of_scan, entity_type, id_somministrazione, dynamo_user) 
+                SELECT $$${scans}$$::json->>'company',$$${scans}$$::json->'extra'->>'scanId',($$${scans}$$::json->>'registry')::numeric,$$${scans}$$::json, CURRENT_DATE, $$${scans}$$::json->>'entityType', ($$${scans}$$::json ->> 'checkId')::numeric, $$${scans}$$::json->>'dynamoUser'
+                ON CONFLICT DO NOTHING;`;
+
+                console.log('running query: ', query);
+                response = await client.query(query);
+                
                 //See the function in the db which answer the question of survey
                 query = `select entrasp.OneKYC_process_aml_scans($$ ${scans} $$);`;
 
