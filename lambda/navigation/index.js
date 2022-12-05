@@ -1,9 +1,10 @@
 const AWS = require('aws-sdk');
 AWS.config.update({region: 'eu-central-1'});
 const AmazonDaxClient = require('amazon-dax-client');
-const dax = new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' });
+const dax = DAX_ENABLED? new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' }): null;
 const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED? dax: null });
 
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
 const helperFuncts = require('./helperFuncts');
 
@@ -51,8 +52,50 @@ function getMenuWithPermissions(menu, permissions) {
     return filteredMenu;
 }
 
-function performMergedProfileUpdate(records) {
+async function performDynamoDBMergedProfileUpdate(event) {
+    let result = [];
 
+    for(const record of event['Records']) {
+        const profile = record['dynamodb']['Keys']['name']['S'];
+        console.log('Checking for profile: ', profile);
+        const profileData = await helperFuncts.refreshMergedProfileData(dynamo, 'PROFILES_NAME', 'MERGED_PROFILESNAME', profile);
+        if(profileData) {
+            result.push('Refresh profile succeded for : ' + profile);
+        }
+        else {
+            result.push('Refresh profile failure for : ' + profile);
+        }
+    }
+    
+    console.log('Trigger succeeded with: ', JSON.stringify(result));
+    return {result: 'OK', result: result };
+}
+
+async function performS3UploadToDynamo(event) {
+    
+    let s3Record = event['S3Record'];
+    let key = s3Record['Key'];
+    let table = s3Record['Table'];
+    let keyParts = key.split('/');
+    let fileName = keyParts[keyParts.length-1].split('.json')[0];
+    const s3ParamsGetList = {
+        Bucket: 'gorico2.dynamodb',
+        Key: key
+    };
+
+    const object = await s3.getObject(s3ParamsGetList).promise();
+    console.log('Body: ', object.Body.toString());
+                        
+    //Save new merged_profile
+    const DynamoParams = {
+        TableName: table,
+        Item: JSON.parse(object.Body.toString())
+    };
+
+    console.log('Saving to dynamo db with these params: ', DynamoParams);
+    const result = await dynamo.put(DynamoParams).promise();
+
+    return {result: 'OK', result: result };
 }
 
 exports.handler = async (event, context) => {
@@ -61,24 +104,10 @@ exports.handler = async (event, context) => {
 
     console.log('Event:', JSON.stringify(event));
     if(Object.keys(event).includes('Records')) {
-        let result = [];
-
-        for(const record of event['Records']) {
-            const profile = record['dynamodb']['Keys']['name']['S'];
-            console.log('Checking for profile: ', profile);
-            const profileData = await helperFuncts.refreshMergedProfileData(dynamo, 'PROFILES_NAME', 'MERGED_PROFILESNAME', profile);
-            if(profileData) {
-                result.push('Refresh profile succeded for : ' + profile);
-            }
-            else {
-                result.push('Refresh profile failure for : ' + profile);
-            }
-        }
-
-        body = {result: 'OK', result: result };
-        
-        console.log('Trigger succeeded with: ', JSON.stringify(result));
-
+        body = await performDynamoDBMergedProfileUpdate(event);
+    }
+    else if(Object.keys(event).includes('S3Record')) {
+        body = await performS3UploadToDynamo(event);
     }
     else {
         const queryParams = event.queryStringParameters;
