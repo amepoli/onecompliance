@@ -54,7 +54,9 @@ export class TimeTrackerService {
 
             if (userName && dateTimeNow && company) {
                 if (_this.lastStatus) {
-                    _this.updateStatusLocally();
+                    setTimeout(() => {
+                        _this.updateStatusLocally();
+                    }, 1000);
                 }
                 let isTrDayCompleteSubscription = _this._backendService.isTrDayComplete(userName, dateTimeNow).subscribe(
                     isTrDayCompleteResponse => {
@@ -235,7 +237,9 @@ export class TimeTrackerService {
             }
         }
         else {
-            _this.checkStatus();
+            setTimeout(() => {
+                _this.checkStatus();
+            }, 1000)
         }
 
     }
