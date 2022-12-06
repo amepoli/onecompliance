@@ -360,6 +360,10 @@
               "isPrimary": false,
               "key": "id_risposta_prev_rif",
               "label": "Viene Risposto",
+              "outputEvent": {
+                  "eventName": "select_id_risposta_rif",
+                  "eventTrigger": "select"
+              },
               "inputEvents": [
                 {
                   "eventName": "id_domanda_rif_change",
@@ -367,7 +371,22 @@
                   "queryFunct": "select coalesce(£id_risposta_prev_rif£, 0) as id_risposta_prev_rif",
                   "condition": "none",
                   "values": []
+                },
+                { 
+                  "eventName": "id_domanda_rif_change",
+                  "actionType": "query",
+                  "queryFunct": "update entrasp.domande set id_domanda_rif=£id_domanda_rif£ where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_sezione=$id_sezione$ and id_domanda_rif is null",
+                  "condition": "none",
+                  "values": []
+                },
+                { 
+                  "eventName": "select_id_risposta_rif",
+                  "actionType": "query",
+                  "queryFunct": "update entrasp.domande set id_risposta_prev_rif=£id_risposta_prev_rif_rif£ where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda_rif=£id_domanda_rif£ and id_sezione=$id_sezione$",
+                  "condition": "none",
+                  "values": []
                 }
+
               ],
               "newLine": true,
               "size": 9,
