@@ -619,6 +619,138 @@
             "size": 1
         },
         {
+            "format": {
+                "dataType": "number",
+                "viewType": "label"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_domanda",
+            "label": "id_argomento_domanda",
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "get_aml_scan",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "get_aml_scan",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "regulat_api",
+                            "regulatAPIParams": {
+                                "actionType": "get_aml_scan",
+                                "entityParams": {
+                                    "codice_azienda": "codice_azienda",
+                                    "id_anagrafica": "id_anagrafica",
+                                    "id_somministrazione": "id_somministrazione",
+                                    "dynamo_user": "username",
+                                    "is_light_scan": false
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "sameOrigin": false,
+            "key": "kyc_deep",
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when £id_argomento_domanda£=45414 then false else true end as label"
+                }
+            ],
+            "label": "OneKYC - Deep",
+            "buttonIcon": "person_search",
+            "newLine": false,
+            "size": 1
+        },
+        {
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "get_light_aml_scan",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "get_light_aml_scan",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "regulat_api",
+                            "regulatAPIParams": {
+                                "actionType": "get_aml_scan",
+                                "entityParams": {
+                                    "codice_azienda": "codice_azienda",
+                                    "id_anagrafica": "id_anagrafica",
+                                    "id_somministrazione": "id_somministrazione",
+                                    "dynamo_user": "username",
+                                    "is_light_scan": true
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "sameOrigin": false,
+            "key": "kyc_light",
+            "label": "OneKYC - Light",
+            "buttonIcon": "person_search",
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when £id_argomento_domanda£=45414 then false else true end as label"
+                }
+            ],
+            "newLine": false,
+            "size": 1
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "key": "new_line",
+            "label": "new_line",
+            "newLine": true,
+            "size": 8
+        },
+        {
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
