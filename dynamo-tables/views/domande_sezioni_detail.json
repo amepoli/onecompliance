@@ -241,6 +241,168 @@
     {
       "autoGenerate": false,
       "format": {
+          "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "activate_oggetti_collegati_k",
+      "label": "Altro",
+      "buttonIcon": "expand_more",
+      "newLine": false,
+      "size": 0.9,
+      "outputEvent": {
+          "eventName": "activate_oggetti_collegati",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+          {
+              "actionType": "hide",
+              "eventName": "activate_oggetti_collegati",
+              "condition": "none",
+              "values": []
+          },
+          {
+              "actionType": "show",
+              "eventName": "hide_oggetti_collegati",
+              "condition": "none",
+              "values": []
+          }
+      ],
+      "style": {
+          "background_color": "#25599C",
+          "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+  },
+  {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "button"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "hide_oggetti_collegati_k",
+      "label": "Nascondi dettagli",
+      "buttonIcon": "expand_less",
+      "newLine": true,
+      "size": 1.5,
+      "outputEvent": {
+          "eventName": "hide_oggetti_collegati",
+          "eventTrigger": "press"
+      },
+      "inputEvents": [
+          {
+              "actionType": "show",
+              "eventName": "activate_oggetti_collegati",
+              "condition": "none",
+              "values": []
+          },
+          {
+              "actionType": "hide",
+              "eventName": "hide_oggetti_collegati",
+              "condition": "none",
+              "values": []
+          }
+      ],
+      "style": {
+          "background_color": "#25599C",
+          "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+  },
+  {
+      "format": {
+          "viewType": "subform",
+          "subform_keys": [
+            {
+              "autoGenerate": false,
+              "format": {
+                "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test = $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$",
+                "options": [],
+                "viewType": "combobox"
+              },
+              "isHidden": false,
+              "isPrimary": false,
+              "key": "id_domanda_rif",
+              "label": "Attiva se alla domanda",
+              "outputEvent": {
+                "eventName": "id_domanda_rif_change",
+                "eventTrigger": "select"
+              },
+              "newLine": true,
+              "size": 10,
+              "readOnly": false
+            },
+            {
+              "autoGenerate": false,
+              "format": {
+                "viewType": "checkbox",
+                "dataType": "text"
+              },
+              "isHidden": false,
+              "isPrimary": false,
+              "key": "flag_non_viene_risposto",
+              "label": "NON",
+              "size": 1,
+              "newLine": false,
+              "readOnly": false
+            },
+            {
+              "autoGenerate": false,
+              "format": {
+                "comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$ and id_domanda=£id_domanda_rif£;",
+                "viewType": "combobox",
+                "options": []
+              },
+              "isHidden": false,
+              "isPrimary": false,
+              "key": "id_risposta_prev_rif",
+              "label": "Viene Risposto",
+              "inputEvents": [
+                {
+                  "eventName": "id_domanda_rif_change",
+                  "actionType": "query",
+                  "queryFunct": "select coalesce(£id_risposta_prev_rif£, 0) as id_risposta_prev_rif",
+                  "condition": "none",
+                  "values": []
+                }
+              ],
+              "newLine": true,
+              "size": 9,
+              "readOnly": false
+            }
+          
+          ]
+      },
+      "inputEvents": [
+          {
+              "actionType": "show",
+              "condition": "none",
+              "eventName": "activate_oggetti_collegati",
+              "values": []
+          },
+          {
+              "actionType": "hide",
+              "condition": "none",
+              "eventName": "hide_oggetti_collegati",
+              "values": []
+          }
+      ],
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "oggetti_collegati",
+      "label": "Oggetti collegati",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "saveWhenHidden": true
+  },
+ 
+    {
+      "autoGenerate": false,
+      "format": {
         "dataType": "number",
         "viewType": "input"
       },
