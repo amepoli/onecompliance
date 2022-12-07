@@ -11,8 +11,8 @@ import { AuthService, BackendService, DialogService, PubSubService } from 'app/o
 <button *ngIf="field.buttonIcon && !field.label && !field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()" [matTooltip]="field.tooltip">
         <mat-icon>{{field.buttonIcon}}</mat-icon>
 </button>
-<button *ngIf="field.buttonIcon && field.label && !field.isDownloadButton" mat-icon-button color="primary" [disabled]="field.readonly" (click)="onClickButton()"
-[style.width]="'100%'" [matTooltip]="field.tooltip">
+<button mat-raised-button *ngIf="field.buttonIcon && field.label && !field.isDownloadButton" color="primary" [disabled]="field.readonly" (click)="onClickButton()"
+[style.width]="'100%'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
         <mat-icon>{{field.buttonIcon}}</mat-icon>{{field.label}}
 </button>
 <button *ngIf="field.isDownloadButton" mat-icon-button [disabled]="field.readonly" (click)="onClickButton()" [matTooltip]="field.tooltip">

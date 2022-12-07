@@ -121,7 +121,7 @@
     "predefinedQueries": [
         {
             "operation": "selectForm",
-            "queryString": "select * from entrasp.select_domande_risposte($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+            "queryString": "select *,'€global_username€' as username from entrasp.select_domande_risposte($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
             "type": "main"
         },
         {
@@ -298,6 +298,18 @@
             "sameOrigin": false,
             "key": "id_somministrazione",
             "label": "id_somministrazione",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica",
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -633,11 +645,28 @@
         },
         {
             "format": {
+                "viewType": "invisible"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "key": "no_new_line",
+            "label": "no_new_line",
+            "newLine": false,
+            "size": 3
+        },
+        {
+            "format": {
                 "viewType": "button"
             },
             "isHidden": true,
             "isPrimary": false,
             "readOnly": false,
+            "style": {
+                "font_color": "white",
+                "background_color": "forestgreen"
+            },
             "outputEvent": {
                 "eventName": "get_aml_scan",
                 "eventTrigger": "press"
@@ -673,16 +702,21 @@
             ],
             "sameOrigin": false,
             "key": "kyc_deep",
+            "tooltip": "Controllo OneKYC approfondito",
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
                     "queryString": "select case when £id_argomento_domanda£=45414 then false else true end as label"
+                },
+                {
+                    "attributeType": "readOnly",
+                    "queryString": "select case when £id_risposta£ is not null then true else false end as label"
                 }
             ],
             "label": "OneKYC - Deep",
             "buttonIcon": "person_search",
             "newLine": false,
-            "size": 1
+            "size": 2
         },
         {
             "format": {
@@ -691,6 +725,10 @@
             "isHidden": true,
             "isPrimary": false,
             "readOnly": false,
+            "style": {
+                "background_color": "#2A4F9D",
+                "font_color": "white"
+            },
             "outputEvent": {
                 "eventName": "get_light_aml_scan",
                 "eventTrigger": "press"
@@ -726,16 +764,21 @@
             ],
             "sameOrigin": false,
             "key": "kyc_light",
+            "tooltip": "Controllo OneKYC limitato alle liste anti-terrorismo",
             "label": "OneKYC - Light",
             "buttonIcon": "person_search",
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
                     "queryString": "select case when £id_argomento_domanda£=45414 then false else true end as label"
+                },
+                {
+                    "attributeType": "readOnly",
+                    "queryString": "select case when £id_risposta£ is not null then true else false end as label"
                 }
             ],
             "newLine": false,
-            "size": 1
+            "size": 2
         },
         {
             "format": {
@@ -748,7 +791,7 @@
             "key": "new_line",
             "label": "new_line",
             "newLine": true,
-            "size": 8
+            "size": 3
         },
         {
             "autoGenerate": false,
