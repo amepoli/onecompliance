@@ -9,7 +9,7 @@ const folders = ['batch/finafarm/upload']; //['batch/finafarm'];
 const columnsList = {
     "analeas.dbf": ['IDANACLI', 'NUMCONTR', 'DATA_CON', 'DT_SOSP', 'DESCRIZ', 'DTSTIPULA'],
     "anacont.dbf": ['IDANACLI', 'PKTBTIPCON', 'DESCRI', 'NUMCONT',  'DATA_INI', 'DT_SOSP'], //tolto 'DESCOGE',
-    "anacli.dbf": ['IDBASE','CODCLI', 'RAGSOC', 'COGNOME', 'NOME', 'IND_SL', 'CAP_SL', 'STATO_SL', 'CODFISC', 'PIVA', 'DAT_NASC', 'SESSO', 'CLIFOR', 'PKTBSPECIE'] //tolto 'TELEF', 'FAX', 'EMAIL'
+    "anacli.dbf": ['IDBASE','CODCLI', 'RAGSOC', 'COGNOME', 'NOME', 'IND_SL', 'CAP_SL', 'STATO_SL', 'CODFISC', 'PIVA', 'DAT_NASC', 'SESSO', 'CLIFOR', 'PKTBSPECIE', 'PROV_NA', 'NUMDOC', 'DATARIL', 'AUTRIL', 'DATAFUS', 'PKTBTIPDOC'] //tolto 'TELEF', 'FAX', 'EMAIL'
 };
 
 async function getFilesList(folder, bucket) {
@@ -63,7 +63,7 @@ function createCSV(dbfData, columns) {
     const rows = dbfData && dbfData.rows ? dbfData.rows.length : 0;
     if (rows > 0) {
         console.log('Creating CSV...');
-        const keys = columns && columns.length? columns: dbfData.columns.map(x => x.name); //Object.keys(dbfData.columns);
+        const keys = columns && columns.length ? columns : dbfData.columns.map(x => x.name); //Object.keys(dbfData.columns);
         let csvData = '';
         csvData += `${keys.join(separator)}\n`;
         csvData += dbfData.rows.map(row => keys.map(key => row[key]).join(separator)).join('\n');
