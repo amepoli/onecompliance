@@ -3,6 +3,7 @@
 	"entryKey": "contratti_fornitori",
 	"businessObjectName": "contratti",
 	"origin": "entrasp.contratti",
+	"inheritsFrom": "contracts_investment",
 	"predefinedQueries": [
 		{
 			"operation": "update",
@@ -35,173 +36,15 @@
 			"eventTrigger": "onReload"
 		}
 	],
-	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "codice_azienda",
-			"key": "codice_azienda",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": true,
-			"newLine": false
-		},
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "#",
-			"key": "id_contratto",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false,
-			"size": 0.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Fornitore",
-			"key": "id_fornitore",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "N. Contratto",
-			"key": "numero_contratto",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Descrizione",
-			"key": "descrizione",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', ragione_sociale) as name from entrasp.anagrafiche_vr an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and codice_ruolo= 'FONDO';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Fondo Gestito",
-			"key": "id_strumento_finanziario",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_asset AS id, descrizione as name from entrasp.asset WHERE codice_azienda='€global_codice_azienda€';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Asset",
-			"key": "id_asset",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_stipulazione",
-			"label": "Data Stipula",
-			"newLine": false,
-			"size": 2,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_cessazione",
-			"label": "Data Cessazione",
-			"newLine": false,
-			"size": 2,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_contratto_da",
-			"label": "Data Contratto Da",
-			"newLine": false,
-			"size": 2,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_contratto_a",
-			"label": "Data Contratto a",
-			"newLine": false,
-			"size": 2,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "object_key",
-			"key": "object_key",
-			"queryFunct": "codice_azienda||'|'||id_contratto",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": false,
-			"newLine": false
-		}
-	],
+	"define": {
+		"is_hidden_conflicts": "true",
+		"is_hidden_invisible_field": "true",
+		"label_id_controparte": "Cliente",
+		"label_controparte": "Cliente",
+		"is_hidden_mifid": "false",
+		"size_with_or_without_mifid": "1.57",
+		"is_hidden_fornitori": "false"
+	},
 	"table_keys": [
 		{
 			"format": {
