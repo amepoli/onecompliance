@@ -93,9 +93,9 @@ export class ButtonComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         const _this = this;
-        _this.field.style = _this.field.style == null ? { background_color: 'lightblue', font_color: 'black' } : _this.field.style;
-        _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : 'lightblue';
-        _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
+        _this.field.style = _this.field.style == null ? { background_color: '#2A4F9D', font_color: 'white' } : _this.field.style;
+        _this.field.style.background_color = _this.field.style.background_color != null ? _this.field.style.background_color : '#2A4F9D';
+        _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'white';
     }
 
     ngOnDestroy() {
