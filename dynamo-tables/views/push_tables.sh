@@ -67,3 +67,15 @@ dynamo_files=(dynamo-input/*.json)
 for d in "${dynamo_files[@]}"; do
     aws dynamodb batch-write-item --request-items file://$d  
 done
+
+
+# For aligning using S3 bucket
+if [ $# -eq 2 ]
+  then
+    echo "Going to align views/"${2}" on "${TABLENAME}
+      cd ../../tools/push_tables_s3
+      ./run.sh ${TABLENAME} views/${2}
+    echo "Uploaded to S3!"
+  else
+    echo "Did not upload to S3!"
+fi   
