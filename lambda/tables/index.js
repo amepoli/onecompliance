@@ -17,7 +17,7 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 
 const AmazonDaxClient = require('amazon-dax-client');
-const dax = new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' });
+const dax = DAX_ENABLED? new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' }): null;
 const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED? dax: null });
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
