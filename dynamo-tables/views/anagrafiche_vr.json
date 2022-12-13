@@ -182,16 +182,16 @@
                         },
                         "actionOnYes": {
                             "actionType": "query",
-                            "queryFunct": "select entrasp.anagrafica_id_new_version('€global_codice_azienda€', $id_anagrafica$, $prog_vr$, $codice_tipo_documento$, ($data_scadenza_documento$)::date) as prog_vr"
+                            "queryFunct": "select entrasp.anagrafica_id_new_version('€global_codice_azienda€', $id_anagrafica$, $prog_vr$, true) as prog_vr"
                         }
                     },
                     "condition": "none",
                     "values": [],
-                    "outputEventWhenComplete": "cancella_tipo_documento"
+                    "outputEventWhenComplete": "navigate_to_new_vr"
                 },
                 {
                     "eventName": "cancella_tipo_documento",
-                    "actionType": "query",
+                    "actionType": "show",
                     "queryFunct": "select 'ND'::varchar as codice_tipo_documento",
                     "condition": "none",
                     "values": [],
@@ -1906,6 +1906,28 @@
             },
             "actionType": "navigate",
             "eventName": "navigate_to_new_progetto"
+        },
+        {
+            "actionTarget": {
+                "name": "anagrafiche_vr",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    },
+                    {
+                        "source": "prog_vr",
+                        "destination": "prog_vr"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_new_vr"
         }
     ],
     "hideActions": [
