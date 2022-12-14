@@ -35,6 +35,7 @@ import { MatMenuModule } from '@angular/material/menu';
 
 import { AngularEditorModule } from '@kolkov/angular-editor';
 import { S3ExplorerModule } from '../widgets/s3-explorer/s3-explorer.module';
+import { OCDateModule, OCDateTimeModule } from '../adapters';
 
 @NgModule({
     declarations: [
@@ -70,7 +71,10 @@ import { S3ExplorerModule } from '../widgets/s3-explorer/s3-explorer.module';
         AttachmentsModule,
         MultiAttachmentsModule,
         ShareModule,
-        S3ExplorerModule
+        S3ExplorerModule,
+
+        OCDateModule,
+        OCDateTimeModule
     ],
     exports: [
         InputComponent,
@@ -89,6 +93,6 @@ import { S3ExplorerModule } from '../widgets/s3-explorer/s3-explorer.module';
         LabelComponent,
         SubformComponent
     ],
-    providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it' }]
+    providers: [{ provide: MAT_DATE_LOCALE, useValue: 'it-IT' }]
 })
 export class DynamicFormsModule { }
