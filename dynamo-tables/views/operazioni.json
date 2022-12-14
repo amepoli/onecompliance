@@ -71,7 +71,11 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": true,
-			"size": 3.4
+			"size": 3.4,
+			"outputEvent": {
+				"eventTrigger": "select",
+				"eventName": "calcola_segno"
+			}
 		},
 		{
 			"autoGenerate": false,
@@ -81,18 +85,28 @@
 			},
 			"label": "Segno",
 			"key": "segno",
-			"readOnly": false,
+			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": false,
 			"size": 3.3,
-			"newLine": false
+			"newLine": false,
+			"inputEvents": [
+				{
+					"eventName": "calcola_segno",
+					"actionType": "query",
+					"queryFunct": "select segno from entrasp.causali_analitiche where id_causale=$id_causale$",
+					"condition": "none",
+          			"values": []
+				}
+			]
 		},
 		{
 			"autoGenerate": false,
 			"format": {
 				"comboQuery": "SELECT id_valuta AS id, sigla as name from entrasp.valute WHERE codice_part='€global_codice_part€';",
 				"options": [],
-				"viewType": "combobox"
+				"viewType": "combobox",
+				"value": "0"
 			},
 			"label": "valuta",
 			"key": "codice_valuta",
