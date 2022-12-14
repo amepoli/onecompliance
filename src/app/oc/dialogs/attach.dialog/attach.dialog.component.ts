@@ -148,7 +148,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 const element = _this.data.keys[key];
                 // hack, fe_attachment_form needs this field
                 if (key === 'codice_part') {
-                    _this.formParams.keys['codice_azienda'] = element;
+                    _this.formParams.keys['codice_azienda'] = _this.authService.getCurrentCompany(); //element;
                     // hack, fe_attachment_form pick up the value of 'descrizione' if we attach from domande(incorrect) [maybe because they have the same name_key ('descrizione' in fe_att and domande) ]
                 } else if (key === 'descrizione') {
                     _this.formParams.keys[key] = '';
