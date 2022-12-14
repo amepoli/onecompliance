@@ -10,7 +10,7 @@ exports.handler = async (event, context) => {
 
   //Declare queryParams
   const queryParams = event.queryStringParameters ? event.queryStringParameters : event;
-  //console.log('queryParams: ', queryParams);
+  console.log('queryParams: ', queryParams);
 
   const company = queryParams['company'];
   const checkId = queryParams['checkId'];
@@ -38,7 +38,7 @@ exports.handler = async (event, context) => {
       'Access-Control-Allow-Origin': '*'
     }
   });
-  //console.log('Token:', token.data.access_token);
+  console.log('Token:', token.data.access_token);
 
 
   /*** Get Scans ***/

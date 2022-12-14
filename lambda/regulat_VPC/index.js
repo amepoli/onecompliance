@@ -83,7 +83,7 @@ exports.handler = async (event) => {
                 AND ca.dt_fine IS NULL
                 AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null);`;
 
-                //console.log('running query: ', query);
+                console.log('running query: ', query);
                 response = await client.query(query);
 
                 let connectedRegistries = null;
