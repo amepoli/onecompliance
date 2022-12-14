@@ -87,7 +87,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
             if (_this.newTypeParams.keys.codice_azienda == null) { // hack, tipi_allegati requires this field
-                _this.newTypeParams.keys.codice_azienda = _this.newTypeParams.keys.codice_part;
+                _this.newTypeParams.keys.codice_azienda = _this.authService.getCurrentCompany();
             }
             _this.attach = true;
         });

@@ -87,7 +87,8 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 }
             }
             if (_this.newTypeParams.keys.codice_azienda == null) { // hack, tipi_allegati requires this field
-                _this.newTypeParams.keys.codice_azienda = _this.newTypeParams.keys.codice_part;
+                _this.newTypeParams.keys.codice_azienda = _this.authService.getCurrentCompany(); 
+                //_this.newTypeParams.keys.codice_part;
             }
             _this.attach = true;
         });
