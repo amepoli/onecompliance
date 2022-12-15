@@ -10,7 +10,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select coll.tipo, coll.id_argomento, td.*  from entrasp.cpl_trattamenti_dati td inner join (select codice_azienda, id_trattamento_dati, id_argomento_categoria as id_argomento, 'categoria' as tipo from entrasp.cpl_trattamenti_dati_categorie union select codice_azienda, id_trattamento_dati, id_argomento_finalita, 'finalita' as tipo from entrasp.cpl_trattamenti_dati_finalita) coll on td.codice_azienda=coll.codice_azienda and td.id_trattamento_dati=coll.id_trattamento_dati where td.codice_azienda in(€global_user_companies€) and id_argomento=$id_argomento$"
+      "queryString": "select coll.tipo, coll.id_argomento, td.*  from entrasp.cpl_trattamenti_dati td inner join (select codice_azienda, id_trattamento_dati, id_argomento_categoria as id_argomento, 'categoria' as tipo from entrasp.cpl_trattamenti_dati_categorie union select codice_azienda, id_trattamento_dati, id_argomento_finalita, 'finalita' as tipo from entrasp.cpl_trattamenti_dati_finalita) coll on td.codice_azienda=coll.codice_azienda and td.id_trattamento_dati=coll.id_trattamento_dati where td.codice_azienda in(€global_user_companies€) and id_argomento=entrasp.evaluate_given_field_null('id_argomento', '$id_argomento$')"
     }
   ]
   
