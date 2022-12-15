@@ -101,18 +101,36 @@ export class HelperService {
      * @returns formatted date time
      */
     public static getFormattedDateTime(dateTime: any, timezone: string = 'Z') {
-        // Example formatted date
-        // "2017-09-25T00:00:00.000Z"
-        let date = new Date(dateTime);
-        //We use dayCorrector to remove the timezone. We want brut date without any timezone
-        // let dayCorrector = (date.getHours()>12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
-        // date.setDate(date.getDate()+dayCorrector);
-        let dateTimeFinal = `${date.getFullYear()}-${this.getTwoDigitText(date.getMonth() + 1)}-${this.getTwoDigitText(date.getDate())}T${this.getTwoDigitText(date.getHours())}:${this.getTwoDigitText(date.getMinutes())}:${this.getTwoDigitText(date.getSeconds())}.000${timezone}`;
-        return dateTimeFinal;
+        //Check the format and fix it is not Long Date time
+        if(dateTime.includes(',')) {
+            // This was manually added and so we need to format it
+            const parts = dateTime.replace(' ', '').split(',');
+            const dateParts = parts[0].split('/');
+            const timeParts = parts[1].split(':');
+            try {
+                let dateTimeFinal = `${dateParts[2]}-${this.getTwoDigitText(parseInt(dateParts[1]))}-${this.getTwoDigitText(parseInt(dateParts[0]))}T${this.getTwoDigitText(parseInt(timeParts[0]))}:${this.getTwoDigitText(parseInt(timeParts[1]))}:${this.getTwoDigitText(parseInt(timeParts[2]))}.000${timezone}`;
+                return dateTimeFinal;
+            }
+            catch(e) {
+                console.log(e);
+                return null;
+            }
 
-        // Old method
-        // let formattedDate = `${dateTime.getFullYear()}-${this.getTwoDigitText(dateTime.getMonth() + 1)}-${this.getTwoDigitText(dateTime.getDate())}T00:00:00.000Z`;
-        // return formattedDate;
+        } 
+        else {
+            // Example formatted date
+            // "2017-09-25T00:00:00.000Z"
+            let date = new Date(dateTime);
+            //We use dayCorrector to remove the timezone. We want brut date without any timezone
+            // let dayCorrector = (date.getHours()>12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
+            // date.setDate(date.getDate()+dayCorrector);
+            let dateTimeFinal = `${date.getFullYear()}-${this.getTwoDigitText(date.getMonth() + 1)}-${this.getTwoDigitText(date.getDate())}T${this.getTwoDigitText(date.getHours())}:${this.getTwoDigitText(date.getMinutes())}:${this.getTwoDigitText(date.getSeconds())}.000${timezone}`;
+            return dateTimeFinal;
+    
+            // Old method
+            // let formattedDate = `${dateTime.getFullYear()}-${this.getTwoDigitText(dateTime.getMonth() + 1)}-${this.getTwoDigitText(dateTime.getDate())}T00:00:00.000Z`;
+            // return formattedDate;
+        }
     }
 
     /**
