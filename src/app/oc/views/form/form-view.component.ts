@@ -188,7 +188,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     }
 
     isFormValid() {
-        let notValidField;
+        let notValidField = [];
         if (this.formGetter.formArray && this.formGetter.formArray.length) {
             this.formGetter.formArray.forEach(form => {
 
@@ -199,11 +199,22 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                 // }
 
                 form.fields.forEach(field => {
-                    if (field.isVisible && form.form.get(field.name) && !form.form.get(field.name).valid) {
-                        form.form.get(field.name).markAsTouched({ onlySelf: false });
-                        //isValid = false;
-                        notValidField = field.label; 
-                        return;
+                    if (field.type == 'subform' && field.subform) {
+                        field.subform.forEach(subformField => {
+                            if (subformField.isVisible && form.form.get(subformField.name) && !form.form.get(subformField.name).valid) {
+                                form.form.get(subformField.name).markAsTouched({ onlySelf: false });
+                                //isValid = false;
+                                notValidField.push(`"${subformField.label}"`);
+                                return;
+                            }
+                        });
+                    } else {
+                        if (field.isVisible && form.form.get(field.name) && !form.form.get(field.name).valid) {
+                            form.form.get(field.name).markAsTouched({ onlySelf: false });
+                            //isValid = false;
+                            notValidField.push(`"${field.label}"`);
+                            return;
+                        }
                     }
                 });
                 // if (!isValid) {
@@ -216,7 +227,11 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
             });
         }
-        return notValidField;
+        if (notValidField.length > 0) {
+            return [... new Set(notValidField)];
+        } else {
+            return null;
+        }
     }
 
     navigationToViewHome(values, data) {
@@ -245,7 +260,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     onSave() {
         let _this = this;
-        let notValidField = JSON.stringify(_this.isFormValid());
+        let notValidField = _this.isFormValid();
         if (!notValidField) {
             // notify parent, which will take care of propagating to siblings if needed 
             _this.sendEvent.emit({ eventType: 'gotSave' });
@@ -333,7 +348,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             _this.subscriptions.push(subscription);
         }
         else {
-            _this._toastService.showWarningToast("Form is not valid", "Please check "+ notValidField, 5000, true);
+            _this._toastService.showWarningToast("Form is not valid", "Please check "+ notValidField.join(', '), 5000, true);
         }
     }
 
