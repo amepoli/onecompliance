@@ -6,7 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select fin.*, entrasp.argomenti_descr_breve(id_argomento_finalita) as finalita_trattamento, true as delete_trattamenti_dati_finalita, entrasp.articoli_normativi_descrizione(argan.id_articolo_normativo) as rif_normativo from entrasp.cpl_trattamenti_dati_finalita fin left join entrasp.argomenti_articoli_normativi argan on fin.id_argomento_finalita=argan.id_argomento where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$",
+      "queryString": "select fin.*, entrasp.argomenti_descr_breve(id_argomento_finalita) as finalita_trattamento, true as delete_trattamenti_dati_finalita, entrasp.articoli_normativi_descrizione(argan.id_articolo_normativo) as rif_normativo, argan.id_articolo_normativo from entrasp.cpl_trattamenti_dati_finalita fin left join entrasp.argomenti_articoli_normativi argan on fin.id_argomento_finalita=argan.id_argomento where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$",
       "type": "main"
     }
   ],
@@ -100,6 +100,15 @@
       "format": {
         "dataType": "number"
       },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_articolo_normativo",
+      "label": "id_articolo_normativo"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
       "isHidden": false,
       "isPrimary": false,
       "width": "4%",
@@ -153,6 +162,22 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "rif_normativo",
+      "isInputButton": true,
+            "buttonAction": {
+                "target": "articoli_normativi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_articolo_normativo",
+                        "destination": "id_articolo_normativo"
+                    }
+                ]
+            },
       "width": "40%",
       "label": "Riferimento normativo"
     },
