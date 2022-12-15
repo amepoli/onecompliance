@@ -25,5 +25,13 @@
 			],
 			"label": "Trattamenti dati"
 		  }
-	]
+	],
+	"exportQueries": {
+		"formQueries": [
+			{
+				"label": "Trattamenti dati associati alla categoria",
+				"queryString": "select entrasp.argomenti_descr_breve(id_argomento_consenso) as tipo_consenso, td.titolo as trattamento, an.codice_articolo_normativo||'-'||rubrica as base_giuridica from entrasp.articoli_normativi an left join entrasp.argomenti arg on an.id_argomento_consenso=arg.id_argomento inner join entrasp.cpl_trattamenti_dati_finalita tdf on an.id_articolo_normativo=tdf.id_articolo_normativo right join entrasp.cpl_trattamenti_dati td on tdf.id_trattamento_dati=td.id_trattamento_dati and tdf.codice_azienda=td.codice_azienda right join entrasp.cpl_trattamenti_dati_categorie tdc on tdc.id_trattamento_dati=td.id_trattamento_dati and tdc.codice_azienda=td.codice_azienda where td.codice_azienda=$codice_azienda$ and tdc.id_argomento_categoria=$id_argomento$ order by td.codice_azienda, entrasp.argomenti_descr_breve(id_argomento_consenso)"
+			}
+		]
+	}
 }
