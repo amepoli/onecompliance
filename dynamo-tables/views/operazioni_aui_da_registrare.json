@@ -12,7 +12,7 @@
     {
       "operation": "selectForm",
       "type": "main",
-      "queryString": "select an.id_anagrafica as id_anagrafica, avr.codice_nazione, avr.indirizzo, ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario, ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,az.cab_comune_filiale, az.comune_filiale, az.provincia_filiale, op.data_op as data_operazione, concat(ca.codice_causale, ' - ' ,ca.descrizione) as causale_analitica, op.segno,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta, op.importo as importo_euro, op.importo_contanti, ct.numero_contratto as identificativo_rapporto,'01' as tipo_soggetto, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo, avr.codice_comune, avr.cab_comune, ate.id_ateco, sae.cod_sae, (select codice from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as ndg_esecutore, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_esecutore)as cognome_nome_esecutore, (select codice_fiscale from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore order by prog_vr desc limit 1) as cod_fiscale_esecutore, (select nascita_data from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as data_nascita_esecutore, (select nascita_luogo from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as comune_paese_nascita_esecutore, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_beneficiario)as cognome_nome_rag_sociale_ben, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='€global_codice_part€' and avr.id_anagrafica=op.id_anagrafica_beneficiario order by avr.prog_vr desc limit 1) as paese_ordinante_beneficiario, (select cab_comune from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_beneficiario order by prog_vr desc limit 1) as cab_ordinante_beneficiario, (select comune from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_beneficiario order by prog_vr desc limit 1) as comune_ordinante_beneficiario, (select codice from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_ctp) as codice_intermediario_ctp, (select ragione_sociale from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_ctp order by prog_vr desc limit 1) as denominazione_intermediario_ctp, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='€global_codice_part€' and avr.id_anagrafica=op.id_anagrafica_ctp order by avr.prog_vr desc limit 1) as paese_intermediario_ctp, op.cab_ordinante as cab_intermediario_cpt, op.iban_rapp_ctp as iban_rapporto_cpt from entrasp.operazioni op inner join entrasp.contratti ct on op.codice_azienda=ct.codice_azienda and op.id_contratto=ct.id_contratto inner join entrasp.causali_analitiche ca on op.id_causale=ca.id_causale inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where op.codice_azienda=$codice_azienda$ and op.id_operazione=$id_operazione$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
+      "queryString": "select op.annotazioni_interne, an.id_anagrafica as id_anagrafica, avr.codice_nazione, op.id_operazione, avr.indirizzo, ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario, ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,az.cab_comune_filiale, az.comune_filiale, az.provincia_filiale, op.data_op as data_operazione, concat(ca.codice_causale, ' - ' ,ca.descrizione) as causale_analitica, op.segno,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta, op.importo as importo_euro, op.importo_contanti, ct.numero_contratto as identificativo_rapporto,'01' as tipo_soggetto, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo, avr.codice_comune, avr.cab_comune, ate.id_ateco, sae.cod_sae, (select codice from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as ndg_esecutore, op.id_anagrafica_esecutore as id_anagrafica_esec, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_esecutore)as cognome_nome_esecutore, (select codice_fiscale from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore order by prog_vr desc limit 1) as cod_fiscale_esecutore, (select nascita_data from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as data_nascita_esecutore, (select nascita_luogo from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as comune_paese_nascita_esecutore, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_beneficiario)as cognome_nome_rag_sociale_ben, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='€global_codice_part€' and avr.id_anagrafica=op.id_anagrafica_beneficiario order by avr.prog_vr desc limit 1) as paese_ordinante_beneficiario, (select cab_comune from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_beneficiario order by prog_vr desc limit 1) as cab_ordinante_beneficiario, (select comune from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_beneficiario order by prog_vr desc limit 1) as comune_ordinante_beneficiario, (select codice from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_ctp) as codice_intermediario_ctp, (select ragione_sociale from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_ctp order by prog_vr desc limit 1) as denominazione_intermediario_ctp, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='€global_codice_part€' and avr.id_anagrafica=op.id_anagrafica_ctp order by avr.prog_vr desc limit 1) as paese_intermediario_ctp, op.cab_ordinante as cab_intermediario_cpt, op.iban_rapp_ctp as iban_rapporto_cpt from entrasp.operazioni op inner join entrasp.contratti ct on op.codice_azienda=ct.codice_azienda and op.id_contratto=ct.id_contratto inner join entrasp.causali_analitiche ca on op.id_causale=ca.id_causale inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where op.codice_azienda=$codice_azienda$ and op.id_operazione=$id_operazione$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
     }
   ],
   "form_keys": [
@@ -260,7 +260,7 @@
       "label": "Codice Filiale",
       "newLine": false,
       "size": 1.66,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -274,7 +274,7 @@
       "label": "CAB Filiale",
       "size": 1.67,
       "newLine": false,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -295,7 +295,7 @@
       "label": "Comune Filiale",
       "size": 3.33,
       "newLine": false,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -316,7 +316,7 @@
       "label": "CAB Comune Filiale",
       "size": 1.67,
       "newLine": false,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -337,7 +337,7 @@
       "label": "Provincia Filiale",
       "size": 1.67,
       "newLine": true,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "format": {
@@ -759,16 +759,23 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "invisible"
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Campo Obbligatorio",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "invisible",
-      "label": "invisible",
-      "size": 3.3,
-      "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
+      "key": "cab_comune_filiale",
+      "label": "CAB Comune di Residenza",
+      "size": 3.33,
+      "newLine": false,
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -832,14 +839,7 @@
         "viewType": "combobox",
         "options": [],
         "dataType": "text",
-        "comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'",
-        "validations": [
-          {
-            "message": "Campo Obbligatorio",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -930,6 +930,20 @@
     {
       "autoGenerate": false,
       "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica_esec",
+      "label": "",
+      "newLine": false,
+      "size": 0,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "dataType": "text",
         "viewType": "input"
       },
@@ -967,7 +981,21 @@
       "label": "Data di Nascita",
       "newLine": true,
       "size": 3.3,
-      "readOnly": false
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateDtNascitaEsec",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateDtNascitaEsec",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_id set nascita_data='£data_nascita_esecutore£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica_esec$ RETURNING 1",
+          "successMessage": "Comune di Nascita Aggiornato"
+        }
+      ]
     },
     {
       "autoGenerate": false,
@@ -1011,7 +1039,21 @@
       "label": "Comune di Nascita",
       "size": 3.3,
       "newLine": true,
-      "readOnly": false
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateComuneNascitaEsec",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateComuneNascitaEsec",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_id set nascita_luogo='£comune_paese_nascita_esecutore£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica_esec$ RETURNING 1",
+          "successMessage": "Comune di Nascita Aggiornato"
+        }
+      ]
     },
     {
       "format": {
@@ -1167,11 +1209,25 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "a_disposizione",
+      "key": "annotazioni_interne",
       "label": "A Disposizione",
       "size": 10,
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+			"outputEvent": {
+				"eventName": "updateAnnotazioniInterne",
+				"eventTrigger": "blur"
+			},
+			"inputEvents": [
+				{
+					"condition": "none",
+					"values": [],
+					"eventName": "updateAnnotazioniInterne",
+					"actionType": "query",
+					"queryFunct": "update entrasp.operazioni set annotazioni_interne='£annotazioni_interne£' where codice_azienda=$codice_azienda$ and id_operazione=$id_operazione$ RETURNING 1",
+					"successMessage": "Note Aggiornate"
+				}
+			]
     }
   ],
   "table_keys": [
@@ -1220,7 +1276,7 @@
       "key": "causale_analitica",
       "isHidden": false,
       "isPrimary": false,
-      "width": "50%"
+      "width": "40%"
     },
     {
       "format": {
@@ -1240,7 +1296,7 @@
       "isPrimary": false,
       "key": "contratto",
       "label": "Contratto",
-      "width": "15%"
+      "width": "25%"
     },
     {
       "format": {
@@ -1274,5 +1330,64 @@
         ]
       }
     }
-  ]
+  ],
+  "subTables": [
+		{
+			"entryKey": "connessioni_anagrafiche_sub_rapp_aui_da_registrare",
+			"isHidden": false,
+			"keys": [
+				{
+					"parent": "id_anagrafica",
+					"son": "id_anagrafica"
+				},
+				{
+					"parent": "codice_part",
+					"son": "codice_part"
+				}
+			],
+			"label": "Anagrafiche connesse"
+		}
+	],
+	"hideActions": [
+		{
+			"tableActionType": "add",
+			"viewType": "table"
+		},
+		{
+			"tableActionType": "quick-add",
+			"viewType": "table"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "startEvent"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "stopEvent"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "import_export"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "share"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "attachments"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "multi-attachments"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "documentation"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "delete"
+		}
+	]
 }
