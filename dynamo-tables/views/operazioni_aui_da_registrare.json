@@ -2,41 +2,20 @@
   "$schema": "../views.schema.json",
   "entryKey": "operazioni_aui_da_registrare",
   "origin": "entrasp.anagrafiche_vr",
-	"businessObjectName": "anagrafiche_vr",
+  "businessObjectName": "anagrafiche_vr",
   "predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select roa.id_registrazione_op, op.id_operazione, op.codice_azienda,op.codice_part,op.data_op,op.id_causale, op.importo from entrasp.operazioni op left join entrasp.registrazioni_operazioni_aui roa on op.codice_azienda=roa.codice_azienda and op.id_operazione=roa.id_operazione where op.codice_azienda=$codice_azienda$"
-		},
     {
-			"operation": "selectForm",
-			"type": "main",
-			"queryString": "select an.id_anagrafica as id_anagrafica, avr.codice_nazione, avr.indirizzo, ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario, ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,az.cab_comune_filiale, az.comune_filiale, az.provincia_filiale, op.data_op as data_operazione, concat(ca.codice_causale, ' - ' ,ca.descrizione) as causale_analitica, op.segno,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta, op.importo as importo_euro, op.importo_contanti, ct.numero_contratto as identificativo_rapporto,'01' as tipo_soggetto, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo, avr.codice_comune, avr.cab_comune, ate.id_ateco, sae.cod_sae, (select codice from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as ndg_esecutore, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_esecutore)as cognome_nome_esecutore, (select codice_fiscale from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore order by prog_vr desc limit 1) as cod_fiscale_esecutore, (select nascita_data from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as data_nascita_esecutore, (select nascita_luogo from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as comune_paese_nascita_esecutore, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_beneficiario)as cognome_nome_rag_sociale_ben, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='€global_codice_part€' and avr.id_anagrafica=op.id_anagrafica_beneficiario order by avr.prog_vr desc limit 1) as paese_ordinante_beneficiario, (select cab_comune from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_beneficiario order by prog_vr desc limit 1) as cab_ordinante_beneficiario, (select comune from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_beneficiario order by prog_vr desc limit 1) as comune_ordinante_beneficiario, (select codice from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_ctp) as codice_intermediario_ctp, (select ragione_sociale from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_ctp order by prog_vr desc limit 1) as denominazione_intermediario_ctp, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='€global_codice_part€' and avr.id_anagrafica=op.id_anagrafica_ctp order by avr.prog_vr desc limit 1) as paese_intermediario_ctp, op.cab_ordinante as cab_intermediario_cpt, op.iban_rapp_ctp as iban_rapporto_cpt from entrasp.operazioni op inner join entrasp.contratti ct on op.codice_azienda=ct.codice_azienda and op.id_contratto=ct.id_contratto inner join entrasp.causali_analitiche ca on op.id_causale=ca.id_causale inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where op.codice_azienda=$codice_azienda$ and op.id_operazione=$id_operazione$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
-		}
-  ],
-  "table_multiselection_actions": [
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select roa.id_registrazione_op, op.id_operazione, (select concat(id_contratto, ' - ' ,descrizione) as name from entrasp.contratti where codice_azienda=op.codice_azienda and id_contratto=op.id_contratto) as contratto, op.codice_azienda,op.codice_part,op.data_op, entrasp.causali_codice_descr(id_causale) as causale_analitica, op.importo from entrasp.operazioni op left join entrasp.registrazioni_operazioni_aui roa on op.codice_azienda=roa.codice_azienda and op.id_operazione=roa.id_operazione where op.codice_azienda=$codice_azienda$"
+    },
     {
-        "viewType": "menu",
-        "key": "menureg_op",
-        "label": "Actions",
-        "icon": "more_vert",
-        "menuOptions": [
-          {
-              "key": "unifica",
-              "icon": "merge_type",
-              "label": "Unifica modelli verifica",
-              "query": "select 1",
-              "confirmAction": true,
-              "reloadOnSuccess": true,
-              "confirmActionMessage": "Unificare i modelli di verifica selezionati?"
-          }
-        
-        
-        ]
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "select op.annotazioni_interne, an.id_anagrafica as id_anagrafica, avr.codice_nazione, op.id_operazione, avr.indirizzo, ct.codice_azienda, ct.codice_part, arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario, ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,az.cab_comune_filiale, az.comune_filiale, az.provincia_filiale, op.data_op as data_operazione, concat(ca.codice_causale, ' - ' ,ca.descrizione) as causale_analitica, op.segno,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta, op.importo as importo_euro, op.importo_contanti, ct.numero_contratto as identificativo_rapporto,'01' as tipo_soggetto, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo, avr.codice_comune, avr.cab_comune, ate.id_ateco, sae.cod_sae, (select codice from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as ndg_esecutore, op.id_anagrafica_esecutore as id_anagrafica_esec, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_esecutore)as cognome_nome_esecutore, (select codice_fiscale from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore order by prog_vr desc limit 1) as cod_fiscale_esecutore, (select nascita_data from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as data_nascita_esecutore, (select nascita_luogo from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_esecutore) as comune_paese_nascita_esecutore, entrasp.anagrafiche_cognnome(az.codice_part, op.id_anagrafica_beneficiario)as cognome_nome_rag_sociale_ben, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='€global_codice_part€' and avr.id_anagrafica=op.id_anagrafica_beneficiario order by avr.prog_vr desc limit 1) as paese_ordinante_beneficiario, (select cab_comune from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_beneficiario order by prog_vr desc limit 1) as cab_ordinante_beneficiario, (select comune from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_beneficiario order by prog_vr desc limit 1) as comune_ordinante_beneficiario, (select codice from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_ctp) as codice_intermediario_ctp, (select ragione_sociale from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=op.id_anagrafica_ctp order by prog_vr desc limit 1) as denominazione_intermediario_ctp, (select cod_banca_italia from entrasp.nazioni naz inner join entrasp.anagrafiche_vr avr on naz.codice_nazione =avr.codice_nazione where avr.codice_part='€global_codice_part€' and avr.id_anagrafica=op.id_anagrafica_ctp order by avr.prog_vr desc limit 1) as paese_intermediario_ctp, op.cab_ordinante as cab_intermediario_cpt, op.iban_rapp_ctp as iban_rapporto_cpt from entrasp.operazioni op inner join entrasp.contratti ct on op.codice_azienda=ct.codice_azienda and op.id_contratto=ct.id_contratto inner join entrasp.causali_analitiche ca on op.id_causale=ca.id_causale inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where op.codice_azienda=$codice_azienda$ and op.id_operazione=$id_operazione$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica);"
     }
-],
-"form_keys": [
+  ],
+  "form_keys": [
     {
       "autoGenerate": false,
       "format": {
@@ -195,9 +174,52 @@
       "isPrimary": false,
       "key": "identificativo_rapporto",
       "label": "Identificativo Rapporto",
-      "newLine": true,
-      "size": 3.3,
+      "newLine": false,
+      "size": 2.8,
       "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "menu",
+        "menuOptions": [
+          {
+            "icon": "group_work",
+            "label": "Registra in AUI",
+            "outputEventName": "register"
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "eventName": "register",
+          "actionType": "show_message",
+          "condition": "none",
+          "values": [],
+          "message": {
+            "messageTitle": "Registra in AUI",
+            "messageText": "Sei sicuro di voler registrare definitivamente il rapporto e le anagrafiche connesse?",
+            "actionOnYes": {
+              "actionType": "query",
+              "queryFunct": "select entrasp.aui_registra_operazione($codice_azienda$, $id_operazione$)"
+            },
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select true"
+            }
+          },
+          "successMessage": "Fatto"
+        }
+      ],
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "more_vert",
+      "key": "rapporti_da_registrare_actions",
+      "label": "",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.4
     },
     {
       "format": {
@@ -238,7 +260,7 @@
       "label": "Codice Filiale",
       "newLine": false,
       "size": 1.66,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -252,7 +274,7 @@
       "label": "CAB Filiale",
       "size": 1.67,
       "newLine": false,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -273,7 +295,7 @@
       "label": "Comune Filiale",
       "size": 3.33,
       "newLine": false,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -294,7 +316,7 @@
       "label": "CAB Comune Filiale",
       "size": 1.67,
       "newLine": false,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -315,7 +337,7 @@
       "label": "Provincia Filiale",
       "size": 1.67,
       "newLine": true,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "format": {
@@ -381,7 +403,7 @@
     {
       "autoGenerate": false,
       "format": {
-				"viewType": "input",
+        "viewType": "input",
         "dataType": "text",
         "validations": [
           {
@@ -417,7 +439,7 @@
       "key": "segno",
       "label": "Segno",
       "newLine": false,
-      "size": 0.835,
+      "size": 0.8325,
       "readOnly": true
     },
     {
@@ -437,7 +459,7 @@
       "isPrimary": false,
       "key": "codice_valuta",
       "label": "Valuta",
-      "size": 0.835,
+      "size": 0.8325,
       "newLine": false,
       "readOnly": true
     },
@@ -458,7 +480,7 @@
       "isPrimary": false,
       "key": "importo_euro",
       "label": "Importo",
-      "size": 0.835,
+      "size": 0.8325,
       "newLine": false,
       "readOnly": true
     },
@@ -479,413 +501,412 @@
       "isPrimary": false,
       "key": "importo_contanti",
       "label": "Contanti",
-      "size": 0.835,
+      "size": 0.8325,
       "newLine": true,
       "readOnly": true
     },
-		{
-			"format": {
-				"dataType": "text",
-				"viewType": "label"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "dati_soggetto",
-			"label": "Dati Soggetto",
-			"style": {
-				"background_color": "#2B679D",
-				"font_color": "white",
-				"font_size": "1.3em",
-				"font_style": "italic",
-				"font_weight": "400"
-			},
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "cognome_nome_rag_sociale_soggetto",
-			"label": "Denominazione",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT codice_nazione AS id, concat (coalesce(cod_banca_italia::varchar,codice_nazione), '-' ,descrizione) AS name FROM entrasp.nazioni",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_nazione",
-			"label": "Stato di Residenza",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateNazione",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateNazione",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set codice_nazione='£codice_nazione£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Stato di Residenza Aggiornato"
-				}
-			]
-		},
     {
-			"format": {
-				"dataType": "number",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT cod_sae AS id, concat (cod_sae, '-' ,descrizione) AS name FROM entrasp.sae"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "cod_sae",
-			"label": "SAE",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateSae",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateSae",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set cod_sae='£cod_sae£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Codice SAE Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "tipo_soggetto",
-			"label": "Tipo Soggetto",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "indirizzo",
-			"label": "Indirizzo di Residenza",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateIndirizzoResidenza",
-				"eventTrigger": "blur"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateIndirizzoResidenza",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set indirizzo='£indirizzo£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Indirizzo di Residenza Aggiornato"
-				}
-			]
-		},
+      "format": {
+        "dataType": "text",
+        "viewType": "label"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "dati_soggetto",
+      "label": "Dati Soggetto",
+      "style": {
+        "background_color": "#2B679D",
+        "font_color": "white",
+        "font_size": "1.3em",
+        "font_style": "italic",
+        "font_weight": "400"
+      },
+      "newLine": true,
+      "readOnly": true,
+      "sameOrigin": false
+    },
     {
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT id_ateco AS id, descrizione AS name FROM entrasp.ateco"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_ateco",
-			"label": "Ateco",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateAteco",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateAteco",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set id_ateco='£id_ateco£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Codice Ateco Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice",
-			"label": "NDG",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_comune",
-			"label": "Comune di Residenza",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateComuneResidenza",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateComuneResidenza",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set codice_comune='£codice_comune£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Comune di Residenza Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "invisible"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "invisible",
-			"label": "invisible",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_fiscale",
-			"label": "Codice Fiscale",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "nascita_data",
-			"label": "Data di Nascita",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateDataNascita",
-				"eventTrigger": "change"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateDataNascita",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_id set nascita_data='£nascita_data£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
-					"successMessage": "Data di Nascita Aggiornata"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "invisible"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "invisible",
-			"label": "invisible",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "combobox",
-				"options": [],
-				"dataType": "text",
-				"comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "sesso",
-			"label": "Sesso",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateSesso",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateSesso",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_id set sesso='£sesso£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
-					"successMessage": "Sesso Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "nascita_luogo",
-			"label": "Comune di Nascita",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateComuneNascita",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateComuneNascita",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_id set nascita_luogo='£nascita_luogo£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
-					"successMessage": "Comune di Nascita Aggiornato"
-				}
-			]
-		},
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Campo Obbligatorio",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cognome_nome_rag_sociale_soggetto",
+      "label": "Denominazione",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": true
+    },
     {
-			"autoGenerate": false,
-			"format": {
-				"viewType": "invisible"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "invisible",
-			"label": "invisible",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT codice_nazione AS id, concat (coalesce(cod_banca_italia::varchar,codice_nazione), '-' ,descrizione) AS name FROM entrasp.nazioni",
+        "validations": [
+          {
+            "message": "Campo Obbligatorio",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_nazione",
+      "label": "Stato di Residenza",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateNazione",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateNazione",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_vr set codice_nazione='£codice_nazione£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+          "successMessage": "Stato di Residenza Aggiornato"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT cod_sae AS id, concat (cod_sae, '-' ,descrizione) AS name FROM entrasp.sae"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cod_sae",
+      "label": "SAE",
+      "size": 3.3,
+      "newLine": true,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateSae",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateSae",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_vr set cod_sae='£cod_sae£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+          "successMessage": "Codice SAE Aggiornato"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Campo Obbligatorio",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_soggetto",
+      "label": "Tipo Soggetto",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Campo Obbligatorio",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "indirizzo",
+      "label": "Indirizzo di Residenza",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateIndirizzoResidenza",
+        "eventTrigger": "blur"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateIndirizzoResidenza",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_vr set indirizzo='£indirizzo£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+          "successMessage": "Indirizzo di Residenza Aggiornato"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT id_ateco AS id, descrizione AS name FROM entrasp.ateco"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_ateco",
+      "label": "Ateco",
+      "size": 3.3,
+      "newLine": true,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateAteco",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateAteco",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_vr set id_ateco='£id_ateco£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+          "successMessage": "Codice Ateco Aggiornato"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Campo Obbligatorio",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice",
+      "label": "NDG",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia",
+        "validations": [
+          {
+            "message": "Campo Obbligatorio",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_comune",
+      "label": "Comune di Residenza",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateComuneResidenza",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateComuneResidenza",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_vr set codice_comune='£codice_comune£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+          "successMessage": "Comune di Residenza Aggiornato"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Campo Obbligatorio",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cab_comune_filiale",
+      "label": "CAB Comune di Residenza",
+      "size": 3.33,
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_fiscale",
+      "label": "Codice Fiscale",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "nascita_data",
+      "label": "Data di Nascita",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateDataNascita",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateDataNascita",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_id set nascita_data='£nascita_data£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
+          "successMessage": "Data di Nascita Aggiornata"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "invisible"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "invisible",
+      "label": "invisible",
+      "size": 3.3,
+      "newLine": true,
+      "readOnly": true,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "dataType": "text",
+        "comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "sesso",
+      "label": "Sesso",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateSesso",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateSesso",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_id set sesso='£sesso£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
+          "successMessage": "Sesso Aggiornato"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "nascita_luogo",
+      "label": "Comune di Nascita",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateComuneNascita",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateComuneNascita",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_id set nascita_luogo='£nascita_luogo£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
+          "successMessage": "Comune di Nascita Aggiornato"
+        }
+      ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "invisible"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "invisible",
+      "label": "invisible",
+      "size": 3.3,
+      "newLine": true,
+      "readOnly": true,
+      "sameOrigin": false
+    },
     {
       "format": {
         "dataType": "text",
@@ -905,6 +926,20 @@
       "newLine": true,
       "readOnly": true,
       "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_anagrafica_esec",
+      "label": "",
+      "newLine": false,
+      "size": 0,
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -946,22 +981,36 @@
       "label": "Data di Nascita",
       "newLine": true,
       "size": 3.3,
-      "readOnly": false
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateDtNascitaEsec",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateDtNascitaEsec",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_id set nascita_data='£data_nascita_esecutore£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica_esec$ RETURNING 1",
+          "successMessage": "Comune di Nascita Aggiornato"
+        }
+      ]
     },
     {
-			"autoGenerate": false,
-			"format": {
-				"viewType": "invisible"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "invisible",
-			"label": "invisible",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true,
-			"sameOrigin": false
-		},
+      "autoGenerate": false,
+      "format": {
+        "viewType": "invisible"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "invisible",
+      "label": "invisible",
+      "size": 3.3,
+      "newLine": false,
+      "readOnly": true,
+      "sameOrigin": false
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -979,18 +1028,32 @@
     {
       "autoGenerate": false,
       "format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia"
-			},
+        "dataType": "text",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia"
+      },
       "isHidden": false,
       "isPrimary": false,
       "key": "comune_paese_nascita_esecutore",
       "label": "Comune di Nascita",
       "size": 3.3,
       "newLine": true,
-      "readOnly": false
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateComuneNascitaEsec",
+        "eventTrigger": "select"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateComuneNascitaEsec",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_id set nascita_luogo='£comune_paese_nascita_esecutore£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica_esec$ RETURNING 1",
+          "successMessage": "Comune di Nascita Aggiornato"
+        }
+      ]
     },
     {
       "format": {
@@ -1002,7 +1065,7 @@
       "key": "dati_controparte",
       "label": "Dati Beneficiario / Controparte",
       "style": {
-        "background_color": "#03a9f4",
+        "background_color": "#2B679D",
         "font_color": "white",
         "font_size": "1.3em",
         "font_style": "italic",
@@ -1021,8 +1084,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "cognome_nome_rag_sociale_ben",
-      "label": "Cognome Nome / Ragione Sociale Beneficiario",
-      "size": 5,
+      "label": "Denominazione",
+      "size": 3.3,
       "newLine": false,
       "readOnly": false
     },
@@ -1034,9 +1097,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "paese_ordinante_beneficiario",
-      "label": "Paese Ordinante Beneficiario",
-      "size": 4,
+      "key": "comune_ordinante_beneficiario",
+      "label": "Comune Ordinante Beneficiario",
+      "size": 3.33,
       "newLine": false,
       "readOnly": false
     },
@@ -1050,8 +1113,8 @@
       "isPrimary": false,
       "key": "cab_ordinante_beneficiario",
       "label": "CAB Ordinante Beneficiario",
-      "size": 1,
-      "newLine": true,
+      "size": 1.67,
+      "newLine": false,
       "readOnly": false
     },
     {
@@ -1062,10 +1125,10 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "comune_ordinante_beneficiario",
-      "label": "Comune Ordinante Beneficiario",
-      "size": 4,
-      "newLine": false,
+      "key": "paese_ordinante_beneficiario",
+      "label": "Paese Ordinante Beneficiario",
+      "size": 1.66,
+      "newLine": true,
       "readOnly": false
     },
     {
@@ -1078,7 +1141,7 @@
       "isPrimary": false,
       "key": "codice_intermediario_ctp",
       "label": "Cod. Intermediario Controparte",
-      "size": 1,
+      "size": 0.8325,
       "newLine": false,
       "readOnly": false
     },
@@ -1092,7 +1155,7 @@
       "isPrimary": false,
       "key": "denominazione_intermediario_ctp",
       "label": "Denominazione Intermediario Controparte",
-      "size": 4,
+      "size": 2.4875,
       "newLine": false,
       "readOnly": false
     },
@@ -1106,8 +1169,8 @@
       "isPrimary": false,
       "key": "paese_intermediario_ctp",
       "label": "Paese Intermediario Controparte",
-      "size": 1,
-      "newLine": true,
+      "size": 1.67,
+      "newLine": false,
       "readOnly": false
     },
     {
@@ -1120,8 +1183,8 @@
       "isPrimary": false,
       "key": "cab_intermediario_ctp",
       "label": "CAB Intermediario Controparte",
-      "size": 1,
-      "newLine": true,
+      "size": 1.67,
+      "newLine": false,
       "readOnly": false
     },
     {
@@ -1134,8 +1197,8 @@
       "isPrimary": false,
       "key": "iban_rapporto_ctp",
       "label": "IBAN Rapporto Controparte",
-      "size": 3,
-      "newLine": false,
+      "size": 3.33,
+      "newLine": true,
       "readOnly": false
     },
     {
@@ -1146,100 +1209,189 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "a_disposizione",
+      "key": "annotazioni_interne",
       "label": "A Disposizione",
-      "size": 7,
+      "size": 10,
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+			"outputEvent": {
+				"eventName": "updateAnnotazioniInterne",
+				"eventTrigger": "blur"
+			},
+			"inputEvents": [
+				{
+					"condition": "none",
+					"values": [],
+					"eventName": "updateAnnotazioniInterne",
+					"actionType": "query",
+					"queryFunct": "update entrasp.operazioni set annotazioni_interne='£annotazioni_interne£' where codice_azienda=$codice_azienda$ and id_operazione=$id_operazione$ RETURNING 1",
+					"successMessage": "Note Aggiornate"
+				}
+			]
     }
   ],
   "table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"key": "id_operazione",
-			"label": "ID"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": true,
-			"key": "codice_azienda",
-			"label": "codice_azienda"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "codice_part",
-			"label": "codice_part"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"label": "Data Oper.",
-			"key": "data_op",
-			"isHidden": false,
-			"isPrimary": false
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"label": "Causale Analitica",
-			"key": "id_causale",
-			"queryFunct": "entrasp.causali_codice_descr (id_causale)",
-			"isHidden": false,
-			"isPrimary": false
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"label": "Importo",
-			"key": "importo",
-			"isHidden": false,
-			"isPrimary": false
-		},
     {
-			"format": {
-				"dataType": "number"
-			},
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_operazione",
+      "label": "# Operazione",
+      "width": "7%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "label": "Data Oper.",
+      "key": "data_op",
+      "isHidden": false,
+      "isPrimary": false
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "label": "Causale Analitica",
+      "key": "causale_analitica",
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "40%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "label": "Importo",
+      "key": "importo",
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "contratto",
+      "label": "Contratto",
+      "width": "25%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "8%",
+      "key": "id_registrazione_op",
+      "label": "Operazione Aui",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        }
+      ],
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "registrazioni_op",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_registrazione_op",
+            "destination": "id_registrazione_op"
+          }
+        ]
+      }
+    }
+  ],
+  "subTables": [
+		{
+			"entryKey": "connessioni_anagrafiche_sub_rapp_aui_da_registrare",
 			"isHidden": false,
-			"isPrimary": false,
-			"width": "5%",
-			"key": "id_registrazione_op",
-			"label": "Operazione Aui",
-			"style": [
+			"keys": [
 				{
-					"value": "*",
-					"text_align": "center"
+					"parent": "id_anagrafica",
+					"son": "id_anagrafica"
+				},
+				{
+					"parent": "codice_part",
+					"son": "codice_part"
 				}
 			],
-			"isInputButton": true,
-			"buttonAction": {
-				"target": "registrazioni_op",
-				"viewType": "form",
-				"action": "navigate",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_registrazione_op",
-						"destination": "id_registrazione_op"
-					}
-				]
-			}
+			"label": "Anagrafiche connesse"
+		}
+	],
+	"hideActions": [
+		{
+			"tableActionType": "add",
+			"viewType": "table"
+		},
+		{
+			"tableActionType": "quick-add",
+			"viewType": "table"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "startEvent"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "stopEvent"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "import_export"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "share"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "attachments"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "multi-attachments"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "documentation"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "delete"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "save"
 		}
 	]
 }
