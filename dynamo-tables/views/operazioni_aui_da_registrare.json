@@ -728,11 +728,25 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "cab_comune_filiale",
+      "key": "cab_comune",
       "label": "CAB Comune di Residenza",
       "size": 3.33,
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "outputEvent": {
+        "eventName": "updateCABComuneResidenza",
+        "eventTrigger": "blur"
+      },
+      "inputEvents": [
+        {
+          "condition": "none",
+          "values": [],
+          "eventName": "updateCABComuneResidenza",
+          "actionType": "query",
+          "queryFunct": "update entrasp.anagrafiche_vr set cab_comune='£cab_comune£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
+          "successMessage": "CAB Comune di Residenza Aggiornato"
+        }
+      ]
     },
     {
       "autoGenerate": false,
