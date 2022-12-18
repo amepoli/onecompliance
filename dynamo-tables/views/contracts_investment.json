@@ -71,12 +71,12 @@
 				"dataType": "date",
 				"viewType": "input",
 				"validations": [
-                    {
-                        "message": "Inserire il giorno di stipulazione del contratto",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+					{
+						"message": "Inserire il giorno di stipulazione del contratto",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -188,13 +188,13 @@
 			"format": {
 				"viewType": "input",
 				"dataType": "text",
-                "validations": [
-                    {
-                        "message": "Numero contratto necessario",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+				"validations": [
+					{
+						"message": "Numero contratto necessario",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
 			},
 			"label": "N.Contratto",
 			"key": "numero_contratto",
@@ -290,7 +290,7 @@
 			"isPrimary": false,
 			"newLine": false,
 			"size": 1.57
-		},	
+		},
 		{
 			"autoGenerate": false,
 			"format": {
@@ -307,7 +307,7 @@
 			"isPrimary": false,
 			"newLine": false,
 			"size": 1.57
-		},	
+		},
 		{
 			"format": {
 				"viewType": "invisible"
@@ -380,7 +380,7 @@
 			"newLine": false,
 			"size": "$Q{size_with_or_without_mifid}",
 			"tooltip": "Si veda il menù 'Scadenziario'"
-		},		
+		},
 		{
 			"autoGenerate": false,
 			"format": {
@@ -482,6 +482,246 @@
 			"label": "codice_compito_created",
 			"newLine": false,
 			"readOnly": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": "$Q{is_hidden_fornitori}",
+			"isPrimary": false,
+			"key": "activate_dettagli_k",
+			"label": "Maggiori dettagli",
+			"buttonIcon": "expand_more",
+			"newLine": true,
+			"size": 1,
+			"outputEvent": {
+				"eventName": "activate_dettagli",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"actionType": "hide",
+					"eventName": "activate_dettagli",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"actionType": "show",
+					"eventName": "hide_dettagli",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "hide_dettagli_k",
+			"label": "Nascondi dettagli",
+			"buttonIcon": "expand_less",
+			"newLine": true,
+			"size": 1,
+			"outputEvent": {
+				"eventName": "hide_dettagli",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"actionType": "show",
+					"eventName": "activate_dettagli",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"actionType": "hide",
+					"eventName": "hide_dettagli",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"format": {
+				"viewType": "subform",
+				"subform_keys": [
+					{
+						"autoGenerate": false,
+						"format": {
+							"value": "0",
+							"viewType": "checkbox"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "flag_esternalizzazione",
+						"tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione",
+						"size": 3.13,
+						"label": "Esternalizzazione",
+						"readOnly": false,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"value": "0",
+							"viewType": "checkbox"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "flag_essenziale",
+						"tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione essenziale",
+						"size": 3.13,
+						"label": "Essenziale",
+						"readOnly": false,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"value": "0",
+							"viewType": "checkbox"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 3.13,
+						"tooltip": "Flaggare qualora si tratti di funzione la cui inattività deve essere gestita con urgenza",
+						"label": "Urgente",
+						"readOnly": false,
+						"newLine": true
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "text"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "giurisdizione",
+						"label": "Giurisdizione",
+						"size": 3.13,
+						"tooltip": "Indicare la giurisdizione di riferimento",
+						"newLine": false,
+						"readOnly": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"dataType": "text",
+							"viewType": "input"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "note_essenzialità",
+						"label": "Note essenzialità",
+						"size": 3.13,
+						"tooltip": "Illustrare i motivi per cui si ritiene la funzione essenziale o meno",
+						"newLine": false,
+						"readOnly": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$);",
+							"options": [],
+							"viewType": "combobox"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "id_anagrafica_approvatore",
+						"label": "Responsabile",
+						"newLine": true,
+						"tooltip": "La persona fisica all’interno dell’impresa, che ha approvato l’accordo di esternalizzazione nel cloud",
+						"readOnly": false,
+						"size": 5
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+							"options": [],
+							"viewType": "combobox"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "id_centro_gest",
+						"label": "Centro Gestionale Responsabile",
+						"newLine": false,
+						"readOnly": false,
+						"size": 3.13
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "combobox",
+							"options": [],
+							"dataType": "text",
+							"comboQuery": "select distinct arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=48362"
+						},
+						"label": "Modello esternalizzazione",
+						"key": "id_argomento_mod_esternalizzazione",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"newLine": false,
+						"size": 3.13,
+						"tooltip": "Modello esternalizzazione secondo "
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"dataType": "number",
+							"viewType": "input"
+						},
+						"isHidden": false,
+						"isPrimary": false,
+						"key": "tariffa_mensile",
+						"label": "Costo mensile",
+						"size": 3.13,
+						"tooltip": "il costo di bilancio annuale stimato dell’accordo di esternalizzazione nel cloud",
+						"newLine": false,
+						"readOnly": false
+					}
+				]
+			},
+			"inputEvents": [
+				{
+					"actionType": "show",
+					"condition": "none",
+					"eventName": "activate_dettagli",
+					"values": []
+				},
+				{
+					"actionType": "hide",
+					"condition": "none",
+					"eventName": "hide_dettagli",
+					"values": []
+				}
+			],
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "dettagli",
+			"label": "Valutazione Rischi",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": true,
+			"saveWhenHidden": true
 		}
 	],
 	"table_keys": [
@@ -763,13 +1003,13 @@
 			]
 		},
 		{
-		  "format": {
-			"dataType": "number"
-		  },
-		  "isHidden": true,
-		  "isPrimary": false,
-		  "key": "id_argomento_evento",
-		  "label": "id_argomento_evento"
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_argomento_evento",
+			"label": "id_argomento_evento"
 		}
 	],
 	"subTables": [
@@ -946,14 +1186,6 @@
 		{
 			"tableActionType": "quick-add",
 			"viewType": "table"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "attachments"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "add"
 		}
 	],
 	"querySuffixes": {
