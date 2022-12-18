@@ -68,12 +68,12 @@ for d in "${dynamo_files[@]}"; do
 done
 
 # For aligning using S3 bucket
-if [ $# -eq 2 ]
-  then
-    echo "Going to align reports/"${2}" on "${TABLENAME}
-      cd ../../tools/push_tables_s3
-      ./run.sh ${TABLENAME} reports/${2}
-    echo "Uploaded to S3!"
-  else
-    echo "Did not upload to S3!"
-fi   
+# if [ $# -eq 2 ]
+#   then
+#     echo "Going to align email_templates/"${2}" on "${TABLENAME}
+#       cd ../../tools/push_tables_s3
+#       ./run.sh ${TABLENAME} email_templates/${2}
+#     echo "Uploaded to S3!"
+#   else
+#     echo "Did not upload to S3!"
+# fi   
