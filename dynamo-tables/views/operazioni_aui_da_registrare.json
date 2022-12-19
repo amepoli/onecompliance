@@ -7,7 +7,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select roa.id_registrazione_op, op.id_operazione, (select concat(id_contratto, ' - ' ,descrizione) as name from entrasp.contratti where codice_azienda=op.codice_azienda and id_contratto=op.id_contratto) as contratto, op.codice_azienda,op.codice_part,op.data_op, entrasp.causali_codice_descr(id_causale) as causale_analitica, op.importo from entrasp.operazioni op left join entrasp.registrazioni_operazioni_aui roa on op.codice_azienda=roa.codice_azienda and op.id_operazione=roa.id_operazione where op.codice_azienda=$codice_azienda$"
+      "queryString": "select distinct roa.id_registrazione_op, op.id_operazione, (select concat(id_contratto, ' - ' ,descrizione) as name from entrasp.contratti where codice_azienda=op.codice_azienda and id_contratto=op.id_contratto) as contratto, op.codice_azienda,op.codice_part,op.data_op, entrasp.causali_codice_descr(id_causale) as causale_analitica, op.importo from entrasp.operazioni op left join entrasp.registrazioni_operazioni_aui roa on op.codice_azienda=roa.codice_azienda and op.id_operazione=roa.id_operazione where op.codice_azienda=$codice_azienda$"
     },
     {
       "operation": "selectForm",
@@ -1388,6 +1388,22 @@
       "label": "Anagrafiche connesse"
     }
   ],
+  "search_keys": [
+		{
+			"fieldName": "not_registered_toggle",
+			"format": {
+			  "value": "1",
+			  "viewType": "toggle"
+			},
+			"label": "Nascondi Operazioni Registrate",
+			"newLine": false,
+			"queryCond": "roa.id_registrazione_op IS NULL"
+		  }
+	],
+	"orderBy": {
+		"key": "op.id_operazione",
+		"order": "descending"
+	},
   "hideActions": [
     {
       "tableActionType": "add",
