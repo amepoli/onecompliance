@@ -12,7 +12,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "SELECT a.codice_azienda,b.codice_part,a.id_argomento_stato_approvazione,a.id_risorsa,a.prog_revisione,a.data_rif_a, a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(a.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$"
+      "queryString": "SELECT a.data_creazione::date, a.codice_azienda,b.codice_part,a.id_argomento_stato_approvazione,a.id_risorsa,a.prog_revisione,a.data_rif_a, a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(a.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$"
     },
     {
       "type": "preProcessing",
@@ -465,7 +465,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "anagrafica",
-      "width": "17%",
+      "width": "14%",
       "label": "Cliente/Fornitore/Dipendente",
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
     },
@@ -475,7 +475,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "10%",
+      "width": "8%",
       "key": "revisore",
       "label": "Utente"
     },
@@ -558,8 +558,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "tipo_allegato",
-      "width": "10%",
-      "label": "Tipo Documento"
+      "width": "8%",
+      "label": "Tipo Doc."
     },
     {
       "format": {
@@ -569,7 +569,7 @@
       "isPrimary": false,
       "key": "data_rif",
       "width": "6%",
-      "label": "Data rif. da"
+      "label": "Dt rif. da"
     },
     {
       "format": {
@@ -579,7 +579,17 @@
       "isPrimary": false,
       "key": "data_rif_a",
       "width": "6%",
-      "label": "Data rif. a"
+      "label": "Dt rif. a"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_creazione",
+      "width": "6%",
+      "label": "Dt creaz."
     },
     {
       "format": {
