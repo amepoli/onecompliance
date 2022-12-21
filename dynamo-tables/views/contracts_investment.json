@@ -20,7 +20,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select distinct arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on aa.id_argomento_son=arg.id_argomento where aa.id_argomento_father=$P{id_argomento_tipo_contratto} and id_argomento not in(5408,5402,3526) order by arg.id_argomento||'-'||arg.descrizione_breve"
+			"queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408))"
 		},
 		{
 			"operation": "update",
@@ -91,7 +91,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "select distinct id_argomento as id, id_argomento||'-'||descrizione_breve as name from entrasp.argomenti where id_argomento in (select id_argomento_descendants from entrasp.descendants_of_argomento($P{id_argomento_tipo_contratto})) and id_argomento not in(5408,5402,3526) order by id_argomento||'-'||descrizione_breve",
+				"comboQuery": "select distinct id_argomento as id, id_argomento||'-'||descrizione_breve as name from entrasp.argomenti where id_argomento in (select id_argomento_descendants from entrasp.descendants_of_argomento(5408,2)) and id_argomento not in(5408,5402,3526) order by id_argomento||'-'||descrizione_breve",
 				"options": [],
 				"viewType": "combobox",
 				"validations": [
