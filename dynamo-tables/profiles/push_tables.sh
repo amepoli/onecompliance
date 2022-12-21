@@ -69,26 +69,26 @@ for d in "${dynamo_files[@]}"; do
 done
 
 # For aligning using lambda call (Not working as DAX is not available outside VPC)
-# if [ $# -eq 2 ]
-#   then
-#     echo "Going to align "${2}" on "${LAMBDANAME}
-#       aws lambda invoke \
-#         --function-name ${LAMBDANAME} \
-#         --cli-binary-format raw-in-base64-out \
-#         --payload  '{ "Records": [ { "dynamodb": { "Keys": { "name": { "S": "'${2}'"}}}}]}' \
-#         result.json
-#     echo "Merged profile updated!"
-#   else
-#     echo "Merged profile not updated!"
-# fi   
-
-# For aligning using S3 bucket
 if [ $# -eq 2 ]
   then
-    echo "Going to align profiles/"${2}" on "${TABLENAME}
-      cd ../../tools/push_tables_s3
-      ./run.sh ${TABLENAME} profiles/${2}
-    echo "Uploaded to S3!"
+    echo "Going to align "${2}" on "${LAMBDANAME}
+      aws lambda invoke \
+        --function-name ${LAMBDANAME} \
+        --cli-binary-format raw-in-base64-out \
+        --payload  '{ "Records": [ { "dynamodb": { "Keys": { "name": { "S": "'${2}'"}}}}]}' \
+        result.json
+    echo "Merged profile updated!"
   else
-    echo "Did not upload to S3!"
+    echo "Merged profile not updated!"
 fi   
+
+# # For aligning using S3 bucket
+# if [ $# -eq 2 ]
+#   then
+#     echo "Going to align profiles/"${2}" on "${TABLENAME}
+#       cd ../../tools/push_tables_s3
+#       ./run.sh ${TABLENAME} profiles/${2}
+#     echo "Uploaded to S3!"
+#   else
+#     echo "Did not upload to S3!"
+# fi   
