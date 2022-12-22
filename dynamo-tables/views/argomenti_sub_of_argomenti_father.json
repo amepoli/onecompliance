@@ -7,7 +7,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select *, true as delete_argomenti_father, entrasp.argomenti_codice(id_argomento_father) as codice, entrasp.argomenti_descr(id_argomento_father) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento_son$"
+      "queryString": "select *, true as delete_argomenti_father, entrasp.argomenti_codice(id_argomento_father) as codice, entrasp.argomenti_descr(id_argomento_father) as argomento,  true as button_argomento from entrasp.argomenti_argomenti aa inner join entrasp.argomenti arg on aa.id_argomento_son=arg.id_argomento where aa.id_argomento_son=$id_argomento_son$"
     }
   ],
   "form_keys": [
@@ -167,6 +167,7 @@
       "queryFunct": "entrasp.argomenti_descr(id_argomento_father)",
       "key": "argomento",
       "label": "Argomento Padre",
+      "width": "50%",
       "isInputButton": true,
       "buttonAction": {
         "target": "argomenti",
@@ -179,6 +180,17 @@
           }
         ]
       }
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isCheckbox": true,
+      "isPrimary": false,
+      "key": "flag_no_delete",
+      "label": "Non cancellare",
+      "width": "10%"
     }
   ],
   "inputEvents": [

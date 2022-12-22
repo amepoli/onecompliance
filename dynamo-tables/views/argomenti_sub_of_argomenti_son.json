@@ -13,7 +13,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select *, true as delete_argomenti_son, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$"
+      "queryString": "select *, true as delete_argomenti_son, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti aa inner join entrasp.argomenti arg on aa.id_argomento_father=arg.id_argomento where id_argomento_father=$id_argomento_father$"
     }
   ],
   "form_keys": [
@@ -184,6 +184,17 @@
                     }
                 ]
             }
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isCheckbox": true,
+      "isPrimary": false,
+      "key": "flag_no_delete",
+      "label": "Non cancellare",
+      "width": "10%"
     }
   ],
   "inputEvents": [
