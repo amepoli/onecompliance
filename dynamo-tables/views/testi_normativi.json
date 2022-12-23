@@ -1,135 +1,241 @@
 {
-    "$schema": "../views.schema.json",
-    "entryKey": "testi_normativi",
-    "origin": "entrasp.testi_normativi",
-    "businessObjectName": "testiNormativi",   
-    "form_keys": [
-      {
-        "autoGenerate": true,
-        "format": {
-          "dataType": "number",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": true,
-        "key": "id_testo_normativo",
-        "label": "ID",
-        "newLine": false,
-        "readOnly": true,
-        "size": 1
+  "$schema": "../views.schema.json",
+  "entryKey": "testi_normativi",
+  "origin": "entrasp.testi_normativi",
+  "businessObjectName": "testiNormativi",
+  "form_keys": [
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descrizione",
-        "label": "Descrizione",
-        "newLine": true,
-        "size": 9,
-        "readOnly": false
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_testo_normativo",
+      "label": "ID",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "riferimenti",
-        "label": "Riferimenti",
-        "newLine": true,
-        "readOnly": false
-      }
-    ],
-    "search_keys": [
-      {
-        "fieldName": "id_testo_normativo",
-        "format": {
-          "dataType": "number",
-          "viewType": "input"
-        },
-        "label": "ID",
-        "newLine": true,
-        "queryCond": "id_testo_normativo=$id_testo_normativo$"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione",
+      "newLine": false,
+      "size": 8.5,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "menu",
+          "menuOptions": [
+              {
+                  "icon": "class",
+                  "label": "Crea e associa argomento",
+                  "outputEventName": "create_associate_argomento"
+              }
+          ]
       },
-      {
-        "fieldName": "descrizione",
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "label": "Descrizione",
-        "newLine": true,
-        "queryCond": "descrizione like '%€descrizione€%'"
-      },
-      {
-        "fieldName": "riferimenti",
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "label": "Riferimenti",
-        "newLine": true,
-        "queryCond": "riferimenti like '%€riferimenti€%'"
-      }
-    ],
-    "subTables": [
-      {
-        "entryKey": "articoli_normativi_sub_of_testi_normativi",
-        "keys": [
+      "inputEvents": [
           {
-            "parent": "id_testo_normativo",
-            "son": "id_testo_normativo"
+              "eventName": "create_associate_argomento",
+              "actionType": "query",
+              "condition": "none",
+              "values": [],
+              "outputEventWhenComplete": "testi_normativi_reload",
+              "queryFunct": "select entrasp.argomenti_testi_normativi_create_and_update($id_testo_normativo$, $riferimenti$, $descrizione$ , 48418)"
           }
-        ],
-        "label": "Articoli"
-      }
-    ],
-    "table_keys": [
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": false,
-        "isPrimary": true,
-        "key": "id_testo_normativo",
-        "label": "ID Testo",
-        "width": "8%"
+      ],
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "more_vert",
+      "key": "testi_normativi_actions",
+      "label": "",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+  },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
       },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "descrizione",
-        "label": "Descrizione",
-        "width": "35%" 
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "riferimenti",
+      "label": "Riferimenti",
+      "newLine": false,
+      "size": 6,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
       },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "riferimenti",
-        "label": "Riferimenti",
-        "width": "35%" 
-      }
-    ],
-    "hideActions": [
-      {
-        "tableActionType": "quick-add",
-        "viewType": "table"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_entrata_vigore",
+      "label": "Data entrata in vigore",
+      "newLine": false,
+      "size": 2,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
       },
-      {
-        "viewType": "form",
-        "formActionType": "attachments"
-      }
-    ]
-  }
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ultima_data_aggiornamento",
+      "label": "Data ultimo aggiornamento",
+      "newLine": true,
+      "size":2,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "Argomento",
+      "readOnly": false,
+      "size": 3.5,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "label": "Note",
+      "size": 6.5,
+      "newLine": false,
+      "readOnly": false
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_testo_normativo",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID",
+      "newLine": true,
+      "queryCond": "id_testo_normativo=$id_testo_normativo$"
+    },
+    {
+      "fieldName": "descrizione",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Descrizione",
+      "newLine": true,
+      "queryCond": "descrizione like '%€descrizione€%'"
+    },
+    {
+      "fieldName": "riferimenti",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Riferimenti",
+      "newLine": true,
+      "queryCond": "riferimenti like '%€riferimenti€%'"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "articoli_normativi_sub_of_testi_normativi",
+      "keys": [
+        {
+          "parent": "id_testo_normativo",
+          "son": "id_testo_normativo"
+        }
+      ],
+      "label": "Articoli"
+    },
+    {
+      "entryKey": "tag_sub_of_modelli_test_vr",
+      "keys": [
+        {
+          "parent": "id_argomento",
+          "son": "id_argomento_son"
+        }
+      ],
+      "label": "TAG"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_testo_normativo",
+      "label": "ID Testo",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Descrizione",
+      "width": "35%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "riferimenti",
+      "label": "Riferimenti",
+      "width": "35%"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "attachments"
+    }
+  ],
+  "inputEvents": [
+    {
+      "eventName": "testi_normativi_reload",
+      "actionType": "reload"
+    }
+  ]
+}
