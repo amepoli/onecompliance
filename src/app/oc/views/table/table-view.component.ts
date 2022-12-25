@@ -61,6 +61,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     styles = {};
     dataSource: MatTableDataSource<any> = null;
+    hasData: boolean = false;
     selectedRow: MatRow = null;
     isLoading = false;
 
@@ -448,6 +449,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.dataSource = new MatTableDataSource(results);
                     _this.dataSource.sort = _this.sort;
                     _this.dataSource.paginator = _this.paginator;
+                    _this.hasData = results && results.length > 0;
+                    
                     // triggers any change in displayed datasource, setting the array of primary keys
                     _this.subscriptions.push(_this.dataSource.connect().subscribe(source => {
                         _this.keysArray = source.map(row => {
