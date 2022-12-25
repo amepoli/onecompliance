@@ -378,17 +378,15 @@
                             "dataType": "text",
                             "viewType": "combobox",
                             "options": [],
-                            "comboQuery": "SELECT codice_nazione AS id, concat (coalesce(cod_banca_italia::varchar,codice_nazione), '-' ,descrizione) AS name FROM entrasp.nazioni"
+                            "comboQuery": "SELECT codice_nazione AS id, concat (codice_nazione, '-', descrizione) AS name FROM entrasp.nazioni"
                         },
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "codice_nazione",
                         "label": "Nazione",
-                        "sameOrigin": false,
                         "newLine": false,
                         "readOnly": false,
-                        "size": 3.33,
-                        "queryFunct": "select codice_nazione from entrasp.anagrafiche_vr where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$"
+                        "size": 3.33
                     },
                     {
                         "autoGenerate": false,
@@ -797,24 +795,6 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "combobox",
-                            "options": [],
-                            "comboQuery": "SELECT codice_nazione AS id, concat (coalesce(cod_banca_italia::varchar,codice_nazione), '-' ,descrizione) AS name FROM entrasp.nazioni"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "codice_nazione",
-                        "label": "Nazione",
-                        "sameOrigin": false,
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3.33,
-                        "queryFunct": "select codice_nazione from entrasp.anagrafiche_vr where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
                             "viewType": "input",
                             "validations": [
                                 {
@@ -868,7 +848,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 3.33
-                    },                    
+                    },
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1460,7 +1440,8 @@
             "sameOrigin": false,
             "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false
-        },{
+        },
+        {
             "format": {
                 "viewType": "invisible"
             },
