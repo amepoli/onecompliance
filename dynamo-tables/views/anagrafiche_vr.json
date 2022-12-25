@@ -262,6 +262,11 @@
                         "outputEventName": "progetto_create"
                     },
                     {
+                        "icon": "delete",
+                        "label": "Elimina versione corrente",
+                        "outputEventName": "elimina_ver_corrente_an"
+                    },
+                    {
                         "icon": "sync",
                         "label": "Sync.doc.controparte",
                         "outputEventName": "get_drive_folder_contents"
@@ -314,7 +319,16 @@
                     "actionType": "query",
                     "queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, null, $id_anagrafica$);",
                     "outputEventWhenComplete": "navigate_to_new_progetto"
+                },
+                {
+                    "eventName": "elimina_ver_corrente_mdt",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Versione eliminata",
+                    "values": [],
+                    "queryFunct": "delete from entrasp.anagrafiche_vr where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$;"
                 }
+             
             ]
         },
         {

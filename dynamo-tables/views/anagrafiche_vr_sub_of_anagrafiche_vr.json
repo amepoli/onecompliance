@@ -7,7 +7,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, avr.prog_vr, avr.codice_fiscale, avr.partita_iva, avr.codice_fiscale, avr.partita_iva, entrasp.transcodifiche_transcodifica('TIPO_DOC_IDENT',an.tipo_soggetto)as tipo_doc_ident, avr.data_scadenza_documento, indirizzo, localita FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$;",
+            "queryString": "SELECT an.codice_part, avr.id_anagrafica, avr.prog_vr, avr.codice_fiscale, avr.partita_iva, avr.codice_fiscale, avr.partita_iva, entrasp.argomenti_descr_breve_no_num(id_argomento_tipo_documento) as tipo_doc_ident, avr.data_scadenza_documento, indirizzo, localita FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica WHERE an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$;",
             "type": "main"
         },
         {
@@ -48,6 +48,26 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "prog_vr",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "anagrafiche_vr",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "prog_vr",
+                        "destination": "prog_vr"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    }
+                ]
+            },
             "label": "Versione",
             "width": "5%"
         },
@@ -90,7 +110,7 @@
             "key": "codice_fiscale",
             "width": "10%",
             "label": "Cod. Fiscale"
-        }, 
+        },
         {
             "format": {
                 "dataType": "text"
@@ -100,7 +120,7 @@
             "key": "indirizzo",
             "width": "20%",
             "label": "Indirizzo"
-        }, 
+        },
         {
             "format": {
                 "dataType": "text"
@@ -110,8 +130,7 @@
             "key": "localita",
             "width": "15%",
             "label": "Località"
-        }, 
-        
+        },
         {
             "format": {
                 "dataType": "number"
