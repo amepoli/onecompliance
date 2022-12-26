@@ -204,6 +204,14 @@
                     "condition": "none",
                     "values": [],
                     "successMessage": "Done!"
+                },
+                {
+                    "eventName": "update_current_version",
+                    "actionType": "query",
+                    "queryFunct": "select max(prog_vr) as prog_vr from entrasp.anagrafiche_vr where codice_azienda=$codice_azienda$ and id_anagrafica=$id_anagrafica$",
+                    "outputEventWhenComplete": "formReload",
+                    "condition": "none",
+                    "values": []
                 }
             ],
             "isHidden": false,
@@ -325,7 +333,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "successMessage": "Versione eliminata",
-                    "outputEventWhenComplete": "navigate_anagrafiche_vr",
+                    "outputEventWhenComplete": "update_current_version",
                     "values": [],
                     "queryFunct": "delete from entrasp.anagrafiche_vr where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$;"
                 }
