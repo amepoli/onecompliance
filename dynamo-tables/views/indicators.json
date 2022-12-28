@@ -48,7 +48,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 5.5
+			"size": 4.5
 		},
 		{
 			"autoGenerate": false,
@@ -79,8 +79,40 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": true,
+			"newLine": false,
 			"size": 1.5
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "menu",
+				"menuOptions": [
+					{
+						"icon": "class",
+						"label": "Crea e associa argomento",
+						"outputEventName": "create_associate_argomento"
+					}
+				]
+			},
+			"inputEvents": [
+				{
+					"eventName": "create_associate_argomento",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"outputEventWhenComplete": "indicators_reload",
+					"queryFunct": "select entrasp.argomenti_create_and_update_indicatori($id_indicatore$, $titolo$, $descrizione$ , 'ind'||$id_indicatore$, 48491)"
+				}
+			],
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "more_vert",
+			"key": "indicators_actions",
+			"label": "",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 0.5
 		},
 		{
 			"autoGenerate": false,
@@ -227,8 +259,7 @@
 			"format": {
 				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=697 order by descrizione",
 				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
+				"viewType": "combobox"
 			},
 			"isHidden": false,
 			"isPrimary": false,
@@ -377,7 +408,7 @@
 			"format": {
 				"dataType": "number"
 			},
-			"isHidden": true,
+			"isHidden": false,
 			"isPrimary": false,
 			"key": "id_argomento",
 			"label": "ID argomento"
@@ -413,6 +444,12 @@
 		{
 			"formActionType": "stopEvent",
 			"viewType": "form"
+		}
+	],
+	"inputEvents": [
+		{
+			"actionType": "reload",
+			"eventName": "indicators_reload"
 		}
 	]
 }
