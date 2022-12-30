@@ -197,6 +197,11 @@
             "icon": "content_copy",
             "label": "Duplica domanda",
             "outputEventName": "domande_duplica"
+          },
+          {
+            "icon": "content_copy",
+            "label": "Risposte previste: crea e associa argomento",
+            "outputEventName": "create_associa_arg_risposte"
           }
         ]
       },
@@ -208,6 +213,14 @@
           "successMessage": "Done!",
           "values": [],
           "queryFunct": "select entrasp.duplica_domanda($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$)"
+        },
+        {
+          "actionType": "query",
+          "eventName": "create_associa_arg_risposte",
+          "condition": "none",
+          "successMessage": "Done!",
+          "values": [],
+          "queryFunct": "select entrasp.argomenti_create_and_update_risposte_previste(codice_azienda, id_risposta_prev, id_domanda, id_modello_test, id_modello_test_vr, risposta, risposta, 725) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
         }
       ],
       "isHidden": false,
