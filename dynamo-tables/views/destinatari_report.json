@@ -1,0 +1,88 @@
+{
+	"$schema": "../views.schema.json",
+	"entryKey": "destinatari_report",
+	"origin": "entrasp.destinatari_report",
+	"form_keys": [
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "id_report",
+			"key": "id_report",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false,
+			"size": 2
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"label": "Azienda",
+			"key": "codice_azienda",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false
+		}
+	],
+	"subTables": [
+		{
+			"entryKey": "reports",
+			"keys": [
+				{
+					"parent": "id_report",
+					"son": "id_report"
+				}
+			],
+			"label": "Sotto Reports"
+		}
+	],
+	"table_keys": [
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"width": "10%",
+			"isPrimary": true,
+			"key": "id_report",
+			"label": "ID Report"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "10%",
+			"isPrimary": true,
+			"key": "codice_azienda",
+			"label": "Azienda"
+		}
+	],
+	"hideActions": [
+		{
+			"formActionType": "attachments",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "share",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "startEvent",
+			"viewType": "form"
+		},
+		{
+			"formActionType": "stopEvent",
+			"viewType": "form"
+		}
+	]
+}
