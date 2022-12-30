@@ -2,6 +2,7 @@
 	"$schema": "../views.schema.json",
 	"entryKey": "destinatari_report",
 	"origin": "entrasp.destinatari_report",
+	"businessObjectName": "destinatari_report",
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -12,10 +13,9 @@
 			"label": "id_report",
 			"key": "id_report",
 			"readOnly": true,
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": true,
-			"newLine": false,
-			"size": 2
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -31,18 +31,32 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Email destinatari",
+			"key": "lista_email_destinatari",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 8
 		}
 	],
-	"subTables": [
+	"predefinedQueries": [
 		{
-			"entryKey": "reports",
-			"keys": [
-				{
-					"parent": "id_report",
-					"son": "id_report"
-				}
-			],
-			"label": "Sotto Reports"
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select * from entrasp.destinatari_report where codice_azienda in(€global_user_companies€)"
+		},
+		{
+			"operation": "selectForm",
+			"type": "main",
+			"queryString": "select * from entrasp.destinatari_report where codice_azienda=$codice_azienda$ and id_report=$id_report$"
 		}
 	],
 	"table_keys": [
@@ -65,7 +79,17 @@
 			"isPrimary": true,
 			"key": "codice_azienda",
 			"label": "Azienda"
-		}
+		},
+		{
+		"format": {
+			"dataType": "text"
+		},
+		"isHidden": false,
+		"width": "20%",
+		"isPrimary": true,
+		"key": "lista_email_destinatari",
+		"label": "Email destinatari"
+	}
 	],
 	"hideActions": [
 		{
