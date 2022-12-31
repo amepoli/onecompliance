@@ -222,7 +222,7 @@
       "isPrimary": false,
       "key": "descrizione",
       "label": "Descrizione",
-      "width": "35%"
+      "width": "25%"
     },
     {
       "format": {
@@ -232,7 +232,7 @@
       "isPrimary": false,
       "key": "riferimenti",
       "label": "Riferimenti",
-      "width": "35%"
+      "width": "30%"
     },
     {
       "format": {
@@ -242,7 +242,7 @@
       "isPrimary": false,
       "key": "data_entrata_vigore",
       "label": "Entrata in vigore",
-      "width": "10%"
+      "width": "8%"
     },
     {
       "format": {
@@ -252,7 +252,18 @@
       "isPrimary": false,
       "key": "ultima_data_aggiornamento",
       "label": "Ultimo aggiornamento",
-      "width": "10%"
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tag",
+      "label": "Tag",
+      "queryFunct": "select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418",
+      "width": "20%"
     }
   ],
   "hideActions": [
@@ -270,5 +281,8 @@
       "eventName": "testi_normativi_reload",
       "actionType": "reload"
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by greatest(ultima_data_aggiornamento, data_entrata_vigore) desc"
+  }
 }
