@@ -3,6 +3,13 @@
   "entryKey": "testi_normativi",
   "origin": "entrasp.testi_normativi",
   "businessObjectName": "testiNormativi",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select *, (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn left join entrasp.testi_normativi_aggiornamenti tna on tn.id_testo_normativo=tna.id_testo_normativo",
+      "type": "main"
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": true,
@@ -100,11 +107,12 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "ultima_data_aggiornamento",
+      "key": "data_aggiornamento",
       "label": "Data ultimo aggiornamento",
+      "queryFunct": "select max(data_aggiornamento) from entrasp.testi_normativi_aggiornamenti where id_testo_normativo=$id_testo_normativo$",
       "newLine": true,
       "size": 2,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,
@@ -193,6 +201,16 @@
       "label": "Articoli"
     },
     {
+      "entryKey": "testi_normativi_aggiornamenti",
+      "keys": [
+        {
+          "parent": "id_testo_normativo",
+          "son": "id_testo_normativo"
+        }
+      ],
+      "label": "Articoli"
+    },
+    {
       "entryKey": "tag_sub_of_modelli_test_vr",
       "keys": [
         {
@@ -252,6 +270,7 @@
       "isPrimary": false,
       "key": "ultima_data_aggiornamento",
       "label": "Ultimo aggiornamento",
+      "queryFunct": "select max(tna.data_aggiornamento) from entrasp.testi_normativi_aggiornamenti tna where tna.id_testo_normativo=tn.id_testo_normativo",
       "width": "8%"
     },
     {
@@ -283,6 +302,14 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "order by greatest(ultima_data_aggiornamento, data_entrata_vigore) desc"
+    "tableViewSuffix": "order by greatest(data_aggiornamento, data_entrata_vigore) desc"
+  },
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "label": "Estrazione per mailing list",
+        "queryString": "select id_testo_normativo, descrizione, riferimenti, data_entrata_vigore, note, link_ipertestuale, data_aggiornamento, articoli_commento, (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn left join entrasp.testi_normativi_aggiornamenti tna on tn.id_testo_normativo=tna.id_testo_normativo order by greatest(data_aggiornamento, data_entrata_vigore) desc"
+      }
+    ]
   }
 }
