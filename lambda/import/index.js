@@ -131,14 +131,14 @@ function processCSV(csvData) {
     // let utf8String = csvData.toString('utf-8');
 
     // Another technique
-    let stringData = csvData;
+    let stringData = csvData;    
     try{
-        stringData = decodeURIComponent(csvData);
+        stringData = decodeURIComponent(csvData.toString());
         console.log('stringData after decoding: ', stringData);
     } 
     catch(e) {
         console.log('There is no need to encode this file!');
-        stringData = csvData;
+        stringData = csvData.toString();
     }
     
     // Remove the header
