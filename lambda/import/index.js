@@ -33,6 +33,19 @@ const pool = new Pool({
 
 var global_variables = {};
 
+
+function isNullOrWhiteSpace(data) {
+    if(data == null || data.length == 0) {
+        return true;
+    }
+    if(data.replace(/\s+/g, '').length == 0) {
+        return true;
+    }
+
+    // The string is not
+    return false;
+}
+
 function getDateFormat() {
     var d = new Date();
     var month = d.getMonth() + 1;
@@ -142,7 +155,7 @@ function processCSV(csvData) {
     }
     
     // Remove the header
-    stringData = stringData.split(' ').filter(x => x != null && x.length).join(' ');
+    stringData = stringData.split(' ').filter(x => !isNullOrWhiteSpace(x)).join(' ');
     /*
     stringData = stringData.split('\n');
     //stringData.splice(0, 1);
