@@ -137,7 +137,7 @@
     "tableQueries": [
       {
         "label": "Estrazioni per tipo e mese",
-        "queryString": "select codice_azienda, extract(year from date_of_scan), extract(month from date_of_scan), CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) order by codice_azienda"
+        "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) order by codice_azienda,  extract(year from date_of_scan),  extract(month from date_of_scan)"
       }
     ]
   }
