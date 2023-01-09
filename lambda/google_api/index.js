@@ -1068,8 +1068,54 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         let thread_id = emailResponse.data.threadId;
                         let to = emailResponse.data.payload.headers.filter( x => x.name === "To")[0].value;
                         let from = emailResponse.data.payload.headers.filter( x => x.name === "From")[0].value;
-                        //let body = x.data.payload.body;
-                        emailsResult.push({ date, email_id, thread_id, subject, to, from});
+                        let attachmentsIds = [];
+
+                        let messagePayloadParts = emailResponse.data.payload.parts;
+
+                        const attachments = await messagePayloadParts.reduce(async function (acc2Prom, part) {
+                            const acc2 = await acc2Prom;
+                            if (!part.body.size || part.body.attachmentId == undefined) {
+                                return acc2;
+                            }
+                            const internalDate = new Date(parseInt(message.internalDate, 10));
+                            const datestring = internalDate.getFullYear() + " " + (internalDate.getMonth()+1).toString().padStart(2, "0") + " " + internalDate.getDate().toString().padStart(2, "0");
+                            console.log(datestring, shortFromEmail, part.filename, part)
+                            let fileExt;
+                            switch (part.mimeType) {
+                                case 'application/octet-stream': fileExt = ''; break;
+                                case 'application/pdf': fileExt = 'pdf'; break;
+                                case 'message/rfc822': fileExt = 'eml'; break;
+                                case 'image/jpeg': fileExt = 'jpg'; break;
+                                case 'image/png': fileExt = 'png'; break;
+                                case 'application/msword': fileExt = 'doc'; break;
+                                default: console.error('unknownMimeType', part.mimeType); boom;
+                            }
+                            attachmentsIds.push(part.body.attachmentId); //.substring(0,8));
+                            
+                            const {data: attachment} = await gmail.users.messages.attachments.get({
+                                userId: 'me',
+                                messageId: message.id,
+                                id: part.body.attachmentId,
+                            });
+                            const { size, data: dataB64 } = attachment;
+
+                            //let body = x.data.payload.body;
+                            let s3_path = `attachments/${part.body.attachmentId}`;
+                            var params = {
+                                Bucket: 'BUCKET_NAME',
+                                Key: s3_path,
+                                Body: dataB64 //Buffer.from(dataB64, 'base64')
+                            };
+                        
+                            const s3result = await s3.upload(params).promise();
+
+                            return acc2;
+                    //   console.log('callback: ' + JSON.stringify(attachments))
+                        }, Promise.resolve([]));
+
+                        
+                        
+                        emailsResult.push({ date, s3_path, email_id, thread_id, subject, to, from});
                     }
 
                 }
