@@ -12,7 +12,7 @@ import { ToastService } from './toast.service';
 })
 export class TimeTrackerService {
 
-
+    
     // Event Emitter for naviate requests
     public statusUpdated: EventEmitter<TimeTrackerStatus> = new EventEmitter();
 
@@ -21,10 +21,7 @@ export class TimeTrackerService {
 
     public lastStatus: TimeTrackerStatus;
     public lastStatusUpdate: number;
-
-    public isTrStarted : boolean = true;
-    public fromOtherPlaces : boolean = false;
-
+    
     /**
      * Constructor
      * @param AuthService
@@ -43,80 +40,71 @@ export class TimeTrackerService {
      * Check Status
      */
     checkStatus() {
-        
         let _this = this;
+        const userName = _this._authService.getUsername();
+        const dateTimeNow =   HelperService.getFormattedDateTime((new Date()).toString(), _this._timezoneService.timezoneInfo.utc_offset);
+        const company = _this._authService.getCurrentCompany();
         
-        if (_this.isTrStarted || _this.fromOtherPlaces) {
-            const userName = _this._authService.getUsername();
-            const dateTimeNow = HelperService.getFormattedDateTime((new Date()).toString(), _this._timezoneService.timezoneInfo.utc_offset);
-            const company = _this._authService.getCurrentCompany();
-            _this.fromOtherPlaces = false;
-
-            if (userName && dateTimeNow && company) {
-                if (_this.lastStatus) {
-                    setTimeout(() => {
-                        _this.updateStatusLocally();
-                    }, 1000);
-                }
-                let isTrDayCompleteSubscription = _this._backendService.isTrDayComplete(userName, dateTimeNow).subscribe(
-                    isTrDayCompleteResponse => {
-                        if (isTrDayCompleteResponse.result === 'OK' && isTrDayCompleteResponse.data && isTrDayCompleteResponse.data[0] && isTrDayCompleteResponse.data[0]['is_tr_day_complete']) {
-                            let color = isTrDayCompleteResponse.data[0]['is_tr_day_complete'];
-                            _this.descriptionColorUpdated.emit(color);
-                            let subscription = _this._backendService.checkTimerStatus(company).subscribe(
-                                result => {
-                                    if (result.result === 'OK' && result.data) {
-                                        let status: TimeTrackerStatus = { data: null, elapsedTime: null };
-                                        if (Array.isArray(result.data)) {
-                                            status.data = result.data[0];
-                                        }
-                                        else {
-                                            status.data = result.data;
-                                        }
-
-                                        if (!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
-                                            status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours ? status.data.elapsed_time.hours : 0) + ':' +
-                                                HelperService.getTwoDigitText(status.data.elapsed_time.minutes ? status.data.elapsed_time.minutes : 0) + ':' +
-                                                HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0) 
-
-                                            _this.lastStatusUpdate = Date.now();
-                                            _this.lastStatus = status;
-                                            _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
-                                            _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
-                                            _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
-                                            _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
-
-                                            _this.statusUpdated.emit(status);
-
-                                        }
-                                        else {
-                                            _this.updateStatusLocally();
-                                        }
-
-                                        if(status.data.status == 'paused'){
-                                            _this.isTrStarted = false;
-                                        }
+        if(userName && dateTimeNow && company) {
+            if(_this.lastStatus) {
+                setTimeout(() => {
+                    _this.updateStatusLocally();
+                }, 1000);
+            }
+            let isTrDayCompleteSubscription = _this._backendService.isTrDayComplete(userName, dateTimeNow).subscribe(
+                isTrDayCompleteResponse => {
+                    if(isTrDayCompleteResponse.result === 'OK' && isTrDayCompleteResponse.data && isTrDayCompleteResponse.data[0] && isTrDayCompleteResponse.data[0]['is_tr_day_complete']) {
+                        let color = isTrDayCompleteResponse.data[0]['is_tr_day_complete'];
+                        _this.descriptionColorUpdated.emit(color);
+                        let subscription = _this._backendService.checkTimerStatus(company).subscribe(
+                            result => {
+                                if (result.result === 'OK' && result.data) {
+                                    let status: TimeTrackerStatus = {data: null, elapsedTime: null};
+                                    if (Array.isArray(result.data)) {
+                                        status.data = result.data[0];
                                     }
                                     else {
-                                        _this.statusUpdated.emit(null);
+                                        status.data = result.data;
                                     }
-                                    subscription.unsubscribe();
-                                },
-                                error => {
-                                    _this._toastService.showErrorToast(error);
-                                    _this.statusUpdated.emit(null);
-                                    subscription.unsubscribe();
+                                    
+                                    if(!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
+                                        status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours? status.data.elapsed_time.hours: 0) + ':' +
+                                        HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) + ':' +
+                                        HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0)
+                                        
+                                        _this.lastStatusUpdate = Date.now();
+                                        _this.lastStatus = status;
+                                        _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
+                                        _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
+                                        _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
+                                        _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
+                                        
+                                        _this.statusUpdated.emit(status);
+            
+                                    }
+                                    else {
+                                        _this.updateStatusLocally();
+                                    }
                                 }
-                            );
-                        }
-                        isTrDayCompleteSubscription.unsubscribe();
-                    },
-                    error => {
-                        console.error(error);
-                        isTrDayCompleteSubscription.unsubscribe();
+                                else{
+                                    _this.statusUpdated.emit(null);
+                                }
+                                subscription.unsubscribe();
+                            },
+                            error => {
+                                _this._toastService.showErrorToast(error);
+                                _this.statusUpdated.emit(null);
+                                subscription.unsubscribe();
+                            }
+                        );
                     }
-                )
-            }
+                    isTrDayCompleteSubscription.unsubscribe();
+                },
+                error => {
+                    console.error(error);
+                    isTrDayCompleteSubscription.unsubscribe();
+                }
+            )
         }
     }
 
@@ -126,14 +114,11 @@ export class TimeTrackerService {
      */
     startTimer(data: any) {
         let _this = this;
-        if (data) {
+        if(data) {
             let subscription = _this._backendService.startTimer(data.codice_azienda, data.codice_compito).subscribe(
                 result => {
                     let status = false;
                     if (result.result === 'OK' && result.data) {
-                        
-                        _this.isTrStarted = true;
-
                         if (Array.isArray(result.data)) {
                             status = result.data[0].time_report_play;
                         }
@@ -167,12 +152,11 @@ export class TimeTrackerService {
      */
     stopTimer(data: any) {
         let _this = this;
-        if (data) {
+        if(data) {
             let subscription = _this._backendService.stopTimer(data.codice_azienda).subscribe(
                 result => {
                     let status = false;
                     if (result.result === 'OK' && result.data) {
-
                         if (Array.isArray(result.data)) {
                             status = result.data[0].time_report_stop;
                         }
@@ -186,17 +170,15 @@ export class TimeTrackerService {
                     if (status) {
                         _this._toastService.showSuccessToast('Task stopped!');
                         _this.checkStatus();
-                        _this.isTrStarted = false;
                     }
                     else {
                         _this._toastService.showErrorToast('Task stopping failed!');
-                        _this.isTrStarted = false;
                     }
                     subscription.unsubscribe();
                 },
                 error => {
                     // _this._toastService.showErrorToast(error);
-
+                    
                     subscription.unsubscribe();
                 }
             );
@@ -205,31 +187,31 @@ export class TimeTrackerService {
 
     updateStatusLocally() {
         let _this = this;
-        if (_this.lastStatus) {
-            if (_this.lastStatus.data.status === 'running') {
+        if(_this.lastStatus) {
+            if(_this.lastStatus.data.status === 'running') {
                 const elapsedMilliseconds: number = Date.now() - _this.lastStatusUpdate;
                 let seconds = 0;
-
-                if (elapsedMilliseconds > 999) {
+                
+                if(elapsedMilliseconds > 999) {
                     seconds = parseInt("" + elapsedMilliseconds / 1000);
                 }
 
                 let currentStatus = JSON.parse(JSON.stringify(_this.lastStatus));
                 currentStatus.data.elapsed_time.seconds += seconds;
-
-                if (currentStatus.data.elapsed_time.seconds > 59) {
+                
+                if(currentStatus.data.elapsed_time.seconds > 59) {
                     currentStatus.data.elapsed_time.minutes = currentStatus.data.elapsed_time.minutes + parseInt("" + (currentStatus.data.elapsed_time.seconds / 60));
                     currentStatus.data.elapsed_time.seconds = currentStatus.data.elapsed_time.seconds % 60;
                 }
-
-                if (currentStatus.data.elapsed_time.minutes > 59) {
+                
+                if(currentStatus.data.elapsed_time.minutes > 59) {
                     currentStatus.data.elapsed_time.hours = currentStatus.data.elapsed_time.hours + parseInt("" + (currentStatus.data.elapsed_time.minutes / 60));
                     currentStatus.data.elapsed_time.minutes = currentStatus.data.elapsed_time.minutes % 60;
                 }
-
-                currentStatus.elapsedTime = HelperService.getTwoDigitText(currentStatus.data.elapsed_time.hours ? currentStatus.data.elapsed_time.hours : 0) + ':' +
-                    HelperService.getTwoDigitText(currentStatus.data.elapsed_time.minutes ? currentStatus.data.elapsed_time.minutes : 0) + ':' +
-                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.seconds? currentStatus.data.elapsed_time.seconds: 0)                
+                
+                currentStatus.elapsedTime = HelperService.getTwoDigitText(currentStatus.data.elapsed_time.hours? currentStatus.data.elapsed_time.hours: 0) + ':' +
+                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.minutes? currentStatus.data.elapsed_time.minutes: 0) + ':' +
+                                HelperService.getTwoDigitText(currentStatus.data.elapsed_time.seconds? currentStatus.data.elapsed_time.seconds: 0)                
                 _this.statusUpdated.emit(currentStatus);
             }
             else {
@@ -239,19 +221,19 @@ export class TimeTrackerService {
         else {
             setTimeout(() => {
                 _this.checkStatus();
-            }, 1000)
+            }, 1000);
         }
 
     }
 
     isStatusDifferent(oldStatus: any, newStatus: any) {
-        if (
+        if(
             oldStatus.data.codice_azienda !== newStatus.data.codice_azienda ||
             oldStatus.data.codice_compito !== newStatus.data.codice_compito ||
             oldStatus.data.id_cons !== newStatus.data.id_cons ||
             oldStatus.data.date_time_begin !== newStatus.data.date_time_begin ||
             oldStatus.data.description !== newStatus.data.description ||
-            oldStatus.data.status !== newStatus.data.status
+            oldStatus.data.status !== newStatus.data.status            
         ) {
             return true;
         }

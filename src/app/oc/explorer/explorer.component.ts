@@ -897,14 +897,14 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
 
         }
         else if(action == 'update_time_tracker') {
-            _this._timeTrackerService.isTrStarted = !_this._timeTrackerService.isTrStarted;
-            _this._timeTrackerService.fromOtherPlaces = true;
+            //_this._timeTrackerService.isTrStarted = !_this._timeTrackerService.isTrStarted;
+            //_this._timeTrackerService.fromOtherPlaces = true;
             _this._timeTrackerService.checkStatus();
         }
         else if(action == 'update_time_tracker_and_reload') {
             // check Timer Status first
-            _this._timeTrackerService.isTrStarted = !_this._timeTrackerService.isTrStarted;
-            _this._timeTrackerService.fromOtherPlaces = true;
+            //_this._timeTrackerService.isTrStarted = !_this._timeTrackerService.isTrStarted;
+            //_this._timeTrackerService.fromOtherPlaces = true;
             _this._timeTrackerService.checkStatus();
             
             // reload
