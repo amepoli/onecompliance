@@ -1115,7 +1115,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
 
                         
                         
-                        emailsResult.push({ date, s3_path, email_id, thread_id, subject, to, from});
+                        emailsResult.push({ date, s3_path, email_id, thread_id, subject, to, from, attachmentsIds});
                     }
 
                 }
