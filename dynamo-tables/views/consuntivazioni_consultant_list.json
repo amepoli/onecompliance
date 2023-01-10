@@ -930,6 +930,44 @@
         "viewType": "subform",
         "subform_keys": [
           {
+            "key": "id_an_partenza",
+            "format": {
+              "comboQuery": "SELECT avr.id_anagrafica AS id, avr.id_anagrafica||'-'||coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as name from entrasp.anagrafiche_id an left join entrasp.anagrafiche_vr avr on an.id_anagrafica=avr.id_anagrafica and an.codice_part=avr.codice_part WHERE avr.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) order by avr.id_anagrafica",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "label": "Anagrafica partenza",
+            "newLine": false,
+            "readOnly": false,
+            "outputEvent": {
+              "eventName": "select_anagrafica_partenza",
+              "eventTrigger": "select"
+            },
+            "isPrimary": false,
+            "sameOrigin": false,
+            "isHidden": false,
+            "size": 5
+          },
+          {
+            "key": "id_an_arrivo",
+            "format": {
+              "comboQuery": "SELECT avr.id_anagrafica AS id, avr.id_anagrafica||'-'||coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as name from entrasp.anagrafiche_id an left join entrasp.anagrafiche_vr avr on an.id_anagrafica=avr.id_anagrafica and an.codice_part=avr.codice_part WHERE avr.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) order by avr.id_anagrafica",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "label": "Anagrafica arrivo",
+            "outputEvent": {
+              "eventName": "select_anagrafica_arrivo",
+              "eventTrigger": "select"
+            },
+            "newLine": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "isHidden": false,
+            "size": 5
+          },
+          {
             "autoGenerate": false,
             "format": {
               "viewType": "input",
@@ -939,6 +977,15 @@
             "isPrimary": false,
             "key": "indirizzo_partenza",
             "label": "Indirizzo partenza",
+            "inputEvents": [
+              {
+                "eventName": "select_anagrafica_partenza",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select indirizzo||', '||coalesce(cap||', ','')||comune as indirizzo_partenza from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=£id_an_partenza£"
+              }
+            ],
             "sameOrigin": true,
             "newLine": false,
             "readOnly": false
@@ -953,6 +1000,15 @@
             "isPrimary": false,
             "key": "indirizzo_arrivo",
             "label": "Indirizzo arrivo",
+            "inputEvents": [
+              {
+                "eventName": "select_anagrafica_arrivo",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select indirizzo||', '||coalesce(cap||', ','')||comune as indirizzo_arrivo from entrasp.anagrafiche_vr where codice_part='€global_codice_part€' and id_anagrafica=£id_an_arrivo£"
+              }
+            ],
             "sameOrigin": true,
             "newLine": true,
             "readOnly": false
@@ -974,17 +1030,17 @@
             "inputEvents": [
               {
                 "eventName": "tipo_viaggio_change",
-                "actionType": "update",
+                "actionType": "query",
                 "condition": "equalTo",
                 "values": ["R"],
-                "updateFunct": "select £km_percorsi£*2 as km_percorsi"
+                "queryFunct": "select £km_percorsi£*2 as km_percorsi"
               },
               {
                 "eventName": "tipo_viaggio_change",
-                "actionType": "update",
+                "actionType": "query",
                 "condition": "equalTo",
                 "values": ["A"],
-                "updateFunct": "select £km_percorsi£/2 as km_percorsi"
+                "queryFunct": "select £km_percorsi£/2 as km_percorsi"
               },
               {
                 "actionType": "google_api",
@@ -1031,7 +1087,8 @@
               "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPOLOGIE_VIAGGI';",
               "options": [],
               "viewType": "combobox",
-              "dataType": "text"
+              "dataType": "text",
+              "value": "A"
             },
             "outputEvent": {
               "eventName": "tipo_viaggio_change",
@@ -1604,9 +1661,20 @@
         "viewType": "checkbox"
       },
       "label": "Aperti",
-      "newLine": true,
+      "newLine": false,
       "size": 2,
       "queryCond": "csn.stato!='C'"
+    },
+    {
+      "fieldName": "is_trasferta",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Con trasferta",
+      "newLine": true,
+      "size": 2,
+      "queryCond": "csn.km_percorsi is not null"
     },
     {
       "fieldName": "toggle_consuntivazioni_aperte",
