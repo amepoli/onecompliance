@@ -1062,6 +1062,15 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         }
                     }
                     
+                    let company = null;
+                    const separators = [' >', ' +', ' &', '>', '+', '&'];
+                    separators.forEach( s => {
+                        let companyParts = subject.split(s);
+                        if(!company && companyParts.length > 1) {
+                            company = companyParts[0];
+                        }
+                    });
+
                     if(matches) {
                         let date = emailResponse.data.payload.headers.filter( x => x.name === "Date")[0].value;
                         let email_id = emailResponse.data.id;
@@ -1069,9 +1078,9 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         let to = emailResponse.data.payload.headers.filter( x => x.name === "To")[0].value;
                         let from = emailResponse.data.payload.headers.filter( x => x.name === "From")[0].value;
                         let attachmentsIds = [];
-
+                        
                         let messagePayloadParts = emailResponse.data.payload.parts;
-
+                        
                         const attachments = await messagePayloadParts.reduce(async function (acc2Prom, part) {
                             const acc2 = await acc2Prom;
                             if (!part.body.size || part.body.attachmentId == undefined) {
@@ -1079,7 +1088,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             }
                             const internalDate = new Date(parseInt(message.internalDate, 10));
                             const datestring = internalDate.getFullYear() + " " + (internalDate.getMonth()+1).toString().padStart(2, "0") + " " + internalDate.getDate().toString().padStart(2, "0");
-                            console.log(datestring, shortFromEmail, part.filename, part)
+                            console.log(datestring, part.filename, part)
                             let fileExt;
                             switch (part.mimeType) {
                                 case 'application/octet-stream': fileExt = ''; break;
@@ -1090,7 +1099,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 case 'application/msword': fileExt = 'doc'; break;
                                 default: console.error('unknownMimeType', part.mimeType); boom;
                             }
-                            attachmentsIds.push(part.body.attachmentId); //.substring(0,8));
+                            attachmentsIds.push(part.body.attachmentId.substring(0,32));
                             
                             const {data: attachment} = await gmail.users.messages.attachments.get({
                                 userId: 'me',
@@ -1100,13 +1109,13 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             const { size, data: dataB64 } = attachment;
 
                             //let body = x.data.payload.body;
-                            let s3_path = `attachments/${part.body.attachmentId}`;
+                            let s3_path = `${company}/attachments/${part.body.attachmentId.substring(0,32)}`;
                             var params = {
                                 Bucket: 'BUCKET_NAME',
                                 Key: s3_path,
-                                Body: dataB64 //Buffer.from(dataB64, 'base64')
+                                Body: Buffer.from(dataB64, 'base64')
                             };
-                        
+                            
                             const s3result = await s3.upload(params).promise();
 
                             return acc2;
@@ -1115,7 +1124,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
 
                         
                         
-                        emailsResult.push({ date, s3_path, email_id, thread_id, subject, to, from, attachmentsIds});
+                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsIds});
                     }
 
                 }
