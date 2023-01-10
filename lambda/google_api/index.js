@@ -1109,7 +1109,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             const { size, data: dataB64 } = attachment;
 
                             //let body = x.data.payload.body;
-                            let s3_path = `${company}/attachments/${part.body.attachmentId.substring(0,32)}`;
+                            let s3_path = `${company}/${part.body.attachmentId.substring(0,32)}`;
                             var params = {
                                 Bucket: 'BUCKET_NAME',
                                 Key: s3_path,
