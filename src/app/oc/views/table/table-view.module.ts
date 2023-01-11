@@ -18,6 +18,7 @@ import { FormViewModule } from '../form/form-view.module';
 import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
 import { TableMultiselectToolbarModule } from '../table-multiselect-toolbar/table-multiselect-toolbar.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DomChangeDirectiveModule } from 'app/oc/directives';
 
 @NgModule({
     declarations: [TableViewComponent],
@@ -39,7 +40,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
         DynamicFormsModule,
         FormViewModule,
         TableMultiselectToolbarModule,
-        OneCompliancePipesModule
+        OneCompliancePipesModule,
+
+        DomChangeDirectiveModule
     ],
     exports: [
         CommonModule,

@@ -249,6 +249,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.selection.clear();
     }
 
+    public onPaginatorChange($event: Event): void {
+        console.log($event);
+        if(this.paginator && this.dataSource) {
+            this.dataSource.paginator = this.paginator;
+        }
+    }
+    
     public loadData() {
         const _this = this;
         _this.resetView();
@@ -426,6 +433,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     loadTable(search_keys: any): void {
         const _this = this;
         _this.isLoading = true;
+        _this.hasData = false;
 
         // Add search toggles if exist
         search_keys = _this.applySearchToggles(search_keys);
@@ -448,8 +456,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
                     _this.dataSource = new MatTableDataSource(results);
                     _this.dataSource.sort = _this.sort;
-                    _this.dataSource.paginator = _this.paginator;
-                    _this.hasData = results && results.length > 0;
+                    if(_this.paginator) {
+                        _this.dataSource.paginator = _this.paginator;
+                    }
                     
                     // triggers any change in displayed datasource, setting the array of primary keys
                     _this.subscriptions.push(_this.dataSource.connect().subscribe(source => {
@@ -464,6 +473,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                             return key_values;
                         });
                     }));
+                    _this.hasData = results && results.length > 0;                    
                     _this.isLoading = false;
                 }
                 else {
