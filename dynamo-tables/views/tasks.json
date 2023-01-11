@@ -1,7 +1,8 @@
 {
   "$schema": "../views.schema.json",
+  "origin": "entrasp.compiti",
   "entryKey": "tasks",
-  "inheritsFrom": "data_breach",
+  "businessObjectName": "compiti",
   "predefinedQueries": [
     {
       "operation": "selectForm",
@@ -29,7 +30,7 @@
     "is_hidden_compiti_consultant": "true",
     "label_data": "Data Segnalazione",
     "label_codice": "Codice Segnalazione",
-    "label_codice_parent": "Codice Segnalazione Parent"
+    "label_codice_parent": "# Compito padre"
   },
   "form_keys": [
     {
@@ -105,6 +106,60 @@
       "size": 1.5
     },
     {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "label"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "compito",
+      "label": "Compito",
+      "newLine": false,
+      "readOnly": true,
+      "sameOrigin": false,
+      "style": {
+        "background_color": "transparent",
+        "font_color": "black",
+        "font_size": "1.5em",
+        "font_style": "normal",
+        "font_weight": "600"
+      },
+      "size": 9.4
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "menu",
+        "menuOptions": [
+          {
+            "icon": "edit",
+            "label": "Inserisci aggiornamento",
+            "outputEventName": "inserisci_aggiornamento"
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "eventName": "inserisci_aggiornamento",
+          "actionType": "query",
+          "queryFunct": "select id_cons from entrasp.consuntivazione_blank_insert((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$, '[Scrivere Aggiornamento]')",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "navigate_to_new_cons"
+        }
+      ],
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "more_vert",
+      "key": "tasks_actions",
+      "label": "",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.6
+    },
+    {
       "autoGenerate": true,
       "format": {
         "dataType": "text",
@@ -113,10 +168,10 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
-      "label": "Codice Compito",
+      "label": "#",
       "newLine": false,
       "readOnly": true,
-      "size": 1
+      "size": 1.66
     },
     {
       "autoGenerate": false,
@@ -131,21 +186,7 @@
       "label": "Aperto il",
       "newLine": false,
       "readOnly": false,
-      "size": 1.2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_competenza",
-      "label": "Data Competenza",
-      "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
-      "newLine": false,
-      "readOnly": false
+      "size": 1.67
     },
     {
       "autoGenerate": false,
@@ -176,7 +217,7 @@
       "label": "Titolo",
       "newLine": false,
       "readOnly": false,
-      "size": 4.6
+      "size": 3.3
     },
     {
       "autoGenerate": false,
@@ -214,7 +255,7 @@
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
-      "size": 1
+      "size": 1.67
     },
     {
       "autoGenerate": false,
@@ -233,10 +274,10 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_tipo_segnalazione",
-      "label": "Tipo Segnalazione",
+      "label": "Tipologia",
       "newLine": true,
       "readOnly": false,
-      "size": 2,
+      "size": 1.67,
       "insertUpdateFunct": "select coalesce(£id_tipo_segnalazione£, 0)",
       "inputEvents": [
         {
@@ -255,7 +296,7 @@
         "viewType": "textarea"
       },
       "isHidden": false,
-      "textareaHeight": "L",
+      "textareaHeight": "S",
       "isPrimary": false,
       "key": "note",
       "insertUpdateFunct": "select coalesce('£note£', '£titolo£')",
@@ -269,10 +310,9 @@
         }
       ],
       "label": "Descrizione estesa",
-      "showTextAreaRichFormatter": true,
       "newLine": false,
       "readOnly": false,
-      "size": 8.7
+      "size": 6.66
     },
     {
       "autoGenerate": false,
@@ -284,29 +324,10 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_argomento_priorita",
-      "size": 1.3,
+      "size": 1.67,
       "label": "Priorità",
       "readOnly": false,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "inserisci_aggiornamento_k",
-      "buttonIcon": "edit",
-      "label": "Inserisci aggiornamento",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "inserisci_aggiornamento",
-        "eventTrigger": "press"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 5
+      "newLine": false
     },
     {
       "autoGenerate": false,
@@ -316,10 +337,10 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "activate_detail_k",
-      "label": "Maggiori Dettagli",
+      "label": "",
       "buttonIcon": "expand_more",
-      "newLine": true,
-      "size": 5,
+      "newLine": false,
+      "size": 0.4,
       "outputEvent": {
         "eventName": "activate_detail",
         "eventTrigger": "press"
@@ -339,7 +360,7 @@
         }
       ],
       "style": {
-        "background_color": "#25599C",
+        "background_color": "#9FACBD",
         "font_color": "white"
       },
       "readOnly": false,
@@ -353,10 +374,10 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "hide_detail_k",
-      "label": "Nascondi Dettagli",
+      "label": "",
       "buttonIcon": "expand_less",
-      "newLine": true,
-      "size": 5,
+      "newLine": false,
+      "size": 0.4,
       "outputEvent": {
         "eventName": "hide_detail",
         "eventTrigger": "press"
@@ -384,8 +405,62 @@
     },
     {
       "format": {
+        "dataType": "text",
+        "viewType": "label"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "maggiori_dettagli",
+      "label": "Ulteriori Dettagli",
+      "style": {
+        "background_color": "transparent",
+        "font_color": "black",
+        "font_size": "1.3em",
+        "font_weight": "400"
+      },
+      "newLine": true,
+      "readOnly": true,
+      "sameOrigin": false,
+      "size": 1.2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "data_competenza",
+      "label": "Data Competenza",
+      "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "format": {
         "viewType": "subform",
         "subform_keys": [
+          {
+            "format": {
+              "dataType": "text",
+              "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sezione_ulteriori_dettagli",
+            "label": "Sezione ulteriori dettagli",
+            "style": {
+              "background_color": "#2B679D",
+              "font_color": "white",
+              "font_size": "1.3em",
+              "font_style": "italic",
+              "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+          },
           {
             "autoGenerate": false,
             "format": {
@@ -399,7 +474,7 @@
             "label": "Cliente",
             "newLine": false,
             "readOnly": false,
-            "size": 2.75
+            "size": 1.66
           },
           {
             "autoGenerate": false,
@@ -431,7 +506,7 @@
             "label": "ID Responsabile",
             "newLine": false,
             "readOnly": false,
-            "size": 2.15
+            "size": 1.67
           },
           {
             "autoGenerate": false,
@@ -446,7 +521,7 @@
             "label": "Centro Gestionale Responsabile",
             "newLine": false,
             "readOnly": false,
-            "size": 2.5
+            "size": 3.33
           },
           {
             "autoGenerate": false,
@@ -461,7 +536,7 @@
             "label": "Centro Gestionale Monitoraggio/Segnalante",
             "newLine": true,
             "readOnly": false,
-            "size": 2.5
+            "size": 3.34
           },
           {
             "autoGenerate": true,
@@ -489,7 +564,7 @@
             "label": "Data Scadenza",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5
+            "size": 1.66
           },
           {
             "autoGenerate": false,
@@ -503,7 +578,7 @@
             "label": "Data Chiusura",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5
+            "size": 1.67
           },
           {
             "autoGenerate": false,
@@ -515,7 +590,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_tipo_articolo",
-            "size": 1.2,
+            "size": 1.66,
             "label": "Tipo Articolo",
             "readOnly": false,
             "newLine": false
@@ -530,7 +605,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_tipo_difformita",
-            "size": 1.8,
+            "size": 1.67,
             "label": "Tipo Difformità",
             "readOnly": false,
             "newLine": false
@@ -549,7 +624,7 @@
             "label": "$P{label_codice_parent}",
             "newLine": true,
             "readOnly": true,
-            "size": 1.5
+            "size": 3.34
           },
           {
             "autoGenerate": false,
@@ -561,9 +636,8 @@
             "isPrimary": false,
             "key": "trattamento",
             "label": "Trattamento -azione intrapresa per risolvere il problema o ridurne gli effetti",
-            "newLine": false,
-            "readOnly": false,
-            "size": 5
+            "newLine": true,
+            "readOnly": false
           },
           {
             "autoGenerate": false,
@@ -576,8 +650,7 @@
             "key": "analisi_cause",
             "label": "Analisi Cause",
             "newLine": true,
-            "readOnly": false,
-            "size": 5
+            "readOnly": false
           },
           {
             "autoGenerate": false,
@@ -591,7 +664,8 @@
             "label": "Perdita Diretta Potenziale",
             "newLine": false,
             "readOnly": false,
-            "sameOrigin": true
+            "sameOrigin": true,
+            "size": 1.66
           },
           {
             "autoGenerate": false,
@@ -605,7 +679,8 @@
             "label": "Perdita Diretta Effettiva",
             "newLine": false,
             "readOnly": false,
-            "sameOrigin": true
+            "sameOrigin": true,
+            "size": 1.67
           },
           {
             "autoGenerate": false,
@@ -619,7 +694,8 @@
             "label": "Perdita Indiretta Potenziale",
             "newLine": false,
             "readOnly": false,
-            "sameOrigin": true
+            "sameOrigin": true,
+            "size": 1.66
           },
           {
             "autoGenerate": false,
@@ -633,7 +709,8 @@
             "label": "Perdita Indiretta Effettiva",
             "newLine": false,
             "readOnly": false,
-            "sameOrigin": true
+            "sameOrigin": true,
+            "size": 1.67
           },
           {
             "autoGenerate": false,
@@ -647,7 +724,8 @@
             "label": "Reclamo",
             "readOnly": false,
             "newLine": false,
-            "sameOrigin": true
+            "sameOrigin": true,
+            "size": 1
           },
           {
             "autoGenerate": false,
@@ -661,7 +739,8 @@
             "label": "Causa Legale",
             "readOnly": false,
             "newLine": false,
-            "sameOrigin": true
+            "sameOrigin": true,
+            "size": 1
           },
           {
             "autoGenerate": false,
@@ -675,7 +754,8 @@
             "label": "Progetto Informatico",
             "readOnly": false,
             "newLine": false,
-            "sameOrigin": true
+            "sameOrigin": true,
+            "size": 1.33
           }
         ]
       },
@@ -1267,6 +1347,26 @@
       }
     }
   ],
+  "inputEvents": [
+    {
+      "actionType": "navigate",
+      "eventName": "navigate_to_new_cons",
+      "actionTarget": {
+        "name": "consuntivazioni_consultant_sub_of_compiti_consultant",
+        "type": "form",
+        "keymap": [
+          {
+            "source": "id_cons",
+            "destination": "id_cons"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          }
+        ]
+      }
+    }
+  ],
   "exportQueries": {
     "tableQueries": [
       {
@@ -1283,6 +1383,18 @@
     {
       "viewType": "form",
       "formActionType": "attachments"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "share"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "import_export"
+    },
+    {
+      "viewType": "table",
+      "tableActionType": "quick-add"
     }
   ],
   "querySuffixes": {
