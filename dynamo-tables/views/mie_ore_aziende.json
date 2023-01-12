@@ -6,12 +6,12 @@
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
-			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) as time_consumed, entrasp.count_sondaggi_open_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) as sondaggi_aperti from entrasp.aziende where codice_azienda=$codice_azienda$ and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) != 0",
+			"queryString": "SELECT INITCAP(csn.codice_azienda) AS codice_azienda_s, csn.codice_azienda, csn.codice_part, ROUND(SUM(csn.durata)/480,2) as time_consumed FROM entrasp.consuntivazioni csn INNER JOIN entrasp.aziende az on csn.codice_azienda=az.codice_azienda where csn.codice_azienda=$codice_azienda$ and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' GROUP BY csn.codice_azienda,csn.codice_part",
 			"type": "main"
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select codice_azienda, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>current_date::date) as time_consumed, entrasp.consuntivazioni_time_consumed(codice_azienda, datainizio=>entrasp.first_day_month(CURRENT_DATE),datafine=>entrasp.last_day_month(CURRENT_DATE))::numeric(8,0) as ultimo_mese from entrasp.aziende where codice_azienda in(€global_user_companies€)",
+			"queryString": "SELECT INITCAP(csn.codice_azienda) AS codice_azienda_s, csn.codice_azienda, csn.codice_part, ROUND(SUM(csn.durata)/480,2) as time_consumed FROM entrasp.consuntivazioni csn INNER JOIN entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' GROUP BY csn.codice_azienda,csn.codice_part HAVING sum(csn.durata) > 0",
 			"type": "main"
 		}
 	],
@@ -23,14 +23,14 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "Cliente",
-			"label": "Cliente",
+			"key": "azienda",
+			"label": "Azienda",
 			"style": {
-				"background_color": "#03a9f4",
+				"background_color": "#2B679D",
 				"font_color": "white",
-				"font_size": "1.5em",
-				"font_style": "normal",
-				"font_weight": "600"
+				"font_size": "1.3em",
+				"font_style": "italic",
+				"font_weight": "400"
 			},
 			"newLine": true,
 			"readOnly": true,
@@ -43,8 +43,21 @@
 				"viewType": "input",
 				"dataType": "text"
 			},
-			"label": "Cliente",
+			"label": "",
 			"key": "codice_azienda",
+			"readOnly": true,
+			"isHidden": true,
+			"isPrimary": true,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Azienda",
+			"key": "codice_azienda_s",
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": true,
@@ -63,13 +76,13 @@
 			"isPrimary": false,
 			"newLine": false
 		},
-	{
+		{
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
 				"dataType": "number"
 			},
-			"label": "Tempo Impiegato",
+			"label": "Tempo impiegato (in giorni)",
 			"key": "time_consumed",
 			"queryFunct": "entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date)",
 			"readOnly": true,
@@ -80,28 +93,14 @@
 	],
 	"subTables": [
 		{
-			"entryKey": "compiti_sub_of_azienda",
+			"entryKey": "miei_compiti_sub_of_mie_ore_aziende",
 			"keys": [
 				{
 					"parent": "codice_azienda",
 					"son": "codice_azienda"
 				}
 			],
-			"label": "Attività/compiti"
-		},
-		{
-			"entryKey": "user_sub_of_azienda",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "codice_azienda_erogante",
-					"son": "codice_azienda_erogante"
-				}
-			],
-			"label": "Utenti impegnati"
+			"label": "Compiti"
 		}
 	],
 	"search_keys": [
@@ -155,13 +154,22 @@
 			"format": {
 				"dataType": "text"
 			},
-			"isHidden": false,
-			"width": "18%",
+			"isHidden": true,
 			"isPrimary": true,
 			"key": "codice_azienda",
-			"label": "Cliente"
+			"label": ""
 		},
-				{
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "18%",
+			"isPrimary": false,
+			"key": "codice_azienda_s",
+			"label": "Azienda"
+		},
+		{
 			"format": {
 				"dataType": "text"
 			},
@@ -178,16 +186,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "time_consumed",
-			"label": "Totale lavorato (gg)"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "ultimo_mese",
-			"label": "Ultimo mese (min)"
+			"label": "Tempo impiegato (in giorni)"
 		}
 	],
 	"querySuffixes": {
@@ -209,6 +208,10 @@
 		{
 			"viewType": "form",
 			"formActionType": "attachments"
+		},
+		{
+			"viewType": "table",
+			"formActionType": "import_export"
 		}
 	]
 }
