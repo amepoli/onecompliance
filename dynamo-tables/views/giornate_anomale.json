@@ -22,18 +22,18 @@
       "icon": "more_vert",
       "menuOptions": [
         {
-          "key": "aggiungi_ferie_per_utente",
-          "icon": "merge_type",
-          "label": "Aggiungi ferie",
-          "reloadOnSuccess": true,
-          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z-'||coll.dynamo_user||'-' in( $selected_rows_data$);"
-        },
-        {
           "key": "aggiungi_minuti_mancanti_per_utente",
           "icon": "merge_type",
           "label": "Aggiungi minuti mancanti",
           "reloadOnSuccess": true,
           "query": "select entrasp.inserisci_consuntivazione(entrasp.dynamo_employer(coll.dynamo_user),coll.giorno::date, 5440, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0))), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z-'||coll.dynamo_user||'-' in( $selected_rows_data$);"
+        },
+        {
+          "key": "aggiungi_ferie_per_utente",
+          "icon": "merge_type",
+          "label": "Segna ferie",
+          "reloadOnSuccess": true,
+          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z-'||coll.dynamo_user||'-' in( $selected_rows_data$);"
         },
         {
           "key": "aggiungi_ferie_per_utente",
@@ -92,17 +92,27 @@
       "isPrimary": true,
       "key": "giorno",
       "label": "Data",
-      "width": "8%"
+      "width": "10%",
+      "style": [
+        {
+          "value": "*",
+          "background_color": "lightblue",
+          "text_align": "center",
+          "font_size": "medium",
+          "font_weight": "599"
+        }
+      ]
     },
     {
       "format": {
-        "dataType": "text"
+        "dataType": "text",
+        "value": ""
       },
       "isHidden": false,
-      "isPrimary": true,
-      "key": "dynamo_user",
-      "width": "10%",
-      "label": "Utente"
+      "isPrimary": false,
+      "width": "5%",
+      "key": "inv_field3",
+      "label": ""
     },
     {
       "format": {
@@ -112,7 +122,7 @@
       "isPrimary": false,
       "key": "minuti_rendicontati",
       "label": "Minuti rendicontati",
-      "width": "8%"
+      "width": "9%"
     },
     {
       "format": {
@@ -136,14 +146,26 @@
     },
     {
       "format": {
+        "dataType": "text",
+        "value": ""
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "inv_field2",
+      "label": ""
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "16%",
+      "width": "17%",
       "queryFunct": "select true",
       "key": "insert_missing_mins",
       "label": "Aggiungi minuti mancanti",
+      "tooltip": "Aggiungi i minuti mancanti alla giornata creando una generica attività di rendicontazione",
       "style": [
         {
           "button_icon": "update",
@@ -179,14 +201,26 @@
     },
     {
       "format": {
+        "dataType": "text",
+        "value": ""
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "inv_field1",
+      "label": ""
+    },
+    {
+      "format": {
         "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "13%",
+      "width": "10%",
       "queryFunct": "select true",
       "key": "segna_ferie",
       "label": "Segna ferie",
+      "tooltip": "Segna come giornata di ferie",
       "style": [
         {
           "button_icon": "update",
@@ -212,23 +246,20 @@
             "destination": "dynamo_user"
           }
         ],
-        "onSuccessAction": "navigate",
-        "target": "mie_ferie",
-        "onSuccessActionKeymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "giorno",
-            "destination": "data"
-          },
-          {
-            "source": "dynamo_user",
-            "destination": "dynamo_user"
-          }
-        ]
+        "onSuccessAction": "reload",
+        "target": "giornate_anomale"
       }
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "value": ""
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "inv_field",
+      "label": ""
     },
     {
       "format": {
@@ -236,10 +267,11 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "13%",
+      "width": "12%",
       "queryFunct": "select true",
       "key": "segna_permesso",
       "label": "Segna Permesso",
+      "tooltip": "Segna i minuti mancanti come permesso",
       "style": [
         {
           "button_icon": "update",
@@ -269,23 +301,20 @@
             "destination": "minuti_mancanti"
           }
         ],
-        "onSuccessAction": "navigate",
-        "target": "mie_ferie",
-        "onSuccessActionKeymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "giorno",
-            "destination": "data"
-          },
-          {
-            "source": "dynamo_user",
-            "destination": "dynamo_user"
-          }
-        ]
+        "onSuccessAction": "reload",
+        "target": "giornate_anomale"
       }
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "value": ""
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "2%",
+      "key": "inv_field0",
+      "label": ""
     },
     {
       "format": {
