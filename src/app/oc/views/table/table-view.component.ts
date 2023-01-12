@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
@@ -31,7 +31,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     @Output() onReload = new EventEmitter<any>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     format = {};
     
@@ -157,7 +157,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private httpClient: HttpClient,
         private _timeTrackerService: TimeTrackerService,
         private _googleAPIService: GoogleAPIService,
-        private _dataSharingService: DataSharingService
+        private _dataSharingService: DataSharingService,
+        private changeDetector : ChangeDetectorRef
     ) {
         // Set selection model
         this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
@@ -256,6 +257,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         }
     }
     
+    public onTableChange($event: Event): void {
+        console.log($event);
+        if(this.sort && this.dataSource) {
+            this.dataSource.sort = this.sort;
+        }
+    }
+
     public loadData() {
         const _this = this;
         _this.resetView();
@@ -473,7 +481,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                             return key_values;
                         });
                     }));
-                    _this.hasData = results && results.length > 0;                    
+                    _this.hasData = results && results.length > 0;
+                    _this.changeDetector.detectChanges();
                     _this.isLoading = false;
                 }
                 else {
