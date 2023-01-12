@@ -112,7 +112,7 @@
             "label": "Descrizione scadenza",
             "newLine": false,
             "readOnly": false,
-            "size": 6
+            "size": 5.4
         },
         {
             "autoGenerate": false,
@@ -156,7 +156,7 @@
             "isHidden": false,
             "isPrimary": false,
             "readOnly": false,
-            "newLine": true,
+            "newLine": false,
             "size": 1.5,
             "key": "close",
             "queryFunct": "SELECT CASE WHEN compiti.stato !='C' THEN FALSE ELSE TRUE END",
@@ -176,6 +176,47 @@
                 }
             ]
         },
+        {
+			"autoGenerate": false,
+			"format": {
+				"viewType": "menu",
+				"menuOptions": [
+                    {
+                        "icon": "add_to_queue",
+                        "label": "Integra sotto-controlli",
+                        "outputEventName": "sondaggio_integra"
+                    }
+				]
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "more_vert",
+			"key": "contratti_actions",
+			"label": "",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": false,
+			"size": 0.6,
+			"inputEvents": [
+			    {
+                    "eventName": "sondaggio_integra",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler integrare/aggiungere automaticamente i sotto-controlli della scadenza?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.integra_somministrazioni_sondaggio(snd.codice_azienda, snd.id_sondaggio) from entrasp.sondaggi snd where snd.id_sondaggio IN (SELECT id_sondaggio FROM entrasp.compiti WHERE (codice_compito_parent=$codice_compito$ OR codice_compito=$codice_compito$) AND codice_azienda=$codice_azienda$);"
+                        }
+                    }
+                }
+			]
+		},
         {
             "autoGenerate": false,
             "format": {
