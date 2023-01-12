@@ -397,7 +397,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     }
 
     gotoTasksList() {
-        HelperService.redirectTo(this.router, `/oc/main-table/compiti`);
+        HelperService.redirectTo(this.router, `/oc/main-table/tasks`);
     }
 
 }

@@ -177,7 +177,7 @@
                             </mat-menu>
                         </div>
         
-                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="25"></mat-paginator>
+                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" (domChange)="onPaginatorChange($event)" [pageSize]="25"></mat-paginator>
         
                     </div>
         
@@ -234,7 +234,9 @@
     
                                         <button
                                             *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
-                                            style="background-color: #25599c; color: white;" mat-icon-button
+                                            style="background-color: #25599c; color: white;"
+                                            [ngStyle]="getElementStyle(entry.key, row[entry.key])"
+                                            mat-icon-button
                                             (click)="onButtonClick(entry.key, i, row)" [matTooltip]="entry.tooltip">
                                             <mat-icon>{{getButtonIcon(entry.key)}}</mat-icon>
                                         </button>
