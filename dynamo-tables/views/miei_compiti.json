@@ -2,6 +2,7 @@
   "$schema": "../views.schema.json",
   "origin": "entrasp.compiti",
   "entryKey": "miei_compiti",
+  "businessObjectName": "compiti",
   "define": {
     "is_hidden_compiti": "false",
     "is_hidden_compiti_consultant": "true",
@@ -31,7 +32,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select INITCAP(a.codice_azienda) as codice_azienda_s,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text)::numeric(8,0)||' min.' as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0)||' min.' as minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€)  group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part, b.id_risorsa having  entrasp.dynamo_user_from_id_an(b.codice_part, b.id_risorsa)='€global_username€'::text order by entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text)::numeric(8,0) desc, entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0) desc"
+      "queryString": "select INITCAP(a.codice_azienda) as codice_azienda_s,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text)::numeric(8,0)||' min.' as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0)||' min.' as minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€) group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part, b.id_risorsa having  entrasp.dynamo_user_from_id_an(b.codice_part, b.id_risorsa)='€global_username€'::text order by entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito,'€global_username€'::text)::numeric(8,0) desc, entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0) desc"
     },
     {
       "operation": "startEvent",
@@ -44,6 +45,114 @@
       "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
   ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "label": "",
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "newLine": false,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "label"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "compito",
+      "label": "Compito",
+      "newLine": false,
+      "readOnly": true,
+      "sameOrigin": false,
+      "style": {
+        "background_color": "transparent",
+        "font_color": "black",
+        "font_size": "1.5em",
+        "font_style": "normal",
+        "font_weight": "600"
+      },
+      "size": 0.8
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_compito",
+      "label": "#",
+      "newLine": false,
+      "readOnly": true,
+      "size": 0.6
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "label": "Titolo",
+      "newLine": false,
+      "readOnly": true,
+      "size": 4.19
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "segnalazione_descr",
+      "label": "Tipologia",
+      "newLine": false,
+      "readOnly": true,
+      "queryFunct": "select descrizione from entrasp.tipi_segnalazioni where id_tipo_segnalazione=compiti.id_tipo_segnalazione",
+      "size": 1.67
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "label": "Azienda",
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "codice_azienda_s",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1.37,
+      "queryFunct": "INITCAP(codice_azienda)"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "readOnly": true,
+      "key": "minuti_totali",
+      "label": "Minuti Totali",
+      "queryFunct": "entrasp.consuntivazioni_time_consumed(compiti.codice_azienda, codicecompito => compiti.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0)",
+      "size": 1.37
+    }
+  ],
   "table_keys": [
     {
       "format": {
@@ -52,8 +161,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "codice_compito",
-      "width": "7%",
-      "label": "# Compito"
+      "width": "5%",
+      "label": "#"
     },
     {
       "format": {
@@ -62,13 +171,13 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "width": "52%",
-      "label": "Titolo",
+      "width": "49%",
+      "label": "Titolo Compito",
       "style": [
         {
           "value": "*",
-          "font_size": "large",
-          "font_color": "navy"
+          "font_size": "medium",
+          "font_weight": "590"
         }
       ]
     },
@@ -81,7 +190,7 @@
       "key": "tipo_segnalazione",
       "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
       "label": "Tipo",
-      "width": "15%"
+      "width": "18%"
     },
     {
       "format": {
@@ -100,8 +209,7 @@
       "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "Codice Azienda",
-      "width": "0%"
+      "label": ""
     },
     {
       "format": {
@@ -119,15 +227,16 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "minuti_mensili",
-      "width": "8%",
+      "width": "9%",
       "label": "Mese Corrente",
       "style": [
         {
           "value": "*",
-          "background_color": "LightBlue",
+          "background_color": "#2B679D",
+          "font_color": "whitesmoke",
           "text_align": "center",
-          "font_weight": "bold",
-          "font_size": "medium"
+          "font_size": "medium",
+          "font_weight": "400"
         }
       ]
     },
@@ -138,16 +247,16 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "minuti_totali",
-      "width": "8%",
+      "width": "9%",
       "label": "Totali",
       "style": [
         {
           "value": "*",
-          "background_color": "RoyalBlue",
+          "background_color": "#2B679D",
           "font_color": "whitesmoke",
           "text_align": "center",
-          "font_weight": "bold",
-          "font_size": "medium"
+          "font_size": "medium",
+          "font_weight": "400"
         }
       ]
     },
@@ -240,7 +349,68 @@
       }
     }
   ],
-    "restrictions": {
-    "preventNavigationToForm": true
-  }
+  "subTables": [
+    {
+      "entryKey": "miei_aggiornamenti_of_miei_compiti",
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "codice_compito",
+          "son": "codice_compito"
+        }
+      ],
+      "label": "Attività"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "codice_compito",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "# Identificativo",
+      "newLine": false,
+      "queryCond": "a.codice_compito=$codice_compito$",
+      "size": 1.67
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "queryCond": "a.codice_azienda='€codice_azienda_s€'",
+      "fieldName": "codice_azienda_s",
+      "label": "Codice Azienda",
+      "newLine": false,
+      "size": 1.67
+    },
+    {
+      "fieldName": "parola_search",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Parola chiave",
+      "newLine": false,
+      "queryCond": "(upper(substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200)) like '%'||upper('€parola_search€')||'%')",
+      "size": 3.33
+    },
+    {
+      "fieldName": "durata_min",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Durata maggiore di",
+      "newLine": false,
+      "queryCond": "entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0) >= $durata_min$",
+      "size": 1.67
+    }
+  ]
 }
