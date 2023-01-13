@@ -7,7 +7,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select *,nome||' '||cognome as denominazione, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month from entrasp.employers where dynamo_user in(select entrasp.colleghi('€global_username€'))"
+      "queryString": "SELECT INITCAP(csn.codice_azienda) AS codice_azienda_s, csn.codice_azienda, csn.codice_part, ROUND(SUM(csn.durata)/480,2) as time_consumed, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => csn.codice_azienda , dynamouser=> em.dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => csn.codice_azienda , dynamouser=> em.dynamo_user, datainizio=>entrasp.first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => csn.codice_azienda , dynamouser=> em.dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month, em.dynamo_user, em.nome||' '||em.cognome as denominazione FROM entrasp.consuntivazioni csn INNER JOIN entrasp.aziende az on csn.codice_azienda=az.codice_azienda INNER JOIN entrasp.employers em on entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)=dynamo_user WHERE csn.codice_azienda in(€global_user_companies€) GROUP BY csn.codice_azienda,csn.codice_part, em.dynamo_user, em.nome||' '||em.cognome HAVING sum(csn.durata) > 0"
     },
     {
       "type": "postProcessing",
@@ -178,10 +178,19 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "Codice Azienda Erogante"
+      "label": ""
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda_s",
+      "label": "Azienda"
     },
     {
       "format": {
@@ -207,26 +216,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "minuti_richiesti_giornalieri",
-      "label": "Minutaggio giornaliero previsto"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "time_consumed_current_year",
-      "label": "Totali Giorni Impiegati Anno in Corso"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
       "key": "time_consumed_current_month",
-      "label": "Totali Giorni Impiegati Mese in Corso"
+      "label": "Giorni Impiegati Mese in Corso",
+      "tooltip": "Giorni Impiegati Mese in Corso"
     },
     {
       "format": {
@@ -235,7 +227,28 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "time_consumed_previous_month",
-      "label": "Totali Giorni Impiegati Mese Precedente"
+      "label": "Giorni Impiegati Mese Precedente",
+      "tooltip": "Giorni Impiegati Mese Precedente"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed_current_year",
+      "label": "Giorni Impiegati Anno in Corso",
+      "tooltip": "Giorni Impiegati Anno in Corso"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "time_consumed",
+      "label": "Totale Giorni Impiegati",
+      "tooltip": "Totale Giorni Impiegati"
     }
   ],
   "querySuffixes": {
