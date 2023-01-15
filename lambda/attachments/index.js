@@ -480,8 +480,10 @@ exports.handler = async (event, context) => {
                     provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
                     datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
                     query = `update entrasp.cdms_risorse_revisioni set data_creazione='${date}',  file_id='${filename}', revisore='${requestBody.autore}',
-                    client_file_name='d'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', 
+                    client_file_name=entrasp.get_file_name_from_file_name('${requestBody.nickname}'), 
                     original_client_file_name='${requestBody.nickname}',
+                    data_rif=coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date, 
+                    data_rif_a=coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date,  
                     content_type='${requestBody.content_type}', dimensione=${requestBody.dimensione},
                     checksum_sha1='${checksum}', id_argomento_stato=4035, descrizione=coalesce('${requestBody.descrizione}',descrizione), data_ultima_revisione=current_date, 
                     ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica), id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
@@ -502,7 +504,6 @@ exports.handler = async (event, context) => {
                     idris = (keys['id_risorsa'] == undefined) ? null : keys['id_risorsa'];
                     provr = (keys['prog_revisione'] == undefined) ? null : keys['prog_revisione'];
                     datarif = (requestBody.data_rif == undefined) ? new Date().toISOString() : requestBody.data_rif;
-
                     query = `select id_argomento_stato from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr};`;
                     console.log(query);
                     response = await client.query(query);
@@ -512,8 +513,10 @@ exports.handler = async (event, context) => {
                     if (stato && stato != '4035') {
 
                         query = `update entrasp.cdms_risorse_revisioni set data_creazione='${date}',  file_id='${filename}', revisore='${requestBody.autore}',
-                        client_file_name='d'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', 
+                        client_file_name=entrasp.get_file_name_from_file_name('${requestBody.nickname}'),
                         original_client_file_name='${requestBody.nickname}',
+                        data_rif=coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date, 
+                        data_rif_a=coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date,      
                         content_type='${requestBody.content_type}', dimensione=${requestBody.dimensione},
                         checksum_sha1='${checksum}', id_argomento_stato=4035, descrizione=coalesce(${requestBody.descrizione}::varchar,descrizione), data_ultima_revisione=current_date, 
                         ts_ultima_modifica=coalesce('${date}',ts_ultima_modifica), id_riunione=coalesce(${requestBody.id_riunione},id_riunione), id_odg=coalesce(${requestBody.id_odg}, id_odg)
@@ -540,13 +543,17 @@ exports.handler = async (event, context) => {
                             query = `insert into entrasp.cdms_risorse_revisioni (codice_azienda, id_risorsa, prog_revisione, data_creazione, file_id, 
                                     revisore, client_file_name, 
                                     original_client_file_name, 
-                                    content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
+                                    content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, 
+                                    data_rif, data_rif_a, 
+                                    data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                                     select '${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                     '${requestBody.autore}', 
-                                    'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', 
+                                    entrasp.get_file_name_from_file_name('${requestBody.nickname}'),
                                     '${requestBody.nickname}', 
                                     '${requestBody.content_type}', ${dimensione}, 
-                                    '${checksum}', ${idriu}, ${idodg}, 4035, descrizione, data_rif, '${date}', '${date}', '${md5Checksum}'
+                                    '${checksum}', ${idriu}, ${idodg}, 4035, descrizione, 
+                                    coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date, coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date,  
+                                    '${date}', '${date}', '${md5Checksum}'
                                     FROM entrasp.cdms_risorse_revisioni where codice_azienda='${company}' and id_risorsa=${idris} and prog_revisione=${provr};`;
                             console.log(query);
                             response = await client.query(query);
@@ -626,12 +633,16 @@ exports.handler = async (event, context) => {
                                     revisore, 
                                     client_file_name, 
                                     original_client_file_name, 
-                                    content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
+                                    content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, 
+                                    data_rif, data_rif_a, 
+                                    data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                                     values ('${company}', ${idris}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
-                                    '${requestBody.autore}', 'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', 
+                                    '${requestBody.autore}', entrasp.get_file_name_from_file_name('${requestBody.nickname}'), 
                                     '${requestBody.nickname}', 
                                     '${requestBody.content_type}', ${dimensione}, 
-                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}', '${md5Checksum}');`;
+                                    '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', 
+                                    coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date, coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date,  
+                                    '${date}', '${date}', '${md5Checksum}');`;
                             console.log(query);
                             response = await client.query(query);
                             console.log(JSON.stringify(response));
@@ -767,13 +778,17 @@ exports.handler = async (event, context) => {
                                 revisore, 
                                 client_file_name, 
                                 original_client_file_name,
-                                content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
+                                content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, 
+                                data_rif, data_rif_a, 
+                                data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                                 values ('${company}', ${idFlowInfo1}, coalesce(${nextProgRevisione},0) + 1,'${date}', '${filename}', 
                                 '${requestBody.autore}', 
-                                'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', 
+                                entrasp.get_file_name_from_file_name('${requestBody.nickname}'),
                                 '${requestBody.nickname}',                                   
                                 '${requestBody.content_type}', ${dimensione}, 
-                                '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', '${datarif}', '${date}', '${date}', '${md5Checksum}');`;
+                                '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}', 
+                                coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date, coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date,  
+                                '${date}', '${date}', '${md5Checksum}');`;
                                 console.log(query);
                                 response = await client.query(query);
                                 console.log(JSON.stringify(response));
@@ -845,13 +860,17 @@ exports.handler = async (event, context) => {
                         revisore, 
                         client_file_name, 
                         original_client_file_name, 
-                        content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, data_rif, data_ultima_revisione, ts_ultima_modifica, hash_md5) 
+                        content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, 
+                        data_rif, data_rif_a
+                        data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                         '${requestBody.autore}', 
-                        'd'||substr(replace('${datarif}','-',''),0,9)||'_'||'${replaceAll(requestBody.nickname, "'", "''")}', 
+                        entrasp.get_file_name_from_file_name('${requestBody.nickname}'),
                         '${requestBody.nickname}', 
                         '${requestBody.content_type}', ${dimensione}, 
-                        '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , '${datarif}', '${date}', '${date}','${md5Checksum}');`;
+                        '${checksum}', ${idriu}, ${idodg}, 4035, '${descrizione}' , 
+                        coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date, coalesce('${datarif}', entrasp.get_date_from_file_name('${requestBody.nickname}'))::date,  
+                        '${date}', '${date}','${md5Checksum}');`;
                             console.log(query);
                             response = await client.query(query);
                             console.log(JSON.stringify(response));
