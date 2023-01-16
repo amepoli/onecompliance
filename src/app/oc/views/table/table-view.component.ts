@@ -250,20 +250,25 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.selection.clear();
     }
 
-    public onPaginatorChange($event: Event): void {
-        console.log($event);
-        if(this.paginator && this.dataSource) {
-            this.dataSource.paginator = this.paginator;
-        }
-    }
-    
-    public onTableChange($event: Event): void {
-        console.log($event);
-        if(this.sort && this.dataSource) {
-            this.dataSource.sort = this.sort;
+    public loadPaginationAndSort() {
+        if(this.dataSource && this.dataSource.data) {
+            if(this.sort) {
+                this.dataSource.sort = this.sort;
+            }
+            if(this.paginator) {
+                this.dataSource.paginator = this.paginator;
+            }
         }
     }
 
+    public onPaginatorChange($event: Event): void {
+        this.loadPaginationAndSort();
+    }
+    
+    public onTableChange($event: Event): void {
+        this.loadPaginationAndSort();
+    }
+ 
     public loadData() {
         const _this = this;
         _this.resetView();
