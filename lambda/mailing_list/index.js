@@ -77,7 +77,7 @@ function dataPrepend2xls(dataset, title, isMainSheet = false) {
         }] // <-- It can be only values
     ];
 
-    if ( isMainSheet ) {
+    if (isMainSheet) {
 
         //console.log('generate main sheet');
 
@@ -122,10 +122,14 @@ function dataPrepend2xls(dataset, title, isMainSheet = false) {
         //console.log('generate secondary sheets');
 
         const specification = {};
-        
+
         let property = Object.keys(dataset.rows[0]);
         for (let i = 0; i < property.length; i++) {
-            specification[property[i]] = {displayName: property[i], headerStyle: styles.data, width: 120 };
+            specification[property[i]] = {
+                displayName: property[i],
+                headerStyle: styles.data,
+                width: 120
+            };
         }
 
         return {
@@ -135,7 +139,7 @@ function dataPrepend2xls(dataset, title, isMainSheet = false) {
             data: dataset.rows // <-- Report data
         }
     }
-    
+
 }
 
 exports.handler = async (event) => {
@@ -154,9 +158,9 @@ exports.handler = async (event) => {
 
     if (result) {
 
-        let mail_to,mail_body,mail_subject,mail_sender,query_excel_to_create,sheet_titles,indicators_value;
-        
-        for(const row in result.rows) {
+        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value;
+
+        for (const row in result.rows) {
 
             mail_to = result.rows[row].mail_to;
             mail_body = result.rows[row].mail_body;
@@ -182,22 +186,22 @@ exports.handler = async (event) => {
             excelData.push(dataPrepend2xls(mainSheet, mail_subject, true));
 
             //Generate and join report's sheets
-            for(const value in values) {
+            for (const value in values) {
                 if (values[value] != 0) {
                     // here prepend secondary sheet to the main one
                     await pool
-                    .query(queries[value])
-                    .then(res => excelData.push(dataPrepend2xls(res, titles[value])))
-                    .catch(err => console.error('Error executing query', err.stack))
+                        .query(queries[value])
+                        .then(res => excelData.push(dataPrepend2xls(res, titles[value])))
+                        .catch(err => console.error('Error executing query', err.stack))
                 }
             };
 
-            const report = excel.buildExport(excelData);
-            
-            console.log("\nsending email to: ", mail_to, 
+            const report = excel.buildExport(excelData);
+
+            console.log("\nsending email to: ", mail_to,
                 ";\nfrom: ", mail_sender,
-                ";\nwith subject: ", mail_subject, 
-                ";\nand body: ", mail_body, 
+                ";\nwith subject: ", mail_subject,
+                ";\nand body: ", mail_body,
                 ";\nattaching the report: ", report);
 
             //send email
