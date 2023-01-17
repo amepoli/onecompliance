@@ -355,6 +355,11 @@
 						"outputEventName": "to_attivita_associata"
 					},
 					{
+						"icon": "sync_alt",
+						"label": "Sync. mod. progetto associato",
+						"outputEventName": "sync_mod_progetto"
+					},
+					{
 						"icon": "content_copy",
 						"label": "Duplica (SENZA risposte)",
 						"outputEventName": "progetto_duplica"
@@ -417,6 +422,13 @@
 					"values": [],
 					"queryFunct": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;",
 					"outputEventWhenComplete": "formReload"
+				},
+				{
+					"eventName": "sync_mod_progetto",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": " entrasp.attivita_update_from_progetti(codice_azienda, id_progetto) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
 				},
 				{
 					"eventName": "progetto_duplica",
