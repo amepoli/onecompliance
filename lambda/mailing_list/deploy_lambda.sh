@@ -27,6 +27,8 @@ HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
 USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
 
+BUCKET_NAME=`cat ../../${1}.json | jq -r ".lambdas.mailing_list.s3.bucket"`
+
 #replace Variables
 cp index.js index.js.ori
 

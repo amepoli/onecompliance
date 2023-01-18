@@ -1,3 +1,7 @@
+const AWS = require('aws-sdk');
+AWS.config.update({ region: 'eu-central-1' });
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+
 const excel = require('node-excel-export');
 
 const Pool = require('pg-pool');
@@ -90,10 +94,10 @@ function dataPrepend2xls(dataset, title, isMainSheet = false) {
             indicator_value: {
                 displayName: 'Valore Indicatore',
                 headerStyle: styles.data,
-                cellStyle: function(value, row) {
+                /* cellStyle: function (value, row) {
                     // if the indicator_value is different than 0 then color in red else as default
                     return (row.indicator_value != 0) ? styles.cellRed : null;
-                },
+                }, */
                 width: 120
             }
         };
@@ -142,7 +146,7 @@ function dataPrepend2xls(dataset, title, isMainSheet = false) {
 
 }
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
 
     console.log('Hello from lambda mailing_list (: ');
 
@@ -181,6 +185,8 @@ exports.handler = async (event) => {
                 indicator_value: values[index]
             }));
 
+            console.log('mainsheet', mainSheet);
+
             //Generate report's main sheet
             var excelData = [];
             excelData.push(dataPrepend2xls(mainSheet, mail_subject, true));
@@ -198,16 +204,39 @@ exports.handler = async (event) => {
 
             const report = excel.buildExport(excelData);
 
-            console.log("\nsending email to: ", mail_to,
-                ";\nfrom: ", mail_sender,
-                ";\nwith subject: ", mail_subject,
-                ";\nand body: ", mail_body,
-                ";\nattaching the report: ", report);
+            // configurations to upload the file on S3
+            var filename = 'mail/' + context.awsRequestId + '.xlsx'; // generate a 'unique' UUID as filename
 
-            //send email
+            var s3ParamsInsert = {
+                Bucket: 'gorico2-reports',
+                Key: filename,
+                Body: report
+            };
+            var s3ParamsUrl = {
+                Bucket: 'gorico2-reports',
+                Key: filename
+            };
 
+            // upload to S3
+            await s3.putObject(s3ParamsInsert).promise();
+
+            //get the uploaded file url
+            var url = s3.getSignedUrl('getObject', s3ParamsUrl);
+
+            //invoke the email composer giving the parameters
+            var sesParams = {
+                mail_to: mail_to,
+                mail_sender: mail_sender,
+                mail_body: mail_body,
+                url: url
+            };
+
+            console.log("\nsending email to: ", sesParams.mail_to,
+                ";\nfrom: ", sesParams.mail_sender,
+                ";\nwith subject: ", sesParams.mail_subject,
+                ";\nand body: ", sesParams.mail_body,
+                ";\nattaching the report: ", sesParams.url);
         };
-
     }
 
     return {
