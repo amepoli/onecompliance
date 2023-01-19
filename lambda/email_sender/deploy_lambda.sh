@@ -30,7 +30,7 @@ SCHEMA=`cat ../../${1}.json | jq -r ".postgres.schema"`
 
 REGION="eu-central-1"
 
-BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.attachments.s3.bucket"`
+BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.mailing_list.s3.bucket"`
 
 #replace Variables
 cp index.js index.js.ori
