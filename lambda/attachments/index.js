@@ -861,7 +861,7 @@ exports.handler = async (event, context) => {
                         client_file_name, 
                         original_client_file_name, 
                         content_type, dimensione, checksum_sha1, id_riunione, id_odg, id_argomento_stato, descrizione, 
-                        data_rif, data_rif_a
+                        data_rif, data_rif_a,
                         data_ultima_revisione, ts_ultima_modifica, hash_md5) 
                         values ('${company}', ${nextId}, 1,'${date}', '${filename}', 
                         '${requestBody.autore}', 
