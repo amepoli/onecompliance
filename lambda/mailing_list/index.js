@@ -1,8 +1,16 @@
 const AWS = require('aws-sdk');
-AWS.config.update({ region: 'eu-central-1' });
-const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+AWS.config.update({
+    region: 'eu-central-1'
+});
+const s3 = new AWS.S3({
+    apiVersion: '2006-03-01'
+});
 
 const excel = require('node-excel-export');
+
+var lambda = new AWS.Lambda({
+    region: 'REGION'
+});
 
 const Pool = require('pg-pool');
 const pool = new Pool({
@@ -30,13 +38,20 @@ function getBadUrlResponse() {
     };
 }
 
-function dataPrepend2xls(dataset, title, isMainSheet = false) {
+function getDateFormatted() {
+    var d = new Date();
+    var month = d.getMonth() + 1;
+    return d.getFullYear() + '-' + month.toString() + '-' + d.getDate();
+}
+
+function dataPrepare2xls(dataset, title, isMainSheet = false) {
     const styles = {
         headerDark: {
             fill: {
                 fgColor: {
                     rgb: 'FF008000'
-                }
+                },
+
             },
             font: {
                 color: {
@@ -136,9 +151,21 @@ function dataPrepend2xls(dataset, title, isMainSheet = false) {
             };
         }
 
+        const merges = [{
+            start: {
+                row: 1,
+                column: 1
+            },
+            end: {
+                row: 1,
+                column: property.length
+            }
+        }];
+
         return {
             name: title, // <- Specify sheet name (optional)
             heading: heading, // <- Raw heading array (optional)
+            merges: merges, // <- Merge cell ranges
             specification: specification, // <- Report specification
             data: dataset.rows // <-- Report data
         }
@@ -148,10 +175,8 @@ function dataPrepend2xls(dataset, title, isMainSheet = false) {
 
 exports.handler = async (event, context) => {
 
-    console.log('Hello from lambda mailing_list (: ');
-
     let caller_url = event.headers.host + event.requestContext.path;
-    console.log('Caller: ', caller_url);
+    console.log('\tHello from lambda mailing_list (: \nHere\'s the Caller: ', caller_url);
 
     let result;
 
@@ -162,7 +187,7 @@ exports.handler = async (event, context) => {
 
     if (result) {
 
-        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value;
+        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value, company;
 
         for (const row in result.rows) {
 
@@ -173,9 +198,9 @@ exports.handler = async (event, context) => {
             query_excel_to_create = result.rows[row].query_excel_to_create;
             sheet_titles = result.rows[row].sheet_titles;
             indicators_value = result.rows[row].indicators_value;
+            company = result.rows[row].company;
 
-            //generate excel report (multiple rows in query_excel_to_create)
-
+            // generate report main sheet's data
             let queries = query_excel_to_create.split(";");
             let titles = sheet_titles.split(";");
             let values = indicators_value.split(";");
@@ -185,57 +210,59 @@ exports.handler = async (event, context) => {
                 indicator_value: values[index]
             }));
 
-            console.log('mainsheet', mainSheet);
-
-            //Generate report's main sheet
             var excelData = [];
-            excelData.push(dataPrepend2xls(mainSheet, mail_subject, true));
+            excelData.push(dataPrepare2xls(mainSheet, mail_subject, true));
 
-            //Generate and join report's sheets
+            // generate and join report sheet's data
             for (const value in values) {
                 if (values[value] != 0) {
-                    // here prepend secondary sheet to the main one
+                    // here it prepares secondary sheets to the main one
                     await pool
                         .query(queries[value])
-                        .then(res => excelData.push(dataPrepend2xls(res, titles[value])))
+                        .then(res => excelData.push(dataPrepare2xls(res, titles[value])))
                         .catch(err => console.error('Error executing query', err.stack))
                 }
             };
 
+            // generate the report
             const report = excel.buildExport(excelData);
 
             // configurations to upload the file on S3
-            var filename = 'mail/' + context.awsRequestId + '.xlsx'; // generate a 'unique' UUID as filename
+            var filename = mail_subject + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' UUID as filename //'context.awsRequestId'
 
             var s3ParamsInsert = {
-                Bucket: 'gorico2-reports',
-                Key: filename,
+                Bucket: 'BUCKET_NAME',
+                Key: 'mail/' + filename,
                 Body: report
             };
-            var s3ParamsUrl = {
+            /* var s3ParamsUrl = {
                 Bucket: 'gorico2-reports',
-                Key: filename
-            };
+                Key: 'mail/' + filename
+            }; */
 
             // upload to S3
             await s3.putObject(s3ParamsInsert).promise();
 
             //get the uploaded file url
-            var url = s3.getSignedUrl('getObject', s3ParamsUrl);
+            //var url = s3.getSignedUrl('getObject', s3ParamsUrl);
 
             //invoke the email composer giving the parameters
             var sesParams = {
                 mail_to: mail_to,
                 mail_sender: mail_sender,
                 mail_body: mail_body,
-                url: url
+                attachments: [{
+                    name: filename,
+                    path: 'mail/' + filename
+                }]
             };
 
-            console.log("\nsending email to: ", sesParams.mail_to,
-                ";\nfrom: ", sesParams.mail_sender,
-                ";\nwith subject: ", sesParams.mail_subject,
-                ";\nand body: ", sesParams.mail_body,
-                ";\nattaching the report: ", sesParams.url);
+            console.log('SESParams: ', JSON.stringify(sesParams));
+
+           /*  await lambda.invoke({
+                FunctionName: 'EMAIL_TRIGGER',
+                Payload: JSON.stringify(sesParams)
+            }).promise(); */
         };
     }
 

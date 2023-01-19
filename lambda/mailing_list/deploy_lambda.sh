@@ -27,7 +27,10 @@ HOSTNAME=`cat ../../${1}.json | jq -r ".postgres.host"`
 USERNAME=`cat ../../${1}.json | jq -r ".postgres.username"`
 PASSWORD=`cat ../../${1}.json | jq -r ".postgres.password"`
 
-BUCKET_NAME=`cat ../../${1}.json | jq -r ".lambdas.mailing_list.s3.bucket"`
+REGION="eu-central-1"
+
+BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.mailing_list.s3.bucket"`
+EMAILTRIGGER=`cat ../../${1}.json | jq -r ".lambdas.email_trigger.functionName"`
 
 #replace Variables
 cp index.js index.js.ori
@@ -39,6 +42,9 @@ sed -i -e "s/PASSWORD/${PASSWORD}/g" index.js
 sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 sed -i -e "s/PROFILES_NAME/${DYN_PROFILESNAME}/g" index.js
 sed -i -e "s/VIEWS_NAME/${DYN_VIEWSNAME}/g" index.js
+sed -i -e "s/BUCKET_NAME/${BUCKETNAME}/g" index.js
+sed -i -e "s/EMAIL_TRIGGER/${EMAILTRIGGER}/g" index.js
+sed -i -e "s/REGION/${REGION}/g" index.js
 
 rm index.js-e
 
