@@ -1,6 +1,7 @@
 var aws = require('aws-sdk');
 aws.config.update({ region: 'REGION' });
 var ses = new aws.SES({ apiVersion: '2010-12-01' });
+const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
 let data = {
     Destination: {
@@ -21,8 +22,27 @@ let data = {
 };
 
 
-async function sendEmail(to, cc, body, subject, sender) {
+async function sendEmail(to, cc, body, subject, sender, attachments) {
     try {
+
+        let attachmentsList = null;
+        if(attachments && attachments.length > 0) {
+            attachmentsList = [];
+            for(const attachment in attachments) {
+                const s3ParamsGetList = {
+                    Bucket: 'BUCKET_NAME',
+                    Key: attachment.path
+                };
+                const object = await s3.getObject(s3ParamsGetList).promise();
+                if(object && object.Body) {
+                    attachmentsList.push({Filename: attachment.name, Content: object.Body});
+                }
+                else  {
+                    console.log('There was an error trying to download attachment from s3: ' + attachment.name);
+                }
+            }
+        }
+        
         var eParams = {
             Destination: {
                 ToAddresses: to,
@@ -41,9 +61,8 @@ async function sendEmail(to, cc, body, subject, sender) {
                     Data: subject
                 }
             },
-
-            // Replace source_email with your SES validated email address
-            Source: sender
+            Source: sender,
+            Attachments: attachmentsList
         };
 
         console.log(eParams);
