@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 AWS.config.update({
-    region: 'eu-central-1'
+    region: 'REGION'
 });
 const s3 = new AWS.S3({
     apiVersion: '2006-03-01'
@@ -259,10 +259,13 @@ exports.handler = async (event, context) => {
 
             console.log('SESParams: ', JSON.stringify(sesParams));
 
-           /*  await lambda.invoke({
-                FunctionName: 'EMAIL_TRIGGER',
+            let response = await lambda.invoke({
+                FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_trigger',
                 Payload: JSON.stringify(sesParams)
-            }).promise(); */
+            }).promise();
+
+            console.log('response: ',response);
+
         };
     }
 
