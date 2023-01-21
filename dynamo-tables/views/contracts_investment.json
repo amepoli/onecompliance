@@ -144,6 +144,12 @@
 						"label": "Chiudi Contratto",
 						"outputEventName": "close_contract",
 						"tooltip": "E' possibile chiudere il contratto solo se è definita la data cessazione"
+					},
+					{
+						"icon": "lock",
+						"label": "Registra chiusura rapporto in AUI",
+						"outputEventName": "close_rapporto_aui",
+						"tooltip": "E' possibile registrare la chiusura del rapporto in AUI solo se è stato registrato all'apertura"
 					}
 				]
 			},
@@ -174,13 +180,12 @@
 					"outputEventWhenComplete": "to_compito_created"
 				},
 				{
-					"eventName": "close_aui_too",
+					"eventName": "close_rapporto_aui",
 					"actionType": "show_message",
 					"condition": "none",
 					"values": [],
 					"message": {
-						"messageTitle": "Registrare chiusura in AUI?",
-						"messageText": "Il contratto é registrato nell'AUI, si desidera registrare anche la sua chiusura?",
+						"messageTitle": "Registrare chiusura rapporto in AUI?",
 						"actionOnYes": {
 							"actionType": "query",
 							"queryFunct": "select entrasp.aui_registra_chiusura_rapporto($codice_azienda$, $id_contratto$)"
@@ -200,7 +205,7 @@
 					"values": [],
 					"queryFunct": "UPDATE entrasp.contratti SET data_cessazione=coalesce('£data_cessazione£',current_date), stato='C' WHERE id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$ RETURNING (SELECT case when count(*) >  0 then 'true' else 'false' end FROM entrasp.contratti cnt INNER JOIN entrasp.registrazioni_rapporti_aui rra  ON cnt.numero_contratto=trim(rra.identificativo_rapporto) and cnt.codice_azienda=rra.codice_azienda WHERE cnt.id_contratto=$id_contratto$ and cnt.codice_azienda=$codice_azienda$)",
 					"successMessage": "Contratto chiuso",
-					"outputEventWhenComplete": "close_aui_too"
+					"outputEventWhenComplete": "survey_reload"
 				}
 			]
 		},
