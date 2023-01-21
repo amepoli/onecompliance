@@ -7,7 +7,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select snd.*, snd2.id_sondaggio as id_sondaggio_successivo, snd.id_modello_test||'-'||snd.id_modello_test_vr as id_e_vr, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria, entrasp.centri_gestionali_descr(snd.codice_part,snd.id_centro_gest) as centro_gest, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as descr_stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test left join entrasp.sondaggi snd2 on snd.codice_azienda=snd2.codice_azienda and snd.id_sondaggio=snd2.id_sondaggio_succ inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where dynamo_user='€global_username€'"
+            "queryString": "select snd.*,entrasp.giudizio_scadenza(snd.data_prevista, snd.stato) as scaduto, snd2.id_sondaggio as id_sondaggio_successivo, snd.id_modello_test||'-'||snd.id_modello_test_vr as id_e_vr, entrasp.anagrafiche_cognnome(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria, entrasp.centri_gestionali_descr(snd.codice_part,snd.id_centro_gest) as centro_gest, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as descr_stato, mt.titolo as modello_test from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test left join entrasp.sondaggi snd2 on snd.codice_azienda=snd2.codice_azienda and snd.id_sondaggio=snd2.id_sondaggio_succ inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where dynamo_user='€global_username€'"
         },
         {
             "operation": "selectForm",
@@ -59,7 +59,15 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "Codice Azienda",
-            "width": "8%"
+            "width": "8%",
+            "style":[
+            {
+                "value": "*",
+                "background_color": "lightblue",
+                "text_align": "center",
+                "font_weight": "599"
+            }
+        ]
         },
         {
             "format": {
@@ -109,7 +117,7 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "width": "28%"
+            "width": "23%"
         },
         {
             "format": {
@@ -119,10 +127,207 @@
             "isPrimary": false,
             "key": "giudizio",
             "label": "Giudizio automatico",
-            "width": "6%",
+            "width": "7%",
             "style": [
                 {
                     "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Rischio basso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Favorevole",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Adeguato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In prevalenza favorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Irrilevante",
+                    "font_color": "DarkBlue",
+                    "font_weight": "500",
+                    "background_color": "GhostWhite",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non significativo",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Poco significativo",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Nessun Riscontro",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Prevalentemente adeguato",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-Basso",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Falsi Positivi",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Rischio medio",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Abbastanza significativo",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente favorevole",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-Alto",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente adeguato",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente sfavorevole",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Molto significativo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Rilevati Riscontri",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In prevalenza sfavorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non adeguato",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Sfavorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "black",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Rischio alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Obbligo di Astensione",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
                     "text_align": "center"
                 }
             ]
@@ -131,7 +336,7 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "giudizio_manuale",
             "label": "Giudizio manuale",
@@ -141,7 +346,7 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_modello_test",
             "isInputButton": true,
@@ -202,39 +407,60 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "8%",
+            "width": "7%",
             "key": "descr_stato",
             "label": "Stato",
             "style": [
                 {
                     "value": "Chiuso",
-                    "font_color": "green",
-                    "font_weight": "500"
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
                 },
                 {
                     "value": "Provvisorio",
-                    "font_color": "#BA68C8",
-                    "font_weight": "500"
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
                 },
                 {
                     "value": "Pianificato",
-                    "font_color": "#FF8100",
-                    "font_weight": "500"
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
                 },
                 {
                     "value": "Attesa Riscontro",
-                    "font_color": "#FF0000",
-                    "font_weight": "500"
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "yellow",
+                    "font_size": "medium",
+                    "text_align": "center"
                 },
                 {
                     "value": "In Svolgimento",
-                    "font_color": " #A1A100",
-                    "font_weight": "500"
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "font_size": "medium",
+                    "text_align": "center"
                 },
                 {
                     "value": "Annullato",
-                    "font_color": "grey",
-                    "font_weight": "500"
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "LightGray",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non previsto",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "LightGray",
+                    "text_align": "center"
                 }
             ]
         },
@@ -244,21 +470,34 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "4.5%",
+            "width": "6.5%",
             "key": "sondaggio_completato",
             "label": "Completato",
             "style": [
                 {
-                    "value": "Completo",
-                    "font_color": "green",
-                    "font_weight": "500"
+                  "value": "*",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "firebrick",
+                  "font_size": "medium",
+                  "text_align": "center"
                 },
                 {
-                    "value": "Incompleto",
-                    "font_color": "red",
-                    "font_weight": "500"
+                  "value": "Completo",
+                  "font_color": "PaleGreen",
+                  "font_weight": "500",
+                  "background_color": "Green",
+                  "text_align": "center"
+                },
+                {
+                  "value": "Incompleto",
+                  "font_color": "white",
+                  "font_weight": "500",
+                  "background_color": "firebrick",
+                  "font_size": "medium",
+                  "text_align": "center"
                 }
-            ]
+              ]
         },
         {
             "format": {
@@ -268,8 +507,102 @@
             "isPrimary": false,
             "key": "id_anagrafica_assegnataria",
             "label": "Assegnato a",
-            "width": "6.5%"
+            "width": "7.5%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Bello Michela",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "LightBlue",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Poli Amedeo",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#FAF57D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Guadagnini Marco",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "Blue",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Zonta Annarita",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "LightPink",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Tonicello Davide",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#90EE90",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Bruscagin Giacomo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "Indigo",
+                    "text_align": "center"
+                }
+            ]
         },
+        {
+            "format": {
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "scaduto",
+            "label": "Scadenza",
+            "width": "5%",
+            "style": [
+              {
+                "value": "*",
+                "text_align": "center"
+              },
+              {
+                "value": "Non scaduta",
+                "font_color": "PaleGreen",
+                "font_weight": "500",
+                "background_color": "Green",
+                "text_align": "center"
+              },
+              {
+                "value": "Scaduta",
+                "font_color": "white",
+                "font_weight": "500",
+                "background_color": "firebrick",
+                "font_size": "medium",
+                "text_align": "center"
+              },
+              {
+                "value": "Eseguita",
+                "font_color": "white",
+                "font_weight": "500",
+                "background_color": "#579AF2",
+                "font_size": "medium",
+                "text_align": "center"
+              },
+              {
+                "value": "In scadenza",
+                "font_color": "white",
+                "font_weight": "500",
+                "background_color": "#D69215",
+                "text_align": "center"
+            }
+            ]
+          },
         {
             "format": {
                 "dataType": "number"
@@ -547,6 +880,16 @@
             "label": "Doc.incompleta",
             "newLine": false,
             "queryCond": "entrasp.is_doc_completa_sondaggio(snd.codice_azienda, snd.id_sondaggio)=false"
+        },
+        {
+            "fieldName": "competenza_corrente",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Comp. Corrente",
+            "newLine": false,
+            "queryCond": "snd.data_comp>current_date"
         }
     ]
 }
