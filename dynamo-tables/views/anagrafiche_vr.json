@@ -283,6 +283,12 @@
                         "icon": "mail",
                         "label": "Get emails",
                         "outputEventName": "get_emails_by_codice_azienda"
+                    },
+                    {
+                        "icon": "ios_share",
+						"label": "Registra variazione legami in AUI",
+						"outputEventName": "variazione_legami_aui",
+						"tooltip": "E' possibile registrare le variazioni dei legami della presente anagrafica in AUI dove ha contratti registrati attivi"
                     }
                 ]
             },
@@ -336,6 +342,14 @@
                     "outputEventWhenComplete": "update_current_version",
                     "values": [],
                     "queryFunct": "delete from entrasp.anagrafiche_vr where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$;"
+                },
+                {
+                    "eventName": "variazione_legami_aui",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Variazioni registrate",
+                    "values": [],
+                    "queryFunct": "select entrasp.aui_registra_variazione_legame_soggetti($codice_azienda$,$id_anagrafica$);"
                 }
             ]
         },
