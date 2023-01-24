@@ -2,6 +2,32 @@
     "$schema": "../views.schema.json",
     "inheritsFrom": "anagrafiche_vr",
     "entryKey": "fornitori",
+    "define": {
+        "is_hidden_codice_part": "true",
+        "is_hidden_ruolo": "true",
+        "is_hidden_ruolo2": "true",
+        "is_hidden_contratti_sottoscritti": "false",
+        "is_hidden_profilo_aml": "false"
+    },
+     "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "unifica",
+                    "icon": "merge_type",
+                    "label": "Unifica anagrafiche",
+                    "query": "select entrasp.unifica_anagrafiche_selezionate(array[$selected_rows_data$], '€global_username€', '€global_codice_azienda€')",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Unificare le anagrafiche selezionate?"
+                }
+            ]
+        }
+    ],
     "outputEvents": [
         {
             "eventName": "onSaveAnagrafichevr",
@@ -10,443 +36,6 @@
         {
             "eventName": "onLoadAnagrafichevr",
             "eventTrigger": "onReload"
-        }
-    ],
-    "form_keys": [
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_part",
-            "label": "codice_part",
-            "newLine": true,
-            "readOnly": true
-        },
-        {
-            "format": {
-                "dataType": "text",
-                "viewType": "input",
-                "value": "E"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "tipo_soggetto_bis",
-            "label": "Tipo soggetto bis",
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "tipo_soggetto_load",
-                "eventTrigger": "change"
-            },
-            "queryFunct": "SELECT tipo_soggetto as tipo_soggetto_bis from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-            "readOnly": false,
-            "sameOrigin": false
-        },
-        {
-            "format": {
-                "comboQuery": "select codice as id, transcodifica as name from entrasp.transcodifiche where tipo_dato='TIPO_SOGGETTO'",
-                "options": [],
-                "value": "E",
-                "viewType": "combobox",
-                "dataType": "text",
-                "validations": [
-                    {
-                        "message": "Tipo soggetto necessario",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "tipo_soggetto",
-            "label": "Tipo soggetto",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "combo_tipo_soggetto",
-                "eventTrigger": "select"
-            },
-            "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "id_anagrafica",
-            "label": "ID",
-            "newLine": false,
-            "readOnly": true,
-            "size": 1
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice",
-            "label": "Codice",
-            "newLine": false,
-            "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-            "readOnly": false,
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "value": "£CURRENT_DATE£",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_upd",
-            "label": "Data Aggiunta",
-            "newLine": true,
-            "readOnly": true,
-            "size": 2
-        },
-        {
-            "format": {
-                "viewType": "subform",
-                "subform_keys": [
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "nome",
-                        "label": "Nome",
-                        "newLine": false,
-                        "queryFunct": "SELECT nome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "cognome",
-                        "label": "Cognome",
-                        "newLine": true,
-                        "queryFunct": "SELECT cognome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false
-                    }
-                ]
-            },
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "condition": "equalTo",
-                    "eventName": "combo_tipo_soggetto",
-                    "values": [
-                        "P"
-                    ]
-                },
-                {
-                    "actionType": "show",
-                    "condition": "equalTo",
-                    "eventName": "tipo_soggetto_load",
-                    "values": [
-                        "P"
-                    ]
-                }
-            ],
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "persone_fisiche",
-            "label": "Persone Fisiche",
-            "newLine": true,
-            "readOnly": false,
-            "sameOrigin": false,
-            "saveWhenHidden": true
-        },
-        {
-            "format": {
-                "viewType": "subform",
-                "subform_keys": [
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "ragione_sociale",
-                        "label": "Ragione sociale",
-                        "newLine": true,
-                        "readOnly": false
-                    }
-                ]
-            },
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "condition": "equalTo",
-                    "eventName": "combo_tipo_soggetto",
-                    "values": [
-                        "E"
-                    ]
-                },
-                {
-                    "actionType": "show",
-                    "condition": "equalTo",
-                    "eventName": "tipo_soggetto_load",
-                    "values": [
-                        "E"
-                    ]
-                }
-            ],
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "persone_giuridiche",
-            "label": "Persone Giuridiche",
-            "newLine": true,
-            "readOnly": false,
-            "saveWhenHidden": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_fiscale",
-            "label": "Codice fiscale",
-            "newLine": false,
-            "readOnly": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "partita_iva",
-            "label": "Partita IVA",
-            "newLine": true,
-            "readOnly": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "indirizzo",
-            "label": "Indirizzo",
-            "newLine": true,
-            "readOnly": false,
-            "size": 10
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "cap",
-            "label": "CAP",
-            "newLine": false,
-            "readOnly": false,
-            "size": 1
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "comune",
-            "label": "Località",
-            "newLine": false,
-            "readOnly": false,
-            "size": 8
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "provincia",
-            "label": "Provincia",
-            "newLine": true,
-            "readOnly": false,
-            "size": 1
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "value": 1,
-                "viewType": "input"
-            },
-            "inputEvents": [
-                {
-                    "actionType": "query",
-                    "condition": "none",
-                    "eventName": "clienti_button_nuova_versione",
-                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version('€global_codice_azienda€',$id_anagrafica$, $prog_vr$)",
-                    "values": []
-                }
-            ],
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "prog_vr",
-            "label": "Versione",
-            "newLine": false,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "nuova_versione",
-            "label": "Nuova Versione",
-            "newLine": true,
-            "outputEvent": {
-                "eventName": "clienti_button_nuova_versione",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "textarea"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "annotazioni_interne",
-            "label": "Note Interne",
-            "newLine": true,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": "1",
-                "viewType": "checkbox"
-            },
-            "key": "flag_fornitore",
-            "label": "Fornitore",
-            "newLine": false,
-            "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','FOR',$id_anagrafica$)",
-            "readOnly": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when £id_anagrafica£ is null or £id_anagrafica£::varchar ='' then true else false end as label"
-                }
-            ],
-            "sameOrigin": false,
-            "isHidden": true,
-            "isPrimary": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "key": "flag_cliente",
-            "label": "Cliente",
-            "newLine": false,
-            "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','CLI',$id_anagrafica$)",
-            "readOnly": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when €id_anagrafica€ is null or €id_anagrafica€::varchar ='' then true else false end as label"
-                }
-            ],
-            "sameOrigin": false,
-            "isPrimary": false,
-            "isHidden": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "key": "flag_dipendente",
-            "newLine": false,
-            "label": "Dip./collab.",
-            "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','RSRSA',$id_anagrafica$)",
-            "readOnly": false,
-            "sameOrigin": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when $id_anagrafica$ is null or $id_anagrafica$::varchar ='' then true else false end as label"
-                }
-            ],
-            "isHidden": false,
-            "isPrimary": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "key": "flag_fondo",
-            "label": "Fondo",
-            "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','FONDO',$id_anagrafica$)",
-            "readOnly": false,
-            "sameOrigin": false,
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when $id_anagrafica$ is null or $id_anagrafica$::varchar ='' then true else false end as label"
-                }
-            ],
-            "isHidden": false,
-            "isPrimary": false
         }
     ],
     "predefinedQueries": [
@@ -490,8 +79,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Documenti Associati",
-            "type": "tableForm"
+            "label": "Documenti Associati"
+            
         },
         {
             "entryKey": "sondaggi_somministrati_sub_of_anagrafiche",
@@ -601,6 +190,12 @@
                 }
             ],
             "label": "Trattamenti Dati/Titolare"
+        }
+    ],
+     "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "formReload"
         }
     ]
 }
