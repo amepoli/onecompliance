@@ -286,9 +286,15 @@
                     },
                     {
                         "icon": "ios_share",
+						"label": "Registra ultima versione in AUI",
+						"outputEventName": "nuova_versione_anagrafica_aui",
+						"tooltip": "E' possibile registrare l'ultima versione dell'anagrafica in AUI dove sono presenti contratti registrati attivi"
+                    },
+                    {
+                        "icon": "ios_share",
 						"label": "Registra variazione legami in AUI",
 						"outputEventName": "variazione_legami_aui",
-						"tooltip": "E' possibile registrare le variazioni dei legami della presente anagrafica in AUI dove ha contratti registrati attivi"
+						"tooltip": "E' possibile registrare le variazioni dei legami della presente anagrafica in AUI dove sono presenti contratti registrati attivi"
                     }
                 ]
             },
@@ -342,6 +348,14 @@
                     "outputEventWhenComplete": "update_current_version",
                     "values": [],
                     "queryFunct": "delete from entrasp.anagrafiche_vr where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$;"
+                },
+                {
+                    "eventName": "nuova_versione_anagrafica_aui",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Nuova versione registrata",
+                    "values": [],
+                    "queryFunct": "select entrasp.aui_registra_ultima_versione_anagrafica($codice_azienda$,$id_anagrafica$);"
                 },
                 {
                     "eventName": "variazione_legami_aui",
