@@ -1,7 +1,7 @@
 var aws = require('aws-sdk');
 aws.config.update({ region: 'REGION' });
 var ses = new aws.SES({ apiVersion: '2010-12-01' });
-const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+const s3 = new aws.S3({ apiVersion: '2006-03-01' });
 
 let data = {
     Destination: {
@@ -28,7 +28,7 @@ async function sendEmail(to, cc, body, subject, sender, attachments) {
         let attachmentsList = null;
         if(attachments && attachments.length > 0) {
             attachmentsList = [];
-            for(const attachment in attachments) {
+            for(const attachment of attachments) {
                 const s3ParamsGetList = {
                     Bucket: 'BUCKET_NAME',
                     Key: attachment.path
@@ -42,7 +42,7 @@ async function sendEmail(to, cc, body, subject, sender, attachments) {
                 }
             }
         }
-        
+
         var eParams = {
             Destination: {
                 ToAddresses: to,

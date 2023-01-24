@@ -8,10 +8,6 @@ const s3 = new AWS.S3({
 
 const excel = require('node-excel-export');
 
-var lambda = new AWS.Lambda({
-    region: 'REGION'
-});
-
 const Pool = require('pg-pool');
 const pool = new Pool({
     host: 'HOST_NAME',
@@ -179,6 +175,7 @@ exports.handler = async (event, context) => {
     // console.log('\tHello from lambda mailing_list (: \nHere\'s the Caller: ', caller_url);
 
     let result;
+    let body = null;
 
     await pool
         .query(`select * from entrasp.mailing_list();`)
@@ -247,10 +244,11 @@ exports.handler = async (event, context) => {
             //var url = s3.getSignedUrl('getObject', s3ParamsUrl);
 
             //invoke the email composer giving the parameters
+            let list = mail_to.split(',');
             var sesParams = {
-                to: mail_to,
+                to: { list },
                 sender: mail_sender,
-                body: mail_body,
+                body: { header: mail_body },
                 attachments: [{
                     name: filename,
                     path: 'mail/' + filename
@@ -258,24 +256,10 @@ exports.handler = async (event, context) => {
             };
 
             console.log('SESParams: ', JSON.stringify(sesParams));
-
-            let response = await lambda.invoke({
-                FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:email_trigger',
-                Payload: JSON.stringify(sesParams)
-            }).promise();
-
-            console.log('response: ',response);
+            body = JSON.stringify(sesParams);
 
         };
     }
 
-    return {
-        "statusCode": 200,
-        "isBase64Encoded": false,
-        "headers": {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-        },
-        "body": 'OK'
-    };
+    return { body };
 };
