@@ -238,6 +238,7 @@ exports.handler = async (event, context, callback) => {
 
             // Get body
             let body = await getBody(entry.body);
+            console.log('body', body);
 
             // Get sender
             let sender = entry.sender ? entry.sender : default_sender;
