@@ -357,6 +357,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'import' });
     }
 
+    importXBRL(): void {
+        this._importExportService.requestImportXBRL();
+        // this._pubSubService.publishEvent(this.pubMsgCmdTopic, { type: 'import' });
+    }
+
     importAdvanced(item: ImportItem) {
         this._importExportService.requestAdvancedImport(item.label);
     }

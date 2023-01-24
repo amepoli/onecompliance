@@ -41,6 +41,9 @@ export class ImportExportService {
     // Event Emitter for import requests
     public onImportRequested: EventEmitter<string> = new EventEmitter();
 
+    // Event Emitter for import requests for XBRL files
+    public onImportRequestedXBRL: EventEmitter<string> = new EventEmitter();
+
     // Event Emitter for importing advanced requests
     public onAdvancedImportRequested: EventEmitter<string> = new EventEmitter();
 
@@ -151,6 +154,28 @@ export class ImportExportService {
             if (result) {
                 _this._console.table(result);
                 _this.performImport(result.tableName, null, result.files, false, null, null, result.allowMultipleFiles);
+            }
+        });
+    }
+
+    /**
+     * Show Import Dialog
+     * @param tableName table to import into
+     */
+    importXBRL(tableName: string): void {
+        const _this = this;
+
+        // Open dialog
+        const dialogRef = this._importDialog.open(ImportDialogComponent, {
+            width: '1280px',
+            data: { tableName: tableName }
+        });
+
+        // Check result to perform import
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                _this._console.table(result);
+                _this.performImport(result.tableName, null, result.files, false, null, null, result.allowMultipleFiles, 'XBRL');
             }
         });
     }
@@ -347,7 +372,7 @@ export class ImportExportService {
      * @param files files to import, currently only one file supported
      * @param allowMultipleFiles should import single or multiple files
      */
-    performImport(tableName: string, keys: any[], files: any[], isImportAdvanced: boolean = false, label: string = null, isForm: boolean = false, allowMultipleFiles: boolean = false): void {
+    performImport(tableName: string, keys: any[], files: any[], isImportAdvanced: boolean = false, label: string = null, isForm: boolean = false, allowMultipleFiles: boolean = false, fileType: string = 'CSV'): void {
         if (files != null && files.length) {
             let uploadingToast = this._toastService.showLoadingToast('Uploading', 'Please wait...');
             // this._dialogService.showLoadingDialog('Uploading', 'Please wait...');
@@ -471,7 +496,7 @@ export class ImportExportService {
                                     );
                                 }
                                 else{
-                                    this._backendService.importFileFromS3(this._authService.getCurrentCompany(), createURLResponse.fileName, tableName, null).subscribe(
+                                    this._backendService.importFileFromS3(this._authService.getCurrentCompany(), createURLResponse.fileName, tableName, null, fileType).subscribe(
                                         importFileFromS3Response => {
                                             this._console.log(importFileFromS3Response);
                                             if (importFileFromS3Response != null && importFileFromS3Response.result === 'OK') {
@@ -602,6 +627,10 @@ export class ImportExportService {
 
     requestImport(entryName = '') {
         this.onImportRequested.emit(entryName);
+    }
+
+    requestImportXBRL(entryName = '') {
+        this.onImportRequestedXBRL.emit(entryName);
     }
 
     requestAdvancedImport(label: string) {

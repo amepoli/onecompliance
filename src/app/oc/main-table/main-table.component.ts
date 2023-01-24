@@ -145,6 +145,10 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this._importExportService.importCSV(_this.tableName);
         }));
 
+        _this.subscriptions.push(_this._importExportService.onImportRequestedXBRL.subscribe((entryName) => {
+            _this._importExportService.importXBRL(_this.tableName);
+        }));
+
         _this.subscriptions.push(_this._importExportService.onAdvancedImportRequested.subscribe((label) => {
             _this._importExportService.importAdvancedCSV(_this.tableName, (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, label, _this.tableType === 'form');
         }));

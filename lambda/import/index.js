@@ -1,5 +1,7 @@
 const excel = require('node-excel-export');
 
+const xbrlParser = require('xbrl-parser');
+
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'REGION' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
@@ -35,10 +37,10 @@ var global_variables = {};
 
 
 function isNullOrWhiteSpace(data) {
-    if(data == null || data.length == 0) {
+    if (data == null || data.length == 0) {
         return true;
     }
-    if(data.replace(/\s+/g, '').length == 0) {
+    if (data.replace(/\s+/g, '').length == 0) {
         return true;
     }
 
@@ -87,7 +89,7 @@ async function getProfileData(profile) {
         }
     };
     let data = await dynamo.get(profileParams).promise();
-    
+
     data = await helperFuncts.overrideTable('PROFILES_NAME', data.Item, dynamo);
 
     data = await helperFuncts.includeTable('PROFILES_NAME', data, dynamo);
@@ -144,16 +146,16 @@ function processCSV(csvData) {
     // let utf8String = csvData.toString('utf-8');
 
     // Another technique
-    let stringData = csvData;    
-    try{
+    let stringData = csvData;
+    try {
         stringData = decodeURIComponent(csvData.toString());
         console.log('stringData after decoding: ', stringData);
-    } 
-    catch(e) {
+    }
+    catch (e) {
         console.log('There is no need to encode this file!');
         stringData = csvData.toString();
     }
-    
+
     // Remove the header
     stringData = stringData.split(' ').filter(x => !isNullOrWhiteSpace(x)).join(' ');
     /*
@@ -1012,7 +1014,7 @@ async function overrideTable(son) {
 function replaceJSONParams(JSONString, paramsObject) {
     if (paramsObject == null) {
         return JSONString
-    } 
+    }
 
     JSONString = JSON.stringify(JSONString);
 
@@ -1149,6 +1151,7 @@ exports.handler = async (event, context) => {
                 // Load mandatory query params
                 let fileName = queryParams['filename'];
                 let table = queryParams['entry_name'];
+                let fileType = queryParams['file_type'];
 
                 // Check if mandatory query params provided
                 if (!fileName || !table) {
@@ -1162,109 +1165,137 @@ exports.handler = async (event, context) => {
                             entryKey: table
                         }
                     };
-    
+
                     let entry_params = await dynamo.get(DynamoParams).promise();
-    
+
                     // complete table if inherited
                     entry_params = await overrideTable(entry_params.Item);
                     console.log('entry_params: ', JSON.stringify(entry_params));
 
-                    // Load file from S3
-                    const s3ParamsGetList = {
-                        Bucket: bucket,
-                        Key: "CSV/" + fileName
-                    };
-
-                    let csvFile = await s3.getObject(s3ParamsGetList).promise();
-
-                    // Check if file exists
-                    if (!csvFile.ContentLength) {
-                        console.log("File does not exist!");
-                        body = { result: 'KO', reason: 'File does not exist!' };
-                    }
-                    else {
-                        console.log(`S3 File length: ${csvFile.ContentLength}`);
-                        
-                        console.log('Processing CSV to UTF-8...');
-                        // Convert to UTF-8
-                        csvFile = processCSV(csvFile.Body);
-
-                        console.log('Saving CSV to temp folder...');
-
-                        // Save temporarily
-                        var saveResult = await s3.putObject({
+                    if (fileType == 'CSV') {
+                        // Load file from S3
+                        const s3ParamsGetList = {
                             Bucket: bucket,
-                            Key: "CSV/_temp/" + fileName,
-                            Body: csvFile,
-                            ContentType: 'text/csv'                           
-                           }
-                        ).promise();
-                        console.log('SaveResult:', saveResult);
-                        // Try to load columns from query params
-                        let columns = queryParams['columns'];
+                            Key: "CSV/" + fileName
+                        };
 
-                        // Check if columns were not provided in the query params
-                        if (!columns) {
-                            // Let's search CSV header for columns
-                            // First line contains headers, replace all extra characters
-                            columns = processCSV(csvFile).toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/﻿/g, '').replace(/CSV_DELIMITER/g, ',');
+                        let csvFile = await s3.getObject(s3ParamsGetList).promise();
+
+                        // Check if file exists
+                        if (!csvFile.ContentLength) {
+                            console.log("File does not exist!");
+                            body = { result: 'KO', reason: 'File does not exist!' };
                         }
+                        else {
+                            console.log(`S3 File length: ${csvFile.ContentLength}`);
 
-                        let tableToImport = entry_params.origin || table;
-                        // Added schema if table does not contain
-                        if (!tableToImport.includes('.')) {
-                            tableToImport = `${schema}.${tableToImport}`;
-                        }
+                            console.log('Processing CSV to UTF-8...');
+                            // Convert to UTF-8
+                            csvFile = processCSV(csvFile.Body);
 
-                        // Data prepared:
-                        console.table({ "fileName": fileName, "table": tableToImport, "columns": columns });
+                            console.log('Saving CSV to temp folder...');
 
-                        // Create extensions
-                        // query = `CREATE EXTENSION aws_s3 CASCADE;`
-                        // query = `CREATE EXTENSION aws_commons CASCADE;`
+                            // Save temporarily
+                            var saveResult = await s3.putObject({
+                                Bucket: bucket,
+                                Key: "CSV/_temp/" + fileName,
+                                Body: csvFile,
+                                ContentType: 'text/csv'
+                            }
+                            ).promise();
+                            console.log('SaveResult:', saveResult);
+                            // Try to load columns from query params
+                            let columns = queryParams['columns'];
 
-                        // Import CSV from S3 to Postgres
-                        const query = `SELECT aws_s3.table_import_from_s3(
+                            // Check if columns were not provided in the query params
+                            if (!columns) {
+                                // Let's search CSV header for columns
+                                // First line contains headers, replace all extra characters
+                                columns = processCSV(csvFile).toString().split('\n')[0].replace(/'/g, '').replace(/\r/g, '').replace(/﻿/g, '').replace(/CSV_DELIMITER/g, ',');
+                            }
+
+                            let tableToImport = entry_params.origin || table;
+                            // Added schema if table does not contain
+                            if (!tableToImport.includes('.')) {
+                                tableToImport = `${schema}.${tableToImport}`;
+                            }
+
+                            // Data prepared:
+                            console.table({ "fileName": fileName, "table": tableToImport, "columns": columns });
+
+                            // Create extensions
+                            // query = `CREATE EXTENSION aws_s3 CASCADE;`
+                            // query = `CREATE EXTENSION aws_commons CASCADE;`
+
+                            // Import CSV from S3 to Postgres
+                            const query = `SELECT aws_s3.table_import_from_s3(
                             '${tableToImport}',
                             '${columns}', 
                             '(FORMAT CSV, DELIMITER E''CSV_DELIMITER'', HEADER true)',
                             aws_commons.create_s3_uri('${bucket}', 'CSV/_temp/${fileName}','${region}')
                         );`;
-                        // ,aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
+                            // ,aws_commons.create_aws_credentials('${accessKey}', '${secret}', '')
 
-                        // Try to run query 5 times on failure
-                        let queryResponse = null;
-                        let tries = 0;
-                        while (!queryResponse && tries < 5) {
-                            console.log(`Trying to run query [${tries}]`);
-                            try {
-                                queryResponse = await client.query(query);
+                            // Try to run query 5 times on failure
+                            let queryResponse = null;
+                            let tries = 0;
+                            while (!queryResponse && tries < 5) {
+                                console.log(`Trying to run query [${tries}]`);
+                                try {
+                                    queryResponse = await client.query(query);
+                                }
+                                catch (e) {
+                                    console.log(e);
+                                    queryResponse = null;
+                                    tries++;
+                                }
                             }
-                            catch (e) {
-                                console.log(e);
-                                queryResponse = null;
-                                tries++;
+
+                            // Delete temporary file
+                            var deleteResult = await s3.deleteObject({
+                                Bucket: bucket,
+                                Key: "CSV/_temp/" + fileName
+                            }
+                            ).promise();
+                            console.log('deleteResult:', deleteResult);
+
+
+                            // Check if success or failure
+                            if (queryResponse) {
+                                console.table(queryResponse);
+                                body = { result: 'OK', response: queryResponse };
+                            }
+                            else {
+                                body = { result: 'KO', reason: 'CSV file is not valid for this table!' };
                             }
                         }
-
-                        // Delete temporary file
-                        var deleteResult = await s3.deleteObject({
-                            Bucket: bucket,
-                            Key: "CSV/_temp/" + fileName                           
-                           }
-                        ).promise();
-                        console.log('deleteResult:', deleteResult);
+                    } else if (fileType == 'XBRL') {
                         
+                        console.log('File type: XBRL');
 
-                        // Check if success or failure
-                        if (queryResponse) {
-                            console.table(queryResponse);
-                            body = { result: 'OK', response: queryResponse };
+                        const s3ParamsGetList = {
+                            Bucket: bucket,
+                            Key: "CSV/" + fileName
+                        };
+
+                        let xbrlFile = await s3.getObject(s3ParamsGetList).promise();
+
+                        // Check if file exists
+                        if (!xbrlFile.ContentLength) {
+                            console.log("File does not exist!");
+                            body = { result: 'KO', reason: 'File does not exist!' };
                         }
                         else {
-                            body = { result: 'KO', reason: 'CSV file is not valid for this table!' };
+                            console.log(`S3 File length: ${xbrlFile.ContentLength}`); 
+                            console.log(`S3 File body: ${xbrlFile.Body}`);   
+                            const xbrlParsed = xbrlParser.parseXbrlFile(xbrlFile.Body);
+                            
+                            console.log(xbrlParsed['xbrli:xbrl']['xbrli:context'][0]);
+
                         }
                     }
+
+
                 }
             }
             else if (requestType === 'importAdvancedFile') {
@@ -1366,7 +1397,7 @@ exports.handler = async (event, context) => {
 
                 // Convert to UTF-8
                 csvFile = processCSV(csvFile.Body.toString());
-                
+
                 console.log(csvFile);
 
                 console.log(`Saving CSV to temp folder... with address: ${bucket}:/${"CSV/_temp/" + fileName}`);
@@ -1376,11 +1407,11 @@ exports.handler = async (event, context) => {
                     Bucket: bucket,
                     Key: "CSV/_temp/" + fileName,
                     Body: csvFile,
-                    ContentType: 'text/csv'                           
-                   }
+                    ContentType: 'text/csv'
+                }
                 ).promise();
                 console.log('SaveResult:', saveResult);
-                
+
                 // //TO TEST
                 // processedFile.push({"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'});
                 // let payload = {"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'};
@@ -1390,19 +1421,19 @@ exports.handler = async (event, context) => {
                 //     FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:utf_encoder',
                 //     Payload: JSON.stringify(payload)  
                 // }).promise();
-            
+
                 // console.log(risp);
-                
+
                 // Check if mandatory query params provided
                 if (!fileName || !table || !queryString) {
                     // Delete temporary file
                     var deleteResult = await s3.deleteObject({
                         Bucket: bucket,
-                        Key: "CSV/_temp/" + fileName                           
-                       }
+                        Key: "CSV/_temp/" + fileName
+                    }
                     ).promise();
                     console.log('deleteResult:', deleteResult);
-                    
+
                     // Error Response Body
                     body = { result: 'KO', reason: 'Check File, table and queryString are correct!' };
                 }
@@ -1453,11 +1484,11 @@ exports.handler = async (event, context) => {
                     // Delete temporary file
                     var deleteResult = await s3.deleteObject({
                         Bucket: bucket,
-                        Key: "CSV/_temp/" + fileName                           
-                       }
+                        Key: "CSV/_temp/" + fileName
+                    }
                     ).promise();
                     console.log('deleteResult:', deleteResult);
-                    
+
                     // Check if success or failure
                     if (queryResponse) {
                         console.table(queryResponse);
@@ -1476,7 +1507,7 @@ exports.handler = async (event, context) => {
                     Key: "CSV/" + fileName
                 };
 
-               const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsDelete);
+                const signedUrl = s3.getSignedUrl('deleteObject', s3ParamsDelete);
 
                 body = { result: 'OK', url: signedUrl };
             }
@@ -1583,7 +1614,7 @@ exports.handler = async (event, context) => {
 
                 console.log('Full value set: ', fullValueSet);
 
-                
+
                 additionalQueryCond = getAdditionalQueryCond(entry_name, profileData);
 
                 let queryString = null;
@@ -1673,10 +1704,10 @@ exports.handler = async (event, context) => {
                     }
 
                     console.log('queryString3', queryString);
-                    
+
                     queryString = replaceGlobalkeys(queryString);
                     console.log('queryString4', queryString);
-                    
+
                     queryData = await runQuery(queryString, client);
                     // console.log('queryData', queryData);
 
