@@ -241,6 +241,10 @@ exports.handler = async (event, context, callback) => {
 
             // Get sender
             let sender = entry.sender ? entry.sender : default_sender;
+            
+            // Get attachments
+            let attachments = entry.attachments;
+            
             console.log("Calling back...");
 
             let eParams = {
@@ -250,7 +254,8 @@ exports.handler = async (event, context, callback) => {
                     "ccn": ccn,
                     "body": body,
                     "subject": subject,
-                    "sender": sender
+                    "sender": sender,
+                    "attachments": attachments
                 }
             }
             event = eParams;
