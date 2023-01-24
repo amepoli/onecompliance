@@ -93,7 +93,8 @@ exports.handler = async (event, context, callback) => {
         let body = data.body;
         let subject = data.subject;
         let sender = data.sender;
-        let emailResponse = await sendEmail(to, cc, body, subject, sender);
+        let attachments = data.attachments;
+        let emailResponse = await sendEmail(to, cc, body, subject, sender, attachments);
         if (emailResponse && emailResponse.MessageId) {
             result = { 'Success': true, 'Message': emailResponse, 'Error': null };
         }

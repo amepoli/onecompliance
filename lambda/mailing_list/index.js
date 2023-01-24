@@ -175,8 +175,8 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
 exports.handler = async (event, context) => {
 
-    let caller_url = event.headers.host + event.requestContext.path;
-    console.log('\tHello from lambda mailing_list (: \nHere\'s the Caller: ', caller_url);
+    // let caller_url = event.headers.host + event.requestContext.path;
+    // console.log('\tHello from lambda mailing_list (: \nHere\'s the Caller: ', caller_url);
 
     let result;
 
@@ -248,9 +248,9 @@ exports.handler = async (event, context) => {
 
             //invoke the email composer giving the parameters
             var sesParams = {
-                mail_to: mail_to,
-                mail_sender: mail_sender,
-                mail_body: mail_body,
+                to: mail_to,
+                sender: mail_sender,
+                body: mail_body,
                 attachments: [{
                     name: filename,
                     path: 'mail/' + filename
