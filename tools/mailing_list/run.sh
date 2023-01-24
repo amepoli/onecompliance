@@ -12,6 +12,6 @@ echo $mailingList
 aws lambda invoke \
 --function-name email_trigger \
 --cli-binary-format raw-in-base64-out \
---payload $mailingList \
+--payload "$mailingList" \
 result.json
 
