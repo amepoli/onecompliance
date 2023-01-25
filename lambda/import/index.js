@@ -1286,12 +1286,14 @@ exports.handler = async (event, context) => {
                             body = { result: 'KO', reason: 'File does not exist!' };
                         }
                         else {
-                            console.log(`S3 File length: ${xbrlFile.ContentLength}`); 
-                            console.log(`S3 File body: ${xbrlFile.Body}`);   
+
+                            console.log(`S3 File length: ${xbrlFile.ContentLength}`);
+                            console.log(`S3 File body: ${xbrlFile.Body}`);
                             const xbrlParsed = xbrlParser.parseXbrlFile(xbrlFile.Body);
                             
-                            console.log(xbrlParsed['xbrli:xbrl']['xbrli:context'][0]);
+                            const xbrlParsedItem = xbrlParsed['xbrli:xbrl']['xbrli:context'][0];
 
+                            console.log('[xbrli:xbrl][xbrli:context][xbrli:scenario][xbrldi:explicitMember][0]',xbrlParsedItem['xbrli:scenario']['xbrldi:explicitMember'][0]);
                         }
                     }
 

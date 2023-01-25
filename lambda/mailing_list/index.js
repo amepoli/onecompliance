@@ -244,10 +244,11 @@ exports.handler = async (event, context) => {
             //var url = s3.getSignedUrl('getObject', s3ParamsUrl);
 
             //invoke the email composer giving the parameters
-            let list = mail_to.split(',');
-            var sesParams = {
-                to: { list },
+
+            body = {
+                to: {list : mail_to},
                 sender: mail_sender,
+                subject: mail_subject,
                 body: { header: mail_body },
                 attachments: [{
                     name: filename,
@@ -255,11 +256,11 @@ exports.handler = async (event, context) => {
                 }]
             };
 
-            console.log('SESParams: ', JSON.stringify(sesParams));
-            body = JSON.stringify(sesParams);
+            // console.log('SESParams: ', JSON.stringify(sesParams));
+            // body = JSON.stringify(sesParams);
 
         };
     }
 
-    return { body };
+    return body;
 };
