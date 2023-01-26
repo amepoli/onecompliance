@@ -41,6 +41,7 @@ function getDateFormatted() {
 }
 
 function dataPrepare2xls(dataset, title, isMainSheet = false) {
+
     const styles = {
         headerDark: {
             fill: {
@@ -60,19 +61,29 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
         title: {
             fill: {
                 fgColor: {
-                    rgb: 'FFE0E0E0'
+                    rgb: 'FF2B679D'
                 },
             },
             font: {
                 color: {
-                    rgb: 'FF0080C4'
+                    rgb: 'FFFFFFFF'
                 },
-                sz: 34
+                sz: 34,
+                bold: true
             }
         },
         data: {
             font: {
-                sz: 16
+                color: {
+                    rgb: 'FFFFFFFF'
+                },
+                sz: 16,
+                bold : true
+            },
+            fill: {
+                fgColor: {
+                    rgb: 'FF16ACFF'
+                },
             }
         },
         cellRed: {
@@ -80,6 +91,14 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
                 fgColor: {
                     rgb: 'FFFF0000'
                 }
+            }
+        },
+        cellUnderlined: {
+            font: {
+                color: {
+                    rgb: 'FF0645AD'
+                },
+                underline : true
             }
         }
     };
@@ -94,7 +113,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
     if (isMainSheet) {
 
-        //console.log('generate main sheet');
+        console.log('generate main sheet with dataset: ', dataset);
 
         const specification = {
             indicator_description: {
@@ -110,6 +129,17 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
                     return (row.indicator_value != 0) ? styles.cellRed : null;
                 }, */
                 width: 120
+            },
+            link: {
+                displayName: 'Link alla pagina',
+                headerStyle: styles.data,
+                cellStyle: styles.cellUnderlined,
+                width: 120
+            },
+            filter: {
+                displayName: 'Filtri di ricerca',
+                headerStyle: styles.data,
+                width: 120
             }
         };
 
@@ -120,7 +150,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
             },
             end: {
                 row: 1,
-                column: 2
+                column: 4
             }
         }];
 
@@ -134,8 +164,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
     } else {
 
-        //console.log('generate secondary sheets');
-
+        console.log('generate secondary sheets with dataset: ', dataset);
         const specification = {};
 
         let property = Object.keys(dataset.rows[0]);
@@ -184,10 +213,10 @@ exports.handler = async () => {
 
     if (result) {
 
-        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value, company;
+        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value, company, menu_links, search_filters;
 
         for (const row in result.rows) {
-
+            
             mail_to = result.rows[row].mail_to;
             mail_body = result.rows[row].mail_body;
             mail_subject = result.rows[row].mail_subject;
@@ -196,15 +225,21 @@ exports.handler = async () => {
             sheet_titles = result.rows[row].sheet_titles;
             indicators_value = result.rows[row].indicators_value;
             company = result.rows[row].company;
+            menu_links = result.rows[row].menu_links;
+            search_filters = result.rows[row].search_filters;
 
             // generate report main sheet's data
             let queries = query_excel_to_create.split(";");
             let titles = sheet_titles.split(";");
             let values = indicators_value.split(";");
+            let links = menu_links.split(";");
+            let filters = search_filters.split(";");
 
             let mainSheet = titles.map((value, index) => ({
                 indicator_description: value,
-                indicator_value: values[index]
+                indicator_value: values[index],
+                link: links[index],
+                filter: filters[index]
             }));
 
             var excelData = [];
@@ -217,13 +252,14 @@ exports.handler = async () => {
                     await pool
                         .query(queries[value])
                         .then(res => excelData.push(dataPrepare2xls(res, titles[value])))
-                        .catch(err => console.error('Error executing query', err.stack))
+                        .catch(err => console.error('Error executing query', err.stack));
                 }
             };
 
             // generate the report
-            const report = excel.buildExport(excelData);
-
+            let report = excel.buildExport(excelData);
+            console.log('excelData ', excelData );
+            
             // configurations to upload the file on S3
             var filename = mail_subject + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' identifier as filename
 
@@ -238,6 +274,7 @@ exports.handler = async () => {
             }; */
 
             // upload to S3
+            console.log('put object: ', filename);
             await s3.putObject(s3ParamsInsert).promise();
 
             //get the uploaded file url
@@ -245,7 +282,7 @@ exports.handler = async () => {
 
             //push the values
             body.push({
-                to: {list : mail_to},
+                to: { list: mail_to },
                 sender: mail_sender,
                 subject: mail_subject,
                 body: { header: mail_body },
@@ -260,6 +297,6 @@ exports.handler = async () => {
 
         };
     }
-    console.log('RETURNING:', body);
+    //console.log('RETURNING:', body);
     return body;
 };
