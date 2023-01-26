@@ -169,13 +169,13 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
 }
 
-exports.handler = async (event, context) => {
+exports.handler = async () => {
 
     // let caller_url = event.headers.host + event.requestContext.path;
     // console.log('\tHello from lambda mailing_list (: \nHere\'s the Caller: ', caller_url);
 
     let result;
-    let body = null;
+    let body = [];
 
     await pool
         .query(`select * from entrasp.mailing_list();`)
@@ -225,7 +225,7 @@ exports.handler = async (event, context) => {
             const report = excel.buildExport(excelData);
 
             // configurations to upload the file on S3
-            var filename = mail_subject + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' UUID as filename //'context.awsRequestId'
+            var filename = mail_subject + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' identifier as filename
 
             var s3ParamsInsert = {
                 Bucket: 'BUCKET_NAME',
@@ -233,7 +233,7 @@ exports.handler = async (event, context) => {
                 Body: report
             };
             /* var s3ParamsUrl = {
-                Bucket: 'gorico2-reports',
+                Bucket: 'BUCKET_NAME',
                 Key: 'mail/' + filename
             }; */
 
@@ -243,9 +243,8 @@ exports.handler = async (event, context) => {
             //get the uploaded file url
             //var url = s3.getSignedUrl('getObject', s3ParamsUrl);
 
-            //invoke the email composer giving the parameters
-
-            body = {
+            //push the values
+            body.push({
                 to: {list : mail_to},
                 sender: mail_sender,
                 subject: mail_subject,
@@ -254,13 +253,13 @@ exports.handler = async (event, context) => {
                     name: filename,
                     path: 'mail/' + filename
                 }]
-            };
+            });
 
             // console.log('SESParams: ', JSON.stringify(sesParams));
             // body = JSON.stringify(sesParams);
 
         };
     }
-
+    console.log('RETURNING:', body);
     return body;
 };

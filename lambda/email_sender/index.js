@@ -65,7 +65,7 @@ async function sendEmail(to, cc, body, subject, sender, attachments) {
         //                 Data: body
         //             },
         //             Html: {
-        //                 Data: `<html><head><title>Your Token</title><style>h1{color:#f00;}</style></head><body><h1>Hello name,</h1><div>Your Device Validation Token is token<br/>Simply copy this token and paste it into the device validation input field.</div></body></html>`
+        //                 Data: body
         //             }
         //         },
         //         Subject: {
