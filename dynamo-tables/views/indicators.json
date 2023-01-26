@@ -7,7 +7,7 @@
 		{
 			"type": "main",
 			"operation": "selectTable",
-			"queryString": "select * from entrasp.indicatori where codice_azienda is null or codice_azienda='€global_codice_azienda€'"
+			"queryString": "select * from entrasp.indicatori where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
 		},
 		{
 			"type": "main",
@@ -287,7 +287,7 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=697 order by descrizione",
+				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=48491 order by descrizione",
 				"options": [],
 				"viewType": "combobox"
 			},
@@ -358,8 +358,19 @@
 			},
 			"label": "ID Report",
 			"newLine": false,
-			"queryCond": "id_indicatore in(select id_indicatore from entrasp.indicatori_report where id_report=$id_report_s$)"
-		}
+			"queryCond": "id_indicatore in(select id_indicatore from entrasp.indicatori_report where id_report=$id_report_s$ and id_indicatore is not null)"
+		},
+		{
+            "fieldName": "no_report",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Non associati a report",
+            "newLine": false,
+            "size": 1.5,
+			"queryCond": "id_indicatore not in(select id_indicatore from entrasp.indicatori_report where id_indicatore is not null)"
+        }
 	],
 	"subTables": [
 		{
