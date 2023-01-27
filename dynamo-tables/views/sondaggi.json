@@ -603,6 +603,11 @@
                         "outputEventName": "sondaggi_reopen"
                     },
                     {
+                        "icon": "lock_close",
+                        "label": "Chiudi verifiche del sondaggio",
+                        "outputEventName": "sondaggi_somministrati_close"
+                    },
+                    {
                         "icon": "add_to_queue",
                         "label": "Integra verifiche del sondaggio",
                         "outputEventName": "sondaggio_integra"
@@ -659,6 +664,14 @@
                     "eventName": "sondaggi_reopen",
                     "actionType": "query",
                     "queryFunct": "update entrasp.sondaggi set stato='A' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "sondaggi_somministrati_close",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.sondaggi_somministrati set stato='C' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
                     "condition": "none",
                     "values": [],
                     "outputEventWhenComplete": "survey_reload"
