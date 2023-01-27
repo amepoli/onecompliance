@@ -113,7 +113,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
     if (isMainSheet) {
 
-        console.log('generate main sheet with dataset: ', dataset);
+        //console.log('generate main sheet with dataset: ', dataset);
 
         const specification = {
             indicator_description: {
@@ -164,7 +164,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
     } else {
 
-        console.log('generate secondary sheets with dataset: ', dataset);
+        //console.log('generate secondary sheets with dataset: ', dataset);
         const specification = {};
 
         let property = Object.keys(dataset.rows[0]);
@@ -258,7 +258,6 @@ exports.handler = async () => {
 
             // generate the report
             let report = excel.buildExport(excelData);
-            console.log('excelData ', excelData );
             
             // configurations to upload the file on S3
             var filename = mail_subject + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' identifier as filename
@@ -274,7 +273,6 @@ exports.handler = async () => {
             }; */
 
             // upload to S3
-            console.log('put object: ', filename);
             await s3.putObject(s3ParamsInsert).promise();
 
             //get the uploaded file url
@@ -297,6 +295,6 @@ exports.handler = async () => {
 
         };
     }
-    //console.log('RETURNING:', body);
+    console.log('RETURNING:', body);
     return body;
 };
