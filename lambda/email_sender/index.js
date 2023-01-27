@@ -50,8 +50,6 @@ async function sendEmail(to, cc, body, subject, sender, attachments) {
             }
         }
 
-        console.log('attachmentsList ', JSON.stringify(attachmentsList));
-
         // var eParams = {
         //     Destination: {
         //         ToAddresses: to,
