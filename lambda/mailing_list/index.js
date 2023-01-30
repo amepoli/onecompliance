@@ -209,11 +209,11 @@ exports.handler = async () => {
     await pool
         .query(`select * from entrasp.mailing_list();`)
         .then(res => result = res.rows.length > 0 ? res : null)
-        .catch(err => console.error('Error executing query', err.stack))
+        .catch(err => console.error('Error executing query "select * from entrasp.mailing_list();" ', err.stack))
 
     if (result) {
 
-        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value, company, menu_links, search_filters;
+        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value, company, menu_links, search_filters, frequency;
 
         for (const row in result.rows) {
             
@@ -227,6 +227,7 @@ exports.handler = async () => {
             company = result.rows[row].company;
             menu_links = result.rows[row].menu_links;
             search_filters = result.rows[row].search_filters;
+            frequency = result.rows[row].frequency;
 
             // generate report main sheet's data
             let queries = query_excel_to_create.split(";");
@@ -252,7 +253,7 @@ exports.handler = async () => {
                     await pool
                         .query(queries[value])
                         .then(res => excelData.push(dataPrepare2xls(res, titles[value])))
-                        .catch(err => console.error('Error executing query', err.stack));
+                        .catch(err => console.error('Error executing query: ', queries[value] + '\nERROR: ' + err.stack));
                 }
             };
 
@@ -260,7 +261,7 @@ exports.handler = async () => {
             let report = excel.buildExport(excelData);
             
             // configurations to upload the file on S3
-            var filename = mail_subject + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' identifier as filename
+            var filename = mail_subject + ' - ' + frequency + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' identifier as filename
 
             var s3ParamsInsert = {
                 Bucket: 'BUCKET_NAME',
@@ -295,6 +296,6 @@ exports.handler = async () => {
 
         };
     }
-    console.log('RETURNING:', body);
+    //console.log('RETURNING:', body);
     return body;
 };
