@@ -3,6 +3,9 @@ AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const crypto = require('crypto');
+const shasum = crypto.createHash('sha1');
+const md5sum = crypto.createHash('md5');
+
 const uuid = require('uuid');
 
 //const { Readable } = require('stream');
@@ -1078,6 +1081,8 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         let to = emailResponse.data.payload.headers.filter( x => x.name === "To")[0].value;
                         let from = emailResponse.data.payload.headers.filter( x => x.name === "From")[0].value;
                         let attachmentsIds = [];
+                        let sha1List = [];
+                        let md5List = [];
                         
                         let messagePayloadParts = emailResponse.data.payload.parts;
                         
@@ -1097,6 +1102,8 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 case 'image/jpeg': fileExt = 'jpg'; break;
                                 case 'image/png': fileExt = 'png'; break;
                                 case 'application/msword': fileExt = 'doc'; break;
+                                case 'application/json': fileExt = 'json'; break;
+                                case 'text/csv': fileExt = 'csv'; break;
                                 default: console.error('unknownMimeType', part.mimeType); boom;
                             }
                             attachmentsIds.push(part.body.attachmentId.substring(0,32));
@@ -1108,6 +1115,10 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             });
                             const { size, data: dataB64 } = attachment;
 
+                            sha1List.push(shasum.update(dataB64).digest('hex'));
+                            md5List.push(md5sum.update(dataB64).digest('hex'));
+
+                            
                             //let body = x.data.payload.body;
                             let s3_path = `${company}/${part.body.attachmentId.substring(0,32)}`;
                             var params = {
@@ -1124,7 +1135,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
 
                         
                         
-                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsIds});
+                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsIds, sha1List, md5List});
                     }
 
                 }
