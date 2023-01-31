@@ -1081,8 +1081,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         let to = emailResponse.data.payload.headers.filter( x => x.name === "To")[0].value;
                         let from = emailResponse.data.payload.headers.filter( x => x.name === "From")[0].value;
                         let attachmentsIds = [];
-                        let sha1List = [];
-                        let md5List = [];
+                        let attachmentsList = [];
                         
                         let messagePayloadParts = emailResponse.data.payload.parts;
                         
@@ -1104,7 +1103,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 case 'application/msword': fileExt = 'doc'; break;
                                 case 'application/json': fileExt = 'json'; break;
                                 case 'text/csv': fileExt = 'csv'; break;
-                                default: console.error('unknownMimeType', part.mimeType); boom;
+                                default: console.error('unknownMimeType', part.mimeType);
                             }
                             attachmentsIds.push(part.body.attachmentId.substring(0,32));
                             
@@ -1114,9 +1113,10 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 id: part.body.attachmentId,
                             });
                             const { size, data: dataB64 } = attachment;
-
-                            sha1List.push(shasum.update(dataB64).digest('hex'));
-                            md5List.push(md5sum.update(dataB64).digest('hex'));
+                            
+                            let fileNameParts = part.filename.split('.');
+                            let ext = fileNameParts[fileNameParts.length - 1];
+                            attachmentsList.push({filename: part.filename, extension: ext, sha1: shasum.update(dataB64).digest('hex'), md5: md5sum.update(dataB64).digest('hex') });
 
                             
                             //let body = x.data.payload.body;
@@ -1132,10 +1132,8 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             return acc2;
                     //   console.log('callback: ' + JSON.stringify(attachments))
                         }, Promise.resolve([]));
-
                         
-                        
-                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsIds, sha1List, md5List});
+                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsIds, attachmentsList});
                     }
 
                 }
