@@ -582,24 +582,24 @@
         },
         {
             "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_tipo_processo_trans",
-            "queryFunct": "entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda)",
-            "width": "10%",
-            "label": "Tipo processo"
-        },
-        {
-            "format": {
                 "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": true,
             "key": "id_procedura",
             "width": "5%",
-            "label": "Id Processo"
+            "label": "Id Proc."
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cliente",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica)",
+            "width": "15%",
+            "label": "Società/Cliente"
         },
         {
             "format": {
@@ -608,8 +608,8 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "codice",
-            "width": "8%",
-            "label": "Codice"
+            "width": "5%",
+            "label": "Cod."
         },
         {
             "format": {
@@ -618,7 +618,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "descrizione_breve",
-            "width": "45%",
+            "width": "30%",
             "label": "Titolo"
         },
         {
@@ -629,14 +629,14 @@
             "isPrimary": false,
             "key": "descrizioni_centro_gestionale",
             "label": "Centro gestionale",
-            "width": "15%",
+            "width": "10%",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
         },
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_procedura_parent",
             "width": "5%",
@@ -649,7 +649,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "Descr_procedura_parent",
-            "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura_parent,codice_azienda)",
+            "queryFunct": "substring(id_procedura_parent||'-'||entrasp.procedure_aziendali_descr(id_procedura_parent,codice_azienda), 1, 60)",
             "width": "15%",
             "label": "Procedura Superiore"
         },
@@ -680,6 +680,17 @@
                     "font_weight": "500"
                 }
             ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_processo_trans",
+            "queryFunct": "entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda)",
+            "width": "10%",
+            "label": "Tipo processo"
         }
     ],
     "messages": [
