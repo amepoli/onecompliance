@@ -3,6 +3,9 @@ AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const crypto = require('crypto');
+const shasum = crypto.createHash('sha1');
+const md5sum = crypto.createHash('md5');
+
 const uuid = require('uuid');
 
 //const { Readable } = require('stream');
@@ -1078,6 +1081,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         let to = emailResponse.data.payload.headers.filter( x => x.name === "To")[0].value;
                         let from = emailResponse.data.payload.headers.filter( x => x.name === "From")[0].value;
                         let attachmentsIds = [];
+                        let attachmentsList = [];
                         
                         let messagePayloadParts = emailResponse.data.payload.parts;
                         
@@ -1097,7 +1101,9 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 case 'image/jpeg': fileExt = 'jpg'; break;
                                 case 'image/png': fileExt = 'png'; break;
                                 case 'application/msword': fileExt = 'doc'; break;
-                                default: console.error('unknownMimeType', part.mimeType); boom;
+                                case 'application/json': fileExt = 'json'; break;
+                                case 'text/csv': fileExt = 'csv'; break;
+                                default: console.error('unknownMimeType', part.mimeType);
                             }
                             attachmentsIds.push(part.body.attachmentId.substring(0,32));
                             
@@ -1107,7 +1113,12 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 id: part.body.attachmentId,
                             });
                             const { size, data: dataB64 } = attachment;
+                            
+                            let fileNameParts = part.filename.split('.');
+                            let ext = fileNameParts[fileNameParts.length - 1];
+                            attachmentsList.push({filename: part.filename, extension: ext, sha1: shasum.update(dataB64).digest('hex'), md5: md5sum.update(dataB64).digest('hex') });
 
+                            
                             //let body = x.data.payload.body;
                             let s3_path = `${company}/${part.body.attachmentId.substring(0,32)}`;
                             var params = {
@@ -1121,10 +1132,8 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             return acc2;
                     //   console.log('callback: ' + JSON.stringify(attachments))
                         }, Promise.resolve([]));
-
                         
-                        
-                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsIds});
+                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsIds, attachmentsList});
                     }
 
                 }
