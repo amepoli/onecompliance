@@ -78,7 +78,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
                     rgb: 'FFFFFFFF'
                 },
                 sz: 16,
-                bold : true
+                bold: true
             },
             fill: {
                 fgColor: {
@@ -98,7 +98,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
                 color: {
                     rgb: 'FF0645AD'
                 },
-                underline : true
+                underline: true
             }
         }
     };
@@ -216,7 +216,7 @@ exports.handler = async () => {
         let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value, company, menu_links, search_filters, frequency;
 
         for (const row in result.rows) {
-            
+
             mail_to = result.rows[row].mail_to;
             mail_body = result.rows[row].mail_body;
             mail_subject = result.rows[row].mail_subject;
@@ -259,7 +259,7 @@ exports.handler = async () => {
 
             // generate the report
             let report = excel.buildExport(excelData);
-            
+
             // configurations to upload the file on S3
             var filename = mail_subject + ' - ' + frequency + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' identifier as filename
 
