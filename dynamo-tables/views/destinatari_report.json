@@ -3,6 +3,13 @@
 	"entryKey": "destinatari_report",
 	"origin": "entrasp.destinatari_report",
 	"businessObjectName": "destinatari_report",
+	"predefinedQueries": [
+		{
+			"operation": "selectTable",
+			"type": "main",
+			"queryString": "select id_report,codice_azienda,interval_multiplier||' '||interval_value as frequenza,lista_email_destinatari from entrasp.destinatari_report where codice_azienda in(€global_user_companies€) and id_report=$id_report$"
+		}
+	],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -10,12 +17,13 @@
 				"viewType": "input",
 				"dataType": "number"
 			},
-			"label": "id_report",
+			"label": "# Report",
 			"key": "id_report",
 			"readOnly": true,
-			"isHidden": true,
+			"isHidden": false,
 			"isPrimary": true,
-			"newLine": false
+			"newLine": false,
+			"size": 1
 		},
 		{
 			"autoGenerate": false,
@@ -23,14 +31,16 @@
 				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
 				"options": [],
 				"viewType": "combobox",
-				"dataType": "text"
+				"dataType": "text",
+				"value": "DEMO"
 			},
 			"label": "Azienda",
 			"key": "codice_azienda",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": true,
-			"newLine": false
+			"newLine": false,
+			"size": 2.3
 		},
 		{
 			"autoGenerate": false,
@@ -44,19 +54,39 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 8
-		}
-	],
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select * from entrasp.destinatari_report where codice_azienda in(€global_user_companies€)"
+			"size": 3.3
 		},
 		{
-			"operation": "selectForm",
-			"type": "main",
-			"queryString": "select * from entrasp.destinatari_report where codice_azienda=$codice_azienda$ and id_report=$id_report$"
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval' and codice in ('Days','Weeks','Months','Years');",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text",
+				"value": "Weeks"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_value",
+			"label": "Unità di misura intervalli",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.66
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "number",
+				"viewType": "input",
+				"value": "1"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "interval_multiplier",
+			"label": "Numero intervalli",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.67
 		}
 	],
 	"table_keys": [
@@ -81,15 +111,24 @@
 			"label": "Azienda"
 		},
 		{
-		"format": {
-			"dataType": "text"
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "50%",
+			"isPrimary": true,
+			"key": "lista_email_destinatari",
+			"label": "Email destinatari"
 		},
-		"isHidden": false,
-		"width": "20%",
-		"isPrimary": true,
-		"key": "lista_email_destinatari",
-		"label": "Email destinatari"
-	}
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "frequenza",
+			"label": "Frequenza"
+		}
 	],
 	"hideActions": [
 		{
