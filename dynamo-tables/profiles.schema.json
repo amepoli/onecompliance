@@ -50,6 +50,54 @@
                 }
             }
         },
+        "menuOptions": {
+            "type": "object",
+            "description": "M: Show/Hide menu options",
+            "additionalProperties": false,
+            "required": [
+                "deny"
+            ],
+            "properties": {
+                "allow": {
+                    "type": "array",
+                    "description": "M: set of menu voices to show, '*' means all (except those in 'deny')",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "deny": {
+                    "type": "array",
+                    "description": "M: set of menu voices to hide, '*' means all. Has higher priority than 'allow'",
+                    "items": {
+                        "type": "object",
+                        "description": "M: Show/Hide menu options entry",
+                        "additionalProperties": false,
+                        "required": [
+                            "entry",
+                            "key",
+                            "options"
+                        ],
+                        "properties": {
+                            "entry": {
+                                "type": "string",
+                                "description": "M: entry name of the view containing menu options"
+                            },
+                            "key": {
+                                "type": "string",
+                                "description": "M: key inside the view containing menu options"
+                            },
+                            "options": {
+                                "type": "array",
+                                "description": "M: set of menu options to hide",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "tables": {
             "type":"object",
             "description": "?: Set of table related entries",

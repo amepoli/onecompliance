@@ -115,7 +115,25 @@ function removeProperty(source, properties) {
     }
     
     return source;
-  }
+}
+
+function removeDeniedMenuOptions(data, entry_name, profileData) {
+    if (profileData != null && profileData.menuOptions != null && profileData.menuOptions.deny != null && profileData.menuOptions.deny.length > 0) {
+        let menuOptions = profileData.menuOptions;
+        menuOptions.deny.forEach(menuOption => {
+            if(menuOption.entry == entry_name) {
+                data['form_keys'].forEach((formKey, i) => {
+                    if(formKey['key'] == menuOption.key) {
+                        data['form_keys'][i]['format']['menuOptions'] = data['form_keys'][i]['format']['menuOptions'].filter( o => !menuOption.options.includes(o.key))
+                    }
+                })
+                denied.push(menuOption);
+            }
+        });
+    }
+    return data;
+}
+
 
 exports.handler = async (event, context) => {
 
@@ -168,7 +186,8 @@ exports.handler = async (event, context) => {
         data = processPermissions(data, profileData, entry_name);
         data['profileHideActions'] = getProfileHideActions(entry_name, profileData);
         externalUpdate = getExternalSource(entry_name, profileData);
-
+        data = removeDeniedMenuOptions(data, entry_name, profileData);
+        
     } catch (e) {
         console.log(e);
         return {
@@ -180,7 +199,7 @@ exports.handler = async (event, context) => {
     }
 
     data = removeProperty(data, queryKeys);
-    console.log('Data: ',data);
+    console.log('Data: ', JSON.stringify(data));
 
     return {
         "isBase64Encoded": false,
