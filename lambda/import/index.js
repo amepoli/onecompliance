@@ -890,22 +890,50 @@ function data2xls(data, title, keys = null) {
             }
         },
         title: {
+            border: {
+                top: {
+                    style: 'thin',
+                    color: 'FF000000'
+                },
+                left: {
+                    style: 'thin',
+                    color: 'FF000000'
+                },
+                right: {
+                    style: 'thin',
+                    color: 'FF000000'
+                },
+                bottom: {
+                    style: 'thin',
+                    color: 'FF000000'
+                }
+            },
             fill: {
                 fgColor: {
-                    rgb: 'FFE0E0E0'
+                    rgb: 'FFb3d9ff'
                 },
             },
             font: {
                 color: {
-                    rgb: 'FF0080C4'
+                    rgb: 'FF000000'
                 },
-                sz: 34
+                sz: 16
             }
         },
         data: {
             font: {
                 sz: 16
-            }
+            },
+            border: {
+                left: {
+                    style: 'thin',
+                    color: 'FF000000'
+                },
+                right: {
+                    style: 'thin',
+                    color: 'FF000000'
+                }
+            },
         }
     };
 
@@ -920,7 +948,7 @@ function data2xls(data, title, keys = null) {
     if (keys != null) {
         columns = keys.map(x => x.key);
         keys.forEach(key => {
-            specification[key.key] = { displayName: key.label, headerStyle: styles.data, width: 120 }
+            specification[key.key] = { displayName: key.label, headerStyle: styles.data, width: 120 , cellStyles: styles.data}
         });
 
         console.log('columns', columns);
@@ -932,7 +960,7 @@ function data2xls(data, title, keys = null) {
         if (columns === null) {
             columns = Object.keys(row);
             columns.forEach(c => {
-                specification[c] = { displayName: c, headerStyle: styles.data, width: 120 }
+                specification[c] = { displayName: c, headerStyle: styles.title, width: 120 , cellStyles: styles.data}
             });
             console.log('columns', columns);
 
@@ -954,9 +982,9 @@ function data2xls(data, title, keys = null) {
     const report = excel.buildExport(
         [ // <- Notice that this is an array. Pass multiple sheets to create multi sheet report
             {
-                name: 'Report', // <- Specify sheet name (optional)
-                heading: heading, // <- Raw heading array (optional)
-                merges: merges, // <- Merge cell ranges
+                name: title, // <- Specify sheet name (optional)
+                //heading: heading, // <- Raw heading array (optional)
+                //merges: merges, // <- Merge cell ranges
                 specification: specification, // <- Report specification
                 data: dataset //consts.dataset // <-- Report data
             }
@@ -1808,7 +1836,7 @@ exports.handler = async (event, context) => {
                     else {
                         fileName = 'Excel/' + uuid + '.xlsx';
                         if (isAdvanced) {
-                            fileBody = data2xls(queryData, queryParams.entry_name);
+                            fileBody = data2xls(queryData, advancedQueryLabel ? advancedQueryLabel : initcap(entry_name.split('_').join(' ')));
                         }
                         else {
                             var viewKeys = isForm ? entry_params.form_keys : entry_params.table_keys;
@@ -1816,7 +1844,7 @@ exports.handler = async (event, context) => {
 
                             const validKeys = viewKeys.filter(key => !key.isHidden);
                             console.log('validKeys', validKeys);
-                            fileBody = data2xls(queryData, queryParams.entry_name, validKeys);
+                            fileBody = data2xls(queryData, advancedQueryLabel ? advancedQueryLabel : initcap(entry_name.split('_').join(' ')), validKeys);
                         }
                     }
 
