@@ -283,7 +283,7 @@ exports.handler = async () => {
             body.push({
                 to: { list: mail_to },
                 sender: mail_sender,
-                subject: mail_subject,
+                subject: filename, //mail_subject
                 body: { header: mail_body },
                 attachments: [{
                     name: filename,
