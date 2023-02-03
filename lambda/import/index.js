@@ -54,6 +54,14 @@ function getDateFormat() {
     return d.getFullYear() + '-' + month.toString() + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
 }
 
+function initcap(str) {
+    const arr = str.split(" ");
+    for (var i = 0; i < arr.length; i++) {
+        arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].toLowerCase().slice(1);
+    }
+    return arr.join(" ");
+}
+
 async function getProfile(userid, company) {
 
     var userParams = {
@@ -1270,7 +1278,7 @@ exports.handler = async (event, context) => {
                             }
                         }
                     } else if (fileType == 'XBRL') {
-                        
+
                         console.log('File type: XBRL');
 
                         const s3ParamsGetList = {
@@ -1290,10 +1298,10 @@ exports.handler = async (event, context) => {
                             console.log(`S3 File length: ${xbrlFile.ContentLength}`);
                             console.log(`S3 File body: ${xbrlFile.Body}`);
                             const xbrlParsed = xbrlParser.parseXbrlFile(xbrlFile.Body);
-                            
+
                             const xbrlParsedItem = xbrlParsed['xbrli:xbrl']['xbrli:context'][0];
 
-                            console.log('[xbrli:xbrl][xbrli:context][xbrli:scenario][xbrldi:explicitMember][0]',xbrlParsedItem['xbrli:scenario']['xbrldi:explicitMember'][0]);
+                            console.log('[xbrli:xbrl][xbrli:context][xbrli:scenario][xbrldi:explicitMember][0]', xbrlParsedItem['xbrli:scenario']['xbrldi:explicitMember'][0]);
                         }
                     }
 
@@ -1781,7 +1789,7 @@ exports.handler = async (event, context) => {
                     let fileBody = null;
                     let fileName = null;
 
-                    var uuid = context.awsRequestId; // generate a 'unique' UUID as fileName
+                    var uuid = (advancedQueryLabel ? advancedQueryLabel : initcap(entry_name.split('_').join(' '))) + ' - ' + initcap(company) + ' ' + (new Date().toISOString());//context.awsRequestId; // generate a 'unique' UUID as fileName
 
                     if (isCSV) {
                         fileName = 'CSV/' + uuid + '.csv';
