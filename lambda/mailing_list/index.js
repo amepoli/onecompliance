@@ -262,6 +262,7 @@ exports.handler = async () => {
 
             // configurations to upload the file on S3
             var filename = mail_subject + ' - ' + frequency + ' - ' + company + ' ' + getDateFormatted() + '.xlsx'; // generate a 'unique' identifier as filename
+            mail_subject = mail_subject + ' - ' + frequency + ' - ' + company + ' ' + getDateFormatted();
 
             var s3ParamsInsert = {
                 Bucket: 'BUCKET_NAME',

@@ -1830,7 +1830,7 @@
                 "viewType": "combobox"
             },
             "label": "Completezza",
-            "newLine": false,
+            "newLine": true,
             "queryCond": "snd.sondaggio_completato='€completo€'"
         },
         {
@@ -1840,9 +1840,20 @@
                 "viewType": "input"
             },
             "label": "Parola chiave",
-            "newLine": true,
+            "newLine": false,
             "size": 4,
             "queryCond": "(upper(mt.titolo) like '%'||upper('€parola_search€')||'%' or upper(snd.descrizione) like '%'||upper('€parola_search€')||'%' or upper(snd.titolo) like '%'||upper('€parola_search€')||'%')"
+        },
+        {
+            "fieldName": "argomento_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg where arg.id_argomento in(select id_argomento from entrasp.modelli_test) order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Argomento",
+            "newLine": true,
+            "queryCond": "array[mt.id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
         },
         {
             "fieldName": "no_progect_associated",
