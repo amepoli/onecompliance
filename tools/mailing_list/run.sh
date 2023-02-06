@@ -20,3 +20,6 @@ _jq() {
     --payload "$(_jq)" \
     result.json
 done
+
+#Stoiricizzo i valori sul database (commentato poichè psql non installato su questo sistema)
+#psql -h onecompliance-aurora.caxbbckt9xen.eu-central-1.rds.amazonaws.com -U postgres -d Gorico -c "select entrasp.insert_val_ind_report_mail();"
