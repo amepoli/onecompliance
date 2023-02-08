@@ -568,34 +568,37 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     if (!_this.styles[key.key]) {
                         _this.styles[key.key] = {};
                     }
-                    if(style.button_icon) {
-                        _this.styles[key.key] = style;
-                    }
-                    else {
-                        _this.styles[key.key][style.value] = style;
-                    }
+                    _this.styles[key.key][style.value] = style;
                 });
             }
         });
     }
 
     doesButtonIconExist(key: string) {
-        return (this.styles[key] && this.styles[key]['button_icon']);
+        const keys = Object.keys(this.styles[key]);
+        let buttonIconExists = false;
+
+        keys.forEach(k => {
+            if(this.styles[key][k]['button_icon']) {
+                buttonIconExists = true;
+            }
+        })
+        return buttonIconExists;
     }
 
-    getButtonIcon(key: string) {
-        return this.styles[key]['button_icon'];
+    getButtonIcon(key: string, value) {
+        return (this.styles[key][value] ?? this.styles[key]['*'] ?? this.styles[key])['button_icon'];
     }
 
     getElementStyle(column, value) {
         let styles = {};
-        if (column && value && this.styles[column]) {
+        const valueStr = value != null? value + '': null;
+        if (column && valueStr && this.styles[column]) {
             let values: string[] = Object.keys(this.styles[column]);
-
-            if (value && values.includes(value)) {
-                Object.keys(this.styles[column][value]).forEach(key => {
+            if (valueStr && values.includes(valueStr)) {
+                Object.keys(this.styles[column][valueStr]).forEach(key => {
                     if (key != 'value') {
-                        styles[HelperService.getStyleName(key)] = this.styles[column][value][key];
+                        styles[HelperService.getStyleName(key)] = this.styles[column][valueStr][key];
                     }
                 });
             }

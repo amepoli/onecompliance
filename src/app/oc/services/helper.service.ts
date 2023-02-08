@@ -294,5 +294,20 @@ export class HelperService {
         return window.location.reload();
     }
     
+    /**
+     * Add Short Date in File Name
+     * @param fileName file name
+     * @returns newFileNameWithDate
+     */
+     public static addShortDateInFileName(fileName: string) {
+        if(fileName) {
+            const fileNameParts = fileName.split('.');
+            const ext = fileNameParts.pop();
+            return `${fileNameParts.join('.')}_${this.getFormattedShortDate(new Date())}.ext`;
+        }
+        return '';
+
+    }
+
 }
 
