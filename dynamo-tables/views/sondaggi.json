@@ -1963,7 +1963,7 @@
             "label": "Non chiuso",
             "newLine": false,
             "size": 1.5,
-            "queryCond": "snd.stato not in('C', 'N')"
+            "queryCond": "snd.stato not in('C', 'N', 'R')"
         },
         {
             "fieldName": "doc_completa",
@@ -1983,7 +1983,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con doc. incompleta",
-            "newLine": false,
+            "newLine": true,
             "size": 1.5,
             "queryCond": "snd.id_sondaggio in (select ro.id_sondaggio from entrasp.cdms_risorse_oggetti ro inner join entrasp.cdms_risorse_revisioni rev on ro.id_risorsa=rev.id_risorsa and ro.prog_revisione=rev.prog_revisione and ro.codice_azienda=rev.codice_azienda where id_argomento_stato!=4035 and ro.id_sondaggio is not null)"
         },
@@ -2038,7 +2038,17 @@
             "label": "Comp. Corrente",
             "newLine": false,
             "queryCond": "snd.data_comp>current_date"
-        }
+        },
+        {
+            "fieldName": "data_prev_dodici",
+            "format": {
+              "viewType": "checkbox",
+              "value": "0"
+            },
+            "label": "Data prevista antec. i 12 mesi",
+            "newLine": false,
+            "queryCond": "snd.data_prevista < (CURRENT_DATE - interval '12 month')"
+          }
     ],
     "subTables": [
         {
