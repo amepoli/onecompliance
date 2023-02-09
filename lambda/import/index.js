@@ -248,7 +248,7 @@ function processCSV(csvData) {
     var re = new RegExp(find, 'g');
     console.log('stringData before replacement: ', stringData);
     stringData = stringData.replace(re, stuff_to_replace[0].out);
-    stringData = stringData.split('\n').filter(x => !isNullOrWhiteSpace(x)).join('\n');
+    stringData = stringData.split('\n').filter(x => !isNullOrWhiteSpace(x)).join('\n').trim();
     return stringData;
 }
 
