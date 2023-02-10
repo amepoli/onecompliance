@@ -259,14 +259,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 this.router.navigate(['/login']);
             }
     
-            let getProfileDataSubscription = _this._backendService.getProfileData(company).subscribe(x => {
-                getProfileDataSubscription.unsubscribe();
-                let runCompanyChangeQuerySubscription = _this._backendService.runCompanyChangeQuery(company).subscribe( response => {
-                    runCompanyChangeQuerySubscription.unsubscribe();
-                    setTimeout(() => _this._timeTrackerService.checkStatus(), 1000);
-                }, error => {
-                    // console.log(error);
-                });
+            let runCompanyChangeQuerySubscription = _this._backendService.runCompanyChangeQuery(company).subscribe( response => {
+                runCompanyChangeQuerySubscription.unsubscribe();
+                setTimeout(() => _this._timeTrackerService.checkStatus(), 1000);
             }, error => {
                 // console.log(error);
             });
