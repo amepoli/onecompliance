@@ -127,7 +127,6 @@ function removeDeniedMenuOptions(data, entry_name, profileData) {
                         data['form_keys'][i]['format']['menuOptions'] = data['form_keys'][i]['format']['menuOptions'].filter( o => !menuOption.options.includes(o.key))
                     }
                 })
-                denied.push(menuOption);
             }
         });
     }
