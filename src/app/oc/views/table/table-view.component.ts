@@ -592,19 +592,21 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     getElementStyle(column, value) {
         let styles = {};
+        const styleKeysToIgnore = ['value', 'button_icon'];
+
         const valueStr = value != null? value + '': null;
         if (column && valueStr && this.styles[column]) {
             let values: string[] = Object.keys(this.styles[column]);
             if (valueStr && values.includes(valueStr)) {
                 Object.keys(this.styles[column][valueStr]).forEach(key => {
-                    if (key != 'value') {
+                    if (!styleKeysToIgnore.includes(key)) {
                         styles[HelperService.getStyleName(key)] = this.styles[column][valueStr][key];
                     }
                 });
             }
             else if (values.includes('*')) {
                 Object.keys(this.styles[column]['*']).forEach(key => {
-                    if (key != 'value') {
+                    if (!styleKeysToIgnore.includes(key)) {
                         styles[HelperService.getStyleName(key)] = this.styles[column]['*'][key];
                     }
                 });
