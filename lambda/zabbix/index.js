@@ -1,7 +1,19 @@
 const Pool = require('pg-pool');
-const pool = new Pool({
+const zabbix = new Pool({
     host: 'HOST_NAME',
     database: 'zabbix',
+    user: 'USER_NAME',
+    password: 'PASSWORD',
+    port: 5432,
+    max: 1,
+    min: 0,
+    idleTimeoutMillis: 300000,
+    connectionTimeoutMillis: 1000
+});
+
+const pool = new Pool({
+    host: 'HOST_NAME',
+    database: 'DB_NAME',
     user: 'USER_NAME',
     password: 'PASSWORD',
     port: 5432,
@@ -25,8 +37,13 @@ exports.handler = async (event) => {
 
     let JSON_object = JSON.stringify(event);
 
-    await pool
+    await zabbix
         .query(`SELECT imports.process_object('${codice_azienda}', '${timestamp}', $$${JSON_object}$$::json);`)
+        .then(res => console.log('Done'))
+        .catch(err => console.error('Error executing query', err.stack));
+    
+    await pool
+        .query(`SELECT zabbix.process_object('${codice_azienda}', '${timestamp}', $$${JSON_object}$$::json);`)
         .then(res => console.log('Done'))
         .catch(err => console.error('Error executing query', err.stack))
 
