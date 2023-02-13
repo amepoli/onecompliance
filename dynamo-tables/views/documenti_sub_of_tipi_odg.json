@@ -4,11 +4,11 @@
   "origin": "entrasp.argomenti_argomenti",
   "businessObjectName": "argomenti_argomenti",
   "define": {
-		"id_argomento_relazione": "4037",
+    "id_argomento_relazione": "4037",
     "label_titolo_argomento": "Tipo documento",
     "label_codice_argomento": "Codice documento",
     "id_argomento_oggetto_collegato": "3576"
-	},
+  },
   "predefinedQueries": [
     {
       "operation": "selectTable",
@@ -36,7 +36,7 @@
         "viewType": "combobox",
         "options": [],
         "comboQuery": "select id_argomento as ID , id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_oggetto_collegato} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') order by descrizione;"
-    },
+      },
       "isHidden": false,
       "isPrimary": true,
       "key": "id_argomento_son",
@@ -57,7 +57,7 @@
       "label": "id_argomento_relazione",
       "newLine": true,
       "readOnly": false
-    }  
+    }
   ],
   "table_keys": [
     {
@@ -93,33 +93,38 @@
         "dataType": "text"
       },
       "isHidden": false,
-  		"width": "40%",
+      "width": "40%",
       "isPrimary": false,
       "key": "titolo",
-      "label": "$P{label_titolo_argomento}"     
+      "label": "$P{label_titolo_argomento}"
     },
     {
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "5%",
-			"key": "button_argomento",
-  	  "isButton": true,
-			"buttonAction": {
-				"target": "classification_mdt",
-				"viewType": "form",
-				"action": "navigate",
-				"keymap": [
-					{
-						"source": "id_argomento_son",
-						"destination": "id_argomento"
-					}
-				]
-			}
-		}
-	
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "button_argomento",
+      "isButton": true,
+      "buttonAction": {
+        "target": "classification_mdt",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "id_argomento_son",
+            "destination": "id_argomento"
+          }
+        ]
+      },
+      "style": [
+        {
+          "button_icon": "",
+          "value": "*"
+        }
+      ]
+    }
   ],
   "inputEvents": [
     {

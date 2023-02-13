@@ -1,192 +1,192 @@
 {
-    "$schema": "../views.schema.json",
-    "entryKey": "tipi_allegati_sub_of_modelli_test",
-    "origin": "entrasp.modelli_test_argomenti_documenti",
-    "businessObjectName": "modelli_test_argomenti_documenti",
-    "predefinedQueries": [
-      {
-        "queryString": "INSERT INTO entrasp.modelli_test_argomenti_documenti(codice_azienda, id_modello_test, id_argomento_documento) select distinct codice_azienda, id_modello_test, id_argomento_tipo_allegato from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test is not null and id_argomento_tipo_allegato is not null on conflict do nothing;",
-        "type": "preProcessing",
-        "operation": "selectTable"
+  "$schema": "../views.schema.json",
+  "entryKey": "tipi_allegati_sub_of_modelli_test",
+  "origin": "entrasp.modelli_test_argomenti_documenti",
+  "businessObjectName": "modelli_test_argomenti_documenti",
+  "predefinedQueries": [
+    {
+      "queryString": "INSERT INTO entrasp.modelli_test_argomenti_documenti(codice_azienda, id_modello_test, id_argomento_documento) select distinct codice_azienda, id_modello_test, id_argomento_tipo_allegato from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test is not null and id_argomento_tipo_allegato is not null on conflict do nothing;",
+      "type": "preProcessing",
+      "operation": "selectTable"
+    },
+    {
+      "queryString": "select distinct id_argomento_documento, note, entrasp.argomenti_descr_breve(id_argomento_documento) as tipo_allegato, true as cancella_associazione_documento, id_modello_test, codice_azienda from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+      "type": "main",
+      "operation": "selectTable"
+    },
+    {
+      "type": "preCheck",
+      "operation": "insert",
+      "messageNotNull": "Attenzione tipo documento già inserito",
+      "queryString": "select id_argomento_documento from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_argomento_documento='£id_argomento_documento£'"
+    },
+    {
+      "type": "postProcessing",
+      "queryString": "UPDATE entrasp.modelli_test SET documentazione_necessaria = (select string_agg (distinct entrasp.argomenti_descr_breve(id_argomento_documento),'; ') from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$) WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+      "operation": "insert"
+    }
+  ],
+  "form_keys": [
+    {
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select id_argomento as ID , id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
       },
-      {
-        "queryString": "select distinct id_argomento_documento, note, entrasp.argomenti_descr_breve(id_argomento_documento) as tipo_allegato, true as cancella_associazione_documento, id_modello_test, codice_azienda from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
-        "type": "main",
-        "operation": "selectTable"
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento_documento",
+      "label": "ID Tipo Documento",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
       },
-      {
-        "type": "preCheck",
-        "operation": "insert",
-        "messageNotNull": "Attenzione tipo documento già inserito",
-        "queryString": "select id_argomento_documento from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_argomento_documento='£id_argomento_documento£'"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "label": "Note (ulteriori specificazioni)",
+      "readOnly": false
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
       },
-      {
-        "type": "postProcessing",
-        "queryString": "UPDATE entrasp.modelli_test SET documentazione_necessaria = (select string_agg (distinct entrasp.argomenti_descr_breve(id_argomento_documento),'; ') from entrasp.modelli_test_argomenti_documenti where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$) WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-        "operation": "insert"
-      }
-    ],
-    "form_keys": [
-      {
-        "format": {
-          "viewType": "combobox",
-          "options": [],
-          "comboQuery": "select id_argomento as ID , id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "readOnly": false
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
       },
-        "isHidden": false,
-        "isPrimary": true,
-        "key": "id_argomento_documento",
-        "label": "ID Tipo Documento",
-        "readOnly": false,
-        "newLine": false
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "id_modello_test",
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
       },
-      {
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "note",
-        "label": "Note (ulteriori specificazioni)",
-        "readOnly": false
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "flag_applicazione_singola",
+      "label": "Applicazione singola (non moltiplicati per ciascuna verifica)",
+      "readOnly": false,
+      "newLine": false,
+      "sameOrigin": true
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
       },
-      {
-        "format": {
-          "dataType": "text",
-          "viewType": "input"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "codice_azienda",
-        "label": "codice_azienda",
-        "readOnly": false
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento_documento",
+      "label": "ID Tipo Documento",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "text"
       },
-      {
-        "format": {
-          "dataType": "number",
-          "viewType": "input"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "id_modello_test",
-        "label": "id_modello_test",
-        "readOnly": false
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_allegato",
+      "label": "Documento",
+      "width": "30%"
+    },
+    {
+      "format": {
+        "dataType": "text"
       },
-      {
-        "autoGenerate": false,
-        "format": {
-          "value": "0",
-          "viewType": "checkbox"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "flag_applicazione_singola",
-        "label": "Applicazione singola (non moltiplicati per ciascuna verifica)",
-        "readOnly": false,
-        "newLine": false,
-        "sameOrigin": true
-      }
-    ],
-    "table_keys": [
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": false,
-        "isPrimary": true,
-        "key": "id_argomento_documento",
-        "label": "ID Tipo Documento",
-        "width": "8%"
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "label": "Note",
+      "width": "40%"
+    },
+    {
+      "format": {
+        "dataType": "text"
       },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "tipo_allegato",
-        "label": "Documento",
-        "width": "30%"
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
       },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "key": "note",
-        "label": "Note",
-        "width": "40%"
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_modello_test",
+      "label": "id_modello_test"
+    },
+    {
+      "format": {
+        "dataType": "number"
       },
-      {
-        "format": {
-          "dataType": "text"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "codice_azienda",
-        "label": "codice_azienda"
-      },
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "id_modello_test",
-        "label": "id_modello_test"
-      },
-      {
-        "format": {
-          "dataType": "number"
-        },
-        "isHidden": false,
-        "isPrimary": false,
-        "width": "20%",
-        "key": "cancella_associazione_documento",
-        "label": "",
-        "style": [
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "20%",
+      "key": "cancella_associazione_documento",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "*",
+          "font_color": "black",
+          "background_color": "red"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "tipi_allegati_sub_of_modelli_test",
+        "viewType": "form",
+        "action": "query",
+        "query": "select entrasp.cancella_associazione_documento_modello_test('£codice_azienda£',£id_argomento_documento£,£id_modello_test£)",
+        "keymap": [
           {
-            "button_icon": "delete",
-            "value": "*", 
-            "font_color": "red",
-            "background_color": "red"
+            "source": "id_modello_test",
+            "destination": "id_modello_test"
+          },
+          {
+            "source": "id_argomento_documento",
+            "destination": "id_argomento_documento"
+          },
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
           }
         ],
-        "isButton": true,
-        "buttonAction": {
-          "target": "tipi_allegati_sub_of_modelli_test",
-          "viewType": "form",
-          "action": "query", 
-          "query": "select entrasp.cancella_associazione_documento_modello_test('£codice_azienda£',£id_argomento_documento£,£id_modello_test£)",
-          "keymap": [
-            {
-              "source": "id_modello_test",
-              "destination": "id_modello_test"
-            },
-            {
-              "source": "id_argomento_documento",
-              "destination": "id_argomento_documento"
-            },
-            {
-              "source": "codice_azienda",
-              "destination": "codice_azienda"
-            }
-          ],
-          "confirmAction": true,
-                  "confirmMessage": {
-                      "title": "Elimina",
-                      "text": "Si vuole cancellare il documento associato?"
-                  },
-          "onSuccessAction": "reload"
-        }
+        "confirmAction": true,
+        "confirmMessage": {
+          "title": "Elimina",
+          "text": "Si vuole cancellare il documento associato?"
+        },
+        "onSuccessAction": "reload"
       }
-    ],
-    "hideActions": [
-      {
-        "tableActionType": "add",
-        "viewType": "table"
-      }
-    ]
-  }
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    }
+  ]
+}
