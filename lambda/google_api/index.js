@@ -1080,7 +1080,6 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         let thread_id = emailResponse.data.threadId;
                         let to = emailResponse.data.payload.headers.filter( x => x.name === "To")[0].value;
                         let from = emailResponse.data.payload.headers.filter( x => x.name === "From")[0].value;
-                        let attachmentsIds = [];
                         let attachmentsList = [];
                         
                         let messagePayloadParts = emailResponse.data.payload.parts;
@@ -1105,7 +1104,6 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 case 'text/csv': fileExt = 'csv'; break;
                                 default: console.error('unknownMimeType', part.mimeType);
                             }
-                            attachmentsIds.push(part.body.attachmentId.substring(0,32));
                             
                             const {data: attachment} = await gmail.users.messages.attachments.get({
                                 userId: 'me',
@@ -1116,7 +1114,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             
                             let fileNameParts = part.filename.split('.');
                             let ext = fileNameParts[fileNameParts.length - 1];
-                            attachmentsList.push({filename: part.filename, extension: ext, sha1: shasum.update(dataB64).digest('hex'), md5: md5sum.update(dataB64).digest('hex') });
+                            attachmentsList.push({attachmentId: part.body.attachmentId.substring(0,32), filename: part.filename, extension: ext, sha1: shasum.update(dataB64).digest('hex'), md5: md5sum.update(dataB64).digest('hex') });
 
                             
                             //let body = x.data.payload.body;
@@ -1133,7 +1131,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                     //   console.log('callback: ' + JSON.stringify(attachments))
                         }, Promise.resolve([]));
                         
-                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsIds, attachmentsList});
+                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsList});
                     }
 
                 }
