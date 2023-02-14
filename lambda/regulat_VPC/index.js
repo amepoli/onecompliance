@@ -59,7 +59,9 @@ exports.handler = async (event) => {
                 tool (like missing/wrong argument of question[tag] in survey template or company not enabled), and handle this case return info.
                 IMPROVEMENT 2: Shrink the query, delete the UNION  
                 ***/
-
+                
+                console.log('company: '+company+', registry: '+registry);
+                
                 //Prepare the query to get the connected registries, because i need to launch the tool on these too 
                 query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, '' as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
                 FROM entrasp.anagrafiche_id an
@@ -128,6 +130,8 @@ exports.handler = async (event) => {
                 IMPROVEMENT 2: Shrink the query, delete the UNION  
                 ***/
 
+                console.log('company: '+company+', check: '+check);
+
                 //Prepare the query to get the connected registries, because i need to launch the tool on these too 
                 query = `SELECT an.id_anagrafica AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, '' as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
                 FROM entrasp.anagrafiche_id an
@@ -151,7 +155,7 @@ exports.handler = async (event) => {
                 AND ca.dt_fine IS NULL
                 AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null);`;
 
-                //console.log('running query: ', query);
+                console.log('running query: ', query);
                 response = await client.query(query);
 
                 let connectedRegistries = null;
@@ -190,6 +194,8 @@ exports.handler = async (event) => {
                 let query = "";
                 let response;
 
+                console.log('company: '+company+', survey: '+survey);
+
                 //Prepare the query to get the connected checks, because i need to launch the tool on these too 
                 query = `SELECT ss.id_somministrazione
                 FROM entrasp.sondaggi snd 
@@ -205,7 +211,7 @@ exports.handler = async (event) => {
                     AND dmd.id_argomento=45414 
                 );`;
 
-                //console.log('running query: ', query);
+                console.log('running query: ', query);
                 response = await client.query(query);
 
                 let connectedChecks = null;
@@ -265,7 +271,7 @@ exports.handler = async (event) => {
                 //See the function in the db which answer the question of survey
                 query = `select entrasp.OneKYC_process_aml_scans($$ ${scans} $$);`;
 
-                //console.log('running query: ', query);
+                console.log('running query: ', query);
                 response = await client.query(query);
 
                 //release the client
