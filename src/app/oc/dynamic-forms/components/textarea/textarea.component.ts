@@ -32,7 +32,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
 
   subscription: Subscription;
 
-  @ViewChild('textAreaEl') textAreaEl: ElementRef;
+  @ViewChild('textAreaEl') textAreaEl: ElementRef | any;
   @HostBinding('style.height') textAreaComponentHeight = '211px';
   
   htmlContent: string = "";
@@ -42,7 +42,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     spellcheck: true,
     height: '140px',
     minHeight: '140px',
-    maxHeight: '140px',
+    maxHeight: 'auto',
     width: '100%',
     minWidth: '100%',
     translate: 'yes',
@@ -90,21 +90,24 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   
   setHeights() {
     // Reset field height
-    if(!this.field.showTextAreaRichFormatter) {
-      this.textAreaEl.nativeElement.style.height = 'inherit';
+    const nativeElement = this.textAreaEl.nativeElement? this.textAreaEl.nativeElement: (this.textAreaEl.textArea && this.textAreaEl.textArea.nativeElement? this.textAreaEl.textArea.nativeElement: null);
+    
+    if(nativeElement) {
+
+      nativeElement.style.height = 'inherit';
 
       // Get the computed styles for the element
-      var computed = window.getComputedStyle(this.textAreaEl.nativeElement);
+      var computed = window.getComputedStyle(nativeElement);
   
       // Calculate the height
       var height = Math.min(parseInt(computed.getPropertyValue('border-top-width'), 10)
         + parseInt(computed.getPropertyValue('padding-top'), 10)
-        + this.textAreaEl.nativeElement.scrollHeight
+        + nativeElement.scrollHeight
         + parseInt(computed.getPropertyValue('padding-bottom'), 10)
         + parseInt(computed.getPropertyValue('border-bottom-width'), 10), this.maxHeight);
   
       // Apply heights
-      this.textAreaEl.nativeElement.style.height = height + 'px';
+      nativeElement.style.height = height + 'px';
       this.textAreaComponentHeight = (height + 78) + "px";
     }
     else {
