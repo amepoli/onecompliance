@@ -7,7 +7,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select * from entrasp.indicatori_presidi ip inner join entrasp.presidi prs on ip.id_presidio=prs.id_presidio and ip.codice_azienda=prs.codice_azienda"
+      "queryString": "select *, true as delete_indicatori_presidi from entrasp.indicatori_presidi ip inner join entrasp.presidi prs on ip.id_presidio=prs.id_presidio and ip.codice_azienda=prs.codice_azienda where ip.codice_azienda=$codice_azienda$"
     }
   ],
   "form_keys": [
@@ -19,8 +19,8 @@
       },
       "isHidden": true,
       "isPrimary": true,
-      "key": "id_presidio",
-      "label": "Presidio",
+      "key": "id_indicatore",
+      "label": "id_indicatore",
       "newLine": true,
       "readOnly": false
     },
@@ -40,20 +40,58 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
         "viewType": "combobox",
-        "comboQuery": "select id_indicatore as id, id_indicatore||'-'||substring (titolo,1,100)as descrizione from entrasp.indicatori",
+        "comboQuery": "select id_presidio as id, id_presidio||'-'||substring (descrizione_breve, 1,100) as name from entrasp.presidi where codice_azienda='€global_codice_azienda€'",
         "options": []
       },
       "isHidden": false,
       "isPrimary": true,
-      "key": "id_indicatore",
-      "label": "id_indicatore",
+      "key": "id_presidio",
+      "label": "Presidio",
       "readOnly": false,
       "newLine": false
     }
   ],
   "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_indicatori_presidi",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "*"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "presidi_sub_of_indicatori",
+        "viewType": "table",
+        "query": "delete from entrasp.indicatori_presidi where codice_azienda='£codice_azienda£' AND id_indicatore=£id_indicatore£ AND id_presidio=£id_presidio£",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_presidio",
+            "destination": "id_presidio"
+          },
+          {
+            "source": "id_indicatore",
+            "destination": "id_indicatore"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
     {
       "format": {
         "dataType": "text"
@@ -70,7 +108,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_presidio",
-      "label": "id_presidio"
+      "label": "id_presidio",
+      "width": "8%"
     },
     {
       "format": {
@@ -79,7 +118,6 @@
       "isHidden": true,
       "isPrimary": true,
       "key": "id_indicatore",
-      "width": "5%",
       "label": "id_indicatore"
     },
     {
@@ -106,9 +144,15 @@
           }
         ]
       },
-      "width": "95%",
+      "width": "60%",
       "sameOrigin": false,
       "queryFunct": "substring(entrasp.presidi_descr(id_presidio, codice_azienda), 1, 130)"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
     }
   ]
 }
