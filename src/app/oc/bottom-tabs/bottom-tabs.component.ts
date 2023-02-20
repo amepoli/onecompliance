@@ -106,7 +106,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
             }
 
             _this.tabsGroup.selectedIndex = _this.activeIndex;
-            _this.tableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
+            _this.tableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true, showFullScreenButton: true, searchKeys: null };
             _this.formTableParams = { entryName: _this.filteredTabs[_this.activeIndex].table, keys: _this.filteredTabs[_this.activeIndex].keys, showHeader: true };
 
             _this.cdRef.detectChanges();
@@ -117,7 +117,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
         if (this.filteredTabs && this.filteredTabs.length && tabChangeEvent.index > -1) {  // at least one tab visible
             if(this.tabsGroup.selectedIndex === tabChangeEvent.index) {
                 this.activeIndex = tabChangeEvent.index >= 0 ? tabChangeEvent.index : 0;  // might get a -1
-                this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true, showFullScreenButton: true };
+                this.tableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true, showFullScreenButton: true, searchKeys: null };
                 this.formTableParams = { entryName: this.filteredTabs[this.activeIndex].table, keys: this.filteredTabs[this.activeIndex].keys, showHeader: true };
             }
         }

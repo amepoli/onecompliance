@@ -31,7 +31,8 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
         entryName: '',
         keys: {},
         showHeader: true,
-        showFullScreenButton: false
+        showFullScreenButton: false,
+        searchKeys: null
     };
 
     @Output() sendEvent = new EventEmitter<any>();
@@ -218,7 +219,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                 _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?
                     _this.backendService.dashboardKeys : {};
                 _this.backendService.dashboardKeys = null; // reset dashboard path
-                _this.tableData = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
+                _this.tableData = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: null };
                 _this.loadData();
             })
         );
