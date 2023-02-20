@@ -24,13 +24,13 @@
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<property name="com.jaspersoft.studio.report.description" value=""/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Gorico_locale"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="gorico_locale"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select pa1.descrizione_breve as uno_db, entrasp.centri_gestionali_descr(pa1.codice_part, pa1.id_centro_gest) as centro_gest, pa2.descrizione_breve as due_db, pa3.descrizione_breve as tre_db, pa1.codice|| '-' ||pa1.descrizione_breve as uno_c, pa2.codice as due_c, pa3.codice as tre_c, pa1.id_procedura as uno_id_proc, pa2.id_procedura as due_id_proc, pa3.id_procedura as tre_id_proc, pa1.descrizione as uno_d, pa2.descrizione as due_d, pa3.descrizione as tre_d, pa1.codice_azienda as uno_ca, pa2.codice_azienda as due_ca, pa3.codice_azienda as tre_ca, pa1.id_procedura_parent as uno_id_pp, pa2.id_procedura_parent as due_id_pp,pa3.id_procedura_parent as tre_id_pp,fr1.codice_azienda as fr1_ca, fr1.codice_rischio as fr1_cr,fr2.codice_azienda as fr2_ca, fr2.codice_rischio as fr2_cr,fr3.codice_azienda as fr3_ca, fr3.codice_rischio as fr3_cr from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda left join entrasp.fonti_rischio fr1 on fr1.codice_azienda= pa1.codice_azienda and fr1.id_procedura=pa1.id_procedura left join entrasp.fonti_rischio fr2 on fr2.codice_azienda= pa2.codice_azienda and fr2.id_procedura=pa2.id_procedura left join entrasp.fonti_rischio fr3 on fr3.codice_azienda= pa3.codice_azienda and fr3.id_procedura=pa3.id_procedura where pa1.codice_azienda ='BENETTONGROUP' and pa1.id_procedura = 184"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select pa1.descrizione_breve as uno_db, entrasp.centri_gestionali_descr(pa1.codice_part, pa1.id_centro_gest) as centro_gest, pa2.descrizione_breve as due_db, pa3.descrizione_breve as tre_db, pa1.codice, pa1.codice|| '-' ||pa1.descrizione_breve as uno_c, pa2.codice as due_c, pa3.codice as tre_c, pa1.id_procedura as uno_id_proc, pa2.id_procedura as due_id_proc, pa3.id_procedura as tre_id_proc, pa1.descrizione as uno_d, pa2.descrizione as due_d, pa3.descrizione as tre_d, pa1.codice_azienda as uno_ca, pa2.codice_azienda as due_ca, pa3.codice_azienda as tre_ca, pa1.id_procedura_parent as uno_id_pp, pa2.id_procedura_parent as due_id_pp,pa3.id_procedura_parent as tre_id_pp,fr1.codice_azienda as fr1_ca, fr1.codice_rischio as fr1_cr,fr2.codice_azienda as fr2_ca, fr2.codice_rischio as fr2_cr,fr3.codice_azienda as fr3_ca, fr3.codice_rischio as fr3_cr from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda left join entrasp.fonti_rischio fr1 on fr1.codice_azienda= pa1.codice_azienda and fr1.id_procedura=pa1.id_procedura left join entrasp.fonti_rischio fr2 on fr2.codice_azienda= pa2.codice_azienda and fr2.id_procedura=pa2.id_procedura left join entrasp.fonti_rischio fr3 on fr3.codice_azienda= pa3.codice_azienda and fr3.id_procedura=pa3.id_procedura where pa1.codice_azienda ='BENETTONGROUP' and pa1.id_procedura = 184"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["ifir"]]></defaultValueExpression>
@@ -55,6 +55,11 @@
 	<field name="tre_db" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="tre_db"/>
 		<property name="com.jaspersoft.studio.field.label" value="tre_db"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
+	</field>
+	<field name="codice" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali"/>
 	</field>
 	<field name="uno_c" class="java.lang.String">
@@ -201,7 +206,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Bold_arial" isBold="true"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{uno_c}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{codice}]]></textFieldExpression>
 				</textField>
 				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="68" width="537" height="1" isRemoveLineWhenBlank="true" uuid="6ad74109-1734-4f82-a1c8-ceeb6252ef0c">
