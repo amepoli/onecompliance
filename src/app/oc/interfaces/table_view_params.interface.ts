@@ -4,4 +4,5 @@ export interface TableViewParams {
     showHeader: boolean;
     showFullScreenButton: boolean;
     outputEvent?: any;
+    searchKeys: any;
 }

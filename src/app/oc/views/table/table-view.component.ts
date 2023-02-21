@@ -180,7 +180,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             // Check if it is main table
             if (!_this.isTabMode) {
                 // Load main table data
-                _this.loadData();
+                _this.loadData(_this.tableData.searchKeys);
 
                 if(!_this._reportService.isLazyLoadingEnabled || _this._reportService.cache[_this.tableData.entryName]) {
                     // Request to load reports
@@ -269,7 +269,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.loadPaginationAndSort();
     }
  
-    public loadData() {
+    public loadData(search_keys = null) {
         const _this = this;
         _this.resetView();
         _this.resetSelection();
@@ -312,7 +312,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.explorerSource = 'table-view';
                     }
                     if(_this.explorerSource != 'google-drive') {
-                        _this.loadTable(null);
+                        _this.loadTable(search_keys);
                     }
                     else {
                         _this.loadDriveContents();

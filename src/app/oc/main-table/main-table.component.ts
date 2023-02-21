@@ -28,13 +28,14 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     tabs: TabType[] = [];
 
-    public navigationHistory: { level: number, tableName: string, type: string, tableKeys: any, primaryKeys: any, params: any, description: string }[] = [];
+    public navigationHistory: { level: number, tableName: string, type: string, tableKeys: any, primaryKeys: any, searchKeys: any, params: any, description: string }[] = [];
 
     private tableParams: TableViewParams = {
         entryName: '',
         keys: {},
         showHeader: true,
-        showFullScreenButton: false
+        showFullScreenButton: false,
+        searchKeys: {}
     };
 
     private formParams: FormViewParams= {
@@ -115,7 +116,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?
                     _this.backendService.dashboardKeys : {};
                 _this.backendService.dashboardKeys = null; // reset dashboard path
-                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
+                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys };
             }));
 
         // Receive Navigation Event from Time Tracker Service
@@ -352,12 +353,12 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.currentPrimaryKeys = event.queryParams.keys; // update
             _this.tableName = event.queryParams.entry.name;
             if (event.queryParams.entry.type === 'table') {
-                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false };
+                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys  };
                 _this.tableType = 'table';
                 _this.currentDescription = 'Tabella ' + _this.tableName;
             }
             else if (event.queryParams.entry.type === 'explorer') {
-                _this.tableParams = { entryName: _this.tableName, keys: event.queryParams.keys, showHeader: true, showFullScreenButton: false };
+                _this.tableParams = { entryName: _this.tableName, keys: event.queryParams.keys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys  };
                 _this.tableType = 'table';
                 _this.currentDescription = 'Tabella ' + _this.tableName;
             } else if (event.queryParams.entry.type === 'form') { // handled later on
@@ -435,8 +436,11 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.currentTableKeys = item.tableKeys;
         _this.tableName = item.tableName;
         _this.currentPrimaryKeys = item.primaryKeys;
+        _this.searchKeys = item.searchKeys;
+
         if (item.type === 'table') {
             _this.tableParams = item.params;
+            _this.tableParams.searchKeys = item.searchKeys;
             _this.currentDescription = 'Tabella ' + _this.tableName;
             _this.tableType = 'table';
         } else {
@@ -459,6 +463,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             type: _this.tableType,
             tableKeys: _this.currentTableKeys,
             primaryKeys: _this.currentPrimaryKeys,
+            searchKeys: _this.searchKeys,
             params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
             description: _this.currentDescription
         };
