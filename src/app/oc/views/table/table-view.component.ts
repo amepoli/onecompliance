@@ -227,7 +227,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         });
     }
 
-    public resetView() {
+    public resetView(search_keys = null) {
         this.showQuickAdd = false;
         this.showAdvSearch = false;
 
@@ -242,7 +242,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.searchData = null;
         this.dataSource = null;
 
-        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
+        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: search_keys } }); // pass search keys to parent view 
     
     }
 
@@ -271,7 +271,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
  
     public loadData(search_keys = null) {
         const _this = this;
-        _this.resetView();
+        _this.resetView(search_keys);
         _this.resetSelection();
         _this.isLoading = true;
         _this.subscriptions.push(_this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
@@ -804,9 +804,22 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
             }
         }
-                
-        this.loadTable(cleanedValues);
-        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: cleanedValues } }); // pass search keys to parent view 
+
+        // New Logic, navigate to a new table view page with same params but with search Keys
+        const newTableParams: any = {
+            entry:  {
+                name: this.tableData.entryName,
+                type: 'table'
+            },
+            keys: this.tableData.keys,
+            searchKeys: cleanedValues
+            
+        }
+        this.navigate(newTableParams);
+
+        // Old logc, load current table with search Keys 
+        // this.loadTable(cleanedValues);
+        // this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: cleanedValues } }); // pass search keys to parent view 
     }
 
     cancel_search() {

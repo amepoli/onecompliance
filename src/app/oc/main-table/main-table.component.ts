@@ -353,9 +353,9 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.currentPrimaryKeys = event.queryParams.keys; // update
             _this.tableName = event.queryParams.entry.name;
             if (event.queryParams.entry.type === 'table') {
-                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys  };
+                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: event.queryParams.searchKeys  };
                 _this.tableType = 'table';
-                _this.currentDescription = 'Tabella ' + _this.tableName;
+                _this.currentDescription =  event.queryParams.searchKeys? 'Risultati: advanced search': ('Tabella ' + _this.tableName);
             }
             else if (event.queryParams.entry.type === 'explorer') {
                 _this.tableParams = { entryName: _this.tableName, keys: event.queryParams.keys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys  };
@@ -441,7 +441,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (item.type === 'table') {
             _this.tableParams = item.params;
             _this.tableParams.searchKeys = item.searchKeys;
-            _this.currentDescription = 'Tabella ' + _this.tableName;
+            _this.currentDescription = item.searchKeys? 'Risultati: advanced search': ('Tabella ' + _this.tableName);
             _this.tableType = 'table';
         } else {
             _this.formParams = item.params;
