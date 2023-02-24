@@ -288,8 +288,8 @@ async function loadChangesToken(userid, changes_type) {
     let username = await getUsername(userid);
 
     let extAuthentication = await getExtAuthentication(username);
-    if(extAuthentication) {
-        let changesToken = changes_type == "gdrive"? extAuthentication['changes_gdrive']: extAuthentication['changes_gmail'];
+    if (extAuthentication) {
+        let changesToken = changes_type == "gdrive" ? extAuthentication['changes_gdrive'] : extAuthentication['changes_gmail'];
         return { result: 'OK', token: changesToken };
     }
     return { result: 'OK', token: null };
@@ -349,10 +349,10 @@ async function getChanges(userid, authParams) {
         for (const change of res.data.changes) {
             _console.log('change found for file: ', change.fileId);
             const path = await getDriveFileCompletePath(change.fileId);
-            if(path) {
+            if (path) {
                 let newPath = path.startsWith('/') ? path.substring(1) : path;
                 let newPathPaths = newPath.split('/');
-                if(newPathPaths.length > 2 && newPathPaths[1].includes('~')) {
+                if (newPathPaths.length > 2 && newPathPaths[1].includes('~')) {
                     fileIds.push(change.fileId);
                     filePaths.push(path);
                 }
@@ -406,11 +406,11 @@ async function getLocalSharedFolderId(drivePath) {
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name)',
             });
-            if(response) {
+            if (response) {
                 try {
                     response = JSON.parse(response);
                 }
-                catch(e) { }
+                catch (e) { }
             }
         }
         catch (e) { }
@@ -427,11 +427,11 @@ async function getLocalSharedFolderId(drivePath) {
                 pageSize: 5,
                 fields: 'nextPageToken, files(id, name, mimeType)',
             });
-            if(response) {
+            if (response) {
                 try {
                     response = JSON.parse(response);
                 }
-                catch(e) { }
+                catch (e) { }
             }
         }
         catch (e) { }
@@ -798,10 +798,10 @@ async function getDriveFileCompletePath(driveFileId) {
             _console.log(JSON.stringify(response));
             _console.log('data: ', response.data);
             if (response.data) {
-                if(!completePath && response.data.mimeType == folderMime) {
+                if (!completePath && response.data.mimeType == folderMime) {
                     return null;
                 }
-                if(response.data.name != "My Drive" && response.data.name != "Il mio Drive") {
+                if (response.data.name != "My Drive" && response.data.name != "Il mio Drive") {
                     completePath = `/${response.data.name}${completePath}`
                 }
                 driveFileId = response.data.parents ? response.data.parents[0] : null;
@@ -1008,33 +1008,35 @@ async function getDistance(origin, destination) {
 
 async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
     _console.log('codiceAzienda', codiceAzienda);
-    
+
     await performGoogleAuth(authParams);
 
     const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
     try {
         let subjectsToSearch = [];
         let subjectsToMatch = [];
-        
+
         codiceAzienda.forEach(x => {
-            subjectsToSearch.push(`subject:${x}>`);
-            subjectsToSearch.push(`subject:${x}+`);
-            subjectsToSearch.push(`subject:${x}&`);
-            subjectsToSearch.push(`subject:(${x} >)`);
-            subjectsToSearch.push(`subject:(${x} +)`);
-            subjectsToSearch.push(`subject:(${x} &)`);
-            subjectsToMatch.push(`${x}>`.toLowerCase());
-            subjectsToMatch.push(`${x}+`.toLowerCase());
-            subjectsToMatch.push(`${x}&`.toLowerCase());
-            subjectsToMatch.push(`${x} >`.toLowerCase());
-            subjectsToMatch.push(`${x} +`.toLowerCase());
-            subjectsToMatch.push(`${x} &`.toLowerCase());
+            subjectsToSearch.push(`subject:${x}`);
+            // subjectsToSearch.push(`subject:${x}>`);
+            // subjectsToSearch.push(`subject:${x}+`);
+            // subjectsToSearch.push(`subject:${x}&`);
+            // subjectsToSearch.push(`subject:(${x}>`);
+            // subjectsToSearch.push(`subject:(${x}+`);
+            // subjectsToSearch.push(`subject:(${x}&`);
+            // subjectsToSearch.push(`${x}`);
+            // subjectsToMatch.push(`${x}>`);
+            // subjectsToMatch.push(`${x}+`);
+            // subjectsToMatch.push(`${x}&`);
+            // subjectsToMatch.push(`(${x}>`);
+            // subjectsToMatch.push(`(${x}+`);
+            // subjectsToMatch.push(`(${x}&`);
         });
 
         let query = `{${subjectsToSearch.join(' ')}}`; // `subject:${codiceAzienda} OR subject:${codiceAzienda}>`;
-        
+
         const existingtoken = await loadChangesToken(userid, "gmail");
-        if(existingtoken && existingtoken.token && existingtoken.token.length > 0) {
+        if (existingtoken && existingtoken.token && existingtoken.token.length > 0) {
             query = query + ` after:${existingtoken.token}`;
         }
 
@@ -1043,55 +1045,57 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
             userId: 'me',
             q: query
         });
-        
+
         _console.log('email messages: ', emails.data.messages);
-        if(emails && emails.data && emails.data.messages && emails.data.messages.length > 0) {
+        if (emails && emails.data && emails.data.messages && emails.data.messages.length > 0) {
             let emailsResult = [];
             for await (message of emails.data.messages) {
-                try{
+                try {
                     // console.log('Getting email by id: ', message.id);
-                    let emailResponse = await gmail.users.messages.get({userId: "me", id: message.id });
+                    let emailResponse = await gmail.users.messages.get({ userId: "me", id: message.id });
                     // console.log('Email response: ', emailResponse);
-                    let subject = emailResponse.data.payload.headers.filter( x => x.name === "Subject")[0].value;
+                    let subject = emailResponse.data.payload.headers.filter(x => x.name === "Subject")[0].value;
                     let subjectLower = subject.toLowerCase();
-                    let matches = false;
-                    for(let i = 0; i < subjectsToMatch.length; i++) {
-                        if(matches) {
+
+                    //hack after amedeo's request, get all the emails without testing the matches
+                    let matches = true;
+                    for (let i = 0; i < subjectsToMatch.length; i++) {
+                        if (matches) {
                             console.log('already matched!');
                         }
-                        if(subjectLower.includes(subjectsToMatch[i])) {
+                        if (subjectLower.includes(subjectsToMatch[i])) {
                             matches = true;
                             break;
                         }
                     }
-                    
+
                     let company = null;
                     const separators = [' >', ' +', ' &', '>', '+', '&'];
-                    separators.forEach( s => {
+                    separators.forEach(s => {
                         let companyParts = subject.split(s);
-                        if(!company && companyParts.length > 1) {
+                        if (!company && companyParts.length > 1) {
                             company = companyParts[0];
                         }
                     });
 
-                    if(matches) {
-                        let date = emailResponse.data.payload.headers.filter( x => x.name === "Date")[0].value;
+                    if (matches) {
+                        let date = emailResponse.data.payload.headers.filter(x => x.name === "Date")[0].value;
                         let email_id = emailResponse.data.id;
                         let thread_id = emailResponse.data.threadId;
-                        let to = emailResponse.data.payload.headers.filter( x => x.name === "To")[0].value;
-                        let from = emailResponse.data.payload.headers.filter( x => x.name === "From")[0].value;
+                        let to = emailResponse.data.payload.headers.filter(x => x.name === "To")[0].value;
+                        let from = emailResponse.data.payload.headers.filter(x => x.name === "From")[0].value;
                         let attachmentsList = [];
-                        
+
                         let messagePayloadParts = emailResponse.data.payload.parts;
-                        
+
                         const attachments = await messagePayloadParts.reduce(async function (acc2Prom, part) {
                             const acc2 = await acc2Prom;
                             if (!part.body.size || part.body.attachmentId == undefined) {
                                 return acc2;
                             }
-                            const internalDate = new Date(parseInt(message.internalDate, 10));
-                            const datestring = internalDate.getFullYear() + " " + (internalDate.getMonth()+1).toString().padStart(2, "0") + " " + internalDate.getDate().toString().padStart(2, "0");
-                            console.log(datestring, part.filename, part)
+                            //const internalDate = new Date(parseInt(message.internalDate, 10));
+                            //const datestring = internalDate.getFullYear() + " " + (internalDate.getMonth()+1).toString().padStart(2, "0") + " " + internalDate.getDate().toString().padStart(2, "0");
+                            console.log(/*datestring,*/ part.filename, part)
                             let fileExt;
                             switch (part.mimeType) {
                                 case 'application/octet-stream': fileExt = ''; break;
@@ -1104,51 +1108,51 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 case 'text/csv': fileExt = 'csv'; break;
                                 default: console.error('unknownMimeType', part.mimeType);
                             }
-                            
-                            const {data: attachment} = await gmail.users.messages.attachments.get({
+
+                            const { data: attachment } = await gmail.users.messages.attachments.get({
                                 userId: 'me',
                                 messageId: message.id,
                                 id: part.body.attachmentId,
                             });
                             const { size, data: dataB64 } = attachment;
-                            
+
                             let fileNameParts = part.filename.split('.');
                             let ext = fileNameParts[fileNameParts.length - 1];
-                            attachmentsList.push({attachmentId: part.body.attachmentId.substring(0,32), filename: part.filename, extension: ext, sha1: shasum.update(dataB64).digest('hex'), md5: md5sum.update(dataB64).digest('hex') });
+                            attachmentsList.push({ attachmentId: part.body.attachmentId.substring(0, 32), filename: part.filename, extension: ext, sha1: shasum.update(dataB64).digest('hex'), md5: md5sum.update(dataB64).digest('hex') });
 
-                            
+
                             //let body = x.data.payload.body;
-                            let s3_path = `${company}/${part.body.attachmentId.substring(0,32)}`;
+                            let s3_path = `${company}/${part.body.attachmentId.substring(0, 32)}`;
                             var params = {
                                 Bucket: 'BUCKET_NAME',
                                 Key: s3_path,
                                 Body: Buffer.from(dataB64, 'base64')
                             };
-                            
+
                             const s3result = await s3.upload(params).promise();
 
                             return acc2;
-                    //   console.log('callback: ' + JSON.stringify(attachments))
+                            //   console.log('callback: ' + JSON.stringify(attachments))
                         }, Promise.resolve([]));
-                        
-                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsList});
+
+                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsList });
                     }
 
                 }
-                catch(e) {
+                catch (e) {
                     console.log('Exception: ', e);
                 }
             }
-            
+
             let username = await getUsername(userid);
             let extAuthentication = await getExtAuthentication(username);
             let dateNow = new Date();
             dateNow.setDate(dateNow.getDate());
-            extAuthentication["changes_gmail"] = `${dateNow.getFullYear()}/${dateNow.getMonth()+1}/${dateNow.getDate()}`;
+            extAuthentication["changes_gmail"] = `${dateNow.getFullYear()}/${dateNow.getMonth() + 1}/${dateNow.getDate()}`;
             await createExtAuthentication(extAuthentication);
 
             // Return emails
-            return { result: 'OK', emails: emailsResult };            
+            return { result: 'OK', emails: emailsResult };
         }
         return { result: 'OK', emails: [] };
     } catch (err) {
@@ -1784,7 +1788,7 @@ async function syncDriveS3File(syncData, syncMode, authParams) {
                 _console.log('s3FileModifiedDateTime', s3FileModifiedDateTime);
 
                 if (driveFileModifiedDateTime > s3FileModifiedDateTime) {
-                    if(syncMode == syncModes.full || syncMode == syncModes.driveToS3) {
+                    if (syncMode == syncModes.full || syncMode == syncModes.driveToS3) {
                         _console.log('deleteS3File...');
                         await deleteS3File(s3FilePath);
                         _console.log('copyFromDriveToS3...');
@@ -1797,7 +1801,7 @@ async function syncDriveS3File(syncData, syncMode, authParams) {
                     }
                 }
                 else if (driveFileModifiedDateTime < s3FileModifiedDateTime) {
-                    if(syncMode == syncModes.full || syncMode == syncModes.s3ToDrive) {
+                    if (syncMode == syncModes.full || syncMode == syncModes.s3ToDrive) {
                         _console.log('deleteDriveFile...');
                         await deleteDriveFile(driveFileInfo.id);
                         _console.log('copyFromS3ToDrive...');
@@ -1812,7 +1816,7 @@ async function syncDriveS3File(syncData, syncMode, authParams) {
             }
         }
         else if (driveFileInfo && driveFileInfo.modifiedTime != null) {
-            if(syncMode == syncModes.full || syncMode == syncModes.driveToS3) {
+            if (syncMode == syncModes.full || syncMode == syncModes.driveToS3) {
                 _console.log('copyFromDriveToS3...');
                 await copyFromDriveToS3(s3FilePath, driveFolderId, driveFile, driveFileId, authParams);
                 syncRow['s3md5'] = driveFileInfo.md5Checksum;
@@ -1823,7 +1827,7 @@ async function syncDriveS3File(syncData, syncMode, authParams) {
             }
         }
         else if (s3FileInfo && s3FileInfo.LastModified != null) {
-            if(syncMode == syncModes.full || syncMode == syncModes.s3ToDrive) {
+            if (syncMode == syncModes.full || syncMode == syncModes.s3ToDrive) {
                 _console.log('copyFromS3ToDrive...');
                 await copyFromS3ToDrive(s3FilePath, driveFilePath, authParams);
                 syncRow['s3md5'] = s3FileInfo.ETag;
@@ -2444,7 +2448,7 @@ exports.handler = async (event, context) => {
                 const destination = queryParams['destination'];
                 body = await getDistance(origin, destination);
             }
-            else if(requestType === "getEmailsByCodiceAzienda") {
+            else if (requestType === "getEmailsByCodiceAzienda") {
                 let eventBody = event.body ? JSON.parse(event.body) : {};
                 const userid = eventBody['userid'] || event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
                 const authParams = eventBody['authToken'];
