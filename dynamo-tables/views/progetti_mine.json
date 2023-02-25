@@ -14,18 +14,8 @@
 			"operation": "selectForm"
 		},
 		{
-			"operation": "selectForm",
-			"type": "preProcessing",
-			"queryString": "select entrasp.progetti_fasi_stato_update($codice_azienda$, $id_progetto$);"
-		},
-		{
-			"operation": "selectForm",
-			"queryString": "update entrasp.progetti prg set codice_part=az.codice_part from entrasp.aziende az where prg.codice_azienda=az.codice_azienda and prg.codice_part is null and prg.codice_azienda=$codice_azienda$ and prg.id_progetto=$id_progetto$",
-			"type": "postProcessing"
-		},
-		{
 			"operation": "selectTable",
-			"queryString": "select *, entrasp.centri_gestionali_descr(prg.codice_part, prg.id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO', stato) as stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) as descr_cliente from entrasp.progetti prg where prg.codice_azienda=$codice_azienda$ and prg.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.codice_part = $codice_part$ and cg2.id_gruppo_lavoro in(select glm.id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part=$codice_part$))",
+			"queryString": "select *, entrasp.centri_gestionali_descr(prg.codice_part, prg.id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO', stato) as stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) as descr_cliente from entrasp.progetti prg where prg.codice_azienda=$codice_azienda$ and prg.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.codice_part = '€global_codice_part€' and cg2.id_gruppo_lavoro in(select glm.id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€'))",
 			"type": "main"
 		}
 	]
