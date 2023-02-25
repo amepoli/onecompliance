@@ -1,8 +1,9 @@
 {
   "$schema": "../views.schema.json",
-  "origin": "entrasp.sondaggi",
+  "origin": "entrasp.sondaggi snd",
   "entryKey": "sondaggi_ulteriori_elementi",
   "businessObjectName": "sondaggi",
+  "inheritsFrom": "sondaggi",
   "predefinedQueries": [
     {
       "operation": "selectForm",
@@ -386,6 +387,141 @@
       "size": 1
     }
   ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "sondaggi",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_sondaggio",
+            "destination": "id_sondaggio"
+          }
+        ]
+      },
+      "label": "#",
+      "width": "5%",
+      "style": [
+        {
+          "value": "*",
+          "background_color": "lightblue",
+          "text_align": "center",
+          "font_weight": "599",
+          "font_size": "medium"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "titolo",
+      "width": "25%",
+      "label": "Titolo"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_comp",
+      "label": "Data Competenza",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_prevista",
+      "label": "Data Prevista",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_esecuzione",
+      "label": "Data Esecuzione",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_richiesta_doc",
+      "label": "Dt rich.doc.",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_ricezione_doc",
+      "label": "Data ric.doc.",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_riferimento_da",
+      "label": "Data rif.da",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_riferimento_a",
+      "label": "Data rif. a",
+      "width": "6%"
+    }
+  ],
   "subTables": [
     {
       "entryKey": "tipi_allegati_sub_of_sondaggi_ulteriori_elementi",
@@ -441,5 +577,8 @@
       "actionType": "reload",
       "eventName": "survey_reload"
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by id_sondaggio desc limit 100"
+  }
 }
