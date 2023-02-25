@@ -65,6 +65,27 @@
       "autoGenerate": false,
       "format": {
         "dataType": "date",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Inserire una data pianificata di esecuzione!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_prevista",
+      "label": "Prevista esecuzione",
+      "newLine": false,
+      "size": 2,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
         "viewType": "input"
       },
       "isHidden": false,
@@ -72,7 +93,8 @@
       "key": "data_rilevazione_da",
       "label": "Eseguito dal",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -85,7 +107,8 @@
       "key": "data_rilevazione_a",
       "label": "al",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -98,7 +121,8 @@
       "key": "data_riferimento_da",
       "label": "Riferimento dal",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -110,7 +134,87 @@
       "isPrimary": false,
       "key": "data_riferimento_a",
       "label": "al",
+      "newLine": true,
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "data_richiesta_doc",
+      "label": "Dt. richiesta doc.",
+      "tooltip": "Data in cui è stata richiesta alla controparte la documentazione strumentale all'attività/verifica",
       "newLine": false,
+      "readOnly": false,
+      "size": 1.6
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "sameOrigin": false,
+      "key": "data_ricezione_doc",
+      "label": "Dt. ricez. doc.",
+      "tooltip": "Data in cui è stata ricevuta dalla controparte la documentazione strumentale all'attività/verifica",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.6
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_esecuzione",
+      "label": "Data Esecuzione",
+      "inputEvents": [
+        {
+          "eventName": "onSaveSondaggio",
+          "actionType": "query",
+          "queryFunct": "select 1",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "data_esecuzione_update"
+        },
+        {
+          "eventName": "data_esecuzione_update",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.sondaggi_somministrati ss set data_esecuzione=coalesce(ss.data_esecuzione,snd.data_esecuzione) from entrasp.sondaggi snd where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+        }
+      ],
+      "newLine": false,
+      "size": 1.6,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "sameOrigin": false,
+      "isPrimary": false,
+      "key": "data_invio_rendiconto",
+      "label": "Dt invio rend.",
+      "tooltip": "Data in cui è stata inviata alla controparte la rendicontazione finale dell'attività svolta",
+      "newLine": false,
+      "size": 1.6,
       "readOnly": false
     },
     {
@@ -123,7 +227,29 @@
       "isPrimary": false,
       "key": "data_scadenza",
       "label": "Scadenza sondaggio",
+      "newLine": false,
+      "size": 1.6,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Inserire ultimo giorno esercizio di competenza",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_comp",
+      "label": "Competenza",
       "newLine": true,
+      "size": 1.7,
       "readOnly": false
     },
     {
