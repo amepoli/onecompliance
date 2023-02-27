@@ -884,5 +884,8 @@
             "newLine": false,
             "queryCond": "(case when ss.object_name='anagraficheId' then nullif(split_part(ss.object_key,'|',2),'')::numeric else null::numeric end)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='€global_codice_azienda€' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='€global_codice_part€' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='€global_codice_azienda€' and cntx.id_cliente is not null)))"
         }
-    ]
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": " order by somministrazione_completata desc"
+      }
 }
