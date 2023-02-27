@@ -234,7 +234,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.viewKeys = null;
         this.completeSearchKeys = null;
         this.advancedSearchKeys = null;
-        this.searchToggles = null;
+        // this.searchToggles = null;
         this.displayedColumns = null;
         this.currentKeys = null;
 
@@ -286,7 +286,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.loadViewKeys(params.table_keys);
                     _this.completeSearchKeys = params.search_keys;
                     _this.updateAdvancedSearchKeys(params.search_keys);
-                    _this.loadSearchToggles(params.search_keys);
+                    _this.loadSearchToggles(params.search_keys, search_keys);
                     _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
@@ -713,16 +713,25 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         }
     }
 
-    loadSearchToggles(searchKeys: SearchViewKey[]) {
-        if(searchKeys && searchKeys.length > 0) {
-            this.searchToggles = searchKeys.filter(x => x.format.viewType == 'toggle').map( x => {
+    loadSearchToggles(completeSearchKeys: SearchViewKey[], searchKeys: any = null) {
+        if(completeSearchKeys && completeSearchKeys.length > 0) {
+            this.searchToggles = completeSearchKeys.filter(x => x.format.viewType == 'toggle').map( x => {
+                let checked = false;
+                if(searchKeys && Object.keys(searchKeys).includes(x.fieldName)) {
+                    checked = searchKeys[x.fieldName];
+                }
+                else {
+                    checked = (x.format.value == 'true' || x.format.value == true || x.format.value == '1' || x.format.value == 1) ? true: false;
+                }
                 return {
                     fieldName: x.fieldName,
                     label: x.label,
                     tooltip: x.tooltip,
-                    checked: (x.format.value == 'true' || x.format.value == true || x.format.value == '1' || x.format.value == 1) ? true: false
+                    checked: checked
                 };
             });
+
+            this.searchToggles;
         }
         else {
             this.searchToggles = [];
@@ -730,8 +739,22 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     updateSearchToggle(index: number, checked: boolean) {
+        let cleanedValues={};
         this.searchToggles[index].checked = checked;
-        this.search_submit({});
+        // this.search_submit({});
+        this.searchToggles.forEach( x => {
+            cleanedValues[x.fieldName] = x.checked
+        });
+        const newTableParams: any = {
+            entry:  {
+                name: this.tableData.entryName,
+                type: 'table'
+            },
+            keys: this.tableData.keys,
+            searchKeys: cleanedValues
+            
+        }
+        this.navigate(newTableParams);
     }
     
     applySearchToggles(cleanedValues: any) {
