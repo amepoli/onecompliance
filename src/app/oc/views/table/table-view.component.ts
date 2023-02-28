@@ -741,20 +741,25 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     updateSearchToggle(index: number, checked: boolean) {
         let cleanedValues={};
         this.searchToggles[index].checked = checked;
-        // this.search_submit({});
-        this.searchToggles.forEach( x => {
+        this.searchToggles.filter(x=> x.checked).forEach( x => {
             cleanedValues[x.fieldName] = x.checked
         });
-        const newTableParams: any = {
-            entry:  {
-                name: this.tableData.entryName,
-                type: 'table'
-            },
-            keys: this.tableData.keys,
-            searchKeys: cleanedValues
+        
+        this.loadTable(cleanedValues);
+        this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: cleanedValues } }); // pass search keys to parent view 
+        
+        // To navigate
+        // const newTableParams: any = {
+        //     entry:  {
+        //         name: this.tableData.entryName,
+        //         type: 'table'
+        //     },
+        //     keys: this.tableData.keys,
+        //     searchKeys: cleanedValues
             
-        }
-        this.navigate(newTableParams);
+        // }
+        // this.navigate(newTableParams);
+
     }
     
     applySearchToggles(cleanedValues: any) {
