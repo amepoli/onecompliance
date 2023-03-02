@@ -291,6 +291,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
+                    if(!_this.isTabMode) {
+                        _this.sendEvent.emit({ eventType: 'currentTableLabel', queryParams: { label: params.label } }); // pass current label to parent view 
+                    }
+                    
                     if(result.data.explorerOptions && result.data.explorerOptions.showExplorerView) {
                         _this.showExplorer = true;
                     }

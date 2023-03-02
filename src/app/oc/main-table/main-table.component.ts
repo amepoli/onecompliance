@@ -58,6 +58,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private currentTableKeys: any;  // keys set in currently active table/subtable (might be foreing keys of subtable)
 
+    private currentTableLabel: string; // Table label
+
     private currentPrimaryKeys: any[]; // current list of primary keys provided by the table-view
 
     private subscriptions: Subscription[] = [];
@@ -110,11 +112,12 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 _this.level = 0;
                 _this.resetFormParams();
                 _this.tableName = params.table_name;
-                _this.currentDescription = 'Tabella ' + _this.tableName;
+                _this.currentTableLabel = _this.tableName;
+                _this.currentDescription = 'Tabella ' + _this.currentTableLabel;
                 _this.tableType = 'table';           // only table views from left navigation bar
                 // check if we are coming from dashboard 
                 _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?
-                    _this.backendService.dashboardKeys : {};
+                _this.backendService.dashboardKeys : {};
                 _this.backendService.dashboardKeys = null; // reset dashboard path
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys };
             }));
@@ -199,7 +202,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 // } else 
                 if (msg.type === 'add') { // toolbar asking for adding a new element
                     _this.historyPush();
-                    _this.currentDescription = 'Nuovo elemento tabella ' + _this.tableName;
+                    _this.currentDescription = 'Nuovo elemento tabella ' + _this.currentTableLabel;
                     _this.formParams = {
                         entryName: _this.tableName,
                         index: 1,
@@ -320,7 +323,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.tableName = event.queryParams.entry.name;
             
             _this.historyPush();            
-            _this.currentDescription = 'Nuovo elemento tabella ' + _this.tableName;
+            _this.currentDescription = 'Nuovo elemento tabella ' + _this.currentTableLabel;
             
             newIndex = event.queryParams.index;
             newTotal = event.queryParams.total;            
@@ -355,16 +358,16 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             if (event.queryParams.entry.type === 'table') {
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: event.queryParams.searchKeys  };
                 _this.tableType = 'table';
-                _this.currentDescription =  event.queryParams.searchKeys? 'Risultati ricerca' : ('Tabella ' + _this.tableName);
+                _this.currentDescription =  event.queryParams.searchKeys? 'Risultati ricerca' : ('Tabella ' + _this.currentTableLabel);
             }
             else if (event.queryParams.entry.type === 'explorer') {
                 _this.tableParams = { entryName: _this.tableName, keys: event.queryParams.keys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys  };
                 _this.tableType = 'table';
-                _this.currentDescription = 'Tabella ' + _this.tableName;
+                _this.currentDescription = 'Tabella ' + _this.currentTableLabel;
             } else if (event.queryParams.entry.type === 'form') { // handled later on
                 newIndex = event.queryParams.index;
                 newTotal = event.queryParams.total;
-                _this.currentDescription = 'Dettaglio ' + _this.tableName;
+                _this.currentDescription = 'Dettaglio ' + _this.currentTableLabel;
             }
 
         } else if (event.eventType === 'first') {
@@ -391,6 +394,9 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.fullScreenTab = event.queryParams.value;
         } else if (event.eventType === 'currentTableKeys') {  // table in subtable view providing its current keys
             _this.currentTableKeys = event.queryParams.keys;
+        } else if (event.eventType === 'currentTableLabel') {  // table in subtable view providing its current keys
+            _this.currentTableLabel = event.queryParams.label || _this.tableName;
+            _this.currentDescription = _this.searchKeys? 'Risultati ricerca': (_this.tableType === 'table' ? 'Tabella ' + _this.currentTableLabel: 'Dettaglio ' + _this.currentTableLabel);
         } else if (event.eventType === 'deletedForm') {
             _this.historyPop(_this.navigationHistory[_this.level - 1]); // go back
         } else if (event.eventType === 'gotSave') { // user pressed save button on form-view
@@ -437,15 +443,16 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.tableName = item.tableName;
         _this.currentPrimaryKeys = item.primaryKeys;
         _this.searchKeys = item.searchKeys;
+        _this.currentTableLabel = item.label;
 
         if (item.type === 'table') {
             _this.tableParams = item.params;
             _this.tableParams.searchKeys = item.searchKeys;
-            _this.currentDescription = item.searchKeys? 'Risultati ricerca': ('Tabella ' + _this.tableName);
+            _this.currentDescription = item.searchKeys? 'Risultati ricerca': ('Tabella ' + _this.currentTableLabel);
             _this.tableType = 'table';
         } else {
             _this.formParams = item.params;
-            _this.currentDescription = 'Dettaglio ' + _this.tableName;
+            _this.currentDescription = 'Dettaglio ' + _this.currentTableLabel;
             _this.tableType = 'form';
         }
 
@@ -462,6 +469,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             tableName: _this.tableName,
             type: _this.tableType,
             tableKeys: _this.currentTableKeys,
+            label: _this.currentTableLabel,
             primaryKeys: _this.currentPrimaryKeys,
             searchKeys: _this.searchKeys,
             params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
