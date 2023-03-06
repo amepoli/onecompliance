@@ -354,7 +354,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
 
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
-                    _this.sendEvent.emit({ eventType: 'formData', viewKeys: _this.currentKeys, tabKeys: params.subTables });
+                    _this.sendEvent.emit({ eventType: 'formData', queryParams: { label: params.label }, viewKeys: _this.currentKeys, tabKeys: params.subTables });
+                   if(!_this.isTabMode)
+                   {
+                       _this.sendEvent.emit({ eventType: 'currentTableLabel', queryParams: { label: params.label } }); // pass current label to parent view 
+                   }
+                 
                     // handle input events
                     if (reloadEvents) {
                         if (params.inputEvents != null) {  // subscribe to global table events
@@ -362,6 +367,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 const event = params.inputEvents[i];
                                 const subcription = _this.pubSubService.subscribe(event.eventName,
                                     value => {
+                                        
                                         _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
                                     });
                                 _this.formSubscriptions.push(subcription);
