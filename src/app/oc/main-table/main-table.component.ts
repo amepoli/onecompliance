@@ -367,6 +367,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             } else if (event.queryParams.entry.type === 'form') { // handled later on
                 newIndex = event.queryParams.index;
                 newTotal = event.queryParams.total;
+            _this.currentTableLabel = event.queryParams.label || _this.tableName;
                 _this.currentDescription = 'Dettaglio ' + _this.currentTableLabel;
             }
 
