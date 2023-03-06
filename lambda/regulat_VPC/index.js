@@ -280,6 +280,8 @@ exports.handler = async (event) => {
                 await client.release();
 
             } catch (e) {
+                console.error(e.message, e.stack);
+                await client.release();
                 return {
                     "statusCode": 200,
                     "isBase64Encoded": false,

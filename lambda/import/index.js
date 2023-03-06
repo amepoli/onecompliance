@@ -2079,6 +2079,7 @@ exports.handler = async (event, context) => {
             await client.release();
         } catch (e) {
             console.log(e);
+            await client.release();
             body = { result: 'KO', reason: 'Server error' };
         }
 
