@@ -948,7 +948,7 @@ function data2xls(data, title, keys = null) {
     if (keys != null) {
         columns = keys.map(x => x.key);
         keys.forEach(key => {
-            specification[key.key] = { displayName: key.label, headerStyle: styles.data, width: 120 , cellStyles: styles.data}
+            specification[key.key] = { displayName: key.label, headerStyle: styles.data, width: 120, cellStyles: styles.data }
         });
 
         console.log('columns', columns);
@@ -960,7 +960,7 @@ function data2xls(data, title, keys = null) {
         if (columns === null) {
             columns = Object.keys(row);
             columns.forEach(c => {
-                specification[c] = { displayName: c, headerStyle: styles.title, width: 120 , cellStyles: styles.data}
+                specification[c] = { displayName: c, headerStyle: styles.title, width: 120, cellStyles: styles.data }
             });
             console.log('columns', columns);
 
@@ -1711,106 +1711,116 @@ exports.handler = async (event, context) => {
                     }
                     console.log('queryString1', queryString);
 
-                    comma = ' WHERE ';
-                    if (queryString.includes('$')) {
-                        comma = ' AND ';
-                        queryString = replaceKeys(queryString, fullValueSet, keyTypes);
-                    }
+                    if (queryString != null) {
 
-                    console.log('queryString2', queryString);
+                        comma = ' WHERE ';
+                        if (queryString.includes('$')) {
+                            comma = ' AND ';
+                            queryString = replaceKeys(queryString, fullValueSet, keyTypes);
+                        }
 
-                    if (search_keys != null) {
+                        console.log('queryString2', queryString);
 
-                        let search_params = entry_params.search_keys;
-                        let search_types = search_params.map(k => {
-                            let dataType = k.format.dataType ? k.format.dataType : '';
-                            return { key: k.fieldName, dataType: dataType };
-                        });
+                        if (search_keys != null) {
 
-                        console.log("Query so far: ", queryString);
+                            let search_params = entry_params.search_keys;
+                            let search_types = search_params.map(k => {
+                                let dataType = k.format.dataType ? k.format.dataType : '';
+                                return { key: k.fieldName, dataType: dataType };
+                            });
 
-                        for (const key in search_keys) {
-                            if (search_keys.hasOwnProperty(key)) {
-                                let search_param = search_params.find(s => (s.fieldName === key));
-                                if (search_param != null && search_param.queryCond != null) {
-                                    let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
-                                    queryString = queryString + comma + fieldString;
-                                    comma = ' AND '; // needed only the first time if no table_
+                            console.log("Query so far: ", queryString);
+
+                            for (const key in search_keys) {
+                                if (search_keys.hasOwnProperty(key)) {
+                                    let search_param = search_params.find(s => (s.fieldName === key));
+                                    if (search_param != null && search_param.queryCond != null) {
+                                        let fieldString = replaceKeys(search_param.queryCond, search_keys, search_types);
+                                        queryString = queryString + comma + fieldString;
+                                        comma = ' AND '; // needed only the first time if no table_
+                                    }
                                 }
                             }
                         }
+
+                        console.log('queryString3', queryString);
+
+                        queryString = replaceGlobalkeys(queryString);
+                        console.log('queryString4', queryString);
+
+                        queryData = await runQuery(queryString, client);
+                        // console.log('queryData', queryData);
+
+                    } else {
+                        console.log('queryString is null, exit');
                     }
-
-                    console.log('queryString3', queryString);
-
-                    queryString = replaceGlobalkeys(queryString);
-                    console.log('queryString4', queryString);
-
-                    queryData = await runQuery(queryString, client);
-                    // console.log('queryData', queryData);
 
                 }
                 else {
                     queryString = getTableQuery(entry_params, table_keys, fullValueSet, isForm, search_keys, additionalQueryCond);
 
-                    if (!isForm) {
-                        // add the search combos if any
-                        getSearchCombos(entry_params, fullValueSet, false, queryString.comboQueries);
-                    }
+                    if (queryString != null) {
 
-                    // process query string(s) 
-                    queryData = await processPreMainPost(queryString, client, isFormRecord, true);
+                        if (!isForm) {
+                            // add the search combos if any
+                            getSearchCombos(entry_params, fullValueSet, false, queryString.comboQueries);
+                        }
 
-                    let searchOptions = [];
-                    if (queryData != null && queryString.comboQueries != null && queryString.comboQueries.length) {
-                        for (let qd_index = 0; qd_index < queryData.length; qd_index++) {
-                            for (let index = 0; index < queryString.comboQueries.length; index++) {
-                                let element = queryString.comboQueries[index];
-                                let query = element.comboQuery;
-                                // search for local keys
-                                query = replaceLocalKeys(query, queryData[qd_index]);
-                                let comboData = await client.query(query);
-                                console.log('Combo query: ', query, ' Result: ', comboData.rows);
-                                if (isFormRecord) { // form/new record, add combobox options to relevant field
-                                    let comboEntry = new Object;
-                                    comboEntry[element.key] = new Object;
-                                    comboEntry[element.key]['value'] = queryData[qd_index][element.key];
-                                    comboEntry[element.key]['options'] = comboData.rows;
-                                    Object.assign(queryData[qd_index], comboEntry);
-                                }
-                                else { // table view, add search combobox to search_combos field's array
-                                    qd_index = queryData.length;  // bad trick, make it exit from loop on rows
-                                    searchOptions.push({ fieldName: element.key, options: comboData.rows });
+                        // process query string(s) 
+                        queryData = await processPreMainPost(queryString, client, isFormRecord, true);
+
+                        let searchOptions = [];
+                        if (queryData != null && queryString.comboQueries != null && queryString.comboQueries.length) {
+                            for (let qd_index = 0; qd_index < queryData.length; qd_index++) {
+                                for (let index = 0; index < queryString.comboQueries.length; index++) {
+                                    let element = queryString.comboQueries[index];
+                                    let query = element.comboQuery;
+                                    // search for local keys
+                                    query = replaceLocalKeys(query, queryData[qd_index]);
+                                    let comboData = await client.query(query);
+                                    console.log('Combo query: ', query, ' Result: ', comboData.rows);
+                                    if (isFormRecord) { // form/new record, add combobox options to relevant field
+                                        let comboEntry = new Object;
+                                        comboEntry[element.key] = new Object;
+                                        comboEntry[element.key]['value'] = queryData[qd_index][element.key];
+                                        comboEntry[element.key]['options'] = comboData.rows;
+                                        Object.assign(queryData[qd_index], comboEntry);
+                                    }
+                                    else { // table view, add search combobox to search_combos field's array
+                                        qd_index = queryData.length;  // bad trick, make it exit from loop on rows
+                                        searchOptions.push({ fieldName: element.key, options: comboData.rows });
+                                    }
                                 }
                             }
                         }
+
+                        //                    if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
+                        //                        queryData = { table_data: queryData, search_options: searchOptions };
+                        //                    }
+
+                        // process properties query
+
+                        tableProperties = await process_properties(entry_params, table_keys, isFormRecord, client);
+
+                        queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
+                        // process attributeFuncts
+                        if (isFormRecord) {
+                            attributes = await processAttributeQueries(entry_params, queryData, client);
+                        }
+
+                        //                   if (!isForm) {
+                        //                       queryData = queryData["table_data"];
+                        //                   }
+
+                        //queryData["anonymous"]["calcolo_risultato_log"] = null;
+                        console.log('queryData', queryData);
+                        console.log('tableProperties', tableProperties);
+                        console.log('attributes', attributes);
+                        console.log('queryString', queryString);
+
+                    } else {
+                        console.log('queryString is null, exit');
                     }
-
-                    //                    if (!isFormRecord && searchOptions.length) { // at least one search combobox, return it as search_combos key
-                    //                        queryData = { table_data: queryData, search_options: searchOptions };
-                    //                    }
-
-                    // process properties query
-
-                    tableProperties = await process_properties(entry_params, table_keys, isFormRecord, client);
-
-                    queryData = getCalculatedParams(entry_params, queryData, isFormRecord);
-                    // process attributeFuncts
-                    if (isFormRecord) {
-                        attributes = await processAttributeQueries(entry_params, queryData, client);
-                    }
-
-                    //                   if (!isForm) {
-                    //                       queryData = queryData["table_data"];
-                    //                   }
-
-                    //queryData["anonymous"]["calcolo_risultato_log"] = null;
-                    console.log('queryData', queryData);
-                    console.log('tableProperties', tableProperties);
-                    console.log('attributes', attributes);
-                    console.log('queryString', queryString);
-
-
                 }
 
                 if (queryData) {
