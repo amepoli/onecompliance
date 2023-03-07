@@ -520,6 +520,27 @@
             "format": {
                 "dataType": "number"
             },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "6%",
+            "key": "id_tipo_presidio",
+            "label": "Tipo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "key": "tipo_presidio",
+            "queryFunct": "entrasp.tipo_processo_descr(id_tipo_presidio, codice_azienda)",
+            "label": "Tipo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
             "isHidden": false,
             "isPrimary": false,
             "width": "18%",
@@ -888,7 +909,7 @@
             },
             {
                 "label": "Presidi ISO27001",
-                "queryString": "select id_presidio,id_presidio_parent, codice, entrasp.tipo_presidio_descr(id_tipo_presidio,codice_azienda)as tipo_presidio,descrizione_breve, descrizione, guida_attuativa, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, note  from entrasp.presidi where codice_azienda= $codice_azienda$ and livello =3"
+                "queryString": "select distinct (pr.id_presidio), pr.id_presidio_parent, pr.codice, entrasp.tipo_presidio_descr(id_tipo_presidio,pr.codice_azienda)as tipo_presidio, pr.descrizione_breve, pr.descrizione, pr.guida_attuativa, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, pr.note from entrasp.presidi pr inner join entrasp.argomenti arg on pr.id_argomento=arg.id_argomento inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where pr.codice_azienda= '$codice_azienda$' and aa.id_argomento_father in (5328, 48928)"
             }
         ]
     },
