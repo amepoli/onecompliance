@@ -3,8 +3,7 @@ AWS.config.update({ region: 'eu-central-1' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const crypto = require('crypto');
-const shasum = crypto.createHash('sha1');
-const md5sum = crypto.createHash('md5');
+
 
 const uuid = require('uuid');
 
@@ -1118,7 +1117,9 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
 
                             let fileNameParts = part.filename.split('.');
                             let ext = fileNameParts[fileNameParts.length - 1];
-                            attachmentsList.push({ attachmentId: part.body.attachmentId.substring(0, 32), filename: part.filename, extension: ext, sha1: shasum.update(dataB64).digest('hex'), md5: md5sum.update(dataB64).digest('hex') });
+                            const shasum = crypto.createHash('sha1');
+                            const md5sum = crypto.createHash('md5');
+                            attachmentsList.push({ attachment_id: part.body.attachmentId.substring(0, 32), filename: part.filename, extension: ext, sha1: shasum.update(dataB64).digest('hex'), md5: md5sum.update(dataB64).digest('hex') });
 
 
                             //let body = x.data.payload.body;
@@ -1135,7 +1136,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             //   console.log('callback: ' + JSON.stringify(attachments))
                         }, Promise.resolve([]));
 
-                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachmentsList });
+                        emailsResult.push({ date, email_id, thread_id, subject, to, from, company, attachment_list: attachmentsList });
                     }
 
                 }
