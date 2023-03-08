@@ -19,16 +19,6 @@
       "queryString": "SELECT entrasp.rischi_delete($codice_azienda$, $codice_rischio$);"
     },
     {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
-    },
-    {
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "update entrasp.rischi set intensita_singola_pre = $intensita_singola_pre$ ,probabilita_pre = $probabilita_pre$, intensita_totale_pre=$intensita_totale_pre$ where codice_azienda=$codice_azienda$ and codice_rischio = $codice_rischio$"
@@ -192,6 +182,11 @@
             "icon": "calculate",
             "label": "Ricalcola tutti i rischi",
             "outputEventName": "ricalcolo_rischi"
+          },
+          {
+            "icon": "calculate",
+            "label": "Ricalcola singolo rischio",
+            "outputEventName": "ricalcolo_singolo_rischio"
           }
         ]
       },
@@ -209,7 +204,15 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.rischi_net_value_update(rs.codice_azienda, rs.codice_rischio) from entrasp.rischi rs where codice_azienda=$codice_azienda$;",
+          "queryFunct": "select entrasp.aggiorna_rischi_tutti($codice_azienda$);",
+          "outputEventWhenComplete": "rischiFormReload"
+        },
+        {
+          "eventName": "ricalcolo_singolo_rischio",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "select entrasp.aggiorna_rischio($codice_azienda$, $codice_rischio$);",
           "outputEventWhenComplete": "rischiFormReload"
         }
       ],
