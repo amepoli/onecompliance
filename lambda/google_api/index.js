@@ -1024,9 +1024,12 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
             // subjectsToSearch.push(`subject:(${x}+`);
             // subjectsToSearch.push(`subject:(${x}&`);
             // subjectsToSearch.push(`${x}`);
-            // subjectsToMatch.push(`${x}>`);
-            // subjectsToMatch.push(`${x}+`);
-            // subjectsToMatch.push(`${x}&`);
+            subjectsToMatch.push(`${x}>`);
+            subjectsToMatch.push(`${x}+`);
+            subjectsToMatch.push(`${x}&`);
+            subjectsToMatch.push(`${x} >`);
+            subjectsToMatch.push(`${x} +`);
+            subjectsToMatch.push(`${x} &`);
             // subjectsToMatch.push(`(${x}>`);
             // subjectsToMatch.push(`(${x}+`);
             // subjectsToMatch.push(`(${x}&`);
@@ -1057,27 +1060,32 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                     let subjectLower = subject.toLowerCase();
 
                     //hack after amedeo's request, get all the emails without testing the matches
-                    let matches = true;
+                    let matches = false;
                     for (let i = 0; i < subjectsToMatch.length; i++) {
-                        if (matches) {
-                            console.log('already matched!');
-                        }
-                        if (subjectLower.includes(subjectsToMatch[i])) {
+                        if(subject.includes(subjectsToMatch[i])) {
                             matches = true;
-                            break;
                         }
+                        // if (matches) {
+                        //     console.log('already matched!');
+                        // }
+                        // if (subjectLower.includes(subjectsToMatch[i])) {
+                        //     matches = true;
+                        //     break;
+                        // }
                     }
 
-                    let company = null;
-                    const separators = [' >', ' +', ' &', '>', '+', '&'];
-                    separators.forEach(s => {
-                        let companyParts = subject.split(s);
-                        if (!company && companyParts.length > 1) {
-                            company = companyParts[0];
-                        }
-                    });
+                    
 
                     if (matches) {
+                        let company = null;
+                        const separators = [' >', ' +', ' &', '>', '+', '&'];
+                        separators.forEach(s => {
+                            let companyParts = subject.split(s);
+                            if (!company && companyParts.length > 1) {
+                                company = companyParts[0];
+                            }
+                        });
+
                         let date = emailResponse.data.payload.headers.filter(x => x.name === "Date")[0].value;
                         let email_id = emailResponse.data.id;
                         let thread_id = emailResponse.data.threadId;
