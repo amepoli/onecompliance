@@ -61,6 +61,30 @@
       {
         "autoGenerate": false,
         "format": {
+          "comboQuery": "select id_contratto as id, concat (id_contratto, '-' ,descrizione) as name from entrasp.contratti where codice_azienda=$codice_azienda$",
+          "options": [],
+          "viewType": "combobox"
+        },
+        "isHidden": false,
+        "isPrimary": true,
+        "key": "id_contratto",
+        "label": "Contratto",
+        "outputEvent": {
+          "eventName": "contratto_select",
+          "eventTrigger": "select"
+        },
+        "inputEvents": [
+          {
+            "eventName": "contratto_select",
+            "queryFunct": "update entrasp.cpl_trattamenti_dati_titolari_esterni ctdte set id_titolare_esterno=cnt.id_cliente, data_firma_contratto=cnt.data_stipulazione, data_chiusura_contratto=cnt.data_cessazione from entrasp.contratti cnt where ctdr.id_contratto=cnt.id_contratto and ctdr.codice_azienda=cnt.codice_azienda and ctr.codice_azienda=$codice_azienda$ and ctr.id_contratto=£id_contratto£"
+          }
+        ],
+        "readOnly": false,
+        "newLine": false
+      },  
+      {
+        "autoGenerate": false,
+        "format": {
           "viewType": "input",
           "dataType": "date"
         },
