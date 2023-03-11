@@ -56,6 +56,15 @@
       "key": "id_responsabile",
       "label": "Responsabile Esterno",
       "readOnly": false,
+      "inputEvents": [
+        {
+          "eventName": "contratto_select",
+          "actionType": "query",
+          "queryFunct": "select cnt.id_cliente from entrasp.contratti cnt where cnt.codice_azienda=$codice_azienda$ and cnt.id_contratto=£id_contratto£",
+          "condition": "none",
+          "values": []
+        }
+      ],
       "newLine": false
     },
     {
@@ -76,7 +85,10 @@
       "inputEvents": [
         {
           "eventName": "contratto_select",
-          "queryFunct": "update entrasp.cpl_trattamenti_dati_responsabili ctdr set id_responsabile=cnt.id_cliente, data_firma_contratto=cnt.data_stipulazione, data_chiusura_contratto=cnt.data_cessazione from entrasp.contratti cnt where ctdr.id_contratto=cnt.id_contratto and ctdr.codice_azienda=cnt.codice_azienda and ctr.codice_azienda=$codice_azienda$ and ctr.id_contratto=£id_contratto£"
+          "actionType": "query",
+          "queryFunct": "update entrasp.cpl_trattamenti_dati_responsabili ctdr set id_responsabile=cnt.id_cliente, data_firma_contratto=cnt.data_stipulazione, data_chiusura_contratto=cnt.data_cessazione from entrasp.contratti cnt where ctdr.id_contratto=cnt.id_contratto and ctdr.codice_azienda=cnt.codice_azienda and cnt.codice_azienda=$codice_azienda$ and cnt.id_contratto=£id_contratto£",
+          "condition": "none",
+          "values": []
         }
       ],
       "readOnly": false,
