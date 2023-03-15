@@ -301,6 +301,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         // Use the selected language for translations
         this._translateService.use(lang.id);
         this._translateService.setDefaultLang(lang.id);
+        this._authService.updateUserLanguage( lang.id);
 
         // set it into the service for the reload
         this._authService.userinfo.value.language = lang.id;
