@@ -193,6 +193,17 @@ export class AuthService {
     _this.retrieveMenu();
 
   }
+  public updateUserLanguage( language : string): void {
+    const _this = this;
+  
+    _this.setLastLanguage(language)
+    //get languages
+    _this.retrieveLanguages();
+
+    // get new menu
+    _this.retrieveMenu();
+
+  }
 
   public getCurrentCompany(currentKeys: any = null): string {
     const _this = this;
@@ -218,6 +229,13 @@ export class AuthService {
         if (ud != null && ud.result === 'OK') {
           if (ud.userdata.language == null) {
             ud.userdata.language = 'it';  // defaults to italian
+          } 
+          else {
+            let lastLanguage: string = _this.getLastLanguage();
+            if(lastLanguage ){
+           
+              ud.userdata.language  = lastLanguage;
+            }
           }
           _this.userinfo.next(ud.userdata); // signal a value change to subscribers
           if (_this.currentCompany == null) {  // do not get default company if reloading because of user chose a different company
@@ -325,6 +343,12 @@ export class AuthService {
     return lastCompany;
   }
 
+  /** Check if local storage contains company */
+  public getLastLanguage(): string {
+    let lastCompany: string = localStorage.getItem('lastLanguage');
+    return lastCompany;
+  }
+
   public getSyncMode(): string {
     return this.sync;
   }
@@ -337,6 +361,12 @@ export class AuthService {
   public setLastCompany(lastCompany: string) {
     localStorage.setItem('lastCompany', lastCompany);
   }
+
+  /** Set last Language in local storage */
+  public setLastLanguage(lastLanguage: string) {
+    localStorage.setItem('lastLanguage', lastLanguage);
+  }
+  
 
   /** Load Session */
   public loadSession() {
