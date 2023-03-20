@@ -116,10 +116,15 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
         //console.log('generate main sheet with dataset: ', dataset);
 
         const specification = {
+            indicator_id: {
+                displayName: 'Id',
+                headerStyle: styles.data,
+                width: 50
+            },
             indicator_description: {
                 displayName: 'Descrizione Indicatore',
                 headerStyle: styles.data,
-                width: 120
+                width: 400
             },
             indicator_value: {
                 displayName: 'Valore Indicatore',
@@ -128,18 +133,18 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
                     // if the indicator_value is different than 0 then color in red else as default
                     return (row.indicator_value != 0) ? styles.cellRed : null;
                 }, */
-                width: 120
+                width: 140
             },
             link: {
                 displayName: 'Link alla pagina',
                 headerStyle: styles.data,
                 cellStyle: styles.cellUnderlined,
-                width: 120
+                width: 400
             },
             filter: {
                 displayName: 'Filtri di ricerca',
                 headerStyle: styles.data,
-                width: 120
+                width: 1020
             }
         };
 
@@ -150,7 +155,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
             },
             end: {
                 row: 1,
-                column: 4
+                column: 5
             }
         }];
 
@@ -198,22 +203,28 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
 }
 
-exports.handler = async () => {
-
-    // let caller_url = event.headers.host + event.requestContext.path;
-    // console.log('\tHello from lambda mailing_list (: \nHere\'s the Caller: ', caller_url);
+exports.handler = async (event) => {
 
     let result;
     let body = [];
 
-    await pool
-        .query(`select * from entrasp.mailing_list();`)
-        .then(res => result = res.rows.length > 0 ? res : null)
-        .catch(err => console.error('Error executing query "select * from entrasp.mailing_list();" ', err.stack))
+    if (event.mode && event.mode == 'test') {
+        console.log ('TEST MODE ON');
+        await pool
+            .query(`select * from entrasp.mailing_list('test');`)
+            .then(res => result = res.rows.length > 0 ? res : null)
+            .catch(err => console.error('Error executing query "select * from entrasp.mailing_list("test");" ', err.stack))
+
+    } else {
+        await pool
+            .query(`select * from entrasp.mailing_list();`)
+            .then(res => result = res.rows.length > 0 ? res : null)
+            .catch(err => console.error('Error executing query "select * from entrasp.mailing_list();" ', err.stack))
+    }
 
     if (result) {
 
-        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_value, company, menu_links, search_filters, frequency;
+        let mail_to, mail_body, mail_subject, mail_sender, query_excel_to_create, sheet_titles, indicators_id, indicators_value, company, menu_links, search_filters, frequency;
 
         for (const row in result.rows) {
 
@@ -223,6 +234,7 @@ exports.handler = async () => {
             mail_sender = result.rows[row].mail_sender;
             query_excel_to_create = result.rows[row].query_excel_to_create;
             sheet_titles = result.rows[row].sheet_titles;
+            indicators_id = result.rows[row].indicators_id;
             indicators_value = result.rows[row].indicators_value;
             company = result.rows[row].company;
             menu_links = result.rows[row].menu_links;
@@ -232,11 +244,13 @@ exports.handler = async () => {
             // generate report main sheet's data
             let queries = query_excel_to_create.split(";");
             let titles = sheet_titles.split(";");
+            let ids = indicators_id.split(";");
             let values = indicators_value.split(";");
             let links = menu_links.split(";");
             let filters = search_filters.split(";");
 
             let mainSheet = titles.map((value, index) => ({
+                indicator_id: ids[index],
                 indicator_description: value,
                 indicator_value: values[index],
                 link: links[index],
