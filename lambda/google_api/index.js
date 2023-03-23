@@ -1062,7 +1062,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                     //hack after amedeo's request, get all the emails without testing the matches
                     let matches = false;
                     for (let i = 0; i < subjectsToMatch.length; i++) {
-                        if(subject.includes(subjectsToMatch[i])) {
+                        if (subject.includes(subjectsToMatch[i])) {
                             matches = true;
                         }
                         // if (matches) {
@@ -1074,17 +1074,27 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         // }
                     }
 
-                    
+
 
                     if (matches) {
-                        let company = null;
+                        let company = '';
                         const separators = [' >', ' +', ' &', '>', '+', '&'];
                         separators.forEach(s => {
                             let companyParts = subject.split(s);
-                            if (!company && companyParts.length > 1) {
-                                company = companyParts[0];
+                            if (companyParts.length > 1) {
+                                let j = companyParts[0].length - 2;
+                                for (let i = companyParts[0].length - 1; i > j; i--) {
+                                    if (!companyParts[0].charAt(i).match(/[A-Z]/)) {
+                                        break;
+                                    }
+                                    else {
+                                        j--;
+                                        company = companyParts[0].slice(i, companyParts[0].length);
+                                    }
+                                }
                             }
                         });
+                        console.log('Calculated company: '+ company);
 
                         let date = emailResponse.data.payload.headers.filter(x => x.name === "Date")[0].value;
                         let email_id = emailResponse.data.id;
