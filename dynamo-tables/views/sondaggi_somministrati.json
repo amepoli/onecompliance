@@ -2964,6 +2964,18 @@
       {
         "label": "Domande e risposte della verifica",
         "queryString": "select * from entrasp.punteggi_domande_delle_risposte_estesa where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+      },
+      {
+        "label": "Template per le risposte",
+        "queryString": "select id_domanda, '' as codice_esterno, '' as note FROM entrasp.domande dmd INNER JOIN entrasp.sondaggi snd USING (codice_azienda,id_modello_test,id_modello_test_vr) INNER JOIN entrasp.sondaggi_somministrati ss USING (codice_azienda,id_sondaggio) left join entrasp.domande_sezioni ds on dmd.codice_azienda = ds.codice_azienda and dmd.id_modello_test = ds.id_modello_test and dmd.id_modello_test_vr= ds.id_modello_test_vr and dmd.id_sezione = ds.id_sezione WHERE ss.id_somministrazione=$id_somministrazione$ and dmd.codice_azienda=$codice_azienda$ ORDER BY ds.ordinamento ASC, dmd.ordinamento ASC"
+      }
+    ]
+  },
+  "importQueries": {
+    "formQueries": [
+      {
+        "label": "Rispondi alla verifica",
+        "queryString": "select entrasp.import_risposte($codice_azienda$, $id_somministrazione$, $nome_file$)"
       }
     ]
   },
