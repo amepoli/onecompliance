@@ -1094,7 +1094,6 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 }
                             }
                         });
-                        console.log('Calculated company: '+ company);
 
                         let date = emailResponse.data.payload.headers.filter(x => x.name === "Date")[0].value;
                         let email_id = emailResponse.data.id;
