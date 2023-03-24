@@ -185,6 +185,11 @@
                         "icon": "add_to_queue",
                         "label": "Integra sotto-controlli",
                         "outputEventName": "sondaggio_integra"
+                    },
+                    {
+                        "icon": "launch",
+                        "label": "Riepilogo risultati",
+                        "outputEventName": "check_existence_riepilogo_risultati"
                     }
                 ]
             },
@@ -214,6 +219,14 @@
                             "queryFunct": "select entrasp.integra_somministrazioni_sondaggio(snd.codice_azienda, snd.id_sondaggio) from entrasp.sondaggi snd where snd.id_sondaggio IN (SELECT id_sondaggio FROM entrasp.compiti WHERE (codice_compito_parent=$codice_compito$ OR codice_compito=$codice_compito$) AND codice_azienda=$codice_azienda$);"
                         }
                     }
+                },
+                {
+                    "eventName": "check_existence_riepilogo_risultati",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select check_existence_cpl_risultati as new_riepilogo_risultati from entrasp.check_existence_cpl_risultati($codice_azienda$, $id_sondaggio$)",
+                    "outputEventWhenComplete": "to_riepilogo_risultati"
                 }
             ]
         },
@@ -749,6 +762,24 @@
         {
             "actionType": "reload",
             "eventName": "reloadScadenze"
+        },
+        {
+            "actionTarget": {
+                "name": "cpl_risultati_sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_riepilogo_risultati"
         }
     ],
     "hideActions": [
