@@ -1006,7 +1006,7 @@ async function getDistance(origin, destination) {
 }
 
 async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
-    _console.log('codiceAzienda', codiceAzienda);
+    //_console.log('Codici azienda to check into subject', codiceAzienda);
 
     await performGoogleAuth(authParams);
 
@@ -1048,7 +1048,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
             q: query
         });
 
-        _console.log('email messages: ', emails.data.messages);
+        _console.log('number of email messages: ', emails.data.messages.length);
         if (emails && emails.data && emails.data.messages && emails.data.messages.length > 0) {
             let emailsResult = [];
             for await (message of emails.data.messages) {
@@ -1059,7 +1059,8 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                     let subject = emailResponse.data.payload.headers.filter(x => x.name === "Subject")[0].value;
                     let subjectLower = subject.toLowerCase();
 
-                    //hack after amedeo's request, get all the emails without testing the matches
+                    console.log('email subject to match: ',subject);
+
                     let matches = false;
                     for (let i = 0; i < subjectsToMatch.length; i++) {
                         if (subject.includes(subjectsToMatch[i])) {
@@ -1074,6 +1075,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                         // }
                     }
 
+                    console.log('subject matches? ', matches);
 
 
                     if (matches) {
@@ -1085,7 +1087,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                                 let j = companyParts[0].length - 2;
                                 for (let i = companyParts[0].length - 1; i > j; i--) {
                                     if (!companyParts[0].charAt(i).match(/[A-Z0-9-]/)) {
-                                        break;
+                                        continue;
                                     }
                                     else {
                                         j--;
@@ -1111,7 +1113,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             }
                             //const internalDate = new Date(parseInt(message.internalDate, 10));
                             //const datestring = internalDate.getFullYear() + " " + (internalDate.getMonth()+1).toString().padStart(2, "0") + " " + internalDate.getDate().toString().padStart(2, "0");
-                            console.log(/*datestring,*/ part.filename, part)
+                            //console.log(/*datestring,*/ part.filename, part)
                             let fileExt;
                             switch (part.mimeType) {
                                 case 'application/octet-stream': fileExt = ''; break;
