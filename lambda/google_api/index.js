@@ -1084,7 +1084,7 @@ async function getEmailsByCodiceAzienda(userid, authParams, codiceAzienda) {
                             if (companyParts.length > 1) {
                                 let j = companyParts[0].length - 2;
                                 for (let i = companyParts[0].length - 1; i > j; i--) {
-                                    if (!companyParts[0].charAt(i).match(/[A-Z]/)) {
+                                    if (!companyParts[0].charAt(i).match(/[A-Z0-9-]/)) {
                                         break;
                                     }
                                     else {
