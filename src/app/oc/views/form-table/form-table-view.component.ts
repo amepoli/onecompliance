@@ -108,7 +108,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
         _this.updateToolbarOffset();
       }
       if (windowScroll >= _this.formTableViewToolbarPosition) {
-        _this.isFormTableViewToolbarSticky = true;
+        _this.isFormTableViewToolbarSticky = false;
       } else {
         _this.isFormTableViewToolbarSticky = false;
       }
