@@ -905,9 +905,89 @@
                         "key": "descrizione",
                         "label": "Descrizione",
                         "textareaHeight": "M",
-                        "newLine": false,
+                        "newLine": true,
                         "readOnly": false,
                         "size": 3.23
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_sondaggi_associati",
+                        "label": "N.sondaggi Associati",
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_sondaggi_from_modelli_test",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select count(id_sondaggio) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_presidi_associati",
+                        "label": "N.presidi associati",
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_presidi_from_modelli_test",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select count(id_presidio) from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_fasi_mod_proge",
+                        "label": "N.fasi (mod.progetto) associate",
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_fasi_associate",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select count(codice_attivita) from entrasp.attivita where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and data_fine_validita is null"
+                    },
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "n_procedure_associate",
+                        "label": "N.procedure associate",
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_procedure_associate",
+                            "eventTrigger": "press"
+                        },
+                        "style": {
+                            "background_color": "white"
+                        },
+                        "readOnly": true,
+                        "queryFunct": "select count(id_procedura) from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
                     }
                 ]
             },
@@ -1065,7 +1145,7 @@
             "size": 1.7,
             "key": "flag_ripianifica_per_cliente",
             "tooltip": "Vale solo per i sondaggi con popolazione di tipo anagrafica! Se flaggato non verrà creato un sondaggio ulteriore qualora già esistente un sondaggio, con medesimo modello ver, associato allo stesso cliente",
-            "newLine": false,
+            "newLine": true,
             "label": "Ripianifica per cliente",
             "readOnly": false
         },
