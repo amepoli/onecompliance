@@ -14,7 +14,7 @@
           "key": "data_pagamento",
           "icon": "date",
           "label": "Inserire Data Pagamento Odierna",
-          "query": "update entrasp.crediti_ceduti set data_pagamento=current_date  where id_cessione = array[$selected_rows_data$] and codice_azienda=$codice_azienda$",
+          "query": "update entrasp.crediti_ceduti set data_pagamento=current_date where id_cessione IN (SELECT COALESCE(NULLIF(SPLIT_PART(ARR,'-',3),''),SPLIT_PART(ARR,'-',2))::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
           "confirmAction": true,
           "reloadOnSuccess": true,
           "confirmActionMessage": "Inserire la data odierna nella data pagamento?"
