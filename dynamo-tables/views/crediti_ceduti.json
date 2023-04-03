@@ -14,7 +14,7 @@
           "key": "data_pagamento",
           "icon": "date",
           "label": "Inserire Data Pagamento Odierna",
-          "query": "select 1",
+          "query": "update entrasp.crediti_ceduti set data_pagamento=current_date  where id_cessione = array[$selected_rows_data$] and codice_azienda=$codice_azienda$",
           "confirmAction": true,
           "reloadOnSuccess": true,
           "confirmActionMessage": "Inserire la data odierna nella data pagamento?"
@@ -181,7 +181,6 @@
       "key": "id_cedente",
       "label": "Cedente",
       "readOnly": false
-     
     },
     {
       "autoGenerate": false,
@@ -602,7 +601,7 @@
       "key": "tasso_interesse",
       "queryFunct": "select 0.08",
       "label": "Tasso Interesse",
-      "readOnly": false ,
+      "readOnly": false,
       "newLine": false
     },
     {
@@ -866,7 +865,219 @@
       "label": "Giorni Scaduto"
     }
   ],
-  "search_keys": [],
+  "search_keys": [
+    {
+      "fieldName": "id_cessione",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Cessione",
+      "newLine": false,
+      "size": 1.5,
+      "queryCond": "id_cessione=$id_cessione$"
+    },
+    {
+      "fieldName": "id_cedente",
+      "format": {
+        "comboQuery": "SELECT distinct id_cedente AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cedente",
+      "newLine": false,
+      "queryCond": "id_cedente=$id_cedente$"
+    },
+    {
+      "fieldName": "id_debitore_ceduto",
+      "format": {
+        "comboQuery": "SELECT distinct id_debitore_ceduto AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Debitore Ceduto",
+      "newLine": false,
+      "queryCond": "id_debitore_ceduto=$id_debitore_ceduto$"
+    },
+    {
+      "fieldName": "id_acquirente",
+      "format": {
+        "comboQuery": "SELECT distinct id_acquirente AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_acquirente) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Acquirente",
+      "newLine": true,
+      "queryCond": "id_acquirente=$id_acquirente$"
+    },
+    {
+      "fieldName": "data_acquisto_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Acquisto dopo il",
+      "newLine": false,
+      "queryCond": "data_acquisto>='€data_acquisto_min€'"
+    },
+    {
+      "fieldName": "data_fattura_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Fattura dopo il",
+      "newLine": false,
+      "queryCond": "data_fattura>='€data_fattura_min€'"
+    },
+    {
+      "fieldName": "data_pagamento_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Pagamento dopo il",
+      "newLine": false,
+      "queryCond": "data_pagamento>='€data_pagamento_min€'"
+    },
+    {
+      "fieldName": "data_scadenza_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Scadenza dopo il",
+      "newLine": true,
+      "queryCond": "data_scadenza>='€data_scadenza_min€'"
+    },
+    {
+      "fieldName": "data_acquisto_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Acquisto entro il",
+      "newLine": false,
+      "queryCond": "data_acquisto<='€data_acquisto_max€'"
+    },
+    {
+      "fieldName": "data_fattura_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Fattura entro il",
+      "newLine": false,
+      "queryCond": "data_fattura<='€data_fattura_max€'"
+    },
+    {
+      "fieldName": "data_pagamento_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Pagamento entro il",
+      "newLine": false,
+      "queryCond": "data_pagamento<='€data_pagamento_max€'"
+    },
+    {
+      "fieldName": "data_scadenza_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Scadenza entro il",
+      "newLine": true,
+      "queryCond": "data_scadenza<='€data_scadenza_max€'"
+    },
+    {
+      "fieldName": "giorni_scad_max",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Giorni scaduto inferiore a",
+      "newLine": false,
+      "queryCond": "entrasp.calcola_scaduto (data_fattura, data_pagamento)<='€giorni_scad_max€'"
+    },
+    {
+      "fieldName": "giorni_scad_min",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Giorni scaduto superiore a",
+      "newLine": false,
+      "queryCond": "entrasp.calcola_scaduto (data_fattura, data_pagamento)>='€giorni_scad_min€'"
+    },
+    {
+      "fieldName": "fascicolo",
+      "format": {
+        "comboQuery": "SELECT distinct fascicolo AS id, fascicolo AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Fascicolo",
+      "newLine": false,
+      "queryCond": "fascicolo=$fascicolo$"
+    },
+    {
+      "fieldName": "n_fattura",
+      "format": {
+        "comboQuery": "SELECT distinct n_fattura AS id, n_fattura AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Fattura N.",
+      "newLine": true,
+      "queryCond": "n_fattura=$n_fattura$"
+    },
+    {
+      "fieldName": "flag_lav_legale",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Lavorazione Legale",
+      "newLine": false,
+      "queryCond": "azionato = '1'"
+    },
+    {
+      "fieldName": "flag_azionati",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Azionati",
+      "newLine": false,
+      "queryCond": "azionato = '1'"
+    },
+    {
+      "fieldName": "flag_opposti",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Opposti",
+      "newLine": false,
+      "queryCond": "opposto = '1'"
+    },
+    {
+      "fieldName": "flag_esecutivo",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Esecutivi",
+      "newLine": false,
+      "queryCond": "esecutivo = '1'"
+    },
+    {
+      "fieldName": "flag_archiviati",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Fascicoli Archiviati",
+      "newLine": false,
+      "queryCond": "azionato = '1'"
+    }
+  ],
   "querySuffixes": {
     "tableViewSuffix": "limit 100"
   }
