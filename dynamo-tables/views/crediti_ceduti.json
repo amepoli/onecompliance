@@ -20,13 +20,58 @@
           "confirmActionMessage": "Inserire la data odierna nella data pagamento?"
         },
         {
+          "key": "flag_lavorazione_legale",
+          "icon": "date",
+          "label": "Segnare Lavorazione Legale",
+          "query": "update entrasp.crediti_ceduti set lavorazione_legale = '1' where id_cessione IN (SELECT COALESCE(NULLIF(SPLIT_PART(ARR,'-',3),''),SPLIT_PART(ARR,'-',2))::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag lavorazione_legale alla selezione?"
+        },
+        {
+          "key": "flag_esecutivo",
+          "icon": "date",
+          "label": "Segnare Esecutivo",
+          "query": "update entrasp.crediti_ceduti set esecutivo = '1' where id_cessione IN (SELECT COALESCE(NULLIF(SPLIT_PART(ARR,'-',3),''),SPLIT_PART(ARR,'-',2))::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag esecutivo alla selezione?"
+        },
+        {
           "key": "flag_azionati",
           "icon": "date",
           "label": "Segnare come azionati",
-          "query": "select 1",
+          "query": "update entrasp.crediti_ceduti set azionato = '1' where id_cessione IN (SELECT COALESCE(NULLIF(SPLIT_PART(ARR,'-',3),''),SPLIT_PART(ARR,'-',2))::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
           "confirmAction": true,
           "reloadOnSuccess": true,
           "confirmActionMessage": "Inserire il flag azionati alla selezione?"
+        },
+        {
+          "key": "flag_opposti",
+          "icon": "date",
+          "label": "Segnare come opposti",
+          "query": "update entrasp.crediti_ceduti set opposto = '1' where id_cessione IN (SELECT COALESCE(NULLIF(SPLIT_PART(ARR,'-',3),''),SPLIT_PART(ARR,'-',2))::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag opposti alla selezione?"
+        },
+        {
+          "key": "flag_pagam_cedente",
+          "icon": "date",
+          "label": "Segnare pagamento cedente",
+          "query": "update entrasp.crediti_ceduti set pagam_cedente = '1' where id_cessione IN (SELECT COALESCE(NULLIF(SPLIT_PART(ARR,'-',3),''),SPLIT_PART(ARR,'-',2))::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il pagamento al cedente alla selezione?"
+        },
+        {
+          "key": "flag_fasc_archiviato",
+          "icon": "date",
+          "label": "Segnare archiviazione fascicolo",
+          "query": "update entrasp.crediti_ceduti set fasc_archiviato = '1' where id_cessione IN (SELECT COALESCE(NULLIF(SPLIT_PART(ARR,'-',3),''),SPLIT_PART(ARR,'-',2))::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag fascicolo archiviato alla selezione?"
         }
       ]
     }
@@ -36,6 +81,12 @@
       "operation": "selectForm",
       "type": "preProcessing",
       "queryString": "update entrasp.crediti_ceduti crc set codice_part=az.codice_part from entrasp.aziende az WHERE crc.codice_azienda=az.codice_azienda and id_cessione=$id_cessione$"
+    }
+  ],
+  "outputEvents": [
+    {
+      "eventName": "onload_crediti_ceduti",
+      "eventTrigger": "onReload"
     }
   ],
   "form_keys": [
@@ -555,8 +606,22 @@
       "size": 1.5,
       "sameOrigin": false,
       "queryFunct": "entrasp.calcola_scaduto (data_fattura, data_pagamento)",
-      "readOnly": true,
-      "newLine": false
+      "readOnly": false,
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "colore_scaduto_",
+        "eventTrigger": "load"
+      },
+      "inputEvents": [
+        {
+          "eventName": "onload_crediti_ceduti",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select case when entrasp.calcola_scaduto(data_fattura,data_pagamento)>90 then'firebrick' else 'green' end as giorni_scaduto_background_color from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_cessione=$id_cessione$"
+        }
+      ]
     },
     {
       "autoGenerate": false,
@@ -589,6 +654,7 @@
       "size": 1.5,
       "readOnly": false,
       "newLine": false
+     
     },
     {
       "autoGenerate": false,
@@ -596,27 +662,11 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "tasso_interesse",
-      "queryFunct": "select 0.08",
-      "label": "Tasso Interesse",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
       "isHidden": false,
       "isPrimary": false,
-      "key": "tasso_interesse_perc",
-      "label": "Tasso Interesse",
-      "size": 1.5,
-      "queryFunct": "(tasso_interesse * 100)::varchar||'%'",
-      "readOnly": true,
+      "key": "tasso_interesse",
+      "label": "Tasso Interesse %",
+      "readOnly": false,
       "newLine": true
     },
     {
@@ -641,10 +691,10 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "interessi_legge_non_inc",
-      "label": "Interesse di Legge non Inclusi",
+      "label": "Interesse di Legge non Incassati",
       "sameOrigin": false,
       "queryFunct": "select 1",
       "size": 1.5,
@@ -1076,6 +1126,15 @@
       "label": "Fascicoli Archiviati",
       "newLine": false,
       "queryCond": "azionato = '1'"
+    },
+    {
+      "fieldName": "non_pagati",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Crediti non incassati",
+      "newLine": false,
+      "queryCond": "data_pagamento is null"
     }
   ],
   "querySuffixes": {
