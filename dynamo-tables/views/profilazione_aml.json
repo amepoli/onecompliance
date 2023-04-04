@@ -2168,6 +2168,10 @@
       {
         "label": "Profili AML per cliente",
         "queryString": "SELECT codice_anagrafica,denominazione,tipo_soggetto,nazione,cod_ateco,profilo,data_calc_rischio as data_profilo,p_classe_rischio_ver as punteggio_ottenuto,pep FROM entrasp.estrazione_profili_aml WHERE codice_azienda=$codice_azienda$"
+      },
+      {
+        "label": "Profilo cliente e connessioni",
+        "queryString": "SELECT DISTINCT epa.codice_anagrafica,epa.denominazione,epa.profilo,epa.id_sondaggio,epa.data_calc_rischio,avr.id_anagrafica, STRING_AGG(distinct acc.id_anagrafica_conn::varchar ||' - '||acc.codice_ruolo::varchar ||' - '||coalesce(nullif(an2.nome||' '||an2.cognome,' '), avr2.ragione_sociale, '') ||' - N. Doc '||coalesce(avr2.numero_documento::varchar,'vuoto') ||' - Scad. '||coalesce(avr2.data_scadenza_documento::varchar,'vuota'), ', ') as anagrafiche_connesse, (SELECT string_agg(distinct id_contratto::varchar, ', ') FROM entrasp.contratti WHERE id_cliente=avr.id_anagrafica AND codice_azienda=epa.codice_azienda AND stato != 'C') as lista_contratti_aperti FROM entrasp.estrazione_profili_aml epa INNER JOIN entrasp.aziende az USING (codice_azienda) INNER JOIN entrasp.anagrafiche_vr avr ON avr.codice_part=az.codice_part AND avr.codice=epa.codice_anagrafica LEFT JOIN entrasp.connessioni_anagrafiche acc ON acc.id_anagrafica=avr.id_anagrafica AND acc.codice_part=avr.codice_part LEFT JOIN entrasp.anagrafiche_id an2 ON an2.codice_part=aCC.codice_part AND an2.id_anagrafica=acc.id_anagrafica_conn LEFT JOIN entrasp.anagrafiche_vr avr2 ON avr2.codice_part=an2.codice_part AND avr2.id_anagrafica=acc.id_anagrafica_conn AND avr2.prog_vr=entrasp.anagrafiche_vr_max(an2.codice_part, an2.id_anagrafica) WHERE epa.codice_azienda=$codice_azienda$ GROUP BY epa.codice_azienda,epa.codice_anagrafica,epa.denominazione,epa.profilo,epa.id_sondaggio,epa.data_calc_rischio,avr.id_anagrafica"
       }
     ],
     
