@@ -4,6 +4,25 @@
   "origin": "entrasp.compiti",
   "entryKey": "compiti",
   "label": "Compiti",
+  "table_multiselection_actions": [
+    {
+        "viewType": "menu",
+        "key": "menuCompiti",
+        "label": "Azioni",
+        "icon": "more_vert",
+        "menuOptions": [
+            {
+                "key": "close_compito",
+                "icon": "check",
+                "label": "Chiudi segnalazioni",
+                "confirmAction": true,
+                "confirmActionMessage": "Chiudere le segnalazioni selezionate?",
+                "query": "update entrasp.compiti set stato='C', data_chiusura=current_date where codice_compito IN (SELECT SPLIT_PART(ARR,'-',1) FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€' and stato != 'C';",
+                "reloadOnSuccess": true
+            }
+        ]
+    }
+],
   "inputEvents": [
     {
       "actionType": "navigate",
