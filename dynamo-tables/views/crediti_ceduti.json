@@ -83,12 +83,6 @@
       "queryString": "update entrasp.crediti_ceduti crc set codice_part=az.codice_part from entrasp.aziende az WHERE crc.codice_azienda=az.codice_azienda and id_cessione=$id_cessione$"
     }
   ],
-  "outputEvents": [
-    {
-      "eventName": "onload_crediti_ceduti",
-      "eventTrigger": "onReload"
-    }
-  ],
   "form_keys": [
     {
       "format": {
@@ -605,16 +599,16 @@
       "label": "Giorni di Scaduto",
       "size": 1.5,
       "sameOrigin": false,
-      "queryFunct": "entrasp.calcola_scaduto (data_fattura, data_pagamento)",
-      "readOnly": false,
+      "queryFunct": "entrasp.calcola_scaduto(data_fattura, data_pagamento)",
+      "readOnly": true,
       "newLine": false,
       "outputEvent": {
-        "eventName": "colore_scaduto_",
+        "eventName": "colore_scaduto",
         "eventTrigger": "load"
       },
       "inputEvents": [
         {
-          "eventName": "onload_crediti_ceduti",
+          "eventName": "colore_scaduto",
           "condition": "none",
           "values": [],
           "actionType": "query_style",
