@@ -15,6 +15,8 @@ const pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 
+const helperFuncts = require('./helperFuncts');
+
 var crypto = require('crypto');
 
 function replaceAll(str, find, replace) {
@@ -105,6 +107,25 @@ async function tableName2BusinessObject(table_name) {
 
 }
 
+async function connectPool(event,pool,company,dynamo) {
+    
+    let client = await pool.connect();
+
+    const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+
+    var global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
+
+    // Handling RLS Policies on DB
+    let aziendeSet = "'" + (global_variables.global_user_companies ? global_variables.global_user_companies.replaceAll("'", "") : "") + "'";
+    console.log('aziendeSet: ', aziendeSet);
+    if (aziendeSet != "") {
+        await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
+    }
+
+    return client;
+
+}
+
 exports.handler = async (event, context) => {
 
     const shasum = crypto.createHash('sha1');
@@ -191,8 +212,7 @@ exports.handler = async (event, context) => {
     try {
 
         if (requestType === 'getGoogleDriveFileCopyParams') {
-            client = await pool.connect();
-
+            client = await connectPool(event,pool,company,dynamo);
             let query = `select * from entrasp.getGoogleDriveFileCopyParams('${company}', '${checksum}');`;
             console.log('running query: ', query);
             let response = await client.query(query);
@@ -212,7 +232,7 @@ exports.handler = async (event, context) => {
             body = { result: 'OK', response: response };
         }
         else if (requestType === 'getS3GoogleSyncFilesList') {
-            client = await pool.connect();
+            client = await connectPool(event,pool,company,dynamo);
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
             let query = `select file_id, hash_md5 as s3Md5, '/'||codice_azienda||'/'||file_id as s3Path, entrasp.getgoogledrivepath(codice_azienda, checksum_sha1) as googleDrivePath from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
             console.log('running query: ', query);
@@ -226,7 +246,7 @@ exports.handler = async (event, context) => {
             const codice_part = queryParams['codice_part'];
 
             const username = queryParams['username'];
-            client = await pool.connect();
+            client = await connectPool(event,pool,company,dynamo);
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
             let query = '';
             if (id_sondaggio) {
@@ -252,7 +272,7 @@ exports.handler = async (event, context) => {
         }
         else if (requestType === 'setProperFileFolder') {
             let jsonBody = event.body;
-            client = await pool.connect();
+            client = await connectPool(event,pool,company,dynamo);
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
             let query = `select * from entrasp.set_proper_file_folder(('${jsonBody}')::json);`;
             console.log('running query: ', query);
@@ -264,7 +284,7 @@ exports.handler = async (event, context) => {
         }
         else if (requestType === "anagraficheToBeUpdated") {
             let jsonBody = event.body;
-            client = await pool.connect();
+            client = await connectPool(event,pool,company,dynamo);
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
             let query = `select * from entrasp.anagrafiche_to_be_updated(('${jsonBody}')::json);`;
             console.log('running query: ', query);
@@ -279,7 +299,7 @@ exports.handler = async (event, context) => {
             let jsonBody = event.body ? JSON.parse(event.body) : {};
             let input = jsonBody['input'];
             let codiceAzienda = jsonBody['codiceAzienda'];
-            client = await pool.connect();
+            client = await connectPool(event,pool,company,dynamo);
             //let query = `select file_id, entrasp.getgoogledrivefilecopyparams(codice_azienda, checksum_sha1) from entrasp.cdms_risorse_revisioni where codice_azienda='${company}' AND client_file_name != 'tbd';`;
             let query = `select * from entrasp.associate_emails_simple(($$ ${JSON.stringify(input)} $$)::json, ('${codiceAzienda.join(',')}')::text);`;
             console.log('running query: ', query);
@@ -306,7 +326,7 @@ exports.handler = async (event, context) => {
                 bus_object = await tableName2BusinessObject(entryName);
             }
 
-            client = await pool.connect();
+            client = await connectPool(event,pool,company,dynamo);
 
             let query, response;
 

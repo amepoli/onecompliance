@@ -1165,6 +1165,17 @@ exports.handler = async (event, context) => {
             // const date = getDateFormat();
             let client = await pool.connect();
 
+            var global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
+            console.log('global_variables: ', global_variables);
+
+            // Handling RLS Policies on DB
+            let aziendeSet = "'" + (global_variables.global_user_companies ? global_variables.global_user_companies.replaceAll("'", "") : "") + "'";
+            console.log('aziendeSet: ', aziendeSet);
+            if (aziendeSet != "") {
+                await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
+            }
+
+            
             if (requestType === 'createNewFile') {
                 const fileName = context.awsRequestId + ".csv"; // generate a 'unique' UUID as fileName
                 console.log(fileName);

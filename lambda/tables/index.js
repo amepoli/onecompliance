@@ -2053,6 +2053,11 @@ exports.handler = async (event, context) => {
         global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
         console.log('global_variables: ', global_variables);
         
+        // Handling RLS Policies on DB
+        aziendeSet = "'" + global_variables.global_user_companies.replaceAll("'","") + "'";
+        console.log(aziendeSet);
+        await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
+
         if (method === 'GET') {
             if (dashboardIndex != null) {
                 queryString = getDashboardQuery(entry_params, table_keys, dashboardIndex);

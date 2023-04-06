@@ -37,7 +37,7 @@ const scripts = {
     where an.dynamo_user='€global_username€'`,
     startTime: "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '£codice_compito£', '£codice_azienda£')",
     stopTime: "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)",
-    isTrDayComplete: `select entrasp.is_tr_day_complete('£user_name£', replace('£date_time£', 'null', '')::date)` 
+    isTrDayComplete: `select entrasp.is_tr_day_complete('£user_name£', replace('£date_time£', 'null', '')::date)`
 };
 
 var global_variables = {};
@@ -163,6 +163,7 @@ async function runQuery(queryString, client) {
     return queryData;
 }
 
+
 exports.handler = async (event, context) => {
 
     const queryParams = event.queryStringParameters;
@@ -249,6 +250,13 @@ exports.handler = async (event, context) => {
 
             global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
             console.log('global_variables: ', global_variables);
+
+            // Handling RLS Policies on DB
+            let aziendeSet = "'" + (global_variables.global_user_companies ? global_variables.global_user_companies.replaceAll("'", "") : "") + "'";
+            console.log('aziendeSet: ', aziendeSet);
+            if (aziendeSet != "") {
+                await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
+            }
 
 
             queryString = replaceKeys(scripts[requestType], keys, null);

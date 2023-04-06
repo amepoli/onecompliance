@@ -14,6 +14,8 @@ const pool = new Pool({
 });
 const request = require('sync-request');
 
+const helperFuncts = require('./helperFuncts');
+
 async function overrideTable(son) {
 
     if (son.inheritsFrom == null) {
@@ -367,6 +369,22 @@ exports.handler = async (event, context) => {
     let client, body;
     client = await pool.connect();
 
+    // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
+    // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
+    const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+
+    console.log('userid: ', userid);
+    
+    global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
+    console.log('global_variables: ', global_variables);
+
+    // Handling RLS Policies on DB
+    let aziendeSet = "'" + (global_variables.global_user_companies ? global_variables.global_user_companies.replaceAll("'", "") : "") + "'";
+    console.log('aziendeSet: ', aziendeSet);
+    if (aziendeSet != "") {
+        await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
+    }
+    
     try {
 
         // read the entry params from DynamoDB view table
