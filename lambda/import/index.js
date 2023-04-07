@@ -1165,7 +1165,7 @@ exports.handler = async (event, context) => {
             // const date = getDateFormat();
             let client = await pool.connect();
 
-            var global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
+            global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
             console.log('global_variables: ', global_variables);
 
             // Handling RLS Policies on DB
@@ -1654,7 +1654,7 @@ exports.handler = async (event, context) => {
                 entry_params = await overrideTable(entry_params.Item);
 
                 await addCodiceAzienda(table_keys, company, entry_params, client, isForm);
-                global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
+                //global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
 
                 // replace constants
                 entry_params = replaceJSONParams(entry_params, entry_params.define)
