@@ -273,10 +273,21 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza titolare effettivo",
+            "label": "No tit.effett. o esec.",
             "newLine": true,
             "size": 1,
-            "queryCond": "an.id_anagrafica not in(select id_anagrafica from entrasp.connessioni_anagrafiche where an.codice_part='€global_codice_part€' and codice_ruolo='TIEF' and id_anagrafica is not null) and an.tipo_soggetto='E'"
+            "queryCond": "an.id_anagrafica not in(select id_anagrafica from entrasp.connessioni_anagrafiche where an.codice_part='€global_codice_part€' and codice_ruolo in('TIEF','ESEC') and id_anagrafica is not null) and an.tipo_soggetto='E'"
+        },
+        {
+            "fieldName": "tit_eff_esec_pg",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Tit.effett. o esec. PG",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "an.id_anagrafica in(select ca.id_anagrafica from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an2 on ca.codice_part=an2.codice_part and ca.id_anagrafica_conn=an2.id_anagrafica where ca.codice_part='€global_codice_part€' and ca.codice_ruolo in('TIEF','ESEC') and an2.id_anagrafica is not null and an2.tipo_soggetto!='P') and an.tipo_soggetto='E'"
         },
         {
             "fieldName": "senza_profilazioni_attive",
