@@ -476,7 +476,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     if(_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
                     }
-                    
+                    _this.adjustViewKeysWidths();
                     // triggers any change in displayed datasource, setting the array of primary keys
                     _this.subscriptions.push(_this.dataSource.connect().subscribe(source => {
                         _this.keysArray = source.map(row => {
@@ -514,6 +514,18 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         // Calculate table height
         this.calculateTableHeight();
+    }
+
+    adjustViewKeysWidths() {
+        let _this = this;
+        const sum = _this.viewKeys.filter(x => !x.isHidden && x.width).map(x => parseFloat(x.width.replace('%', ''))).reduce((sum, n) => sum + n);
+        
+        _this.viewKeys.forEach((x, i) => {
+            if(_this.viewKeys[i].width) {
+                const width = (parseFloat(x.width.replace('%', '')) / (sum / 100)) + '%';
+                _this.viewKeys[i].width = width;
+            }
+        })
     }
 
     loadLevel(table_keys) {
