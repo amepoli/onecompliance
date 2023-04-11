@@ -13,7 +13,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_azienda, data_versione, id_somministrazione_vr, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as stato, utente_versione, entrasp.modelli_test_risultati_righe_descr(id_risultato, pct_da, codice_azienda) as giudizio, entrasp.modelli_test_risultati_righe_descr(id_risultato, pct_da_manuale, codice_azienda) as giudizio_manuale from entrasp.sondaggi_somministrati_vr where codice_azienda=$codice_azienda$ and id_sondaggio =$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+      "queryString": "select codice_azienda, data_versione, id_somministrazione_vr, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as stato, utente_versione, entrasp.modelli_test_risultati_righe_descr(id_risultato, pct_da, codice_azienda) as giudizio, entrasp.modelli_test_risultati_righe_descr(id_risultato, pct_da_manuale, codice_azienda) as giudizio_manuale, id_sondaggio, id_somministrazione from entrasp.sondaggi_somministrati_vr where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
     }
   ],
   "form_keys": [
@@ -48,7 +48,7 @@
       }
     },
     {
-      "autoGenerate": true,
+      "autoGenerate": false,
       "format": {
         "dataType": "number",
         "viewType": "input"
@@ -69,7 +69,7 @@
       },
       "isHidden": false,
       "isPrimary": true,
-      "key": "id_somministrazion_vr",
+      "key": "id_somministrazione_vr",
       "label": "#",
       "newLine": false,
       "readOnly": true,
@@ -334,7 +334,7 @@
       "label": "Incaricato Compilazione",
       "newLine": false,
       "readOnly": false,
-      "queryFunct": "SELECT id_anagrafica_assegnataria FROM entrasp.sondaggi WHERE id_sondaggio=$id_sondaggio$ AND codice_azienda=$codice_azienda$",
+      "queryFunct": "SELECT id_anagrafica_assegnataria FROM entrasp.sondaggi WHERE id_sondaggio=sondaggi_somministrati_vr.id_sondaggio AND codice_azienda=$codice_azienda$",
       "size": 1.9,
       "sameOrigin": false
     },
@@ -771,6 +771,76 @@
       "isPrimary": false,
       "key": "data_versione",
       "label": "Data Versione"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "domande_risposte",
+      "label": "Domande e Risposte",
+      "type": "tableForm",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "somministrazioni_flags_sezioni",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
+        }
+      ],
+      "isHidden": true,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_modello_test",
+          "son": "id_modello_test"
+        },
+        {
+          "parent": "id_modello_test_vr",
+          "son": "id_modello_test_vr"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ]
+    },
+    {
+      "entryKey": "domande_sezioni_sub_of_somministrazioni",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "somministrazioni_flags_sezioni",
+          "condition": "equalTo",
+          "values": [
+            "1"
+          ]
+        }
+      ],
+      "isHidden": true,
+      "keys": [
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        },
+        {
+          "parent": "id_sondaggio",
+          "son": "id_sondaggio"
+        },
+        {
+          "parent": "id_somministrazione",
+          "son": "id_somministrazione"
+        }
+      ],
+      "label": "Domande e Risposte - Sezioni",
+      "type": "table"
     }
   ],
   "hideActions": [
