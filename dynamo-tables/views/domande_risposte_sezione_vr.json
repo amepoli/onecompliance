@@ -1,11 +1,14 @@
 {
-    "entryKey": "domande_risposte_vr",
+    "entryKey": "domande_risposte_sezione_vr",
     "$schema": "../views.schema.json",
-    "inheritsFrom": "domande_risposte",
+    "inheritsFrom": "domande_risposte_sezione",
+    "define": {
+        "is_hidden_risultato": "false"
+    },
     "predefinedQueries": [
         {
             "operation": "selectForm",
-            "queryString": "select *,'€global_username€' as username from entrasp.select_domande_risposte_vr($codice_azienda$, $id_sondaggio$, $id_somministrazione$, null, $id_somministrazione_vr$)",
+            "queryString": "select * from entrasp.select_domande_risposte_vr($codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_sezione$, $id_somministrazione_vr$);",
             "type": "main"
         }
     ],
@@ -13,6 +16,42 @@
         {
             "propertyType": "readOnly",
             "queryString": "select true"
+        },
+        {
+            "propertyType": "isHidden",
+            "queryString": "select case when entrasp.domanda_active(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_somministrazione$)=1 then false else true end as label from entrasp.domande dm where dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_modello_test_vr=$id_modello_test_vr$ and id_sezione=$id_sezione$ order by dm.ordinamento;",
+            "inputEvents": [
+                {
+                    "eventName": "toggle_question",
+                    "actionType": "showRow",
+                    "condition": "equalTo",
+                    "keys": [
+                        {
+                            "sender": "id_domanda",
+                            "receiver": "id_domanda_rif"
+                        },
+                        {
+                            "sender": "%value%",
+                            "receiver": "id_risposta_prev_rif"
+                        }
+                    ]
+                },
+                {
+                    "eventName": "toggle_question_mc",
+                    "actionType": "showRow",
+                    "condition": "equalTo",
+                    "keys": [
+                        {
+                            "sender": "id_domanda",
+                            "receiver": "id_domanda_rif"
+                        },
+                        {
+                            "sender": "%value%",
+                            "receiver": "id_risposta_prev_rif"
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "form_keys": [
