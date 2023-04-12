@@ -15,7 +15,8 @@
 		"is_hidden_mifid": "false",
 		"size_with_or_without_mifid": "1.57",
 		"is_hidden_fornitori": "true",
-		"id_argomento_tipo_contratto": "5408"
+		"id_argomento_tipo_contratto": "5408",
+		"is_hidden_finanziamenti": "false"
 	},
 	"predefinedQueries": [
 		{
@@ -65,7 +66,18 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false,
-			"size": 3.13
+			"size": 3.13,
+			"inputEvents": [
+				{
+					"eventName": "contratto_duplica",
+					"condition": "none",
+					"values": [],
+					"actionType": "query",
+					"queryFunct": "select entrasp.duplica_contratto ($codice_azienda$, $id_contratto$) as id_contratto"
+					
+				}
+			]
+
 		},
 		{
 			"autoGenerate": false,
@@ -134,6 +146,11 @@
 						"icon": "stacked_line_chart",
 						"label": "Crea progetto",
 						"outputEventName": "progetto_create"
+					},
+					{
+						"icon": "stacked_line_chart",
+						"label": "Duplica contratto",
+						"outputEventName": "contratto_duplica"
 					},
 					{
 						"icon": "warning",
@@ -559,6 +576,43 @@
 			"format": {
 				"viewType": "button"
 			},
+			"isHidden": "$Q{is_hidden_finanziamenti}",
+			"isPrimary": false,
+			"key": "activate_dettagli_fin",
+			"label": "Maggiori dettagli fin",
+			"buttonIcon": "expand_more",
+			"newLine": true,
+			"size": 1,
+			"outputEvent": {
+				"eventName": "activate_dettagli_fin",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"actionType": "hide",
+					"eventName": "activate_dettagli_fin",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"actionType": "show",
+					"eventName": "hide_dettagli_fin",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
 			"isHidden": true,
 			"isPrimary": false,
 			"key": "hide_dettagli_k",
@@ -580,6 +634,43 @@
 				{
 					"actionType": "hide",
 					"eventName": "hide_dettagli",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "button"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "hide_dettagli_fin",
+			"label": "Nascondi dettagli",
+			"buttonIcon": "expand_less",
+			"newLine": true,
+			"size": 1,
+			"outputEvent": {
+				"eventName": "hide_dettagli_fin",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"actionType": "show",
+					"eventName": "activate_dettagli_fin",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"actionType": "hide",
+					"eventName": "hide_dettagli_fin",
 					"condition": "none",
 					"values": []
 				}
@@ -752,6 +843,245 @@
 			"isPrimary": false,
 			"key": "dettagli",
 			"label": "Maggiori dettagli",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": true,
+			"saveWhenHidden": true
+		},
+		{
+			"format": {
+				"viewType": "subform",
+				"subform_keys": [
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "TAEG",
+						"key": "taeg",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Spread",
+						"key": "spread",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Tasso Min",
+						"key": "tax_min",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Tasso Max",
+						"key": "tax_max",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Tasso Mo",
+						"key": "tass_mo",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": true
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Mora %",
+						"key": "moraperc",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Agenzia",
+						"key": "agenzia",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "idanapromo",
+						"key": "idanapromo",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "imp_esen",
+						"key": "Importo Esente",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "imp_bene",
+						"key": "Importo Bene",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": true
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Importo",
+						"key": "importo",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Tan",
+						"key": "tan",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Tasso pre",
+						"key": "tass_pre",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Taeg Reale",
+						"key": "tass_pre",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "tipcontr",
+						"key": "tipcontr",
+						"readOnly": false,
+						"isHidden": false,
+						"isPrimary": false,
+						"size": 2,
+						"newLine": false
+					}
+				]
+			},
+			"inputEvents": [
+				{
+					"actionType": "show",
+					"condition": "none",
+					"eventName": "activate_dettagli_fin",
+					"values": []
+				},
+				{
+					"actionType": "hide",
+					"condition": "none",
+					"eventName": "hide_dettagli_fin",
+					"values": []
+				}
+			],
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "dettagli_fin",
+			"label": "Dettagli Cont. Fin.",
 			"newLine": true,
 			"readOnly": false,
 			"sameOrigin": true,
@@ -1131,7 +1461,7 @@
 			"queryCond": "id_cliente=$id_anagrafica_s$"
 		},
 		{
-			"fieldName": "nome_rs", 
+			"fieldName": "nome_rs",
 			"format": {
 				"dataType": "text",
 				"viewType": "input"
@@ -1272,13 +1602,13 @@
 		}
 	],
 	"importQueries": {
-        "tableQueries": [
-            {
-                "label": "Importa contratti",
-                "queryString": "select entrasp.contratti_import($codice_azienda$, $nome_file$)"
-            }
-        ]
-    },
+		"tableQueries": [
+			{
+				"label": "Importa contratti",
+				"queryString": "select entrasp.contratti_import($codice_azienda$, $nome_file$)"
+			}
+		]
+	},
 	"exportQueries": {
 		"tableQueries": [
 			{
