@@ -476,7 +476,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     if(_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
                     }
-                    _this.adjustViewKeysWidths();
+                    //_this.adjustViewKeysWidths();
                     // triggers any change in displayed datasource, setting the array of primary keys
                     _this.subscriptions.push(_this.dataSource.connect().subscribe(source => {
                         _this.keysArray = source.map(row => {
