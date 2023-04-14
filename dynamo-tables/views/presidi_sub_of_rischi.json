@@ -7,7 +7,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select rp.*,true as delete_presidi_rischi, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda)as descr_presidio, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.rischi_presidi rp inner join entrasp.presidi pr on rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio where rp.codice_azienda=$codice_azienda$ and rp.codice_rischio=$codice_rischio$"
+            "queryString": "select rp.*, pct_mitigazione_probabilita, pct_mitigazione_intensita_singola, true as delete_presidi_rischi, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda)as descr_presidio, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.rischi_presidi rp inner join entrasp.presidi pr on rp.codice_azienda=pr.codice_azienda and rp.id_presidio=pr.id_presidio where rp.codice_azienda=$codice_azienda$ and rp.codice_rischio=$codice_rischio$"
         },
         {
             "operation": "update",
@@ -79,18 +79,11 @@
         {
             "format": {
                 "viewType": "input",
-                "dataType": "number",
-                "value": 0,
-                "validations": [
-                    {
-                        "message": "Inserire un valore (0 se non si intende valutarlo)",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+                "dataType": "number"               
             },
             "label": "% Prob. Mit.",
             "key": "pct_mitigazione_probabilita",
+            "queryFunct": "select entrasp.presidi_valutazione(codice_azienda, id_presidio) where codice_azienda='QUANTYX'",
             "readOnly": true,
             "isHidden": false,
             "isPrimary": false,
@@ -100,33 +93,11 @@
         {
             "format": {
                 "viewType": "input",
-                "dataType": "number",
-                "value": 0,
-                "validations": [
-                    {
-                        "message": "Inserire un valore (0 se non si intende valutarlo)",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+                "dataType": "number"
             },
             "label": "% Mit. Int. Sin.",
             "key": "pct_mitigazione_intensita_singola",
-            "readOnly": true,
-            "isHidden": false,
-            "isPrimary": false,
-            "size": 1,
-            "newLine": false
-        },
-        {
-            "evalFunct": "(Number(£pct_mitigazione_probabilita£)/100*Number(£pct_mitigazione_intensita_singola£)).toFixed(2)",
-            "format": {
-                "viewType": "input",
-                "dataType": "number",
-                "value": 0
-            },
-            "label": "% Mit. Int. Tot.",
-            "key": "pct_mitigazione_intensita_totale",
+            "queryFunct": "select entrasp.presidi_valutazione(codice_azienda, id_presidio) where codice_azienda='QUANTYX'",
             "readOnly": true,
             "isHidden": false,
             "isPrimary": false,
@@ -412,8 +383,7 @@
         },
         {
             "format": {
-                "dataType": "number",
-                "value": 0
+                "dataType": "number"
             },
             "label": "% Prob. Mit.",
             "key": "pct_mitigazione_probabilita",
