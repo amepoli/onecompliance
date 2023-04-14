@@ -131,7 +131,17 @@
                         "icon": "tag",
                         "label": "Tagga presidi (crea e associa e argomento)",
                         "outputEventName": "presidi_tag"
-                    }
+                    },
+                    {
+                        "icon": "calculate",
+                        "label": "Ricalcola tutti i presidi",
+                        "outputEventName": "ricalcolo_presidi"
+                      },
+                      {
+                        "icon": "calculate",
+                        "label": "Ricalcola singolo presidio",
+                        "outputEventName": "ricalcolo_singolo_presidio"
+                      }
                 ]
             },
             "inputEvents": [
@@ -142,7 +152,21 @@
                     "successMessage": "Presidi taggati correttamente",
                     "values": [],
                     "queryFunct": "select entrasp.argomenti_create_and_update_presidi(codice_azienda, id_presidio, descrizione, descrizione, 3381) from entrasp.presidi where codice_azienda=$codice_azienda$ and id_argomento is null;"
-                }
+                },
+                {
+                    "eventName": "ricalcolo_presidi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.presidi_valutazione(codice_azienda, id_presidio) from entrasp.presidi where codice_azienda=$codice_azienda$;"
+                  },
+                  {
+                    "eventName": "ricalcolo_singolo_presidio",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.presidi_valutazione($codice_azienda$, $id_presidio$);"
+                  }
             ],
             "isHidden": false,
             "isPrimary": false,
