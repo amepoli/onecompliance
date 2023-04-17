@@ -2,14 +2,14 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 
 const AmazonDaxClient = require('amazon-dax-client');
-const dax = DAX_ENABLED? new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' }): null;
-const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED? dax: null });
+const dax = DAX_ENABLED ? new AmazonDaxClient({ region: 'eu-central-1', endpoint: 'daxs://DAX_ENDPOINT' }) : null;
+const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED ? dax : null });
 
 const helperFuncts = require('./helperFuncts');
 
-const queryKeys = ['badgeQuery', 'queryString', 'query', 'comboQuery', 
-                   'queryFunct', 'insertUpdateFunct', 'conditionQuery',
-                   'onSuccessQuery', 'querySuffixes'];
+const queryKeys = ['badgeQuery', 'queryString', 'query', 'comboQuery',
+    'queryFunct', 'insertUpdateFunct', 'conditionQuery',
+    'onSuccessQuery', 'querySuffixes'];
 
 
 function processPermissions(data, profile, entry_name) {
@@ -78,7 +78,7 @@ function getExternalSource(entry_name, profileData) {
 function replaceJSONParams(JSONString, paramsObject) {
     if (paramsObject == null) {
         return JSONString
-    } 
+    }
 
     JSONString = JSON.stringify(JSONString);
 
@@ -99,21 +99,21 @@ function replaceJSONParams(JSONString, paramsObject) {
 
 function removeProperty(source, properties) {
     if (typeof source === 'object' && source != null) {
-      if (Array.isArray(source)) {
-        for (var i=0; i< source.length; i++) {
-          removeProperty(source[i], properties);
+        if (Array.isArray(source)) {
+            for (var i = 0; i < source.length; i++) {
+                removeProperty(source[i], properties);
+            }
+        } else {
+            for (key in source) {
+                if (properties.indexOf(key) > -1) {
+                    delete source[key];
+                } else {
+                    removeProperty(source[key], properties);
+                }
+            }
         }
-      } else {
-        for (key in source) {
-          if (properties.indexOf(key) > -1) {
-            delete source[key];
-          } else { 
-            removeProperty(source[key], properties);
-          }
-        }
-      }
     }
-    
+
     return source;
 }
 
@@ -121,12 +121,37 @@ function removeDeniedMenuOptions(data, entry_name, profileData) {
     if (profileData != null && profileData.menuOptions != null && profileData.menuOptions.deny != null && profileData.menuOptions.deny.length > 0) {
         let menuOptions = profileData.menuOptions;
         menuOptions.deny.forEach(menuOption => {
-            if(menuOption.entry == entry_name) {
+            if (menuOption.entry == entry_name) {
                 data['form_keys'].forEach((formKey, i) => {
-                    if(formKey['key'] == menuOption.key) {
-                        data['form_keys'][i]['format']['menuOptions'] = data['form_keys'][i]['format']['menuOptions'].filter( o => !menuOption.options.includes(o.key))
+                    if (formKey['key'] == menuOption.key) {
+                        data['form_keys'][i]['format']['menuOptions'] = data['form_keys'][i]['format']['menuOptions'].filter(o => !menuOption.options.includes(o.key))
                     }
                 })
+            }
+        });
+    }
+    return data;
+}
+
+function removeDeniedExportQueries(data, entry_name, profileData) {
+
+    if (profileData != null && profileData.exportQueries != null && profileData.exportQueries.deny != null && profileData.exportQueries.deny.length > 0) {
+        let exportQueries = profileData.exportQueries;
+        exportQueries.deny.forEach(exportQuery => {
+            if (exportQuery.entry == entry_name) {
+                data['exportQueries']['tableQueries'].forEach((exportTableQuery, i) => {
+                    // console.log('key: ', data['exportQueries']['tableQueries'][i]['key']);
+                    if (data['exportQueries']['tableQueries'][i]['key'] == exportQuery.key) {
+                        console.log('pd: ',data['exportQueries']['tableQueries']);
+                        data['exportQueries']['tableQueries'].splice(i,1);
+                    }
+                });
+                data['exportQueries']['formQueries'].forEach((exportFormQuery, i) => {
+                    // console.log('key: ', data['exportQueries']['formQueries'][i]['key']);
+                    if (data['exportQueries']['formQueries'][i]['key'] == exportQuery.key) {
+                        data['exportQueries']['formQueries'].splice(i,1);
+                    }
+                });
             }
         });
     }
@@ -162,9 +187,9 @@ exports.handler = async (event, context) => {
     try {
 
         const profile = await helperFuncts.getProfile(dynamo, 'USERS_NAME', userid, company);
-        
+
         const profileData = await helperFuncts.getProfileData(dynamo, 'PROFILES_NAME', 'MERGED_PROFILESNAME', profile);
-        
+
         if (profileData == null) {
             return {
                 "isBase64Encoded": false,
@@ -174,19 +199,21 @@ exports.handler = async (event, context) => {
             };
         }
 
-        
+
 
         data = await dynamo.get(DynamoParams).promise();
 
         data = await helperFuncts.overrideTable('VIEWS_NAME', data.Item, dynamo);
 
-        data = replaceJSONParams(data,data.define)
-        
+        data = replaceJSONParams(data, data.define)
+
         data = processPermissions(data, profileData, entry_name);
         data['profileHideActions'] = getProfileHideActions(entry_name, profileData);
         externalUpdate = getExternalSource(entry_name, profileData);
+        console.log('profileData: ', profileData)
         data = removeDeniedMenuOptions(data, entry_name, profileData);
-        
+        data = removeDeniedExportQueries(data, entry_name, profileData);
+
     } catch (e) {
         console.log(e);
         return {
