@@ -286,6 +286,7 @@ export class AuthService {
     _this.backendService.getMenu({ codice_azienda: _this.currentCompany }).subscribe(
       menu => {
         if (menu != null && menu.result === 'OK') {
+          this.setUsermenu(JSON.stringify(menu.menu));
           _this.navigationService.register('usermenu', [menu.menu]);
           _this.navigationService.setCurrentNavigation('usermenu');
         }
@@ -321,6 +322,75 @@ export class AuthService {
           _this._toastService.showErrorToast(result_it.reason);
         }
       });
+  }
+
+
+  public setUsermenu(usermenu: any) {
+    localStorage.setItem('usermenu',  usermenu);
+  }
+
+  public getUsermenu() {
+    return JSON.parse(localStorage.getItem('usermenu'));
+  }
+
+
+  public filterMenu(filter): void {
+    const _this = this;
+       
+    const usermenu =  _this.getUsermenu();
+    
+    let filteredMenu = Object.assign({}, usermenu);
+
+  if(filter) {
+      const fullMenu =Object.assign({}, usermenu);
+      filteredMenu = _this.filterMenuItem(fullMenu, filter);
+    }
+
+    _this.navigationService.unregister('usermenu');
+    _this.navigationService.register('usermenu', [filteredMenu]);
+    _this.navigationService.setCurrentNavigation('usermenu');
+}
+
+  private filterMenuItem(item, filter) {
+    
+    if(filter) {
+      let found = false;
+      
+      const filterLower = filter.toLowerCase();
+
+      const translate = item.translate? this._translateService.instant(item.translate).toLowerCase(): null;
+      if((item.title && item.title.toLowerCase().includes(filterLower))
+      || (translate && translate.includes(filterLower))) {
+        found = true;
+      }
+
+      if(!found && item.children && item.children.length > 0) {
+        let children = [];
+        item.children.forEach(child => {
+          let childData = this.filterMenuItem(child, filter);
+          if(childData) {
+            found = true;
+            children.push(childData);
+          }
+        });
+        if(children.length > 0) {
+          item.children = children;
+        }
+        else {
+          item.children = null;
+        }
+      }
+
+      if(found) {
+      return item;
+      }
+      else {
+        return null;
+      }
+    }
+    else {
+      return item;
+    }
   }
 
   /** Check if local storage contains access token */

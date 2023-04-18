@@ -1,0 +1,231 @@
+{
+  "$schema": "../views.schema.json",
+  "businessObjectName": "cpl_srr",
+  "origin": "entrasp.cpl_srr",
+  "entryKey": "cpl_srr",
+  "form_keys": [
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "readOnly": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "id_esercizio",
+      "label": "id_esercizio"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "P"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "tipo_soglia_pk",
+      "label": "tipo_soglia_pk"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "I"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "tipo_soglia_int",
+      "label": "tipo_soglia_int"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "soglia_a_pk",
+      "label": "soglia_a_pk"
+    },
+    {
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "readOnly": true,
+      "key": "soglia_a_int",
+      "label": "soglia_a_int"
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "probabilita",
+      "size": 2.5,
+      "readOnly": true,
+      "queryFunct": "entrasp.cpl_soglie_descrizione($codice_azienda$,'P', soglia_a_pk)",
+      "label": "Probabilità",
+      "newLine": false
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "size": 2.5,
+      "readOnly": true,
+      "key": "impatto",
+      "queryFunct": "entrasp.cpl_soglie_descrizione($codice_azienda$,'I', soglia_a_int)",
+      "label": "Impatto",
+      "newLine": false
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT soglia_a AS id, entrasp.cpl_soglie_descrizione(codice_azienda,'T', soglia_a) AS name  FROM entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T'",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "readOnly": false,
+      "isPrimary": false,
+      "key": "soglia_a_tot",
+      "newLine": false,
+      "label": "Totale"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT id_rr AS id, id_rr||'-'||descrizione AS name  FROM entrasp.risk_responses",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "readOnly": false,
+      "isPrimary": false,
+      "newLine": false,
+      "key": "id_risk_response",
+      "label": "Risk response"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_esercizio",
+      "label": "id_esercizio"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "tipo_soglia_pk",
+      "label": "tipo_soglia_pk"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "tipo_soglia_int",
+      "label": "tipo_soglia_int"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "soglia_a_pk",
+      "label": "soglia_a_pk"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "soglia_a_int",
+      "label": "soglia_a_int"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "probabilita",
+      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P', soglia_a_pk)",
+      "label": "Probabilità"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "impatto",
+      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I', soglia_a_int)",
+      "label": "Impatto"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "totale",
+      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T', soglia_a_tot)",
+      "label": "Totale"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "risk_response",
+      "queryFunct": "entrasp.risk_response_descr(id_risk_response)",
+      "label": "Risk Response"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    }
+  ]
+}
