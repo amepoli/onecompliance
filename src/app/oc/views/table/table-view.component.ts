@@ -591,14 +591,16 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     doesButtonIconExist(key: string) {
-        const keys = Object.keys(this.styles[key]);
         let buttonIconExists = false;
-
-        keys.forEach(k => {
-            if(this.styles[key][k]['button_icon']) {
-                buttonIconExists = true;
-            }
-        })
+        if(this.styles && this.styles[key]) {
+            const keys = Object.keys(this.styles[key]);
+    
+            keys.forEach(k => {
+                if(this.styles[key][k]['button_icon']) {
+                    buttonIconExists = true;
+                }
+            })
+        }
         return buttonIconExists;
     }
 

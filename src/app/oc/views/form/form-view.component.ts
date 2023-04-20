@@ -7,7 +7,7 @@ import { MultiAttachmentsDialogComponent } from 'app/oc/dialogs/multi-attachment
 import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
 import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageView, TabType, TabViewKey } from 'app/oc/interfaces';
-import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService } from 'app/oc/services';
+import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService, ValidationsService } from 'app/oc/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { exit } from 'process';
 
@@ -209,11 +209,23 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                             }
                         });
                     } else {
-                        if (field.isVisible && form.form.get(field.name) && !form.form.get(field.name).valid) {
-                            form.form.get(field.name).markAsTouched({ onlySelf: false });
-                            //isValid = false;
-                            notValidField.push(`"${field.label}"`);
-                            return;
+                        if (field.isVisible && form.form.get(field.name)) {
+                            if(field.inputType == "date" || field.inputType == "time" || field.inputType == "datetime")
+                            {
+                                // Since date, time and datetime use picker, they have issues with empty data
+                                // So this is a manual fix to check if empty value is invalid or not
+                                const isRequired = ValidationsService.checkIfRequired(field.validations);
+                                if(isRequired && !form.form.get(field.name).value) {
+                                    form.form.get(field.name).markAsTouched({ onlySelf: false });
+                                    notValidField.push(`"${field.label}"`);    
+                                }
+                            }
+                            else if(!form.form.get(field.name).valid) {
+                                form.form.get(field.name).markAsTouched({ onlySelf: false });
+                                //isValid = false;
+                                notValidField.push(`"${field.label}"`);
+                                return;
+                            }
                         }
                     }
                 });
