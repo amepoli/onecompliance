@@ -1,7 +1,5 @@
 const excel = require('node-excel-export');
 
-const xbrlParser = require('xbrl-parser');
-
 const AWS = require('aws-sdk');
 AWS.config.update({ region: 'REGION' });
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
@@ -246,7 +244,7 @@ function processCSV(csvData) {
     // Replace any space with the separator
     var find = stuff_to_replace[0].in;
     var re = new RegExp(find, 'g');
-    console.log('stringData before replacement: ', stringData);
+    // console.log('stringData before replacement: ', stringData);
     stringData = stringData.replace(re, stuff_to_replace[0].out);
     stringData = stringData.split('\n').filter(x => !isNullOrWhiteSpace(x)).join('\n').trim();
     return stringData;
@@ -774,7 +772,7 @@ function replaceGlobalkeys(queryString) {
 
 function replaceKeys(queryString, keys, keyTypes) {
 
-    console.log(keys);
+    // console.log(keys);
     var delimiters = ['$', '€'];
     if (queryString) {
         // first replace the global variables, must be €-contoured
@@ -794,7 +792,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                 let keyType = keyTypes.find(e => (e.key === key));
 
                 if (typeof keys[key] === 'object' && keyType && keyType.dataType && Array.isArray(keyType.dataType) && keys[key] != null) { // key with multiple subkeys
-                    console.log(keys[key], keyType);
+                    // console.log(keys[key], keyType);
                     // tslint:disable-next-line:forin
                     for (var subkey in keys[key]) {
                         // console.log(subKey);
@@ -809,7 +807,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                             queryString = newString;
                             newString = queryString.replace(toReplace, replacement);
                         }
-                        console.log(`newString Object: ${newString}`);
+                        // console.log(`newString Object: ${newString}`);
                     }
                 } else if (typeof keys[key] !== 'object') {  // avoid spourious values like arrays form events
                     let bracket = (delimiter === '$' && keyType && keyType.dataType === 'text') ? '\'' : '';
@@ -951,7 +949,7 @@ function data2xls(data, title, keys = null) {
             specification[key.key] = { displayName: key.label, headerStyle: styles.data, width: 120, cellStyles: styles.data }
         });
 
-        console.log('columns', columns);
+        // console.log('columns', columns);
     }
 
     const dataset = [];
@@ -962,7 +960,7 @@ function data2xls(data, title, keys = null) {
             columns.forEach(c => {
                 specification[c] = { displayName: c, headerStyle: styles.title, width: 120, cellStyles: styles.data }
             });
-            console.log('columns', columns);
+            // console.log('columns', columns);
 
         }
 
@@ -973,7 +971,7 @@ function data2xls(data, title, keys = null) {
         dataset.push(value);
     });
 
-    console.log('dataset length: ', dataset.length);
+    // console.log('dataset length: ', dataset.length);
 
     const merges = [
         { start: { row: 1, column: 1 }, end: { row: 1, column: columns !== null ? columns.length : 1 } }
@@ -1007,7 +1005,13 @@ async function runQuery(queryString, client) {
 
     if (queryString != null && queryString !== '') {
         let query = replaceLocalKeys(queryString, local_keys);
-        queryData = await client.query(query);
+        try {
+            queryData = await client.query(query);
+        } catch (e) {
+            console.log("Error while running query: ", e);
+            body = { result: 'KO', reason: 'Query error' };
+            await client.release();
+        }
         queryData = queryData.rows;
         console.log('Main query : ', query, ' result : ', queryData);
     }
@@ -1079,7 +1083,7 @@ exports.handler = async (event, context) => {
     // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
     const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 
-    console.log('userid: ', userid);
+    // console.log('userid: ', userid);
 
     console.log('queryParams: ', queryParams);
 
@@ -1170,22 +1174,22 @@ exports.handler = async (event, context) => {
 
             // Handling RLS Policies on DB
             let aziendeSet = "'" + (global_variables.global_user_companies ? global_variables.global_user_companies.replaceAll("'", "") : "") + "'";
-            console.log('aziendeSet: ', aziendeSet);
+            // console.log('aziendeSet: ', aziendeSet);
             if (aziendeSet != "") {
                 await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
             }
 
-            
+
             if (requestType === 'createNewFile') {
                 const fileName = context.awsRequestId + ".csv"; // generate a 'unique' UUID as fileName
-                console.log(fileName);
+                // console.log(fileName);
 
                 const s3ParamsInsert = {
                     Bucket: bucket,
                     Key: "CSV/" + fileName
                 };
 
-                console.log(s3ParamsInsert);
+                // console.log(s3ParamsInsert);
 
                 // create a temporary signed URL for the object 
                 const signedUrl = s3.getSignedUrl('putObject', s3ParamsInsert);
@@ -1234,7 +1238,7 @@ exports.handler = async (event, context) => {
                             body = { result: 'KO', reason: 'File does not exist!' };
                         }
                         else {
-                            console.log(`S3 File length: ${csvFile.ContentLength}`);
+                            // console.log(`S3 File length: ${csvFile.ContentLength}`);
 
                             console.log('Processing CSV to UTF-8...');
                             // Convert to UTF-8
@@ -1286,18 +1290,23 @@ exports.handler = async (event, context) => {
                             // Try to run query 5 times on failure
                             let queryResponse = null;
                             let tries = 0;
-                            while (!queryResponse && tries < 5) {
-                                console.log(`Trying to run query [${tries}]`);
-                                try {
-                                    queryResponse = await client.query(query);
+                            try {
+                                while (!queryResponse && tries < 5) {
+                                    console.log(`Trying to run query [${tries}]`);
+                                    try {
+                                        queryResponse = await client.query(query);
+                                    }
+                                    catch (e) {
+                                        console.log(e);
+                                        queryResponse = null;
+                                        tries++;
+                                    }
                                 }
-                                catch (e) {
-                                    console.log(e);
-                                    queryResponse = null;
-                                    tries++;
-                                }
+                            } catch (e) {
+                                console.log(e);
+                                body = { result: 'KO', reason: 'Query error' };
+                                await client.release();
                             }
-
                             // Delete temporary file
                             var deleteResult = await s3.deleteObject({
                                 Bucket: bucket,
@@ -1316,32 +1325,6 @@ exports.handler = async (event, context) => {
                                 body = { result: 'KO', reason: 'CSV file is not valid for this table!' };
                             }
                         }
-                    } else if (fileType == 'XBRL') {
-
-                        console.log('File type: XBRL');
-
-                        const s3ParamsGetList = {
-                            Bucket: bucket,
-                            Key: "CSV/" + fileName
-                        };
-
-                        let xbrlFile = await s3.getObject(s3ParamsGetList).promise();
-
-                        // Check if file exists
-                        if (!xbrlFile.ContentLength) {
-                            console.log("File does not exist!");
-                            body = { result: 'KO', reason: 'File does not exist!' };
-                        }
-                        else {
-
-                            console.log(`S3 File length: ${xbrlFile.ContentLength}`);
-                            console.log(`S3 File body: ${xbrlFile.Body}`);
-                            const xbrlParsed = xbrlParser.parseXbrlFile(xbrlFile.Body);
-
-                            const xbrlParsedItem = xbrlParsed['xbrli:xbrl']['xbrli:context'][0];
-
-                            console.log('[xbrli:xbrl][xbrli:context][xbrli:scenario][xbrldi:explicitMember][0]', xbrlParsedItem['xbrli:scenario']['xbrldi:explicitMember'][0]);
-                        }
                     }
 
 
@@ -1356,8 +1339,8 @@ exports.handler = async (event, context) => {
                 const table = queryParams['entry_name'];
 
                 console.log("Importing advanced file...");
-                console.log(queryParams);
-                console.log(table_keys);
+                // console.log(queryParams);
+                // console.log(table_keys);
                 body = { result: 'OK', reason: 'Done!' };
 
                 // Load mandatory query params
@@ -1442,12 +1425,12 @@ exports.handler = async (event, context) => {
 
                 console.log('Processing CSV to UTF-8...');
 
-                console.log(csvFile.Body.toString());
+                // console.log(csvFile.Body.toString());
 
                 // Convert to UTF-8
                 csvFile = processCSV(csvFile.Body.toString());
 
-                console.log(csvFile);
+                // console.log(csvFile);
 
                 console.log(`Saving CSV to temp folder... with address: ${bucket}:/${"CSV/_temp/" + fileName}`);
 
@@ -1459,7 +1442,7 @@ exports.handler = async (event, context) => {
                     ContentType: 'text/csv'
                 }
                 ).promise();
-                console.log('SaveResult:', saveResult);
+                // console.log('SaveResult:', saveResult);
 
                 // //TO TEST
                 // processedFile.push({"bucket": bucket, "file_in" : fileName, "file_out" : 'fileout123.csv', "folder" : 'CSV'});
@@ -1481,7 +1464,7 @@ exports.handler = async (event, context) => {
                         Key: "CSV/_temp/" + fileName
                     }
                     ).promise();
-                    console.log('deleteResult:', deleteResult);
+                    // console.log('deleteResult:', deleteResult);
 
                     // Error Response Body
                     body = { result: 'KO', reason: 'Check File, table and queryString are correct!' };
@@ -1496,12 +1479,6 @@ exports.handler = async (event, context) => {
                         queryString = replaceKeys(queryString, table_keys, keyTypes);
                     }
 
-                    console.log('queryString2', queryString);
-
-                    console.log('queryString3', queryString);
-
-                    console.log('queryString4', queryString);
-
                     // add order by if present (for table view only
                     if (orderBy != null && orderBy.key != null) {
                         let order = orderBy.order === 'descending' ? ' DESC' : ' ASC';
@@ -1510,7 +1487,7 @@ exports.handler = async (event, context) => {
 
                     queryString = queryString + ';';
 
-                    console.log('queryString5', queryString);
+                    console.log('queryString', queryString);
 
                     // Data prepared:
                     console.table({ "fileName": fileName, "query": queryString, "table": table });
@@ -1518,16 +1495,22 @@ exports.handler = async (event, context) => {
                     // Try to run query 5 times on failure
                     let queryResponse = null;
                     let tries = 0;
-                    while (!queryResponse && tries < 5) {
-                        console.log(`Trying to run query [${tries}]`);
-                        try {
-                            queryResponse = await client.query(queryString);
+                    try {
+                        while (!queryResponse && tries < 5) {
+                            console.log(`Trying to run query [${tries}]`);
+                            try {
+                                queryResponse = await client.query(queryString);
+                            }
+                            catch (e) {
+                                console.log(e);
+                                queryResponse = null;
+                                tries++;
+                            }
                         }
-                        catch (e) {
-                            console.log(e);
-                            queryResponse = null;
-                            tries++;
-                        }
+                    } catch (e) {
+                        console.log(e);
+                        body = { result: 'KO', reason: 'Query error' };
+                        await client.release();
                     }
 
                     // Delete temporary file
@@ -1598,7 +1581,7 @@ exports.handler = async (event, context) => {
 
 
                     console.log("entry_params", entry_params);
-                    console.log("table", table);
+                    // console.log("table", table);
 
                     // Get columns for the table
                     const query = `select entrasp.grc_listacampiditabella(
@@ -1625,6 +1608,7 @@ exports.handler = async (event, context) => {
                     catch (e) {
                         console.log(e);
                         queryResponse = null;
+                        await client.release();
                         body = { result: 'KO', reason: 'CSV file is not valid for this table!' };
                     }
                 }
@@ -1788,7 +1772,13 @@ exports.handler = async (event, context) => {
                                     let query = element.comboQuery;
                                     // search for local keys
                                     query = replaceLocalKeys(query, queryData[qd_index]);
-                                    let comboData = await client.query(query);
+                                    try {
+                                        let comboData = await client.query(query);
+                                    } catch (e) {
+                                        console.log('Error while running query: ', e);
+                                        await client.release();
+                                        body = { result: 'KO', reason: 'Query error' };
+                                    }
                                     console.log('Combo query: ', query, ' Result: ', comboData.rows);
                                     if (isFormRecord) { // form/new record, add combobox options to relevant field
                                         let comboEntry = new Object;
@@ -1825,8 +1815,8 @@ exports.handler = async (event, context) => {
 
                         //queryData["anonymous"]["calcolo_risultato_log"] = null;
                         console.log('queryData', queryData);
-                        console.log('tableProperties', tableProperties);
-                        console.log('attributes', attributes);
+                        // console.log('tableProperties', tableProperties);
+                        // console.log('attributes', attributes);
                         console.log('queryString', queryString);
 
                     } else {
@@ -2098,6 +2088,7 @@ exports.handler = async (event, context) => {
             }
 
             await client.release();
+
         } catch (e) {
             console.log(e);
             await client.release();
