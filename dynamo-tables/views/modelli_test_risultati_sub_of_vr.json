@@ -6,7 +6,7 @@
     {
       "operation": "insert",
       "type": "postProcessing",
-      "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_tipo_risultato$, $id_risultato$);"
+      "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_risultato$);"
     },
     {
       "operation": "update",
@@ -16,7 +16,12 @@
     {
       "operation": "update",
       "type": "postProcessing",
-      "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_tipo_risultato$, $id_risultato$);"
+      "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_risultato$);"
+    },
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "SELECT a.codice_azienda,b.id_modello_test,b.id_modello_test_vr,b.flag_penalizzazioni,a.id_risultato,a.descrizione,a.flag_valore_significativo,a.flag_pct_risultato_inverso,a.tipo_calcolo FROM entrasp.modelli_test_risultati a INNER JOIN entrasp.modelli_test_vr b ON a.codice_azienda=b.codice_azienda AND a.id_risultato=b.id_risultato WHERE a.codice_azienda=$codice_azienda$ AND a.id_risultato=$id_risultato$ AND b.id_modello_test=$id_modello_test$ AND b.id_modello_test_vr=$id_modello_test_vr$;"
     }
   ],
   "form_keys": [
@@ -70,10 +75,10 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_risultato",
-      "label": "ID",
+      "label": "#",
       "newLine": false,
       "readOnly": true,
-      "size": 1
+      "size": 0.5
     },
     {
       "autoGenerate": false,
@@ -87,7 +92,23 @@
       "label": "Descrizione",
       "newLine": false,
       "readOnly": true,
-      "size": 4
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT distinct cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
+        "dataType": "number",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_calcolo",
+      "label": "Tipo calcolo risultato sintetico",
+      "newLine": false,
+      "readOnly": false,
+      "size": 3
     },
     {
       "autoGenerate": false,
@@ -136,6 +157,7 @@
           "eventName": "mtvr_flag_penalizzazioni",
           "actionType": "query",
           "values": [],
+          "condition": "none",
           "queryFunct": "UPDATE entrasp.modelli_test_vr SET flag_penalizzazioni = (SELECT CASE WHEN £flag_penalizzazioni£ = 1 THEN TRUE ELSE FALSE END), tipo_pt_pen = coalesce(tipo_pt_pen, 'Massimo') WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$ AND id_modello_test_vr=$id_modello_test_vr$;"
         }
       ]
@@ -168,21 +190,6 @@
           "queryFunct": "UPDATE entrasp.modelli_test_vr SET tipo_pt_pen = £tipo_pt_pen£ WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$ AND id_modello_test_vr=$id_modello_test_vr$;"
         }
       ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT distinct cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
-        "dataType": "number",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_calcolo",
-      "label": "Tipo calcolo risultato sintetico",
-      "newLine": true,
-      "readOnly": false
     }
   ],
   "subTables": [
@@ -199,7 +206,7 @@
         }
       ],
       "label": "Soglie",
-      "type": "tableForm"
+      "type": "table"
     },
     {
       "entryKey": "modelli_test_vr_sub_of_modelli_test_risultati",

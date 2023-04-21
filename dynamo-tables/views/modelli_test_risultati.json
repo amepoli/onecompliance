@@ -1,20 +1,9 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "modelli_test_risultati",
+  "origin": "entrasp.modelli_test_risultati",
   "businessObjectName": "modelliTestRisultati",
-  "predefinedQueries": [
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_tipo_risultato$, $id_risultato$);"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, $id_tipo_risultato$, $id_risultato$);"
-    }
-
-  ],
+  "label": "Criteri d'analisi",
   "form_keys": [
     {
       "autoGenerate": false,
@@ -38,7 +27,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_risultato",
-      "label": "ID",
+      "label": "#",
       "newLine": false,
       "readOnly": true,
       "size": 1
@@ -55,71 +44,24 @@
       "label": "Descrizione",
       "newLine": false,
       "readOnly": false,
-      "size": 4.5
+      "size": 3.33
     },
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
         "dataType": "number",
-        "viewType": "input"
+        "options": [],
+        "viewType": "combobox",
+        "value": "1"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "pct_pesatura",
-      "label": "Incidenza sotto-criterio sul criterio",
+      "key": "tipo_calcolo",
+      "label": "Tipo calcolo risultato sintetico",
       "newLine": false,
       "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "navigate_to_tipi_modelli_test_risultati_key",
-      "label": "Criterio di analisi",
-      "newLine": true,
-      "outputEvent": {
-        "eventName": "navigate_to_tipi_modelli_test_risultati",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "size": 2,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_tipo_risultato as id, descrizione as name FROM entrasp.tipi_modelli_test_risultati WHERE codice_azienda=$codice_azienda$",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "outputEvent": {
-        "eventName": "change_id_tipo_risultato",
-        "eventTrigger": "select"
-      },
-      "inputEvents": [
-        {
-          "eventName": "change_id_tipo_risultato",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "outputEventWhenComplete": "relaod_modelli_test_risultati",
-          "queryFunct": "select entrasp.modelli_test_risultati_righe_insert($codice_azienda$, entrasp.evaluate_given_field('id_tipo_risultato', $id_tipo_risultato$), $id_risultato$) as id_tipo_risultato"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_risultato",
-      "label": "Criterio di analisi",
-      "newLine": true,
-      "readOnly": false
+      "size": 3.33
     },
     {
       "autoGenerate": false,
@@ -131,7 +73,8 @@
       "key": "flag_valore_significativo",
       "label": "Usa valore significativo?",
       "newLine": false,
-      "readOnly": false
+      "readOnly": false,
+      "size": 1
     },
     {
       "autoGenerate": false,
@@ -144,25 +87,10 @@
       "key": "flag_pct_risultato_inverso",
       "label": "Inverti soglie",
       "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
-        "dataType": "number",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_calcolo",
-      "label": "Tipo calcolo risultato sintetico",
-      "newLine": true,
-      "readOnly": false
+      "readOnly": false,
+      "size": 1
     }
   ],
-  "origin": "entrasp.modelli_test_risultati",
   "search_keys": [
     {
       "fieldName": "codice_azienda",
@@ -224,7 +152,7 @@
         }
       ],
       "label": "Soglie",
-      "type": "tableForm"
+      "type": "table"
     },
     {
       "entryKey": "modelli_test_vr_sub_of_modelli_test_risultati",
@@ -269,21 +197,13 @@
     },
     {
       "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_tipo_risultato",
-      "label": "id_tipo_risultato"
-    },
-    {
-      "format": {
         "dataType": "number"
       },
       "isHidden": false,
       "isPrimary": true,
       "key": "id_risultato",
-      "label": "ID"
+      "label": "#",
+      "width": "7%"
     },
     {
       "format": {
@@ -292,8 +212,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione",
-      "label": "Sottocriterio di analisi",
-      "width": "55%",
+      "label": "Criterio",
       "style": [
         {
             "value": "*",
@@ -305,32 +224,10 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "stato",
-      "label": "Stato",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "pct_pesatura",
-      "label": "Peso",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "criterio_di_analisi",
-      "queryFunct": "entrasp.tipo_modello_test_risultato_descr(id_tipo_risultato, codice_azienda)",
-      "label": "Criterio analisi",
-      "width": "20%"
+      "label": "Stato"
     }
   ],
   "inputEvents": [
@@ -361,6 +258,34 @@
     {
       "formActionType": "attachments",
       "viewType": "form"
+    },
+    {
+      "formActionType": "multi-attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "import_export",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "documentation",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "import_export",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
     }
   ],
   "querySuffixes": {

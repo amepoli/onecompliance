@@ -2,13 +2,7 @@
   "$schema": "../views.schema.json",
   "entryKey": "modelli_test_risultati_righe_sub",
   "origin": "entrasp.modelli_test_risultati_righe",
-  "predefinedQueries": [
-     {
-      "operation": "update",
-      "queryString": "UPDATE entrasp.modelli_test_risultati_righe set pct_da=$pct_da$ where codice_azienda=$codice_azienda$ and prog_riga=$prog_riga$ and id_risultato=$id_risultato$",
-      "type": "postProcessing"
-    }
-  ],
+  "businessObjectName": "modelliTestRisultati",
   "form_keys": [
     {
       "autoGenerate": false,
@@ -24,16 +18,16 @@
       "newLine": false
     },
     {
-      "autoGenerate": true,
+      "autoGenerate": false,
       "format": {
         "viewType": "input",
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "prog_riga",
-      "label": "#",
-      "readOnly": false,
+      "label": "",
+      "readOnly": true,
       "newLine": false
     },
     {
@@ -42,21 +36,21 @@
         "viewType": "input",
         "dataType": "text"
       },
-      
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione",
-      "label": "Descrizione","inputEvents": [
+      "label": "Descrizione",
+      "inputEvents": [
         {
           "eventName": "codice_colore_change",
           "condition": "none",
           "values": [],
           "actionType": "update_style",
           "styleAttribute": "background_color",
-          "updateFunct": "'£codice_colore£'"
+          "updateFunct": "'£colore£'"
         }
       ],
-      "readOnly": true,
+      "readOnly": false,
       "newLine": false
     },
     {
@@ -68,8 +62,21 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "pct_da",
-      "label": "Percentuale da",
+      "label": "Percentuale risultato da",
       "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "pct_a",
+      "label": "Percentuale risultato a",
+      "readOnly": true,
       "newLine": false
     },
     {
@@ -117,7 +124,7 @@
         "viewType": "input",
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "pct_significativa_manuale",
       "label": "Percentuale significativa manuale",
@@ -130,13 +137,13 @@
         "viewType": "input",
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
-      "key": "codice_colore",
-      "sameOrigin": false,
+      "key": "colore",
       "label": "Colore",
       "readOnly": false,
-      "newLine": false
+      "newLine": false,
+      "tooltip": "Immettere un colore con il suo codice html: https://www.w3schools.com/colors/colors_names.asp"
     }
   ],
   "table_keys": [
@@ -153,20 +160,19 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "prog_riga",
-      "label": "#"
+      "label": ""
     },
     {
       "format": {
         "dataType": "text"
       },
-          "isHidden": false,
-      "sameOrigin": false,
+      "isHidden": false,
       "isPrimary": false,
       "key": "descrizione",
-      "label": "Descrizione",
+      "label": "",
       "width": "20%"
     },
     {
@@ -182,6 +188,15 @@
       "format": {
         "dataType": "number"
       },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "pct_a",
+      "label": "Percentuale risultato a"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
       "isHidden": true,
       "isPrimary": true,
       "key": "id_risultato",
@@ -189,7 +204,7 @@
     },
     {
       "format": {
-       "dataType": "boolean"
+        "dataType": "boolean"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -209,7 +224,7 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "pct_significativa_manuale",
       "label": "Percentuale significativa manuale"
@@ -218,11 +233,80 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
-      "key": "codice_colore",
-      "sameOrigin": false,
-      "label": "Colore"
+      "key": "colore",
+      "label": "Colore",
+      "style": [
+        {
+          "value": "green",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "yellow",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "yellow",
+          "font_size": "medium",
+          "text_align": "center"
+        },
+        {
+          "value": "orange",
+          "font_color": "DarkRed",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
+        },
+        {
+          "value": "red",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "firebrick",
+          "font_size": "medium",
+          "text_align": "center"
+        }
+      ]
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "multi-attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "import_export",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "documentation",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "import_export",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
     }
   ]
 }
