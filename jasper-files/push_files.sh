@@ -6,10 +6,18 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
+if [ $# = "gorico_prod" ]
+  then
+    HOSTNAME="vm-prod.alacritas.eu"
+else
+    #HOSTNAME="vm-dev.alacritas.eu"
+    HOSTNAME="vm-prod.alacritas.eu"
+fi
+
 aws s3 cp . s3://gorico2-reports/Jasper/ --recursive --exclude "*" --include "*.jasper" --exclude "MyReports/*" 
 aws s3 cp . s3://gorico2-reports/Jasper/reports/ --recursive --exclude "*" --include "*.jrxml" --exclude "MyReports/*"
 aws s3 cp ./logos/. s3://gorico2-reports/Jasper/logos/ --recursive --exclude "*" --include "*.png"
-sftp -i reports.key -P 5222 -b sftp.txt reports@18.197.167.37
+sftp -i reports.key -P 5222 -b sftp.txt reports@"$HOSTNAME"
 cd ../dynamo-tables/reports/
 ./push_tables.sh $1
 cd -
