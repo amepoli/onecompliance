@@ -811,6 +811,60 @@
         },
         {
             "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "readOnly": false,
+            "style": {
+                "font_color": "white",
+                "background_color": "royalblue"
+            },
+            "outputEvent": {
+                "eventName": "check_provincia_event",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "check_provincia_event",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "Controllo rischio relativo alla provincia di residenza",
+                        "messageText": "Procedere?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "SELECT entrasp.check_provincia($codice_azienda$,'€global_codice_part€',$id_anagrafica$, $id_somministrazione$)"
+                        }
+                    },
+                    "outputEventWhenComplete": "onSaveD_R"
+                }
+            ],
+            "sameOrigin": false,
+            "key": "check_provincia",
+            "tooltip": "Check provincia",
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when £id_argomento_domanda£=43480 then false else true end as label "
+                },
+                {
+                    "attributeType": "readOnly",
+                    "queryString": "select case when £id_risposta£ is not null then true else false end as label"
+                }
+            ],
+            "label": "Check provincia",
+            "buttonIcon": "person_search",
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "format": {
                 "viewType": "invisible"
             },
             "isHidden": false,
