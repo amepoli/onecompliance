@@ -1772,8 +1772,9 @@ exports.handler = async (event, context) => {
                                     let query = element.comboQuery;
                                     // search for local keys
                                     query = replaceLocalKeys(query, queryData[qd_index]);
+                                    let comboData;
                                     try {
-                                        let comboData = await client.query(query);
+                                        comboData = await client.query(query);
                                     } catch (e) {
                                         console.log('Error while running query: ', e);
                                         await client.release();
@@ -2093,6 +2094,12 @@ exports.handler = async (event, context) => {
             console.log(e);
             await client.release();
             body = { result: 'KO', reason: 'Server error' };
+            return {
+                "isBase64Encoded": false,
+                "headers": { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                "statusCode": 200,
+                "body": JSON.stringify(body)
+            };
         }
 
         return {
