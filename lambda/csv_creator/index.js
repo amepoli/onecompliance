@@ -72,7 +72,7 @@ async function start(bucket = bucket, company = default_company, folder = defaul
             let property = Object.keys(response.rows[0]);
 
             for (let i = 0; i < property.length; i++) {
-                csvFile += property[i] + (separator_out);
+                csvFile += property[i].toUpperCase() + (separator_out);
             }
 
             csvFile += "\r\n";
