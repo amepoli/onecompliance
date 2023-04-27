@@ -6,7 +6,7 @@
     "predefinedQueries": [
         {
             "type": "main",
-            "queryString": "select codice_provincia, codice_regione, sigla_provincia, descrizione, CASE WHEN flag_a_rischio = true THEN 'Alto' ELSE 'Basso' END as descr_rischio, (select descrizione from entrasp.regioni where codice_regione=p.codice_regione) as descr_regione from entrasp.province p",
+            "queryString": "select codice_provincia, codice_regione, sigla_provincia, descrizione, CASE WHEN flag_a_rischio = true THEN 'Alto' ELSE 'Basso' END as descr_rischio, CASE WHEN flag_a_rischio_2 = true THEN 'Alto' ELSE 'Basso' END as descr_rischio_2, (select descrizione from entrasp.regioni where codice_regione=p.codice_regione) as descr_regione from entrasp.province p",
             "operation": "selectTable"
         }
     ],
@@ -48,7 +48,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "width": "35%"
+            "width": "30%"
         },
         {
             "format": {
@@ -58,7 +58,7 @@
             "isPrimary": false,
             "key": "sigla_provincia",
             "label": "Sigla",
-            "width": "20%"
+            "width": "15%"
         },
         {
             "format": {
@@ -77,6 +77,34 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "descr_rischio",
+            "label": "A rischio",
+            "width": "10%",
+            "style": [
+                {
+                    "value": "Basso",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "ForestGreen",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "Crimson",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_rischio_2",
             "label": "A rischio",
             "width": "10%",
             "style": [
