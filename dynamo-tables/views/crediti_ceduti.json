@@ -1116,6 +1116,16 @@
       "queryCond": "data_scadenza>='€data_scadenza_min€'"
     },
     {
+      "fieldName": "tranche_search_field",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Tranche",
+      "newLine": false,
+      "queryCond": "tranche =$tranche_search_field$"
+    },
+    {
       "fieldName": "data_acquisto_max",
       "format": {
         "dataType": "date",
@@ -1253,7 +1263,7 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "limit 50"
+    "tableViewSuffix": "limit 100"
   },
   "hideActions": [
     {
@@ -1261,6 +1271,14 @@
       "viewType": "form"
     }
   ],
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "label": "Template crediti",
+        "queryString": "SELECT id_cessione,id_contratto,tranche,n_fattura,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as id_cedente,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as id_debitore_ceduto,data_pagamento from entrasp.crediti_ceduti where data_pagamento is null"
+      }
+    ]
+  },
   "importQueries": {
     "tableQueries": [
       {
