@@ -70,12 +70,12 @@
         {
             "type": "main",
             "operation": "insert",
-            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=> coalesce($descrizione$,$titolo$), flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar) , id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean,titolocartella=>$titolo_cartella$,flagworkflow=>coalesce($flag_workflow$::bpchar,'0'::bpchar),flagripianificapercliente=>coalesce($flag_ripianifica_per_cliente$::bpchar,'0'::bpchar));"
+            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=> coalesce($descrizione$,$titolo$), flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar) , id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>'€flag_no_domande€', stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean,titolocartella=>$titolo_cartella$,flagworkflow=>coalesce($flag_workflow$::bpchar,'0'::bpchar),flagripianificapercliente=>coalesce($flag_ripianifica_per_cliente$::bpchar,'0'::bpchar));"
         },
         {
             "type": "main",
             "operation": "update",
-            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>coalesce($descrizione$,$titolo$), flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar), id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$::bpchar,0::bpchar), giorni_anticipo_pres_doc=>coalesce($giorni_anticipo_pres_doc$,15),codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::boolean, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean,titolocartella=>$titolo_cartella$,flagworkflow=>coalesce($flag_workflow$::bpchar,'0'::bpchar),flagripianificapercliente=>coalesce($flag_ripianifica_per_cliente$::bpchar,'0'::bpchar));"
+            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>coalesce($descrizione$,$titolo$), flag_applicazione_singola=>$flag_applicazione_singola$::character, id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>$flag_sezioni$::character, giorni_anticipo_pres_doc=>coalesce($giorni_anticipo_pres_doc$,15),codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>$flag_mostra_punteggi$::character, id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::character, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean,titolocartella=>$titolo_cartella$,flagworkflow=>$flag_workflow$::character,flagripianificapercliente=>$flag_ripianifica_per_cliente$::character);"
         },
         {
             "operation": "insert",
@@ -880,9 +880,9 @@
                     {
                         "autoGenerate": false,
                         "format": {
-                            "dataType": "text",
+                            "dataType": "number",
                             "viewType": "input",
-                            "value": "15"
+                            "value": 15
                         },
                         "queryFunct": "SELECT giorni_anticipo_pres_doc from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
                         "isHidden": false,
@@ -1039,7 +1039,8 @@
             "autoGenerate": false,
             "format": {
                 "value": "0",
-                "viewType": "checkbox"
+                "viewType": "checkbox",
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
