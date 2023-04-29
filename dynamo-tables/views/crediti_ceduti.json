@@ -346,7 +346,7 @@
       "isPrimary": false,
       "key": "data_acquisto",
       "label": "Data acquisto",
-      "size": 3.3,
+      "size": 2.5,
       "readOnly": false,
       "newLine": false
     },
@@ -362,7 +362,7 @@
       "key": "data_pagamento",
       "label": "Data Pagamento",
       "readOnly": false,
-      "size": 3.3
+      "size": 2.5
     },
     {
       "autoGenerate": false,
@@ -372,11 +372,25 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "newLine": true,
+      "newLine": false,
       "key": "data_scadenza",
       "label": "Data Scadenza",
       "readOnly": false,
-      "size": 3.4
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": true,
+      "key": "cig",
+      "label": "CIG",
+      "readOnly": false,
+      "size": 2.5
     },
     {
       "format": {
@@ -1163,7 +1177,7 @@
       },
       "label": "Scadenza entro il",
       "newLine": true,
-      "queryCond": "data_scadenza<='€data_scadenza_max€'"
+      "queryCond": "data_scadenza<=€data_scadenza_max€"
     },
     {
       "fieldName": "giorni_scad_max",
@@ -1258,8 +1272,68 @@
         "viewType": "checkbox"
       },
       "label": "Crediti non incassati",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "data_pagamento is null"
+    },
+    {
+      "fieldName": "data_pagamento_null",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Pagamento non avvenuto",
+      "newLine": false,
+      "queryCond": "data_pagamento is null",
+      "size": 0
+    },
+    {
+      "fieldName": "fascicolo_null",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Fascicolo non presente",
+      "newLine": false,
+      "queryCond": "fascicolo is null",
+      "size": 0
+    },
+    {
+      "fieldName": "debitore_ceduto_null",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Debitore non presente",
+      "newLine": false,
+      "queryCond": "id_debitore_ceduto is null",
+      "size": 0
+    },
+    {
+      "fieldName": "dt_pag_prec_dt_fatt",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Data Pagamento Precedente a Data Fattura",
+      "newLine": false,
+      "queryCond": "data_pagamento<data_fattura",
+      "size": 0
+    },
+    {
+      "fieldName": "dt_scad_prec_dt_fatt",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Data Scadenza precedente a Data Fattura",
+      "newLine": false,
+      "queryCond": "data_fattura>data_scadenza",
+      "size": 0
+    },
+    {
+      "fieldName": "fattura_duplicata",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Fattura duplicata",
+      "newLine": false,
+      "queryCond": "n_fattura in (select n_fattura from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
+      "size": 0
     }
   ],
   "querySuffixes": {
@@ -1275,7 +1349,7 @@
     "tableQueries": [
       {
         "label": "Template crediti",
-        "queryString": "SELECT id_cessione,id_contratto,tranche,n_fattura,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as id_cedente,entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as id_debitore_ceduto,data_pagamento from entrasp.crediti_ceduti where data_pagamento is null"
+        "queryString": "SELECT cre.id_cessione,cnt.numero_contratto,cre.tranche,cre.n_fattura,entrasp.anagrafiche_vr_dati_identificativi(cre.codice_part, cre.id_cedente) as id_cedente,entrasp.anagrafiche_vr_dati_identificativi(cre.codice_part, cre.id_debitore_ceduto) as id_debitore_ceduto,cre.data_pagamento FROM entrasp.crediti_ceduti cre INNER JOIN entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda AND cre.id_contratto=cnt.id_contratto WHERE cre.data_pagamento IS NULL AND cre.codice_azienda=$codice_azienda$"
       }
     ]
   },
@@ -1284,6 +1358,10 @@
       {
         "label": "Importa crediti",
         "queryString": "select entrasp.import_crediti_ceduti($codice_azienda$, $nome_file$)"
+      },
+      {
+        "label": "Aggiorna date pagamento",
+        "queryString": "select entrasp.import_crediti_ceduti_dt_pagamento($codice_azienda$, $nome_file$)"
       }
     ]
   }
