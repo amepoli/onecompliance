@@ -12,7 +12,7 @@
 		{
 			"type": "main",
 			"operation": "selectForm",
-			"queryString": "select * from entrasp.indicatori where id_indicatore=$id_indicatore$"
+			"queryString": "select *, 'P' as codice_tipo_indicatore from entrasp.indicatori where id_indicatore=$id_indicatore$"
 		},
 		{
 			"type": "postProcessing",
@@ -265,6 +265,23 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_INDICATORE';",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": true,
+			"queryFunct": "select 'P'",
+			"key": "codice_tipo_indicatore",
+			"label": "Tipo Indicatore",
+			"newLine": false,
+			"readOnly": false,
+			"size": 1.4
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"viewType": "input",
 				"dataType": "text"
 			},
@@ -275,7 +292,7 @@
 					"actionType": "query",
 					"condition": "none",
 					"values": [],
-					"queryFunct": "select valore_indicatore from entrasp.calcola_indicatore_arg($id_argomento$, $data_da$, $data_a$, $codice_azienda$, $codice_tipo_indicatore$)",
+					"queryFunct": "select valore_indicatore from entrasp.calcola_indicatore_arg(array[$id_argomento$::numeric], '€data_esec_da€'::date, '€data_esec_a€'::date, '€global_codice_azienda€'::varchar, '€codice_tipo_indicatore€'::varchar)",
 					"eventName": "calcola_indicatore"
 				}
 			],
@@ -352,6 +369,16 @@
 			"queryCond": "id_indicatore=$id_indicatore_s$"
 		},
 		{
+			"fieldName": "id_argomento_s",
+			"format": {
+				"dataType": "number",
+				"viewType": "input"
+			},
+			"label": "ID Argomento",
+			"newLine": false,
+			"queryCond": "id_argomento=$id_argomento_s$"
+		},
+		{
 			"fieldName": "id_report_s",
 			"format": {
 				"dataType": "number",
@@ -362,16 +389,16 @@
 			"queryCond": "id_indicatore in(select id_indicatore from entrasp.indicatori_report where id_report=$id_report_s$ and id_indicatore is not null)"
 		},
 		{
-            "fieldName": "no_report",
-            "format": {
-                "value": "0",
-                "viewType": "toggle"
-            },
-            "label": "Non associati a report",
-            "newLine": false,
-            "size": 1.5,
+			"fieldName": "no_report",
+			"format": {
+				"value": "0",
+				"viewType": "toggle"
+			},
+			"label": "Non associati a report",
+			"newLine": false,
+			"size": 1.5,
 			"queryCond": "id_indicatore not in(select id_indicatore from entrasp.indicatori_report where id_indicatore is not null)"
-        }
+		}
 	],
 	"subTables": [
 		{
