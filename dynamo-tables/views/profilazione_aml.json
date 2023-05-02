@@ -1757,7 +1757,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "object_description",
-      "label": "Oggetto di Verifica",
+      "label": "Cliente/controparte",
       "width": "21%",
       "style": [
         {
@@ -2290,6 +2290,370 @@
       "key": "incaricato_risposta",
       "queryFunct": "entrasp.anagrafiche_id_codcognnome('€global_codice_part€', id_anagrafica)",
       "label": "Incaricato a rispondere"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_sondaggio_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Sondaggio",
+      "newLine": false,
+      "queryCond": "ss.id_sondaggio=$id_sondaggio_s$"
+    },
+    {
+      "fieldName": "id_sondaggio_succ_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Sond.Succ",
+      "newLine": false,
+      "queryCond": "snd.id_sondaggio_succ=$id_sondaggio_succ_s$"
+    },
+    {
+      "fieldName": "id_somministrazione_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Id Verifica",
+      "newLine": false,
+      "queryCond": "ss.id_somministrazione=$id_somministrazione_s$"
+    },
+    {
+      "fieldName": "id_modello_test_list",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Lista id modelli verifica",
+      "newLine": false,
+      "size": 2.5,
+      "queryCond": "snd.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
+    },
+    {
+      "fieldName": "id_tipo_modello_test",
+      "format": {
+        "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Tipo modello verifica",
+      "newLine": false,
+      "size": 3.5,
+      "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
+    },
+    {
+      "fieldName": "id_modello_test_vr_s",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "Versione",
+      "newLine": true,
+      "queryCond": "snd.id_modello_test_vr=$id_modello_test_vr_s$"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "stato_s",
+      "label": "Stato",
+      "newLine": false,
+      "queryCond": "ss.stato='€stato_s€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+    },
+    {
+      "fieldName": "data_esec_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Esecuzione Prevista entro il",
+      "newLine": false,
+      "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+    },
+    {
+      "fieldName": "data_esec_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione dopo il",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+    },
+    {
+      "fieldName": "data_esec_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Esecuzione entro il",
+      "newLine": false,
+      "queryCond": "((snd.data_esecuzione<='€data_esec_max€' and snd.data_esecuzione is not null) or (ss.data_esecuzione<='€data_esec_max€' and ss.data_esecuzione is not null))"
+    },
+    {
+      "fieldName": "data_comp",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Data Competenza",
+      "newLine": true,
+      "queryCond": "snd.data_comp='€data_comp€'"
+    },
+    {
+      "fieldName": "object_description",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Oggetto verifica (cliente,for., dip., proc...)",
+      "newLine": false,
+      "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT distinct giudizio AS id, giudizio AS name  FROM entrasp.sondaggi_somministrati WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "giudizio_s",
+      "label": "Giudizio",
+      "newLine": false,
+      "queryCond": "entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) ='€giudizio_s€'"
+    },
+    {
+      "format": {
+        "comboQuery": "select distinct descrizione as id, descrizione as name from entrasp.tipi_modelli_test_risultati_righe where codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "fieldName": "giudizio_manuale_s",
+      "label": "Giudizio Manuale",
+      "newLine": true,
+      "queryCond": "(select descrizione from entrasp.tipi_modelli_test_risultati_righe_descr_from_pct(ss.codice_azienda, ss.pct_da_manuale, ss.id_risultato))='€giudizio_manuale_s€'"
+    },
+    {
+      "fieldName": "scaduto_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Scaduto",
+      "newLine": false,
+      "queryCond": "(snd.data_prevista<=now() and ss.stato not in ('C','N'))"
+    },
+    {
+      "fieldName": "flag_sondaggio_riprogrammato",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Riprogrammata",
+      "newLine": false,
+      "queryCond": "snd.id_sondaggio in(select snd2.id_sondaggio_succ from entrasp.sondaggi snd2 where snd2.codice_azienda=$codice_azienda$ and id_sondaggio_succ is not null)"
+    },
+    {
+      "fieldName": "no_giudizio",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Senza giudizio",
+      "newLine": false,
+      "queryCond": "ss.giudizio is null"
+    },
+    {
+      "fieldName": "flag_giudizio_manuale",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Con giudizio manuale",
+      "newLine": false,
+      "queryCond": "ss.pct_da_manuale is not null"
+    },
+    {
+      "fieldName": "flag_progetto_null",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Senza Progetto",
+      "newLine": false,
+      "queryCond": "snd.id_sondaggio not in (select id_sondaggio from entrasp.progetti_fasi where codice_azienda=snd.codice_azienda and id_sondaggio is not null)"
+    },
+    {
+      "fieldName": "flag_contratti_null",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Senza Contratto",
+      "newLine": true,
+      "queryCond": "snd.id_sondaggio in (select id_sondaggio from entrasp.sondaggi where codice_azienda=snd.codice_azienda and id_modello_test=snd.id_modello_test and id_contratto is null)"
+    },
+    {
+      "fieldName": "flag_profilazione_scaduta",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Profilazioni Collocatore Scadute",
+      "newLine": false,
+      "queryCond": "entrasp.prof_scaduta(ss.codice_azienda, ss.id_somministrazione) and ss.stato = 'C' and ss.data_inserimento IS NOT NULL"
+    },
+    {
+      "fieldName": "flag_ultimo_modello_test",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Mod Ver-per Data",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_ultimo_modello_test_rett",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Mod Ver -per ID",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio)"
+    },
+    {
+      "fieldName": "flag_ultimo_per_cliente",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ultimo Cli. per Data",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+    },
+    {
+      "fieldName": "flag_ultimo_per_cliente_rett",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ult. Cli. per ID",
+      "newLine": false,
+      "queryCond": "entrasp.is_max_object_key_rett(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+    },
+    {
+      "fieldName": "flag_contratti_cessati",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Cessati",
+      "newLine": true,
+      "queryCond": "split_part(ss.object_key, '|', 2)::numeric IN(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato = 'C' and c2.id_cliente is not null GROUP BY c2.id_cliente)"
+    },
+    {
+      "fieldName": "flag_contratti_non_cessati",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Escluso Cessati",
+      "newLine": false,
+      "queryCond": "(split_part(ss.object_key, '|', 2)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='€global_codice_azienda€' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='€global_codice_part€' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='€global_codice_azienda€' and cntx.id_cliente is not null)))"
+    },
+    {
+      "fieldName": "flag_somministrazioni_mie",
+      "format": {
+        "value": "0",
+        "viewType": "toggle"
+      },
+      "label": "Mie/Mio Ufficio",
+      "newLine": false,
+      "queryCond": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+    },
+    {
+      "fieldName": "solo_profilazioni_aml",
+      "format": {
+        "value": "1",
+        "viewType": "toggle"
+      },
+      "label": "Solo profilazioni aml",
+      "newLine": false,
+      "queryCond": "mt.id_argomento in(294, 366, 367, 563, 419, 564, 6740, 43451, 48339, 48338)"
+    },
+    {
+      "fieldName": "flag_discostamenti",
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "label": "Alert Discostamenti ADV",
+      "newLine": false,
+      "queryCond": "ss.id_somministrazione IN (SELECT id_somministrazione FROM entrasp.risposte WHERE codice_azienda=ss.codice_azienda AND id_domanda=4200 AND ((id_risposta_prev = 3 AND entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) IN ('Basso','Medio-Basso','Medio-Alto') )OR (id_risposta_prev IN (1,2) AND entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda)='Alto'))AND ID_SOMMINISTRAZIONE = SS.ID_SOMMINISTRAZIONE)"
+    },
+    {
+      "fieldName": "incompleto_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Incompleto",
+      "newLine": false,
+      "queryCond": "ss.somministrazione_completata!='Completo'"
+    },
+    {
+      "fieldName": "completo_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Completo",
+      "newLine": false,
+      "queryCond": "ss.somministrazione_completata='Completo'"
+    },
+    {
+      "fieldName": "non_chiuso_s",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Non chiuso",
+      "newLine": false,
+      "queryCond": "ss.stato!='C'"
+    },
+    {
+      "fieldName": "no_controlli_succ",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "No controlli successivi",
+      "newLine": true,
+      "queryCond": "snd.id_sondaggio_succ is null"
+    },
+    {
+      "fieldName": "data_esec_data_prev",
+      "format": {
+        "viewType": "checkbox",
+        "value": "0"
+      },
+      "label": "Esec >30 Prev",
+      "newLine": false,
+      "queryCond": "snd.data_esecuzione >= (snd.data_prevista + interval '1 month')"
     }
   ],
   "exportQueries": {
