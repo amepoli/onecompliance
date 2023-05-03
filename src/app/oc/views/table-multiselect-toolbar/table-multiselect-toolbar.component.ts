@@ -45,9 +45,9 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                 });
                 if(primaryKeys.length > 0) {
                     let key_values = primaryKeys.map( x => x.key);
-                    let params = key_values.join(" || '-' || ");
+                    let params = key_values.join(" || '~' || ");
                     let dataRows = _this.selection.selected.map( s => {
-                        return `'${key_values.map( key => s[key]).join('-')}'`;
+                        return `'${key_values.map( key => s[key]).join('~')}'`;
                     });
                     let data = dataRows.join(',');
                     let finalCondition = ` WHERE (${params}) IN (${data});`;
@@ -93,9 +93,9 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                 });
                 if(primaryKeys.length > 0) {
                     let key_values = primaryKeys.map( x => x.key);
-                    let params = key_values.join(" || '-' || ");
+                    let params = key_values.join(" || '~' || ");
                     let dataRows = _this.selection.selected.map( s => {
-                        return `'${key_values.map( key => s[key]).join('-')}'`;
+                        return `'${key_values.map( key => s[key]).join('~')}'`;
                     });
                     let data = dataRows.join(',');
                     let finalCondition = ` WHERE (${params}) IN (${data});`;
