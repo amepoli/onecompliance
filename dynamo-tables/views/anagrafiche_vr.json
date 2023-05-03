@@ -41,6 +41,12 @@
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
         },
         {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null and $partita_iva$ is null limit 1",
+            "messageNotNull": "Attenzione: inserire codice fiscale o partita iva per continuare!"
+        },
+        {
             "operation": "update",
             "type": "preCheck",
             "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$ and id_anagrafica!= $id_anagrafica$",
@@ -51,6 +57,12 @@
             "type": "preCheck",
             "queryString": "select codice_fiscale from entrasp.anagrafiche_vr where codice_part=$codice_part$ and codice_fiscale=$codice_fiscale$ and id_anagrafica!= $id_anagrafica$",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null and $partita_iva$ is null limit 1",
+            "messageNotNull": "Attenzione: inserire codice fiscale o partita iva per continuare!"
         },
         {
             "operation": "update",
