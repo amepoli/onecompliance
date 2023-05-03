@@ -1677,6 +1677,17 @@
       "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
     },
     {
+      "fieldName": "id_anagrafica_ver_s",
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, id_anagrafica||'-'||entrasp.anagrafiche_id_codcognnome(codice_part, id_anagrafica) as name from entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_cognnome(codice_part, id_anagrafica);",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Anagrafica verificata",
+      "newLine": false,
+      "queryCond": "(ss.object_key=$codice_azienda$||'|'||$id_anagrafica_ver_s$ and ss.object_name='anagraficheId')"
+    },
+    {
       "format": {
         "comboQuery": "SELECT distinct giudizio AS id, giudizio AS name  FROM entrasp.sondaggi_somministrati WHERE codice_azienda=$codice_azienda$;",
         "options": [],
