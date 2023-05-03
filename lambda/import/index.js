@@ -816,7 +816,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                     //let replacement = keys[key].value ? keys[key].value : keys[key]; // handle subtables
                     // replace single quotes with double quotes within strings to avoid errors with queries
 
-                    let valueWithFixedQuotes = (keys[key] != null && keyType && keyType.dataType === 'text') ? keys[key].replace(/'/g, "''") : keys[key];
+                    let valueWithFixedQuotes = (keys[key] != null && keyType && keyType.dataType === 'text') ? keys[key].toString().replace(/'/g, "''") : keys[key];
                     let replacement = keys[key] == null ? 'null' : bracket + valueWithFixedQuotes + bracket;
                     //console.log ('toReplace: ', toReplace, ' replacement: ', replacement);
                     let newString = queryString.replace(toReplace, replacement);
