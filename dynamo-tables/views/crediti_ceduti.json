@@ -1219,7 +1219,7 @@
       },
       "label": "Fattura N.",
       "newLine": true,
-      "queryCond": "n_fattura=$n_fattura$"
+      "queryCond": "n_fattura='$n_fattura$'"
     },
     {
       "fieldName": "flag_lav_legale",
@@ -1332,12 +1332,12 @@
       },
       "label": "Fattura duplicata",
       "newLine": false,
-      "queryCond": "n_fattura in (select n_fattura from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
+      "queryCond": "extract(year from data_fattura)||n_fattura||id_cedente in (select extract(year from data_fattura)||n_fattura||id_cedente from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
       "size": 0
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "limit 100"
+    "tableViewSuffix": "order by id_cessione desc, id_cedente desc, n_fattura desc limit 100"
   },
   "hideActions": [
     {
