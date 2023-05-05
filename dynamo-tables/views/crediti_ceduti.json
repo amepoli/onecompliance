@@ -953,11 +953,21 @@
       "format": {
         "dataType": "date"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "data_scadenza",
       "width": "5%",
       "label": "Data Scad."
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_fattura",
+      "width": "5%",
+      "label": "Data Fatt."
     },
     {
       "format": {
@@ -1218,8 +1228,19 @@
         "viewType": "combobox"
       },
       "label": "Fattura N.",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "n_fattura='$n_fattura$'"
+    },
+    {
+      "fieldName": "id_contratto_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_contratto AS id, numero_contratto AS name FROM entrasp.contratti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Contratto N.",
+      "newLine": true,
+      "queryCond": "id_contratto=$id_contratto_s$"
     },
     {
       "fieldName": "flag_lav_legale",
@@ -1334,6 +1355,16 @@
       "newLine": false,
       "queryCond": "extract(year from data_fattura)||n_fattura||id_cedente in (select extract(year from data_fattura)||n_fattura||id_cedente from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
       "size": 0
+    },
+    {
+      "fieldName": "max_tranche",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Ultima tranche",
+      "newLine": false,
+      "queryCond": "tranche IN (SELECT max(tranche) FROM entrasp.crediti_ceduti cci WHERE codice_azienda=crediti_ceduti.codice_azienda and id_contratto=crediti_ceduti.id_contratto)",
+      "size": 0
     }
   ],
   "querySuffixes": {
@@ -1349,7 +1380,7 @@
     "tableQueries": [
       {
         "label": "Template crediti",
-        "queryString": "SELECT cre.id_cessione,cnt.numero_contratto,cre.tranche,cre.n_fattura,entrasp.anagrafiche_vr_dati_identificativi(cre.codice_part, cre.id_cedente) as id_cedente,entrasp.anagrafiche_vr_dati_identificativi(cre.codice_part, cre.id_debitore_ceduto) as id_debitore_ceduto,cre.data_pagamento FROM entrasp.crediti_ceduti cre INNER JOIN entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda AND cre.id_contratto=cnt.id_contratto WHERE cre.data_pagamento IS NULL AND cre.codice_azienda=$codice_azienda$"
+        "queryString": "SELECT cre.id_cessione,cnt.numero_contratto,cre.tranche,cre.n_fattura,entrasp.anagrafiche_vr_dati_identificativi(cre.codice_part, cre.id_cedente) as id_cedente,entrasp.anagrafiche_vr_dati_identificativi(cre.codice_part, cre.id_debitore_ceduto) as id_debitore_ceduto, cre.importo, cre.data_fattura, cre.data_pagamento FROM entrasp.crediti_ceduti cre INNER JOIN entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda AND cre.id_contratto=cnt.id_contratto WHERE cre.data_pagamento IS NULL AND cre.codice_azienda=$codice_azienda$ order by entrasp.anagrafiche_vr_dati_identificativi(cre.codice_part, cre.id_cedente) asc,entrasp.anagrafiche_vr_dati_identificativi(cre.codice_part, cre.id_debitore_ceduto) asc, data_fattura asc"
       }
     ]
   },
