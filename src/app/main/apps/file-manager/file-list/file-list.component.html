@@ -1,17 +1,23 @@
 <mat-table #table [dataSource]="dataSource" [@animateStagger]="{value:'80'}">
 
     <!-- Icon Column -->
-    <!-- <ng-container matColumnDef="icon">
+    <ng-container matColumnDef="icon">
         <mat-header-cell *matHeaderCellDef fxFlex="64px"></mat-header-cell>
         <mat-cell *matCellDef="let row" fxFlex="64px">
             <mat-icon class="type-icon" [ngClass]="row.type"></mat-icon>
         </mat-cell>
-    </ng-container> -->
+    </ng-container>
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
         <mat-cell *matCellDef="let row"> {{row.name}}</mat-cell>
+    </ng-container>
+
+    <!-- rifDate Column -->
+    <ng-container matColumnDef="rifDate">
+        <mat-header-cell *matHeaderCellDef fxHide fxShow.gt-md fxFlex="10%">Reference date</mat-header-cell>
+        <mat-cell *matCellDef="let row" fxHide fxShow.gt-md fxFlex="10%">{{row.rifDate}}</mat-cell>
     </ng-container>
 
     <!-- Type Column ->
@@ -22,24 +28,24 @@
 
     <!-- Owner Column -->
     <ng-container matColumnDef="owner">
-        <mat-header-cell *matHeaderCellDef fxHide.xs>Owner</mat-header-cell>
-        <mat-cell *matCellDef="let row" fxHide.xs> {{row.owner}}</mat-cell>
-    </ng-container>
-
-    <!-- Size Column -->
-    <ng-container matColumnDef="size">
-        <mat-header-cell *matHeaderCellDef fxHide.xs>Size</mat-header-cell>
-        <mat-cell *matCellDef="let row" fxHide.xs>{{row.size === '' ? '-': row.size}}</mat-cell>
+        <mat-header-cell *matHeaderCellDef fxHide.xs fxFlex="20%">Owner</mat-header-cell>
+        <mat-cell *matCellDef="let row" fxHide.xs fxFlex="20%"> {{row.owner}}</mat-cell>
     </ng-container>
 
     <!-- Modified Column -->
     <ng-container matColumnDef="modified">
-        <mat-header-cell *matHeaderCellDef fxHide fxShow.gt-md>Modified</mat-header-cell>
-        <mat-cell *matCellDef="let row" fxHide fxShow.gt-md>{{row.modified}}</mat-cell>
+        <mat-header-cell *matHeaderCellDef fxHide fxShow.gt-md fxFlex="15%">Modified</mat-header-cell>
+        <mat-cell *matCellDef="let row" fxHide fxShow.gt-md fxFlex="15%">{{row.modified}}</mat-cell>
+    </ng-container>
+
+     <!-- Size Column -->
+     <ng-container matColumnDef="size">
+        <mat-header-cell *matHeaderCellDef fxHide.xs fxFlex="10%">Size</mat-header-cell>
+        <mat-cell *matCellDef="let row" fxHide.xs fxFlex="10%">{{row.size === '' ? '-': row.size}}</mat-cell>
     </ng-container>
 
     <!-- Detail Button Column -->
-    <ng-container matColumnDef="detail-button">
+    <!-- <ng-container matColumnDef="detail-button">
         <mat-header-cell *matHeaderCellDef fxFlex="48px" fxHide.xs></mat-header-cell>
         <mat-cell *matCellDef="let row" fxFlex="48px" fxHide.xs>
             <button mat-icon-button class="sidebar-toggle" fxHide.xs
@@ -47,7 +53,7 @@
                 <mat-icon class="secondary-text">info</mat-icon>
             </button>
         </mat-cell>
-    </ng-container>
+    </ng-container> -->
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"

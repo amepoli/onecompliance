@@ -87,7 +87,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 }
             }
             if (_this.newTypeParams.keys.codice_azienda == null) { // hack, tipi_allegati requires this field
-                _this.newTypeParams.keys.codice_azienda = _this.authService.getCurrentCompany(); 
+                _this.newTypeParams.keys.codice_azienda = _this.authService.getCurrentCompany();
                 //_this.newTypeParams.keys.codice_part;
             }
             _this.attach = true;
@@ -179,7 +179,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
             _this.fileUploader.registerOnChange(function (files: File[]): void {
                 _this.files = files;
                 _this.form = _this.formRef.formArray.first.form; // getting the FormGroup
-                // _this.form.patchValue({ fileName: file.name, dimensione: file.size });
+                _this.form.patchValue({ fileName: files[0].name, dimensione: files[0].size });
                 // _this.onFileSelected();
             });
         }
@@ -223,12 +223,13 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                                 'type': 'document',
                                 'owner': element.revisore,
                                 'size': this.fileService.getFileSize(element.dimensione),
-                                'modified': new Date(element.data_ultima_revisione || element.data_creazione).toString(),
-                                'opened': new Date(element.data_ins || element.data_ultima_accesso).toString(),
-                                'created': new Date(element.data_creazione).toString(),
+                                'modified': new Date(element.data_ultima_revisione || element.data_creazione).toLocaleString(),
+                                'opened': new Date(element.data_ins || element.data_ultima_accesso).toLocaleString(),
+                                'created': new Date(element.data_creazione).toLocaleString(),
                                 'extention': '',
                                 'location': '',
-                                'offline': true
+                                'offline': true,
+                                'rifDate': new Date(element.data_rif_a).toLocaleDateString()
                             };
                             files.push(file);
                         });
@@ -308,13 +309,13 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 let responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
                 _this._console.log(responseCheck);
                 if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
-                    if(_this.authService.getSyncMode() === 'google') {
+                    if (_this.authService.getSyncMode() === 'google') {
                         const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).toPromise();
                         _this._console.log(googleDriveFileCopyParamsResponse);
                         _this._console.log('Uploading to google');
                         try {
-                            if(googleDriveFileCopyParamsResponse.result === 'OK') {
-                                if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
+                            if (googleDriveFileCopyParamsResponse.result === 'OK') {
+                                if (googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
                                     let auth = await _this.authService.loadGoogleAuth('gdrive');
                                     let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
                                     let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
@@ -324,7 +325,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                                 }
                             }
                         }
-                        catch(e) {
+                        catch (e) {
                             _this._console.error("Google upload error: ", e);
                         }
                     }
@@ -336,8 +337,8 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                     else {
                         _this._toastService.showSuccessToast("File uploaded successfully");
                     }
-                    if(i < _this.files.length - 1) {
-                        _this.saveFile(i+1);
+                    if (i < _this.files.length - 1) {
+                        _this.saveFile(i + 1);
                     }
                     else {
                         if (_this.data.onSave) {
@@ -345,7 +346,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                         }
                         _this.isSaving = false;
                         _this.fileService.requestReload(_this.data.entryName);
-                    }                    
+                    }
                 }
                 else {
                     // Show error snackbar
@@ -359,17 +360,17 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 _this._toastService.showErrorToast(responseURL.reason);
             }
         }
-        catch(e) {
+        catch (e) {
             _this.isSaving = false;
             _this._toastService.showErrorToast(e);
         }
     }
 
     getValue(val: any) {
-        if(val !== null && val !== undefined) {
-            if(typeof val === 'object' && !Array.isArray(val)) {
-                if(val.id !== null && val.id !== undefined) {
-                    if(typeof val.id === 'object' && !Array.isArray(val.id)) {
+        if (val !== null && val !== undefined) {
+            if (typeof val === 'object' && !Array.isArray(val)) {
+                if (val.id !== null && val.id !== undefined) {
+                    if (typeof val.id === 'object' && !Array.isArray(val.id)) {
                         return val.id.id;
                     }
                     else {
@@ -379,11 +380,11 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
             }
             else {
                 return val;
-            }            
-        } 
+            }
+        }
         return null;
     }
-    
+
     // onFileSelected() {
     //     let _this = this;
     //     const blob = new Blob([_this.file]);
