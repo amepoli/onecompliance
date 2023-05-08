@@ -92,7 +92,6 @@ function processCSV(csvData) {
             for (let i = 0; i < line.length; i++) {
                 // let's go through each character one by one.
                 let curChar = line[i];
-                if (i < 20) {console.log(i+' curchar: ',curChar);}
                 if (!columnStarted) {
                     if (curChar === '"') {
                         curColumn = "";
