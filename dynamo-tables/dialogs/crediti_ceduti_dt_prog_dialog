@@ -1,0 +1,65 @@
+{
+    "$schema": "../dialogs.schema.json",
+    "entryKey": "crediti_ceduti_dt_prog_dialog",
+    "origin": "entrasp.crediti_ceduti",
+    "businessObjectName": "crediti_ceduti",
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select sum(importo) from entrasp.crediti_ceduti WHERE codice_azienda||'~'||id_cessione IN (SELECT * FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR)"
+        }
+    ],
+    "form_dialog_keys": [
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "output"
+            },
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Azienda"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "output"
+            },
+            "isPrimary": true,
+            "key": "id_cessione",
+            "label": "Id_Cessione"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "output"
+            },
+            "key": "importo",
+            "label": "Importo"
+        },
+        {
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "key": "data_pagamento",
+            "label": "Data pagamento"
+        },
+        {
+            "format": {
+                "dataType": "boolean",
+                "viewType": "input"
+            },
+            "key": "flag_azionato",
+            "label": "Azionato"
+        },
+        {
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT id_contratto AS id, numero_contratto as name from entrasp.anagrafiche_id WHERE codice_azienda IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR)"
+            },
+            "key": "id_contratto",
+            "label": "Contratto"
+        }
+    ]
+}

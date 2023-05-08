@@ -222,12 +222,13 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                 'type': 'document',
                                 'owner': element.revisore,
                                 'size': this.fileService.getFileSize(element.dimensione),
-                                'modified': new Date(element.data_ultima_revisione || element.data_creazione).toString(),
-                                'opened': new Date(element.data_ins || element.data_ultima_accesso).toString(),
-                                'created': new Date(element.data_creazione).toString(),
+                                'modified': new Date(element.data_ultima_revisione || element.data_creazione).toLocaleString(),
+                                'opened': new Date(element.data_ins || element.data_ultima_accesso).toLocaleString(),
+                                'created': new Date(element.data_creazione).toLocaleString(),
                                 'extention': '',
                                 'location': '',
-                                'offline': true
+                                'offline': true,
+                                'rifDate': new Date(element.data_rif_a).toLocaleDateString()
                             };
                             files.push(file);
                         });
@@ -256,6 +257,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 // get the S3 URL 
                 const responseURL: any = await _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).toPromise();
                 _this._console.log(responseURL);
+
                 if (responseURL != null && responseURL.result === 'OK') {
                     const blob = new Blob([_this.file]);
                     // upload the file using obtained url
@@ -300,12 +302,12 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                     _this._console.log('responseCheck: ', responseCheck);
                     if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
                         _this._console.log(responseCheck);
-                        if(_this.authService.getSyncMode() === 'google') {
+                        if (_this.authService.getSyncMode() === 'google') {
                             try {
                                 const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).toPromise();
                                 _this._console.log('googleDriveFileCopyParamsResponse', googleDriveFileCopyParamsResponse);
-                                if(googleDriveFileCopyParamsResponse.result === 'OK') {
-                                    if(googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
+                                if (googleDriveFileCopyParamsResponse.result === 'OK') {
+                                    if (googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
                                         let auth = await _this.authService.loadGoogleAuth('gdrive');
                                         let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
                                         let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
@@ -315,7 +317,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                                     }
                                 }
                             }
-                            catch(e) {
+                            catch (e) {
                                 _this._console.error("Google upload error: ", e);
                             }
                         }
@@ -357,10 +359,10 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getValue(val: any) {
-        if(val !== null && val !== undefined) {
-            if(typeof val === 'object' && !Array.isArray(val)) {
-                if(val.id !== null && val.id !== undefined) {
-                    if(typeof val.id === 'object' && !Array.isArray(val.id)) {
+        if (val !== null && val !== undefined) {
+            if (typeof val === 'object' && !Array.isArray(val)) {
+                if (val.id !== null && val.id !== undefined) {
+                    if (typeof val.id === 'object' && !Array.isArray(val.id)) {
                         return val.id.id;
                     }
                     else {
@@ -370,8 +372,8 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             else {
                 return val;
-            }            
-        } 
+            }
+        }
         return null;
     }
 

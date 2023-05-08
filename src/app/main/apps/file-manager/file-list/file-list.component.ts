@@ -18,7 +18,7 @@ export class FileManagerFileListComponent implements OnInit, OnDestroy
 {
     files: any;
     dataSource: FilesDataSource | null;
-    displayedColumns = [/*'icon',*/ 'name', /*'type',*/ 'owner', 'size', 'modified', 'detail-button'];
+    displayedColumns = ['icon', 'name', /*'type',*/'rifDate', 'owner', 'modified', 'size'/* , 'detail-button' */];
     selected: any;
 
     // Private

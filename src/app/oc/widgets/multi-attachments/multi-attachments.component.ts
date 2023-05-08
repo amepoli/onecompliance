@@ -99,12 +99,14 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
                                 'type': 'document',
                                 'owner': element.autore,
                                 'size': _this._fileService.getFileSize(element.dimensione),
-                                'modified': new Date(element.data_upd).toString(),
-                                'opened': new Date(element.data_ins).toString(),
-                                'created': new Date(element.data_creazione).toString(),
+                                'modified': new Date(element.data_upd).toLocaleString(),
+                                'opened': new Date(element.data_ins).toLocaleString(),
+                                'created': new Date(element.data_creazione).toLocaleString(),
                                 'extention': '',
                                 'location': '',
-                                'offline': true
+                                'offline': true,
+                                'rifDate': new Date(element.data_rif_a).toLocaleDateString()
+
                             };
                             files.push(file);
                         });
