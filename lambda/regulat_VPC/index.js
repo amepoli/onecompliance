@@ -82,7 +82,7 @@ exports.handler = async (event) => {
                 AND ca.id_anagrafica=${registry} 
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL
-                AND ca.codice_ruolo IN ('TIEF','ESE','COINT')
+                AND ca.codice_ruolo IN ('TIEF','ESEC','COINT')
                 AND ca.dt_fine IS NULL
                 AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null);`;
 
@@ -153,7 +153,7 @@ exports.handler = async (event) => {
                 AND ca.id_anagrafica=(SELECT split_part(object_key, '|', 2)::numeric FROM entrasp.sondaggi_somministrati WHERE codice_azienda='${company}' AND id_somministrazione=${check} AND object_name='anagraficheId')
                 AND avr.prog_vr=entrasp.anagrafiche_vr_max(ca.codice_part, avr.id_anagrafica)
                 AND tipo_soggetto IS NOT NULL
-                AND ca.codice_ruolo IN ('TIEF','ESE','COINT')
+                AND ca.codice_ruolo IN ('TIEF','ESEC','COINT')
                 AND ca.dt_fine IS NULL
                 AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null);`;
 
