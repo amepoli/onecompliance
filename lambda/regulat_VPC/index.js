@@ -73,7 +73,7 @@ exports.handler = async (event) => {
                 AND tipo_soggetto != 'C'
                 AND an.id_anagrafica NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null)
                 UNION
-                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, r.descrizione as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
+                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, string_agg(r.descrizione,',') as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
                 FROM entrasp.connessioni_anagrafiche ca 
                 INNER JOIN entrasp.anagrafiche_id an ON ca.codice_part=an.codice_part AND ca.id_anagrafica_conn=an.id_anagrafica 
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
@@ -84,7 +84,8 @@ exports.handler = async (event) => {
                 AND tipo_soggetto IS NOT NULL
                 AND ca.codice_ruolo IN ('TIEF','ESEC','COINT')
                 AND ca.dt_fine IS NULL
-                AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null);`;
+                AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null)
+                GROUP BY id_anagrafica_conn,tipo_soggetto,avr.ragione_sociale,an.nome,an.cognome,an.nascita_data;`;
 
                 //console.log('running query: ', query);
                 response = await client.query(query);
@@ -144,7 +145,7 @@ exports.handler = async (event) => {
                 AND tipo_soggetto != 'C'
                 AND an.id_anagrafica NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null)
                 UNION
-                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, r.descrizione as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
+                SELECT id_anagrafica_conn AS connected_registry, tipo_soggetto AS entity_type, avr.ragione_sociale as company_name, an.nome as name, an.cognome as surname, an.nascita_data as yob, string_agg(r.descrizione,',') as role, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as registry_name
                 FROM entrasp.connessioni_anagrafiche ca 
                 INNER JOIN entrasp.anagrafiche_id an ON ca.codice_part=an.codice_part AND ca.id_anagrafica_conn=an.id_anagrafica 
                 INNER JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica 
@@ -155,7 +156,8 @@ exports.handler = async (event) => {
                 AND tipo_soggetto IS NOT NULL
                 AND ca.codice_ruolo IN ('TIEF','ESEC','COINT')
                 AND ca.dt_fine IS NULL
-                AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null);`;
+                AND id_anagrafica_conn NOT IN (SELECT id_anagrafica FROM imports.aml_scans WHERE codice_azienda='${company}' AND date_of_scan = CURRENT_DATE and id_anagrafica is not null)
+                GROUP BY id_anagrafica_conn,tipo_soggetto,avr.ragione_sociale,an.nome,an.cognome,an.nascita_data;`;
 
                 //console.log('running query: ', query);
                 response = await client.query(query);
