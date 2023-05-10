@@ -1,0 +1,210 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "mandati",
+  "origin": "entrasp.crediti_ceduti",
+  "businessObjectName": "crediti_ceduti",
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "readOnly": true
+    },
+   {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "newLine": false,
+      "key": "n_mandato",
+      "label": "Lotto",
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_mandato",
+      "label": "Data mandato",
+      "newLine": false,
+      "size": 1.5,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_pagamento",
+      "label": "Data pagamento",
+      "newLine": false,
+      "size": 1.5,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": true,
+      "key": "importo_tot",
+      "label": "Importo Mandato",
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false,
+      "key": "id_cedente",
+      "label": "Cedente",
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "newLine": true,
+      "key": "id_mandante",
+      "label": "Debitore Ceduto",
+      "readOnly": false
+    }   
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+   {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "n_mandato",
+      "label": "N.Mandato"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_mandato",
+      "label": "Data mandato"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_pagamento",
+      "label": "Data pagamento"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "importo_tot",
+      "label": "Importo Mandato"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_cedente)",
+      "key": "id_cedente",
+      "label": "Cedente"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_mandante",
+      "label": "id_mandante"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_cedente)",
+      "key": "Mandante",
+      "label": "Mandante"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_cedente_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_cedente AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cedente",
+      "newLine": false,
+      "queryCond": "id_cedente=$id_cedente_s$"
+    },
+    {
+      "fieldName": "id_mandante_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_debitore_ceduto AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Mandante",
+      "newLine": false,
+      "queryCond": "id_mandante=$id_mandante_s$"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    }
+  ]
+}
