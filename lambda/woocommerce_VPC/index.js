@@ -251,6 +251,24 @@ exports.handler = function () { return __awaiter(void 0, void 0, void 0, functio
                 ;
                 _c.label = 6;
             case 6:
+                // let template = fs.readFileSync('./checklist_template.html', 'utf8');
+                // let options = {
+                //     format: 'A4',
+                //     orientation: 'portrait',
+                //     border: '10mm'
+                // };
+                // let data = {
+                //     title: 'My PDF Document',
+                //     content: 'Hello World!'
+                // };
+                // let pdf = await PDFCreator.create(template, data, options);
+                // var s3ParamsInsert = {
+                //     Bucket: process.env.BUCKET_NAME,
+                //     Key: 'test/' + 'pidieffe.pdf',
+                //     Body: pdf
+                // };
+                // // upload to S3
+                // await s3.putObject(s3ParamsInsert).promise();
                 console.log('bodyResponse: ', JSON.stringify(bodyResponse));
                 return [2 /*return*/, {
                         statusCode: 200,
