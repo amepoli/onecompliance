@@ -302,6 +302,8 @@ async function getIdAnagrafica(company, data) {
 
 exports.handler = async (event, context) => {
 
+    console.log('event', event);
+
     const queryParams = event.queryStringParameters;
 
     console.log(queryParams);
@@ -369,22 +371,26 @@ exports.handler = async (event, context) => {
     let client, body;
     client = await pool.connect();
 
-    // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
-    // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
-    const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+    var userid = null;
 
-    console.log('userid: ', userid);
-    
-    global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
-    console.log('global_variables: ', global_variables);
+    if (event.hasOwnProperty("requestContext")) {
+        // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
+        // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
+        userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 
-    // Handling RLS Policies on DB
-    let aziendeSet = "'" + (global_variables.global_user_companies ? global_variables.global_user_companies.replaceAll("'", "") : "") + "'";
-    console.log('aziendeSet: ', aziendeSet);
-    if (aziendeSet != "") {
-        await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
+        console.log('userid: ', userid);
+
+        global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
+        console.log('global_variables: ', global_variables);
+
+        // Handling RLS Policies on DB
+        let aziendeSet = "'" + (global_variables.global_user_companies ? global_variables.global_user_companies.replaceAll("'", "") : "") + "'";
+        console.log('aziendeSet: ', aziendeSet);
+        if (aziendeSet != "") {
+            await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
+        }
     }
-    
+
     try {
 
         // read the entry params from DynamoDB view table
@@ -404,19 +410,21 @@ exports.handler = async (event, context) => {
             const response = await client.query(query);
             body = { result: 'OK', list: response.rows.map(row => ({ "alias": row.alias, "descrizione": row.descrizione })) };
         } else if (requestType === 'getReport') {
+            
             reportDynamoParams.Key.name = reportName;
             var data = await dynamo.get(reportDynamoParams).promise();
             const keyPrefix = data.Item.tableNickname ? data.Item.tableNickname + '.' : '';     // table.key=value or just key=value 
             const ignorePrefixInSearchKey = data.Item.ignorePrefixInSearchKey ? true : false;
             const queryString = await getQuery(entryName, data.Item.queryString, keyPrefix, ignorePrefixInSearchKey, keys, search_keys, isFormRecord);
             const mainQuery = { name: reportName, query: queryString };
-            const userId = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
+            
+            if (userid) {
+                const userData = await getUserData(userid);
+                const username = userData.username;
+                const idUserAnagrafica = await getIdAnagrafica(company, userData);
+            }
 
-            const userData = await getUserData(userId);
-            const username = userData.username;
-            const idUserAnagrafica = await getIdAnagrafica(company, userData);
-
-            const url = await getURLFromServer(mainQuery, company, username, idUserAnagrafica);
+            const url = await getURLFromServer(mainQuery, company, username = '', idUserAnagrafica = '');
             if (url != null && url !== '') {
                 body = { result: 'OK', url: url };
             } else {
@@ -427,6 +435,7 @@ exports.handler = async (event, context) => {
         }
     } catch (e) {
         console.log(e);
+        await client.release();
         body = { result: 'KO', reason: 'Server error' };
     }
 
