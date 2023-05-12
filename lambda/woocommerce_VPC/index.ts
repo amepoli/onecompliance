@@ -5,6 +5,7 @@ import * as Pool from 'pg-pool';
 AWS.config.update({ region: process.env.REGION });
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
+const lambda = new AWS.Lambda({ region: process.env.REGION });
 
 const pool = new Pool({
     host: process.env.HOST_NAME,
@@ -132,6 +133,8 @@ exports.handler = async () => {
     const nextYearFromToday = d.toISOString();
 
     let query = `SELECT 'select coalesce(id_sezione,1) as sezione, (select descrizione from entrasp.domande_sezioni where id_modello_test=domande.id_modello_test and id_modello_test_vr=domande.id_modello_test_vr and codice_azienda=domande.codice_azienda and id_sezione=domande.id_sezione ) as descrizione_sezione, ordinamento, descrizione as domanda, punteggio as punteggio_domanda, note as note_domanda, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as risposte_previste from entrasp.domande where codice_azienda=''SITO'' and id_modello_test='||mt.id_modello_test||' and id_modello_test_vr='||mtvr.id_modello_test_vr||' order by id_sezione asc, ordinamento asc' query_excel_to_create,
+                    mt.id_modello_test,
+                    mtvr.id_modello_test_vr,
                     mt.titolo AS name,
                     concat_ws('.',mt.id_modello_test,mtvr.id_modello_test_vr,mt.codice) AS sku,
                     concat_ws('.',mt.id_modello_test,mtvr.id_modello_test_vr,mt.codice) AS partnersku,
@@ -153,7 +156,7 @@ exports.handler = async () => {
                     AND mt.id_modello_test=mtvr.id_modello_test
                 WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test)
                     AND mt.codice_azienda='SITO'
-                    AND mtvr.data_ins::date = CURRENT_DATE;`;
+                    --AND mtvr.data_ins::date = CURRENT_DATE;`;
 
     await pool
         .query(query)
@@ -189,23 +192,43 @@ exports.handler = async () => {
             let excelFile = excel.buildExport(excelData);
 
             // configurations to upload the file on S3
-            var filename = checkListTitle + '.xlsx'; // generate a 'unique' identifier as filename
+            var filename = checkListTitle; // generate a 'unique' identifier as filename
 
             var s3ParamsInsert = {
                 Bucket: process.env.BUCKET_NAME,
-                Key: 'test/' + filename,
+                Key: 'test/' + filename+ '.xlsx',
                 Body: excelFile
             };
             var s3ParamsUrl = {
                 Bucket: process.env.BUCKET_NAME,
-                Key: 'test/' + filename
+                Key: 'test/' + filename+ '.xlsx'
             };
 
             // upload to S3
             await s3.putObject(s3ParamsInsert).promise();
 
             // get the uploaded file url
-            let url = s3.getSignedUrl('getObject', s3ParamsUrl);
+            let excel_url = s3.getSignedUrl('getObject', s3ParamsUrl);
+            
+            //generate pdf_url
+
+            let payload = {
+                body: '"MT_Q&A_nosez_punt"',
+                queryStringParameters: {
+                    company: "SITO",
+                    entry_name: "modelli_test_vr",
+                    form: "1",
+                    keys: `{"codice_azienda":"SITO","id_modello_test": "${queryResult.rows[row].id_modello_test}","id_modello_test_vr":"${queryResult.rows[row].id_modello_test_vr}"}`
+                },
+                httpMethod: 'POST'
+            }
+
+            let response: any = await lambda.invoke({
+                FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:reports',
+                Payload: JSON.stringify(payload)
+            }).promise(); 
+
+            let pdf_url = JSON.parse(JSON.parse(response.Payload).body).url; 
 
             //push the check list
             bodyResponse.response.push({
@@ -222,16 +245,21 @@ exports.handler = async () => {
                 stock: queryResult.rows[row].stock,
                 price: queryResult.rows[row].price,
                 downloads: [{
-                    id: filename,
-                    name: filename,
-                    file: url
+                    id: filename+ '.xlsx',
+                    name: filename+ '.xlsx',
+                    file: excel_url
+                },
+                {
+                    id: filename+ '.pdf',
+                    name: filename+ '.pdf',
+                    file: pdf_url
                 }],
                 downloadLimit: queryResult.rows[row].downloadlimit,
                 downloadExpiry: queryResult.rows[row].downloadexpiry
             });
 
         };
-    }    
+    }
 
     console.log('bodyResponse: ', JSON.stringify(bodyResponse));
 
