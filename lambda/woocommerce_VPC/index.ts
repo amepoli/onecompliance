@@ -131,7 +131,7 @@ exports.handler = async () => {
     d.setFullYear(d.getFullYear() + 1);
     const nextYearFromToday = d.toISOString();
 
-    let query = `SELECT 'select coalesce(id_sezione,1) as sezione, ordinamento, descrizione as domanda, note as note_domanda, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as risposte_previste from entrasp.domande where codice_azienda=''SITO'' and id_modello_test='||mt.id_modello_test||' and id_modello_test_vr='||mtvr.id_modello_test_vr||' order by id_sezione asc, ordinamento asc' query_excel_to_create,
+    let query = `SELECT 'select coalesce(id_sezione,1) as sezione, (select descrizione from entrasp.domande_sezioni where id_modello_test=domande.id_modello_test and id_modello_test_vr=domande.id_modello_test_vr and codice_azienda=domande.codice_azienda and id_sezione=domande.id_sezione ) as descrizione_sezione, ordinamento, descrizione as domanda, punteggio as punteggio_domanda, note as note_domanda, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as risposte_previste from entrasp.domande where codice_azienda=''SITO'' and id_modello_test='||mt.id_modello_test||' and id_modello_test_vr='||mtvr.id_modello_test_vr||' order by id_sezione asc, ordinamento asc' query_excel_to_create,
                     mt.titolo AS name,
                     concat_ws('.',mt.id_modello_test,mtvr.id_modello_test_vr,mt.codice) AS sku,
                     concat_ws('.',mt.id_modello_test,mtvr.id_modello_test_vr,mt.codice) AS partnersku,
