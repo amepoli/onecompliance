@@ -5,7 +5,7 @@
   "businessObjectName": "indicatori_report",
   "predefinedQueries": [
     {
-      "queryString": "select *, entrasp.report_description(id_report) as report_description from entrasp.indicatori_report where id_indicatore=$id_indicatore$",
+      "queryString": "select *, entrasp.report_description(id_report) as report_description, true as delete_indicatori_report from entrasp.indicatori_report where id_indicatore=$id_indicatore$",
       "operation": "selectTable",
       "type": "main"
     }
@@ -134,6 +134,45 @@
     }
   ],
   "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "4%",
+      "queryFunct": "select true",
+      "key": "delete_indicatori_report",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "*"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "indicators_sub_of_reports",
+        "viewType": "table",
+        "query": "delete from entrasp.indicatori_report where id_indicatore=£id_indicatore£ AND id_report=£id_report£",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_report",
+            "destination": "id_report"
+          },
+          {
+            "source": "id_indicatore",
+            "destination": "id_indicatore"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
     {
       "format": {
         "dataType": "number"
