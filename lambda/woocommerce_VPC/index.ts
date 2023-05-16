@@ -156,7 +156,7 @@ exports.handler = async () => {
                     AND mt.id_modello_test=mtvr.id_modello_test
                 WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test)
                     AND mt.codice_azienda='SITO'
-                    --AND mtvr.data_ins::date = CURRENT_DATE;`;
+                    AND (mtvr.data_ins::date = CURRENT_DATE OR mtvr.data_upd::date=CURRENT_DATE);`;
 
     await pool
         .query(query)
@@ -213,7 +213,7 @@ exports.handler = async () => {
             //generate pdf_url
 
             let payload = {
-                body: '"MT_Q&A_nosez_punt"',
+                body: '"MT_sito"',
                 queryStringParameters: {
                     company: "SITO",
                     entry_name: "modelli_test_vr",
