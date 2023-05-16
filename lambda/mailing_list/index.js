@@ -242,7 +242,7 @@ exports.handler = async (event) => {
             frequency = result.rows[row].frequency;
 
             // generate report main sheet's data
-            let queries = query_excel_to_create.split(";");
+            let queries = query_excel_to_create.split("~~");
             let titles = sheet_titles.split(";");
             let ids = indicators_id.split(";");
             let values = indicators_value.split(";");
