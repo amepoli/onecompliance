@@ -327,6 +327,12 @@
                         "label": "Registra variazione legami in AUI",
                         "outputEventName": "variazione_legami_aui",
                         "tooltip": "E' possibile registrare le variazioni dei legami della presente anagrafica in AUI dove sono presenti contratti registrati attivi"
+                    },
+                    {
+                        "icon": "content_copy",
+                        "label": "SCONSIGLIATO: Duplica anagrafica",
+                        "outputEventName": "duplica_anagrafica",
+                        "tooltip": "E' possibile duplicare l'anagrafica corrente al fine di avere più anagrafiche con lo stesso codice fiscale o partita IVA"
                     }
                 ]
             },
@@ -396,6 +402,14 @@
                     "successMessage": "Variazioni registrate",
                     "values": [],
                     "queryFunct": "select entrasp.aui_registra_variazione_legame_soggetti($codice_azienda$,$id_anagrafica$);"
+                },
+                {
+                    "eventName": "duplica_anagrafica",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Anagrafica duplicata",
+                    "values": [],
+                    "queryFunct": "select entrasp.anagrafica_clona($codice_part$, $id_anagrafica$, $codice_part$);"
                 }
             ]
         },
