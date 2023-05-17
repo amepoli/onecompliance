@@ -209,7 +209,7 @@ exports.handler = async (event) => {
     let body = [];
 
     if (event.mode && event.mode == 'test') {
-        console.log ('TEST MODE ON');
+        console.log('TEST MODE ON');
         await pool
             .query(`select * from entrasp.mailing_list('test');`)
             .then(res => result = res.rows.length > 0 ? res : null)
@@ -262,13 +262,15 @@ exports.handler = async (event) => {
 
             // generate and join report sheet's data
             for (const value in values) {
+                let queryResult = null;
                 if (values[value] != 0) {
                     // here it prepares secondary sheets to the main one
                     await pool
                         .query(queries[value])
-                        .then(res => excelData.push(dataPrepare2xls(res, titles[value])))
+                        .then((res => queryResult = res.rows.length > 0 ? res : null))
                         .catch(err => console.error('Error executing query: ', queries[value] + '\nERROR: ' + err.stack));
                 }
+                if (queryResult) { excelData.push(dataPrepare2xls(queryResult, titles[value])) }
             };
 
             // generate the report
@@ -305,7 +307,6 @@ exports.handler = async (event) => {
                     path: 'mail/' + filename
                 }]
             });
-
             // console.log('SESParams: ', JSON.stringify(sesParams));
             // body = JSON.stringify(sesParams);
 

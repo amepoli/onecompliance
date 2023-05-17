@@ -4,6 +4,7 @@ aws lambda invoke \
 --function-name mailing_list \
 --cli-binary-format raw-in-base64-out \
 --payload  '' \
+--cli-read-timeout 0 \
 mailing_list.json
 
 mailingList=`cat ./mailing_list.json`
