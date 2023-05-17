@@ -20,6 +20,15 @@
           "confirmActionMessage": "Inserire il flag lavorazione_legale alla selezione?"
         },
         {
+          "key": "flag_ricessione",
+          "icon": "date",
+          "label": "Segnare Ricessione",
+          "query": "update entrasp.crediti_ceduti set ricessione = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag ricessione alla selezione?"
+        },
+        {
           "key": "flag_esecutivo",
           "icon": "date",
           "label": "Segnare Esecutivo",
@@ -1006,13 +1015,24 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "interessi_legge",
       "label": "Interesse di Legge",
       "sameOrigin": false,
-      "queryFunct": "entrasp.interessi_scaduto_pagato (data_fattura,data_pagamento,id_contratto, codice_azienda,importo)",
-      "width": "7%"
+      "queryFunct": "entrasp.interessi_scaduto_pagato (data_fattura,data_pagamento,id_contratto, codice_azienda,importo)"
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "isCheckbox": true,
+      "key": "ricessione",
+      "width": "7%",
+      "sameOrigin": false,
+      "label": "Ricessione"
     },
     {
       "format": {
@@ -1068,13 +1088,24 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "giorni_scaduto",
-      "width": "8%",
       "sameOrigin": false,
       "queryFunct": "entrasp.calcola_scaduto (data_fattura, data_pagamento)",
       "label": "Giorni Scaduto"
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "isCheckbox": true,
+      "key": "lavorazione_legale",
+      "width": "8%",
+      "sameOrigin": false,
+      "label": "Lavorazione legale"
     }
   ],
   "search_keys": [
