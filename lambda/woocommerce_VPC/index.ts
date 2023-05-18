@@ -224,7 +224,7 @@ exports.handler = async () => {
             }
 
             let response: any = await lambda.invoke({
-                FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:reports',
+                FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:reports_prod',
                 Payload: JSON.stringify(payload)
             }).promise(); 
 

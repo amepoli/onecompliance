@@ -218,7 +218,7 @@ exports.handler = function () { return __awaiter(void 0, void 0, void 0, functio
                                     httpMethod: 'POST'
                                 };
                                 return [4 /*yield*/, lambda.invoke({
-                                        FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:reports',
+                                        FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:reports_prod',
                                         Payload: JSON.stringify(payload)
                                     }).promise()];
                             case 4:
