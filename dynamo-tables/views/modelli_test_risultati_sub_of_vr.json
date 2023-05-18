@@ -92,7 +92,7 @@
       "label": "Descrizione",
       "newLine": false,
       "readOnly": true,
-      "size": 2
+      "size": 1.8
     },
     {
       "autoGenerate": false,
@@ -108,7 +108,7 @@
       "label": "Tipo calcolo risultato sintetico",
       "newLine": false,
       "readOnly": false,
-      "size": 3
+      "size": 2.7
     },
     {
       "autoGenerate": false,
@@ -145,7 +145,7 @@
       "size": 1.5,
       "key": "flag_penalizzazioni",
       "label": "Penalizzazioni",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false,
       "sameOrigin": false,
       "outputEvent": {
@@ -190,6 +190,53 @@
           "queryFunct": "UPDATE entrasp.modelli_test_vr SET tipo_pt_pen = £tipo_pt_pen£ WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$ AND id_modello_test_vr=$id_modello_test_vr$;"
         }
       ]
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "menu",
+        "menuOptions": [
+          {
+            "icon": "class",
+            "label": "Crea e associa argomento",
+            "outputEventName": "create_associate_argomento"
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "eventName": "create_associate_argomento",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "reload_modelli_test_risultati",
+          "queryFunct": "select entrasp.argomenti_create_and_update_risultati($codice_azienda$, $id_risultato$, $descrizione$, $descrizione$ , $id_risultato$::varchar, 49800)"
+        }
+      ],
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "more_vert",
+      "key": "mtr_actions",
+      "label": "",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "label": "Argomento",
+      "readOnly": false,
+      "size": 3.33,
+      "newLine": false
     }
   ],
   "subTables": [
