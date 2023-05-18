@@ -6,8 +6,27 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select tn.*, (entrasp.ultimo_aggiornamento_testo_normativo(tn.id_testo_normativo)) as ultima_data_aggiornamento,  (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn",
+      "queryString": "select tn.*, (entrasp.ultimo_aggiornamento_testo_normativo(tn.id_testo_normativo)) as ultima_data_aggiornamento,  (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn WHERE true",
       "type": "main"
+    }
+  ],
+  "table_multiselection_actions": [
+    {
+      "viewType": "menu",
+      "key": "menuanag",
+      "label": "Actions",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "unifica",
+          "icon": "merge_type",
+          "label": "Unifica testi normativi",
+          "query": "select entrasp.unifica_testi_normativi(array[$selected_rows_data$], '€global_codice_azienda€')",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Unificare i testi normativi selezionati?"
+        }
+      ]
     }
   ],
   "form_keys": [
@@ -158,6 +177,17 @@
     }
   ],
   "search_keys": [
+    {
+      "fieldName": "id_testo_normativi_list",
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "label": "Lista id",
+      "newLine": false,
+      "size": 2.5,
+      "queryCond": "id_testo_normativo::text=any(string_to_array(replace($id_testo_normativi_list$, ' ', ''), ','))"
+    },
     {
       "fieldName": "id_testo_normativo",
       "format": {
