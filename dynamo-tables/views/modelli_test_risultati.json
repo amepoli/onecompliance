@@ -30,7 +30,7 @@
       "label": "#",
       "newLine": false,
       "readOnly": true,
-      "size": 1
+      "size": 0.5
     },
     {
       "autoGenerate": false,
@@ -89,6 +89,54 @@
       "newLine": true,
       "readOnly": false,
       "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "menu",
+        "menuOptions": [
+          {
+            "icon": "class",
+            "label": "Crea e associa argomento",
+            "outputEventName": "create_associate_argomento"
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "eventName": "create_associate_argomento",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "modelli_test_reload",
+          "queryFunct": "select entrasp.argomenti_create_and_update_risultati($codice_azienda$, $id_risultato$, $descrizione$, $descrizione$ , $id_risultato$::varchar, 49800)"
+        }
+      ],
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "more_vert",
+      "key": "testi_normativi_actions",
+      "label": "",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento",
+      "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+      "label": "Argomento",
+      "readOnly": false,
+      "size": 3.33,
+      "newLine": false
     }
   ],
   "search_keys": [
@@ -215,10 +263,10 @@
       "label": "Criterio",
       "style": [
         {
-            "value": "*",
-            "font_weight": "500"
+          "value": "*",
+          "font_weight": "500"
         }
-    ]
+      ]
     },
     {
       "format": {
