@@ -880,8 +880,19 @@
         "dataType": "text"
       },
       "label": "Ruolo",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')"
+    },
+    {
+      "fieldName": "id_responsabile_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Responsabile/Negozio",
+      "newLine": true,
+      "queryCond": "id_responsabile=$id_responsabile_s$"
     },
     {
       "fieldName": "note_search",
