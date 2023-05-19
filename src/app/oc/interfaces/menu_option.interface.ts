@@ -8,4 +8,6 @@ export interface MenuOption {
   confirmActionMessage?: string;
   reloadOnSuccess?: boolean;
   outputEventName?: string;
+  customDialogEntryName?: string;             
+  customDialogTitle?: string;             
 }

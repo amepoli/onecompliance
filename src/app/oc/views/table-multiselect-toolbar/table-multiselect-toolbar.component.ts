@@ -1,8 +1,11 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { I } from '@angular/cdk/keycodes';
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MenuOptionsCustomDialogComponent } from 'app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component';
 import { MenuOption, SelectionAction, SelectionActionParams, TableViewKey } from 'app/oc/interfaces';
 import { AuthService, BackendService, DialogService, ToastService } from 'app/oc/services';
+import { Subscription } from 'rxjs';
 
 import 'rxjs/add/operator/filter';
 import { FormViewComponent } from '../form/form-view.component';
@@ -19,6 +22,7 @@ export class TableMultiselectToolbarComponent implements DoCheck {
     @Input("selection") selection: SelectionModel<any>;
     @Input("actions") actions: SelectionAction[];
     @Input("viewKeys") viewKeys: TableViewKey[];
+    subscriptions: Subscription[] = [];
 
     @Output() onReload = new EventEmitter<any>();
 
@@ -26,7 +30,10 @@ export class TableMultiselectToolbarComponent implements DoCheck {
     userCompanies: string[] = [];
     userdata: any;
     
-    constructor(private _toastService: ToastService, private _dialogService: DialogService, private cdr: ChangeDetectorRef, private _authService: AuthService, private _backendService: BackendService) {
+    constructor(private _toastService: ToastService, private _dialogService: DialogService, private cdr: ChangeDetectorRef, private _authService: AuthService, private _backendService: BackendService, 
+         public cutomDialog: MatDialog,
+        
+        ) {
         // get user data after login
         this.userdata = this._authService.userinfo.getValue();
         
@@ -84,9 +91,50 @@ export class TableMultiselectToolbarComponent implements DoCheck {
         }
     }
 
+
+    showMenuOptionsCustomDialogComponent(menu) {
+        const _this = this;
+        const primaryKeys = _this.viewKeys.filter(entry => {
+            return entry.isPrimary;
+        });
+
+        if(primaryKeys.length > 0) {
+            let key_values = primaryKeys.map( x => x.key);
+            let params = key_values.join(" || '~' || ");
+            let dataRows = _this.selection.selected.map( s => {
+                return `'${key_values.map( key => s[key]).join('~')}'`;
+            });
+            let data = dataRows.join(',');
+
+            menu["keys"] = {
+                selected_rows_primary_keys: params,
+                selected_rows_data: data
+            };
+        }
+        
+        // Pop-up example
+        const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
+            width: '1280px',
+            height: '620px',
+            data: menu,
+            
+        });
+
+        _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
+            // _this.getMFAStatus();
+            if (result) {
+            }
+        }));
+    }
+
     async performMenuAction(action: SelectionAction, menu: MenuOption) {
         const _this = this;
         if(await _this.isConfirmed(menu)) {
+            if(menu["customDialogEntryName"])
+            {
+                _this.showMenuOptionsCustomDialogComponent(menu);
+            }
+
             if(_this.viewKeys) {
                 const primaryKeys = _this.viewKeys.filter(entry => {
                     return entry.isPrimary;

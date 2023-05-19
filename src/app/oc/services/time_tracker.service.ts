@@ -59,32 +59,38 @@ export class TimeTrackerService {
                         let subscription = _this._backendService.checkTimerStatus(company).subscribe(
                             result => {
                                 if (result.result === 'OK' && result.data) {
-                                    let status: TimeTrackerStatus = {data: null, elapsedTime: null};
-                                    if (Array.isArray(result.data)) {
-                                        status.data = result.data[0];
-                                    }
-                                    else {
-                                        status.data = result.data;
-                                    }
-                                    
-                                    if(!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
-                                        status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours? status.data.elapsed_time.hours: 0) + ':' +
-                                        HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) + ':' +
-                                        HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0)
+                                    if(result.data && result.data.length > 0) {
+                                        let status: TimeTrackerStatus = {data: null, elapsedTime: null};
+                                        if (Array.isArray(result.data)) {
+                                            status.data = result.data[0];
+                                        }
+                                        else {
+                                            status.data = result.data;
+                                        }
                                         
-                                        _this.lastStatusUpdate = Date.now();
-                                        _this.lastStatus = status;
-                                        _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
-                                        _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
-                                        _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
-                                        _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
-                                        
-                                        _this.statusUpdated.emit(status);
-            
+                                        if(!_this.lastStatus || _this.isStatusDifferent(_this.lastStatus, status)) {
+                                            status.elapsedTime = HelperService.getTwoDigitText(status.data.elapsed_time.hours? status.data.elapsed_time.hours: 0) + ':' +
+                                            HelperService.getTwoDigitText(status.data.elapsed_time.minutes? status.data.elapsed_time.minutes: 0) + ':' +
+                                            HelperService.getTwoDigitText(status.data.elapsed_time.seconds? status.data.elapsed_time.seconds: 0)
+                                            
+                                            _this.lastStatusUpdate = Date.now();
+                                            _this.lastStatus = status;
+                                            _this.lastStatus.data.elapsed_time.hours = _this.lastStatus.data.elapsed_time.hours || 0;
+                                            _this.lastStatus.data.elapsed_time.minutes = _this.lastStatus.data.elapsed_time.minutes || 0;
+                                            _this.lastStatus.data.elapsed_time.seconds = _this.lastStatus.data.elapsed_time.seconds || 0;
+                                            _this.lastStatus.data.elapsed_time.milliseconds = _this.lastStatus.data.elapsed_time.milliseconds || 0;
+                                            
+                                            _this.statusUpdated.emit(status);
+                
+                                        }
+                                        else {
+                                            _this.updateStatusLocally();
+                                        }
                                     }
                                     else {
                                         _this.updateStatusLocally();
                                     }
+                                    
                                 }
                                 else{
                                     _this.statusUpdated.emit(null);
