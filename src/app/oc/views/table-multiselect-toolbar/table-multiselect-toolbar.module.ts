@@ -18,6 +18,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicFormsModule } from '../../dynamic-forms/dynamic-forms.module';
 import { FileManagerModule } from 'app/main/apps/file-manager/file-manager.module';
 import { FormGetterModule } from '../form-getter/form-getter.module';
+import { MenuOptionsCustomDialogModule } from 'app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.module';
 
 @NgModule({
     imports: [
@@ -39,7 +40,9 @@ import { FormGetterModule } from '../form-getter/form-getter.module';
         MatBadgeModule,
         FileManagerModule,
         MatDialogModule,
-        FormGetterModule
+        FormGetterModule,
+
+        MenuOptionsCustomDialogModule
     ],
     exports: [
         CommonModule,

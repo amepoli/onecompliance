@@ -22,6 +22,10 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     @Input() isQuickAdd: boolean = false;
     @Input() tableData: FormViewParams;
+    
+    // Keys that are provided by external source and are passed to the values in onSave function
+    @Input () externalKeys: object = {};
+
     @Output() sendEvent = new EventEmitter<any>();
 
     @ViewChild(FormGetterComponent, { static: true }) formGetter: FormGetterComponent;
@@ -273,6 +277,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     onSave() {
         let _this = this;
         let notValidField = _this.isFormValid();
+        
         if (!notValidField) {
             // notify parent, which will take care of propagating to siblings if needed 
             _this.sendEvent.emit({ eventType: 'gotSave' });
@@ -307,6 +312,14 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     // }
                 }
             }
+
+            if(_this.externalKeys) {
+                Object.keys(_this.externalKeys).forEach(externalKey => {
+                    values[externalKey] = _this.externalKeys[externalKey];
+                });
+            }
+
+        
 
             _this.savingState = 'saving';
             const subscription = _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
