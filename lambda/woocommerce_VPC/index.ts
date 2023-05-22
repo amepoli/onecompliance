@@ -261,9 +261,11 @@ exports.handler = async () => {
         };
     }
 
-    console.log('bodyResponse: ', JSON.stringify(bodyResponse));
+    // console.log('bodyResponse: ', JSON.stringify(bodyResponse));
 
     return {
+        isBase64Encoded: false,
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
         statusCode: 200,
         body: JSON.stringify(bodyResponse)
     };

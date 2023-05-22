@@ -38,65 +38,102 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var axios_1 = require("axios");
 var client_secrets_manager_1 = require("@aws-sdk/client-secrets-manager");
-exports.handler = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var secret_name, client, response, error_1, secret, username, password, authToken, error_2;
+function axiosError(error) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            }
+            else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                // http.ClientRequest in node.js
+                console.log(error.request);
+            }
+            else {
+                // Something happened in setting up the request that triggered an Error
+                console.log('Error', error.message);
+            }
+            console.log(error.config);
+            return [2 /*return*/];
+        });
+    });
+}
+;
+exports.handler = function (event) { return __awaiter(void 0, void 0, void 0, function () {
+    var secret_name, client, response_1, error_1, secret, username, password, authToken, postData, error_2;
     var _a;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 6, , 7]);
+                console.log('event: ', event);
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 8, , 9]);
                 secret_name = process.env.SECRET_NAME;
                 client = new client_secrets_manager_1.SecretsManagerClient({
                     region: process.env.REGION
                 });
-                response = void 0;
-                _b.label = 1;
-            case 1:
-                _b.trys.push([1, 3, , 4]);
+                _b.label = 2;
+            case 2:
+                _b.trys.push([2, 4, , 5]);
                 return [4 /*yield*/, client.send(new client_secrets_manager_1.GetSecretValueCommand({
                         SecretId: secret_name,
                         VersionStage: "AWSCURRENT"
                     }))];
-            case 2:
-                response = _b.sent();
-                return [3 /*break*/, 4];
             case 3:
+                response_1 = _b.sent();
+                return [3 /*break*/, 5];
+            case 4:
                 error_1 = _b.sent();
                 // For a list of exceptions thrown, see
                 // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
                 throw error_1;
-            case 4:
-                secret = response.SecretString;
+            case 5:
+                secret = response_1.SecretString;
                 username = JSON.parse(secret).username;
                 password = JSON.parse(secret).password;
-                return [4 /*yield*/, axios_1["default"].get("http://109.123.241.212/auth/login?username=" + username + "&password=" + password)];
-            case 5:
-                response = _b.sent();
-                authToken = response.data.access_token;
-                console.log('authToken: ', authToken);
-                // // Costruisce l'oggetto dati da inviare nella richiesta POST
-                // const postData = {
-                //     field1: 'value1',
-                //     field2: 'value2'
-                // };
-                // // Aggiunge il token di autenticazione all'header della richiesta POST
-                // const headers = {
-                //     Authorization: `Bearer ${authToken}`
-                // };
+                return [4 /*yield*/, axios_1["default"].get("http://109.123.241.212/auth/login?username=" + username + "&password=" + password)
+                        .then(function (tokenResponse) {
+                        response_1 = tokenResponse;
+                    })["catch"](function (error) {
+                        axiosError(error);
+                    })];
+            case 6:
+                _b.sent();
+                authToken = response_1.data.access_token;
+                postData = event;
                 // // Effettua la richiesta POST utilizzando i dati e l'header appena creati
-                // const postResponse = await axios.post('https://example.com/api', postData, { headers });
+                return [4 /*yield*/, axios_1["default"].post('http://109.123.241.212/api/products/new/', postData, {
+                        headers: {
+                            'Authorization': "Bearer " + authToken,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(function (postResponse) {
+                        console.log(postResponse);
+                    })["catch"](function (error) {
+                        axiosError(error);
+                    })];
+            case 7:
+                // // Effettua la richiesta POST utilizzando i dati e l'header appena creati
+                _b.sent();
                 return [2 /*return*/, {
                         statusCode: 200,
                         body: JSON.stringify('OK')
                     }];
-            case 6:
+            case 8:
                 error_2 = _b.sent();
                 console.error(error_2);
                 return [2 /*return*/, {
                         statusCode: ((_a = error_2.response) === null || _a === void 0 ? void 0 : _a.status) || 500,
                         body: JSON.stringify({ message: error_2.message })
                     }];
-            case 7: return [2 /*return*/];
+            case 9: return [2 /*return*/];
         }
     });
 }); };
