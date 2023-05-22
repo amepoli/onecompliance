@@ -1654,7 +1654,7 @@
         "dataType": "date",
         "viewType": "input"
       },
-      "label": "Data Esecuzione dopo il",
+      "label": "Data Esec. dopo il",
       "newLine": false,
       "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
     },
@@ -1664,7 +1664,7 @@
         "dataType": "date",
         "viewType": "input"
       },
-      "label": "Data Esecuzione entro il",
+      "label": "Data Esec. entro il",
       "newLine": false,
       "queryCond": "((snd.data_esecuzione<='€data_esec_max€' and snd.data_esecuzione is not null) or (ss.data_esecuzione<='€data_esec_max€' and ss.data_esecuzione is not null))"
     },
@@ -3083,6 +3083,10 @@
       {
         "label": "Pivot giudizi verifiche",
         "queryString": "select mtvr.id_modello_test, entrasp.modello_test_titolo(mtvr.codice_azienda, mtvr.id_modello_test) as titolo, extract(year from snd.data_prevista), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, count(ss.id_somministrazione) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ss.codice_azienda=$codice_azienda$ group by mtvr.id_modello_test, entrasp.modello_test_titolo(mtvr.codice_azienda, mtvr.id_modello_test), extract(year from snd.data_prevista), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) order by extract(year from snd.data_prevista), mtvr.id_modello_test, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda)"
+      },
+      {
+        "label": "Verifiche Negozi",
+        "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione,avr.annotazioni_interne as marchio,ss.data_esecuzione, ss.ris_percentuale, ss.giudizio from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica where ss.codice_azienda=$codice_azienda$"
       }
     ],
     "formQueries": [
