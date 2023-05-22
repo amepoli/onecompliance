@@ -229,7 +229,7 @@ exports.handler = function () { return __awaiter(void 0, void 0, void 0, functio
                                     name: queryResult.rows[row].name,
                                     sku: queryResult.rows[row].sku,
                                     partnerSku: queryResult.rows[row].partnersku,
-                                    ean: queryResult.rows[row].ean,
+                                    ean: queryResult.rows[row].sku,
                                     description: queryResult.rows[row].description,
                                     shortDescription: queryResult.rows[row].shortdescription,
                                     descriptionIt: queryResult.rows[row].descriptionit,

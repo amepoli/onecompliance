@@ -25,8 +25,6 @@ async function axiosError(error: { response: { data: any; status: any; headers: 
 
 exports.handler = async (event) => {
 
-    console.log('event: ', event);
-
     try {
 
         const secret_name = process.env.SECRET_NAME; //"WooCommerce_API";
@@ -67,7 +65,9 @@ exports.handler = async (event) => {
 
         // console.log('authToken: ', authToken);
 
-        const postData = event;
+        const postData = [event];
+
+        console.log('postData: ', postData);
 
         // // Effettua la richiesta POST utilizzando i dati e l'header appena creati
         await axios.post('http://109.123.241.212/api/products/new/',

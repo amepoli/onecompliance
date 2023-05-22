@@ -70,30 +70,27 @@ exports.handler = function (event) { return __awaiter(void 0, void 0, void 0, fu
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                console.log('event: ', event);
-                _b.label = 1;
-            case 1:
-                _b.trys.push([1, 8, , 9]);
+                _b.trys.push([0, 7, , 8]);
                 secret_name = process.env.SECRET_NAME;
                 client = new client_secrets_manager_1.SecretsManagerClient({
                     region: process.env.REGION
                 });
-                _b.label = 2;
-            case 2:
-                _b.trys.push([2, 4, , 5]);
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
                 return [4 /*yield*/, client.send(new client_secrets_manager_1.GetSecretValueCommand({
                         SecretId: secret_name,
                         VersionStage: "AWSCURRENT"
                     }))];
-            case 3:
+            case 2:
                 response_1 = _b.sent();
-                return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 4];
+            case 3:
                 error_1 = _b.sent();
                 // For a list of exceptions thrown, see
                 // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
                 throw error_1;
-            case 5:
+            case 4:
                 secret = response_1.SecretString;
                 username = JSON.parse(secret).username;
                 password = JSON.parse(secret).password;
@@ -103,10 +100,11 @@ exports.handler = function (event) { return __awaiter(void 0, void 0, void 0, fu
                     })["catch"](function (error) {
                         axiosError(error);
                     })];
-            case 6:
+            case 5:
                 _b.sent();
                 authToken = response_1.data.access_token;
-                postData = event;
+                postData = [event];
+                console.log('postData: ', postData);
                 // // Effettua la richiesta POST utilizzando i dati e l'header appena creati
                 return [4 /*yield*/, axios_1["default"].post('http://109.123.241.212/api/products/new/', postData, {
                         headers: {
@@ -119,21 +117,21 @@ exports.handler = function (event) { return __awaiter(void 0, void 0, void 0, fu
                     })["catch"](function (error) {
                         axiosError(error);
                     })];
-            case 7:
+            case 6:
                 // // Effettua la richiesta POST utilizzando i dati e l'header appena creati
                 _b.sent();
                 return [2 /*return*/, {
                         statusCode: 200,
                         body: JSON.stringify('OK')
                     }];
-            case 8:
+            case 7:
                 error_2 = _b.sent();
                 console.error(error_2);
                 return [2 /*return*/, {
                         statusCode: ((_a = error_2.response) === null || _a === void 0 ? void 0 : _a.status) || 500,
                         body: JSON.stringify({ message: error_2.message })
                     }];
-            case 9: return [2 /*return*/];
+            case 8: return [2 /*return*/];
         }
     });
 }); };
