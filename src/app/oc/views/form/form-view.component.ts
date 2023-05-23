@@ -328,6 +328,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     if (result.result === 'OK') {
                         // Show success toast
                         _this._toastService.showSuccessToast('Saved');
+                        _this.sendEvent.emit({ eventType: 'saved' });
                         _this.savingState = 'done';
                         setTimeout(() => {
                             _this.savingState = 'save';

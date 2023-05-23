@@ -13,9 +13,9 @@ import { FileManagerService } from 'app/main/apps/file-manager/file-manager.serv
 
 
 
-export class MenuOptionsCustomDialogComponent implements OnInit, AfterViewInit{
+export class MenuOptionsCustomDialogComponent {
 
-    title: string = "Undefined at the moment";
+    title: string = "Dialog";
     formParams: FormGetterParams = null;
     subscriptions: Subscription[] = [];
 
@@ -37,38 +37,13 @@ export class MenuOptionsCustomDialogComponent implements OnInit, AfterViewInit{
                 },
                 isNew: true,
                 isVisible: true
-            };
-
-            // let subscription = _this.fileService.onFileAdd.subscribe(result => {
-
-                // // recover attachment types
-                // for (const key in _this.data.keys) {
-                //     if (_this.data.keys.hasOwnProperty(key)) {
-                //         const element = _this.data.keys[key];
-                //         _this.formParams.keys[key] = element;
-                //     }
-                // }
-                // if (_this.formParams.keys.codice_azienda == null) { // hack, tipi_allegati requires this field
-                //     _this.formParams.keys.codice_azienda = _this._authService.getCurrentCompany();
-                //     //_this.newTypeParams.keys.codice_part;
-                // }
-                // _this.attach = true;
-            // });
-    
-            // _this.subscriptions.push(subscription);
-
-        
+            };        
     }
 
-    ngOnInit() {
+    onEvent(event) {
+        if(event.eventType === 'saved') {
+            this.dialogRef.close(true);
+        }
     }
 
-    ngAfterViewInit() {
-        let _this = this;
-        
-    }
-
-    
-
-   
 }

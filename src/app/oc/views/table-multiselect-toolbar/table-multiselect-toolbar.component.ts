@@ -115,14 +115,16 @@ export class TableMultiselectToolbarComponent implements DoCheck {
         // Pop-up example
         const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
             width: '1280px',
-            height: '620px',
+            height: 'auto',
             data: menu,
             
         });
 
         _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
             // _this.getMFAStatus();
-            if (result) {
+            if (result === true && menu.reloadOnSuccess) {
+                // Reload on success
+                _this.onReload.emit(true);
             }
         }));
     }
@@ -134,8 +136,7 @@ export class TableMultiselectToolbarComponent implements DoCheck {
             {
                 _this.showMenuOptionsCustomDialogComponent(menu);
             }
-
-            if(_this.viewKeys) {
+            else if(_this.viewKeys) {
                 const primaryKeys = _this.viewKeys.filter(entry => {
                     return entry.isPrimary;
                 });
