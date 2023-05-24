@@ -174,6 +174,21 @@
       ]
     }
   ],
+  "outputEvents": [
+    {
+        "eventName": "onSaveCessione",
+        "eventTrigger": "onSave"
+    }
+
+  ],
+  "inputEvents":[
+    {
+    "eventName": "onSaveCessione",
+    "actionType": "reload"
+    }
+
+  ],
+  
   "form_keys": [
     {
       "format": {
@@ -545,9 +560,38 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "data_pagam_ced",
-      "label": "Data Pagamento Cedente",
+      "key": "data_inatteso",
+      "label": "Data Inatteso",
       "size": 2.5,
+      "readOnly": false,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_inatteso",
+      "label": "Inatteso",
+      "size": 5,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note_inatteso",
+      "label": "Note Inatteso",
+      "size": 5,
       "readOnly": false,
       "newLine": true
     },
@@ -571,7 +615,7 @@
         "dataType": "boolean",
         "viewType": "checkbox"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "pagam_cedente",
       "label": "Pagamento Cedente",
@@ -1499,7 +1543,7 @@
       },
       {
         "label": "Modifiche Crediti",
-        "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.n_mandato,cre.data_mandato, cre.pagam_cedente, cre.data_pagam_ced, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi, cre.note from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.data_pagamento is null and cre.codice_azienda=$codice_azienda$"
+        "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.n_mandato,cre.data_mandato, cre.id_argomento_inatteso, cre.data_inatteso,cre.note_inatteso, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi,cre.data_incasso_parz,cre.incasso_parz, cre.note from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.codice_azienda=$codice_azienda$"
       }
     ]
   },
