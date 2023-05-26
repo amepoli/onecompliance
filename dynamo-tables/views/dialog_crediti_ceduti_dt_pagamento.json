@@ -1,14 +1,40 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "dialog_crediti_ceduti_dt_pagamento",
+  "origin": "entrasp.crediti_ceduti",
   "predefinedQueries": [
     {
       "operation": "update",
       "type": "main",
-      "queryString": "update entrasp.crediti_ceduti cc1 set opposto=coalesce($opposto_combobox$,cc2.opposto), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_acquisto = coalesce($data_acquisto$::date, cc2.data_acquisto), data_scadenza = coalesce($data_scadenza$::date, cc2.data_scadenza), data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), data_pagamento = case  when coalesce($data_pagamento_checkbox$::boolean,false)  then null else coalesce($data_pagamento$::date,cc2.data_pagamento) end, cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, data_incasso_parz = case  when coalesce($data_incasso_parz_checkbox$::boolean,false)  then null else coalesce($data_incasso_parz$::date, cc2.data_incasso_parz) end, incasso_parz = coalesce($incasso_parz$, cc2.incasso_parz), id_acquirente = case  when coalesce($id_acquirente_checkbox$::boolean,false)  then null else coalesce($id_acquirente$, cc2.id_acquirente) end, data_ricessione = case  when coalesce($data_ricessione_checkbox$::boolean,false)  then null else coalesce($data_ricessione$::date, cc2.data_ricessione) end, data_riacquisto = case  when coalesce($data_riacquisto_checkbox$::boolean,false)  then null else coalesce($data_riacquisto$::date, cc2.data_riacquisto) end, id_argomento_inatteso = coalesce($id_argomento_inatteso$, cc2.id_argomento_inatteso), note_inatteso = coalesce($note_inatteso$, cc2.note_inatteso), id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, data_inatteso = coalesce($data_inatteso$::date, cc2.data_inatteso), autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($fascicolo$, cc2.fascicolo) end, n_mandato = case  when coalesce($n_mandato_checkbox$::boolean,false)  then null else coalesce($n_mandato$, cc2.n_mandato) end, data_mandato = case  when coalesce($data_mandato_checkbox$::boolean,false)  then null else coalesce($data_mandato$::date, cc2.data_mandato) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
+      "queryString": "update entrasp.crediti_ceduti cc1 set opposto=coalesce($opposto_combobox$,cc2.opposto), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_acquisto = coalesce($data_acquisto$::date, cc2.data_acquisto), data_scadenza = coalesce($data_scadenza$::date, cc2.data_scadenza), data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), data_pagamento = coalesce($data_pagamento$::date,cc2.data_pagamento), cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, data_incasso_parz = coalesce($data_incasso_parz$::date, cc2.data_incasso_parz), incasso_parz = coalesce($incasso_parz$, cc2.incasso_parz), id_acquirente = case  when coalesce($id_acquirente_checkbox$::boolean,false)  then null else coalesce($id_acquirente$, cc2.id_acquirente) end, data_ricessione = case  when coalesce($data_ricessione_checkbox$::boolean,false)  then null else coalesce($data_ricessione$::date, cc2.data_ricessione) end, data_riacquisto = case  when coalesce($data_riacquisto_checkbox$::boolean,false)  then null else coalesce($data_riacquisto$::date, cc2.data_riacquisto) end, id_argomento_inatteso = coalesce($id_argomento_inatteso$, cc2.id_argomento_inatteso), note_inatteso = coalesce($note_inatteso$, cc2.note_inatteso), id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, data_inatteso = coalesce($data_inatteso$::date, cc2.data_inatteso), autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($fascicolo$, cc2.fascicolo) end, n_mandato = case  when coalesce($n_mandato_checkbox$::boolean,false)  then null else coalesce($n_mandato$, cc2.n_mandato) end, data_mandato = case  when coalesce($data_mandato_checkbox$::boolean,false)  then null else coalesce($data_mandato$::date, cc2.data_mandato) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
     }
   ],
   "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "readOnly": true
+    },
+    {
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "sum_importo",
+      "label": "Importo totale",
+      "queryFunct": "SELECT sum(importo) as sum_importo FROM entrasp.crediti_ceduti WHERE id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€",
+      "readOnly": false,
+      "newLine": true
+    },
     {
       "format": {
         "dataType": "text",
@@ -199,20 +225,6 @@
       "size": 2.5
     },
     {
-      "format": {
-        "value": "0",
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_pagamento_checkbox",
-      "label": "Azzera data pagamento",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2.5
-    },
-    {
       "autoGenerate": false,
       "format": {
         "dataType": "date",
@@ -220,7 +232,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "newLine": true,
+      "newLine": false,
       "key": "data_scadenza",
       "label": "Data Scadenza",
       "readOnly": false,
@@ -251,7 +263,7 @@
       "key": "cig_checkbox",
       "label": "Azzera cig",
       "readOnly": false,
-      "newLine": false,
+      "newLine": true,
       "size": 1.25
     },
     {
@@ -266,21 +278,7 @@
       "key": "data_incasso_parz",
       "label": "Data Incasso Parziale",
       "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "format": {
-        "value": "0",
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_incasso_parz_checkbox",
-      "label": "Azzera data incasso parziale",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2.5
+      "size": 5
     },
     {
       "autoGenerate": false,
@@ -295,7 +293,7 @@
       "key": "incasso_parz",
       "label": "Incasso Parziale",
       "readOnly": false,
-      "size": 2.5
+      "size": 5
     },
     {
       "format": {
