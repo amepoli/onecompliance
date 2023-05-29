@@ -46,6 +46,20 @@
   },
   "form_keys": [
     {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "user_upd",
+      "label": "",
+      "readOnly": false,
+      "sameOrigin": true,
+      "insertUpdateFunct": "SELECT '€global_username€'"
+    },
+    {
       "format": {
         "viewType": "subform",
         "subform_keys": [
@@ -2720,7 +2734,7 @@
       "format": {
         "viewType": "checkbox",
         "value": "0"
-        },
+      },
       "label": "Solo profilazioni aml",
       "newLine": false,
       "queryCond": "(mt.id_tipo_modello_test=50 and mt.id_argomento not in(45421))"
@@ -2744,7 +2758,7 @@
       {
         "label": "Profilo cliente e connessioni",
         "queryString": "SELECT DISTINCT epa.codice_anagrafica,epa.denominazione,epa.profilo,epa.id_sondaggio,epa.data_calc_rischio,snd1.data_prevista as prossima_profilazione,avr.id_anagrafica,COALESCE(STRING_AGG(distinct acc.id_anagrafica_conn::varchar||' - '||acc.codice_ruolo::varchar||' - '||coalesce(nullif(an2.nome||' '||an2.cognome,' '), avr2.ragione_sociale, '')||' - N. Doc '||coalesce(avr2.numero_documento::varchar,'vuoto')||' - Scad. '||coalesce(avr2.data_scadenza_documento::varchar,'vuota'), ', '), 'N. Doc '||coalesce(avr.numero_documento::varchar,'vuoto')||' - Scad. '||coalesce(avr.data_scadenza_documento::varchar,'vuota') ) as esecutore_doc,(SELECT string_agg(distinct id_contratto::varchar, ', ') FROM entrasp.contratti WHERE id_cliente=avr.id_anagrafica AND codice_azienda=epa.codice_azienda AND stato != 'C') as lista_contratti FROM entrasp.estrazione_profili_aml epa INNER JOIN entrasp.aziende az USING (codice_azienda) INNER JOIN entrasp.anagrafiche_vr avr ON avr.codice_part=az.codice_part AND avr.codice=epa.codice_anagrafica LEFT JOIN entrasp.connessioni_anagrafiche acc ON acc.id_anagrafica=avr.id_anagrafica AND acc.codice_part=avr.codice_part AND acc.dt_fine IS NULL AND acc.codice_ruolo = 'ESEC' LEFT JOIN entrasp.anagrafiche_id an2 ON an2.codice_part=aCC.codice_part AND an2.id_anagrafica=acc.id_anagrafica_conn LEFT JOIN entrasp.anagrafiche_vr avr2 ON avr2.codice_part=an2.codice_part AND avr2.id_anagrafica=acc.id_anagrafica_conn AND avr2.prog_vr=entrasp.anagrafiche_vr_max(an2.codice_part, an2.id_anagrafica) LEFT JOIN entrasp.sondaggi snd ON epa.codice_azienda=snd.codice_azienda AND epa.id_sondaggio=snd.id_sondaggio LEFT JOIN entrasp.sondaggi snd1 ON snd.codice_azienda=snd1.codice_azienda AND snd.id_sondaggio_succ=snd1.id_sondaggio WHERE epa.codice_azienda=$codice_azienda$ GROUP BY epa.codice_azienda,epa.codice_anagrafica,epa.denominazione,epa.profilo,epa.id_sondaggio,epa.data_calc_rischio,avr.id_anagrafica,snd1.data_prevista,avr.numero_documento,avr.data_scadenza_documento;",
-         "key": "extr_conn_cli"
+        "key": "extr_conn_cli"
       }
     ],
     "formQueries": [
