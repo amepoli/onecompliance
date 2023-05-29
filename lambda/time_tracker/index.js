@@ -63,7 +63,7 @@ function replaceLocalKeys(queryString, keys) {
 
 function replaceKeys(queryString, keys, keyTypes) {
 
-    console.log(keys);
+    // console.log(keys);
     var delimiters = ['$', '€'];
     if (queryString) {
         // first replace the global variables, must be €-contoured
@@ -94,7 +94,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                     let keyType = keyTypes.find(e => (e.key === key));
 
                     if (typeof keys[key] === 'object' && keyType && keyType.dataType && Array.isArray(keyType.dataType) && keys[key] != null) { // key with multiple subkeys
-                        console.log(keys[key], keyType);
+                        // console.log(keys[key], keyType);
                         // tslint:disable-next-line:forin
                         for (var subkey in keys[key]) {
                             // console.log(subKey);
@@ -109,7 +109,7 @@ function replaceKeys(queryString, keys, keyTypes) {
                                 queryString = newString;
                                 newString = queryString.replace(toReplace, replacement);
                             }
-                            console.log(`newString Object: ${newString}`);
+                            // console.log(`newString Object: ${newString}`);
                         }
                     } else if (typeof keys[key] !== 'object') {  // avoid spourious values like arrays form events
                         let bracket = (delimiter === '$' && keyType && keyType.dataType === 'text') ? '\'' : '';
@@ -141,7 +141,7 @@ async function runQuery(queryString, client) {
     let local_keys = {}; // additional keys generated with pre-main-post processing  
     let queryData = [{}];
 
-    console.log('queryString : ', queryString);
+    // console.log('queryString : ', queryString);
 
     if (queryString == null) {
         return queryData;
@@ -152,7 +152,7 @@ async function runQuery(queryString, client) {
         try {
             queryData = await client.query(query);
             queryData = queryData.rows;
-            console.log('Main query : ', query, ' result : ', queryData);
+            // console.log('Main query : ', query, ' result : ', queryData);
         }
         catch (e) {
             queryData = e;
@@ -174,9 +174,9 @@ exports.handler = async (event, context) => {
     // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
     const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
 
-    console.log('userid: ', userid);
+    // console.log('userid: ', userid);
 
-    console.log('queryParams: ', queryParams);
+    // console.log('queryParams: ', queryParams);
 
     // const DynamoParams = {
     //     TableName: 'VIEWS_NAME',
@@ -203,7 +203,7 @@ exports.handler = async (event, context) => {
 
     let body = null;
 
-    console.log('queryParams', queryParams);
+    // console.log('queryParams', queryParams);
 
     const requestType = queryParams['request_type'];
 
@@ -217,13 +217,13 @@ exports.handler = async (event, context) => {
         };
     }
     else {
-        console.log('Lets start ' + requestType);
+        // console.log('Lets start ' + requestType);
 
         try {
             // const date = getDateFormat();
             // body = { result: 'OK', queryString: scripts[requestType], afterReplace: replaceKeys(scripts[requestType], keys, {}) };
 
-            console.log("Connecting to pool...");
+            // console.log("Connecting to pool...");
             let client = null;
             try {
                 client = await pool.connect();
@@ -232,13 +232,13 @@ exports.handler = async (event, context) => {
                 console.log(e);
             }
 
-            console.log("Connected to pool success!");
+            // console.log("Connected to pool success!");
 
             queryString = scripts[requestType];
-            console.log('queryString: ', queryString);
+            // console.log('queryString: ', queryString);
 
             let keyTypes = {}; //getKeyTypes(entry_keys);
-            console.log('keyTypes: ', keyTypes);
+            // console.log('keyTypes: ', keyTypes);
 
             let keys = {}; //getKeyTypes(entry_keys);
             keys['codice_azienda'] = company;
@@ -246,21 +246,21 @@ exports.handler = async (event, context) => {
             keys['user_name'] = user_name;
             keys['date_time'] = date_time;
 
-            console.log('keys: ', keys);
+            // console.log('keys: ', keys);
 
             global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
-            console.log('global_variables: ', global_variables);
+            // console.log('global_variables: ', global_variables);
 
             // Handling RLS Policies on DB
             let aziendeSet = "'" + (global_variables.global_user_companies ? global_variables.global_user_companies.replaceAll("'", "") : "") + "'";
-            console.log('aziendeSet: ', aziendeSet);
+            // console.log('aziendeSet: ', aziendeSet);
             if (aziendeSet != "") {
                 await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
             }
 
 
             queryString = replaceKeys(scripts[requestType], keys, null);
-            console.log('queryString: ', queryString);
+            // console.log('queryString: ', queryString);
 
             let result = await runQuery(queryString, client);
             await client.release();
