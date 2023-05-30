@@ -14,7 +14,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "SELECT a.cod_rev, a.data_creazione::date, a.codice_azienda,b.codice_part,coalesce(a.id_argomento_stato_approvazione, 6150) as id_argomento_stato_approvazione,a.id_risorsa,a.prog_revisione,a.data_rif_a, a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(a.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$"
+      "queryString": "SELECT rev.cod_rev, rev.data_creazione::date, rev.codice_azienda,b.codice_part,coalesce( rev.id_argomento_stato_approvazione, 6150) as id_argomento_stato_approvazione, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato) AS descr_stato,( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$"
     },
     {
       "type": "preProcessing",
@@ -24,7 +24,7 @@
     {
       "type": "main",
       "operation": "selectForm",
-      "queryString": "SELECT a.cod_rev,a.codice_azienda,b.codice_part,a.descrizione,a.id_argomento_stato_approvazione,coalesce(a.id_argomento_stato, 6150) as rev_id_argomento_stato, a.data_rif_a, a.id_risorsa,a.prog_revisione,a.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica,a.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato,a.data_rif,left(entrasp.odg_titolo(a.codice_azienda, a.id_odg, a.id_riunione),100) as titolo_odg, b.id_anagrafica, a.id_odg, a.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest,a.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni a INNER JOIN entrasp.cdms_risorse b on a.codice_azienda=b.codice_azienda AND a.id_risorsa=b.id_risorsa where a.codice_azienda=$codice_azienda$ and a.id_risorsa=$id_risorsa$ AND A.prog_revisione=$prog_revisione$"
+      "queryString": "SELECT rev.cod_rev, rev.codice_azienda,b.codice_part, rev.descrizione, rev.id_argomento_stato_approvazione,coalesce( rev.id_argomento_stato, 6150) as rev_id_argomento_stato, rev.data_rif_a, rev.id_risorsa, rev.prog_revisione, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_risorsa=$id_risorsa$ AND rev.prog_revisione=$prog_revisione$"
     },
     {
       "type": "main",
@@ -749,7 +749,7 @@
       },
       "label": "ID Documento",
       "newLine": false,
-      "queryCond": "a.id_risorsa=$id_risorsa_s$"
+      "queryCond": " rev.id_risorsa=$id_risorsa_s$"
     },
     {
       "fieldName": "id_sondaggio_s",
@@ -825,7 +825,7 @@
       "size": 2,
       "label": "Stato",
       "newLine": true,
-      "queryCond": "a.id_argomento_stato=$id_argomento_stato_s$"
+      "queryCond": " rev.id_argomento_stato=$id_argomento_stato_s$"
     },
     {
       "fieldName": "file_con_allegati_da_associare",
@@ -835,7 +835,7 @@
       },
       "label": "Con allegati da associare",
       "newLine": false,
-      "queryCond": "a.id_risorsa in(select id_risorsa from entrasp.cdms_risorse_revisioni group by codice_azienda, id_risorsa, id_argomento_stato having count(prog_revisione)>0 and codice_azienda=$codice_azienda$ and id_argomento_stato=4035)"
+      "queryCond": " rev.id_risorsa in(select id_risorsa from entrasp.cdms_risorse_revisioni group by codice_azienda, id_risorsa, id_argomento_stato having count(prog_revisione)>0 and codice_azienda=$codice_azienda$ and id_argomento_stato=4035)"
     },
     {
       "fieldName": "data_da_s",
@@ -845,7 +845,7 @@
       },
       "label": "Data da",
       "newLine": false,
-      "queryCond": "a.data_creazione>=$data_da_s$"
+      "queryCond": " rev.data_creazione>=$data_da_s$"
     },
     {
       "fieldName": "data_a_s",
@@ -855,7 +855,7 @@
       },
       "label": "Data a",
       "newLine": false,
-      "queryCond": "a.data_creazione<=$data_a_s$"
+      "queryCond": " rev.data_creazione<=$data_a_s$"
     },
     {
       "fieldName": "parola_search_s",
@@ -875,7 +875,7 @@
       },
       "label": "Solo attivi",
       "newLine": false,
-      "queryCond": "a.id_argomento_stato not in(6150, 5327, 45434, 6160)"
+      "queryCond": " rev.id_argomento_stato not in(6150, 5327, 45434, 6160)"
     }
   ],
   "hideActions": [
