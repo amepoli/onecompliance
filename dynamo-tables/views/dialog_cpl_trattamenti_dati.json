@@ -1,0 +1,152 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_cpl_trattamenti_dati",
+  "origin": "entrasp.cpl_trattamenti_dati",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "main",
+      "queryString": "update entrasp.cpl_trattamenti_dati td1 set id_centro_gest = coalesce($id_centro_gest$, td2.id_centro_gest) from entrasp.cpl_trattamenti_dati td2 where td1.codice_azienda = td2.codice_aziendaand td1.id_trattamento_dati = td2.id_trattamento_dati and td1.codice_azienda||'~'||td1.id_trattamento_dati in (select * from unnest(string_to_array($selected_rows_data$, ',')))"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_trattamento_dati",
+      "label": "#",
+      "newLine": false,
+      "size": 0.5,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_centro_gest",
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "size": 2,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=45701 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_criticita",
+      "label": "Grado di Criticità",
+      "newLine": false,
+      "size": 3,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "checkbox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "flag_trattamento_conto_terzi",
+      "label": "Trattamento conto Terzi",
+      "readOnly": false,
+      "size": 1,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT ann.id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(ann.codice_part, ann.id_anagrafica) AS name  FROM entrasp.anagrafiche_id ann inner join entrasp.ruoli_anagrafiche ruo on ann.codice_part = ruo.codice_part and ann.id_anagrafica = ruo.id_anagrafica WHERE ann.codice_part='€global_codice_part€' and ruo.codice_ruolo in ('DIP', 'RSRSA');",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_contitolare_trattamento",
+      "label": "Contitolare Trattamento",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "textarea"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "termini_ultimi_cancellazione",
+      "label": "Termini ultimi cancellazione",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "annotazioni",
+      "label": "Note",
+      "size": 6.5,
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "val_prop_trat",
+      "label": "Valutazione della necessità e proporzionalità dei trattamenti (art. 35, par. 2, lett. b)",
+      "readOnly": true
+    }
+  ]
+}
