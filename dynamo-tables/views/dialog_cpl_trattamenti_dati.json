@@ -6,7 +6,7 @@
     {
       "operation": "update",
       "type": "main",
-      "queryString": "update entrasp.cpl_trattamenti_dati td1 set id_centro_gest = coalesce($id_centro_gest$, td2.id_centro_gest) from entrasp.cpl_trattamenti_dati td2 where td1.codice_azienda = td2.codice_azienda and td1.id_trattamento_dati = cc2.id_trattamento_dati and td1.codice_azienda||'~'||td1.id_trattamento_dati in (select * from unnest(ARRAY[$selected_rows_data$]) as arr)"
+      "queryString": "update entrasp.cpl_trattamenti_dati td1 set id_centro_gest = coalesce($id_centro_gest$, td2.id_centro_gest) from entrasp.cpl_trattamenti_dati td2 where td1.codice_azienda = td2.codice_aziendaand td1.id_trattamento_dati = td2.id_trattamento_dati and td1.codice_azienda||'~'||td1.id_trattamento_dati in (select *from unnest(string_to_array($selected_rows_data$, ',')))"
     }
   ],
   "form_keys": [
