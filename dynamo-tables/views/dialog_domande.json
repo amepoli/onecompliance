@@ -1,0 +1,28 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_domande",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "main",
+      "queryString": "select entrasp.domanda_delete(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_argomento_father$)  from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in(array[$selected_rows_data$])"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(133, 349, 3425, 5328,5497,6154,6155,6156, 6157,6158,6721,6871,43448, 6837, 48418,4016,43670,49500,49507,49511, 48662,49061) order by id_argomento||'-'||descrizione_breve",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_argomento_father",
+      "label": "TAG domande selezionate",
+      "readOnly": false,
+      "newLine": false
+    }
+  ]
+}
