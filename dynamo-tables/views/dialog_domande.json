@@ -5,7 +5,7 @@
     {
       "operation": "update",
       "type": "main",
-      "queryString": "select entrasp.domanda_delete(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_argomento_father$)  from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in(array[$selected_rows_data$])"
+      "queryString": "select entrasp.domanda_sub_tables_inserts(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_argomento_father$, $flag_cancella_tag$::boolean) from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)"
     }
   ],
   "form_keys": [
@@ -23,6 +23,20 @@
       "label": "TAG domande selezionate",
       "readOnly": false,
       "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "key": "flag_cancella_tag",
+      "label": "Cancella tag",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false,
+      "isHidden": false,
+      "isPrimary": false
     }
   ]
 }
