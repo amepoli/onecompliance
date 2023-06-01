@@ -871,6 +871,7 @@ function data2csv(data, keys = null) {
     return result;
 }
 
+
 function data2xls(data, title, keys = null) {
     const styles = {
         headerDark: {
@@ -992,6 +993,228 @@ function data2xls(data, title, keys = null) {
     return report;
 }
 
+function dataPrepare2xls(dataset, title, isMainSheet = false) {
+
+    const styles = {
+        headerDark: {
+            fill: {
+                fgColor: {
+                    rgb: 'FF008000'
+                },
+
+            },
+            font: {
+                color: {
+                    rgb: 'FFFFFFFF'
+                },
+                sz: 18,
+                bold: true
+            }
+        },
+        title: {
+            fill: {
+                fgColor: {
+                    rgb: 'FF2B679D'
+                },
+            },
+            font: {
+                color: {
+                    rgb: 'FFFFFFFF'
+                },
+                sz: 34,
+                bold: true
+            }
+        },
+        data: {
+            font: {
+                color: {
+                    rgb: 'FFFFFFFF'
+                },
+                sz: 16,
+                bold: true
+            },
+            fill: {
+                fgColor: {
+                    rgb: 'FF16ACFF'
+                },
+            }
+        },
+        cellRed: {
+            fill: {
+                fgColor: {
+                    rgb: 'FFFF0000'
+                }
+            }
+        },
+        cellUnderlined: {
+            font: {
+                color: {
+                    rgb: 'FF0645AD'
+                },
+                underline: true
+            }
+        }
+    };
+
+    //Array of objects representing heading rows (very top)
+    const heading = [
+        [{
+            value: title,
+            style: styles.title
+        }] // <-- It can be only values
+    ];
+
+    if (isMainSheet) {
+
+        // console.log('generate main sheet with dataset: ', dataset);
+
+        const specification = {
+            indicator_id: {
+                displayName: 'Id',
+                headerStyle: styles.data,
+                width: 50
+            },
+            indicator_description: {
+                displayName: 'Descrizione Indicatore',
+                headerStyle: styles.data,
+                width: 400
+            },
+            indicator_value: {
+                displayName: 'Valore Indicatore',
+                headerStyle: styles.data,
+                /* cellStyle: function (value, row) {
+                    // if the indicator_value is different than 0 then color in red else as default
+                    return (row.indicator_value != 0) ? styles.cellRed : null;
+                }, */
+                width: 140
+            },
+            link: {
+                displayName: 'Link alla pagina',
+                headerStyle: styles.data,
+                cellStyle: styles.cellUnderlined,
+                width: 400
+            },
+            filter: {
+                displayName: 'Filtri di ricerca',
+                headerStyle: styles.data,
+                width: 1020
+            }
+        };
+
+        const merges = [{
+            start: {
+                row: 1,
+                column: 1
+            },
+            end: {
+                row: 1,
+                column: 5
+            }
+        }];
+
+        return {
+            name: title, // <- Specify sheet name (optional)
+            heading: heading, // <- Raw heading array (optional)
+            merges: merges, // <- Merge cell ranges
+            specification: specification, // <- Report specification
+            data: dataset // <-- Report data
+        };
+
+    } else {
+
+        // console.log('generate secondary sheets with dataset: ', dataset);
+        const specification = {};
+
+        let property = Object.keys(dataset.rows[0]);
+        for (let i = 0; i < property.length; i++) {
+            specification[property[i]] = {
+                displayName: property[i],
+                headerStyle: styles.data,
+                width: 120
+            };
+        }
+
+        const merges = [{
+            start: {
+                row: 1,
+                column: 1
+            },
+            end: {
+                row: 1,
+                column: property.length
+            }
+        }];
+
+        return {
+            name: title, // <- Specify sheet name (optional)
+            heading: heading, // <- Raw heading array (optional)
+            merges: merges, // <- Merge cell ranges
+            specification: specification, // <- Report specification
+            data: dataset.rows // <-- Report data
+        }
+    }
+
+}
+
+async function data2xlsReport(data, title, keys = null, client) {
+
+    let mainTitle = data[0].report_title;
+    let query_excel_to_create = data[0].query_excel_to_create;
+    let sheet_titles = data[0].sheet_titles;
+    let indicators_id = data[0].indicators_id;
+    let indicators_value = data[0].indicators_value;
+    let menu_links = data[0].menu_links;
+    let search_filters = data[0].search_filters;
+
+    // generate report main sheet's data
+    let queries = query_excel_to_create.split("~~");
+    let titles = sheet_titles.split(";");
+    let ids = indicators_id.split(";");
+    let values = indicators_value.split(";");
+    let links = menu_links.split(";");
+    let filters = search_filters.split(";");
+
+    let mainSheet = titles.map((value, index) => ({
+        indicator_id: ids[index],
+        indicator_description: value,
+        indicator_value: values[index],
+        link: links[index],
+        filter: filters[index]
+    }));
+
+    var excelData = [];
+    excelData.push(dataPrepare2xls(mainSheet, mainTitle, true));
+
+    // generate and join report sheet's data
+    for (const value in values) {
+        let queryResult = null;
+        if (values[value] != 0) {
+            // here it prepares secondary sheets to the main one
+            try {
+                queryResult = await client.query(queries[value]);
+            } catch (e) {
+                console.log("Error while running query: ", e);
+                body = { result: 'KO', reason: 'Query error' };
+                await client.release();
+            }
+
+            // await client
+            //     .query(queries[value])
+            //     .then((res => queryResult = res.rows.length > 0 ? res : null))
+            //     .catch(async err => {
+            //         console.error('Error executing query: ', queries[value] + '\nERROR: ' + err.stack);
+            //         await client.release();
+            //     });
+        }
+        if (queryResult) { excelData.push(dataPrepare2xls(queryResult, titles[value])) }
+    };
+
+    // generate the report
+    let report = excel.buildExport(excelData);
+
+    return report;
+}
+
 async function runQuery(queryString, client) {
 
     let local_keys = {}; // additional keys generated with pre-main-post processing  
@@ -1074,6 +1297,8 @@ function replaceJSONParams(JSONString, paramsObject) {
 }
 
 exports.handler = async (event, context) => {
+
+    const client = await pool.connect();
 
     const queryParams = event.queryStringParameters;
 
@@ -1167,7 +1392,6 @@ exports.handler = async (event, context) => {
 
         try {
             // const date = getDateFormat();
-            let client = await pool.connect();
 
             global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
             console.log('global_variables: ', global_variables);
@@ -1683,28 +1907,28 @@ exports.handler = async (event, context) => {
 
                 if (isAdvanced) {
                     if (entry_params.exportQueries) {
-                        console.log('entry_params.exportQueries', JSON.stringify(entry_params.exportQueries));
+                        // console.log('entry_params.exportQueries', JSON.stringify(entry_params.exportQueries));
 
                         let exportQueries = null;
                         if (isForm) {
                             exportQueries = entry_params.exportQueries.formQueries;
-                            console.log('entry_params.exportQueries.formQueries', entry_params.exportQueries.formQueries);
+                            // console.log('entry_params.exportQueries.formQueries', entry_params.exportQueries.formQueries);
                         }
                         else {
                             exportQueries = entry_params.exportQueries.tableQueries;
-                            console.log('entry_params.exportQueries.tableQueries', entry_params.exportQueries.tableQueries);
-
+                            // console.log('entry_params.exportQueries.tableQueries', entry_params.exportQueries.tableQueries);
                         }
-                        console.log('exportQueries', exportQueries);
+                        // console.log('exportQueries', exportQueries);
 
                         if (exportQueries) {
                             const advancedQuery = exportQueries.filter(x => x.label === advancedQueryLabel);
                             if (advancedQuery.length > 0) {
                                 queryString = advancedQuery[0].queryString;
+                                var isReport = advancedQuery[0].isReport != undefined ? advancedQuery[0].isReport : false;
                             }
                         }
                     }
-                    console.log('queryString1', queryString);
+                    // console.log('queryString1', queryString);
 
                     if (queryString != null) {
 
@@ -1714,7 +1938,7 @@ exports.handler = async (event, context) => {
                             queryString = replaceKeys(queryString, fullValueSet, keyTypes);
                         }
 
-                        console.log('queryString2', queryString);
+                        // console.log('queryString2', queryString);
 
                         if (search_keys != null) {
 
@@ -1724,7 +1948,7 @@ exports.handler = async (event, context) => {
                                 return { key: k.fieldName, dataType: dataType };
                             });
 
-                            console.log("Query so far: ", queryString);
+                            // console.log("Query so far: ", queryString);
 
                             for (const key in search_keys) {
                                 if (search_keys.hasOwnProperty(key)) {
@@ -1738,10 +1962,10 @@ exports.handler = async (event, context) => {
                             }
                         }
 
-                        console.log('queryString3', queryString);
+                        // console.log('queryString3', queryString);
 
                         queryString = replaceGlobalkeys(queryString);
-                        console.log('queryString4', queryString);
+                        // console.log('queryString4', queryString);
 
                         queryData = await runQuery(queryString, client);
                         // console.log('queryData', queryData);
@@ -1833,7 +2057,7 @@ exports.handler = async (event, context) => {
 
                     if (isCSV) {
                         fileName = 'CSV/' + uuid + '.csv';
-                        if (isAdvanced) {
+                        if (isAdvanced && !isReport) {
                             fileBody = data2csv(queryData);
                         }
                         else {
@@ -1847,8 +2071,11 @@ exports.handler = async (event, context) => {
                     }
                     else {
                         fileName = 'Excel/' + uuid + '.xlsx';
-                        if (isAdvanced) {
+                        if (isAdvanced && !isReport) {
                             fileBody = data2xls(queryData, advancedQueryLabel ? advancedQueryLabel : initcap(entry_name.split('_').join(' ')));
+                        }
+                        else if(isAdvanced && isReport && queryData.length > 0){
+                            fileBody = await data2xlsReport(queryData, advancedQueryLabel ? advancedQueryLabel : initcap(entry_name.split('_').join(' ')), null, client);
                         }
                         else {
                             var viewKeys = isForm ? entry_params.form_keys : entry_params.table_keys;
@@ -1859,18 +2086,6 @@ exports.handler = async (event, context) => {
                             fileBody = data2xls(queryData, advancedQueryLabel ? advancedQueryLabel : initcap(entry_name.split('_').join(' ')), validKeys);
                         }
                     }
-
-
-                    // const dataset = [];
-                    // 
-                    // queryData.forEach(entry => {
-                    //     var value = {};
-                    //     validKeys.forEach(key => {
-                    //         value[key.key] = entry[key.key];
-                    //     });
-                    //     dataset.push(value);
-                    // });
-                    // console.log('dataset', dataset);
 
                     var s3ParamsInsert = {
                         Bucket: 'gorico2-reports',
