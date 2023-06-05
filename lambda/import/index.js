@@ -1066,7 +1066,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
     if (isMainSheet) {
 
-        // console.log('generate main sheet with dataset: ', dataset);
+        console.log('generate main sheet with dataset: ', dataset);
 
         const specification = {
             indicator_id: {
@@ -1122,10 +1122,10 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
 
     } else {
 
-        // console.log('generate secondary sheets with dataset: ', dataset);
+        console.log('generate secondary sheets with dataset: ', dataset);
         const specification = {};
 
-        let property = Object.keys(dataset.rows[0]);
+        let property = dataset.rows ? Object.keys(dataset.rows[0]) : null;
         for (let i = 0; i < property.length; i++) {
             specification[property[i]] = {
                 displayName: property[i],
@@ -1206,7 +1206,7 @@ async function data2xlsReport(data, title, keys = null, client) {
             //         await client.release();
             //     });
         }
-        if (queryResult) { excelData.push(dataPrepare2xls(queryResult, titles[value])) }
+        if (queryResult && queryResult.rows.length > 0) { excelData.push(dataPrepare2xls(queryResult, titles[value])) }
     };
 
     // generate the report
