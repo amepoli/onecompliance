@@ -1206,7 +1206,7 @@ async function data2xlsReport(data, title, keys = null, client) {
             //         await client.release();
             //     });
         }
-        if (queryResult && queryResult.rows > 0) { excelData.push(dataPrepare2xls(queryResult, titles[value])) }
+        if (queryResult) { excelData.push(dataPrepare2xls(queryResult, titles[value])) }
     };
 
     // generate the report
