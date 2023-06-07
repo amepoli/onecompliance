@@ -40,7 +40,7 @@ function getDateFormatted() {
     return d.getFullYear() + '-' + month.toString() + '-' + d.getDate();
 }
 
-function dataPrepare2xls(dataset, title, isMainSheet = false) {
+function dataPrepare2xls(dataset, title, isMainSheet = false, id = null) {
 
     const styles = {
         headerDark: {
@@ -193,7 +193,7 @@ function dataPrepare2xls(dataset, title, isMainSheet = false) {
         }];
 
         return {
-            name: title, // <- Specify sheet name (optional)
+            name: id || title, // <- Specify sheet name (optional)
             heading: heading, // <- Raw heading array (optional)
             merges: merges, // <- Merge cell ranges
             specification: specification, // <- Report specification
@@ -263,14 +263,14 @@ exports.handler = async (event) => {
             // generate and join report sheet's data
             for (const value in values) {
                 let queryResult = null;
-                if (values[value] != 0) {
+                if (values[value]) {
                     // here it prepares secondary sheets to the main one
                     await pool
                         .query(queries[value])
                         .then((res => queryResult = res.rows.length > 0 ? res : null))
                         .catch(err => console.error('Error executing query: ', queries[value] + '\nERROR: ' + err.stack));
                 }
-                if (queryResult) { excelData.push(dataPrepare2xls(queryResult, titles[value])) }
+                if (queryResult) { excelData.push(dataPrepare2xls(queryResult, titles[value], false, ids[value])) }
             };
 
             // generate the report
