@@ -23,6 +23,9 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     @Input() isQuickAdd: boolean = false;
     @Input() tableData: FormViewParams;
     
+    // Is form-view part of dialog
+    @Input() isDialog: boolean = false;
+
     // Keys that are provided by external source and are passed to the values in onSave function
     @Input () externalKeys: object = {};
 
@@ -166,8 +169,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         _this.tot = _this.tableData.total;
     }
 
-    public refreshView() {
-        this.formGetter.refreshView();
+    public refreshView(reloadEvents: boolean = true) {
+        this.formGetter.refreshView(reloadEvents);
     }
 
     getTabs(tabKeys: TabViewKey[], keys: any): TabType[] {
@@ -325,42 +328,52 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             const subscription = _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
                 result => {
                     _this._console.log(result);
-                    if (result.result === 'OK') {
+                    if(result) {
+                        if (result.result === 'OK') {
+                            // Show success toast
+                            _this._toastService.showSuccessToast('Saved');
+                            _this.sendEvent.emit({ eventType: 'saved' });
+                            _this.savingState = 'done';
+                            if(!_this.isDialog) {
+                                setTimeout(() => {
+                                    _this.savingState = 'save';
+                                    if (_this.isQuickAdd) {
+                                        _this.isQuickAdd = false;
+                                        _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                                    }
+                                    else if (_this.tableData && _this.tableData.isNew) {
+                                        _this.navigationToViewHome(values, result.data);
+                                    }
+                                    else if (_this.refreshOnSave) {
+                                        _this.isQuickAdd = false;
+                                        _this.refreshView();
+                                        _this._navigationService.requestBottomTabRefresh();
+                                    }
+                                    else {
+                                        _this.formGetter.runOnSaveEvents();
+                                        _this._navigationService.requestBottomTabRefresh();
+                                    }
+                                    
+                                }, 1000);
+                            }
+                        }
+                        else {
+                            // Check if error occured during pre check
+                            if(result.preErrors){
+                                _this._dialogService.showErrorDialog("Warning", result.preErrors.join('\n'));
+                            }
+                            else {
+                                // Show error snackbar
+                                _this.formGetter.showErrorToast(result.reason);
+                            }
+                            _this.savingState = 'save';
+                        }
+                    }
+                    else {
                         // Show success toast
                         _this._toastService.showSuccessToast('Saved');
                         _this.sendEvent.emit({ eventType: 'saved' });
                         _this.savingState = 'done';
-                        setTimeout(() => {
-                            _this.savingState = 'save';
-                            if (_this.isQuickAdd) {
-                                _this.isQuickAdd = false;
-                                _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
-                            }
-                            else if (_this.tableData && _this.tableData.isNew) {
-                                _this.navigationToViewHome(values, result.data);
-                            }
-                            else if (_this.refreshOnSave) {
-                                _this.isQuickAdd = false;
-                                _this.refreshView();
-                                _this._navigationService.requestBottomTabRefresh();
-                            }
-                            else {
-                                _this.formGetter.runOnSaveEvents();
-                                _this._navigationService.requestBottomTabRefresh();
-                            }
-                            
-                        }, 1000);
-                    }
-                    else {
-                        // Check if error occured during pre check
-                        if(result.preErrors){
-                            _this._dialogService.showErrorDialog("Warning", result.preErrors.join('\n'));
-                        }
-                        else {
-                            // Show error snackbar
-                            _this.formGetter.showErrorToast(result.reason);
-                        }
-                        _this.savingState = 'save';
                     }
                 },
                 error =>{

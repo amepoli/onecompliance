@@ -25,6 +25,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     // Is form-getter part of form-view
     @Input() isFormView: boolean = false;
 
+    // Is form-getter part of dialog form-view
+    @Input() isDialog: boolean = false;
+
     @Input() filter: string;
     @Input() formParams: FormGetterParams = null;
     @Output() sendEvent = new EventEmitter<any>();
@@ -260,7 +263,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     refreshView(reloadEvents: boolean = true) {
         const _this = this;
         _this.isLoading = true;
-        _this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
+        if(!_this.isDialog) {
+            _this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
+        }
 
         const subscription = _this.backendService.getView(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.formParams.keys).subscribe(
             results => {
@@ -297,7 +302,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.exportList = [];
                     }
 
-                    if (_this.isFormView && !_this.isTabMode) {
+                    if (_this.isFormView && !_this.isTabMode && !_this.isDialog) {
 
                         // Load Import Queries list if available
                         if (params.importQueries && params.importQueries.formQueries) {
@@ -355,7 +360,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                     _this.sendEvent.emit({ eventType: 'formData', queryParams: { label: params.label }, viewKeys: _this.currentKeys, tabKeys: params.subTables });
-                   if(!_this.isTabMode)
+                   if(!_this.isTabMode && !_this.isDialog)
                    {
                        _this.sendEvent.emit({ eventType: 'currentTableLabel', queryParams: { label: params.label } }); // pass current label to parent view 
                    }
@@ -381,7 +386,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
 
                     // load the form 
-                    _this.loadTableData(); 4
+                    _this.loadTableData();
 
                     // Load widgets configurations
                     _this.loadWidgetsConfiguration(params.widgetsConfiguration);

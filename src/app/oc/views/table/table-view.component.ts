@@ -271,6 +271,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
  
     public loadData(search_keys = null) {
         const _this = this;
+        search_keys = search_keys || _this.tableData.searchKeys;
         _this.resetView(search_keys);
         _this.resetSelection();
         _this.isLoading = true;
