@@ -35,9 +35,9 @@ exports.handler = async () => {
         ExpressionAttributeNames: { "#dynobase_name": "name", "#dynobase_language": "language" }
     }).promise();
 
-    console.log('users: ', users_table);
+    let users_json=JSON.stringify(users_table.Items);
 
-    let query = `SELECT true;`;
+    let query = `SELECT entrasp.dynamodb_users_insert($$${users_json}$$::json);`;
 
     await pool
         .query(query)
@@ -48,9 +48,8 @@ exports.handler = async () => {
         });
 
     if (queryResult) {
+        //send email if critical
     }
-
-    // console.log('bodyResponse: ', JSON.stringify(bodyResponse));
 
     return {
         isBase64Encoded: false,

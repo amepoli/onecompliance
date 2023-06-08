@@ -53,7 +53,7 @@ var pool = new Pool({
     connectionTimeoutMillis: 1000
 });
 exports.handler = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var queryResult, bodyResponse, d, today, nextYearFromToday, users_table, query;
+    var queryResult, bodyResponse, d, today, nextYearFromToday, users_table, users_json, query;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -62,11 +62,15 @@ exports.handler = function () { return __awaiter(void 0, void 0, void 0, functio
                 today = d.toISOString();
                 d.setFullYear(d.getFullYear() + 1);
                 nextYearFromToday = d.toISOString();
-                return [4 /*yield*/, dynamo.scan({ TableName: 'users', ProjectionExpression: "userid,companies,createdAt,email,#dynobase_language,lastname,#dynobase_name,onekyc,picture,showTimeTracker,sync,username", ExpressionAttributeNames: { "#dynobase_name": "name", "#dynobase_language": "language" } }).promise()];
+                return [4 /*yield*/, dynamo.scan({
+                        TableName: 'users',
+                        ProjectionExpression: "userid,companies,createdAt,email,#dynobase_language,lastname,#dynobase_name,onekyc,picture,showTimeTracker,sync,username",
+                        ExpressionAttributeNames: { "#dynobase_name": "name", "#dynobase_language": "language" }
+                    }).promise()];
             case 1:
                 users_table = _a.sent();
-                console.log('users: ', users_table);
-                query = "SELECT true;";
+                users_json = JSON.stringify(users_table.Items);
+                query = "SELECT entrasp.dynamodb_users_insert($$" + users_json + "$$::json);";
                 return [4 /*yield*/, pool
                         .query(query)
                         .then(function (res) { return queryResult = res.rows.length > 0 ? res : null; })["catch"](function (err) {
