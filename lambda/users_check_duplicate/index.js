@@ -117,7 +117,7 @@ exports.handler = function () { return __awaiter(void 0, void 0, void 0, functio
                     }
                 }
                 if (!send) return [3 /*break*/, 3];
-                return [4 /*yield*/, sendEmail(['service@alacritas.eu'], bodyEmail, 'Conflitti di "id_anagrafica" tra users')];
+                return [4 /*yield*/, sendEmail(['service@alacritas.eu', 'info@alacritas.eu'], bodyEmail, 'Conflitti di "id_anagrafica" tra users')];
             case 2:
                 _p.sent();
                 _p.label = 3;

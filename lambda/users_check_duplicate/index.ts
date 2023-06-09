@@ -94,7 +94,7 @@ exports.handler = async () => {
     }
 
     if (send) {
-        await sendEmail(['service@alacritas.eu'], bodyEmail, 'Conflitti di "id_anagrafica" tra users');
+        await sendEmail(['service@alacritas.eu','info@alacritas.eu'], bodyEmail, 'Conflitti di "id_anagrafica" tra users');
     }
 
     return {
