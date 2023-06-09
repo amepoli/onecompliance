@@ -80,7 +80,7 @@ function sendEmail(to, body, subject) {
                     return [4 /*yield*/, ses.sendEmail(eParams).promise()];
                 case 1:
                     email = _a.sent();
-                    console.log('Sent email: ', email);
+                    console.log('Sent email: ', eParams);
                     return [2 /*return*/];
             }
         });
@@ -88,8 +88,9 @@ function sendEmail(to, body, subject) {
 }
 exports.handler = function () { return __awaiter(void 0, void 0, void 0, function () {
     var bodyResponse, users_table, bodyEmail, send, i, j, k, l;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    return __generator(this, function (_p) {
+        switch (_p.label) {
             case 0:
                 bodyResponse = { result: 'Ok', reason: null, response: [] };
                 return [4 /*yield*/, dynamo.scan({
@@ -98,19 +99,16 @@ exports.handler = function () { return __awaiter(void 0, void 0, void 0, functio
                         ExpressionAttributeNames: { "#dynobase_name": "name", "#dynobase_language": "language" }
                     }).promise()];
             case 1:
-                users_table = _a.sent();
+                users_table = _p.sent();
                 bodyEmail = 'Sono stati riscontrati i seguenti conflitti anagrafici tra differenti user: \n';
                 send = false;
                 for (i = 0; i < users_table.Items.length - 1; i++) {
                     for (j = 0; j < users_table.Items[i].companies.L.length; j++) {
                         for (k = i + 1; k < users_table.Items.length; k++) {
                             for (l = 0; l < users_table.Items[k].companies.L.length; l++) {
-                                if (users_table.Items[i].companies.L[j].M && users_table.Items[k].companies.L[l].M
-                                    && users_table.Items[i].companies.L[j].M.id_anagrafica.N && users_table.Items[k].companies.L[l].M.id_anagrafica.N
-                                    && users_table.Items[i].companies.L[j].M.id_anagrafica.N == users_table.Items[k].companies.L[l].M.id_anagrafica.N
-                                    && users_table.Items[i].companies.L[j].M && users_table.Items[k].companies.L[l].M
-                                    && users_table.Items[i].companies.L[j].M.name.S && users_table.Items[k].companies.L[l].M.name.S
-                                    && users_table.Items[i].companies.L[j].M.name.S == users_table.Items[k].companies.L[l].M.name.S) {
+                                if (((_c = (_b = (_a = users_table.Items[i].companies.L[j]) === null || _a === void 0 ? void 0 : _a.M) === null || _b === void 0 ? void 0 : _b.id_anagrafica) === null || _c === void 0 ? void 0 : _c.N) &&
+                                    ((_f = (_e = (_d = users_table.Items[i].companies.L[j]) === null || _d === void 0 ? void 0 : _d.M) === null || _e === void 0 ? void 0 : _e.id_anagrafica) === null || _f === void 0 ? void 0 : _f.N) == ((_j = (_h = (_g = users_table.Items[k].companies.L[l]) === null || _g === void 0 ? void 0 : _g.M) === null || _h === void 0 ? void 0 : _h.id_anagrafica) === null || _j === void 0 ? void 0 : _j.N)
+                                    && ((_l = (_k = users_table.Items[i].companies.L[j].M) === null || _k === void 0 ? void 0 : _k.name) === null || _l === void 0 ? void 0 : _l.S) == ((_o = (_m = users_table.Items[k].companies.L[l].M) === null || _m === void 0 ? void 0 : _m.name) === null || _o === void 0 ? void 0 : _o.S)) {
                                     send = true;
                                     bodyEmail = bodyEmail + ' - anagrafiche uguali su ' + users_table.Items[i].companies.L[j].M.name.S + ' per gli utenti ' + users_table.Items[i].username.S + ' e ' + users_table.Items[k].username.S + '\n';
                                 }
@@ -119,10 +117,10 @@ exports.handler = function () { return __awaiter(void 0, void 0, void 0, functio
                     }
                 }
                 if (!send) return [3 /*break*/, 3];
-                return [4 /*yield*/, sendEmail(['service@alacritas.eu', 'info@alacritas.eu'], bodyEmail, 'Conflitti di "id_anagrafica" tra users')];
+                return [4 /*yield*/, sendEmail(['service@alacritas.eu'], bodyEmail, 'Conflitti di "id_anagrafica" tra users')];
             case 2:
-                _a.sent();
-                _a.label = 3;
+                _p.sent();
+                _p.label = 3;
             case 3: return [2 /*return*/, {
                     isBase64Encoded: false,
                     headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
