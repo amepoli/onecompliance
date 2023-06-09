@@ -37,57 +37,98 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var AWS = require("aws-sdk");
-var Pool = require("pg-pool");
 AWS.config.update({ region: process.env.REGION });
 var s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 var dynamo = new AWS.DynamoDB({ apiVersion: '2012-08-10' });
-var pool = new Pool({
-    host: process.env.HOST_NAME,
-    database: process.env.DB_NAME,
-    user: process.env.USER_NAME,
-    password: process.env.PASSWORD,
-    port: process.env.PORT,
-    max: 1,
-    min: 0,
-    idleTimeoutMillis: 300000,
-    connectionTimeoutMillis: 1000
-});
+var ses = new AWS.SES({ apiVersion: '2010-12-01' });
+// const pool = new Pool({
+//     host: process.env.HOST_NAME,
+//     database: process.env.DB_NAME,
+//     user: process.env.USER_NAME,
+//     password: process.env.PASSWORD,
+//     port: process.env.PORT,
+//     max: 1,
+//     min: 0,
+//     idleTimeoutMillis: 300000,
+//     connectionTimeoutMillis: 1000
+// });
+function sendEmail(to, body, subject) {
+    return __awaiter(this, void 0, void 0, function () {
+        var eParams, email;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    eParams = {
+                        Destination: {
+                            ToAddresses: to
+                        },
+                        Message: {
+                            Body: {
+                                Text: {
+                                    Charset: "UTF-8",
+                                    Data: body
+                                }
+                            },
+                            Subject: {
+                                Charset: "UTF-8",
+                                Data: subject
+                            }
+                        },
+                        // Replace source_email with your SES validated email address
+                        Source: 'service@alacritas.eu'
+                    };
+                    return [4 /*yield*/, ses.sendEmail(eParams).promise()];
+                case 1:
+                    email = _a.sent();
+                    console.log('Sent email: ', email);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 exports.handler = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var queryResult, bodyResponse, d, today, nextYearFromToday, users_table, users_json, query;
+    var bodyResponse, users_table, bodyEmail, send, i, j, k, l;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 bodyResponse = { result: 'Ok', reason: null, response: [] };
-                d = new Date();
-                today = d.toISOString();
-                d.setFullYear(d.getFullYear() + 1);
-                nextYearFromToday = d.toISOString();
                 return [4 /*yield*/, dynamo.scan({
-                        TableName: 'users',
+                        TableName: 'USERS_NAME',
                         ProjectionExpression: "userid,companies,createdAt,email,#dynobase_language,lastname,#dynobase_name,onekyc,picture,showTimeTracker,sync,username",
                         ExpressionAttributeNames: { "#dynobase_name": "name", "#dynobase_language": "language" }
                     }).promise()];
             case 1:
                 users_table = _a.sent();
-                users_json = JSON.stringify(users_table.Items);
-                query = "SELECT entrasp.dynamodb_users_insert($$" + users_json + "$$::json);";
-                return [4 /*yield*/, pool
-                        .query(query)
-                        .then(function (res) { return queryResult = res.rows.length > 0 ? res : null; })["catch"](function (err) {
-                        console.error("Error executing query \"" + query + "\"", err.stack);
-                        bodyResponse = { result: 'KO', reason: 'Something went wrong quering the DB', response: null };
-                    })];
+                bodyEmail = 'Sono stati riscontrati i seguenti conflitti anagrafici tra differenti user: \n';
+                send = false;
+                for (i = 0; i < users_table.Items.length - 1; i++) {
+                    for (j = 0; j < users_table.Items[i].companies.L.length; j++) {
+                        for (k = i + 1; k < users_table.Items.length; k++) {
+                            for (l = 0; l < users_table.Items[k].companies.L.length; l++) {
+                                if (users_table.Items[i].companies.L[j].M && users_table.Items[k].companies.L[l].M
+                                    && users_table.Items[i].companies.L[j].M.id_anagrafica.N && users_table.Items[k].companies.L[l].M.id_anagrafica.N
+                                    && users_table.Items[i].companies.L[j].M.id_anagrafica.N == users_table.Items[k].companies.L[l].M.id_anagrafica.N
+                                    && users_table.Items[i].companies.L[j].M && users_table.Items[k].companies.L[l].M
+                                    && users_table.Items[i].companies.L[j].M.name.S && users_table.Items[k].companies.L[l].M.name.S
+                                    && users_table.Items[i].companies.L[j].M.name.S == users_table.Items[k].companies.L[l].M.name.S) {
+                                    send = true;
+                                    bodyEmail = bodyEmail + ' - anagrafiche uguali su ' + users_table.Items[i].companies.L[j].M.name.S + ' per gli utenti ' + users_table.Items[i].username.S + ' e ' + users_table.Items[k].username.S + '\n';
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!send) return [3 /*break*/, 3];
+                return [4 /*yield*/, sendEmail(['service@alacritas.eu', 'info@alacritas.eu'], bodyEmail, 'Conflitti di "id_anagrafica" tra users')];
             case 2:
                 _a.sent();
-                if (queryResult) {
-                }
-                // console.log('bodyResponse: ', JSON.stringify(bodyResponse));
-                return [2 /*return*/, {
-                        isBase64Encoded: false,
-                        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-                        statusCode: 200,
-                        body: JSON.stringify(bodyResponse)
-                    }];
+                _a.label = 3;
+            case 3: return [2 /*return*/, {
+                    isBase64Encoded: false,
+                    headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+                    statusCode: 200,
+                    body: JSON.stringify(bodyResponse)
+                }];
         }
     });
 }); };

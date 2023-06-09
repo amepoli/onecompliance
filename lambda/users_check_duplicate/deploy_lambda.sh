@@ -17,13 +17,15 @@ if [ -f ./index.ts.ori ]; then
 fi
 
 LAMBDANAME=`cat ../../${1}.json | jq -r ".lambdas.users_check_duplicate.lambdaName"`
-
 BUCKETNAME=`cat ../../${1}.json | jq -r ".lambdas.users_check_duplicate.s3.bucket"`
+DYN_USERSNAME=`cat ../../${1}.json | jq -r ".dynamoTables.users.tableName"`
 
 tsc index.ts
 
 #replace Variables
 cp index.js index.js.ori
+
+sed -i -e "s/USERS_NAME/${DYN_USERSNAME}/g" index.js
 
 rm index.js-e
 
