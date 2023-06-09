@@ -44,7 +44,7 @@ async function sendEmail(to, body, subject) {
     };
 
     var email = await ses.sendEmail(eParams).promise();
-    console.log('Sent email: ',email);
+    console.log('Sent email: ',eParams);
 }
 
 exports.handler = async () => {
@@ -80,12 +80,9 @@ exports.handler = async () => {
         for (let j = 0; j < users_table.Items[i].companies.L.length; j++) {
             for (let k = i + 1; k < users_table.Items.length; k++) {
                 for (let l = 0; l < users_table.Items[k].companies.L.length; l++) {
-                    if (users_table.Items[i].companies.L[j].M && users_table.Items[k].companies.L[l].M
-                        && users_table.Items[i].companies.L[j].M.id_anagrafica.N && users_table.Items[k].companies.L[l].M.id_anagrafica.N
-                        && users_table.Items[i].companies.L[j].M.id_anagrafica.N == users_table.Items[k].companies.L[l].M.id_anagrafica.N
-                        && users_table.Items[i].companies.L[j].M && users_table.Items[k].companies.L[l].M
-                        && users_table.Items[i].companies.L[j].M.name.S && users_table.Items[k].companies.L[l].M.name.S
-                        && users_table.Items[i].companies.L[j].M.name.S == users_table.Items[k].companies.L[l].M.name.S) {
+                    if (users_table.Items[i].companies.L[j]?.M?.id_anagrafica?.N &&
+                        users_table.Items[i].companies.L[j]?.M?.id_anagrafica?.N == users_table.Items[k].companies.L[l]?.M?.id_anagrafica?.N
+                        && users_table.Items[i].companies.L[j].M?.name?.S == users_table.Items[k].companies.L[l].M?.name?.S) {
 
                         send = true;
                         bodyEmail = bodyEmail + ' - anagrafiche uguali su ' + users_table.Items[i].companies.L[j].M.name.S + ' per gli utenti ' + users_table.Items[i].username.S + ' e ' + users_table.Items[k].username.S + '\n';
