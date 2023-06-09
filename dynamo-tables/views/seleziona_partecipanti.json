@@ -62,6 +62,16 @@
             "operation": "insert",
             "type": "main",
             "queryString": "select entrasp.campione_insert($codice_azienda$, $id_sondaggio$, $object_key$, $id_anagrafica$) as id_somministrazione;"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.sondaggi_somministrati set id_anagrafica=split_part(object_key, '|', 2)::numeric where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.sondaggi_somministrati set id_anagrafica=split_part(object_key, '|', 2)::numeric where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         }
     ],
     "hideActions": [
