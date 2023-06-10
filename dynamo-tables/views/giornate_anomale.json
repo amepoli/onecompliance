@@ -12,6 +12,11 @@
       "operation": "selectForm",
       "queryString": "select $giorno$ as giorno, to_char($giorno$::date, 'Day DD-MM-YYYY') as giorno_descr, $dynamo_user$ as dynamo_user",
       "type": "main"
+    },
+    {
+      "operation": "selectForm",
+      "queryString": "select from entrasp.consuntivazioni csn inner join entrasp.anagrafiche an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where csn.data_intervento=$giorno$ and an.dynamo_usuer=$dynamo_user$",
+      "type": "main"
     }
   ],
   "table_multiselection_actions": [
@@ -81,6 +86,58 @@
       "key": "dynamo_user",
       "readOnly": true,
       "label": "Utente"
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "validata",
+      "label": "Giornata validata",
+      "outputEvent": {
+        "eventName": "valida_giornata",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "valida_giornata",
+          "actionType": "query",
+          "condition": "equalTo",
+          "values": ["1"],
+          "queryFunct": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_angrafica where csn.codice_azienda=$codice_azienda$ and dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ returning 1"
+        }
+      ],
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "motivo_validazione_tr",
+      "label": "Note valid.giornata",
+      "outputEvent": {
+        "eventName": "note_valida_giornata_upd",
+        "eventTrigger": "change"
+      },
+      "inputEvents": [
+        {
+          "eventName": "note_valida_giornata_upd",
+          "actionType": "query",
+          "condition": "equalTo",
+          "values": ["1"],
+          "queryFunct": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_angrafica where csn.codice_azienda=$codice_azienda$ and dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ returning 1"
+        }
+      ],
+      "readOnly": false,
+      "newLine": false
     }
   ],
   "table_keys": [
