@@ -15,7 +15,12 @@
     },
     {
       "operation": "selectForm",
-      "queryString": "select from entrasp.consuntivazioni csn inner join entrasp.anagrafiche an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where csn.data_intervento=$giorno$ and an.dynamo_usuer=$dynamo_user$",
+      "queryString": "select csn.validata, csn.motivo_validazione_tr from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where csn.data_intervento=$giorno$ and an.dynamo_user=$dynamo_user$ limit 1",
+      "type": "postProcessing"
+    },
+    {
+      "operation": "update",
+      "queryString": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an where dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica returning 1",
       "type": "main"
     }
   ],
@@ -107,7 +112,7 @@
           "actionType": "query",
           "condition": "equalTo",
           "values": ["1"],
-          "queryFunct": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_angrafica where csn.codice_azienda=$codice_azienda$ and dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ returning 1"
+          "queryFunct": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an where dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica returning 1"
         }
       ],
       "readOnly": false,
@@ -123,19 +128,6 @@
       "isPrimary": false,
       "key": "motivo_validazione_tr",
       "label": "Note valid.giornata",
-      "outputEvent": {
-        "eventName": "note_valida_giornata_upd",
-        "eventTrigger": "change"
-      },
-      "inputEvents": [
-        {
-          "eventName": "note_valida_giornata_upd",
-          "actionType": "query",
-          "condition": "equalTo",
-          "values": ["1"],
-          "queryFunct": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_angrafica where csn.codice_azienda=$codice_azienda$ and dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ returning 1"
-        }
-      ],
       "readOnly": false,
       "newLine": false
     }
@@ -506,10 +498,6 @@
       "viewType": "form"
     },
     {
-      "formActionType": "save",
-      "viewType": "form"
-    },
-    {
       "formActionType": "share",
       "viewType": "form"
     },
@@ -533,8 +521,5 @@
       "formActionType": "stopEvent",
       "viewType": "form"
     }
-  ],
-  "restrictions": {
-    "preventNavigationToForm": false
-  }
-}
+  ]
+ }
