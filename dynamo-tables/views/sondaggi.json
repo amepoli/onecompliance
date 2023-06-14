@@ -3138,6 +3138,7 @@
                 "label": "Relazioni Annuali",
                 "queryString": "select snd.data_comp, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, snd.id_sondaggio, snd.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, cp.risultati_emersi, cp.proposte_formulate, cp.follow_up from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$"
             }
+            
         ],
         "formQueries": [
             {
@@ -3152,11 +3153,16 @@
                 "label": "Risultati Somministrazioni",
                 "queryString": "select id_sondaggio, id_somministrazione, object_description as campione, punteggio_massimo as punteggio_massimo_ottenibile, punteggio_ottenuto, ris_percentuale as risultato_percentuale, giudizio, punteggio_description, somministrazione_completata from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio = $id_sondaggio$"
             },
+            {
+                "label": "Domande e Risposte",
+                "queryString": "select id_somministrazione, id_domanda,descrizione,descrizione_sez,punteggio as punteggio_dom,risposta_rp, peso, punteggio_risposta from entrasp.select_domande_delle_risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ order by id_somministrazione, ordinamento_sezione, ordinamento"
+            },
 			{
 				"label": "Report",
 				"queryString": "select * from entrasp.report_data_sondaggi('€global_codice_azienda€',19, $id_sondaggio$);",
 				"isReport": true
 			}
+            
         ]
     },
     "formRowProperties": [

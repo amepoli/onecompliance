@@ -984,6 +984,10 @@
             {
                 "label": "Presidi ISO27001",
                 "queryString": "select distinct (pr.id_presidio), pr.id_presidio_parent, pr.codice, entrasp.tipo_presidio_descr(id_tipo_presidio,pr.codice_azienda)as tipo_presidio, pr.descrizione_breve, pr.descrizione, pr.guida_attuativa, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, pr.note from entrasp.presidi pr inner join entrasp.argomenti arg on pr.id_argomento=arg.id_argomento inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where pr.codice_azienda= $codice_azienda$ and aa.id_argomento_father in (5328, 48928)"
+            },
+            {
+                "label": "Presidi dettaglio",
+                "queryString": "select id_presidio,codice,descrizione_breve,descrizione,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as ufficio, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, entrasp.tipo_processo_descr(id_tipo_presidio, codice_azienda) as tipo, entrasp.argomenti_descr_breve(id_argomento_stato_automazione) as automazione from entrasp.presidi where codice_azienda=$codice_azienda$ order by id_presidio"
             }
         ]
     },
