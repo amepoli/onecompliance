@@ -13,7 +13,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select (€global_id_anagrafiche€)::text as user_companies,codice_azienda,data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=prg.codice_azienda and cmp.id_progetto=prg.id_progetto limit 1), prg.codice_azienda) from entrasp.progetti prg where codice_azienda='€global_codice_azienda€' and $P{_and_};"
+			"queryString": "select (€global_id_anagrafiche€)::text as user_companies,codice_azienda,data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr_noid(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=prg.codice_azienda and cmp.id_progetto=prg.id_progetto limit 1), prg.codice_azienda) from entrasp.progetti prg where codice_azienda='€global_codice_azienda€' and $P{_and_};"
 		},
 		{
 			"operation": "delete",
@@ -130,19 +130,19 @@
 	],
 	"form_keys": [
 		{
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "user_upd",
-            "label": "",
-            "readOnly": false,
-            "sameOrigin": true,
-            "insertUpdateFunct": "SELECT '€global_username€'"
-        },
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "user_upd",
+			"label": "",
+			"readOnly": false,
+			"sameOrigin": true,
+			"insertUpdateFunct": "SELECT '€global_username€'"
+		},
 		{
 			"autoGenerate": false,
 			"format": {
@@ -192,162 +192,77 @@
 			]
 		},
 		{
-			"autoGenerate": true,
+			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"dataType": "text",
+				"viewType": "label"
 			},
-			"label": "# Progetto",
-			"key": "id_progetto",
-			"readOnly": true,
 			"isHidden": false,
-			"isPrimary": true,
+			"isPrimary": false,
+			"key": "progettolabel",
+			"label": "Progetto",
 			"newLine": false,
-			"size": 0.9
+			"readOnly": true,
+			"sameOrigin": false,
+			"style": {
+				"background_color": "transparent",
+				"font_color": "black",
+				"font_size": "1.5em",
+				"font_style": "normal",
+				"font_weight": "600"
+			},
+			"size": 6.66
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "text",
-				"validations": [
-					{
-						"message": "Necessario specificare un codice del progetto",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
+				"viewType": "button"
 			},
-			"label": "Codice",
-			"key": "codice_progetto",
+			"isHidden": false,
+			"isPrimary": false,
+			"buttonIcon": "update",
+			"key": "avvia_progetti",
+			"label": "Avvia/aggiorna",
+			"newLine": false,
 			"outputEvent": {
-				"eventName": "codice_progetto_change",
-				"eventTrigger": "change"
+				"eventName": "progetti_avvia",
+				"eventTrigger": "press"
 			},
 			"inputEvents": [
 				{
-					"eventName": "codice_progetto_change",
+					"eventName": "progetti_avvia",
 					"actionType": "query",
 					"condition": "none",
 					"values": [],
-					"queryFunct": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
+					"queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
+					"outputEventWhenComplete": "formReload"
+				},
+				{
+					"eventName": "onAddNewProgetti",
+					"actionType": "hide",
+					"condition": "none",
+					"values": []
 				}
 			],
 			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"size": 1.2,
-			"newLine": false
+			"sameOrigin": false,
+			"size": 1.67,
+			"style": {
+				"background_color": "green"
+			}
 		},
 		{
-			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "text",
-				"validations": [
-					{
-						"message": "Necessario specificare un titolo del progetto",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
+				"viewType": "invisible"
 			},
-			"label": "Titolo",
-			"key": "titolo",
-			"readOnly": false,
+			"size": 1.07,
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false,
-			"size": 4.4
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text",
-				"value": "A",
-				"validations": [
-					{
-						"message": "Stato necessario",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Stato",
-			"key": "stato",
+			"label": "invisible_2",
+			"key": "invisible_2",
+			"sameOrigin": false,
 			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 1.5,
-			"outputEvent": {
-				"eventName": "codice_colore_change_stato",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"eventName": "codice_colore_change_stato",
-					"condition": "none",
-					"values": [],
-					"actionType": "query_style",
-					"styleAttribute": "background_color",
-					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-				},
-				{
-					"eventName": "codice_colore_change_stato",
-					"condition": "none",
-					"values": [],
-					"actionType": "query_style",
-					"styleAttribute": "font_color",
-					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-				},
-				{
-					"eventName": "onLoadProgetti",
-					"condition": "none",
-					"values": [],
-					"actionType": "query_style",
-					"styleAttribute": "background_color",
-					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-				},
-				{
-					"eventName": "onLoadProgetti",
-					"condition": "none",
-					"values": [],
-					"actionType": "query_style",
-					"styleAttribute": "font_color",
-					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date",
-				"value": "£CURRENT_DATE£"
-			},
-			"label": "Data Inserimento",
-			"key": "data_inserimento",
-			"outputEvent": {
-				"eventName": "data_ins_change_progetti",
-				"eventTrigger": "change"
-			},
-			"inputEvents": [
-				{
-					"eventName": "data_ins_change_progetti",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "entrasp.change_data_inserimento_progetto($codice_azienda$, $id_progetto$)"
-				}
-			],
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 1.4
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -373,22 +288,24 @@
 					{
 						"icon": "sync_alt",
 						"label": "Sync. mod. progetto associato",
-						"outputEventName": "sync_mod_progetto"			
+						"outputEventName": "sync_mod_progetto"
 					},
 					{
 						"icon": "content_copy",
-						"label": "Duplica (SENZA risposte)",
+						"label": "Duplica",
 						"outputEventName": "progetto_duplica"
 					},
 					{
 						"icon": "copy_all",
 						"label": "Duplica (CON risposte)",
-						"outputEventName": "progetto_duplica_con_risposte"
+						"outputEventName": "progetto_duplica_con_risposte",
+						"key": "progetto_duplica_con_risposte"
 					},
 					{
 						"icon": "sync_alt",
 						"label": "All. date e centri gest",
-						"outputEventName": "allinea_date"
+						"outputEventName": "allinea_date",
+						"key": "allinea_date"
 					},
 					{
 						"icon": "sync",
@@ -512,6 +429,187 @@
 		{
 			"autoGenerate": false,
 			"format": {
+				"viewType": "input",
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Necessario specificare un codice del progetto",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"label": "Codice",
+			"key": "codice_progetto",
+			"outputEvent": {
+				"eventName": "codice_progetto_change",
+				"eventTrigger": "change"
+			},
+			"inputEvents": [
+				{
+					"eventName": "codice_progetto_change",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
+				}
+			],
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"size": 1.67,
+			"newLine": false
+		},
+		{
+			"autoGenerate": true,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "# Progetto",
+			"key": "id_progetto",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": true,
+			"newLine": false,
+			"size": 0.83
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"label": "Versione",
+			"key": "attivita_vr",
+			"readOnly": true,
+			"isHidden": false,
+			"inputEvents": [
+				{
+					"eventName": "select_modello",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select max(attivita_vr) as attivita_vr from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita='£codice_attivita£'"
+				}
+			],
+			"isPrimary": false,
+			"size": 0.83,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text",
+				"validations": [
+					{
+						"message": "Necessario specificare un titolo del progetto",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"label": "Titolo",
+			"key": "titolo",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 3.33
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text",
+				"value": "P",
+				"validations": [
+					{
+						"message": "Stato necessario",
+						"name": "required",
+						"validator": "Validators.required"
+					}
+				]
+			},
+			"label": "Stato",
+			"key": "stato",
+			"readOnly": true,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 1.66,
+			"outputEvent": {
+				"eventName": "codice_colore_change_stato",
+				"eventTrigger": "select"
+			},
+			"inputEvents": [
+				{
+					"eventName": "codice_colore_change_stato",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "background_color",
+					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+				},
+				{
+					"eventName": "codice_colore_change_stato",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "font_color",
+					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+				},
+				{
+					"eventName": "onLoadProgetti",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "background_color",
+					"queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+				},
+				{
+					"eventName": "onLoadProgetti",
+					"condition": "none",
+					"values": [],
+					"actionType": "query_style",
+					"styleAttribute": "font_color",
+					"queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+				}
+			]
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "date",
+				"value": "£CURRENT_DATE£"
+			},
+			"label": "Data Inserimento",
+			"key": "data_inserimento",
+			"outputEvent": {
+				"eventName": "data_ins_change_progetti",
+				"eventTrigger": "change"
+			},
+			"inputEvents": [
+				{
+					"eventName": "data_ins_change_progetti",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "entrasp.change_data_inserimento_progetto($codice_azienda$, $id_progetto$)"
+				}
+			],
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": true,
+			"size": 1.67
+		},
+		{
+			"autoGenerate": false,
+			"format": {
 				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi_nom(an.codice_part, an.id_anagrafica);",
 				"options": [],
 				"viewType": "combobox",
@@ -542,23 +640,23 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 2.8
+			"size": 3.33
 		},
 		{
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT cnt.id_contratto AS id, cnt.numero_contratto||'-'||entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) AS name  FROM entrasp.contratti cnt inner join entrasp.anagrafiche_id an on cnt.codice_part=an.codice_part and cnt.id_cliente=an.id_anagrafica WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_contratto",
-            "label": "Contratto",
-            "newLine": false,
-            "readOnly": false,
-            "size": 2,
+			"autoGenerate": false,
+			"format": {
+				"comboQuery": "SELECT cnt.id_contratto AS id, cnt.numero_contratto||'-'||entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) AS name  FROM entrasp.contratti cnt inner join entrasp.anagrafiche_id an on cnt.codice_part=an.codice_part and cnt.id_cliente=an.id_anagrafica WHERE codice_azienda=$codice_azienda$;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_contratto",
+			"label": "Contratto",
+			"newLine": false,
+			"readOnly": false,
+			"size": 3.33,
 			"outputEvent": {
 				"eventTrigger": "select",
 				"eventName": "change_id_contratto"
@@ -572,20 +670,6 @@
 					"queryFunct": "select entrasp.aggiorna_contratto_progetto($codice_azienda$, $id_progetto$,£id_contratto£)"
 				}
 			]
-        },
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"label": "Data Competenza",
-			"key": "data_competenza",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 1.3
 		},
 		{
 			"autoGenerate": false,
@@ -598,8 +682,7 @@
 			"readOnly": false,
 			"isHidden": true,
 			"isPrimary": false,
-			"newLine": false,
-			"size": 0
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -612,13 +695,12 @@
 			"readOnly": false,
 			"isHidden": "$Q{is_hidden_codice_azienda}",
 			"isPrimary": true,
-			"newLine": false,
-			"size": 0
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+				"comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr_noid(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
 				"options": [],
 				"viewType": "combobox",
 				"validations": [
@@ -634,43 +716,22 @@
 			"key": "id_centro_gest",
 			"label": "Centro Gestionale",
 			"newLine": false,
-			"size": 1.9,
+			"size": 1.66,
 			"readOnly": false
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "button"
+				"viewType": "input",
+				"dataType": "date"
 			},
+			"label": "Data Competenza",
+			"key": "data_competenza",
+			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"buttonIcon": "update",
-			"key": "avvia_progetti",
-			"label": "Avvia/aggiorna",
 			"newLine": true,
-			"outputEvent": {
-				"eventName": "progetti_avvia",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "progetti_avvia",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
-					"outputEventWhenComplete": "formReload"
-				},
-				{
-					"eventName": "onAddNewProgetti",
-					"actionType": "hide",
-					"condition": "none",
-					"values": []
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.0
+			"size": 1.67
 		},
 		{
 			"autoGenerate": false,
@@ -689,51 +750,13 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"size": 3,
+			"size": 3.33,
 			"newLine": false
 		},
 		{
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Versione",
-			"key": "attivita_vr",
-			"readOnly": true,
-			"isHidden": false,
-			"inputEvents": [
-				{
-					"eventName": "select_modello",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select max(attivita_vr) as attivita_vr from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita='£codice_attivita£'"
-				}
-			],
-			"isPrimary": false,
-			"size": 0.8,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_argomento",
-			"queryFunct": "select entrasp.argomenti_descr_breve(att.id_argomento) from entrasp.progetti pr inner join entrasp.attivita att on att.codice_azienda=pr.codice_azienda and att.codice_attivita=pr.codice_attivita and att.attivita_vr=pr.attivita_vr where id_progetto=$id_progetto$ and pr.codice_azienda=$codice_azienda$ limit 1",
-			"label": "Argomento",
-			"readOnly": true,
-			"newLine": false,
-			"size": 1.2
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "textarea",
 				"dataType": "text"
 			},
 			"label": "Note",
@@ -743,10 +766,67 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 4.4
+			"size": 6.67
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_argomento",
+			"queryFunct": "select entrasp.argomenti_descr_breve(att.id_argomento) from entrasp.progetti pr inner join entrasp.attivita att on att.codice_azienda=pr.codice_azienda and att.codice_attivita=pr.codice_attivita and att.attivita_vr=pr.attivita_vr where id_progetto=$id_progetto$ and pr.codice_azienda=$codice_azienda$ limit 1",
+			"label": "Argomento",
+			"readOnly": true,
+			"newLine": false
 		}
 	],
 	"search_keys": [
+		{
+			"label": "Codice progetto",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"fieldName": "codice_progetto_s",
+			"newLine": false,
+			"queryCond": "codice_progetto like '€codice_progetto_s€'||'%'"
+		},
+		{
+			"label": "Identificativo Progetto",
+			"format": {
+				"dataType": "number",
+				"viewType": "input"
+			},
+			"fieldName": "id_progetto_s",
+			"newLine": false,
+			"queryCond": "id_progetto=$id_progetto_s$"
+		},
+		{
+			"fieldName": "codice_attivita_s",
+			"format": {
+				"comboQuery": "SELECT codice_attivita AS id, codice_attivita||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda='€global_codice_azienda€' and codice_attivita_parent is null;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
+			},
+			"label": "Modello di progetto",
+			"newLine": false,
+			"queryCond": "codice_attivita=$codice_attivita_s$"
+		},
+		{
+			"fieldName": "id_cliente",
+			"format": {
+				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+				"options": [],
+				"viewType": "combobox"
+			},
+			"label": "Cliente",
+			"newLine": false,
+			"queryCond": "id_cliente=$id_cliente$"
+		},
 		{
 			"fieldName": "stato",
 			"format": {
@@ -759,24 +839,15 @@
 			"queryCond": "stato='€stato€'"
 		},
 		{
-			"label": "Id Progetto",
+			"fieldName": "id_centro_gest",
 			"format": {
-				"dataType": "number",
-				"viewType": "input"
+				"comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+				"options": [],
+				"viewType": "combobox"
 			},
-			"fieldName": "id_progetto_s",
-			"newLine": false,
-			"queryCond": "id_progetto=$id_progetto_s$"
-		},
-		{
-			"label": "Codice progetto",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"fieldName": "codice_progetto_s",
-			"newLine": false,
-			"queryCond": "codice_progetto like '€codice_progetto_s€'||'%'"
+			"label": "Centro Gestionale",
+			"newLine": true,
+			"queryCond": "id_centro_gest=$id_centro_gest$"
 		},
 		{
 			"format": {
@@ -791,29 +862,6 @@
 			"queryCond": "array[id_progetto]<@any(select entrasp.elenco_progetti_con_giudizio(codice_azienda, '€giudizio_s€'))"
 		},
 		{
-			"fieldName": "codice_attivita_s",
-			"format": {
-				"comboQuery": "SELECT codice_attivita AS id, codice_attivita||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda='€global_codice_azienda€' and codice_attivita_parent is null;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"label": "Modello di progetto",
-			"newLine": true,
-			"queryCond": "codice_attivita=$codice_attivita_s$"
-		},
-		{
-			"fieldName": "id_centro_gest",
-			"format": {
-				"comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Centro Gestionale",
-			"newLine": false,
-			"queryCond": "id_centro_gest=$id_centro_gest$"
-		},
-		{
 			"fieldName": "id_contratto",
 			"format": {
 				"comboQuery": "SELECT cnt.id_contratto AS id, cnt.numero_contratto||'-'||entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) AS name  FROM entrasp.contratti cnt inner join entrasp.anagrafiche_id an on cnt.codice_part=an.codice_part and cnt.id_cliente=an.id_anagrafica WHERE codice_azienda=$codice_azienda$",
@@ -823,17 +871,6 @@
 			"label": "Contratto",
 			"newLine": false,
 			"queryCond": "id_contratto=$id_contratto$"
-        },
-		{
-			"fieldName": "id_cliente",
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Cliente",
-			"newLine": false,
-			"queryCond": "id_cliente=$id_cliente$"
 		},
 		{
 			"fieldName": "data_ins_min",
@@ -852,8 +889,28 @@
 				"viewType": "input"
 			},
 			"label": "Inserimento entro il",
-			"newLine": true,
+			"newLine": false,
 			"queryCond": "data_inserimento<='€data_ins_max€'"
+		},
+		{
+			"fieldName": "data_comp",
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"label": "Data Competenza",
+			"newLine": false,
+			"queryCond": "data_competenza>='€data_comp€'"
+		},
+		{
+			"fieldName": "parola_s",
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"label": "Parola chiave",
+			"newLine": true,
+			"queryCond": "(UPPER(titolo) like '%'||UPPER('€parola_s€')||'%')"
 		},
 		{
 			"fieldName": "progetti_con_fasi_incomplete",
@@ -886,32 +943,12 @@
 			"queryCond": "id_contratto is null"
 		},
 		{
-			"fieldName": "data_comp",
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"label": "Data Competenza",
-			"newLine": false,
-			"queryCond": "data_competenza>='€data_comp€'"
-		},
-		{
-			"fieldName": "parola_s",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "Parola chiave",
-			"newLine": false,
-			"queryCond": "(UPPER(titolo) like '%'||UPPER('€parola_s€')||'%')"
-		},
-		{
 			"fieldName": "flag_progetti_aperti",
 			"format": {
 				"value": "0",
 				"viewType": "toggle"
 			},
-			"label": "Progetti aperti",
+			"label": "In Svolgimento",
 			"newLine": false,
 			"queryCond": "stato not in ('C', 'N', 'R')"
 		},
@@ -1019,14 +1056,14 @@
 			"isPrimary": false,
 			"key": "codice_progetto",
 			"label": "Codice Progetto",
-			"width": "8%",
+			"width": "10%",
 			"style": [
 				{
 					"value": "*",
-					"background_color": "lightblue",
+					"background_color": "#2B679D",
+					"font_color": "white",
 					"text_align": "center",
-					"font_weight": "599",
-					"font_size": "medium"
+					"font_weight": "599"
 				}
 			]
 		},
@@ -1037,8 +1074,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "data_inserimento",
-			"label": "Data Progetto",
-			"width": "7%"
+			"label": "",
+			"width": "6%"
 		},
 		{
 			"format": {
@@ -1067,7 +1104,7 @@
 			"isPrimary": true,
 			"key": "id_progetto",
 			"label": "# Progetto",
-			"width": "6%"
+			"width": "5%"
 		},
 		{
 			"format": {
@@ -1103,22 +1140,12 @@
 			"key": "titolo",
 			"label": "Titolo",
 			"width": "21%",
-			"isInputButton": true,
-            "buttonAction": {
-                "target": "progetti",
-                "viewType": "form",
-                "action": "navigate",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_progetto",
-                        "destination": "id_progetto"
-                    }
-                ]
-            }
+			"style": [
+				{
+					"value": "*",
+					"font_size": "medium"
+				}
+			]
 		},
 		{
 			"format": {
@@ -1146,14 +1173,21 @@
 			"isPrimary": false,
 			"key": "descr_stato",
 			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
-			"label": "Stato",
-			"width": "6%",
+			"label": "",
+			"width": "8%",
 			"style": [
 				{
 					"value": "Chiuso",
 					"font_color": "PaleGreen",
 					"font_weight": "500",
 					"background_color": "Green",
+					"text_align": "center"
+				},
+				{
+					"value": "In Svolgimento",
+					"font_color": "white",
+					"font_weight": "500",
+					"background_color": "royalblue",
 					"text_align": "center"
 				},
 				{
@@ -1187,8 +1221,7 @@
 			"isPrimary": false,
 			"key": "centro_gest",
 			"label": "Centro gestionale",
-			"width": "11%",
-			"queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
+			"width": "11%"
 		},
 		{
 			"format": {
@@ -1234,7 +1267,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"width": "4.5%",
+			"width": "3.5%",
 			"key": "time_report_play",
 			"label": "",
 			"style": [
@@ -1273,7 +1306,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"width": "5%",
+			"width": "3.5%",
 			"key": "time_report_stop_active",
 			"label": "",
 			"style": [
@@ -1351,8 +1384,24 @@
 			"formActionType": "share"
 		},
 		{
+			"viewType": "form",
+			"formActionType": "import_export"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "stopEvent"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "documentation"
+		},
+		{
+			"viewType": "form",
+			"formActionType": "add"
+		},
+		{
 			"viewType": "table",
-			"tableActionType": "quick-add" 
+			"tableActionType": "quick-add"
 		}
 	]
 }

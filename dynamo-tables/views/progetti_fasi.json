@@ -17,7 +17,7 @@
 	"predefinedQueries": [
 		{
 			"operation": "selectForm",
-			"queryString": "select pf.ordinamento, pf.id_fase, pf.codice, pf.titolo, pf.stato, pf.id_progetto, pf.id_progetto as id_progetto2, pf.id_fase_sup, pf.codice_azienda, pf.id_sondaggio, pf.id_sondaggio as id_sondaggio2, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio limit 1) as id_somministrazione, snd.data_prevista, (select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=pf.codice_azienda and id_sondaggio=pf.id_sondaggio limit 1)as idsomministrazione ,entrasp.fase_avg_result(pf.codice_azienda, pf.id_fase) as avg_risultato,  entrasp.fase_avg_result_worst(pf.codice_azienda, pf.id_fase) as avg_risultato_worst,  entrasp.fase_giudizio_avg_result(pf.codice_azienda, pf.id_fase) as avg_giudizio, entrasp.fase_giudizio_avg_result_worst(pf.codice_azienda, pf.id_fase) as avg_giudizio_worst from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where pf.codice_azienda=$codice_azienda$ and pf.id_fase=$id_fase$",
+			"queryString": "select pf.ordinamento, pf.id_fase, pf.codice, pf.titolo, pf.stato, pf.id_progetto, pf.id_progetto as id_progetto2, pf.id_fase_sup, pf.codice_azienda, pf.id_sondaggio, pf.id_sondaggio as id_sondaggio2, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio limit 1) as id_somministrazione, to_char(snd.data_prevista::date, 'DD/MM/YYYY') as data_prevista, (select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=pf.codice_azienda and id_sondaggio=pf.id_sondaggio limit 1)as idsomministrazione ,entrasp.fase_avg_result(pf.codice_azienda, pf.id_fase) as avg_risultato,  entrasp.fase_avg_result_worst(pf.codice_azienda, pf.id_fase) as avg_risultato_worst,  entrasp.fase_giudizio_avg_result(pf.codice_azienda, pf.id_fase) as avg_giudizio, entrasp.fase_giudizio_avg_result_worst(pf.codice_azienda, pf.id_fase) as avg_giudizio_worst from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where pf.codice_azienda=$codice_azienda$ and pf.id_fase=$id_fase$",
 			"type": "main"
 		},
 		{
@@ -27,7 +27,7 @@
 		},
 		{
 			"operation": "selectTable",
-			"queryString": "select pf.id_fase, pf.id_progetto, entrasp.somministrazione_mono_domanda(pf.codice_azienda, pf.id_sondaggio) as check, entrasp.snd_doc_completa(pf.codice_azienda, pf.id_sondaggio) as doc_completa,  pf.codice_azienda, coalesce(pf.id_sondaggio||'-'::varchar,'')||pf.titolo as titolo, coalesce(extract(year from snd.data_comp)::varchar,'') as competenza, pf.id_fase_sup, pf.id_sondaggio, pf.codice, entrasp.grc_max_id_mdt_vr(snd.codice_azienda, snd.id_modello_test) as id_modello_test_vr, true as duplica_fase, true as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase limit 1), pf.codice_azienda),snd.id_anagrafica_assegnataria,(€global_id_anagrafiche€)::text as user_companies, true as delete_fase, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_prevista, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria, pf.id_sondaggio as id_sondaggio2, mt.id_tipo_modello_test from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr left join entrasp.modelli_test mt on mvr.id_modello_test=mt.id_modello_test and mvr.codice_azienda=mt.codice_azienda where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
+			"queryString": "select pf.id_fase, pf.id_progetto, entrasp.somministrazione_mono_domanda(pf.codice_azienda, pf.id_sondaggio) as check, entrasp.snd_doc_completa(pf.codice_azienda, pf.id_sondaggio) as doc_completa,  pf.codice_azienda, coalesce(pf.id_sondaggio||'-'::varchar,'')||pf.titolo as titolo, coalesce(extract(year from snd.data_comp)::varchar,'') as competenza, pf.id_fase_sup, pf.id_sondaggio, pf.codice, entrasp.grc_max_id_mdt_vr(snd.codice_azienda, snd.id_modello_test) as id_modello_test_vr, true as duplica_fase, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase limit 1), pf.codice_azienda) then false else true end as time_report_play,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase limit 1), pf.codice_azienda),snd.id_anagrafica_assegnataria,(€global_id_anagrafiche€)::text as user_companies, true as delete_fase, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_esecuzione, snd.id_modello_test, snd. id_modello_test_vr, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as id_anagrafica_assegnataria, pf.id_sondaggio as id_sondaggio2, mt.id_tipo_modello_test from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr left join entrasp.modelli_test mt on mvr.id_modello_test=mt.id_modello_test and mvr.codice_azienda=mt.codice_azienda where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$",
 			"type": "main"
 		}
 	],
@@ -39,6 +39,25 @@
 				"title": "Cancellazione fase e sondaggio",
 				"text": "Sei sicuro di voler cancellare la fase, il sondaggio associato e tutte le risposte?"
 			}
+		}
+	],
+	"table_multiselection_actions": [
+		{
+			"viewType": "menu",
+			"key": "menu_prog_fas",
+			"label": "Actions",
+			"icon": "more_vert",
+			"menuOptions": [
+				{
+					"key": "modifica_crediti",
+					"icon": "delete",
+					"label": "Elimina",
+					"query": "select entrasp.progetto_fase_delete(s.codiceazienda, s.idfase::numeric) from ( SELECT SPLIT_PART(ARR,'~',1) as codiceazienda,SPLIT_PART(ARR,'~',2) as idfase FROM UNNEST(ARRAY[$selected_rows_data$]) ARR) AS s;",
+					"confirmAction": true,
+					"reloadOnSuccess": true,
+					"confirmActionMessage": "Eliminare la fase, il sondaggio associato e tutte le risposte?"
+				}
+			]
 		}
 	],
 	"querySuffixes": {
@@ -62,16 +81,24 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"dataType": "text",
+				"viewType": "label"
 			},
-			"label": "Ordinamento",
-			"key": "ordinamento",
-			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
+			"key": "faselabel",
+			"label": "Fase",
 			"newLine": false,
-			"size": 1
+			"readOnly": true,
+			"sameOrigin": false,
+			"style": {
+				"background_color": "transparent",
+				"font_color": "black",
+				"font_size": "1.5em",
+				"font_style": "normal",
+				"font_weight": "600"
+			},
+			"size": 1.11
 		},
 		{
 			"autoGenerate": true,
@@ -79,7 +106,7 @@
 				"viewType": "input",
 				"dataType": "number"
 			},
-			"label": "# Fase",
+			"label": "#",
 			"key": "id_fase",
 			"inputEvents": [
 				{
@@ -112,7 +139,7 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false,
-			"size": 0.7
+			"size": 1.11
 		},
 		{
 			"autoGenerate": false,
@@ -136,7 +163,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 1.3
+			"size": 1.11
 		},
 		{
 			"autoGenerate": false,
@@ -150,7 +177,21 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 4.9
+			"size": 3.33
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"viewType": "input",
+				"dataType": "number"
+			},
+			"label": "Ordinamento",
+			"key": "ordinamento",
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"newLine": false,
+			"size": 1.67
 		},
 		{
 			"autoGenerate": false,
@@ -173,8 +214,8 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"size": 1.5,
-			"newLine": false,
+			"size": 1.67,
+			"newLine": true,
 			"outputEvent": {
 				"eventName": "progetto_fase_change_stato",
 				"eventTrigger": "select"
@@ -217,44 +258,21 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "menu",
-				"menuOptions": [
-					{
-						"icon": "link",
-						"label": "Modifica verifica associata",
-						"outputEventName": "change_sondaggio_associato"
-					},
-					{
-						"icon": "content_copy",
-						"label": "Duplica fase",
-						"outputEventName": "fasi_button_duplica"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"buttonIcon": "more_vert",
-			"key": "progetti_fasi_actions",
-			"label": "",
-			"newLine": true,
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 0.4
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_progetto AS id, id_progetto||'-'||codice_progetto||'-'||titolo AS name FROM entrasp.progetti WHERE codice_azienda=$codice_azienda$;",
-				"options": [],
-				"viewType": "combobox"
+				"viewType": "input",
+				"dataType": "number"
 			},
 			"label": "Progetto",
 			"key": "id_progetto",
-			"readOnly": false,
+			"size": 1.11,
+			"readOnly": true,
+			"sameOrigin": false,
+			"outputEvent": {
+				"eventName": "to_progetto_from_progetti_fasi",
+				"eventTrigger": "press"
+			},
 			"isHidden": false,
 			"isPrimary": false,
-			"newLine": false,
-			"size": 2.8
+			"newLine": false
 		},
 		{
 			"autoGenerate": false,
@@ -269,7 +287,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 2.8
+			"size": 2.22
 		},
 		{
 			"autoGenerate": false,
@@ -309,22 +327,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"newLine": false,
-			"size": 2.8
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"label": "Data scadenza",
-			"key": "data_prevista",
-			"sameOrigin": false,
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true,
-			"size": 1.6
+			"size": 3.33
 		},
 		{
 			"autoGenerate": false,
@@ -332,28 +335,9 @@
 				"viewType": "input",
 				"dataType": "number"
 			},
-			"label": "Id Progetto",
-			"key": "id_progetto2",
-			"size": 1,
-			"readOnly": true,
-			"sameOrigin": false,
-			"outputEvent": {
-				"eventName": "to_progetto_from_progetti_fasi",
-				"eventTrigger": "press"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Id Sondaggio",
+			"label": "Sondaggio",
 			"key": "id_sondaggio2",
-			"size": 1,
+			"size": 0.81,
 			"readOnly": true,
 			"sameOrigin": false,
 			"outputEvent": {
@@ -370,9 +354,9 @@
 				"viewType": "input",
 				"dataType": "number"
 			},
-			"label": "Id Verifica",
+			"label": "Verifica",
 			"key": "id_somministrazione",
-			"size": 1,
+			"size": 0.67,
 			"readOnly": true,
 			"sameOrigin": false,
 			"outputEvent": {
@@ -387,99 +371,237 @@
 			"autoGenerate": false,
 			"format": {
 				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Risultato medio %",
-			"key": "avg_risultato",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"sameOrigin": false,
-			"newLine": false,
-			"size": 1
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
 				"dataType": "text"
 			},
-			"label": "Media giudizio complessivo",
-			"key": "avg_giudizio",
+			"label": "Scadenza",
+			"key": "data_prevista",
+			"sameOrigin": false,
 			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": false,
-			"sameOrigin": false,
 			"newLine": false,
-			"size": 2,
-			"inputEvents": [
-				{
-					"eventName": "onLoadProgettiFasi",
-					"condition": "none",
-					"values": [],
-					"actionType": "query_style",
-					"styleAttribute": "background_color",
-					"queryFunct": "select codice_colore as avg_giudizio_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio£';"
-				},
-				{
-					"eventName": "onSaveProgettiFasi",
-					"condition": "none",
-					"values": [],
-					"actionType": "query_style",
-					"styleAttribute": "background_color",
-					"queryFunct": "select codice_colore as avg_giudizio_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio£';"
-				}
-			]
+			"size": 0.90
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "number"
+				"viewType": "button"
 			},
-			"label": "Risultato medio sulla verifica peggiore %",
-			"key": "avg_risultato_worst",
-			"tooltip": "Media dei risultati percentuali della 'verifica peggiore' per ciascun sondaggio che compone la fase o, se non presente, delle sotto-fasi della fase",
-			"readOnly": true,
 			"isHidden": false,
 			"isPrimary": false,
-			"sameOrigin": false,
+			"key": "activate_detail_k",
+			"label": "",
+			"buttonIcon": "expand_more",
 			"newLine": false,
-			"size": 2
+			"size": 0.30,
+			"outputEvent": {
+				"eventName": "activate_detail",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"actionType": "hide",
+					"eventName": "activate_detail",
+					"condition": "none",
+					"values": []
+				},
+				{
+					"actionType": "show",
+					"eventName": "hide_detail",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"style": {
+				"background_color": "#9FACBD",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
 		},
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "input",
-				"dataType": "text"
+				"viewType": "button"
 			},
-			"label": "Giudizio sulla media verifica peggiore",
-			"tooltip": "Giudizio relativo alla media dei risultati percentuali della 'verifica peggiore' per ciascun sondaggio che compone la fase o, se non presente, delle sotto-fasi della fase",
-			"key": "avg_giudizio_worst",
-			"readOnly": true,
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": false,
-			"sameOrigin": false,
+			"key": "hide_detail_k",
+			"label": "",
+			"buttonIcon": "expand_less",
 			"newLine": false,
-			"size": 2,
+			"size": 0.30,
+			"outputEvent": {
+				"eventName": "hide_detail",
+				"eventTrigger": "press"
+			},
 			"inputEvents": [
 				{
-					"eventName": "onLoadProgettiFasi",
+					"actionType": "show",
+					"eventName": "activate_detail",
 					"condition": "none",
-					"values": [],
-					"actionType": "query_style",
-					"styleAttribute": "background_color",
-					"queryFunct": "select codice_colore as avg_giudizio_worst_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio_worst£';"
+					"values": []
 				},
 				{
-					"eventName": "onSaveProgettiFasi",
+					"actionType": "hide",
+					"eventName": "hide_detail",
 					"condition": "none",
-					"values": [],
-					"actionType": "query_style",
-					"styleAttribute": "background_color",
-					"queryFunct": "select codice_colore as avg_giudizio_worst_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio_worst£';"
+					"values": []
 				}
-			]
+			],
+			"style": {
+				"background_color": "#25599C",
+				"font_color": "white"
+			},
+			"readOnly": false,
+			"sameOrigin": false
+		},
+		{
+			"format": {
+				"dataType": "text",
+				"viewType": "label"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "maggiori_dettagli",
+			"label": "Risultati",
+			"style": {
+				"background_color": "transparent",
+				"font_color": "black",
+				"font_weight": "400",
+				"font_size": "1.3em"
+			},
+			"newLine": true,
+			"readOnly": true,
+			"sameOrigin": false,
+			"size": 0.66
+		},
+		{
+			"format": {
+				"viewType": "subform",
+				"subform_keys": [
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Risultato medio %",
+						"key": "avg_risultato",
+						"readOnly": true,
+						"isHidden": false,
+						"isPrimary": false,
+						"sameOrigin": false,
+						"newLine": false,
+						"size": 2.50
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "text"
+						},
+						"label": "Media giudizio complessivo",
+						"key": "avg_giudizio",
+						"readOnly": true,
+						"isHidden": false,
+						"isPrimary": false,
+						"sameOrigin": false,
+						"newLine": false,
+						"size": 2.50,
+						"inputEvents": [
+							{
+								"eventName": "onLoadProgettiFasi",
+								"condition": "none",
+								"values": [],
+								"actionType": "query_style",
+								"styleAttribute": "background_color",
+								"queryFunct": "select codice_colore as avg_giudizio_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio£';"
+							},
+							{
+								"eventName": "onSaveProgettiFasi",
+								"condition": "none",
+								"values": [],
+								"actionType": "query_style",
+								"styleAttribute": "background_color",
+								"queryFunct": "select codice_colore as avg_giudizio_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio£';"
+							}
+						]
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "number"
+						},
+						"label": "Risultato medio sulla verifica peggiore %",
+						"key": "avg_risultato_worst",
+						"tooltip": "Media dei risultati percentuali della 'verifica peggiore' per ciascun sondaggio che compone la fase o, se non presente, delle sotto-fasi della fase",
+						"readOnly": true,
+						"isHidden": false,
+						"isPrimary": false,
+						"sameOrigin": false,
+						"newLine": false,
+						"size": 2.50
+					},
+					{
+						"autoGenerate": false,
+						"format": {
+							"viewType": "input",
+							"dataType": "text"
+						},
+						"label": "Giudizio sulla media verifica peggiore",
+						"tooltip": "Giudizio relativo alla media dei risultati percentuali della 'verifica peggiore' per ciascun sondaggio che compone la fase o, se non presente, delle sotto-fasi della fase",
+						"key": "avg_giudizio_worst",
+						"readOnly": true,
+						"isHidden": false,
+						"isPrimary": false,
+						"sameOrigin": false,
+						"newLine": false,
+						"size": 2.50,
+						"inputEvents": [
+							{
+								"eventName": "onLoadProgettiFasi",
+								"condition": "none",
+								"values": [],
+								"actionType": "query_style",
+								"styleAttribute": "background_color",
+								"queryFunct": "select codice_colore as avg_giudizio_worst_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio_worst£';"
+							},
+							{
+								"eventName": "onSaveProgettiFasi",
+								"condition": "none",
+								"values": [],
+								"actionType": "query_style",
+								"styleAttribute": "background_color",
+								"queryFunct": "select codice_colore as avg_giudizio_worst_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio_worst£';"
+							}
+						]
+					}
+				]
+			},
+			"inputEvents": [
+				{
+					"actionType": "show",
+					"condition": "none",
+					"eventName": "activate_detail",
+					"values": []
+				},
+				{
+					"actionType": "hide",
+					"condition": "none",
+					"eventName": "hide_detail",
+					"values": []
+				}
+			],
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "sezione_detail",
+			"label": "Maggiori Dettagli",
+			"newLine": true,
+			"readOnly": false,
+			"sameOrigin": true,
+			"saveWhenHidden": true
 		}
 	],
 	"search_keys": [
@@ -536,16 +658,6 @@
 			"label": "Data competenza A",
 			"newLine": false,
 			"queryCond": "snd.data_comp <= $dt_competenza_a$"
-		},
-		{
-			"fieldName": "flag_doc_completa",
-			"format": {
-				"value": "0",
-				"viewType": "toggle"
-			},
-			"label": "Doc.completa",
-			"newLine": false,
-			"queryCond": "entrasp.snd_doc_completa(snd.codice_azienda, snd.id_sondaggio)='Doc.completa'"
 		}
 	],
 	"table_keys": [
@@ -583,45 +695,6 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"width": "3%",
-			"key": "delete_fase",
-			"label": "",
-			"style": [
-				{
-					"button_icon": "delete",
-					"value": "*"
-				}
-			],
-			"isButton": true,
-			"buttonAction": {
-				"target": "progetti_fasi",
-				"viewType": "form",
-				"confirmAction": true,
-				"confirmMessage": {
-					"text": "Sei sicuro di voler cancellare la fase, il sondaggio associato e tutte le risposte?",
-					"title": "Conferma cancellazione fase e sondaggio"
-				},
-				"query": "select entrasp.progetto_fase_delete('£codice_azienda£', £id_fase£)",
-				"action": "query",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_fase",
-						"destination": "id_fase"
-					}
-				],
-				"onSuccessAction": "reload"
-			}
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "3%",
 			"style": [
 				{
 					"button_icon": "content_copy",
@@ -631,6 +704,7 @@
 			"queryFunct": "select true",
 			"key": "duplica_fase",
 			"label": "",
+			"tooltip": "Duplica la fase",
 			"isButton": true,
 			"buttonAction": {
 				"target": "progetti_fasi",
@@ -650,7 +724,7 @@
 				"confirmAction": true,
 				"confirmMessage": {
 					"title": "Nuova fase e sondaggio",
-					"text": "Sei sicuro di voler duplicare questa fase e relativo sondaggo?"
+					"text": "Duplicare questa fase e relativo sondaggo?"
 				},
 				"onSuccessAction": "reload"
 			}
@@ -718,7 +792,7 @@
 					}
 				]
 			},
-			"width": "20%"
+			"width": "22%"
 		},
 		{
 			"format": {
@@ -726,7 +800,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"width": "4%",
+			"width": "3%",
 			"key": "check",
 			"queryFunct": "select entrasp.somministrazione_mono_domanda(codice_azienda, id_sondaggio)",
 			"label": "",
@@ -823,7 +897,7 @@
 				},
 				{
 					"value": "In Svolgimento",
-					"font_color": "whitesmoke",
+					"font_color": "white",
 					"background_color": "royalBlue",
 					"text_align": "center",
 					"font_weight": "500"
@@ -879,8 +953,8 @@
 			"isPrimary": false,
 			"key": "id_modello_test",
 			"hasLevel": true,
-			"label": "Id Mod. Ver.",
-			"width": "5%",
+			"label": "# Mod. Ver.",
+			"width": "6%",
 			"isInputButton": true,
 			"buttonAction": {
 				"target": "modelli_test_vr",
@@ -918,7 +992,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "competenza",
-			"width": "6%",
+			"width": "7%",
 			"label": "Competenza"
 		},
 		{
@@ -928,8 +1002,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "data_prevista",
-			"width": "6%",
-			"label": "Data prevista"
+			"width": "7%",
+			"label": "Prevista"
 		},
 		{
 			"format": {
@@ -938,8 +1012,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "data_esecuzione",
-			"width": "6%",
-			"label": "Data esecuzione"
+			"width": "7%",
+			"label": "Esecuzione"
 		},
 		{
 			"format": {
@@ -1122,12 +1196,11 @@
 			"isPrimary": false,
 			"width": "6%",
 			"key": "sondaggio_completato",
-			"label": "Risposte",
+			"label": "",
 			"style": [
 				{
 					"value": "*",
 					"font_color": "white",
-					"font_weight": "500",
 					"background_color": "firebrick",
 					"font_size": "medium",
 					"text_align": "center"
@@ -1145,7 +1218,7 @@
 			"format": {
 				"dataType": "number"
 			},
-			"isHidden": false,
+			"isHidden": true,
 			"isPrimary": false,
 			"width": "6%",
 			"key": "doc_completa",
@@ -1163,7 +1236,6 @@
 					"font_color": "white",
 					"font_weight": "500",
 					"background_color": "red",
-					"font_size": "medium",
 					"text_align": "center"
 				}
 			]
@@ -1213,7 +1285,7 @@
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"width": "5%",
+			"width": "3%",
 			"key": "time_report_stop_active",
 			"label": "",
 			"style": [
@@ -1417,6 +1489,10 @@
 		{
 			"formActionType": "add",
 			"viewType": "form"
+		},
+		{
+			"tableActionType": "add",
+			"viewType": "table"
 		}
 	],
 	"exportQueries": {

@@ -160,100 +160,26 @@
             "readOnly": true
         },
         {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "size": 1.5,
-            "key": "codice_attivita",
-            "label": "Codice Interno",
-            "newLine": false,
-            "readOnly": true,
-            "inputEvents": [
-                {
-                    "eventName": "attivita_duplica",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageText": "Sei sicuro di voler duplicare questa attivita? (si verrà automaticamente trasferiti nella nuova)",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select 1;"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.attivita_duplica($codice_azienda$, $codice_attivita$,$attivita_vr$) as codice_attivita;"
-                        }
-                    },
-                    "outputEventWhenComplete": "navigate_to_new_attivita"
-                }
-            ]
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input",
-                "value": "1"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "attivita_vr",
-            "label": "Versione",
-            "newLine": false,
-            "readOnly": true,
-            "size": 1,
-            "inputEvents": [
-                {
-                    "eventName": "attivita_button_nuova_versione",
-                    "actionType": "query",
-                    "condition": "none",
-                    "successMessage": "New version created",
-                    "values": [],
-                    "queryFunct": "select entrasp.attivita_nuova_versione($codice_azienda$, $codice_attivita$, $attivita_vr$) as attivita_vr",
-                    "outputEventWhenComplete": "navigate_to_new_attivita_vr"
-                }
-            ]
-        },
-        {
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "input",
-                "validations": [
-                    {
-                        "message": "Codice mancante",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+                "viewType": "label"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "codice",
-            "label": "Codice Esterno",
+            "key": "modelloprogettolabel",
+            "label": "Modello di progetto",
             "newLine": false,
-            "readOnly": false,
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
-                "options": [],
-                "viewType": "combobox"
+            "readOnly": true,
+            "sameOrigin": false,
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.5em",
+                "font_style": "normal",
+                "font_weight": "600"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento",
-            "label": "Argomento",
-            "readOnly": false,
-            "newLine": false,
-            "size": 4
+            "size": 9.4
         },
         {
             "autoGenerate": false,
@@ -321,7 +247,103 @@
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
-            "size": 0.5
+            "size": 0.6
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "size": 1.11,
+            "key": "codice_attivita",
+            "label": "Codice Interno",
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "attivita_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questa attivita? (si verrà automaticamente trasferiti nella nuova)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1;"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.attivita_duplica($codice_azienda$, $codice_attivita$,$attivita_vr$) as codice_attivita;"
+                        }
+                    },
+                    "outputEventWhenComplete": "navigate_to_new_attivita"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input",
+                "value": "1"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "attivita_vr",
+            "label": "Versione",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.11,
+            "inputEvents": [
+                {
+                    "eventName": "attivita_button_nuova_versione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "New version created",
+                    "values": [],
+                    "queryFunct": "select entrasp.attivita_nuova_versione($codice_azienda$, $codice_attivita$, $attivita_vr$) as attivita_vr",
+                    "outputEventWhenComplete": "navigate_to_new_attivita_vr"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Codice mancante",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice Esterno",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.11
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Argomento",
+            "readOnly": false,
+            "newLine": false,
+            "size": 3.33
         },
         {
             "autoGenerate": false,
@@ -333,9 +355,9 @@
             "isPrimary": false,
             "key": "ordinamento",
             "label": "Ordinamento",
-            "newLine": false,
+            "newLine": true,
             "readOnly": false,
-            "size": 1
+            "size": 3.34
         },
         {
             "autoGenerate": false,
@@ -349,7 +371,7 @@
             "label": "Descrizione",
             "newLine": false,
             "readOnly": false,
-            "size": 7
+            "size": 6.66
         },
         {
             "autoGenerate": false,
@@ -367,6 +389,19 @@
             "readOnly": false
         },
         {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 1,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_2",
+            "key": "invisible_2",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false
+        },
+        {
             "autoGenerate": false,
             "format": {
                 "viewType": "button"
@@ -374,10 +409,10 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "activate_detail_k",
-            "label": "Maggiori Dettagli",
+            "label": "",
             "buttonIcon": "expand_more",
-            "newLine": true,
-            "size": 1,
+            "newLine": false,
+            "size": 0.4,
             "outputEvent": {
                 "eventName": "activate_detail",
                 "eventTrigger": "press"
@@ -397,7 +432,7 @@
                 }
             ],
             "style": {
-                "background_color": "#25599C",
+                "background_color": "#9FACBD",
                 "font_color": "white"
             },
             "readOnly": false,
@@ -411,10 +446,10 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "hide_detail_k",
-            "label": "Nascondi Dettagli",
+            "label": "",
             "buttonIcon": "expand_less",
-            "newLine": true,
-            "size": 1,
+            "newLine": false,
+            "size": 0.4,
             "outputEvent": {
                 "eventName": "hide_detail",
                 "eventTrigger": "press"
@@ -442,6 +477,25 @@
         },
         {
             "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "maggiori_dettagli",
+            "label": "Ulteriori Dettagli",
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.3em",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "format": {
                 "viewType": "subform",
                 "subform_keys": [
                     {
@@ -456,7 +510,7 @@
                         "label": "Note",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 2.5
+                        "size": 3.33
                     },
                     {
                         "autoGenerate": false,
@@ -469,8 +523,8 @@
                         "isPrimary": false,
                         "key": "id_centro_gest",
                         "label": "Centro Gestionale",
-                        "newLine": true,
-                        "size": 2.5,
+                        "newLine": false,
+                        "size": 3.33,
                         "readOnly": false
                     },
                     {
@@ -490,81 +544,14 @@
                         "label": "Id Modello Verifica",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 4.5
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "number",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "gg_scadenza_da_avvio_progetto",
-                        "label": "Gg.scad.da avvio prog.",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 2.5
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "number",
-                            "viewType": "input"
-                        },
-                        "inputEvents": [
-                            {
-                                "eventName": "id_modello_test_change",
-                                "actionType": "query",
-                                "condition": "none",
-                                "values": [],
-                                "queryFunct": "select max(id_modello_test_vr) from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
-                            }
-                        ],
-                        "isHidden": true,
-                        "isPrimary": false,
-                        "key": "id_modello_test_vr",
-                        "queryFunct": "entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test)",
-                        "label": "Ver.",
-                        "newLine": false,
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 1
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "input",
-                            "dataType": "date"
-                        },
-                        "label": "Data Inizio Validità",
-                        "key": "data_inizio_validita",
-                        "readOnly": false,
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "newLine": false,
-                        "size": 1.5
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "input",
-                            "dataType": "date"
-                        },
-                        "label": "Data Fine Validità",
-                        "key": "data_fine_validita",
-                        "readOnly": false,
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "newLine": true,
-                        "size": 1.5
+                        "size": 3.33
                     },
                     {
                         "autoGenerate": false,
                         "format": {
                             "viewType": "button"
                         },
-                        "isHidden": false,
+                        "isHidden": true,
                         "isPrimary": false,
                         "key": "modello_test_from_sondaggi",
                         "label": "Modello Verifica Associato",
@@ -650,7 +637,74 @@
                         ],
                         "readOnly": false,
                         "sameOrigin": false,
-                        "size": 2
+                        "size": 1.67
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "gg_scadenza_da_avvio_progetto",
+                        "label": "Giorni scad. da avvio prog.",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 3.33
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "id_modello_test_change",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select max(id_modello_test_vr) from entrasp.modelli_test_vr where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                            }
+                        ],
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "id_modello_test_vr",
+                        "queryFunct": "entrasp.grc_max_id_mdt_vr(codice_azienda, id_modello_test)",
+                        "label": "Ver.",
+                        "newLine": false,
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 3.33
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "date"
+                        },
+                        "label": "Data Inizio Validità",
+                        "key": "data_inizio_validita",
+                        "readOnly": false,
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "size": 3.33
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "date"
+                        },
+                        "label": "Data Fine Validità",
+                        "key": "data_fine_validita",
+                        "readOnly": false,
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "size": 3.33
                     }
                 ]
             },
