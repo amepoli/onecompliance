@@ -6,6 +6,11 @@
       "operation": "update",
       "type": "main",
       "queryString": "select entrasp.domanda_sub_tables_inserts(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_argomento_father$, $flag_cancella_tag$::boolean) from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)"
+    },
+    {
+      "operation": "update",
+      "type": "preProcessing",
+      "queryString": "update entrasp.domande dmd1 set punteggio=coalesce($punteggio$,dmd2.punteggio), flag_non_applicabile_domanda=coalesce($flag_non_applicabile_domanda$,dmd2.flag_non_applicabile_domanda), id_template_rp = coalesce($template_risposte$, dmd2.id_template_rp) from entrasp.domande dmd2, (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS iddomanda,split_part(arr,'~',3) AS idmodellotest,split_part(arr,'~',4) AS idmodellotestvr FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s where dmd1.codice_azienda = dmd2.codice_azienda and dmd1.id_domanda = dmd2.id_domanda and dmd1.id_modello_test = dmd2.id_modello_test and dmd1.id_modello_test_vr = dmd2.id_modello_test_vr and dmd1.codice_azienda='€global_codice_azienda€' and dmd1.id_domanda=s.iddomanda::numeric and dmd1.id_modello_test=s.idmodellotest::numeric and dmd1.id_modello_test_vr=s.idmodellotestvr::numeric;"
     }
   ],
   "form_keys": [
@@ -22,7 +27,8 @@
       "key": "id_argomento_father",
       "label": "TAG domande selezionate",
       "readOnly": false,
-      "newLine": false
+      "newLine": false,
+      "size": 6.66
     },
     {
       "autoGenerate": false,
@@ -32,11 +38,56 @@
       },
       "key": "flag_cancella_tag",
       "label": "Cancella tag",
-      "newLine": false,
+      "newLine": true,
       "readOnly": false,
       "sameOrigin": false,
       "isHidden": false,
       "isPrimary": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "input",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "punteggio",
+      "label": "Punteggio",
+      "readOnly": false,
+      "newLine": false,
+      "size": 3.33
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_template_rp AS id, descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda='€global_codice_azienda€';",
+        "viewType": "combobox",
+        "options": []
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "template_risposte",
+      "label": "Template risposte",
+      "readOnly": false,
+      "newLine": false,
+      "size": 3.33
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
+        "viewType": "combobox",
+        "options": [],
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "flag_non_applicabile_domanda",
+      "label": "Non applicabile?",
+      "readOnly": false,
+      "newLine": false,
+      "size": 3.33
     }
   ]
 }

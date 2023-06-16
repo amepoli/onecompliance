@@ -17,7 +17,7 @@
         {
           "key": "modifica_domande",
           "icon": "edit",
-          "label": "Modifica domande selezionate",
+          "label": "Modifica domande",
           "reloadOnSuccess": true,
           "customDialogEntryName": "dialog_domande",
           "customDialogTitle": "Modifica domande"
@@ -25,11 +25,11 @@
         {
           "key": "cancella_domande",
           "icon": "delete",
-          "label": "cancella_domande_selezione",
-          "query": "select entrasp.domanda_delete(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in(array[$selected_rows_data$])",
+          "label": "Elimina domande",
+          "query": "SELECT entrasp.domanda_delete(s.codiceazienda, s.idmodellotest::numeric, s.idmodellotestvr::numeric, s.iddomanda::numeric)FROM (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS iddomanda,split_part(arr,'~',3) AS idmodellotest,split_part(arr,'~',4) AS idmodellotestvr FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s;",
           "confirmAction": true,
           "reloadOnSuccess": true,
-          "confirmActionMessage": "Cancellare le domande selezionate?"
+          "confirmActionMessage": "Eliminare le domande selezionate?"
         }
       ]
     }
@@ -88,6 +88,86 @@
   },
   "form_keys": [
     {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "label"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "domandalabel",
+      "label": "Domanda",
+      "newLine": false,
+      "readOnly": true,
+      "sameOrigin": false,
+      "style": {
+        "background_color": "transparent",
+        "font_color": "black",
+        "font_size": "1.5em",
+        "font_style": "normal",
+        "font_weight": "600"
+      },
+      "size": 9.4
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "menu",
+        "menuOptions": [
+          {
+            "icon": "tag",
+            "label": "Crea e associa argomento",
+            "outputEventName": "create_associate_argomento"
+          },
+          {
+            "icon": "content_copy",
+            "label": "Duplica domanda",
+            "outputEventName": "domande_duplica"
+          },
+          {
+            "icon": "class",
+            "label": "Risposte previste: crea e associa argomento",
+            "outputEventName": "create_associa_arg_risposte"
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "actionType": "query",
+          "eventName": "domande_duplica",
+          "condition": "none",
+          "successMessage": "Done!",
+          "values": [],
+          "queryFunct": "select entrasp.duplica_domanda($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$)"
+        },
+        {
+          "actionType": "query",
+          "eventName": "create_associa_arg_risposte",
+          "condition": "none",
+          "successMessage": "Done!",
+          "values": [],
+          "queryFunct": "select entrasp.argomenti_create_and_update_risposte_previste(codice_azienda, id_risposta_prev, id_domanda, id_modello_test, id_modello_test_vr, risposta, risposta, 725) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
+        },
+        {
+          "eventName": "create_associate_argomento",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "outputEventWhenComplete": "domande_reload",
+          "queryFunct": "select entrasp.argomenti_create_and_update_domande($codice_azienda$, $id_domanda$, $id_modello_test$, $id_modello_test_vr$, left($descrizione$,120), $descrizione$, 574)"
+        }
+      ],
+      "isHidden": false,
+      "isPrimary": false,
+      "buttonIcon": "more_vert",
+      "key": "modelli_test_vr_actions",
+      "label": "",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 0.6
+    },
+    {
       "format": {
         "viewType": "invisible"
       },
@@ -143,9 +223,10 @@
       "isHidden": true,
       "isPrimary": true,
       "key": "id_modello_test",
-      "label": "ID modello di test",
+      "label": "# Modello di test",
       "newLine": true,
-      "readOnly": true
+      "readOnly": true,
+      "queryFunct": "id_modello_test"
     },
     {
       "autoGenerate": false,
@@ -171,14 +252,29 @@
       "key": "ordinamento",
       "label": "Ord.",
       "newLine": false,
-      "size": 1,
+      "size": 1.66,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_sezione AS id, descrizione AS name  FROM entrasp.domande_sezioni WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_sezione",
+      "label": "Sezione",
+      "size": 1.67,
+      "newLine": false,
       "readOnly": false
     },
     {
       "autoGenerate": false,
       "format": {
         "dataType": "text",
-        "viewType": "textarea",
+        "viewType": "input",
         "validations": [
           {
             "message": "Descrizione richiesta",
@@ -191,91 +287,9 @@
       "isPrimary": false,
       "key": "descrizione",
       "label": "Domanda",
-      "textareaHeight": "M",
-      "size": 5,
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea",
-        "value": "-"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "insertUpdateFunct": "select coalesce($note$, '-')",
-      "key": "note",
-      "label": "Note",
-      "textareaHeight": "M",
-      "size": 3.4,
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "menu",
-        "menuOptions": [
-          {
-            "icon": "zoom_in",
-            "label": "Dettaglio",
-            "outputEventName": "domande_button_dettaglio"
-          },
-          {
-            "icon": "content_copy",
-            "label": "Duplica domanda",
-            "outputEventName": "domande_duplica"
-          },
-          {
-            "icon": "class",
-            "label": "Risposte previste: crea e associa argomento",
-            "outputEventName": "create_associa_arg_risposte"
-          }
-        ]
-      },
-      "inputEvents": [
-        {
-          "actionType": "query",
-          "eventName": "domande_duplica",
-          "condition": "none",
-          "successMessage": "Done!",
-          "values": [],
-          "queryFunct": "select entrasp.duplica_domanda($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$)"
-        },
-        {
-          "actionType": "query",
-          "eventName": "create_associa_arg_risposte",
-          "condition": "none",
-          "successMessage": "Done!",
-          "values": [],
-          "queryFunct": "select entrasp.argomenti_create_and_update_risposte_previste(codice_azienda, id_risposta_prev, id_domanda, id_modello_test, id_modello_test_vr, risposta, risposta, 725) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "more_vert",
-      "key": "modelli_test_vr_actions",
-      "label": "",
+      "size": 6.67,
       "newLine": true,
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.6
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "invisible"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "dm_inv1",
-      "label": "dm_inv1",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": true,
-      "size": 0.3
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -287,7 +301,7 @@
       "key": "flag_non_applicabile_domanda",
       "label": "Domanda Non Applicabile",
       "readOnly": false,
-      "size": 1,
+      "size": 1.11,
       "newLine": false
     },
     {
@@ -301,7 +315,7 @@
       "key": "punteggio",
       "label": "Punteggio",
       "newLine": false,
-      "size": 1,
+      "size": 1.11,
       "readOnly": false,
       "outputEvent": {
         "eventTrigger": "change",
@@ -328,7 +342,7 @@
       "key": "penalizzazione",
       "label": "Penalizzazione",
       "newLine": false,
-      "size": 1,
+      "size": 1.11,
       "readOnly": false,
       "outputEvent": {
         "eventTrigger": "change",
@@ -347,6 +361,22 @@
     {
       "autoGenerate": false,
       "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "-"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "insertUpdateFunct": "select coalesce($note$, '-')",
+      "key": "note",
+      "label": "Note",
+      "size": 6.67,
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "comboQuery": "SELECT id_tipo_domanda AS id, tipo_domanda AS name  FROM entrasp.tipi_domande",
         "dataType": "text",
         "options": [],
@@ -354,24 +384,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "size": 2.5,
+      "size": 3.33,
       "key": "id_tipo_domanda",
       "label": "Tipo Risposta",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_sezione AS id, descrizione AS name  FROM entrasp.domande_sezioni WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_sezione",
-      "label": "Sezione",
-      "size": 2,
       "newLine": false,
       "readOnly": false
     },
@@ -385,7 +400,7 @@
       "isPrimary": false,
       "key": "flag_risposta_multipla",
       "label": "Risposta multipla",
-      "newLine": true,
+      "newLine": false,
       "readOnly": true
     },
     {
@@ -401,7 +416,7 @@
       "key": "id_template_rp",
       "label": "Template Risposte",
       "newLine": false,
-      "size": 3,
+      "size": 3.33,
       "outputEvent": {
         "eventName": "combobox_risposte",
         "eventTrigger": "select"
@@ -411,8 +426,8 @@
     {
       "autoGenerate": false,
       "format": {
-        "value": " ",
-        "viewType": "textarea"
+        "viewType": "input",
+        "dataType": "text"
       },
       "inputEvents": [
         {
@@ -438,13 +453,12 @@
         }
       ],
       "queryFunct": "entrasp.risposte_previste_mostra(codice_azienda, id_modello_test, id_modello_test_vr,id_domanda)",
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "mostra_risposte",
       "textareaHeight": "M",
       "label": "Risposte Possibili",
       "newLine": false,
-      "size": 7,
       "readOnly": true,
       "sameOrigin": false
     },
@@ -456,11 +470,470 @@
       },
       "isHidden": true,
       "isPrimary": false,
-      "key": "id_argomento",
-      "label": "id_argomento",
+      "key": "id_argomento_son",
+      "label": "",
+      "readOnly": false,
       "newLine": false,
-      "size": 1,
-      "readOnly": false
+      "saveWhenHidden": true,
+      "queryFunct": "id_argomento"
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "value": "0",
+        "viewType": "checkbox"
+      },
+      "saveWhenHidden": true,
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "argomento_not_null",
+      "outputEvent": {
+        "eventName": "argomento_not_null",
+        "eventTrigger": "change"
+      },
+      "label": "argomento nullo",
+      "readOnly": true,
+      "queryFunct": "SELECT case WHEN id_argomento IS NULL THEN '1' ELSE '0' end",
+      "newLine": false
+    },
+    {
+      "format": {
+        "viewType": "invisible"
+      },
+      "size": 0.8,
+      "isHidden": false,
+      "isPrimary": false,
+      "label": "invisible_2",
+      "key": "invisible_2",
+      "sameOrigin": false,
+      "readOnly": true,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "activate_detail_k",
+      "label": "",
+      "buttonIcon": "expand_more",
+      "newLine": false,
+      "size": 0.4,
+      "outputEvent": {
+        "eventName": "activate_detail",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "hide",
+          "eventName": "activate_detail",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "show",
+          "eventName": "hide_detail",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#9FACBD",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "hide_detail_k",
+      "label": "",
+      "buttonIcon": "expand_less",
+      "newLine": false,
+      "size": 0.4,
+      "outputEvent": {
+        "eventName": "hide_detail",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "activate_detail",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "eventName": "hide_detail",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "label"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "maggiori_dettagli",
+      "label": "Ulteriori Dettagli",
+      "style": {
+        "background_color": "transparent",
+        "font_color": "black",
+        "font_size": "1.3em",
+        "font_weight": "400"
+      },
+      "newLine": false,
+      "readOnly": true,
+      "sameOrigin": false,
+      "size": 2.1
+    },
+    {
+      "format": {
+        "viewType": "subform",
+        "subform_keys": [
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test_descr",
+            "label": "Modello di Verifica",
+            "newLine": false,
+            "readOnly": true,
+            "queryFunct": "SELECT id_modello_test||'-'||titolo FROM entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+            "size": 3.33
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "size": 3.33,
+            "label": "Argomento",
+            "readOnly": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_allegato",
+            "label": "Tipi Allegati Previsti",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "argomentoTipoAllegato",
+              "eventTrigger": "select"
+            },
+            "inputEvents": [
+              {
+                "eventName": "argomentoTipoAllegato",
+                "queryFunct": "update entrasp.domande set id_argomento_tipo_allegato=£id_argomento_tipo_allegato£ where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test=$id_modello_test$ returning true;update entrasp.cdms_risorse rs set id_argomento_tipo_allegato=dm.id_argomento_tipo_allegato from entrasp.cdms_risorse_oggetti ro inner join entrasp.domande dm on ro.id_modello_test=dm.id_modello_test and ro.id_modello_test_vr=dm.id_modello_test_vr and ro.id_domanda=dm.id_domanda and ro.codice_azienda=dm.codice_azienda where (rs.id_argomento_tipo_allegato is null or rs.id_argomento_tipo_allegato=3981) and dm.id_argomento_tipo_allegato is not null and ro.nome_business_object='riepilogoRisposte' and rs.id_risorsa=ro.id_risorsa and rs.codice_azienda=ro.codice_azienda returning true;",
+                "actionType": "query",
+                "condition": "none",
+                "values": []
+              }
+            ],
+            "size": 1.67,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "peso_risposte_default",
+            "label": "Peso Attribuito con Risposta Assente (%)",
+            "newLine": true,
+            "readOnly": false,
+            "size": 1.67
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test = $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_domanda_rif",
+            "label": "Attiva se alla domanda",
+            "outputEvent": {
+              "eventName": "id_domanda_rif_change",
+              "eventTrigger": "select"
+            },
+            "newLine": false,
+            "size": 3.33,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "checkbox",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_non_viene_risposto",
+            "label": "NON",
+            "size": 3.33,
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$ and id_domanda=£id_domanda_rif£;",
+              "viewType": "combobox",
+              "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_risposta_prev_rif",
+            "label": "Viene Risposto",
+            "inputEvents": [
+              {
+                "eventName": "id_domanda_rif_change",
+                "actionType": "query",
+                "queryFunct": "select coalesce(£id_risposta_prev_rif£, 0) as id_risposta_prev_rif",
+                "condition": "none",
+                "values": []
+              }
+            ],
+            "newLine": true,
+            "size": 3.33,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_RISP_MULTIPLE'",
+              "dataType": "text",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_punteggio_risposta_multipla",
+            "label": "Tipo punteggio",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.33
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_filtro_selezione AS id, descrizione AS name from entrasp.filtri_selezione_oggetti",
+              "viewType": "combobox",
+              "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_filtro_selezione",
+            "label": "Selezionare la risposta in base a",
+            "newLine": false,
+            "size": 3.33,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_db AS id, descrizione AS name from entrasp.db_esterni where codice_azienda = $codice_azienda$",
+              "viewType": "combobox",
+              "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_db",
+            "label": "Reperisci la risposta dal DB",
+            "newLine": true,
+            "size": 3.33,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "query_risultato",
+            "label": "Query Risposta",
+            "newLine": false,
+            "size": 6.66,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "bind_risultato",
+            "label": "Parametri",
+            "newLine": true,
+            "size": 3.33,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "query_allegato",
+            "label": "Query Allegato",
+            "newLine": false,
+            "size": 6.66,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "bind_allegato",
+            "label": "Parametri",
+            "newLine": true,
+            "size": 3.33,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_non_applicabile_risposta_null",
+            "label": "Ignora punteggio se risposta mancante",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.67
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_inversione_pct_efficacia_presidi",
+            "label": "Inversione Efficacia Presidi",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.67
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE aa.id_argomento_father=5390;",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_interval_value",
+            "sameOrigin": true,
+            "label": "Unità misura intervalli",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.67
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_multiplier",
+            "label": "Numero intervalli",
+            "sameOrigin": true,
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.67
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT arg.id_argomento AS id, arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE aa.id_argomento_father=5386;",
+              "options": [],
+              "viewType": "combobox",
+              "dataType": "text",
+              "value": "2270"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_stato",
+            "sameOrigin": true,
+            "label": "Stato",
+            "newLine": true,
+            "readOnly": false,
+            "size": 3.33
+          }
+        ]
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "condition": "none",
+          "eventName": "activate_detail",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
+          "eventName": "hide_detail",
+          "values": []
+        }
+      ],
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "sezione_detail",
+      "label": "Maggiori Dettagli",
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": true,
+      "saveWhenHidden": true
     }
   ],
   "subTables": [
@@ -552,9 +1025,19 @@
     },
     {
       "entryKey": "tag_sub_of_domande",
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "argomento_not_null",
+          "condition": "equalTo",
+          "values": [
+            "0"
+          ]
+        }
+      ],
       "keys": [
         {
-          "parent": "id_argomento",
+          "parent": "id_argomento_son",
           "son": "id_argomento_son"
         }
       ],
@@ -569,32 +1052,6 @@
     {
       "eventName": "reloadMask",
       "actionType": "reload"
-    },
-    {
-      "actionTarget": {
-        "name": "domande_dettaglio",
-        "type": "form",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_modello_test",
-            "destination": "id_modello_test"
-          },
-          {
-            "source": "id_modello_test_vr",
-            "destination": "id_modello_test_vr"
-          },
-          {
-            "source": "id_domanda",
-            "destination": "id_domanda"
-          }
-        ]
-      },
-      "actionType": "navigate",
-      "eventName": "domande_button_dettaglio"
     }
   ],
   "table_keys": [
@@ -611,7 +1068,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "width": "4%",
       "queryFunct": "select true",
@@ -660,7 +1117,7 @@
         "dataType": "number"
       },
       "isHidden": false,
-      "width": "3%",
+      "width": "4%",
       "isPrimary": false,
       "key": "ordinamento",
       "label": "Ord."
@@ -670,10 +1127,10 @@
         "dataType": "number"
       },
       "isHidden": false,
-      "width": "10%",
+      "width": "5%",
       "isPrimary": true,
       "key": "id_domanda",
-      "label": "ID domanda"
+      "label": "# Domanda"
     },
     {
       "format": {
@@ -681,15 +1138,15 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "width": "10%",
+      "width": "5%",
       "key": "id_domanda_rif",
-      "label": "ID.dom.condiz."
+      "label": "# Condizionata"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "width": "10%",
       "key": "id_argomento",
@@ -723,7 +1180,8 @@
       "isHidden": "$Q{is_hidden_mt}",
       "isPrimary": true,
       "key": "id_modello_test",
-      "label": "ID modello di test"
+      "label": "# Modello",
+      "width": "5%"
     },
     {
       "format": {
@@ -741,7 +1199,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "descrizione",
-      "label": "Domanda"
+      "label": "Domanda",
+      "width": "25%"
     },
     {
       "format": {
@@ -752,7 +1211,7 @@
       "isPrimary": false,
       "key": "boolean_non_applicabile_domande",
       "queryFunct": "flag_non_applicabile_domande::boolean",
-      "width": "5%",
+      "width": "4%",
       "label": "N.A."
     },
     {
@@ -762,7 +1221,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "note",
-      "width": "20%",
+      "width": "25%",
       "label": "Note"
     },
     {
@@ -771,9 +1230,9 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "queryFunct": "entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda)",
+      "queryFunct": "entrasp.risposte_previste_mostraaa1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda)",
       "key": "risposte_prev",
-      "width": "20%",
+      "width": "25%",
       "label": "Risposte Previste"
     }
   ],
@@ -783,8 +1242,36 @@
       "viewType": "form"
     },
     {
-      "tableActionType": "quick-add",
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
       "viewType": "table"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "share"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "import_export"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "stopEvent"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "startEvent"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "documentation"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "add"
     }
   ]
 }
