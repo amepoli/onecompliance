@@ -1,60 +1,70 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { AmplifyService } from 'aws-amplify-angular';
-import { Observable } from 'rxjs/Observable';
-import { AuthState } from 'aws-amplify-angular/dist/src/providers/auth.state';
-import { BackendService } from './backend.service';
-import { BehaviorSubject } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
-import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
-import { ToastService } from 'app/oc/services/toast.service';
+import { Injectable, EventEmitter } from "@angular/core";
+import { AmplifyService } from "aws-amplify-angular";
+import { Observable } from "rxjs/Observable";
+import { AuthState } from "aws-amplify-angular/dist/src/providers/auth.state";
+import { BackendService } from "./backend.service";
+import { BehaviorSubject } from "rxjs";
+import { TranslateService } from "@ngx-translate/core";
+import { FuseNavigationService } from "@fuse/components/navigation/navigation.service";
+import { ToastService } from "app/oc/services/toast.service";
 
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
-import { ConsoleLoggerService } from './console_logger.service';
-import { UserInfo } from '../interfaces';
+import { FuseTranslationLoaderService } from "@fuse/services/translation-loader.service";
+import { ConsoleLoggerService } from "./console_logger.service";
+import { OCAuthState, UserInfo } from "../interfaces";
 
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 declare var gapi: any;
 declare var auth2: any;
 
-import { environment } from 'environments/environment';
+import { environment } from "environments/environment";
+import { AwsService } from "./aws.service";
+import { Auth } from "aws-amplify";
+import { logging } from "protractor";
+import { getDate } from "date-fns";
 
 const appData = (environment.appData as any).default;
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
-
-  
   private username: string;
   private password: string;
   private email: string;
   private code: string;
   errorMessage: string;
-  authStateChange$: Observable<AuthState>;
   public isSignedIn = false;
 
   // backend user data
-  public userinfo = new BehaviorSubject<UserInfo>({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: [] });
+  public userinfo = new BehaviorSubject<UserInfo>({
+    name: null,
+    lastname: null,
+    username: null,
+    picture: null,
+    language: "it",
+    companies: [],
+  });
 
   // Error Information Event Emitter for catching and emitting
   // Login and Signup related errors.
-  public errorInfo$ = new EventEmitter<any>();
-
+  // public errorInfo$ = new EventEmitter<any>();
+  public isCheckingExpiry: boolean;
+  public interval;
   private currentCompany: string;
   private confirmUser: any;
   private sync: any;
-  private onekyc: boolean; 
+  private onekyc: boolean;
 
-  // Google 
+  // Google
   // googleUser: SocialUser;
   // googleUserLoggedIn: boolean;
 
   googleScopes = {
-    "gdrive": "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file",
-    "gmail": "https://www.googleapis.com/auth/gmail.readonly"//"https://mail.google.com"
+    gdrive: "https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file",
+    gmail: "https://www.googleapis.com/auth/gmail.readonly", //"https://mail.google.com"
   };
-  
+
   constructor(
+    private awsService: AwsService,
     private amplifyService: AmplifyService,
     private backendService: BackendService,
     private navigationService: FuseNavigationService,
@@ -63,13 +73,33 @@ export class AuthService {
     private _translateService: TranslateService,
     private _console: ConsoleLoggerService
   ) {
-    this.amplifyService = amplifyService;
+    this.awsService = awsService;
 
-    this.amplifyService.auth();
-
-    this.authStateChange$ = this.amplifyService.authStateChange$;
+    this.awsService.auth();
 
     this.initGoogleOAuth();
+
+    this.awsService.errorInfo$
+    .subscribe(error => {
+     
+        this._setError(error); 
+    }, (err) => {
+        // Error occured!
+      this._setError(err);
+    });
+   
+
+    
+  }
+
+  get authStateChange$(): BehaviorSubject<OCAuthState> | null {
+    return this.awsService.authStateChange$;
+  }
+  // public errorInfo$ = new EventEmitter<any>();
+
+  get errorInfo$() :  BehaviorSubject<any> | null
+  {
+    return this.awsService.errorInfo$;
   }
 
   public setUsername(username: string): void {
@@ -101,41 +131,73 @@ export class AuthService {
   }
 
   public forgotPassword(username: string): void {
-    this.amplifyService.auth().forgotPassword(username)
-    .then(data => this._console.log(data))
-    .catch((err) => {
-      this.errorInfo$.emit(err);
-      this._setError(err); });
+
+    try {
+      const data =  this.awsService
+      .auth()
+      .forgotPassword(username);
+        this._console.log(data);
+    }
+    catch(err) {
+    
+      this._setError(err);
+    }
   }
 
-  public forgotPasswordSubmit(username: string, code: string, new_password: string): void {
-    this.amplifyService.auth().forgotPasswordSubmit(username, code, new_password)
-    .then(data => this._console.log(data))
-    .catch((err) => {
-      this.errorInfo$.emit(err);
-      this._setError(err); });
+  public async forgotPasswordSubmit(
+    username: string,
+    code: string,
+    new_password: string
+  ) {
+    try {
+      const data = this.awsService
+        .auth()
+        .ConfirmForgotPassword(username, code, new_password);
+        this._console.log(data);
+    }
+    catch(err) {
+      this._setError(err);
+    }
   }
-
 
   /** signin */
   public signIn(): void {
-    this.amplifyService.auth().signIn(this.username, this.password)
-      .then(user => {
+    this.awsService
+      .auth()
+      .signIn(this.username, this.password)
+      .then((user) => {
         this.isSignedIn = false;
-        if (user['challengeName'] === 'SMS_MFA' || user['challengeName'] === 'SOFTWARE_TOKEN_MFA') {
+        if (
+          user["ChallengeName"] === "SMS_MFA" ||
+          user["ChallengeName"] === "SOFTWARE_TOKEN_MFA"
+        ) {
           this.confirmUser = user;
-          this.amplifyService.setAuthState({ state: 'confirmSignIn', user: user });
-        } else if (user['challengeName'] === 'NEW_PASSWORD_REQUIRED') {
-          this.amplifyService.setAuthState({ state: 'requireNewPassword', user: user });
+          this.awsService.setAuthState({
+            state: "confirmSignIn",
+            user: user,
+          });
+        } else if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
+          this.awsService.setAuthState({
+            state: "requireNewPassword",
+            user: user,
+          });
+          this.awsService
+            .api()
+            .get("gorico", "test", {
+              queryStringParameters: {},
+              headers: null,
+            });
         } else {
-          this.amplifyService.setAuthState({ state: 'signedIn', user: user });
+          this.awsService.setAuthState({
+            state: "signedIn",
+            user: user,
+          });
           this.isSignedIn = true;
           // now get user and related menu info from backend
           this.retrieveUserInfo();
         }
       })
       .catch((err) => {
-        this.errorInfo$.emit(err);
         this._setError(err);
       });
   }
@@ -143,33 +205,47 @@ export class AuthService {
   public signOut(): void {
     this.isSignedIn = false;
     this.currentCompany = null; // force default company for next login
-    this.amplifyService.auth().signOut();
-    this.userinfo.next({ name: null, lastname: null, username: null, picture: null, language: 'it', companies: [] }); // user data nulled
+    this.awsService.auth().mfa="";
+    this.awsService.auth().signOut();
+    localStorage.clear();
+    this.userinfo.next({
+      name: null,
+      lastname: null,
+      username: null,
+      picture: null,
+      language: "it",
+      companies: [],
+    }); // user data nulled
     // reset the left menu
-    this.navigationService.setCurrentNavigation('main');
-    this.navigationService.unregister('usermenu');
+    this.navigationService.setCurrentNavigation("main");
+    this.navigationService.unregister("usermenu");
     this.signOutGoogle();
   }
 
   public signUp(): void {
-    this.amplifyService.auth().signUp(this.username,
-      this.password,
-      this.email)
-      .then(user => this.amplifyService.setAuthState({ state: 'sign-up', user: { 'username': this.username } }))
-      .catch(err => {
-        this.errorInfo$.emit(err);
+    this.awsService
+      .auth()
+      .signUp(this.username, this.password, this.email)
+      .then((user) =>
+        console.log(user)
+      )
+      .catch((err) => {
         this._setError(err);
       });
   }
 
   public confirmSignUp(code: string): void {
-      this.amplifyService.auth().confirmSignUp(this.username, code)
-      .then(data => {
-         this.amplifyService.setAuthState({ state: 'confirm-sign-up', user: { 'username': this.username } });
-          this._console.log(data);
+    this.awsService
+      .auth()
+      .confirmSignUp(this.username, code)
+      .then((data) => {
+        this.awsService.setAuthState({
+          state: "confirm-sign-up",
+          user: { username: this.username },
+        });
+        this._console.log(data);
       })
-      .catch(err => {
-        this.errorInfo$.emit(err);
+      .catch((err) => {
         this._setError(err);
       });
   }
@@ -183,32 +259,30 @@ export class AuthService {
     // Save company to local storage
     _this.setLastCompany(_this.currentCompany);
     // reset the left menu
-    _this.navigationService.setCurrentNavigation('main');
-    _this.navigationService.unregister('usermenu');
+    _this.navigationService.setCurrentNavigation("main");
+    _this.navigationService.unregister("usermenu");
 
     //get languages
     _this.retrieveLanguages();
 
     // get new menu
     _this.retrieveMenu();
-
   }
-  public updateUserLanguage( language : string): void {
+  public updateUserLanguage(language: string): void {
     const _this = this;
-  
-    _this.setLastLanguage(language)
+
+    _this.setLastLanguage(language);
     //get languages
     _this.retrieveLanguages();
 
     // get new menu
     _this.retrieveMenu();
-
   }
 
   public getCurrentCompany(currentKeys: any = null): string {
     const _this = this;
     if (currentKeys != null && currentKeys.codice_azienda != null) {
-        return currentKeys.codice_azienda;
+      return currentKeys.codice_azienda;
     }
     return _this.currentCompany;
   }
@@ -222,75 +296,79 @@ export class AuthService {
     this.errorMessage = err.message || err;
   }
 
-  private retrieveUserInfo(): void {
+  private async retrieveUserInfo() {
     const _this = this;
-    _this.backendService.getUserData().subscribe(
-      ud => {
-        if (ud != null && ud.result === 'OK') {
-          if (ud.userdata.language == null) {
-            ud.userdata.language = 'it';  // defaults to italian
-          } 
-          else {
-            let lastLanguage: string = _this.getLastLanguage();
-            if(lastLanguage ){
-           
-              ud.userdata.language  = lastLanguage;
-            }
+       this.interval = setInterval(
+          () => this.awsService.auth().refreshToken(),
+          1000
+        );
+    
+    _this.backendService.getUserData().subscribe((ud) => {
+      if (ud != null && ud.result === "OK") {
+        if (ud.userdata.language == null) {
+          ud.userdata.language = "it"; // defaults to italian
+        } else {
+          let lastLanguage: string = _this.getLastLanguage();
+          if (lastLanguage) {
+            ud.userdata.language = lastLanguage;
           }
-          _this.userinfo.next(ud.userdata); // signal a value change to subscribers
-          if (_this.currentCompany == null) {  // do not get default company if reloading because of user chose a different company
-            // Check if last company is stored in local storage
-            let lastCompany: string = _this.getLastCompany();
-            if(lastCompany && ud.userdata.companies.includes(lastCompany)){
-              // Set last company from local storage
-              _this.currentCompany = lastCompany;
-            }
-            else{
-              // Select first compnay from companies list 
-              _this.currentCompany = ud.userdata.companies[0];
-              // Save company to local storage
-              _this.setLastCompany(_this.currentCompany);
-            }
+        }
+        _this.userinfo.next(ud.userdata); // signal a value change to subscribers
+        if (_this.currentCompany == null) {
+          // do not get default company if reloading because of user chose a different company
+          // Check if last company is stored in local storage
+          let lastCompany: string = _this.getLastCompany();
+          if (
+            lastCompany &&
+            ud.userdata.companies.includes(lastCompany)
+          ) {
+            // Set last company from local storage
+            _this.currentCompany = lastCompany;
+          } else {
+            // Select first compnay from companies list
+            _this.currentCompany = ud.userdata.companies[0];
+            // Save company to local storage
+            _this.setLastCompany(_this.currentCompany);
           }
-          _this.sync = ud.userdata.sync || null;
-          
-          // If sync mode is google then signin
-          // if(_this.sync === 'google') {
-          //   _this.loginGoogle('gdrive');
-          // }
-
-          _this.onekyc = ud.userdata.onekyc;
-
-          _this._console.log(ud.userdata);
-
-          //load default language for user
-          _this._translateService.setDefaultLang(ud.userdata.language);
-
-          //get languages
-          _this.retrieveLanguages();
-
-          // get new menu
-          _this.retrieveMenu();
         }
-        else {
-          // Show error snackbar
-          _this._toastService.showErrorToast(ud.reason);
-          _this.userinfo.next(null);
-          _this._console.error(ud);
-        }
-      });
+        _this.sync = ud.userdata.sync || null;
+
+        // If sync mode is google then signin
+        // if(_this.sync === 'google') {
+        //   _this.loginGoogle('gdrive');
+        // }
+
+        _this.onekyc = ud.userdata.onekyc;
+
+        _this._console.log(ud.userdata);
+
+        //load default language for user
+        _this._translateService.setDefaultLang(ud.userdata.language);
+
+        //get languages
+        _this.retrieveLanguages();
+
+        // get new menu
+        _this.retrieveMenu();
+      } else {
+        // Show error snackbar
+        _this._toastService.showErrorToast(ud.reason);
+        _this.userinfo.next(null);
+        _this._console.error(ud);
+      }
+    });
   }
 
   private retrieveMenu(): void {
     const _this = this;
-    _this.backendService.getMenu({ codice_azienda: _this.currentCompany }).subscribe(
-      menu => {
-        if (menu != null && menu.result === 'OK') {
+    _this.backendService
+      .getMenu({ codice_azienda: _this.currentCompany })
+      .subscribe((menu) => {
+        if (menu != null && menu.result === "OK") {
           this.setUsermenu(JSON.stringify(menu.menu));
-          _this.navigationService.register('usermenu', [menu.menu]);
-          _this.navigationService.setCurrentNavigation('usermenu');
-        }
-        else {
+          _this.navigationService.register("usermenu", [menu.menu]);
+          _this.navigationService.setCurrentNavigation("usermenu");
+        } else {
           // Show error snackbar
           _this._toastService.showErrorToast(menu.reason);
         }
@@ -299,96 +377,101 @@ export class AuthService {
 
   private retrieveLanguages(): void {
     const _this = this;
-    _this.backendService.getLanguage('it').subscribe(
-      result_it => {
-        if (result_it.result === 'OK') {
-          _this._fuseTranslationLoaderService.loadTranslations(result_it.data);
-          _this.backendService.getLanguage('en').subscribe(
-            result_en => {
-              if (result_en.result === 'OK') {
-                _this._fuseTranslationLoaderService.loadTranslations(result_en.data);
+    _this.backendService.getLanguage("it").subscribe((result_it) => {
+      if (result_it.result === "OK") {
+        _this._fuseTranslationLoaderService.loadTranslations(
+          result_it.data
+        );
+        _this.backendService
+          .getLanguage("en")
+          .subscribe((result_en) => {
+            if (result_en.result === "OK") {
+              _this._fuseTranslationLoaderService.loadTranslations(
+                result_en.data
+              );
 
-                // Use a language
-                _this._translateService.use(_this._translateService.getDefaultLang());
-              }
-              else {
-                // Show error snackbar
-                _this._toastService.showErrorToast(result_en.reason);
-              }
-            });
-        }
-        else {
-          // Show error snackbar
-          _this._toastService.showErrorToast(result_it.reason);
-        }
-      });
+              // Use a language
+              _this._translateService.use(
+                _this._translateService.getDefaultLang()
+              );
+            } else {
+              // Show error snackbar
+              _this._toastService.showErrorToast(
+                result_en.reason
+              );
+            }
+          });
+      } else {
+        // Show error snackbar
+        _this._toastService.showErrorToast(result_it.reason);
+      }
+    });
   }
 
-
   public setUsermenu(usermenu: any) {
-    localStorage.setItem('usermenu',  usermenu);
+    localStorage.setItem("usermenu", usermenu);
   }
 
   public getUsermenu() {
-    return JSON.parse(localStorage.getItem('usermenu'));
+    return JSON.parse(localStorage.getItem("usermenu"));
   }
-
 
   public filterMenu(filter): void {
     const _this = this;
-       
-    const usermenu =  _this.getUsermenu();
-    
+
+    const usermenu = _this.getUsermenu();
+
     let filteredMenu = Object.assign({}, usermenu);
 
-  if(filter) {
-      const fullMenu =Object.assign({}, usermenu);
+    if (filter) {
+      const fullMenu = Object.assign({}, usermenu);
       filteredMenu = _this.filterMenuItem(fullMenu, filter);
     }
 
-    _this.navigationService.unregister('usermenu');
-    _this.navigationService.register('usermenu', [filteredMenu]);
-    _this.navigationService.setCurrentNavigation('usermenu');
-}
+    _this.navigationService.unregister("usermenu");
+    _this.navigationService.register("usermenu", [filteredMenu]);
+    _this.navigationService.setCurrentNavigation("usermenu");
+  }
 
   private filterMenuItem(item, filter) {
-    
-    if(filter) {
+    if (filter) {
       let found = false;
-      
+
       const filterLower = filter.toLowerCase();
 
-      const translate = item.translate? this._translateService.instant(item.translate).toLowerCase(): null;
-      if((item.title && item.title.toLowerCase().includes(filterLower))
-      || (translate && translate.includes(filterLower))) {
+      const translate = item.translate
+        ? this._translateService.instant(item.translate).toLowerCase()
+        : null;
+      if (
+        (item.title &&
+          item.title.toLowerCase().includes(filterLower)) ||
+        (translate && translate.includes(filterLower))
+      ) {
         found = true;
       }
 
-      if(!found && item.children && item.children.length > 0) {
+      if (!found && item.children && item.children.length > 0) {
         let children = [];
-        item.children.forEach(child => {
+        item.children.forEach((child) => {
           let childData = this.filterMenuItem(child, filter);
-          if(childData) {
+          if (childData) {
             found = true;
             children.push(childData);
           }
         });
-        if(children.length > 0) {
+        if (children.length > 0) {
           item.children = children;
-        }
-        else {
+        } else {
           item.children = null;
         }
       }
 
-      if(found) {
-      return item;
-      }
-      else {
+      if (found) {
+        return item;
+      } else {
         return null;
       }
-    }
-    else {
+    } else {
       return item;
     }
   }
@@ -397,9 +480,9 @@ export class AuthService {
   public doesAccessTokenExist(): boolean {
     var result = false;
     // Go through all the keys in local storage
-    // and check if there's any with accessToken in it
+    // and check if there's any with session in it
     Array.from(Array(localStorage.length)).forEach((val, i) => {
-      if (localStorage.key(i).includes('accessToken')) {
+      if (localStorage.key(i).includes("session")) {
         // Found it!
         result = true;
       }
@@ -409,13 +492,13 @@ export class AuthService {
 
   /** Check if local storage contains company */
   public getLastCompany(): string {
-    let lastCompany: string = localStorage.getItem('lastCompany');
+    let lastCompany: string = localStorage.getItem("lastCompany");
     return lastCompany;
   }
 
   /** Check if local storage contains company */
   public getLastLanguage(): string {
-    let lastCompany: string = localStorage.getItem('lastLanguage');
+    let lastCompany: string = localStorage.getItem("lastLanguage");
     return lastCompany;
   }
 
@@ -429,165 +512,217 @@ export class AuthService {
 
   /** Set last Company in local storage */
   public setLastCompany(lastCompany: string) {
-    localStorage.setItem('lastCompany', lastCompany);
+    localStorage.setItem("lastCompany", lastCompany);
   }
 
   /** Set last Language in local storage */
   public setLastLanguage(lastLanguage: string) {
-    localStorage.setItem('lastLanguage', lastLanguage);
+    localStorage.setItem("lastLanguage", lastLanguage);
   }
-  
 
   /** Load Session */
   public loadSession() {
-    this.amplifyService.auth().currentUserInfo()
-      .then(user => {
-        // Check if user is valid
-        if (user && user.id) {
-          // User is valid
-          this.amplifyService.setAuthState({ state: 'signedIn', user: user });
-          this.isSignedIn = true;
-          // now get user and related menu info from backend
-          this.retrieveUserInfo();
-        }
-        else {
-          // User was invalid
-          this.errorInfo$.emit("Invalid session!");
-        }
-      })
-      .catch(error => {
-        this._console.error(error);
-
-        // Error occured which means the session was invalid or expired
-        // Emit the error so we can stop showing the loading dialog
-        this.errorInfo$.emit(error);
+    try {
+      const user = this.awsService.auth().currentUserInfo();
+      // Check if user is valid
+      if (user && user.id) {
+        // User is valid
+        // this.amplifyService.setAuthState({ state: 'signedIn', user: user });
+        this.isSignedIn = true;
+        // now get user and related menu info from backend
+        this.retrieveUserInfo();
+      } else {
+        // User was invalid
+        // this.errorInfo$.emit("Invalid session!");
       }
-      );
+    } catch (error) {
+      this._console.error(error);
 
+      // Error occured which means the session was invalid or expired
+      // Emit the error so we can stop showing the loading dialog
+      // this.errorInfo$.emit(error);
+    }
+
+    // this.amplifyService.auth().currentUserInfo()
+    //   .then(user => {
+    //     // Check if user is valid
+    //     if (user && user.id) {
+    //       // User is valid
+    //       // this.amplifyService.setAuthState({ state: 'signedIn', user: user });
+    //       this.isSignedIn = true;
+    //       // now get user and related menu info from backend
+    //       this.retrieveUserInfo();
+    //     }
+    //     else {
+    //       // User was invalid
+    //       this.errorInfo$.emit("Invalid session!");
+    //     }
+    //   })
+    //   .catch(error => {
+    //     this._console.error(error);
+
+    //     // Error occured which means the session was invalid or expired
+    //     // Emit the error so we can stop showing the loading dialog
+    //     this.errorInfo$.emit(error);
+    //   }
+    //   );
 
     /* 
-    // Testing auth token stuff
-    this.amplifyService.auth().currentCredentials()
-      .then(credentials => {
-        // let awsPersonalCreds = this.amplifyService.auth().essentialCredentials(credentials);
-        // console.table(awsPersonalCreds);
-        
-        // I get valid accessKeyId, sessionToken, secretAccessKey
+// Testing auth token stuff
+this.amplifyService.auth().currentCredentials()
+  .then(credentials => {
+    // let awsPersonalCreds = this.amplifyService.auth().essentialCredentials(credentials);
+    // console.table(awsPersonalCreds);
+    
+    // I get valid accessKeyId, sessionToken, secretAccessKey
 
-        // this.amplifyService.auth().currentSession()
-        //   .then(currentSession => console.table('currentSession= ' + currentSession))
-        //   .catch(error => console.error(error));
-        // // I get an error: no current user
+    // this.amplifyService.auth().currentSession()
+    //   .then(currentSession => console.table('currentSession= ' + currentSession))
+    //   .catch(error => console.error(error));
+    // // I get an error: no current user
 
-        // this.amplifyService.auth().currentUserPoolUser()
-        //   .then(currentUser => console.table('currentUserPoolUser= ' + currentUser))
-        //   .catch(error => console.error(error));
-        // // I get an error: No current user in userpool
+    // this.amplifyService.auth().currentUserPoolUser()
+    //   .then(currentUser => console.table('currentUserPoolUser= ' + currentUser))
+    //   .catch(error => console.error(error));
+    // // I get an error: No current user in userpool
 
-        // this.amplifyService.auth().currentAuthenticatedUser()
-        //   .then(currentAuthUser => console.table('currentAuthUser= ' + currentAuthUser))
-        //   .catch(error => console.error(error));
-        // // I get an error: not authenticated
-      })
-      .catch(error => console.error(error));
-    */
-
+    // this.amplifyService.auth().currentAuthenticatedUser()
+    //   .then(currentAuthUser => console.table('currentAuthUser= ' + currentAuthUser))
+    //   .catch(error => console.error(error));
+    // // I get an error: not authenticated
+  })
+  .catch(error => console.error(error));
+*/
   }
 
   public async getMFAStatus() {
-    let _this = this;    
-    let user = await _this.amplifyService.auth().currentAuthenticatedUser();
-    return user.preferredMFA;
+    let _this = this;
+    let user = await _this.awsService.auth().currentUserInfo();
+    return user?.preferredMFA ?? "";
   }
 
   public async generateTOTPToken() {
-    let _this = this;    
-    let user = await _this.amplifyService.auth().currentAuthenticatedUser();    
-    _this.code = await _this.amplifyService.auth().setupTOTP(user);
+    let _this = this;
+    _this.code = await _this.awsService.auth().setupTOTP();
     return _this.code;
   }
 
   public async VerifyTOTP(challengeAnswer) {
     let _this = this;
-    let user = await _this.amplifyService.auth().currentAuthenticatedUser();
-    
-    let result = await _this.amplifyService.auth().verifyTotpToken(user, challengeAnswer);
-    if(result.Status === 'SUCCESS') {
-      _this.amplifyService.auth().setPreferredMFA(user, 'TOTP');
+    let user = _this.awsService.auth().currentUserInfo();
+    let result = await _this.awsService
+      .auth()
+      .VerifyTOTP(challengeAnswer);
+    if (result.Status === "SUCCESS") {
+      _this.awsService.auth().setPreferredMFA(true);
     }
     return result.Status;
-
   }
 
   public async disableTOTP() {
     let _this = this;
-    let user = await _this.amplifyService.auth().currentAuthenticatedUser();    
-    _this.amplifyService.auth().setPreferredMFA(user, 'NOMFA');
+    // let user = await _this.amplifyService.auth().currentAuthenticatedUser();
+    try {
+      const response = await _this.backendService.disableMFA().toPromise();
+      if(response && response.result == 'OK') {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    catch (e) {
+      return false;
+    }
+
+    // _this.awsService.auth().setPreferredMFA(false);
   }
 
   public async confirmSignIn(challenge: string) {
     let _this = this;
-    
-    _this.amplifyService.auth().confirmSignIn(_this.confirmUser, challenge, 'SOFTWARE_TOKEN_MFA')
-      .then(user => {
-        _this.isSignedIn = false;
-        if (user['challengeName'] === 'NEW_PASSWORD_REQUIRED') {
-          _this.amplifyService.setAuthState({ state: 'requireNewPassword', user: user });
-        } else {
-          _this.amplifyService.setAuthState({ state: 'signedIn', user: user });
-          _this.isSignedIn = true;
+
+    const result = await _this.awsService
+      .auth()
+      .confirmSignIn(_this.confirmUser, challenge, "SOFTWARE_TOKEN_MFA");
+    if(result) {
+      _this.isSignedIn = true;
           // now get user and related menu info from backend
-          _this.retrieveUserInfo();
-        }
-      })
-      .catch((err) => {
-        _this.errorInfo$.emit(err);
-        _this._setError(err);
-      });
+      _this.retrieveUserInfo();
+    }
+    else {
+              // _this.errorInfo$.emit(err);
+
+    }
+
+      // .then((user) => {
+      //   _this.isSignedIn = false;
+      //   if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
+      //     _this.amplifyService.setAuthState({
+      //       state: "requireNewPassword",
+      //       user: user,
+      //     });
+      //   } else {
+      //     _this.amplifyService.setAuthState({
+      //       state: "signedIn",
+      //       user: user,
+      //     });
+      //     _this.isSignedIn = true;
+      //     // now get user and related menu info from backend
+      //     _this.retrieveUserInfo();
+      //   }
+      // })
+      // .catch((err) => {
+      //   _this.errorInfo$.emit(err);
+      //   _this._setError(err);
+      // });
   }
 
-  async loadGoogleAuth(purpose: string){
+  async loadGoogleAuth(purpose: string) {
     let _this = this;
 
-    let loadAuthTokenResponse: any = await _this.backendService.loadAuthToken(`token_${purpose}`).toPromise();
-    _this._console.log('loadAuthToken Response: ', loadAuthTokenResponse);
-    if(loadAuthTokenResponse.result === 'KO') {
-      if(!auth2.isSignedIn.get()) {
+    let loadAuthTokenResponse: any = await _this.backendService
+      .loadAuthToken(`token_${purpose}`)
+      .toPromise();
+    _this._console.log("loadAuthToken Response: ", loadAuthTokenResponse);
+    if (loadAuthTokenResponse.result === "KO") {
+      if (!auth2.isSignedIn.get()) {
         // Sign in the user if they are currently signed in.
         // _this._console.log('Is signed in: ', auth2.isSignedIn.get());
-  
+
         // await _this.signOutGoogle();
         await auth2.signIn();
       }
       let googleUser = auth2.currentUser.get();
       const options = new gapi.auth2.SigninOptionsBuilder();
       //options.setFetchBasicProfile(true);
-      options.setPrompt('select_account');
+      options.setPrompt("select_account");
       options.setScope(_this.googleScopes[purpose]);
-      
-      await googleUser.grant(options);
-      options.setPrompt('consent');
 
-      let offlineAccessCode: any = await googleUser.grantOfflineAccess(options);
-      let saveAuthTokenResponse: any = await _this.backendService.saveAuthToken(`token_${purpose}`, offlineAccessCode.code).toPromise();
-      
+      await googleUser.grant(options);
+      options.setPrompt("consent");
+
+      let offlineAccessCode: any = await googleUser.grantOfflineAccess(
+        options
+      );
+      let saveAuthTokenResponse: any = await _this.backendService
+        .saveAuthToken(`token_${purpose}`, offlineAccessCode.code)
+        .toPromise();
+
       return saveAuthTokenResponse.authParams;
-    }
-    else {
+    } else {
       return loadAuthTokenResponse.authParams;
     }
   }
-  
 
   /**
    * The Sign-In client object.
    */
-    //gAuth: any = null;
+  //gAuth: any = null;
 
   /**
    * Initializes the Sign-In client.
    */
-  initGoogleOAuth(){
+  initGoogleOAuth() {
     // let _this = this;
     // gapi.load('auth2', function(){
     //   /**
@@ -597,37 +732,34 @@ export class AuthService {
     //   _this.gAuth = gapi.auth2.init({
     //       client_id: appData.GAPI_CLIENT_ID
     //   });
-
-      
-
     //   // Attach the click handler to the sign-in button
     //   // auth2.attachClickHandler('signin-button', {}, onSuccess, onFailure);
     // });
     /*
-    let _this = this;
-    return new Promise((resolve, reject) => {
-      gapi.load('auth2', async () => {
-          const gAuth = await gapi.auth2.init({
-              client_id: appData.GAPI_CLIENT_ID,
-              fetch_basic_profile: true,
-              offline_access: true,
-              immediate: false,
-              scope: 'profile email https://mail.google.com https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file'
-          });
-          // https://www.googleapis.com/auth/drive.file 
-          _this.gAuth = gAuth;
-          resolve(gAuth);
-      }, reject);
-    });
-    */
+let _this = this;
+return new Promise((resolve, reject) => {
+  gapi.load('auth2', async () => {
+      const gAuth = await gapi.auth2.init({
+          client_id: appData.GAPI_CLIENT_ID,
+          fetch_basic_profile: true,
+          offline_access: true,
+          immediate: false,
+          scope: 'profile email https://mail.google.com https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.file'
+      });
+      // https://www.googleapis.com/auth/drive.file 
+      _this.gAuth = gAuth;
+      resolve(gAuth);
+  }, reject);
+});
+*/
   }
-  
+
   onLoginGoogle(googleUser) {
     var profile = googleUser.getBasicProfile();
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log("Name: " + profile.getName());
+    console.log("Image URL: " + profile.getImageUrl());
+    console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
 
   async signOutGoogle() {
@@ -637,128 +769,156 @@ export class AuthService {
         await auth2.signOut();
         await auth2.disconnect();
       }
-    }
-    catch(e){}
+    } catch (e) { }
   }
 
   async getGooglePermissions(purpose) {
     let _this = this;
     let googleUser = auth2.currentUser.get();
     console.log(googleUser);
-    if(googleUser.hasGrantedScopes(_this.googleScopes[purpose])) {
+    if (googleUser.hasGrantedScopes(_this.googleScopes[purpose])) {
       return null;
-    }
-    else {
+    } else {
       const options = new gapi.auth2.SigninOptionsBuilder();
       //options.setFetchBasicProfile(true);
-      options.setPrompt('select_account');
+      options.setPrompt("select_account");
       options.setScope(_this.googleScopes[purpose]);
-      
-      await googleUser.grant(options);
-      options.setPrompt('consent');
 
-      let offlineAccessCode: any = await googleUser.grantOfflineAccess(options);
-      let saveAuthTokenResponse: any = await _this.backendService.saveAuthToken(`token_${purpose}`, offlineAccessCode.code).toPromise();
-      
+      await googleUser.grant(options);
+      options.setPrompt("consent");
+
+      let offlineAccessCode: any = await googleUser.grantOfflineAccess(
+        options
+      );
+      let saveAuthTokenResponse: any = await _this.backendService
+        .saveAuthToken(`token_${purpose}`, offlineAccessCode.code)
+        .toPromise();
+
       return saveAuthTokenResponse.authParams;
     }
   }
-
 
   private pageTokens: Array<string | number | null> = [null];
 
   loadEmailThreads(search: string = null) {
     let _this = this;
-    _this.backendService.getEmailThreads(search, _this.loadGoogleAuth('gmail')).subscribe(
-      result => {
-        _this._console.log(result);
-      },
-      error => {
-        console.error(error);
-      }
-    )
+    _this.backendService
+      .getEmailThreads(search, _this.loadGoogleAuth("gmail"))
+      .subscribe(
+        (result) => {
+          _this._console.log(result);
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
   }
 
   loadDriveContents(folder: string = null) {
-    return this.backendService.getDriveContents(folder, this.loadGoogleAuth('gdrive'));
+    return this.backendService.getDriveContents(
+      folder,
+      this.loadGoogleAuth("gdrive")
+    );
   }
 
   createDriveFolder(folder: string) {
-    return this.backendService.createDriveFolder(folder, this.loadGoogleAuth('gdrive'));
+    return this.backendService.createDriveFolder(
+      folder,
+      this.loadGoogleAuth("gdrive")
+    );
   }
 
   copyFromS3ToDrive(s3FilePath: string, driveFilePath: string) {
-    return this.backendService.copyFromS3ToDrive(s3FilePath, driveFilePath, this.loadGoogleAuth('gdrive'));
+    return this.backendService.copyFromS3ToDrive(
+      s3FilePath,
+      driveFilePath,
+      this.loadGoogleAuth("gdrive")
+    );
   }
 
   copyFromDriveToS3(driveFilePath: string, s3FilePath: string) {
-    return this.backendService.copyFromDriveToS3(driveFilePath, s3FilePath, this.loadGoogleAuth('gdrive'));
+    return this.backendService.copyFromDriveToS3(
+      driveFilePath,
+      s3FilePath,
+      this.loadGoogleAuth("gdrive")
+    );
   }
 
-  loadMessages(labelIds: string[], pageNumber: number = 0, searchText: string = ''): Promise<any> {
+  loadMessages(
+    labelIds: string[],
+    pageNumber: number = 0,
+    searchText: string = ""
+  ): Promise<any> {
     let _this = this;
     return new Promise((resolve, reject) => {
-           gapi.client.gmail.users.messages.list({
-              userId: 'me',
-              format: 'full',
-              maxResults: 50,
-              labelIds: labelIds,
-              pageToken: _this.pageTokens[pageNumber],
-              q: searchText
-          }).then(res => {
-              // store page tokens in array to navigate back & forth, 
-              // do something with the list
-              _this._console.log(JSON.stringify(res));
-              resolve(res);
-          }).catch(err => {
-            // handle error
-              reject(err);
-          });
-      });
+      gapi.client.gmail.users.messages
+        .list({
+          userId: "me",
+          format: "full",
+          maxResults: 50,
+          labelIds: labelIds,
+          pageToken: _this.pageTokens[pageNumber],
+          q: searchText,
+        })
+        .then((res) => {
+          // store page tokens in array to navigate back & forth,
+          // do something with the list
+          _this._console.log(JSON.stringify(res));
+          resolve(res);
+        })
+        .catch((err) => {
+          // handle error
+          reject(err);
+        });
+    });
   }
 
   loadLabels() {
     let _this = this;
 
-    const accessToken = sessionStorage.getItem('googleAccessToken');
-    gapi.load('client', () => {
-      gapi.client.setToken({ access_token: accessToken});
+    const accessToken = sessionStorage.getItem("googleAccessToken");
+    gapi.load("client", () => {
+      gapi.client.setToken({ access_token: accessToken });
       gapi.client.init({
-          // apiKey: '<FIREBASE_API_KEY_HERE>',
-          clientId: appData.GAPI_CLIENT_ID,
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest'],
-          scope: 'https://mail.google.com/'
+        // apiKey: '<FIREBASE_API_KEY_HERE>',
+        clientId: appData.GAPI_CLIENT_ID,
+        discoveryDocs: [
+          "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest",
+        ],
+        scope: "https://mail.google.com/",
       });
 
-      gapi.client.load('gmail', 'v1', () => {
+      gapi.client.load("gmail", "v1", () => {
         return new Promise((resolve, reject) => {
-          gapi.client.gmail.users.labels.list({
-              userId: 'me',
-              format: 'full',
-              maxResults: 15
-          }).then(async labelList => {
-              // loop through label list, 
-              // get single label (using Gmail API method 'gapi.client.gmail.users.labels.get') 
+          gapi.client.gmail.users.labels
+            .list({
+              userId: "me",
+              format: "full",
+              maxResults: 15,
+            })
+            .then(async (labelList) => {
+              // loop through label list,
+              // get single label (using Gmail API method 'gapi.client.gmail.users.labels.get')
               // push detailed label data to array
               _this._console.log(labelList);
               resolve(labelList);
-          }).catch(err => {
+            })
+            .catch((err) => {
               reject(err);
-          });
+            });
         });
-      });      
-    });                
+      });
+    });
   }
 
   deleteAllCookies() {
     var cookies = document.cookie.split(";");
 
     for (var i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i];
-        var eqPos = cookie.indexOf("=");
-        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      var cookie = cookies[i];
+      var eqPos = cookie.indexOf("=");
+      var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
   }
-
 }
