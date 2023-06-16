@@ -28,109 +28,24 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_non_applicabile_sezione",
-      "label": "Sezione Non Applicabile",
-      "readOnly": false,
-      "size": 1,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "cancella_sezioni",
-      "label": "Non applicabile",
-      "buttonIcon": "visibility_off",
-      "outputEvent": {
-        "eventName": "sezioni_cancella",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "sezioni_cancella",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.sezioni_domande_delete ($codice_azienda$, $id_sezione$, $id_modello_test$, $id_modello_test_vr$)"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "newLine": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
         "dataType": "text",
-        "viewType": "input"
+        "viewType": "label"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "newLine": false,
-      "readOnly": false,
-      "size": 4.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento",
-      "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
-      "label": "Argomento",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2.4
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tag",
-      "label": "#",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "navigate_to_tagging",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "size": 0.5,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_sezione",
-      "label": "Ident.Sezione",
+      "key": "sezionelebel",
+      "label": "Sezione",
       "newLine": false,
       "readOnly": true,
-      "size": 1
+      "sameOrigin": false,
+      "style": {
+        "background_color": "transparent",
+        "font_color": "black",
+        "font_size": "1.5em",
+        "font_style": "normal",
+        "font_weight": "600"
+      },
+      "size": 9.4
     },
     {
       "autoGenerate": false,
@@ -138,7 +53,7 @@
         "viewType": "menu",
         "menuOptions": [
           {
-            "icon": "class",
+            "icon": "tag",
             "label": "Crea e associa argomento",
             "outputEventName": "create_associate_argomento"
           }
@@ -150,8 +65,8 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "outputEventWhenComplete": "modelli_test_vr_reload",
-          "queryFunct": "select entrasp.argomenti_create_and_update_sezione($codice_azienda$, $id_sezione£, $id_modello_test$, $id_modello_test_vr$, $titolo$, $descrizione$, 45)"
+          "queryFunct": "select entrasp.argomenti_create_and_update_sezione($codice_azienda$, $id_sezione$, $id_modello_test$, $id_modello_test_vr$, $descrizione$, 45)",
+          "successMessage": "Sezione correttamente taggata"
         }
       ],
       "isHidden": false,
@@ -162,7 +77,164 @@
       "newLine": true,
       "readOnly": false,
       "sameOrigin": false,
-      "size": 0.5
+      "size": 0.6
+    },
+    {
+      "autoGenerate": true,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_sezione",
+      "label": "#",
+      "newLine": false,
+      "readOnly": true,
+      "size": 1.66
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "ordinamento",
+      "label": "Ordinamento",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.67
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Descrizione sezione mancante",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "descrizione",
+      "label": "Sezione",
+      "newLine": false,
+      "readOnly": false,
+      "size": 3.33
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "peso",
+      "label": "Peso (%)",
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.67
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "activate_oggetti_collegati_k",
+      "label": "",
+      "buttonIcon": "expand_more",
+      "newLine": false,
+      "size": 0.4,
+      "outputEvent": {
+        "eventName": "activate_oggetti_collegati",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "hide",
+          "eventName": "activate_oggetti_collegati",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "show",
+          "eventName": "hide_oggetti_collegati",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "hide_oggetti_collegati_k",
+      "label": "",
+      "buttonIcon": "expand_less",
+      "newLine": false,
+      "size": 0.4,
+      "outputEvent": {
+        "eventName": "hide_oggetti_collegati",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "eventName": "activate_oggetti_collegati",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "eventName": "hide_oggetti_collegati",
+          "condition": "none",
+          "values": []
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "label"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "maggiori_dettagli",
+      "label": "Ulteriori Dettagli",
+      "style": {
+        "background_color": "transparent",
+        "font_color": "black",
+        "font_size": "1.3em",
+        "font_weight": "400"
+      },
+      "newLine": true,
+      "readOnly": true,
+      "sameOrigin": false,
+      "size": 2.1
     },
     {
       "autoGenerate": false,
@@ -191,224 +263,190 @@
       "readOnly": true
     },
     {
-      "autoGenerate": false,
       "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "N.",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "validations": [
+        "viewType": "subform",
+        "subform_keys": [
           {
-            "message": "Descrizione sezione mancante",
-            "name": "required",
-            "validator": "Validators.required"
+            "autoGenerate": false,
+            "format": {
+              "dataType": "text",
+              "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.33
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_non_applicabile_sezione",
+            "label": "Sezione Non Applicabile",
+            "readOnly": false,
+            "size": 3.33,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
+            "label": "Argomento",
+            "readOnly": false,
+            "newLine": true,
+            "size": 3.33
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "cancella_sezioni",
+            "label": "Non applicabile",
+            "buttonIcon": "visibility_off",
+            "outputEvent": {
+              "eventName": "sezioni_cancella",
+              "eventTrigger": "press"
+            },
+            "inputEvents": [
+              {
+                "eventName": "sezioni_cancella",
+                "actionType": "query",
+                "condition": "none",
+                "values": [],
+                "queryFunct": "select entrasp.sezioni_domande_delete ($codice_azienda$, $id_sezione$, $id_modello_test$, $id_modello_test_vr$)"
+              }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "tag",
+            "label": "#",
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "navigate_to_tagging",
+              "eventTrigger": "press"
+            },
+            "style": {
+              "background_color": "#25599C",
+              "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test = $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_domanda_rif",
+            "label": "Attiva se alla domanda",
+            "outputEvent": {
+              "eventName": "id_domanda_rif_change",
+              "eventTrigger": "select"
+            },
+            "newLine": false,
+            "size": 3.33,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "viewType": "checkbox",
+              "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_non_viene_risposto",
+            "label": "NON",
+            "size": 3.33,
+            "newLine": false,
+            "readOnly": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$ and id_domanda=£id_domanda_rif£;",
+              "viewType": "combobox",
+              "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_risposta_prev_rif",
+            "label": "Viene Risposto",
+            "outputEvent": {
+              "eventName": "select_id_risposta_rif",
+              "eventTrigger": "select"
+            },
+            "inputEvents": [
+              {
+                "eventName": "id_domanda_rif_change",
+                "actionType": "query",
+                "queryFunct": "select coalesce(£id_risposta_prev_rif£, 0) as id_risposta_prev_rif",
+                "condition": "none",
+                "values": []
+              },
+              {
+                "eventName": "id_domanda_rif_change",
+                "actionType": "query",
+                "queryFunct": "update entrasp.domande set id_domanda_rif=£id_domanda_rif£ where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_sezione=$id_sezione$ and id_domanda_rif is null",
+                "condition": "none",
+                "values": []
+              },
+              {
+                "eventName": "select_id_risposta_rif",
+                "actionType": "query",
+                "queryFunct": "update entrasp.domande set id_risposta_prev_rif=£id_risposta_prev_rif_rif£ where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda_rif=£id_domanda_rif£ and id_sezione=$id_sezione$",
+                "condition": "none",
+                "values": []
+              }
+            ],
+            "newLine": true,
+            "size": 3.33,
+            "readOnly": false
           }
         ]
       },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Sezione",
-      "newLine": false,
-      "readOnly": false,
-      "size": 7
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "peso",
-      "label": "Peso (%)",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-          "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "activate_oggetti_collegati_k",
-      "label": "Altro",
-      "buttonIcon": "expand_more",
-      "newLine": false,
-      "size": 0.9,
-      "outputEvent": {
+      "inputEvents": [
+        {
+          "actionType": "show",
+          "condition": "none",
           "eventName": "activate_oggetti_collegati",
-          "eventTrigger": "press"
-      },
-      "inputEvents": [
-          {
-              "actionType": "hide",
-              "eventName": "activate_oggetti_collegati",
-              "condition": "none",
-              "values": []
-          },
-          {
-              "actionType": "show",
-              "eventName": "hide_oggetti_collegati",
-              "condition": "none",
-              "values": []
-          }
-      ],
-      "style": {
-          "background_color": "#25599C",
-          "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false
-  },
-  {
-      "autoGenerate": false,
-      "format": {
-          "viewType": "button"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "hide_oggetti_collegati_k",
-      "label": "Nascondi dettagli",
-      "buttonIcon": "expand_less",
-      "newLine": true,
-      "size": 1.5,
-      "outputEvent": {
+          "values": []
+        },
+        {
+          "actionType": "hide",
+          "condition": "none",
           "eventName": "hide_oggetti_collegati",
-          "eventTrigger": "press"
-      },
-      "inputEvents": [
-          {
-              "actionType": "show",
-              "eventName": "activate_oggetti_collegati",
-              "condition": "none",
-              "values": []
-          },
-          {
-              "actionType": "hide",
-              "eventName": "hide_oggetti_collegati",
-              "condition": "none",
-              "values": []
-          }
-      ],
-      "style": {
-          "background_color": "#25599C",
-          "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false
-  },
-  {
-      "format": {
-          "viewType": "subform",
-          "subform_keys": [
-            {
-              "autoGenerate": false,
-              "format": {
-                "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda=$codice_azienda$ and id_modello_test = $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$",
-                "options": [],
-                "viewType": "combobox"
-              },
-              "isHidden": false,
-              "isPrimary": false,
-              "key": "id_domanda_rif",
-              "label": "Attiva se alla domanda",
-              "outputEvent": {
-                "eventName": "id_domanda_rif_change",
-                "eventTrigger": "select"
-              },
-              "newLine": true,
-              "size": 10,
-              "readOnly": false
-            },
-            {
-              "autoGenerate": false,
-              "format": {
-                "viewType": "checkbox",
-                "dataType": "text"
-              },
-              "isHidden": false,
-              "isPrimary": false,
-              "key": "flag_non_viene_risposto",
-              "label": "NON",
-              "size": 1,
-              "newLine": false,
-              "readOnly": false
-            },
-            {
-              "autoGenerate": false,
-              "format": {
-                "comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda=$codice_azienda$ and id_modello_test= $id_modello_test$ and id_modello_test_vr = $id_modello_test_vr$ and id_domanda=£id_domanda_rif£;",
-                "viewType": "combobox",
-                "options": []
-              },
-              "isHidden": false,
-              "isPrimary": false,
-              "key": "id_risposta_prev_rif",
-              "label": "Viene Risposto",
-              "outputEvent": {
-                  "eventName": "select_id_risposta_rif",
-                  "eventTrigger": "select"
-              },
-              "inputEvents": [
-                {
-                  "eventName": "id_domanda_rif_change",
-                  "actionType": "query",
-                  "queryFunct": "select coalesce(£id_risposta_prev_rif£, 0) as id_risposta_prev_rif",
-                  "condition": "none",
-                  "values": []
-                },
-                { 
-                  "eventName": "id_domanda_rif_change",
-                  "actionType": "query",
-                  "queryFunct": "update entrasp.domande set id_domanda_rif=£id_domanda_rif£ where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_sezione=$id_sezione$ and id_domanda_rif is null",
-                  "condition": "none",
-                  "values": []
-                },
-                { 
-                  "eventName": "select_id_risposta_rif",
-                  "actionType": "query",
-                  "queryFunct": "update entrasp.domande set id_risposta_prev_rif=£id_risposta_prev_rif_rif£ where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda_rif=£id_domanda_rif£ and id_sezione=$id_sezione$",
-                  "condition": "none",
-                  "values": []
-                }
-
-              ],
-              "newLine": true,
-              "size": 9,
-              "readOnly": false
-            }
-          
-          ]
-      },
-      "inputEvents": [
-          {
-              "actionType": "show",
-              "condition": "none",
-              "eventName": "activate_oggetti_collegati",
-              "values": []
-          },
-          {
-              "actionType": "hide",
-              "condition": "none",
-              "eventName": "hide_oggetti_collegati",
-              "values": []
-          }
+          "values": []
+        }
       ],
       "isHidden": true,
       "isPrimary": false,
@@ -418,8 +456,7 @@
       "readOnly": false,
       "sameOrigin": false,
       "saveWhenHidden": true
-  },
- 
+    },
     {
       "autoGenerate": false,
       "format": {
