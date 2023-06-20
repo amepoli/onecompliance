@@ -199,7 +199,17 @@
       "label": "Codice articolo",
       "newLine": true,
       "queryCond": "codice_articolo_normativo=$codice_articolo_normativo$"
-    }
+    },
+    {
+      "fieldName": "flag_principali",
+      "format": {
+          "value": "1",
+          "viewType": "checkbox"
+      },
+      "label": "Solo Principali",
+      "newLine": false,
+      "queryCond": "id_articolo_normativo_parent IS null"
+  }
   ],
   "subTables": [
     {
@@ -221,7 +231,18 @@
         }
       ],
       "label": "Rischi Associati"
-    }
+    },
+    {
+      "entryKey": "articoli_normativi",
+      "keys": [
+          {
+              "parent": "id_articolo_normativo",
+              "son": "id_articolo_normativo_parent"
+          }
+        
+      ],
+      "label": "Sotto Articoli"
+  }
   ],
   "table_keys": [
     {
@@ -282,7 +303,18 @@
       "width": "5%",
       "key": "id_articolo_normativo",
       "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "width": "5%",
+      "key": "id_articolo_normativo_parent",
+      "label": "ID"
     }
+
   ],
   "hideActions": [
     {
