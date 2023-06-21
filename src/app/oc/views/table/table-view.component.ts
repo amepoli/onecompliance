@@ -137,6 +137,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     showExplorer = false;
     explorerSource: "table-view" | "google-drive" = "table-view";
     explorerLevelTwoMask: string = null;
+    wrapView: boolean = true;
 
     foldersSource: object[] = [];
     folders: string[] = [];

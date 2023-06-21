@@ -142,6 +142,22 @@
 
                     <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" (domChange)="onPaginatorChange($event)"
                         [pageSize]="25"></mat-paginator>
+                         
+                        <button mat-raised-button color="primary" (click)="wrapView = !wrapView" style="margin-right: 32px;">
+                            <mat-icon>
+                                {{wrapView? 'view_compact': 'view_comfy'}}
+                            </mat-icon>
+                            {{wrapView? 'Compact': 'Comfortable'}}
+                          </button>
+
+                        <!-- <button  mat-button >
+                        
+                        <span class="material-symbols-outlined">
+                            <mat-icon>
+                                {{wrapView? 'view_compact': 'view_comfy'}}
+                            </mat-icon>
+                        </span>
+                    </button> -->
 
                 </div>
 
@@ -167,6 +183,8 @@
                         </div>
                         <br>
                     </div>
+                  
+                   
 
                     <section class="table-container mat-elevation-z8" [ngClass]="isTabMode? 'mini-mode': 'full-mode'" tabindex="0">
                         
@@ -176,8 +194,8 @@
                                     <!-- Header Cell -->
                                     <ng-container *ngIf="!entry.isSelectCheckbox">
                                         <th mat-header-cell class="mat-header-cell table-column"
-                                            [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
-                                            [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matHeaderCellDef
+                                        [style.white-space]="wrapView ? 'normal' : 'nowrap'" 
+                                           *matHeaderCellDef
                                             mat-sort-header [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
                                             {{entry.label}}
                                     </th>
@@ -197,7 +215,8 @@
                                         <td mat-cell class="mat-cell table-column"
                                             [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
                                             [style.flex]="entry.width? '0 0 ' + entry.width: '1'"
-                                            [style.white-space]="'nowrap'" [style.text-overflow]="'ellipsis'"
+                                        [style.white-space]="wrapView ? 'normal' : 'nowrap'" 
+                                           
                                             *matCellDef="let row; let i = index;"
                                             [style.border-radius.px]="entry.isButton ? '4': '24'" [hidden]="entry.isHidden">
     
