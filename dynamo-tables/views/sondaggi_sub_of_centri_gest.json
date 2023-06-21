@@ -2,7 +2,7 @@
     "$schema": "../views.schema.json",
     "entryKey": "sondaggi_sub_of_centri_gest",
     "inheritsFrom": "sondaggi",
-      "predefinedQueries": [
+    "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
@@ -29,10 +29,14 @@
             "queryString": "update entrasp.progetti_fasi set stato=$stato$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.sondaggi set titolo_cartella=$titolo_cartella$, descrizione=$descrizione$, data_prevista=$data_prevista$, data_comp=$data_comp$, id_contratto=$id_contratto$,id_anagrafica_assegnataria=$id_anagrafica_assegnataria$, id_centro_gest=$id_centro_gest$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        },
+        {
             "operation": "delete",
             "type": "main",
             "queryString": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
         }
     ]
- 
 }
