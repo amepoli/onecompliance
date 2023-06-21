@@ -39,9 +39,15 @@ export class MFAComponent implements OnInit, AfterViewInit {
     }
 
     async disableMFA() {
-        await this._authService.disableTOTP();
-        this._dialogService.showSuccessDialog("Success", "Multi-factor Authentication has been disabled on your account. You might have to logout and login again to complete the process.");
-        this.getMFAStatus();
+        this._authService.disableTOTP().then(result => {
+            if(result) {
+                this._dialogService.showSuccessDialog("Success", "Multi-factor Authentication has been disabled on your account. You might have to logout and login again to complete the process.");
+                this.getMFAStatus();
+            }
+            else {
+                this._dialogService.showErrorDialog("Error", "Error occured while setting the MFA!");
+            }
+        });
     }
 
     showMFADialog() {
