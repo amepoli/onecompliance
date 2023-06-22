@@ -637,11 +637,11 @@ class Api {
                         Object.keys(request.headers).length > 0
                             ? request.headers
                             : {
-                                  Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
-                                  "Content-Type": "text/plain",
-                                  UserId: _this.authStateChange$.value.session
-                                      .sub,
-                              },
+                                Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
+                                "Content-Type": "text/plain",
+                                UserId: _this.authStateChange$.value.session
+                                    .sub,
+                            },
                     params: request.queryStringParameters,
                 })
                 .toPromise();
@@ -663,11 +663,16 @@ class Api {
             const url = environment.appData.awsSdk.GatewayURL + apiName; //'view?entry_name=progetti&company=TEST';
             const result = await _this.http
                 .post(url, request.body, {
-                    headers: request.headers || {
-                        Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
-                        "Content-Type": "text/plain",
-                        UserId: _this.authStateChange$.value.session.sub,
-                    },
+                    headers: 
+                        request.headers &&
+                        Object.keys(request.headers).length > 0
+                            ? request.headers
+                            : {
+                                Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
+                                "Content-Type": "text/plain",
+                                UserId: _this.authStateChange$.value.session
+                                    .sub,
+                            },
                     params: request.queryStringParameters,
                 })
                 .toPromise();
@@ -689,11 +694,16 @@ class Api {
             const url = environment.appData.awsSdk.GatewayURL + apiName; //'view?entry_name=progetti&company=TEST';
             const result = await _this.http
                 .delete(url, {
-                    headers: request.headers || {
-                        Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
-                        "Content-Type": "text/plain",
-                        UserId: _this.authStateChange$.value.session.sub,
-                    },
+                    headers: 
+                        request.headers &&
+                        Object.keys(request.headers).length > 0
+                            ? request.headers
+                            : {
+                                Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
+                                "Content-Type": "text/plain",
+                                UserId: _this.authStateChange$.value.session
+                                    .sub,
+                            },
                     params: request.queryStringParameters,
                 })
                 .toPromise();
@@ -715,11 +725,16 @@ class Api {
             const url = environment.appData.awsSdk.GatewayURL + apiName; //'view?entry_name=progetti&company=TEST';
             const result = await _this.http
                 .put(url, request.body, {
-                    headers: request.headers || {
-                        Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
-                        "Content-Type": "text/plain",
-                        UserId: _this.authStateChange$.value.session.sub,
-                    },
+                    headers: 
+                        request.headers &&
+                        Object.keys(request.headers).length > 0
+                            ? request.headers
+                            : {
+                                Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
+                                "Content-Type": "text/plain",
+                                UserId: _this.authStateChange$.value.session
+                                    .sub,
+                            },
                     params: request.queryStringParameters,
                 })
                 .toPromise();
