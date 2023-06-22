@@ -898,7 +898,34 @@
       "label": "Oggetto di verifica",
       "newLine": false,
       "readOnly": false,
-      "size": 6.66
+      "size": 3.33
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_anagrafica_assegnataria",
+      "label": "Incaricato Compilazione",
+      "newLine": false,
+      "readOnly": false,
+      "queryFunct": "SELECT id_anagrafica_assegnataria FROM entrasp.sondaggi WHERE id_sondaggio=$id_sondaggio$ AND codice_azienda=$codice_azienda$",
+      "size": 3.33,
+      "sameOrigin": false,
+      "inputEvents": [
+        {
+          "eventName": "onSaveSomministrazione",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.sondaggi snd set id_anagrafica_assegnataria=£id_anagrafica_assegnataria£ where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ RETURNING 1;"
+        }
+      ]
     },
     {
       "autoGenerate": false,
@@ -1028,7 +1055,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "maggiori_dettagli",
-      "label": "Ulteriori Dettagli",
+      "label": "Dettagli",
       "style": {
         "background_color": "transparent",
         "font_color": "black",
@@ -1070,7 +1097,7 @@
             "newLine": false,
             "sameOrigin": false,
             "readOnly": false,
-            "size": 1.67
+            "size": 3.33
           },
           {
             "autoGenerate": false,
@@ -1109,7 +1136,7 @@
             ],
             "newLine": false,
             "readOnly": false,
-            "size": 1.67
+            "size": 3.33
           },
           {
             "autoGenerate": false,
@@ -1126,33 +1153,6 @@
             "newLine": false,
             "readOnly": false,
             "size": 3.33
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-              "options": [],
-              "viewType": "combobox",
-              "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_anagrafica_assegnataria",
-            "label": "Incaricato Compilazione",
-            "newLine": true,
-            "readOnly": false,
-            "queryFunct": "SELECT id_anagrafica_assegnataria FROM entrasp.sondaggi WHERE id_sondaggio=$id_sondaggio$ AND codice_azienda=$codice_azienda$",
-            "size": 3.33,
-            "sameOrigin": false,
-            "inputEvents": [
-              {
-                "eventName": "onSaveSomministrazione",
-                "actionType": "query",
-                "condition": "none",
-                "values": [],
-                "queryFunct": "update entrasp.sondaggi snd set id_anagrafica_assegnataria=£id_anagrafica_assegnataria£ where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ RETURNING 1;"
-              }
-            ]
           }
         ]
       },
