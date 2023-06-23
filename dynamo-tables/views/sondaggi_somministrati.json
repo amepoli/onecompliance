@@ -11,6 +11,33 @@
     "size_titolo": "6.66",
     "is_hidden_KYC": "true"
   },
+  "table_multiselection_actions": [
+    {
+      "viewType": "menu",
+      "key": "menuanag",
+      "label": "Actions",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "modifica_verifiche",
+          "icon": "edit",
+          "label": "Modifica verifiche",
+          "reloadOnSuccess": true,
+          "customDialogEntryName": "dialog_sondaggi_somministrati",
+          "customDialogTitle": "Modifica verifiche selezionate"
+        },
+        {
+          "key": "close_sondaggio_button",
+          "icon": "lock",
+          "label": "Chiudi verifiche",
+          "query": "select entrasp.close_somministrazione_sondaggio_insert_following(s.codiceazienda, s.idsomministrazione::numeric, s.idsondaggio::numeric, '€global_username€') FROM (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS idsomministrazione,split_part(arr,'~',3) AS idsondaggio FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s;",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Chiudere verifiche selezionate?"
+        }
+      ]
+    }
+  ],
   "formRowProperties": [
     {
       "propertyType": "readOnly",
@@ -2313,7 +2340,7 @@
       "isPrimary": true,
       "key": "id_somministrazione",
       "label": "# Ver.",
-      "width": "3.5%",
+      "width": "4.5%",
       "style": [
         {
           "value": "*",
@@ -2332,7 +2359,7 @@
       "isPrimary": true,
       "key": "id_sondaggio",
       "label": "# Sond.",
-      "width": "3.6%",
+      "width": "4.5%",
       "style": [
         {
           "value": "*",
@@ -2365,7 +2392,7 @@
       "key": "id_e_vr",
       "hasLevel": true,
       "label": "# Mod. Ver.",
-      "width": "3.8%",
+      "width": "4.5%",
       "isInputButton": true,
       "buttonAction": {
         "target": "modelli_test_vr",
@@ -2395,7 +2422,7 @@
       "isPrimary": false,
       "key": "id_progetto",
       "label": "# Prog.",
-      "width": "3.5%",
+      "width": "5%",
       "style": [
         {
           "value": "*",
@@ -2427,7 +2454,7 @@
       "isPrimary": false,
       "key": "data_prevista",
       "label": "Data Prevista",
-      "width": "5.5%"
+      "width": "6%"
     },
     {
       "format": {
@@ -2437,7 +2464,7 @@
       "isPrimary": false,
       "key": "data_esecuzione",
       "label": "Data Esecuzione",
-      "width": "5.5%"
+      "width": "6.2%"
     },
     {
       "format": {
@@ -2991,7 +3018,7 @@
       "isPrimary": false,
       "key": "id_sondaggio_succ",
       "label": "# Sond.succ.",
-      "width": "4%",
+      "width": "5%",
       "isInputButton": true,
       "buttonAction": {
         "target": "sondaggi",
