@@ -138,7 +138,7 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.aggiorna_tipo_allegato_domanda($codice_azienda$, $id_risorsa$, £id_argomento_tipo_allegato£)"
+          "queryFunct": "select count (*) FROM (select entrasp.aggiorna_tipo_allegato_domanda($codice_azienda$, $id_risorsa$, £id_argomento_tipo_allegato£)) as a"
         }
       ],
       "newLine": false,
@@ -261,7 +261,7 @@
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "select entrasp.unifica_risorse(cd1.id_risorsa,cd2.id_risorsa,cd1.codice_azienda,true) from entrasp.cdms_risorse cd1 inner join entrasp.cdms_risorse cd2 on cd1.id_anagrafica=cd2.id_anagrafica and cd1.codice_azienda= cd2.codice_azienda and cd1.id_argomento_tipo_allegato= cd2.id_argomento_tipo_allegato where cd1.id_risorsa != cd2.id_risorsa and cd1.id_risorsa < cd2.id_risorsa group by cd1.codice_azienda, cd1.id_risorsa,cd2.id_risorsa;"
+          "queryFunct": "select count (*) FROM (select entrasp.unifica_risorse(cd1.id_risorsa,cd2.id_risorsa,cd1.codice_azienda,true) from entrasp.cdms_risorse cd1 inner join entrasp.cdms_risorse cd2 on cd1.id_anagrafica=cd2.id_anagrafica and cd1.codice_azienda= cd2.codice_azienda and cd1.id_argomento_tipo_allegato= cd2.id_argomento_tipo_allegato where cd1.id_risorsa != cd2.id_risorsa and cd1.id_risorsa < cd2.id_risorsa and cd1.codice_azienda=$codice_azienda$ group by cd1.codice_azienda, cd1.id_risorsa,cd2.id_risorsa) as pd;"
         }
       ],
       "size": 3
