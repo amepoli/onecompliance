@@ -7,7 +7,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select csn.codice_azienda, initcap(csn.codice_azienda) as codice_azienda_s, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month, an.dynamo_user, entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica) as denominazione, round(sum(csn.durata/480), 2) as time_consumed from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and az.codice_part=an.codice_part where an.dynamo_user is not null and csn.durata>0 and data_intervento between '2022-01-01' and '2100-12-31'"
+      "queryString": "select csn.codice_azienda, initcap(csn.codice_azienda) as codice_azienda_s, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month, an.dynamo_user, entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica) as denominazione, round(sum(csn.durata/480), 2) as time_consumed from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and az.codice_part=an.codice_part where an.dynamo_user is not null and csn.durata>0 and data_intervento between '2022-01-01' and '2100-12-31' and csn.codice_azienda in(€global_user_companies€)"
     },
     {
       "type": "postProcessing",
@@ -190,7 +190,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "codice_azienda_s",
-      "label": "Azienda"
+      "label": "Azienda",
+      "width": "14%"
     },
     {
       "format": {
@@ -199,7 +200,8 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "dynamo_user",
-      "label": "Collaboratore"
+      "label": "Collaboratore",
+      "width": "14%"
     },
     {
       "format": {
@@ -208,7 +210,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "denominazione",
-      "label": "Denominazione"
+      "label": "Denominazione",
+      "width": "14%"
     },
     {
       "format": {
@@ -218,7 +221,8 @@
       "isPrimary": false,
       "key": "time_consumed_current_month",
       "label": "Giorni Impiegati Mese in Corso",
-      "tooltip": "Giorni Impiegati Mese in Corso"
+      "tooltip": "Giorni Impiegati Mese in Corso",
+      "width": "14%"
     },
     {
       "format": {
@@ -228,7 +232,8 @@
       "isPrimary": false,
       "key": "time_consumed_previous_month",
       "label": "Giorni Impiegati Mese Precedente",
-      "tooltip": "Giorni Impiegati Mese Precedente"
+      "tooltip": "Giorni Impiegati Mese Precedente",
+      "width": "14%"
     },
     {
       "format": {
@@ -238,7 +243,8 @@
       "isPrimary": false,
       "key": "time_consumed_current_year",
       "label": "Giorni Impiegati Anno in Corso",
-      "tooltip": "Giorni Impiegati Anno in Corso"
+      "tooltip": "Giorni Impiegati Anno in Corso",
+      "width": "14%"
     },
     {
       "format": {
@@ -248,7 +254,8 @@
       "isPrimary": false,
       "key": "time_consumed",
       "label": "Totale Giorni Impiegati",
-      "tooltip": "Totale Giorni Impiegati"
+      "tooltip": "Totale Giorni Impiegati",
+      "width": "14%"
     }
   ],
   "querySuffixes": {
