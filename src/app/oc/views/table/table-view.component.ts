@@ -76,6 +76,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     isAuthorized: boolean = true;
     viewKeys: TableViewKey[];  // view fields as specified by the backend
+    
+    searchKeysLoaded: boolean = false;
     completeSearchKeys: SearchViewKey[]; // Also contains search toggles
     advancedSearchKeys: SearchViewKey[]; // Search keys to show Advanced search
     searchToggles: SearchToggle[];
@@ -289,6 +291,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.completeSearchKeys = params.search_keys;
                     _this.updateAdvancedSearchKeys(params.search_keys);
                     _this.loadSearchToggles(params.search_keys, search_keys);
+                    
+                    _this.searchKeysLoaded = false;
+                    // _this.loadSearchKeys();
+
                     _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
@@ -412,6 +418,34 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         ));
         // Calculate table height
         _this.calculateTableHeight();
+    }
+
+    public loadSearchKeys() {
+        const _this = this;
+        _this.subscriptions.push(_this.backendService.getSearchKeys(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
+            result => {
+                if (result.result === 'OK' && result.data) {
+                    const search_keys = result.data;
+                    _this.completeSearchKeys = search_keys;
+                    _this.updateAdvancedSearchKeys(search_keys);
+                    _this.loadSearchToggles(search_keys, search_keys);
+                    _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
+
+                    _this.searchKeysLoaded = true;
+                    _this.showAdvSearch = !_this.showAdvSearch;
+                }
+                else {
+                    _this.isLoading = false;
+                    // Show error snackbar
+                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail ?? result.reason ?? result));
+                }
+            },
+            error => {
+                _this.isLoading = false;
+                // Show error snackbar
+                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
+            }
+        ));
     }
 
     loadTableInfo(): void {
@@ -728,7 +762,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     advSearch() {
-        this.showAdvSearch = !this.showAdvSearch;
+        if(!this.searchKeysLoaded)
+        {
+            this.loadSearchKeys();
+        }
+        else {
+            this.showAdvSearch = !this.showAdvSearch;
+        }
     }
 
     updateAdvancedSearchKeys(searchKeys: SearchViewKey[]) {
