@@ -1,7 +1,7 @@
 #!/bin/bash
 
 aws lambda invoke \
---function-name mailing_list \
+--function-name mailing_list_CDK_dev \
 --cli-binary-format raw-in-base64-out \
 --payload  '' \
 --cli-read-timeout 0 \
@@ -16,7 +16,7 @@ _jq() {
     }
     #echo $(_jq)
     aws lambda invoke \
-    --function-name email_trigger \
+    --function-name email_trigger_CDK_dev \
     --cli-binary-format raw-in-base64-out \
     --payload "$(_jq)" \
     result.json
