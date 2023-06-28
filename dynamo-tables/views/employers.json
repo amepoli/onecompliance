@@ -3,6 +3,24 @@
 	"entryKey": "employers",
 	"businessObjectName": "employers",
 	"origin": "entrasp.employers",
+	"table_multiselection_actions": [
+		{
+			"viewType": "menu",
+			"key": "menuanag",
+			"label": "Actions",
+			"icon": "more_vert",
+			"menuOptions": [
+				{
+					"key": "modifica_impiegati",
+					"icon": "edit",
+					"label": "Modifica Impiegati",
+					"reloadOnSuccess": true,
+					"customDialogEntryName": "dialog_employers",
+					"customDialogTitle": "Modifica crediti selezionati"
+				}
+			]
+		}
+	],
 	"form_keys": [
 		{
 			"autoGenerate": false,
@@ -10,7 +28,7 @@
 				"viewType": "input",
 				"dataType": "text"
 			},
-			"label": "codice_azienda",
+			"label": "Azienda di appartenenza",
 			"key": "codice_azienda",
 			"readOnly": false,
 			"isHidden": false,
@@ -27,10 +45,37 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"key": "dynamo_user",
-			"label": "dynamo_user",
+			"label": "User",
 			"readOnly": false,
 			"newLine": false,
 			"size": 1.5
+		},
+		{
+			"format": {
+				"dataType": "number",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "minuti_richiesti_giornalieri",
+			"label": "Minuti Giornalieri",
+			"autoGenerate": false,
+			"readOnly": false,
+			"newLine": false,
+			"size": 1
+		},
+		{
+			"format": {
+				"dataType": "date",
+				"viewType": "input"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "data_avvio_collaborazione",
+			"label": "Data avvio collaborazione",
+			"autoGenerate": false,
+			"readOnly": false,
+			"size": 2
 		},
 		{
 			"format": {
@@ -61,31 +106,47 @@
 			"newLine": false
 		},
 		{
+			"autoGenerate": false,
 			"format": {
-				"dataType": "number",
-				"viewType": "input"			
+				"comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+				"options": [],
+				"viewType": "combobox"
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "minuti_richiesti_giornalieri",
-			"label": "Minuti Giornalieri",
-			"autoGenerate": false,
-			"readOnly": false,
+			"key": "id_centro_gest",
+			"label": "Centro Gestionale/BU",
 			"newLine": false,
-			"size": 1
+			"size": 3.33,
+			"readOnly": false
 		},
 		{
+			"autoGenerate": false,
 			"format": {
-				"dataType": "date",
-				"viewType": "input"			
+				"comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
+				"options": [],
+				"viewType": "combobox",
+				"dataType": "text"
 			},
 			"isHidden": false,
 			"isPrimary": false,
-			"key": "data_avvio_collaborazione",
-			"label": "Data avvio collaborazione",
-			"autoGenerate": false,
+			"key": "codice_ruolo",
+			"label": "Ruolo",
+			"size": 2,
 			"readOnly": false,
-			"size": 2
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "text",
+				"viewType": "input"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "codice_part",
+			"label": "codice_part",
+			"readOnly": true
 		}
 	],
 	"table_keys": [
@@ -130,6 +191,46 @@
 		},
 		{
 			"format": {
+				"dataType": "text"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "codice_ruolo",
+			"label": "ruolo"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "15%",
+			"isPrimary": false,
+			"key": "descrizione_ruolo",
+			"queryFunct": "entrasp.ruolo_descr(codice_ruolo)",
+			"label": "Ruolo"
+		},
+		{
+			"format": {
+				"dataType": "number"
+			},
+			"isHidden": true,
+			"isPrimary": false,
+			"key": "id_centro_gest",
+			"label": "id_centro_gest"
+		},
+		{
+			"format": {
+				"dataType": "text"
+			},
+			"isHidden": false,
+			"width": "15%",
+			"isPrimary": false,
+			"key": "descrizione_centro_gest",
+			"queryFunct": "entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest)",
+			"label": "Centro Gest/BU"
+		},
+		{
+			"format": {
 				"dataType": "number"
 			},
 			"isHidden": false,
@@ -159,7 +260,7 @@
 			"label": "Nome/Cognome/Ragione Sociale",
 			"newLine": true,
 			"queryCond": "(UPPER(nome) like '%'||UPPER('€nome_rs€')||'%' or UPPER(cognome like '%'||UPPER('€nome_rs€')||'%'"
-		}   
+		}
 	],
 	"hideActions": [
 		{
@@ -183,16 +284,16 @@
 		"tableViewSuffix": "limit 100"
 	},
 	"subTables": [
-         {
-            "entryKey": "anagrafiche_sub_of_employers",
-            "isHidden": false,
-            "keys": [
-                {
-                    "parent": "dynamo_user",
-                    "son": "dynamo_user"
-                }
-            ],
-            "label": "Anagrafiche associate"
-        }      
-    ]  
+		{
+			"entryKey": "anagrafiche_sub_of_employers",
+			"isHidden": false,
+			"keys": [
+				{
+					"parent": "dynamo_user",
+					"son": "dynamo_user"
+				}
+			],
+			"label": "Anagrafiche associate"
+		}
+	]
 }

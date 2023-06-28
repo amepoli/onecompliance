@@ -1,0 +1,45 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_employers",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "main",
+      "queryString": "update entrasp.employers em1 set id_centro_gest=coalesce($id_centro_gest$, em2.id_centro_gest), codice_ruolo=coalesce($codice_ruolo$,em2.codice_ruolo) from entrasp.employers em2, (select split_part(arr,'~',1)as codiceazienda, split_part(arr,'~',2) as dynamouser from unnest(ARRAY[$selected_rows_data$]) arr) as s where em1.codice_azienda=em2.codice_azienda and em1.dynamo_user=em2.dynamo_user"
+    }
+    
+  ],
+  "form_keys": [
+    {
+			"autoGenerate": false,
+			"format": {
+			    "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+			    "options": [],
+			    "viewType": "combobox"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_centro_gest",
+			"label": "Centro Gestionale/BU",
+			"newLine": false,
+			"size": 3.33,
+			"readOnly": false
+		  },
+		  {
+			"autoGenerate": false,
+			"format": {
+			  "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
+			  "options": [],
+			  "viewType": "combobox",
+			  "dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_ruolo",
+			"label": "Ruolo",
+			"size": 2,
+			"readOnly": false,
+			"newLine": false
+		    }
+  ]
+}
