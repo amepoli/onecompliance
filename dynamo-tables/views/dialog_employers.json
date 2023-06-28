@@ -5,7 +5,7 @@
     {
       "operation": "update",
       "type": "main",
-      "queryString": "update entrasp.employers em1 set id_centro_gest=coalesce($id_centro_gest$, em2.id_centro_gest), codice_ruolo=coalesce($codice_ruolo$,em2.codice_ruolo) from entrasp.employers em2, (select split_part(arr,'~',1)as codiceazienda, split_part(arr,'~',2) as dynamouser from unnest(ARRAY[$selected_rows_data$]) arr) as s where em1.codice_azienda=em2.codice_azienda and em1.dynamo_user=em2.dynamo_user"
+      "queryString": "update entrasp.employers em1 set id_centro_gest=coalesce($id_centro_gest$, em2.id_centro_gest), codice_ruolo=coalesce($codice_ruolo$,em2.codice_ruolo) from entrasp.employers em2, (select split_part(arr,'~',1)as codiceazienda, split_part(arr,'~',2) as dynamouser from unnest(ARRAY[$selected_rows_data$]) arr) as s where em1.codice_azienda=em2.codice_azienda and em1.dynamo_user=em2.dynamo_user and em1.codice_azienda=s.codiceazienda and em1.dynamo_user=s.dynamouser"
     }
     
   ],
