@@ -158,6 +158,16 @@ function removeDeniedExportQueries(data, entry_name, profileData) {
     return data;
 }
 
+function removeSearchKeys(data) {
+    if(data['search_keys']) {
+        let newData = {...data};
+        newData['search_keys'] = [];
+        return newData;
+    }
+    else {
+        return data;
+    }
+}
 
 exports.handler = async (event, context) => {
 
@@ -168,6 +178,8 @@ exports.handler = async (event, context) => {
     const entry_name = queryParams['entry_name'];
 
     const company = queryParams['company'];
+
+    const isSearchKeyRequest = queryParams['isSearchKeyRequest'] === '1';
 
     // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
     // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
@@ -207,12 +219,18 @@ exports.handler = async (event, context) => {
 
         data = replaceJSONParams(data, data.define)
 
-        data = processPermissions(data, profileData, entry_name);
-        data['profileHideActions'] = getProfileHideActions(entry_name, profileData);
-        externalUpdate = getExternalSource(entry_name, profileData);
-        console.log('profileData: ', profileData)
-        data = removeDeniedMenuOptions(data, entry_name, profileData);
-        data = removeDeniedExportQueries(data, entry_name, profileData);
+        if(isSearchKeyRequest) {
+            data = data['search_keys'];
+        }
+        else {
+            data = processPermissions(data, profileData, entry_name);
+            data['profileHideActions'] = getProfileHideActions(entry_name, profileData);
+            externalUpdate = getExternalSource(entry_name, profileData);
+            console.log('profileData: ', profileData)
+            data = removeDeniedMenuOptions(data, entry_name, profileData);
+            data = removeDeniedExportQueries(data, entry_name, profileData);
+            data = removeSearchKeys(data);
+        }
 
     } catch (e) {
         console.log(e);
