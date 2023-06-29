@@ -11,7 +11,7 @@ if [ $# = "gorico_prod" ]
     HOSTNAME="vm-prod.alacritas.eu"
 else
     #HOSTNAME="vm-dev.alacritas.eu"
-    HOSTNAME="vm-prod.alacritas.eu"
+    HOSTNAME="vm-dev.alacritas.eu"
 fi
 
 aws s3 cp . s3://gorico2-reports/Jasper/ --recursive --exclude "*" --include "*.jasper" --exclude "MyReports/*" 
