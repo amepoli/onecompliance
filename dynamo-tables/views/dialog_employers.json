@@ -5,7 +5,7 @@
     {
       "operation": "update",
       "type": "main",
-      "queryString": "update entrasp.employers em1 set id_centro_gest=coalesce($id_centro_gest$, em2.id_centro_gest), codice_ruolo=coalesce($codice_ruolo$,em2.codice_ruolo) from entrasp.employers em2, (select split_part(arr,'~',1)as codiceazienda, split_part(arr,'~',2) as dynamouser from unnest(ARRAY[$selected_rows_data$]) arr) as s where em1.codice_azienda=em2.codice_azienda and em1.dynamo_user=em2.dynamo_user and em1.codice_azienda=s.codiceazienda and em1.dynamo_user=s.dynamouser"
+      "queryString": "update entrasp.employers em1 set id_centro_gest=coalesce($id_centro_gest$, em1.id_centro_gest), codice_ruolo=coalesce($codice_ruolo$,em1.codice_ruolo), minuti_richiesti_giornalieri=coalesce ($minuti_richiesti_giornalieri$, em1.minuti_richiesti_giornalieri), data_avvio_collaborazione=coalesce ($data_avvio_collaborazione$, em1.data_avvio_collaborazione) from (select split_part(arr,'~',1)as dynamouser, split_part(arr,'~',2) as codiceazienda from unnest(ARRAY[$selected_rows_data$]) arr) s where  em1.codice_azienda=s.codiceazienda and em1.dynamo_user=s.dynamouser"
     }
     
   ],
@@ -28,7 +28,7 @@
 		  {
 			"autoGenerate": false,
 			"format": {
-			  "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
+			  "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli where codice_ruolo in ('JANL','ANL','ANL','SANL','PRLD','MAN','BUM','STF','PRT','AGE','RSRSA','DIP','SOC','AMM');",
 			  "options": [],
 			  "viewType": "combobox",
 			  "dataType": "text"
@@ -40,6 +40,33 @@
 			"size": 2,
 			"readOnly": false,
 			"newLine": false
-		    }
+		    },
+        {
+          "format": {
+            "dataType": "number",
+            "viewType": "input"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "minuti_richiesti_giornalieri",
+          "label": "Minuti Giornalieri",
+          "autoGenerate": false,
+          "readOnly": false,
+          "newLine": false,
+          "size": 2
+        },
+        {
+          "format": {
+            "dataType": "date",
+            "viewType": "input"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "data_avvio_collaborazione",
+          "label": "Data avvio collaborazione",
+          "autoGenerate": false,
+          "readOnly": false,
+          "size": 2
+        }
   ]
 }
