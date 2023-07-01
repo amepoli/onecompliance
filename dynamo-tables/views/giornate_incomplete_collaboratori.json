@@ -14,5 +14,8 @@
       "queryString": "select $giorno$ as giorno, to_char($giorno$::date, 'Day DD-MM-YYYY') as giorno_descr, $dynamo_user$ as dynamo_user",
       "type": "main"
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "group by gdr.codice_ruolo,gdr.ruolo, gdr.centro_gest, gdr.giorno, gdr.dynamo_user, gdr.nome,gdr.min_richiesti, mr.min_rendicontati having greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0)>0 order by giorno desc"
+  }
 }
