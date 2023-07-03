@@ -17,7 +17,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "select distinct date_trunc('YEAR', current_date)::date as dt_inizio_rif, entrasp.last_day_year(current_date) as dt_fine_rif, an.dynamo_user, em.nome||' '||em.cognome as denominazione, round(sum(csn.durata)/480, 2) as durata, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '12 months')::date, datafine=>current_date::date) as dd_12_months, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '1 months')::date, datafine=>current_date::date) as dd_1_months, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '3 months')::date, datafine=>current_date::date) as dd_3_months from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join (select distinct es.dynamo_user, es.cognome, es.nome from entrasp.employers es) em on an.dynamo_user=em.dynamo_user where csn.codice_azienda in(€global_user_companies€) and an.dynamo_user in(select distinct dynamo_user from entrasp.employers em where codice_azienda in (select codice_azienda from entrasp.employers em2 where dynamo_user='€global_username€') and minuti_richiesti_giornalieri > 0)"
+      "queryString": "select distinct date_trunc('YEAR', current_date)::date as dt_inizio_rif, entrasp.last_day_year(current_date) as dt_fine_rif, an.dynamo_user, em.nome||' '||em.cognome as denominazione, round(sum(csn.durata)/480, 2) as durata, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '12 months')::date, datafine=>current_date::date) as dd_12_months, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '1 months')::date, datafine=>current_date::date) as dd_1_months, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>entrasp.first_day_previous_month(current_date)::date, datafine=>entrasp.last_day_previous_month(current_date)) as prev_month, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '3 months')::date, datafine=>current_date::date) as dd_3_months from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join (select distinct es.dynamo_user, es.cognome, es.nome from entrasp.employers es) em on an.dynamo_user=em.dynamo_user where csn.codice_azienda in(€global_user_companies€) and an.dynamo_user in(select distinct dynamo_user from entrasp.employers em where codice_azienda in (select codice_azienda from entrasp.employers em2 where dynamo_user='€global_username€') and minuti_richiesti_giornalieri > 0)"
     },
     {
       "type": "main",
@@ -118,7 +118,7 @@
       "newLine": false,
       "sameOrigin": false,
       "key": "dd_12_months",
-      "label": "Giorni Eq. ultimi 12 mesi",
+      "label": "Giorni Eq. ultimi 365 gg",
       "size": 1.66
     },
     {
@@ -216,7 +216,7 @@
       "isPrimary": false,
       "key": "denominazione",
       "label": "Nome e Cognome",
-      "width": "25%"
+      "width": "22%"
     },
     {
       "format": {
@@ -226,7 +226,7 @@
       "isPrimary": false,
       "key": "durata",
       "label": "Durata",
-      "width": "15%"
+      "width": "12%"
     },
     {
       "format": {
@@ -236,7 +236,7 @@
       "isPrimary": false,
       "key": "dd_12_months",
       "label": "Giorni eq. ultimi 12 mesi",
-      "width": "15%"
+      "width": "12%"
     },
     {
       "format": {
@@ -245,8 +245,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "dd_3_months",
-      "label": "Giorni eq. ultimi 3 mesi",
-      "width": "15%"
+      "label": "Giorni eq. ultimi 90 gg",
+      "width": "12%"
     },
     {
       "format": {
@@ -255,8 +255,18 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "dd_1_months",
-      "label": "Giorni eq. ultimo mese",
-      "width": "15%"
+      "label": "Giorni eq. ultimi 30 gg",
+      "width": "12%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "prev_month",
+      "label": "Giorni eq. mese prec.",
+      "width": "12%"
     }
   ],
   "subTables": [
