@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users_con_permessi mr on gdr.giorno=mr.data and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='€global_username€' and (coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))>min_extra_anomali_tr",
+      "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti, mr.motivo_validazione_tr, mr.validata from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users_con_permessi mr on gdr.giorno=mr.data and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='€global_username€' and (coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))>min_extra_anomali_tr",
       "type": "main"
     },
     {
@@ -55,6 +55,10 @@
       ]
     }
   ],
+  "define": {
+    "hide_buttons": "true",
+    "hide_giustificazione": "false"
+  },
   "form_keys": [
     {
       "format": {
@@ -183,7 +187,7 @@
       "isPrimary": false,
       "key": "minuti_rendicontati",
       "label": "Minuti rendicontati",
-      "width": "6%"
+      "width": "10%"
     },
     {
       "format": {
@@ -193,7 +197,7 @@
       "isPrimary": false,
       "key": "minuti_richiesti",
       "label": "Minuti richiesti",
-      "width": "6%"
+      "width": "10%"
     },
     {
       "format": {
@@ -203,24 +207,13 @@
       "isPrimary": false,
       "key": "minuti_mancanti",
       "label": "Minuti mancanti",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "inv_field2",
-      "label": ""
+      "width": "10%"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{hide_buttons}",
       "isPrimary": false,
       "width": "15%",
       "queryFunct": "select true",
@@ -275,7 +268,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{hide_buttons}",
       "isPrimary": false,
       "width": "10%",
       "queryFunct": "select true",
@@ -326,7 +319,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{hide_buttons}",
       "isPrimary": false,
       "width": "12%",
       "queryFunct": "select true",
@@ -422,6 +415,17 @@
           "value": "*"
         }
       ]
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "value": ""
+      },
+      "isHidden": "$Q{hide_giustificazione}",
+      "isPrimary": false,
+      "width": "25%",
+      "key": "motivo_validazione_tr",
+      "label": "Giustificazione"
     }
   ],
   "subTables": [
@@ -449,7 +453,7 @@
       },
       "label": "A partire dal",
       "newLine": false,
-      "queryCond": "dd.giorno::date>$date_from$"
+      "queryCond": "gdr.giorno::date>$date_from$"
     },
     {
       "format": {
@@ -458,7 +462,7 @@
         "viewType": "combobox",
         "dataType": "text"
       },
-      "queryCond": "coll.dynamo_user=$dynamo_s$",
+      "queryCond": "gdr.dynamo_user=$dynamo_s$",
       "fieldName": "dynamo_s",
       "label": "Utente",
       "newLine": false,
@@ -472,11 +476,21 @@
       },
       "label": "Miei aggiornamenti",
       "newLine": false,
-      "queryCond": "coll.dynamo_user='€global_username€'"
+      "queryCond": "gdr.dynamo_user='€global_username€'"
+    },
+    {
+      "fieldName": "miei_aggiornamenti",
+      "format": {
+        "value": "0",
+        "viewType": "toggle"
+      },
+      "label": "Escludi giustificati",
+      "newLine": false,
+      "queryCond": "mr.validata is null"
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "group by gdr.codice_ruolo,gdr.ruolo, gdr.centro_gest, gdr.giorno, gdr.dynamo_user, gdr.nome,gdr.min_richiesti, mr.min_rendicontati order by giorno desc"
+    "tableViewSuffix": "group by gdr.codice_ruolo,gdr.ruolo, gdr.centro_gest, gdr.giorno, gdr.dynamo_user, gdr.nome,gdr.min_richiesti, mr.min_rendicontati, mr.validata, mr.motivo_validazione_tr order by giorno desc"
   },
   "hideActions": [
     {
