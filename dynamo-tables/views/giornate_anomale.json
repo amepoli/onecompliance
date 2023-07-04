@@ -1,26 +1,11 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "giornate_anomale",
-  "businessObjectName": "consuntivazioni",
+  "origin": "entrasp.giornate_e_users_da_rendicontare",
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti, mr.motivo_validazione_tr, mr.validata from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users_con_permessi mr on gdr.giorno=mr.data and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='€global_username€' and (coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))>min_extra_anomali_tr",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select $giorno$ as giorno, to_char($giorno$::date, 'Day DD-MM-YYYY') as giorno_descr, $dynamo_user$ as dynamo_user",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select csn.validata, csn.motivo_validazione_tr from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where csn.data_intervento=$giorno$ and an.dynamo_user=$dynamo_user$ limit 1",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an where dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica returning 1",
+      "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti, gdr.motivo_validazione_tr, gdr.validata from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users_con_permessi mr on gdr.giorno=mr.data and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='€global_username€' and (coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))>min_extra_anomali_tr",
       "type": "main"
     }
   ],
@@ -65,21 +50,9 @@
         "viewType": "input",
         "dataType": "date"
       },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "giorno",
-      "readOnly": true,
-      "newLine": false,
-      "label": "Data"
-    },
-    {
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
       "isHidden": false,
       "isPrimary": true,
-      "key": "giorno_descr",
+      "key": "giorno",
       "readOnly": true,
       "newLine": false,
       "label": "Data"
@@ -446,19 +419,16 @@
       "queryCond": "gdr.dynamo_user='€global_username€'"
     },
     {
-      "fieldName": "miei_aggiornamenti",
+      "fieldName": "escludi_giustificati",
       "format": {
         "value": "0",
         "viewType": "toggle"
       },
       "label": "Escludi giustificati",
       "newLine": false,
-      "queryCond": "mr.validata='0'"
+      "queryCond": "gdr.motivo_validazione_tr is null"
     }
   ],
-  "querySuffixes": {
-    "tableViewSuffix": "group by gdr.codice_ruolo,gdr.ruolo, gdr.centro_gest, gdr.giorno, gdr.dynamo_user, gdr.nome,gdr.min_richiesti, mr.min_rendicontati, mr.validata, mr.motivo_validazione_tr order by giorno desc"
-  },
   "hideActions": [
     {
       "tableActionType": "add",
@@ -504,5 +474,8 @@
       "formActionType": "stopEvent",
       "viewType": "form"
     }
-  ]
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by giorno desc"
+  }
 }
