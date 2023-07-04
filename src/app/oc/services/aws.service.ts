@@ -251,7 +251,7 @@ class Auth {
             SecretHash: secretHash,
             UserAttributes: [
                 {
-                    Name: "Email",
+                    Name: "email",
                     Value: email,
                 },
             ],
@@ -371,10 +371,7 @@ class Auth {
                     user: result,
                 });
             } else {
-                _this.setAuthState({
-                    state: "signedIn",
-                    user: result,
-                });
+                _this.loadSignInResponse(result);
             }
             return result;
         } catch (error) {
@@ -416,37 +413,7 @@ class Auth {
                     user: result,
                 });
             } else {
-                const accessTokenData = parseJwt(
-                    result.AuthenticationResult.AccessToken
-                );
-                const idTokenData = parseJwt(
-                    result.AuthenticationResult.IdToken
-                );
-                const user = {
-                    attributes: {
-                        email: idTokenData.email,
-                        email_verified: idTokenData.email_verified,
-                        sub: idTokenData.sub,
-                    },
-                    id: idTokenData.sub,
-                    username: accessTokenData.username,
-                    preferredMFA: _this.mfa,
-                };
-
-                _this.setAuthState({
-                    state: "signedIn",
-                    session: {
-                        ...result.AuthenticationResult,
-                        ...accessTokenData,
-                    },
-                    user: user,
-                });
-
-                localStorage.setItem(
-                    "session",
-                    JSON.stringify(_this.authStateChange$.value.session)
-                );
-                localStorage.setItem("user", JSON.stringify(user));
+                _this.loadSignInResponse(result);
             }
             return true;
         } catch (e: any) {
@@ -454,6 +421,41 @@ class Auth {
             _this.errorInfo$.next(e);
             // return e;
         }
+    }
+
+    private loadSignInResponse(result) {
+        const _this = this;
+        const accessTokenData = parseJwt(
+            result.AuthenticationResult.AccessToken
+        );
+        const idTokenData = parseJwt(
+            result.AuthenticationResult.IdToken
+        );
+        const user = {
+            attributes: {
+                email: idTokenData.email,
+                email_verified: idTokenData.email_verified,
+                sub: idTokenData.sub,
+            },
+            id: idTokenData.sub,
+            username: accessTokenData.username,
+            preferredMFA: _this.mfa,
+        };
+
+        _this.setAuthState({
+            state: "signedIn",
+            session: {
+                ...result.AuthenticationResult,
+                ...accessTokenData,
+            },
+            user: user,
+        });
+
+        localStorage.setItem(
+            "session",
+            JSON.stringify(_this.authStateChange$.value.session)
+        );
+        localStorage.setItem("user", JSON.stringify(user));
     }
 
     public async getUserInfo() {
@@ -626,6 +628,7 @@ class Api {
 
         // Check if refresh token and access token needs refresh
         await _this.awsService.auth().refreshToken();
+        console.log(_this.authStateChange$.value.session)
 
         // _this.awsService.auth().
         try {
