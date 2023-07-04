@@ -1,0 +1,236 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "consuntivazioni_sovrapposte_sub_of_user",
+  "origin": "entrasp.consuntivazioni",
+  "businessObjectName": "consuntivazioni",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select * from entrasp.consuntivazioni_sovrapposte where dynamo_user=$dynamo_user$ and durata>5 and durata2>5",
+      "type": "main"
+    }
+  ],
+  "restrictions": {
+    "preventNavigationToForm": true
+  },
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_cons",
+      "width": "5%",
+      "label": "#",
+      "tooltip": "ID progressivo prima consuntivazione",
+      "isInputButton": true,
+            "buttonAction": {
+                "target": "consuntivazioni_consultant_list",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_cons",
+                        "destination": "id_cons"
+                    }
+                ]
+            }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_cons2",
+      "width": "5%",
+      "label": "#2",
+      "tooltip": "ID progressivo seconda consuntivazione",
+      "isInputButton": true,
+            "buttonAction": {
+                "target": "consuntivazioni_consultant_list",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_cons2",
+                        "destination": "id_cons"
+                    }
+                ]
+            }
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "width": "6%",
+      "label": "Cod.Az."
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_azienda2",
+      "width": "6%",
+      "label": "Cod.Az.2"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "durata",
+      "label": "Durata (minuti)",
+      "width": "7%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center",
+          "font_weight": "400"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "durata2",
+      "label": "Durata (minuti)",
+      "width": "7%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center",
+          "font_weight": "400"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "datetime"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_begin",
+      "label": "Inizio",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "datetime"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_end",
+      "label": "Fine",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "time"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_begin2",
+      "label": "Inizio2",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "time"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "date_time_end2",
+      "label": "Fine2",
+      "width": "8%"
+    },  
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "width": "10%",
+      "label": "Note"
+    },  
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note2",
+      "label": "Note2",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "dynamo_user",
+      "label": "dynamo_user"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "viewType": "table",
+      "tableActionType": "quick-add"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "attachments"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "import_export"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by date_time_begin desc, codice_azienda desc limit 100"
+  }
+}
