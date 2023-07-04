@@ -161,7 +161,7 @@ function removeDeniedExportQueries(data, entry_name, profileData) {
 function removeSearchKeys(data) {
     if(data['search_keys']) {
         let newData = {...data};
-        newData['search_keys'] = [];
+        newData['search_keys'] = newData['search_keys'].filter(x => x.format.viewType === 'toggle');
         return newData;
     }
     else {
