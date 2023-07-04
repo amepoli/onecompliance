@@ -166,36 +166,41 @@ export class AuthService {
       .auth()
       .signIn(this.username, this.password)
       .then((user) => {
-        this.isSignedIn = false;
-        if (
-          user["ChallengeName"] === "SMS_MFA" ||
-          user["ChallengeName"] === "SOFTWARE_TOKEN_MFA"
-        ) {
-          this.confirmUser = user;
-          this.awsService.setAuthState({
-            state: "confirmSignIn",
-            user: user,
-          });
-        } else if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
-          this.awsService.setAuthState({
-            state: "requireNewPassword",
-            user: user,
-          });
-          this.awsService
-            .api()
-            .get("gorico", "test", {
-              queryStringParameters: {},
-              headers: null,
-            });
-        } else {
-          this.awsService.setAuthState({
-            state: "signedIn",
-            user: user,
-          });
+        
+        // if (
+        //   user["ChallengeName"] === "SMS_MFA" ||
+        //   user["ChallengeName"] === "SOFTWARE_TOKEN_MFA"
+        // ) {
+        //   this.confirmUser = user;
+        //   this.awsService.setAuthState({
+        //     state: "confirmSignIn",
+        //     user: user,
+        //   });
+        // } else if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
+        //   this.awsService.setAuthState({
+        //     state: "requireNewPassword",
+        //     user: user,
+        //   });
+        //   this.awsService
+        //     .api()
+        //     .get("gorico", "test", {
+        //       queryStringParameters: {},
+        //       headers: null,
+        //     });
+        // } else {
+        //   this.awsService.setAuthState({
+        //     state: "signedIn",
+        //     user: user,
+        //   });
+        //   this.isSignedIn = true;
+        //   // now get user and related menu info from backend
+        if(user)
+        {
           this.isSignedIn = true;
-          // now get user and related menu info from backend
           this.retrieveUserInfo();
         }
+        
+        // }
       })
       .catch((err) => {
         this._setError(err);
