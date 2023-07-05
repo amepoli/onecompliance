@@ -169,7 +169,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select * from entrasp.employers where codice_part in(select codice_part from entrasp.employers where dynamo_user='€global_username€')"
+			"queryString": "select *, entrasp.ruolo_descr(codice_ruolo) as descrizione_ruolo, entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest) as descrizione_centro_gest from entrasp.employers where codice_part in(select codice_part from entrasp.employers where dynamo_user='€global_username€')"
 		}
 	],
 	"table_keys": [
@@ -253,7 +253,6 @@
 			"width": "15%",
 			"isPrimary": false,
 			"key": "descrizione_ruolo",
-			"queryFunct": "entrasp.ruolo_descr(codice_ruolo)",
 			"label": "Ruolo"
 		},
 		{
@@ -273,7 +272,6 @@
 			"width": "15%",
 			"isPrimary": false,
 			"key": "descrizione_centro_gest",
-			"queryFunct": "entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest)",
 			"label": "Centro Gest/BU"
 		},
 		{
