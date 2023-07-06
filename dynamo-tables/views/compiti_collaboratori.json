@@ -6,7 +6,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select INITCAP(a.codice_azienda) as codice_azienda_s,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito)::numeric(8,0)||' min.' as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito)::numeric(8,0)||' min.' as minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€) group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part order by entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito)::numeric(8,0) desc, entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito)::numeric(8,0) desc"
+      "queryString": "select INITCAP(a.codice_azienda) as codice_azienda_s,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,a.codice_compito,a.codice_azienda), true as time_report_play,(€global_id_anagrafiche€)::text as user_companies,a.codice_azienda,a.codice_compito,a.titolo,entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito)::numeric(8,0)||' min.' as minuti_mensili,entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito)::numeric(8,0)||' min.' as minuti_totali,entrasp.tipo_segnalazione_descr_new(a.id_tipo_segnalazione) as tipo_segnalazione from entrasp.compiti a inner join entrasp.consuntivazioni b on a.codice_azienda=b.codice_azienda and a.codice_compito=b.codice_compito where a.codice_azienda in (€global_user_companies€)"
     },
     {
       "operation": "startEvent",
@@ -84,6 +84,6 @@
     }
   ],
   "querySuffixes": {
-    "tableViewSuffix": "limit 100"
+    "tableViewSuffix": "group by a.codice_azienda, a.codice_compito, a.titolo, b.codice_part order by entrasp.consuntivazioni_time_consumed(a.codice_azienda,entrasp.first_day_month(CURRENT_DATE),entrasp.last_day_month(CURRENT_DATE),a.codice_compito)::numeric(8,0) desc, entrasp.consuntivazioni_time_consumed(a.codice_azienda, codicecompito => a.codice_compito)::numeric(8,0) desc limit 50"
   }
 }
