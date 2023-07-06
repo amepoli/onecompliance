@@ -1,6 +1,6 @@
 {
 	"$schema": "../views.schema.json",
-	"entryKey": "ferie",
+	"entryKey": "ferie_collaboratori",
 	"inheritsFrom": "mie_ferie",
 	"define": {
         "is_hidden_codice_azienda": "true",
@@ -10,7 +10,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select * from entrasp.festivita where dynamo_user='€global_username€' or dynamo_user is null and data< current_date + interval '3 months'"
+			"queryString": "select * from entrasp.festivita where dynamo_user is not null and dynamo_user in(select distinct dynamo_user from entrasp.employers em where codice_azienda in (select codice_azienda from entrasp.employers em2 where dynamo_user='€global_username€'))"
 		},
 		{
 			"operation": "insert",
