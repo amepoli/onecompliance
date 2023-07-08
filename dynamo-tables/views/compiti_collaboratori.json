@@ -6,7 +6,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "SELECT *,(€global_id_anagrafiche€)::text as user_companies,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,codice_compito,codice_azienda) FROM entrasp.compiti_collaboratori where codice_azienda in (€global_user_companies€) and users IN (SELECT entrasp.colleghi('€global_username€'))"
+      "queryString": "SELECT *,(€global_id_anagrafiche€)::text as user_companies,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,codice_compito,codice_azienda) FROM entrasp.compiti_collaboratori where codice_azienda in (€global_user_companies€) and codice_azienda||'-'||codice_compito in(select csn.codice_azienda||'-'||csn.codice_compito from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user in(select entrasp.colleghi('€global_username€')))"
     },
     {
       "operation": "startEvent",
@@ -33,54 +33,6 @@
         }
       ],
       "label": "Attività"
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "codice_compito",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "# Identificativo",
-      "newLine": false,
-      "queryCond": "codice_compito=$codice_compito$",
-      "size": 1.67
-    },
-    {
-      "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "queryCond": "codice_azienda='€codice_azienda_s€'",
-      "fieldName": "codice_azienda_s",
-      "label": "Codice Azienda",
-      "newLine": false,
-      "size": 1.67
-    },
-    {
-      "fieldName": "parola_search",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Parola chiave",
-      "newLine": false,
-      "queryCond": "(upper(titolo) like '%'||upper('€parola_search€')||'%') or (upper(codice_azienda) like '%'||upper('€parola_search€')||'%')",
-      "size": 3.33
-    },
-    {
-      "fieldName": "durata_min",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "Durata maggiore di",
-      "newLine": false,
-      "queryCond": "entrasp.consuntivazioni_time_consumed(codice_azienda, codicecompito => codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0) >= $durata_min$",
-      "size": 1.67
     }
   ],
   "querySuffixes": {
