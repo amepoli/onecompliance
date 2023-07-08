@@ -372,17 +372,7 @@
       "format": {
         "viewType": "checkbox"
       },
-      "label": "Pagamento avvenuto",
-      "newLine": false,
-      "queryCond": "data_pagamento is not null",
-      "size": 0
-    },
-    {
-      "fieldName": "data_pagamento_not_null",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Pagamento avvenuto",
+      "label": "Crediti incassati",
       "newLine": false,
       "queryCond": "data_pagamento is not null",
       "size": 0
@@ -443,8 +433,18 @@
         "viewType": "checkbox"
       },
       "label": "Ultima tranche",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "tranche IN (SELECT max(tranche) FROM entrasp.crediti_ceduti cci WHERE codice_azienda=crediti_ceduti.codice_azienda and id_contratto=crediti_ceduti.id_contratto)",
+      "size": 0
+    },
+    {
+      "fieldName": "da_lavorare",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Da lavorare",
+      "newLine": false,
+      "queryCond": "(azionato='0' and data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.data_fattura,cc.data_pagamento,cc.id_contratto, cc.codice_azienda,cc.importo,cc.data_incasso_parz,cc.incasso_parz)>0)",
       "size": 0
     }
   ],
