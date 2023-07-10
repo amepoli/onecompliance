@@ -553,15 +553,30 @@
     {
       "autoGenerate": false,
       "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664)"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_tipo_documento",
+      "label": "Tipo Documento",
+      "readOnly": false,
+      "newLine": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "dataType": "date",
         "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "data_fattura",
-      "label": "Data Fattura",
+      "label": "Data Documento",
       "newLine": false,
-      "size": 1.5,
+      "size": 1,
       "readOnly": false
     },
     {
@@ -573,8 +588,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "n_fattura",
-      "label": "N° Fattura",
-      "size": 1.5,
+      "label": "N° Documento",
+      "size": 1,
       "readOnly": false,
       "newLine": false
     },
@@ -590,7 +605,7 @@
       "key": "importo",
       "label": "Importo",
       "readOnly": false,
-      "size": 2
+      "size": 1.5
     },
     {
       "autoGenerate": false,
@@ -741,12 +756,26 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "newLine": true,
+      "newLine": false,
       "key": "importo_residuo",
       "label": "Importo Residuo",
       "queryFunct": "case when data_pagamento is null then importo-incasso_parz else 0 end",
       "readOnly": false,
       "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": true,
+      "key": "id_fattura_associata",
+      "label": "Fattura Associata",
+      "readOnly": false
     },
     {
       "format": {
