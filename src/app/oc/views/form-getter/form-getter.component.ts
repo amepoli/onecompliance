@@ -11,6 +11,8 @@ import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-
 import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
 import { RegulatAPIParams } from 'app/oc/interfaces/regulat_api_params';
 import { exit } from 'process';
+import { MatDialog } from '@angular/material/dialog';
+import { MenuOptionsCustomDialogComponent } from 'app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component';
 
 @Component({
     selector: 'form-getter',
@@ -105,7 +107,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _navigationService: NavigationService,
         private _console: ConsoleLoggerService,
         private _timeTrackerService: TimeTrackerService,
-        private _googleAPIService: GoogleAPIService
+        private _googleAPIService: GoogleAPIService,
+        public cutomDialog: MatDialog,
     ) {
         const _this = this;
 
@@ -1428,6 +1431,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             _this.runGoogleEvent(event, value, keyListener);
         } else if (event.actionType === 'regulat_api') {
             _this.runRegulatEvent(event, value, keyListener);
+        } else if (event.actionType === 'dialog') {
+            const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
+                width: '1280px',
+                height: 'auto',
+                data: {
+                    "customDialogTitle": event.customDialogTitle,
+                    "customDialogEntryName": event.customDialogEntryName
+                },
+                
+            });
         }
     }
 
