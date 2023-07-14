@@ -3,6 +3,7 @@
   "entryKey": "mandati",
   "origin": "entrasp.mandati",
   "businessObjectName": "mandati",
+  "label": "Mandati",
   "form_keys": [
     {
       "autoGenerate": false,
@@ -101,6 +102,37 @@
       "readOnly": false
     }
   ],
+  "predefinedQueries": [
+    {
+      "queryString": "select * from entrasp.mandati where codice_azienda=$codice_azienda$",
+      "type": "main",
+      "operation": "selectTable"
+    }
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_cedente_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cedente",
+      "newLine": false,
+      "queryCond": "id_cedente=$id_cedente_s$"
+    },
+    {
+      "fieldName": "id_mandante_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Mandante",
+      "newLine": false,
+      "queryCond": "id_mandante=$id_mandante_s$"
+    }
+  ],
   "table_keys": [
     {
       "format": {
@@ -175,30 +207,6 @@
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante)",
       "key": "Mandante",
       "label": "Mandante"
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_cedente_s",
-      "format": {
-        "comboQuery": "SELECT distinct id_cedente AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Cedente",
-      "newLine": false,
-      "queryCond": "id_cedente=$id_cedente_s$"
-    },
-    {
-      "fieldName": "id_mandante_s",
-      "format": {
-        "comboQuery": "SELECT distinct id_debitore_ceduto AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Mandante",
-      "newLine": false,
-      "queryCond": "id_mandante=$id_mandante_s$"
     }
   ],
   "hideActions": [
