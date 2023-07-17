@@ -89,6 +89,15 @@
           "confirmAction": true,
           "reloadOnSuccess": true,
           "confirmActionMessage": "Inserire il flag fascicolo archiviato alla selezione?"
+        },
+        {
+          "key": "flag_interessi_non_dovuti",
+          "icon": "date",
+          "label": "Esclusione Interessi",
+          "query": "update entrasp.crediti_ceduti set interessi_non_dovuti = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Escludere il calcolo degli interessi alla selezione?"
         }
       ]
     }
@@ -562,7 +571,6 @@
       "format": {
         "dataType": "number",
         "viewType": "input"
-        
       },
       "isHidden": true,
       "isPrimary": false,
@@ -1586,6 +1594,15 @@
       "width": "8%",
       "sameOrigin": false,
       "label": "Lavorazione legale"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_mandato",
+      "label": ""
     }
   ],
   "querySuffixes": {
