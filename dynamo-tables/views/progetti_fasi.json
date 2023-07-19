@@ -49,13 +49,22 @@
 			"icon": "more_vert",
 			"menuOptions": [
 				{
-					"key": "modifica_crediti",
+					"key": "elimina_fase",
 					"icon": "delete",
 					"label": "Elimina",
 					"query": "select entrasp.progetto_fase_delete(s.codiceazienda, s.idfase::numeric) from ( SELECT SPLIT_PART(ARR,'~',1) as codiceazienda,SPLIT_PART(ARR,'~',2) as idfase FROM UNNEST(ARRAY[$selected_rows_data$]) ARR) AS s;",
 					"confirmAction": true,
 					"reloadOnSuccess": true,
 					"confirmActionMessage": "Eliminare la fase, il sondaggio associato e tutte le risposte?"
+				},
+				{
+					"key": "stato_non_previsto",
+					"icon": "do_not_disturb_off",
+					"label": "Porta a stato 'Non previsto'",
+					"query": "update entrasp.sondaggi snd set stato='R' from entrasp.progetti_fasi pf where snd.codice_azienda=pf.codice_azienda and snd.id_sondaggio=pf.id_sondaggio and pf.codice_azienda||'~'||pf.id_fase in ($selected_rows_data$);",
+					"confirmAction": true,
+					"reloadOnSuccess": true,
+					"confirmActionMessage": "Portare tutti i sondaggi connessi alle fasi selezionate in stato 'Non previsto'?"
 				}
 			]
 		}
