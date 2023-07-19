@@ -296,9 +296,9 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         continue; // skip null entries
                     }
                     // make '' -> null
-                    if (element == '') {
-                        values[value] = null;
-                    }
+                    // if (element == '') {
+                    //     values[value] = null;
+                    // }
                     // decode combos
                     if (element['id'] != null) {
                         values[value] = element['id'];
