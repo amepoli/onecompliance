@@ -25,7 +25,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     
     // Is form-view part of dialog
     @Input() isDialog: boolean = false;
-
+    @Input() showSaveButton: boolean = true;
+    
     // Keys that are provided by external source and are passed to the values in onSave function
     @Input () externalKeys: object = {};
 
@@ -295,9 +296,9 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         continue; // skip null entries
                     }
                     // make '' -> null
-                    if (element == '') {
-                        values[value] = null;
-                    }
+                    // if (element == '') {
+                    //     values[value] = null;
+                    // }
                     // decode combos
                     if (element['id'] != null) {
                         values[value] = element['id'];
