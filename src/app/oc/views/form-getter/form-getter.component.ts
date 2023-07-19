@@ -1435,10 +1435,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
                 width: '1280px',
                 height: 'auto',
-                data: {
-                    "customDialogTitle": event.customDialogTitle,
-                    "customDialogEntryName": event.customDialogEntryName
-                },
+                data: event
                 
             });
         }

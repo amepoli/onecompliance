@@ -52,6 +52,7 @@ export interface FieldInputEvent {
   googleAPIParams?: GoogleAPIParams/* ;
   RegulatAPIParams?: RegulatAPIParams */
   
+  customDialogGenericSave?: boolean;
   customDialogEntryName?: string;             
   customDialogTitle?: string;        
 }

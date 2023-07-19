@@ -18,6 +18,7 @@ export class MenuOptionsCustomDialogComponent {
     title: string = "Dialog";
     formParams: FormGetterParams = null;
     subscriptions: Subscription[] = [];
+    showSaveButton: boolean = false;
 
     constructor(
         public dialogRef: MatDialogRef<MenuOptionsCustomDialogComponent>,
@@ -29,6 +30,7 @@ export class MenuOptionsCustomDialogComponent {
         private _console: ConsoleLoggerService) {
             const _this = this;
             _this.title = data.customDialogTitle;
+            _this.showSaveButton = data.customDialogGenericSave ?? true;
 
             _this.formParams = {
                 entryName: data.customDialogEntryName,
