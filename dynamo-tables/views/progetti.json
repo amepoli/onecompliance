@@ -13,7 +13,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select (€global_id_anagrafiche€)::text as user_companies,coalesce(extract(year from data_competenza)::varchar,'')as competenza,codice_azienda,data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr_noid(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=prg.codice_azienda and cmp.id_progetto=prg.id_progetto limit 1), prg.codice_azienda) from entrasp.progetti prg where codice_azienda='€global_codice_azienda€' and $P{_and_};"
+			"queryString": "select prg. foreseen_date, (€global_id_anagrafiche€)::text as user_companies,coalesce(extract(year from data_competenza)::varchar,'') as competenza,codice_azienda,data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr_noid(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=prg.codice_azienda and cmp.id_progetto=prg.id_progetto limit 1), prg.codice_azienda) from entrasp.progetti prg where codice_azienda='€global_codice_azienda€' and $P{_and_};"
 		},
 		{
 			"operation": "delete",
@@ -457,7 +457,35 @@
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
-			"size": 1.67,
+			"size": 0.83,
+			"newLine": false
+		},
+		{
+			"autoGenerate": false,
+			"format": {
+				"dataType": "date",
+				"viewType": "input",
+				"value": "€CURRENT_DATE€"
+			},
+			"label": "Data ins",
+			"key": "data_inserimento",
+			"outputEvent": {
+				"eventName": "data_ins_change_progetti",
+				"eventTrigger": "change"
+			},
+			"inputEvents": [
+				{
+					"eventName": "data_ins_change_progetti",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "entrasp.change_data_inserimento_progetto($codice_azienda$, $id_progetto$)"
+				}
+			],
+			"readOnly": false,
+			"isHidden": false,
+			"isPrimary": false,
+			"size": 1.1,
 			"newLine": false
 		},
 		{
@@ -472,7 +500,7 @@
 			"isHidden": false,
 			"isPrimary": true,
 			"newLine": false,
-			"size": 0.83
+			"size": 0.73
 		},
 		{
 			"autoGenerate": false,
@@ -480,7 +508,7 @@
 				"viewType": "input",
 				"dataType": "text"
 			},
-			"label": "Versione",
+			"label": "Vers.",
 			"key": "attivita_vr",
 			"readOnly": true,
 			"isHidden": false,
@@ -494,7 +522,7 @@
 				}
 			],
 			"isPrimary": false,
-			"size": 0.83,
+			"size": 0.67,
 			"newLine": false
 		},
 		{
@@ -585,22 +613,10 @@
 			"format": {
 				"viewType": "input",
 				"dataType": "date",
-				"value": "£CURRENT_DATE£"
+				"value": "£CURRENT_DATE£+interval '1 year'"
 			},
-			"label": "Data Inserimento",
-			"key": "data_inserimento",
-			"outputEvent": {
-				"eventName": "data_ins_change_progetti",
-				"eventTrigger": "change"
-			},
-			"inputEvents": [
-				{
-					"eventName": "data_ins_change_progetti",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "entrasp.change_data_inserimento_progetto($codice_azienda$, $id_progetto$)"
-				}
-			],
+			"label": "Data prev. conclusione",
+			"key": "foreseen_date",
 			"readOnly": false,
 			"isHidden": false,
 			"isPrimary": false,
@@ -1074,7 +1090,7 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "data_inserimento",
-			"label": "",
+			"label": "Data ins.",
 			"width": "6%"
 		},
 		{
