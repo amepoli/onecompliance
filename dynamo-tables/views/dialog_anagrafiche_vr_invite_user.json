@@ -10,7 +10,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "email",
+      "key": "email_to",
       "label": "Email",
       "readOnly": false,
       "newLine": true
@@ -29,6 +29,138 @@
       "label": "Associa BU come utente",
       "readOnly": false,
       "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "textarea",
+        "validations": [
+          {
+            "message": "Testo del messaggio obbligatorio!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "email_text",
+      "label": "Testo Email",
+      "newLine": true,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "OneCompliance is waiting for you to join the team"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "email_subject",
+      "label": "Oggetto email",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "email_cc",
+      "label": "email_cc",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "service@alacritas.eu"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "email_sender",
+      "label": "email_sender",
+      "newLine": false,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "invia_mail",
+      "buttonIcon": "email",
+      "label": "Invia_mail",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "send_email",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "send_email",
+          "condition": "none",
+          "values": [],
+          "actionType": "show_message",
+          "message": {
+            "messageText": "Si intende procedere all'invio dell'email?",
+            "actionOnYes": {
+              "actionType": "email",
+              "emailActionParameters": {
+                "subjectKeys": [
+                  "email_subject"
+                ],
+                "senderKey": "email_sender",
+                "recipientKeys": [
+                  "email_to"
+                ],
+                "ccKeys": [
+                  "email_cc"
+                ],
+                "bodyKeys": [
+                  {
+                    "key": "email_text",
+                    "label": ""
+                  },
+                  {
+                    "key": "data_riferimento_da",
+                    "label": "Data riferimento da: "
+                  },
+                  {
+                    "key": "data_riferimento_a",
+                    "label": "Data riferimento a: "
+                  },
+                  {
+                    "key": "documentazione_analizzata",
+                    "label": "Documentazione richiesta: "
+                  }
+                ]
+              }
+            },
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select 1"
+            }
+          }
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
     }
   ]
 }
