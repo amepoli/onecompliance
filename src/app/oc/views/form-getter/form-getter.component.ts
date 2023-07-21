@@ -1257,7 +1257,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // = true;
                     _this._timeTrackerService.checkStatus();
                 }
-                else if (actionType === 'email') {
+                else if (actionType === 'email' || actionType === 'create_user_and_email') {
+
+                    if(actionType === 'create_user_and_email') {
+                        ///TODO:
+                        //Perform create user here
+                    }
 
                     let formValues = _this.formArray.first.form.value;
                     let emailActionParameters: EmailActionParameters = event.message.actionOnYes.emailActionParameters;
