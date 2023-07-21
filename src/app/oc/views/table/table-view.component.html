@@ -257,7 +257,7 @@
                                                 [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
                                             </mat-checkbox>
                                         </td>
-    
+
                                     </ng-container>
     
                                     <!-- Footer Cell -->
@@ -266,17 +266,17 @@
                                             [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
                                             [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matFooterCellDef
                                             mat-sort-header [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
-                                            {{entry.label}}
+                                            {{totalRow[entry.key] ?? ''}}
                                     </td>
                                     </ng-container>
                                     <ng-container *ngIf="entry.isSelectCheckbox">
-                                        <td mat-footer-cell *matFooterCellDef class="mat-header-cell table-column">
-                                            <mat-checkbox (change)="$event ? masterToggle() : null"
-                                                [checked]="selection.hasValue() && isAllSelected()"
-                                                [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                                [aria-label]="checkboxLabel()" [matTooltip]="entry.tooltip">
-                                            </mat-checkbox>
-                                        </td>
+                                            <td mat-footer-cell *matFooterCellDef class="mat-header-cell table-column">
+                                                <mat-checkbox (change)="$event ? masterToggle() : null"
+                                                    [checked]="selection.hasValue() && isAllSelected()"
+                                                    [indeterminate]="selection.hasValue() && !isAllSelected()"
+                                                    [aria-label]="checkboxLabel()" [matTooltip]="entry.tooltip">
+                                                </mat-checkbox>
+                                            </td>
                                     </ng-container>
     
                                 </ng-container>
@@ -287,9 +287,14 @@
                                     (dblclick)="getRecord(i, row)" style="line-height: 2em;"
                                     [style.background]="(selectedRow == row) ? 'lightblue' : ''"></tr>
     
-                                <ng-container *ngIf=""></ng-container>
-                                <tr mat-footer-row class="mat-header-row" *matFooterRowDef="tableColumns; sticky: true"
+                                <ng-container *ngIf="totalRow">
+                                    <tr mat-footer-row class="mat-header-row" *matFooterRowDef="displayedColumns; sticky: true"
                                     style="border-radius: 0px 10px 10px 10px; background-color: white;"></tr>
+                                </ng-container>
+                                <ng-container *ngIf="!totalRow">
+                                    <tr mat-footer-row class="mat-header-row" *matFooterRowDef="tableColumns; sticky: true"
+                                        style="border-radius: 0px 10px 10px 10px; background-color: white;"></tr>
+                                </ng-container>
                             </table>
                             <ng-container *ngIf="showExplorer && !isLoading">
                                 <mat-card class="explorer-folders-content">
