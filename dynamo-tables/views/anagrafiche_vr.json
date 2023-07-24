@@ -364,6 +364,11 @@
                         "label": "SCONSIGLIATO: Duplica anagrafica",
                         "outputEventName": "duplica_anagrafica",
                         "tooltip": "E' possibile duplicare l'anagrafica corrente al fine di avere più anagrafiche con lo stesso codice fiscale o partita IVA"
+                    },
+                    {
+                        "icon": "user",
+                        "label": "Invita utente",
+                        "outputEventName": "invite_user"
                     }
                 ]
             },
@@ -441,6 +446,15 @@
                     "successMessage": "Anagrafica duplicata",
                     "values": [],
                     "queryFunct": "select entrasp.anagrafica_clona($codice_part$, $id_anagrafica$, $codice_part$);"
+                },
+                {
+                    "eventName": "invite_user",
+                    "actionType": "dialog",
+                    "customDialogEntryName": "dialog_anagrafiche_vr_invite_user",
+                    "customDialogTitle": "Title",
+                    "condition": "none",
+                    "values": [],
+                    "customDialogGenericSave": false
                 }
             ]
         },
@@ -1385,7 +1399,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "maggiori_dettagli",
-            "label": "Ulteriori Dettagli",
+            "label": "Dettagli",
             "style": {
                 "background_color": "#2B679D",
                 "font_color": "white",
@@ -2121,6 +2135,17 @@
             "queryCond": "avr.id_anagrafica::varchar=any(string_to_array(replace($id_anagrafica_list$, ' ', ''), ','))"
         },
         {
+            "fieldName": "id_anagrafica_min",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "id_anagrafica > di",
+            "newLine": false,
+            "size": 2,
+            "queryCond": "avr.id_anagrafica>=$id_anagrafica_min$"
+        },
+        {
             "fieldName": "nome_rs",
             "format": {
                 "dataType": "text",
@@ -2237,6 +2262,17 @@
             "newLine": false,
             "size": 1,
             "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)"
+        },
+        {
+            "fieldName": "anagrafica_max",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Max id anagr.",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "avr.id_anagrafica=(select max(id_anagrafica) from entrasp.anagrafiche_id where codice_part='€global_codice_part€')"
         }
     ],
     "outputEvents": [
