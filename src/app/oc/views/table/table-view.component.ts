@@ -112,6 +112,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         preventNavigationToForm: false
     };
 
+    // Total row
+    totalRow: any = null;
+
     /** Whether the number of selected elements matches the total number of rows. */
     isAllSelected() {
         const numSelected = this.selection.selected.length;
@@ -512,6 +515,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     if(_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
                     }
+                    _this.loadTotalRow(results);
                     //_this.adjustViewKeysWidths();
                     _this.autodetectViewMode();
                     // triggers any change in displayed datasource, setting the array of primary keys
@@ -569,6 +573,23 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let _this = this;
         const sum = _this.viewKeys.filter(x => !x.isHidden && x.width).map(x => parseFloat(x.width.replace('%', ''))).reduce((sum, n) => sum + n);
         _this.wrapView = sum <= 100;
+    }
+
+    loadTotalRow(results) {
+        let _this = this;
+        const totalKeys = _this.viewKeys.filter(x => x.showTotal).map(x => x.key);
+        
+        if(totalKeys && totalKeys.length > 0) {
+            let totalRow = {};
+    
+            totalKeys.forEach(key => {
+                totalRow[key] = (results.map(x => parseFloat(x[key] + '')).reduce((partialSum, a) => partialSum + a, 0)) + '';
+            });
+            _this.totalRow = totalRow;
+        }
+        else {
+            _this.totalRow = null;
+        }
     }
 
     loadLevel(table_keys) {

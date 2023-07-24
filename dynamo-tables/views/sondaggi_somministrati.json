@@ -745,6 +745,11 @@
             "outputEventName": "risp_non_applicabile"
           },
           {
+            "icon": "content_copy",
+            "label": "Copia risposte della verifica a tutto il sondaggio",
+            "outputEventName": "answers_copy"
+          },
+          {
             "icon": "person_search",
             "label": "OneKYC - Deep",
             "isHidden": "$Q{is_hidden_KYC}",
@@ -879,6 +884,24 @@
               }
             }
           }
+        },
+        {
+          "eventName": "answers_copy",
+          "actionType": "show_message",
+          "condition": "none",
+          "values": [],
+          "message": {
+            "messageText": "Copiare le risposte di questa verifica su tutte le verifiche (somministrazioni) del sondaggio?",
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select 1"
+            },
+            "actionOnYes": {
+              "actionType": "query",
+              "queryFunct": "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
+            }
+          },
+          "successMessage": "Risposte copiate correttamente"
         }
       ],
       "isHidden": false,
