@@ -1,7 +1,67 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "dialog_anagrafiche_vr_invite_user",
+  "origin": "entrasp.anagrafiche_id",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "SELECT '' as email_to, '' as associa_user, '' as email_text, 'OneCompliance is waiting for you to join the team' as email_subject, '' as email_cc, 'service@alacritas.eu' as email_sender, true as invia_mail, id_anagrafica, nome, cognome from entrasp.anagrafiche_id where codice_part=$codice_part$ and id_anagrafic=$id_anagrafica$;"
+    }
+  ],
   "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_anagrafica",
+      "label": "id_anagrafica",
+      "readOnly": false,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice part",
+      "readOnly": false,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "nome",
+      "label": "nome",
+      "readOnly": false,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cognome",
+      "label": "cognome",
+      "readOnly": false,
+      "newLine": true
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -18,7 +78,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Davide'),( '0', 'Andrea')) AS TEMP ( id, name )",
+        "comboQuery": "SELECT nome||' '||cognome as name, dynamo_user as id FROM entrasp.employers WHERE codice_azienda='€global_codice_azienda€'",
         "viewType": "combobox",
         "options": [],
         "dataType": "text"
@@ -43,7 +103,7 @@
           }
         ]
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "email_text",
       "label": "Testo Email",
@@ -57,7 +117,7 @@
         "viewType": "input",
         "value": "OneCompliance is waiting for you to join the team"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "email_subject",
       "label": "Oggetto email",
@@ -70,7 +130,7 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "email_cc",
       "label": "email_cc",
@@ -84,7 +144,7 @@
         "viewType": "input",
         "value": "service@alacritas.eu"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "email_sender",
       "label": "email_sender",
@@ -100,7 +160,7 @@
       "isPrimary": false,
       "key": "invia_mail",
       "buttonIcon": "email",
-      "label": "Invia_mail",
+      "label": "Invite user",
       "newLine": false,
       "outputEvent": {
         "eventName": "send_email",
@@ -115,7 +175,7 @@
           "message": {
             "messageText": "Si intende procedere all'invio dell'email?",
             "actionOnYes": {
-              "actionType": "email",
+              "actionType": "crete_user_and_email",
               "emailActionParameters": {
                 "subjectKeys": [
                   "email_subject"
@@ -131,18 +191,6 @@
                   {
                     "key": "email_text",
                     "label": ""
-                  },
-                  {
-                    "key": "data_riferimento_da",
-                    "label": "Data riferimento da: "
-                  },
-                  {
-                    "key": "data_riferimento_a",
-                    "label": "Data riferimento a: "
-                  },
-                  {
-                    "key": "documentazione_analizzata",
-                    "label": "Documentazione richiesta: "
                   }
                 ]
               }
