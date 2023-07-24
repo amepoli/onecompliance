@@ -139,19 +139,16 @@ function removeDeniedExportQueries(data, entry_name, profileData) {
         let exportQueries = profileData.exportQueries;
         exportQueries.deny.forEach(exportQuery => {
             if (exportQuery.entry == entry_name) {
-                data['exportQueries']['tableQueries'].forEach((exportTableQuery, i) => {
-                    // console.log('key: ', data['exportQueries']['tableQueries'][i]['key']);
+                data['exportQueries']['tableQueries'] ? data['exportQueries']['tableQueries'].forEach((exportTableQuery, i) => {
                     if (data['exportQueries']['tableQueries'][i]['key'] == exportQuery.key) {
-                        console.log('pd: ',data['exportQueries']['tableQueries']);
-                        data['exportQueries']['tableQueries'].splice(i,1);
+                        data['exportQueries']['tableQueries'].splice(i, 1);
                     }
-                });
-                data['exportQueries']['formQueries'].forEach((exportFormQuery, i) => {
-                    // console.log('key: ', data['exportQueries']['formQueries'][i]['key']);
+                }) : null;
+                data['exportQueries']['formQueries'] ? data['exportQueries']['formQueries'].forEach((exportFormQuery, i) => {
                     if (data['exportQueries']['formQueries'][i]['key'] == exportQuery.key) {
-                        data['exportQueries']['formQueries'].splice(i,1);
+                        data['exportQueries']['formQueries'].splice(i, 1);
                     }
-                });
+                }) : null;
             }
         });
     }
@@ -159,8 +156,8 @@ function removeDeniedExportQueries(data, entry_name, profileData) {
 }
 
 function removeSearchKeys(data) {
-    if(data['search_keys']) {
-        let newData = {...data};
+    if (data['search_keys']) {
+        let newData = { ...data };
         newData['search_keys'] = newData['search_keys'].filter(x => x.format.viewType === 'toggle');
         return newData;
     }
@@ -219,7 +216,7 @@ exports.handler = async (event, context) => {
 
         data = replaceJSONParams(data, data.define)
 
-        if(isSearchKeyRequest) {
+        if (isSearchKeyRequest) {
             data = data['search_keys'];
         }
         else {
