@@ -1,0 +1,72 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_employers",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "main",
+      "queryString": "update entrasp.employers em1 set id_centro_gest=coalesce($id_centro_gest$, em1.id_centro_gest), codice_ruolo=coalesce($codice_ruolo$,em1.codice_ruolo), minuti_richiesti_giornalieri=coalesce ($minuti_richiesti_giornalieri$, em1.minuti_richiesti_giornalieri), data_avvio_collaborazione=coalesce ($data_avvio_collaborazione$, em1.data_avvio_collaborazione) from (select split_part(arr,'~',1)as dynamouser, split_part(arr,'~',2) as codiceazienda from unnest(ARRAY[$selected_rows_data$]) arr) s where  em1.codice_azienda=s.codiceazienda and em1.dynamo_user=s.dynamouser"
+    }
+    
+  ],
+  "form_keys": [
+    {
+			"autoGenerate": false,
+			"format": {
+			    "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+			    "options": [],
+			    "viewType": "combobox"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_centro_gest",
+			"label": "Centro Gestionale/BU",
+			"newLine": false,
+			"size": 3.33,
+			"readOnly": false
+		  },
+		  {
+			"autoGenerate": false,
+			"format": {
+			  "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli where codice_ruolo in ('JANL','ANL','ANL','SANL','PRLD','MAN','BUM','STF','PRT','AGE','RSRSA','DIP','SOC','AMM');",
+			  "options": [],
+			  "viewType": "combobox",
+			  "dataType": "text"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "codice_ruolo",
+			"label": "Ruolo",
+			"size": 2,
+			"readOnly": false,
+			"newLine": false
+		    },
+        {
+          "format": {
+            "dataType": "number",
+            "viewType": "input"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "minuti_richiesti_giornalieri",
+          "label": "Minuti Giornalieri",
+          "autoGenerate": false,
+          "readOnly": false,
+          "newLine": false,
+          "size": 2
+        },
+        {
+          "format": {
+            "dataType": "date",
+            "viewType": "input"
+          },
+          "isHidden": false,
+          "isPrimary": false,
+          "key": "data_avvio_collaborazione",
+          "label": "Data avvio collaborazione",
+          "autoGenerate": false,
+          "readOnly": false,
+          "size": 2
+        }
+  ]
+}

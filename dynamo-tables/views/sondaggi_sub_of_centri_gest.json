@@ -2,7 +2,7 @@
     "$schema": "../views.schema.json",
     "entryKey": "sondaggi_sub_of_centri_gest",
     "inheritsFrom": "sondaggi",
-      "predefinedQueries": [
+    "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
@@ -16,7 +16,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select snd.*, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig,entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+            "queryString": "select 'Sondaggio '||(id_sondaggio)::text as sondaggio_id_descr,snd.*, mvr.id_risultato, mvr.flag_no_domande, entrasp. id_sondaggio_rif(snd.codice_azienda, snd.id_sondaggio)  as id_sondaggio_rif, entrasp.mdt_codtitolo(snd.codice_azienda, snd.id_modello_test) as descr_modello_test, (select id_fase from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1) as id_fase_orig,entrasp.sondaggi_flags_sezioni_appsingola(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_multi, entrasp.sezioni_domande_activate(snd.codice_azienda, snd.id_sondaggio) as flags_sezioni_activate, entrasp.descrizione_risultato_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as criterio_analisi from entrasp.sondaggi snd inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where snd.codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
             "operation": "selectForm",
@@ -29,10 +29,14 @@
             "queryString": "update entrasp.progetti_fasi set stato=$stato$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         },
         {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.sondaggi set titolo_cartella=$titolo_cartella$, descrizione=$descrizione$, data_prevista=$data_prevista$, data_comp=$data_comp$, id_contratto=$id_contratto$,id_anagrafica_assegnataria=$id_anagrafica_assegnataria$, id_centro_gest=$id_centro_gest$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        },
+        {
             "operation": "delete",
             "type": "main",
             "queryString": "select entrasp.sondaggio_delete($codice_azienda$, $id_sondaggio$)"
         }
     ]
- 
 }

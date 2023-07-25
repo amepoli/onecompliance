@@ -602,5 +602,19 @@
             ],
             "label": "Trattamenti Dati/Titolare"
         }
-    ]
+    ],
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Resp., tratt.dati, cat.inter., ...",
+                "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento,entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile) as ragione_sociale,td.id_trattamento_dati id_trattamento,td.titolo as trattamento_dati,td.descrizione,entrasp.finalita_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati) as finalita,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_personali') as categorie_dati_personali,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_interessati') as categorie_interessati,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_destinatari') as categorie_destinatari from entrasp.cpl_trattamenti_dati_responsabili tdr inner join entrasp.cpl_trattamenti_dati td on tdr.codice_azienda=td.codice_azienda and tdr.id_trattamento_dati=td.id_trattamento_dati where td.codice_azienda=$codice_azienda$ order by entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile), tdr.id_trattamento_dati"
+            }
+        ],
+        "formQueries": [
+            {
+                "label": "Resp., tratt.dati, cat.inter., ...",
+                "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento,entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile) as ragione_sociale,td.id_trattamento_dati id_trattamento,td.titolo as trattamento_dati,td.descrizione,entrasp.finalita_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati) as finalita,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_personali') as categorie_dati_personali,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_interessati') as categorie_interessati,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_destinatari') as categorie_destinatari from entrasp.cpl_trattamenti_dati_responsabili tdr inner join entrasp.cpl_trattamenti_dati td on tdr.codice_azienda=td.codice_azienda and tdr.id_trattamento_dati=td.id_trattamento_dati where td.codice_azienda=$codice_azienda$ and tdr.id_responsabile=$id_anagrafica$ order by entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile), tdr.id_trattamento_dati"
+            }
+        ]
+    }
 }

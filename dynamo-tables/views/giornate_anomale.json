@@ -1,26 +1,11 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "giornate_anomale",
-  "businessObjectName": "consuntivazioni",
+  "origin": "entrasp.giornate_e_users_da_rendicontare",
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select distinct true as dettaglio, true as naviga_giornata_anomala, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, coll.giorno::date, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user) as employer,  coalesce(csn.minuti_rendicontati,0) as minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date) as minuti_richiesti, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0))) as minuti_mancanti from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg, entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.validata, con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.validata, con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.dynamo_user='€global_username€' and csn.validata is null",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select $giorno$ as giorno, to_char($giorno$::date, 'Day DD-MM-YYYY') as giorno_descr, $dynamo_user$ as dynamo_user",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select csn.validata, csn.motivo_validazione_tr from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where csn.data_intervento=$giorno$ and an.dynamo_user=$dynamo_user$ limit 1",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an where dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica returning 1",
+      "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti, gdr.motivo_validazione_tr, gdr.validata from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users mr on gdr.giorno=mr.data_rend and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='€global_username€' and (coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))>min_extra_anomali_tr",
       "type": "main"
     }
   ],
@@ -43,39 +28,31 @@
           "icon": "merge_type",
           "label": "Segna ferie",
           "reloadOnSuccess": true,
-          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user||'~' in( $selected_rows_data$);"
+          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user in($selected_rows_data$);"
         },
         {
           "key": "aggiungi_ferie_per_utente",
           "icon": "merge_type",
           "label": "Segna permesso",
           "reloadOnSuccess": true,
-          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user, '£giorno£'::date +interval '1080 minutes', '£giorno£'::date + interval '1080 minutes' + greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0)))*interval '1 minute') from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user||'~' in( $selected_rows_data$);"
+          "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user, '£giorno£'::date +interval '1080 minutes', '£giorno£'::date + interval '1080 minutes' + greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0)))*interval '1 minute') from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user in($selected_rows_data$);"
         }
       ]
     }
   ],
+  "define": {
+    "hide_buttons": "true",
+    "hide_giustificazione": "false"
+  },
   "form_keys": [
     {
       "format": {
         "viewType": "input",
         "dataType": "date"
       },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "giorno",
-      "readOnly": true,
-      "newLine": false,
-      "label": "Data"
-    },
-    {
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
       "isHidden": false,
       "isPrimary": true,
-      "key": "giorno_descr",
+      "key": "giorno",
       "readOnly": true,
       "newLine": false,
       "label": "Data"
@@ -111,7 +88,9 @@
           "eventName": "valida_giornata",
           "actionType": "query",
           "condition": "equalTo",
-          "values": ["1"],
+          "values": [
+            "1"
+          ],
           "queryFunct": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an where dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica returning 1"
         }
       ],
@@ -181,7 +160,7 @@
       "isPrimary": false,
       "key": "minuti_rendicontati",
       "label": "Minuti rendicontati",
-      "width": "6%"
+      "width": "10%"
     },
     {
       "format": {
@@ -191,7 +170,7 @@
       "isPrimary": false,
       "key": "minuti_richiesti",
       "label": "Minuti richiesti",
-      "width": "6%"
+      "width": "10%"
     },
     {
       "format": {
@@ -201,24 +180,13 @@
       "isPrimary": false,
       "key": "minuti_mancanti",
       "label": "Minuti mancanti",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "inv_field2",
-      "label": ""
+      "width": "10%"
     },
     {
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{hide_buttons}",
       "isPrimary": false,
       "width": "15%",
       "queryFunct": "select true",
@@ -260,20 +228,9 @@
     },
     {
       "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "inv_field1",
-      "label": ""
-    },
-    {
-      "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{hide_buttons}",
       "isPrimary": false,
       "width": "10%",
       "queryFunct": "select true",
@@ -311,20 +268,9 @@
     },
     {
       "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "inv_field",
-      "label": ""
-    },
-    {
-      "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{hide_buttons}",
       "isPrimary": false,
       "width": "12%",
       "queryFunct": "select true",
@@ -363,17 +309,6 @@
         "onSuccessAction": "reload",
         "target": "giornate_anomale"
       }
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "2%",
-      "key": "inv_field0",
-      "label": ""
     },
     {
       "format": {
@@ -420,6 +355,17 @@
           "value": "*"
         }
       ]
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "value": ""
+      },
+      "isHidden": "$Q{hide_giustificazione}",
+      "isPrimary": false,
+      "width": "35%",
+      "key": "motivo_validazione_tr",
+      "label": "Giustificazione"
     }
   ],
   "subTables": [
@@ -447,7 +393,7 @@
       },
       "label": "A partire dal",
       "newLine": false,
-      "queryCond": "dd.giorno::date>$date_from$"
+      "queryCond": "gdr.giorno::date>$date_from$"
     },
     {
       "format": {
@@ -456,7 +402,7 @@
         "viewType": "combobox",
         "dataType": "text"
       },
-      "queryCond": "coll.dynamo_user=$dynamo_s$",
+      "queryCond": "gdr.dynamo_user=$dynamo_s$",
       "fieldName": "dynamo_s",
       "label": "Utente",
       "newLine": false,
@@ -470,12 +416,19 @@
       },
       "label": "Miei aggiornamenti",
       "newLine": false,
-      "queryCond": "coll.dynamo_user='€global_username€'"
+      "queryCond": "gdr.dynamo_user='€global_username€'"
+    },
+    {
+      "fieldName": "escludi_giustificati",
+      "format": {
+        "value": "0",
+        "viewType": "toggle"
+      },
+      "label": "Escludi giustificati",
+      "newLine": false,
+      "queryCond": "gdr.motivo_validazione_tr is null"
     }
   ],
-  "querySuffixes": {
-    "tableViewSuffix": "group by coll.giorno::date, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user),  csn.minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date) having coalesce(csn.minuti_rendicontati,0)>700 order by coll.giorno::date desc, coalesce(csn.minuti_rendicontati,0) desc limit 200"
-  },
   "hideActions": [
     {
       "tableActionType": "add",
@@ -521,5 +474,8 @@
       "formActionType": "stopEvent",
       "viewType": "form"
     }
-  ]
- }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by giorno desc, gdr.dynamo_user"
+  }
+}

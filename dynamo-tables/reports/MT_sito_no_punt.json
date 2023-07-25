@@ -1,0 +1,5 @@
+{
+    "name": "MT_sito_no_punt",
+    "queryString": "SELECT mt.codice_azienda,mt.id_modello_test, mtvr.id_modello_test_vr,mt.titolo,mt.descrizione,concat_ws('.',mt.id_modello_test,mtvr.id_modello_test_vr,mt.codice) AS codice,mtvr.id_risultato,(SELECT sum(punteggio)FROM entrasp.domande WHERE codice_azienda=mt.codice_azienda AND id_modello_test=mt.id_modello_test AND id_modello_test_vr=mtvr.id_modello_test_vr ) AS punteggio_ottenibile FROM entrasp.modelli_test mt INNER JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test",
+    "tableNickname": "mtvr"
+}

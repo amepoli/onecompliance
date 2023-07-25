@@ -17,8 +17,8 @@ const AWS = require('aws-sdk');
 AWS.config.update({ region: 'eu-central-1' });
 
 const AmazonDaxClient = require('amazon-dax-client');
-const dax = DAX_ENABLED? new AmazonDaxClient({ region: 'eu-central-1',endpoint: 'daxs://DAX_ENDPOINT' }): null;
-const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED? dax: null });
+const dax = DAX_ENABLED ? new AmazonDaxClient({ region: 'eu-central-1', endpoint: 'daxs://DAX_ENDPOINT' }) : null;
+const dynamo = new AWS.DynamoDB.DocumentClient({ service: DAX_ENABLED ? dax : null });
 
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
@@ -27,10 +27,10 @@ const readXlsxFile = require('read-excel-file/node');
 
 const helperFuncts = require('./helperFuncts');
 
-const queryKeys = ['badgeQuery', 'queryString', 'query', 'comboQuery', 
-                   'queryFunct', 'insertUpdateFunct', 'conditionQuery',
-                   'onSuccessQuery', 'querySuffixes', 'tabBadgeQuery',
-                   'tabToolbarElementsQueries'];
+const queryKeys = ['badgeQuery', 'queryString', 'query', 'comboQuery',
+    'queryFunct', 'insertUpdateFunct', 'conditionQuery',
+    'onSuccessQuery', 'querySuffixes', 'tabBadgeQuery',
+    'tabToolbarElementsQueries'];
 
 var global_variables = {};
 
@@ -160,7 +160,7 @@ function replaceKeysArray(queryString, keysArray, keyTypes) {
 function replaceJSONParams(JSONString, paramsObject) {
     if (paramsObject == null) {
         return JSONString
-    } 
+    }
 
     JSONString = JSON.stringify(JSONString);
 
@@ -511,14 +511,14 @@ function getCustomQuery(entry_params, customQueryButtonKey) {
 
 function getTableMultiSelectionActionQuery(entry_params, tableMultiSelectionActionParams) {
     let queryString = null;
-    let tableMultiSelectionActions = entry_params.Item.table_multiselection_actions;
-    
-    if (tableMultiSelectionActions != null && tableMultiSelectionActions.length > 0) {        
-        if(tableMultiSelectionActionParams.viewType === 'button') {
+    let tableMultiSelectionActions = entry_params.table_multiselection_actions;
+
+    if (tableMultiSelectionActions != null && tableMultiSelectionActions.length > 0) {
+        if (tableMultiSelectionActionParams.viewType === 'button') {
             let buttonEl = tableMultiSelectionActions.filter(el => el.key == tableMultiSelectionActionParams.key);
             if (buttonEl != null && buttonEl.length > 0) {
                 buttonEl = buttonEl[0];
-                queryString = buttonEl.query;                
+                queryString = buttonEl.query;
             }
         }
         else {
@@ -529,15 +529,15 @@ function getTableMultiSelectionActionQuery(entry_params, tableMultiSelectionActi
                     let buttonEl = menuEl.menuOptions.filter(el => el.key == tableMultiSelectionActionParams.key);
                     if (buttonEl != null && buttonEl.length > 0) {
                         buttonEl = buttonEl[0];
-                        queryString = buttonEl.query;                
+                        queryString = buttonEl.query;
                     }
                 }
             }
         }
     }
 
-    if(queryString != null && tableMultiSelectionActionParams != null && tableMultiSelectionActionParams.keys) {
-        queryString = replaceGlobalkeys(queryString);        
+    if (queryString != null && tableMultiSelectionActionParams != null && tableMultiSelectionActionParams.keys) {
+        queryString = replaceGlobalkeys(queryString);
         Object.keys(tableMultiSelectionActionParams.keys).forEach(key => {
             queryString = queryString.replace(`$${key}$`, tableMultiSelectionActionParams.keys[key]);
         });
@@ -549,10 +549,10 @@ function getTableMultiSelectionActionQuery(entry_params, tableMultiSelectionActi
 
 function getHomepageQuery(entry_params) {
     let queryString = {};
-    let homepage = entry_params.Item;    
+    let homepage = entry_params.Item;
     if (homepage != null && homepage.tabs != null && homepage.tabs.length > 0) {
-        queryString['tabBadgeQueries'] = homepage.tabs.map( tab => {
-            return {entry: tab.entry, query: replaceGlobalkeys(tab.badgeQuery)}
+        queryString['tabBadgeQueries'] = homepage.tabs.map(tab => {
+            return { entry: tab.entry, query: replaceGlobalkeys(tab.badgeQuery) }
         });
     }
     return queryString;
@@ -564,15 +564,15 @@ function getCompanyChangeQuery() {
 
 function getHomepageTabQuery(entry_params) {
     let queryString = {};
-    let homepageTab = entry_params.Item;    
+    let homepageTab = entry_params.Item;
     if (homepageTab != null && homepageTab.tiles != null && homepageTab.tiles.length > 0) {
-        queryString['tabTilesQueries'] = homepageTab.tiles.filter(tile => tile.content && tile.content.query).map( tile => {
-            return {entry: tile.content.fieldName, query: replaceGlobalkeys(tile.content.query)}
+        queryString['tabTilesQueries'] = homepageTab.tiles.filter(tile => tile.content && tile.content.query).map(tile => {
+            return { entry: tile.content.fieldName, query: replaceGlobalkeys(tile.content.query) }
         });
     }
     if (homepageTab != null && homepageTab.toolbar_elements != null && homepageTab.toolbar_elements.length > 0) {
-        queryString['tabToolbarElementsQueries'] = homepageTab.toolbar_elements.filter(toolbar_element => toolbar_element.comboQuery).map( toolbar_element => {
-            return {entry: toolbar_element.fieldName, query: replaceGlobalkeys(toolbar_element.comboQuery)}
+        queryString['tabToolbarElementsQueries'] = homepageTab.toolbar_elements.filter(toolbar_element => toolbar_element.comboQuery).map(toolbar_element => {
+            return { entry: toolbar_element.fieldName, query: replaceGlobalkeys(toolbar_element.comboQuery) }
         });
     }
     return queryString;
@@ -580,7 +580,7 @@ function getHomepageTabQuery(entry_params) {
 
 function getLazyComboQuery(entry_keys, table_keys, keyTypes, lazy_key, event_keys) {
 
-    let keys = event_keys != null && event_keys.length? JSON.parse(event_keys): {};
+    let keys = event_keys != null && event_keys.length ? JSON.parse(event_keys) : {};
 
     let comboQueries = [];
 
@@ -1082,7 +1082,7 @@ function getDeleteQuery(entry_params, table_keys) {
             comma = ' AND '; // needed only the first time
         }
     }
-    
+
     return {
         mainQuery: queryString,
         comboQueries: [],
@@ -1404,29 +1404,29 @@ async function processCustomQuery(queryString, keys, client) {
 }
 
 async function processHomepageQuery(entry_params, queryString, client) {
-   let homepage = entry_params.Item;
+    let homepage = entry_params.Item;
     if (queryString != null) {
-        if(queryString['tabBadgeQueries'] && queryString['tabBadgeQueries'].length) {
-            for(let tabIndex = 0; tabIndex < queryString['tabBadgeQueries'].length; tabIndex++) {
+        if (queryString['tabBadgeQueries'] && queryString['tabBadgeQueries'].length) {
+            for (let tabIndex = 0; tabIndex < queryString['tabBadgeQueries'].length; tabIndex++) {
                 try {
-                    console.log('Running query: ' + queryString['tabBadgeQueries'][tabIndex].query);                    
+                    console.log('Running query: ' + queryString['tabBadgeQueries'][tabIndex].query);
                     let result = await client.query(queryString['tabBadgeQueries'][tabIndex].query);
                     console.log('Result: ', JSON.stringify(result));
-                    if (result != null && result.rowCount > 0) {                        
+                    if (result != null && result.rowCount > 0) {
                         let key = Object.keys(result.rows[0])[0];
                         let data = result.rows[0][key];
-                        for(let i = 0; i < homepage.tabs.length; i++) {
-                            if(homepage.tabs[i].entry === queryString['tabBadgeQueries'][tabIndex].entry) {
+                        for (let i = 0; i < homepage.tabs.length; i++) {
+                            if (homepage.tabs[i].entry === queryString['tabBadgeQueries'][tabIndex].entry) {
                                 homepage.tabs[i].badgeValue = data;
                             }
                         }
                     }
                 }
-                catch(e) {
+                catch (e) {
                     console.log('Error occured while running query: ' + queryString['tabBadgeQueries'][tabIndex].query);
                 }
             }
-        }        
+        }
     }
     queryString = removeProperty(queryString, queryKeys);
     return {
@@ -1439,61 +1439,61 @@ async function processHomepageQuery(entry_params, queryString, client) {
 
 async function processHomepageTabQuery(entry_params, queryString, search_keys, client) {
     let tilesView = entry_params.Item;
-    
+
     let searchQueries = [];
 
     if (search_keys != null) {
         let search_keys_keys = Object.keys(search_keys);
         let toolBarElementsIncludedInQuery = tilesView.toolbar_elements.filter(e => search_keys_keys.includes(e.fieldName));
-        for(let i = 0; i < toolBarElementsIncludedInQuery.length; i++) {
-            search_keys_keys.forEach( k => {
+        for (let i = 0; i < toolBarElementsIncludedInQuery.length; i++) {
+            search_keys_keys.forEach(k => {
                 toolBarElementsIncludedInQuery[i].queryCond = toolBarElementsIncludedInQuery[i].queryCond.replace('$' + k + '$', search_keys[k]);
             });
             searchQueries.push(toolBarElementsIncludedInQuery[i].queryCond);
         }
 
     }
-    
+
     if (queryString != null) {
-        if(queryString['tabTilesQueries'] && queryString['tabTilesQueries'].length) {
-            for(let tileIndex = 0; tileIndex < queryString['tabTilesQueries'].length; tileIndex++) {
+        if (queryString['tabTilesQueries'] && queryString['tabTilesQueries'].length) {
+            for (let tileIndex = 0; tileIndex < queryString['tabTilesQueries'].length; tileIndex++) {
                 let tileQuery = queryString['tabTilesQueries'][tileIndex].query;
-                if(searchQueries.length){
-                    if(tileQuery.toLowerCase().includes(' where ')) {
-                        tileQuery += ' AND ' + searchQueries.join(' AND '); 
+                if (searchQueries.length) {
+                    if (tileQuery.toLowerCase().includes(' where ')) {
+                        tileQuery += ' AND ' + searchQueries.join(' AND ');
                     }
                     else {
-                        tileQuery += ' WHERE ' + searchQueries.join(' AND '); 
+                        tileQuery += ' WHERE ' + searchQueries.join(' AND ');
                     }
                 }
                 tileQuery += ';';
-                try {                    
+                try {
                     console.log('Running query: ' + tileQuery);
                     let result = await client.query(tileQuery);
                     console.log('Result: ', JSON.stringify(result));
-                    if (result != null && result.rowCount > 0) {                        
+                    if (result != null && result.rowCount > 0) {
                         let key = Object.keys(result.rows[0])[0];
                         let data = result.rows[0][key];
-                        for(let i = 0; i < tilesView.tiles.length; i++) {
-                            if(tilesView.tiles[i].content.fieldName === queryString['tabTilesQueries'][tileIndex].entry) {
+                        for (let i = 0; i < tilesView.tiles.length; i++) {
+                            if (tilesView.tiles[i].content.fieldName === queryString['tabTilesQueries'][tileIndex].entry) {
                                 tilesView.tiles[i].content.value = data;
                             }
                         }
                     }
                 }
-                catch(e) {
+                catch (e) {
                     console.log('Error occured while running query: ' + tileQuery);
                 }
             }
         }
 
-        if(queryString['tabToolbarElementsQueries'] && queryString['tabToolbarElementsQueries'].length) {
-            for(let elementIndex = 0; elementIndex < queryString['tabToolbarElementsQueries'].length; elementIndex++) {
+        if (queryString['tabToolbarElementsQueries'] && queryString['tabToolbarElementsQueries'].length) {
+            for (let elementIndex = 0; elementIndex < queryString['tabToolbarElementsQueries'].length; elementIndex++) {
                 try {
-                    console.log('Running query: ' + queryString['tabToolbarElementsQueries'][elementIndex].query);                    
+                    console.log('Running query: ' + queryString['tabToolbarElementsQueries'][elementIndex].query);
                     let result = await client.query(queryString['tabToolbarElementsQueries'][elementIndex].query);
                     console.log('Result: ', JSON.stringify(result));
-                    if (result != null && result.rowCount > 0) {                        
+                    if (result != null && result.rowCount > 0) {
                         let keyId = Object.keys(result.rows[0])[0];
                         let keyName = Object.keys(result.rows[0])[1];
                         let data = result.rows.map(row => {
@@ -1502,14 +1502,14 @@ async function processHomepageTabQuery(entry_params, queryString, search_keys, c
                                 name: row[1]
                             }
                         });
-                        for(let i = 0; i < tilesView.tiles.length; i++) {
-                            if(tilesView["toolbar_elements"][i].fieldName === queryString['tabToolbarElementsQueries'][elementIndex].entry) {
+                        for (let i = 0; i < tilesView.tiles.length; i++) {
+                            if (tilesView["toolbar_elements"][i].fieldName === queryString['tabToolbarElementsQueries'][elementIndex].entry) {
                                 tilesView["toolbar_elements"][i]["options"] = result.rows;
                             }
                         }
                     }
                 }
-                catch(e) {
+                catch (e) {
                     console.log('Error occured while running query: ' + queryString['tabToolbarElementsQueries'][elementIndex].query);
                 }
             }
@@ -1849,23 +1849,23 @@ function hasIsInsertQuery(entry_params, keys, queryString) {
 
 function removeProperty(source, properties) {
     if (typeof source === 'object' && source != null) {
-      if (Array.isArray(source)) {
-        for (var i=0; i< source.length; i++) {
-          removeProperty(source[i], properties);
+        if (Array.isArray(source)) {
+            for (var i = 0; i < source.length; i++) {
+                removeProperty(source[i], properties);
+            }
+        } else {
+            for (key in source) {
+                if (properties.indexOf(key) > -1) {
+                    delete source[key];
+                } else {
+                    removeProperty(source[key], properties);
+                }
+            }
         }
-      } else {
-        for (key in source) {
-          if (properties.indexOf(key) > -1) {
-            delete source[key];
-          } else { 
-            removeProperty(source[key], properties);
-          }
-        }
-      }
     }
-    
+
     return source;
-  }
+}
 // main function starts here
 
 exports.handler = async (event, context) => {
@@ -1873,7 +1873,7 @@ exports.handler = async (event, context) => {
     const queryParams = event.queryStringParameters;
 
     const method = event.httpMethod;
-    
+
     // quite a tricky method to retrieve the Cognito sub ID , would be maybe better to map it in API GW template
     // see https://forums.aws.amazon.com/thread.jspa?threadID=236366 
     const userid = event.requestContext.identity.cognitoAuthenticationProvider.split(':')[2];
@@ -1882,35 +1882,35 @@ exports.handler = async (event, context) => {
 
     console.log('queryParams: ', queryParams);
 
-    
-    
+
+
     var isFormRecord = (queryParams['form'] === '1');
-    
+
     var isEventUpdate = (queryParams['event'] != null);
-    
-    var isHomepage =  (queryParams['homepage'] === '1');
-    
-    var isHomepageTab =  (queryParams['homepagetab'] === '1');
-    
+
+    var isHomepage = (queryParams['homepage'] === '1');
+
+    var isHomepageTab = (queryParams['homepagetab'] === '1');
+
     var isTableMultiSelectionActionQuery = (queryParams['table_multi_selection_action_query'] === '1');
     var tableMultiSelectionActionParams = null;
-    
-    if(isTableMultiSelectionActionQuery) {
+
+    if (isTableMultiSelectionActionQuery) {
         tableMultiSelectionActionParams = JSON.parse(event.body);
     }
 
     var dashboardIndex = queryParams['dashboard_index'];
-    
+
     var isExcel = (queryParams['excel'] === '1');
-    
+
     var isCustomQuery = (queryParams['custom_query'] === '1');;
     var customQueryButtonKey = queryParams['custom_query_key'];
-    
+
     var isCompanyChangeQuery = (queryParams['company_change_query'] === '1');;
-    
+
     var isFormAction = queryParams['isFormAction'] === '1';
     var formActionType = queryParams['formActionType'];
-    
+
     var search_keys = queryParams['search_keys'];
     if (search_keys) {
         search_keys = JSON.parse(search_keys); // production scenario only
@@ -1920,7 +1920,7 @@ exports.handler = async (event, context) => {
     var isNewRecord = (queryParams['new'] === '1');
     //var table_keys = queryParams['keys']; // test scenario
     var table_keys = queryParams['keys'] != null ? JSON.parse(queryParams['keys']) : null; // production scenario
-    
+
     var company = queryParams['company'];
 
     const profile = await helperFuncts.getProfile(dynamo, 'USERS_NAME', userid, company);
@@ -1936,8 +1936,8 @@ exports.handler = async (event, context) => {
         };
     }
 
-    
-    var authorized = (isHomepage || isHomepageTab || isCompanyChangeQuery)? true: (isAuthorized(queryParams.entry_name, profileData));
+
+    var authorized = (isHomepage || isHomepageTab || isCompanyChangeQuery) ? true : (isAuthorized(queryParams.entry_name, profileData));
 
     if (!authorized) {
         console.log(method, ' request for ', queryParams.entry_name, ' not authorized!');
@@ -1953,7 +1953,7 @@ exports.handler = async (event, context) => {
         console.log(method, ' request for ', queryParams.entry_name, ' authorized!');
     }
 
-    var readOnly = isCompanyChangeQuery? true: isReadOnly(queryParams.entry_name, profileData);
+    var readOnly = isCompanyChangeQuery ? true : isReadOnly(queryParams.entry_name, profileData);
 
     // avoid update, insert or delete if read only
     if (readOnly && (method === 'DELETE' || (method === 'POST' && !isEventUpdate))) {
@@ -1985,11 +1985,11 @@ exports.handler = async (event, context) => {
 
         var client = await pool.connect();
 
-        let DynamoParams = null;    
+        let DynamoParams = null;
         let entry_params = null;
-        
-        if(!isCompanyChangeQuery) {
-            if(isHomepage) {
+
+        if (!isCompanyChangeQuery) {
+            if (isHomepage) {
                 // Load homepage
                 DynamoParams = {
                     TableName: 'HOMEPAGES_NAME',
@@ -1997,13 +1997,13 @@ exports.handler = async (event, context) => {
                         entryKey: 'hp_' + global_variables.global_profile
                     }
                 };
-            
+
                 console.log('DynamoParams: ', DynamoParams);
-                
+
                 // read the entry params from DynamoDB view table
                 entry_params = await dynamo.get(DynamoParams).promise();
 
-                if(!entry_params || !entry_params.Item) {
+                if (!entry_params || !entry_params.Item) {
                     // Load default homepage
                     DynamoParams = {
                         TableName: 'HOMEPAGES_NAME',
@@ -2011,9 +2011,9 @@ exports.handler = async (event, context) => {
                             entryKey: 'default'
                         }
                     };
-                
+
                     console.log('DynamoParams: ', DynamoParams);
-                    
+
                     // read the entry params from DynamoDB view table
                     entry_params = await dynamo.get(DynamoParams).promise();
                 }
@@ -2026,15 +2026,22 @@ exports.handler = async (event, context) => {
                         entryKey: queryParams['entry_name']
                     }
                 };
-            
-                console.log('DynamoParams: ', DynamoParams);
-                
-                // read the entry params from DynamoDB view table
-                entry_params = await dynamo.get(DynamoParams).promise();    
-            }
-        }
 
-        if(!isTableMultiSelectionActionQuery &&  !isHomepage && !isHomepageTab && !isCompanyChangeQuery) {
+                console.log('DynamoParams: ', DynamoParams);
+
+                // read the entry params from DynamoDB view table
+                entry_params = await dynamo.get(DynamoParams).promise();
+            }
+        } 
+        
+        if (isTableMultiSelectionActionQuery) {
+            // complete table if inherited
+            entry_params = await helperFuncts.overrideTable('VIEWS_NAME', entry_params.Item, dynamo);
+
+            // replace constants
+            entry_params = replaceJSONParams(entry_params, entry_params.define);
+        }
+        if (!isTableMultiSelectionActionQuery && !isHomepage && !isHomepageTab && !isCompanyChangeQuery) {
             // complete table if inherited
             entry_params = await helperFuncts.overrideTable('VIEWS_NAME', entry_params.Item, dynamo);
 
@@ -2047,15 +2054,14 @@ exports.handler = async (event, context) => {
 
             // retrieve additional query conditions from profile (if any)
 
-            additionalQueryCond = getAdditionalQueryCond(queryParams.entry_name, profileData);        
+            additionalQueryCond = getAdditionalQueryCond(queryParams.entry_name, profileData);
         }
         
         global_variables = await helperFuncts.setGlobalVariables(company, client, userid, dynamo);
         console.log('global_variables: ', global_variables);
-        
+
         // Handling RLS Policies on DB
-        aziendeSet = "'" + global_variables.global_user_companies.replaceAll("'","") + "'";
-        console.log(aziendeSet);
+        aziendeSet = "'" + global_variables.global_user_companies.replaceAll("'", "") + "'";
         await client.query(`SET onecompliance.aziende TO ${aziendeSet};`);
 
         if (method === 'GET') {
@@ -2065,7 +2071,7 @@ exports.handler = async (event, context) => {
                 queryString = getHomepageQuery(entry_params);
             } else if (isHomepageTab) {
                 queryString = getHomepageTabQuery(entry_params);
-            } else if(isCompanyChangeQuery) {
+            } else if (isCompanyChangeQuery) {
                 queryString = getCompanyChangeQuery();
             } else if (isFormAction) {
                 queryString = getFormActionQuery(formActionType, table_keys, entry_params);
@@ -2074,7 +2080,7 @@ exports.handler = async (event, context) => {
                 // Zee: Since now the first call can be a search request (not having to call GET first) so if we don't calculate search combox here, the advanced search doesn't work.
                 // I know it adds more work but is still better to having to call lambda twice
                 // add the search combos if any
-               getSearchCombos(entry_params, table_keys, false, queryString.comboQueries); 
+                getSearchCombos(entry_params, table_keys, false, queryString.comboQueries);
             } else if (isNewRecord) {
                 queryString = getNewQuery(entry_params, table_keys);
             } else if (isFormRecord) {
@@ -2103,7 +2109,8 @@ exports.handler = async (event, context) => {
                 queryString = getEventQuery(entry_params, JSON.parse(event.body), JSON.parse(queryParams['event']), queryParams);
             } else if (isCustomQuery) {
                 queryString = getCustomQuery(entry_params, customQueryButtonKey);
-            } else if(isTableMultiSelectionActionQuery) {
+            } else if (isTableMultiSelectionActionQuery) {
+                console.log('here pd')
                 queryString = getTableMultiSelectionActionQuery(entry_params, tableMultiSelectionActionParams);
             } else {
                 // process later
@@ -2125,12 +2132,12 @@ exports.handler = async (event, context) => {
             console.log(response);
             await client.release();
             return response;
-        } else if(isTableMultiSelectionActionQuery) {
+        } else if (isTableMultiSelectionActionQuery) {
             let response = await processTableMultiSelectionActionQuery(queryString, client);
             console.log(response);
             await client.release();
             return response;
-        } else if(isCompanyChangeQuery) {
+        } else if (isCompanyChangeQuery) {
             let response = await processCompanyChangeQuery(queryString, client);
             console.log(response);
             await client.release();
@@ -2149,7 +2156,7 @@ exports.handler = async (event, context) => {
         } else {
             // process query string(s) 
             queryData = await processPreMainPost(queryString, client, (isFormRecord || isNewRecord || method === 'DELETE'), (method === 'GET'));
-        }   
+        }
 
         // process comboboxes 
         if (method === 'GET' && dashboardIndex == null && !isEventUpdate && !isCustomQuery && !isFormAction) {
@@ -2365,9 +2372,9 @@ exports.handler = async (event, context) => {
     }
 
     queryData['profileHideActions'] = getProfileHideActions(queryParams.entry_name, profileData);
-    
+
     queryData = removeProperty(queryData, queryKeys);
-    console.log('queryData: ',queryData);
+    console.log('queryData: ', queryData);
 
     return {
         "isBase64Encoded": false,

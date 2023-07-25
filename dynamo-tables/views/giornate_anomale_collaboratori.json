@@ -6,12 +6,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select distinct true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, coll.giorno::date, coll.dynamo_user, entrasp.dynamo_employer(coll.dynamo_user) as employer,  coalesce(csn.minuti_rendicontati,0) as minuti_rendicontati, entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date) as minuti_richiesti, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0))) as minuti_mancanti from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg, entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select $giorno$ as giorno, to_char($giorno$::date, 'Day DD-MM-YYYY') as giorno_descr, $dynamo_user$ as dynamo_user",
+      "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti, gdr.motivo_validazione_tr from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users mr on gdr.giorno=mr.data_rend and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user in(select em.dynamo_user from entrasp.employers em inner join entrasp.employers em2 on em.codice_azienda=em2.codice_azienda where em2.dynamo_user='€global_username€') and (coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))>min_extra_anomali_tr",
       "type": "main"
     }
   ]

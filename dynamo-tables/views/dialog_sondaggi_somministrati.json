@@ -1,0 +1,59 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_sondaggi_somministrati",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "main",
+      "queryString": "update entrasp.sondaggi_somministrati ss1 set id_anagrafica_assegnataria=coalesce($id_anagrafica_assegnataria$,ss2.id_anagrafica_assegnataria), flag_prima_visita=coalesce($flag_prima_visita$,ss2.flag_prima_visita), data_esecuzione = coalesce($data_esecuzione$::date, ss2.data_esecuzione)from entrasp.sondaggi_somministrati ss2,(SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS idsomministrazione FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s where ss1.codice_azienda = ss2.codice_azienda and ss1.id_somministrazione = ss2.id_somministrazione and ss1.codice_azienda='€global_codice_azienda€' and ss1.id_somministrazione=s.idsomministrazione::numeric;"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_anagrafica_assegnataria",
+      "label": "Incaricato Compilazione",
+      "newLine": false,
+      "readOnly": false,
+      "size": 3.33
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
+        "viewType": "combobox",
+        "options": [],
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "flag_prima_visita",
+      "label": "Prima Visita?",
+      "size": 3.33,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_esecuzione",
+      "label": "Data esecuzione",
+      "newLine": false,
+      "readOnly": false,
+      "size": 3.33
+    }
+  ]
+}

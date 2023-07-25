@@ -45,4 +45,5 @@ export interface TableViewKey { // as per API specification
         pipe?: "Date" | "DateTime" | "Time" | "UpperCase" | "LowerCase" | "Currency" | "Decimal" | "Percent"
     };
     width?: string;
+    showTotal?: boolean;
 }

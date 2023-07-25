@@ -2,7 +2,7 @@
   "$schema": "../views.schema.json",
   "entryKey": "mandati",
   "origin": "entrasp.mandati",
-  "businessObjectName": "mandati",
+  "label": "Mandati",
   "form_keys": [
     {
       "autoGenerate": false,
@@ -66,7 +66,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "newLine": true,
+      "newLine": false,
       "key": "importo_tot",
       "label": "Importo Mandato",
       "readOnly": false,
@@ -75,9 +75,23 @@
     {
       "autoGenerate": false,
       "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": true,
+      "key": "importo_man",
+      "label": "Importo Manuale",
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
+        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -91,7 +105,7 @@
       "format": {
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
+        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
       },
       "isHidden": false,
       "isPrimary": true,
@@ -99,6 +113,13 @@
       "key": "id_mandante",
       "label": "Debitore Ceduto",
       "readOnly": false
+    }
+  ],
+  "predefinedQueries": [
+    {
+      "queryString": "select *, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante) as mandante, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente from entrasp.mandati where codice_azienda=$codice_azienda$",
+      "type": "main",
+      "operation": "selectTable"
     }
   ],
   "table_keys": [
@@ -117,6 +138,7 @@
       },
       "isHidden": false,
       "isPrimary": true,
+      "width": "10%",
       "key": "n_mandato",
       "label": "N.Mandato"
     },
@@ -127,7 +149,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_mandato",
-      "label": "Data mandato"
+      "label": "Data mandato",
+      "width": "8%"
     },
     {
       "format": {
@@ -136,7 +159,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "data_pagamento",
-      "label": "Data pagamento"
+      "label": "Data pagamento",
+      "width": "8%"
     },
     {
       "format": {
@@ -145,7 +169,30 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "importo_tot",
-      "label": "Importo Mandato"
+      "label": "Importo Mandato (somma crediti)",
+      "width": "8%",
+      "style": [
+        {
+            "value": "*",
+            "text_align": "end"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "importo_man",
+      "label": "Importo Mandato (registrato)",
+      "width": "8%",
+      "style": [
+        {
+            "value": "*",
+            "text_align": "end"
+        }
+      ]
     },
     {
       "format": {
@@ -154,8 +201,9 @@
       "isHidden": false,
       "isPrimary": false,
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente)",
-      "key": "id_cedente",
-      "label": "Cedente"
+      "key": "cedente",
+      "label": "Cedente",
+      "width": "30%"
     },
     {
       "format": {
@@ -168,20 +216,21 @@
     },
     {
       "format": {
-        "dataType": "number"
+        "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante)",
-      "key": "Mandante",
-      "label": "Mandante"
+      "key": "mandante",
+      "label": "Mandante",
+      "width": "30%"
     }
   ],
   "search_keys": [
     {
       "fieldName": "id_cedente_s",
       "format": {
-        "comboQuery": "SELECT distinct id_cedente AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
       },
@@ -192,7 +241,7 @@
     {
       "fieldName": "id_mandante_s",
       "format": {
-        "comboQuery": "SELECT distinct id_debitore_ceduto AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) AS name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
         "options": [],
         "viewType": "combobox"
       },
@@ -201,10 +250,30 @@
       "queryCond": "id_mandante=$id_mandante_s$"
     }
   ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by id_cedente"
+  },
   "hideActions": [
     {
       "formActionType": "attachments",
       "viewType": "form"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "crediti_ceduti_sub_of_mandati",
+      "type": "table",
+      "label": "Crediti associati",
+      "keys": [
+        {
+          "parent": "n_mandato",
+          "son": "n_mandato"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        }
+      ]
     }
   ]
 }

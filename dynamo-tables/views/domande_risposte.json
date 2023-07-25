@@ -563,6 +563,11 @@
                         "icon": "delete",
                         "label": "Cancella risposta",
                         "outputEventName": "delete_risposta"
+                    },
+                    {
+                        "icon": "content_copy",
+                        "label": "Copia risposta su tutte le segnalazione",
+                        "outputEventName": "answer_copy"
                     }
                 ]
             },
@@ -604,6 +609,24 @@
                     },
                     "successMessage": "Segnalazione dissociata correttamente",
                     "outputEventWhenComplete": "triggerReload"
+                },
+                {
+                    "eventName": "answer_copy",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Copiare questa risposta su tutte le verifiche (somministrazioni) del sondaggio?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$, $id_domanda$) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
+                          }
+                    },
+                    "successMessage": "Risposte copiate correttamente"
                 }
             ],
             "isHidden": false,

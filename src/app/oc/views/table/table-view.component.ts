@@ -76,6 +76,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     isAuthorized: boolean = true;
     viewKeys: TableViewKey[];  // view fields as specified by the backend
+    
+    searchKeysLoaded: boolean = false;
     completeSearchKeys: SearchViewKey[]; // Also contains search toggles
     advancedSearchKeys: SearchViewKey[]; // Search keys to show Advanced search
     searchToggles: SearchToggle[];
@@ -110,6 +112,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         preventNavigationToForm: false
     };
 
+    // Total row
+    totalRow: any = null;
+
     /** Whether the number of selected elements matches the total number of rows. */
     isAllSelected() {
         const numSelected = this.selection.selected.length;
@@ -137,6 +142,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     showExplorer = false;
     explorerSource: "table-view" | "google-drive" = "table-view";
     explorerLevelTwoMask: string = null;
+    wrapView: boolean = true;
 
     foldersSource: object[] = [];
     folders: string[] = [];
@@ -288,6 +294,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.completeSearchKeys = params.search_keys;
                     _this.updateAdvancedSearchKeys(params.search_keys);
                     _this.loadSearchToggles(params.search_keys, search_keys);
+                    
+                    _this.searchKeysLoaded = false;
+                    // _this.loadSearchKeys();
+
                     _this.targetEntryName = (params.navigationTarget != null) ? params.navigationTarget : _this.tableData.entryName; // self or new form table?
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
@@ -413,6 +423,34 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         _this.calculateTableHeight();
     }
 
+    public loadSearchKeys() {
+        const _this = this;
+        _this.subscriptions.push(_this.backendService.getSearchKeys(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
+            result => {
+                if (result.result === 'OK' && result.data) {
+                    const search_keys = result.data;
+                    _this.completeSearchKeys = search_keys;
+                    _this.updateAdvancedSearchKeys(search_keys);
+                    _this.loadSearchToggles(search_keys, search_keys);
+                    _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
+
+                    _this.searchKeysLoaded = true;
+                    _this.showAdvSearch = !_this.showAdvSearch;
+                }
+                else {
+                    _this.isLoading = false;
+                    // Show error snackbar
+                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail ?? result.reason ?? result));
+                }
+            },
+            error => {
+                _this.isLoading = false;
+                // Show error snackbar
+                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
+            }
+        ));
+    }
+
     loadTableInfo(): void {
         const _this = this;
         
@@ -477,7 +515,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     if(_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
                     }
+                    _this.loadTotalRow(results);
                     //_this.adjustViewKeysWidths();
+                    _this.autodetectViewMode();
                     // triggers any change in displayed datasource, setting the array of primary keys
                     _this.subscriptions.push(_this.dataSource.connect().subscribe(source => {
                         _this.keysArray = source.map(row => {
@@ -527,6 +567,29 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 _this.viewKeys[i].width = width;
             }
         })
+    }
+
+    autodetectViewMode() {
+        let _this = this;
+        const sum = _this.viewKeys.filter(x => !x.isHidden && x.width).map(x => parseFloat(x.width.replace('%', ''))).reduce((sum, n) => sum + n);
+        _this.wrapView = sum <= 100;
+    }
+
+    loadTotalRow(results) {
+        let _this = this;
+        const totalKeys = _this.viewKeys.filter(x => x.showTotal).map(x => x.key);
+        
+        if(totalKeys && totalKeys.length > 0) {
+            let totalRow = {};
+    
+            totalKeys.forEach(key => {
+                totalRow[key] = (results.map(x => parseFloat(x[key] + '')).reduce((partialSum, a) => partialSum + a, 0)) + '';
+            });
+            _this.totalRow = totalRow;
+        }
+        else {
+            _this.totalRow = null;
+        }
     }
 
     loadLevel(table_keys) {
@@ -720,7 +783,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     advSearch() {
-        this.showAdvSearch = !this.showAdvSearch;
+        if(!this.searchKeysLoaded)
+        {
+            this.loadSearchKeys();
+        }
+        else {
+            this.showAdvSearch = !this.showAdvSearch;
+        }
     }
 
     updateAdvancedSearchKeys(searchKeys: SearchViewKey[]) {

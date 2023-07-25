@@ -58,7 +58,7 @@
       "key": "id_trattamento_dati",
       "label": "#",
       "newLine": false,
-      "size": 1.67,
+      "size": 1.0,
       "readOnly": true
     },
     {
@@ -79,7 +79,7 @@
       "key": "codice",
       "label": "Codice",
       "newLine": false,
-      "size": 1.66,
+      "size": 1.2,
       "readOnly": false
     },
     {
@@ -94,7 +94,7 @@
       "key": "id_centro_gest",
       "label": "Centro Gestionale",
       "newLine": false,
-      "size": 3.33,
+      "size": 2.5,
       "readOnly": false
     },
     {
@@ -109,10 +109,26 @@
       "isPrimary": false,
       "key": "id_argomento_tipo_trattamento_dato",
       "label": "Tipo Trattamento",
-      "newLine": true,
-      "size": 3.33,
+      "newLine": false,
+      "size": 2.5,
       "readOnly": false
     },
+    {
+			"autoGenerate": false,
+			"format": {
+				"viewType": "combobox",
+				"dataType": "number",
+				"options": [],
+				"comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=50667"
+			},
+			"isHidden": false,
+			"isPrimary": false,
+			"key": "id_argomento_conferimento",
+			"label": "Obbligatorietà conferimento",
+			"readOnly": false,
+			"newLine": true,
+			"size": 2.5
+		},
     {
       "autoGenerate": false,
       "format": {
@@ -252,7 +268,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "maggiori_dettagli",
-      "label": "Ulteriori Dettagli",
+      "label": "Dettagli",
       "style": {
         "background_color": "transparent",
         "font_color": "black",
@@ -799,5 +815,13 @@
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by id_trattamento_dati desc"
+  },
+  "exportQueries": {
+    "tableQueries": [
+      {
+        "label": "Cat.interess., finalità e basi giurid.",
+        "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento, entrasp.argomenti_descr_breve_no_id(tdc.id_argomento_categoria) as categoria_interessati, td.id_trattamento_dati id_trattamento, td.titolo as trattamento_dati, td.descrizione, entrasp.argomenti_descr_breve_no_id(tdf.id_argomento_finalita) as finalita_trattamento, entrasp.finalita_e_basi_giuridiche_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, tdf.id_argomento_finalita) as basi_giuridiche from entrasp.cpl_trattamenti_dati_categorie tdc inner join entrasp.cpl_trattamenti_dati td on tdc.codice_azienda=td.codice_azienda and tdc.id_trattamento_dati=td.id_trattamento_dati inner join entrasp.cpl_trattamenti_dati_finalita tdf on td.codice_azienda=tdf.codice_azienda and td.id_trattamento_dati=tdf.id_trattamento_dati where td.codice_azienda=$codice_azienda$ and tipo='categorie_interessati' order by td.id_argomento_conferimento, tdc.id_argomento_categoria, td.id_trattamento_dati, tdf.id_argomento_finalita"
+      }
+    ]
   }
 }
