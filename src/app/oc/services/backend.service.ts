@@ -139,7 +139,7 @@ export class BackendService {
 
   getAttachList(entryName: string, company: string, keys: any, businessObjectName: string): Observable<any> {
     this.awsService.auth();
-    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), businessObjectName: businessObjectName};
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), businessObjectName: businessObjectName };
     return from(this.awsService.api().get(this.apiName, this.attachApiName, this.myGetInit));
   }
 
@@ -216,20 +216,20 @@ export class BackendService {
 
   disableMFA(): Observable<any> {
     this.awsService.auth();
-    this.myGetInit.queryStringParameters = {mfa_disable: 1};
+    this.myGetInit.queryStringParameters = { mfa_disable: 1 };
     return from(this.awsService.api().get(this.apiName, this.usersApiName, this.myGetInit));
   }
 
   refreshToken(secretHash, refreshToken) {
     this.awsService.auth();
-    this.myPutPostInit.queryStringParameters = {refresh_token: 1};
+    this.myPutPostInit.queryStringParameters = { refresh_token: 1 };
     this.myPutPostInit.body = {
       secretHash,
       refreshToken
     };
     return from(this.awsService.api().post(this.apiName, this.usersApiName, this.myPutPostInit));
   }
-  
+
   getMenu(keys: any): Observable<any> {
     this.awsService.auth();
     this.myGetInit.queryStringParameters = { keys: JSON.stringify(keys) };
@@ -574,6 +574,12 @@ export class BackendService {
     this.awsService.auth();
     this.myGetInit.queryStringParameters = { company: company };
     return from(this.awsService.api().get(this.apiName, this.calendarApiName, this.myGetInit));
+  }
+  
+  getSearchKeys(entryName: string, company: string, keys: any): Observable<any> {
+    this.awsService.auth();
+    this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), isSearchKeyRequest: 1 };
+    return from(this.awsService.api().get(this.apiName, '/' + this.viewsApiName, this.myGetInit));
   }
 
 }

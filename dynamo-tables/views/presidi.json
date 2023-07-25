@@ -71,7 +71,27 @@
             "label": "ID Presidio (PK)",
             "newLine": false,
             "size": 1.5,
-            "readOnly": true
+            "readOnly": true,
+            "inputEvents": [
+                {
+                  "eventName": "duplica_presidio",
+                  "actionType": "show_message",
+                  "condition": "none",
+                  "values": [],
+                  "message": {
+                    "messageText": "Sei sicuro di voler duplicare questo presidio? (ATTENZIONE! Il nuovo presidio sarà creato e si verrà trasferiti allo stesso)",
+                    "actionOnNo": {
+                      "actionType": "query",
+                      "queryFunct": "select £id_presidio£ as id_presidio"
+                    },
+                    "actionOnYes": {
+                      "actionType": "query",
+                      "queryFunct": "select entrasp.presidio_duplica($codice_azienda$, '£id_presidio£');"
+                    }
+                  },
+                  "outputEventWhenComplete": "navigate_to_presidio_new"
+                }
+              ]
         },
         {
             "key": "id_anagrafica_societa",
@@ -141,7 +161,12 @@
                         "icon": "calculate",
                         "label": "Ricalcola singolo presidio",
                         "outputEventName": "ricalcolo_singolo_presidio"
-                    }
+                      },
+                      {
+                        "icon": "content_copy",
+                        "label": "Duplica Presidio",
+                        "outputEventName": "duplica_presidio"
+                      }
                 ]
             },
             "inputEvents": [
@@ -976,7 +1001,25 @@
             },
             "actionType": "navigate",
             "eventName": "navigate_to_presidio_parent"
-        }
+        },
+        {
+            "actionTarget": {
+              "name": "presidi_2",
+              "type": "form",
+              "keymap": [
+                {
+                  "source": "codice_azienda",
+                  "destination": "codice_azienda"
+                },
+                {
+                  "source": "id_presidio",
+                  "destination": "id_presidio"
+                }
+              ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_presidio_new"
+          }
     ],
     "exportQueries": {
         "tableQueries": [
