@@ -35,6 +35,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
+    // Keys that are provided by external source and are passed to the values in onSave function
+    @Input () externalKeys: object = {};
+
     @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
     // Contains form Data
@@ -173,6 +176,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 });
             _this.generalSubscriptions.push(subscription);
         }
+        console.log(_this.externalKeys);
 
     }
 
@@ -497,7 +501,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this; // useful to debug
         _this.isLoading = true;
 
-        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, _this.formParams.isNew, null, false).subscribe(
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), {..._this.currentKeys, ..._this.externalKeys}, null, true, _this.formParams.isNew, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -573,7 +577,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     addRow(default_keys: any): void {
         const _this = this;
         _this.isAddingNew = true;
-        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, true, true, null, false).subscribe(
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), {..._this.currentKeys, ..._this.externalKeys}, null, true, true, null, false).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {
@@ -1092,7 +1096,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 if (value.showEventProcessing === true) {
                     _this._dialogService.showLoadingDialog("Processing", "Please wait...");
                 }
-                const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, event.actionType).subscribe(
+                const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), {..._this.currentKeys, ..._this.externalKeys}, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         if (result.result === 'OK') {
                             if (event.successMessage) {
@@ -1394,7 +1398,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                         }
-                        const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, keyListener, chiavi, event.eventName, action, true).subscribe(
+                        const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), {..._this.currentKeys, ..._this.externalKeys}, keyListener, chiavi, event.eventName, action, true).subscribe(
                             result => {
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
@@ -1440,8 +1444,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
                 width: '1280px',
                 height: 'auto',
-                data: event
-                
+                data: {
+                    ...event,
+                    keys: _this.currentKeys    
+                }
             });
         }
     }
