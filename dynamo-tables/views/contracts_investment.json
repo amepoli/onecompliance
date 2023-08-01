@@ -1583,7 +1583,18 @@
 			"label": "Aperti senza progetto associato",
 			"newLine": false,
 			"queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
-		}
+		},
+		{
+            "fieldName": "rischio_conflitto",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Rischio conflitti",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'"
+        }
 	],
 	"hideActions": [
 		{
