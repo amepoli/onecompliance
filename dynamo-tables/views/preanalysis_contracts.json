@@ -8,17 +8,18 @@
 		"dashboard_contracts_investment"
 	],
 	"define": {
-        "is_hidden_conflicts": "true",
+        "is_hidden_conflicts": "false",
 		"is_hidden_mifid": "true",
 		"is_hidden_invisible_field": "false",
 		"label_id_controparte": "Id Cli/For",
 		"label_controparte": "Cliente/Fornitore"
+		
     },
 	"predefinedQueries": [
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€'"
+			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato, entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto) as rischio_conflitto from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€'"
 		},
 		{
 			"operation": "update",

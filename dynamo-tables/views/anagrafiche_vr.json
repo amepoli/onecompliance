@@ -10,7 +10,9 @@
         "is_hidden_ruolo2": "false",
         "is_hidden_contratti_sottoscritti": "true",
         "not_is_hidden_contratti_sottoscritti": "false",
-        "is_hidden_profilo_aml": "false"
+        "is_hidden_profilo_aml": "false",
+        "is_hidden_dettagli": "false",
+        "is_hidden_utente_tr": "true"
     },
     "predefinedQueries": [
         {
@@ -1396,7 +1398,7 @@
                 "dataType": "text",
                 "viewType": "label"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_dettagli}",
             "isPrimary": false,
             "key": "maggiori_dettagli",
             "label": "Dettagli",
@@ -1417,7 +1419,7 @@
             "format": {
                 "viewType": "button"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_dettagli}",
             "isPrimary": false,
             "key": "activate_detail_k",
             "label": "",
@@ -1700,7 +1702,7 @@
                 "viewType": "invisible"
             },
             "size": 0.2,
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false,
             "label": "invisible_13",
             "key": "invisible_13",
@@ -1713,7 +1715,7 @@
                 "dataType": "text",
                 "viewType": "label"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false,
             "key": "ruolo",
             "label": "Ruoli",
@@ -1734,7 +1736,7 @@
                 "viewType": "invisible"
             },
             "size": 0.2,
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false,
             "label": "invisible_14",
             "key": "invisible_14",
@@ -1747,7 +1749,7 @@
                 "viewType": "invisible"
             },
             "size": 0.8,
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false,
             "label": "invisible_14",
             "key": "invisible_14",
@@ -1819,13 +1821,172 @@
                 "viewType": "invisible"
             },
             "size": 0.6,
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_ruolo}",
             "isPrimary": false,
             "label": "invisible_15",
             "key": "invisible_15",
             "sameOrigin": false,
             "readOnly": true,
+            "newLine": true
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 0.2,
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "label": "invisible_21",
+            "key": "invisible_21",
+            "sameOrigin": false,
+            "readOnly": true,
             "newLine": false
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "key": "dettagli_utente_tr",
+            "label": "Dettagli Time Report",
+            "style": {
+                "background_color": "#2B679D",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "size": 9.6
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 0.2,
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "label": "invisible_91",
+            "key": "invisible_91",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": true
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 0.2,
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "label": "invisible_22",
+            "key": "invisible_22",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false
+        },
+        {
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "value": "£CURRENT_DATE£"
+            },
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "key": "data_avvio_collaborazione",
+            "label": "Data avvio collaborazione",
+            "autoGenerate": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.60,
+            "sameOrigin": false,
+            "queryFunct": "SELECT data_avvio_collaborazione FROM entrasp.employers WHERE dynamo_user=entrasp.dynamo_user_from_id_an($codice_part$, $id_anagrafica$) AND codice_part=$codice_part$ limit 1"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli where codice_ruolo in ('JANL','ANL','ANL','SANL','PRLD','MAN','BUM','STF','PRT','AGE','RSRSA','DIP','SOC','AMM','INTSH');",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "key": "codice_ruolo_tr",
+            "label": "Ruolo",
+            "size": 1.6,
+            "readOnly": false,
+            "newLine": false,
+            "sameOrigin": false,
+            "queryFunct": "SELECT codice_ruolo FROM entrasp.employers WHERE dynamo_user=entrasp.dynamo_user_from_id_an($codice_part$, $id_anagrafica$) AND codice_part=$codice_part$ limit 1"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale/BU",
+            "newLine": false,
+            "size": 3.2,
+            "readOnly": false,
+            "sameOrigin": false,
+            "queryFunct": "SELECT id_centro_gest FROM entrasp.employers WHERE dynamo_user=entrasp.dynamo_user_from_id_an($codice_part$, $id_anagrafica$) AND codice_part=$codice_part$ limit 1"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input",
+                "value": "480"
+            },
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "key": "minuti_richiesti_giornalieri",
+            "label": "Minuti Giornalieri",
+            "autoGenerate": false,
+            "readOnly": false,
+            "newLine": false,
+            "size": 1.6,
+            "sameOrigin": false,
+            "queryFunct": "SELECT minuti_richiesti_giornalieri FROM entrasp.employers WHERE dynamo_user=entrasp.dynamo_user_from_id_an($codice_part$, $id_anagrafica$) AND codice_part=$codice_part$ limit 1"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input",
+                "value": "90"
+            },
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "key": "min_extra_anomali_tr",
+            "label": "Minuti extra anomali",
+            "autoGenerate": false,
+            "readOnly": false,
+            "newLine": false,
+            "size": 1.6,
+            "sameOrigin": false,
+            "queryFunct": "SELECT min_extra_anomali_tr FROM entrasp.employers WHERE dynamo_user=entrasp.dynamo_user_from_id_an($codice_part$, $id_anagrafica$) AND codice_part=$codice_part$ limit 1"
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 0.2,
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "label": "invisible_92",
+            "key": "invisible_92",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": true
         }
     ],
     "table_keys": [
