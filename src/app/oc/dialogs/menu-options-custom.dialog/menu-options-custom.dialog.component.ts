@@ -37,7 +37,7 @@ export class MenuOptionsCustomDialogComponent {
                 keys: {
                     codice_azienda: _this._authService.getCurrentCompany()
                 },
-                isNew: true,
+                isNew: false,
                 isVisible: true
             };        
     }
