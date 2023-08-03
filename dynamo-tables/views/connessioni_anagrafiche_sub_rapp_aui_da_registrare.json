@@ -542,6 +542,177 @@
       ]
     }
   ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice_part"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": "$Q{is_hidden_delete_button}",
+      "isPrimary": false,
+      "width": "3%",
+      "key": "delete_connessione",
+      "queryFunct": "select true",
+      "label": "",
+      "style": [
+        {
+          "button_icon": "delete",
+          "value": "*"
+        }
+      ],
+      "isButton": true,
+      "buttonAction": {
+        "target": "connessioni_anagrafiche",
+        "viewType": "table",
+        "query": "delete from entrasp.connessioni_anagrafiche where codice_azienda ='£codice_azienda£' and codice_part ='£codice_part£' and id_anagrafica=£id_anagrafica£ and id_anagrafica_conn=£id_anagrafica_conn£ and codice_ruolo='£codice_ruolo£' and dt_inizio='£dt_inizio£'",
+        "action": "query",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "codice_part",
+            "destination": "codice_part"
+          },
+          {
+            "source": "id_anagrafica",
+            "destination": "id_anagrafica"
+          },
+          {
+            "source": "id_anagrafica_conn",
+            "destination": "id_anagrafica_conn"
+          },
+          {
+            "source": "codice_ruolo",
+            "destination": "codice_ruolo"
+          },
+          {
+            "source": "dt_inizio",
+            "destination": "dt_inizio"
+          }
+        ],
+        "onSuccessAction": "reload"
+      }
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_anagrafica",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_anagrafica_conn",
+      "label": "id_anagrafica_conn"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_ruolo",
+      "label": "cod_ruolo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "width": "15%",
+      "isPrimary": false,
+      "key": "descrizione_ruolo",
+      "queryFunct": "entrasp.ruolo_descr(codice_ruolo)",
+      "label": "Ruolo"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "anagrafica_connessa",
+      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_conn)",
+      "label": "Anagrafica connessa"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "tipo_soggetto",
+      "label": "Tipo",
+      "queryFunct": "entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select tipo_soggetto from entrasp.anagrafiche_id where codice_part='€global_codice_part€' and id_anagrafica=id_anagrafica_conn))",
+      "sameOrigin": false
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "documento",
+      "label": "Documento/Scadenza",
+      "queryFunct": "entrasp.documenti_identificativi_descr(codice_part, id_anagrafica_conn)",
+      "sameOrigin": false
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "width": "8%",
+      "isPrimary": true,
+      "key": "dt_inizio",
+      "label": "Data inizio"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "width": "8%",
+      "isPrimary": false,
+      "key": "dt_fine",
+      "label": "Data fine"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "label": "prog_vr",
+      "isPrimary": false,
+      "queryFunct": "select max(prog_vr) as prog_vr from entrasp.anagrafiche_vr where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$",
+      "key": "prog_vr"
+    }
+  ],
   "hideActions": [
     {
       "tableActionType": "add",
