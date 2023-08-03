@@ -2406,7 +2406,7 @@
                 "viewType": "checkbox"
             },
             "label": "Documenti scaduti",
-            "newLine": false,
+            "newLine": true,
             "size": 1,
             "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)"
         },
@@ -2420,6 +2420,17 @@
             "newLine": false,
             "size": 1,
             "queryCond": "avr.id_anagrafica=(select max(id_anagrafica) from entrasp.anagrafiche_id where codice_part='€global_codice_part€')"
+        },
+        {
+            "fieldName": "soggetti_collegati_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Parte correlata o soggetti collegati",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "entrasp.soggetti_collegati(avr.codice_part, avr.id_anagrafica) !='Nessun conflitto'"
         }
     ],
     "outputEvents": [
