@@ -117,7 +117,7 @@
   ],
   "predefinedQueries": [
     {
-      "queryString": "select *, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante) as mandante, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente from entrasp.mandati where codice_azienda=$codice_azienda$",
+      "queryString": "select *, entrasp.count_allegati_mandati(codice_azienda, id_mandante, n_mandato) as n_allegati, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante) as mandante, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente from entrasp.mandati where codice_azienda=$codice_azienda$",
       "type": "main",
       "operation": "selectTable"
     }
@@ -170,7 +170,7 @@
       "isPrimary": false,
       "key": "importo_tot",
       "label": "Importo Mandato (somma crediti)",
-      "width": "8%",
+      "width": "6%",
       "style": [
         {
             "value": "*",
@@ -186,7 +186,7 @@
       "isPrimary": false,
       "key": "importo_man",
       "label": "Importo Mandato (registrato)",
-      "width": "8%",
+      "width": "6%",
       "style": [
         {
             "value": "*",
@@ -203,7 +203,7 @@
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente)",
       "key": "cedente",
       "label": "Cedente",
-      "width": "30%"
+      "width": "25%"
     },
     {
       "format": {
@@ -223,7 +223,17 @@
       "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante)",
       "key": "mandante",
       "label": "Mandante",
-      "width": "30%"
+      "width": "25%"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_allegati",
+      "label": "n_allegati",
+      "width": "25%"
     }
   ],
   "search_keys": [
