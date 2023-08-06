@@ -227,12 +227,12 @@
       "label": "Durata (minuti)",
       "outputEvent": {
         "eventName": "durata_change",
-        "eventTrigger": "blur"
+        "eventTrigger": "change"
       },
       "inputEvents": [
         {
           "eventName": "durata_change",
-          "queryFunct": "select 1 from entrasp.insert_update_consuntivazione('£codice_azienda£', '£codice_compito£', £durata£, '€global_username€', '£data_intervento£', £id_cons$, '£note£')",
+          "queryFunct": "select 1 from entrasp.insert_update_consuntivazione('£codice_azienda£', '£codice_compito£', £durata£, '€global_username€', '£data_intervento£', £id_cons£, '£note£')",
           "actionType": "query",
           "condition": "none",
           "values": []
@@ -308,6 +308,22 @@
         "eventName": "date_time_end_edit",
         "eventTrigger": "change"
       },
+      "inputEvents": [
+        {
+          "eventName": "durata_change",
+          "queryFunct": "select ('£date_time_begin£'::timestamp+£durata£* interval '1 minutes') as date_time_end",
+          "actionType": "query",
+          "condition": "none",
+          "values": []
+        },
+        {
+          "eventName": "date_time_begin_edit",
+          "queryFunct": "select ('£date_time_begin£'::timestamp+£durata£* interval '1 minutes') as date_time_end",
+          "actionType": "query",
+          "condition": "none",
+          "values": []
+        }     
+      ],
       "size": 1.8
     },
     {
@@ -1237,5 +1253,31 @@
       "sameOrigin": false,
       "saveWhenHidden": true
     }
-  ]
+  ],
+  "hideActions": [
+    {
+      "formActionType": "share",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "attachments"
+    },
+    {
+      "viewType": "form",
+      "formActionType": "import_export"
+    }
+  ] 
 }
