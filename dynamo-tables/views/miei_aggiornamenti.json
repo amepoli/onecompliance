@@ -469,10 +469,26 @@
       {
         "label": "Totale mese corrente",
         "queryString": "select sum(csn.durata) as minuti_totali_mensili, ROUND(sum(csn.durata)/60.00, 2) as ore_totali_mensili from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' AND ( SELECT DATE_PART('year', data_intervento) ) = (select extract(year from current_date)) and ( SELECT DATE_PART('month', data_intervento) ) = (select extract(month from current_date));"
+      },
+      {
+        "label": "Template - importa attività",
+        "queryString": "SELECT '€global_codice_azienda€' as codiceazienda,'35' as codicecompito, '60' as durata, current_date AS dataintervento"
+      },
+      {
+        "label": "Template - Aziende e compiti",
+        "queryString": "SELECT cmp.codice_azienda,cmp.codice_compito,substring(cmp.titolo FROM 1 FOR 100) AS titolo FROM entrasp.compiti cmp WHERE cmp.id_tipo_segnalazione NOT IN (700,701) AND (cmp.codice_azienda IN(€global_user_companies€) AND entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda)) AND cmp.stato != 'C'"
       }
     ]
   },
   "restrictions": {
     "preventNavigationToForm": false
+  },
+  "importQueries": {
+    "tableQueries": [
+      {
+        "label": "Importa attività",
+        "queryString": "select entrasp.import_consuntivazioni($codice_azienda$, $nome_file$, '€global_username€')"
+      }
+    ]
   }
 }
