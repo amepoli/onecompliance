@@ -167,40 +167,40 @@ export class AuthService {
       .signIn(this.username, this.password)
       .then((user) => {
         
-        // if (
-        //   user["ChallengeName"] === "SMS_MFA" ||
-        //   user["ChallengeName"] === "SOFTWARE_TOKEN_MFA"
-        // ) {
-        //   this.confirmUser = user;
-        //   this.awsService.setAuthState({
-        //     state: "confirmSignIn",
-        //     user: user,
-        //   });
-        // } else if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
-        //   this.awsService.setAuthState({
-        //     state: "requireNewPassword",
-        //     user: user,
-        //   });
-        //   this.awsService
-        //     .api()
-        //     .get("gorico", "test", {
-        //       queryStringParameters: {},
-        //       headers: null,
-        //     });
-        // } else {
-        //   this.awsService.setAuthState({
-        //     state: "signedIn",
-        //     user: user,
-        //   });
-        //   this.isSignedIn = true;
-        //   // now get user and related menu info from backend
+        if (
+          user["ChallengeName"] === "SMS_MFA" ||
+          user["ChallengeName"] === "SOFTWARE_TOKEN_MFA"
+        ) {
+          this.confirmUser = user;
+          this.awsService.setAuthState({
+            state: "confirmSignIn",
+            user: user,
+          });
+        } else if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
+          this.awsService.setAuthState({
+            state: "requireNewPassword",
+            user: user,
+          });
+          this.awsService
+            .api()
+            .get("gorico", "test", {
+              queryStringParameters: {},
+              headers: null,
+            });
+        } else {
+          this.awsService.setAuthState({
+            state: "signedIn",
+            user: user,
+          });
+          this.isSignedIn = true;
+          // now get user and related menu info from backend
         if(user)
         {
           this.isSignedIn = true;
           this.retrieveUserInfo();
         }
         
-        // }
+        }
       })
       .catch((err) => {
         this._setError(err);
@@ -227,16 +227,10 @@ export class AuthService {
     this.signOutGoogle();
   }
 
-  public signUp(): void {
-    this.awsService
-      .auth()
-      .signUp(this.username, this.password, this.email)
-      .then((user) =>
-        console.log(user)
-      )
-      .catch((err) => {
-        this._setError(err);
-      });
+  public signUp() {
+    return this.awsService
+    .auth()
+    .signUp(this.username, this.password, this.email);
   }
 
   public confirmSignUp(code: string): void {

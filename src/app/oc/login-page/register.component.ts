@@ -126,7 +126,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
         this.registering = true;
         // Show loading Alert
         this._dialogService.showLoadingDialog("Signing up", "Please wait...");
-        this.authService.signUp();
+        this.authService.signUp()
+        .then((user) =>
+          console.log(user)
+        )
+        .catch((err) => {
+        //   this._setError(err);
+        });;
     }
 }
 
