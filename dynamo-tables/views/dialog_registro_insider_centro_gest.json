@@ -4,9 +4,19 @@
   "origin": "entrasp.registro_insider",
   "predefinedQueries": [
     {
+      "operation": "update",
+      "type": "main",
+      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, null::varchar,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ ON CONFLICT DO NOTHING RETURNING 1;"
+    },
+    {
       "operation": "insert",
       "type": "main",
-      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, null::varchar,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ RETURNING 1;"
+      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, null::varchar,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ ON CONFLICT DO NOTHING RETURNING 1;"
+    },
+    {
+      "operation": "isInsert",
+      "queryString": "select $codice_part$ is null as label;",
+      "type": "main"
     }
   ],
   "form_keys": [
@@ -52,7 +62,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT id_gruppo_lavoro AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+        "comboQuery": "SELECT id_gruppo_lavoro AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' ORDER BY id_centro_gest ASC;",
         "options": [],
         "viewType": "combobox"
       },
