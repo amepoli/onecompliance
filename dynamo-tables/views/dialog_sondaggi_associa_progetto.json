@@ -1,0 +1,80 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_sondaggi_associa_progetto",
+  "origin": "entrasp.sondaggi",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "main",
+      "queryString": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto_ass$, $id_sondaggio$,  entrasp.evaluate_given_field_null('id_fase_parent', '$id_fase_parent$'));"
+    },
+    {
+      "operation": "insert",
+      "type": "main",
+      "queryString": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto_ass$, $id_sondaggio$,  entrasp.evaluate_given_field_null('id_fase_parent', '$id_fase_parent$'))"
+    },
+    {
+      "operation": "isInsert",
+      "queryString": "select $codice_azienda$ is null as label;",
+      "type": "main"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "newLine": false,
+      "readOnly": true,
+      "label": "id_sondaggio"
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where pf.codice_azienda=$codice_azienda$ union select id_progetto from entrasp.progetti prg2 where prg2.codice_azienda=$codice_azienda$) and prg.codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_progetto_ass",
+      "label": "Progetto",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select id_fase as id, titolo as name from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=£id_progetto_ass£;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_fase_parent",
+      "label": "Fase (opzionale)",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false
+    }
+  ]
+}
