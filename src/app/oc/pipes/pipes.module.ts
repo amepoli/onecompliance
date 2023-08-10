@@ -1,14 +1,18 @@
 import { NgModule } from '@angular/core';
-
+import { TranslatePipe } from '@ngx-translate/core';
+import { OCTranslatePipe } from './octranslate.pipe';
 import { OneCompliancePipe } from './onecompliance.pipe';
 
 @NgModule({
     declarations: [
-        OneCompliancePipe
+        OneCompliancePipe,
+        OCTranslatePipe
     ],
-    imports     : [],
+    imports     : [
+    ],
     exports     : [
-        OneCompliancePipe
+        OneCompliancePipe,
+        OCTranslatePipe
     ]
 })
 export class OneCompliancePipesModule
