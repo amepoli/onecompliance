@@ -49,7 +49,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where pf.codice_azienda=$codice_azienda$ union select id_progetto from entrasp.progetti prg2 where prg2.codice_azienda=$codice_azienda$) and prg.codice_azienda=$codice_azienda$;",
+        "comboQuery": "SELECT distinct prg.id_progetto AS id,CONCAT (prg.id_progetto, ' - ', prg.titolo) AS name FROM entrasp.progetti prg INNER JOIN entrasp.progetti_fasi pf USING (codice_azienda,id_progetto) LEFT JOIN entrasp.sondaggi snd ON pf.codice_azienda=snd.codice_azienda AND pf.id_sondaggio=snd.id_sondaggio WHERE prg.id_progetto IN (SELECT pf.id_progetto FROM entrasp.progetti_fasi pf INNER JOIN entrasp.sondaggi s ON pf.codice_azienda=s.codice_azienda AND pf.id_sondaggio=s.id_sondaggio WHERE s.id_centro_gest in (select id_centro_gest from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$) AND pf.codice_azienda=$codice_azienda$ UNION SELECT id_progetto FROM entrasp.progetti prg2 WHERE prg2.codice_azienda=$codice_azienda$ AND prg2.id_centro_gest in (select id_centro_gest from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$))AND prg.codice_azienda=$codice_azienda$ order by prg.id_progetto asc;",
         "options": [],
         "viewType": "combobox"
       },
