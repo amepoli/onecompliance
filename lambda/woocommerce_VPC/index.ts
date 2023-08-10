@@ -136,8 +136,8 @@ exports.handler = async () => {
                     mt.id_modello_test,
                     mtvr.id_modello_test_vr,
                     mt.titolo AS name,
-                    concat_ws('.',mt.id_modello_test,mtvr.id_modello_test_vr,mt.codice) AS sku,
-                    concat_ws('.',mt.id_modello_test,mtvr.id_modello_test_vr,mt.codice) AS partnersku,
+                    mt.id_modello_test AS sku,
+                    mt.id_modello_test AS partnersku,
                     mt.descrizione AS description,
                     mt.titolo AS shortdescription,
                     mt.descrizione AS descriptionit,
@@ -148,7 +148,12 @@ exports.handler = async () => {
                     '49.99' AS price,
                     NULL AS downloads,
                     '-1' AS downloadlimit,
-                    '-1' AS downloadexpiry
+                    '-1' AS downloadexpiry,
+                                        (select array_agg(entrasp.argomenti_descr_breve_no_id(id_argomento_father)::varchar)
+                                        from entrasp.argomenti_argomenti 
+                                        where id_argomento_son=mt.id_argomento 
+                                        and id_argomento_father in (select entrasp.descendants_of_argomento(349, 1) union select entrasp.descendants_of_argomento(133, 1))) as tags,
+                    true as published										
                 FROM entrasp.modelli_test mt
                 INNER JOIN entrasp.modelli_test_vr mtvr
                     ON mt.codice_azienda=mtvr.codice_azienda
@@ -195,12 +200,12 @@ exports.handler = async () => {
 
             var s3ParamsInsert = {
                 Bucket: process.env.BUCKET_NAME,
-                Key: 'test/' + filename+ '.xlsx',
+                Key: 'test/' + filename + '.xlsx',
                 Body: excelFile
             };
             var s3ParamsUrl = {
                 Bucket: process.env.BUCKET_NAME,
-                Key: 'test/' + filename+ '.xlsx'
+                Key: 'test/' + filename + '.xlsx'
             };
 
             // upload to S3
@@ -208,7 +213,7 @@ exports.handler = async () => {
 
             // get the uploaded file url
             let excel_url = s3.getSignedUrl('getObject', s3ParamsUrl);
-            
+
             //generate pdf_url
 
             let payload = {
@@ -225,9 +230,9 @@ exports.handler = async () => {
             let response: any = await lambda.invoke({
                 FunctionName: 'arn:aws:lambda:eu-central-1:360720986746:function:reports_prod',
                 Payload: JSON.stringify(payload)
-            }).promise(); 
+            }).promise();
 
-            let pdf_url = JSON.parse(JSON.parse(response.Payload).body).url; 
+            let pdf_url = JSON.parse(JSON.parse(response.Payload).body).url;
 
             //push the check list
             bodyResponse.response.push({
@@ -244,23 +249,25 @@ exports.handler = async () => {
                 stock: queryResult.rows[row].stock,
                 price: queryResult.rows[row].price,
                 downloads: [{
-                    id: filename+ '.xlsx',
-                    name: filename+ '.xlsx',
+                    id: filename + '.xlsx',
+                    name: filename + '.xlsx',
                     file: excel_url
                 },
                 {
-                    id: filename+ '.pdf',
-                    name: filename+ '.pdf',
+                    id: filename + '.pdf',
+                    name: filename + '.pdf',
                     file: pdf_url
                 }],
                 downloadLimit: queryResult.rows[row].downloadlimit,
-                downloadExpiry: queryResult.rows[row].downloadexpiry
+                downloadExpiry: queryResult.rows[row].downloadexpiry,
+                tags: queryResult.rows[row].tags,
+                published: queryResult.rows[row].published
             });
 
         };
     }
 
-    // console.log('bodyResponse: ', JSON.stringify(bodyResponse));
+    console.log('bodyResponse: ', JSON.stringify(bodyResponse));
 
     return {
         isBase64Encoded: false,
