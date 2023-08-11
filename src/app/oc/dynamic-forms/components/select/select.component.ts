@@ -5,7 +5,7 @@ import { FieldConfig } from 'app/oc/interfaces';
   selector: "app-select",
   template: `
 <mat-form-field class="demo-full-width margin-top" [formGroup]="group">
-<mat-select [placeholder]="field.label" [formControlName]="field.name" [matTooltip]="field.tooltip">
+<mat-select [placeholder]="field | octranslate" [formControlName]="field.name" [matTooltip]="field.tooltip">
 <mat-option *ngFor="let item of field.options" [value]="item">{{item}}</mat-option>
 </mat-select>
 </mat-form-field>

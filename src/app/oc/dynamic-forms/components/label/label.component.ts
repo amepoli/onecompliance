@@ -6,7 +6,7 @@ import { FieldConfig } from 'app/oc/interfaces';
   template: `
   <div *ngIf="field.isVisible != false" [ngStyle]="{ 'background-color': field.style.background_color? field.style.background_color: 'transparent', 'border-radius':'4px', 'padding': '8px', 'margin-bottom': '1.34375em', 'margin-top': '1.34375em', 'width': '100%'}" appearance="outline" [formGroup]="group">
     <mat-label [ngStyle]="{ 'color': field.style.font_color? field.style.font_color: 'black' , 'font-size': field.style.font_size? field.style.font_size: '1em', 'font-style': field.style.font_style? field.style.font_style: 'normal', 'font-weight': field.style.font_weight? field.style.font_weight: 'normal'}" [matTooltip]="field.tooltip">
-      {{field.label}}
+      {{field | octranslate}}
     </mat-label>
   </div>
   `,
