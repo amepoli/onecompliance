@@ -1,11 +1,16 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { FieldConfig } from 'app/oc/interfaces';
 import { ConsoleLoggerService, DialogService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
 import { TimezoneService } from 'app/oc/services/timezone.service';
 import * as moment from 'moment';
 import { Moment } from 'moment';
 import { Subscription } from 'rxjs';
+
+import { locale as english } from 'app/oc/i18n/en';
+import { locale as italian } from 'app/oc/i18n/it';
+
 @Component({
   selector: 'app-input',
   templateUrl: './input.component.html',
@@ -32,7 +37,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private timezoneService: TimezoneService,
               private pubSubService: PubSubService,
               private _console: ConsoleLoggerService,
-              private _dialogService: DialogService) { }
+              private _dialogService: DialogService,
+              private _fuseTranslationLoaderService: FuseTranslationLoaderService) { }
   ngOnInit(): void {
     const _this = this;
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
@@ -44,6 +50,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: value, type: 'change' });
       });
     }
+
+    _this._fuseTranslationLoaderService.loadTranslations(english, italian);
 
     // When we create an input component, we are running it's blur event
     // Commenting this event for testing
