@@ -3,7 +3,9 @@ export const locale = {
     data: {
         'RESOURCES': {
             'Utente': 'User',
-            'hello': 'Hello'
+            'hello': 'Hello',
+            'office': 'Office',
+            'creation_date': 'Creation date'
         }
     }
 };
