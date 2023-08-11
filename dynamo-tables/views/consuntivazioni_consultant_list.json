@@ -38,7 +38,7 @@
     {
       "operation": "insert",
       "type": "preCheck",
-      "queryString": "select 1 where '£date_time_begin£'>now()",
+      "queryString": "select 1 where entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp>now()",
       "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
     },
     {
@@ -50,7 +50,7 @@
     {
       "operation": "update",
       "type": "preCheck",
-      "queryString": "select 1 where '£date_time_begin£'>now()",
+      "queryString": "select 1 where entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp>now()",
       "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
     },
     {
@@ -296,7 +296,7 @@
         {
           "eventName": "date_time_begin_edit",
           "actionType": "query",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
+          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp with time zone, entrasp.evaluate_given_field_date_null('date_time_end','£date_time_end£', '£')::timestamp with time zone);",
           "outputEventWhenComplete": "reload_durata",
           "condition": "none",
           "values": []
@@ -304,14 +304,14 @@
         {
           "eventName": "date_time_end_edit",
           "actionType": "query",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
+          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp with time zone, entrasp.evaluate_given_field_date_null('date_time_end','£date_time_end£', '£')::timestamp with time zone);",
           "outputEventWhenComplete": "reload_durata",
           "condition": "none",
           "values": []
         }
       ],
       "newLine": false,
-      "size": 1.8
+      "size": 1.67
     },
     {
       "autoGenerate": false,
@@ -329,7 +329,7 @@
         "eventName": "date_time_end_edit",
         "eventTrigger": "change"
       },
-      "size": 1.8
+      "size": 1.6
     },
     {
       "autoGenerate": false,
@@ -355,13 +355,13 @@
           "eventName": "onLoadConsuntivazione",
           "actionType": "query",
           "outputEventWhenComplete": "reload_durata",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
+          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp with time zone, entrasp.evaluate_given_field_date_null('date_time_end','£date_time_end£', '£')::timestamp with time zone);",
           "condition": "none",
           "values": []
         }
       ],
       "newLine": false,
-      "readOnly": false
+      "readOnly": true
     },
     {
       "autoGenerate": false,

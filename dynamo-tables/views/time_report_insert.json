@@ -96,7 +96,7 @@
       },
       "isHidden": false,
       "isPrimary": true,
-      "size": 1.67,
+      "size": 1,
       "key": "id_cons",
       "label": "#",
       "newLine": false,
@@ -144,7 +144,7 @@
       "style": {
         "font_weight": "500"
       },
-      "size": 1.66,
+      "size": 1.6,
       "readOnly": false,
       "outputEvent": {
         "eventName": "cambia_data_intervento",
@@ -173,20 +173,20 @@
       "key": "codice_azienda_s",
       "label": "Azienda",
       "newLine": false,
-      "readOnly": true,
-      "size": 3.33,
+      "readOnly": false,
+      "size": 2.5,
       "queryFunct": "INITCAP(codice_azienda)"
     },
     {
       "autoGenerate": false,
       "format": {
         "viewType": "combobox",
-        "comboQuery": "select codice_compito as id, codice_compito||'-'||titolo as name from entrasp.compiti where codice_azienda=$codice_azienda$ and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, codice_compito, codice_azienda)",
+        "comboQuery": "select codice_compito as id, codice_compito||'-'||titolo as name from entrasp.compiti where codice_azienda='£codice_azienda£' and entrasp.compito_belongs_user((€global_id_anagrafiche€)::text, codice_compito, '£codice_azienda£')",
         "options": [],
         "dataType": "text",
         "validations": [
 					{
-						"message": "Indicare il centro gestionale!",
+						"message": "Indicare il compito!",
 						"name": "required",
 						"validator": "Validators.required"
 					}
@@ -196,9 +196,9 @@
       "isPrimary": false,
       "key": "codice_compito",
       "label": "Compito/ Task",
-      "newLine": true,
+      "newLine": false,
       "readOnly": false,
-      "size": 3.33
+      "size": 3
     },
     {
       "autoGenerate": false,
@@ -222,7 +222,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "size": 1.67,
+      "size": 1.3,
       "key": "durata",
       "label": "Durata (minuti)",
       "outputEvent": {
@@ -248,83 +248,13 @@
           "eventName": "onLoadConsuntivazione",
           "actionType": "query",
           "outputEventWhenComplete": "reload_durata",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
+          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp with time zone, entrasp.evaluate_given_field_date_null('date_time_end','£date_time_end£', '£')::timestamp with time zone);",
           "condition": "none",
           "values": []
         }
       ],
-      "newLine": false,
+      "newLine": true,
       "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "datetime",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "date_time_begin",
-      "label": "Inizio",
-      "readOnly": false,
-      "outputEvent": {
-        "eventName": "date_time_begin_edit",
-        "eventTrigger": "change"
-      },
-      "inputEvents": [
-        {
-          "eventName": "date_time_begin_edit",
-          "actionType": "query",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
-          "outputEventWhenComplete": "reload_durata",
-          "condition": "none",
-          "values": []
-        },
-        {
-          "eventName": "date_time_end_edit",
-          "actionType": "query",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
-          "outputEventWhenComplete": "reload_durata",
-          "condition": "none",
-          "values": []
-        }
-      ],
-      "newLine": false,
-      "size": 1.8
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "datetime",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "date_time_end",
-      "label": "Fine",
-      "readOnly": false,
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "date_time_end_edit",
-        "eventTrigger": "change"
-      },
-      "inputEvents": [
-        {
-          "eventName": "durata_change",
-          "queryFunct": "select ('£date_time_begin£'::timestamp+£durata£* interval '1 minutes') as date_time_end",
-          "actionType": "query",
-          "condition": "none",
-          "values": []
-        },
-        {
-          "eventName": "date_time_begin_edit",
-          "queryFunct": "select ('£date_time_begin£'::timestamp+£durata£* interval '1 minutes') as date_time_end",
-          "actionType": "query",
-          "condition": "none",
-          "values": []
-        }     
-      ],
-      "size": 1.8
     },
     {
       "autoGenerate": false,
@@ -1227,7 +1157,7 @@
       "attributeFuncts": [
         {
           "attributeType": "isHidden",
-          "queryString": "select case when entrasp.evaluate_given_field_null('£km_percorsi£', '£km_percorsi£') is null then true else false end as label"
+          "queryString": "select case when entrasp.evaluate_given_field_null('km_percorsi', '£km_percorsi£', '£') is null then true else false end as label"
         }
       ],
       "inputEvents": [
