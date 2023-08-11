@@ -8,9 +8,16 @@ fi
 
 if [ $# = "gorico_prod" ]
   then
+    ssh-keygen -f "/home/davide/.ssh/known_hosts" -R "[vm-prod.alacritas.eu]:5222"
+    sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@vm-prod.alacritas.eu <<EOF
+exit
+EOF
     HOSTNAME="vm-prod.alacritas.eu"
 else
-    #HOSTNAME="vm-dev.alacritas.eu"
+    ssh-keygen -f "/home/davide/.ssh/known_hosts" -R "[vm-dev.alacritas.eu]:5222"
+    sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@vm-dev.alacritas.eu <<EOF
+exit
+EOF
     HOSTNAME="vm-dev.alacritas.eu"
 fi
 
