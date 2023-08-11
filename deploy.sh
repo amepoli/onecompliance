@@ -17,10 +17,6 @@ cp src/aws-exports.js src/aws-exports.ts
 #remove previous buils
 rm -rf dist/*
 
-#re-deploy lambdas
-cd lambda 
-./deploy_lambdas.sh $1_prod
-
 #re-deploy dynamo-tables
 cd ../dynamo-tables
 ./deploy_tables.sh $1_prod
