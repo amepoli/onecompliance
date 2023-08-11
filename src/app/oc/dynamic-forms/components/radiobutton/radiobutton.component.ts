@@ -7,7 +7,7 @@ import { ConsoleLoggerService, PubSubService } from "app/oc/services";
   selector: "app-radiobutton",
   template: `
 <div [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
-<label class="radio-label-padding">{{field.label}}:</label>
+<label class="radio-label-padding">{{field | octranslate}}:</label>
 <mat-radio-group [formControlName]="field.name" [ngStyle]="{'display': 'flex', 'flex-direction': 'column', 'align-items': 'flex-start'}" [(ngModel)]="chosenItem" [matTooltip]="field.tooltip">
   <mat-radio-button #button color="primary" *ngFor="let item of field.options" [value]="item" [disabled]="field.readonly || readOnlyPage" 
   (change)="onCheck($event)" 

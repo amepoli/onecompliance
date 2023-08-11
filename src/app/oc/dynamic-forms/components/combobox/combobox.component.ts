@@ -8,8 +8,8 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'combobox',
   template: `
 <mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline">
-<mat-label style="font-size: large;">{{field.label}}</mat-label>
-<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field.label" (selectionChange)="onSelection($event)" (openedChange)="openedChange($event)"
+<mat-label style="font-size: large;">{{field | octranslate}}</mat-label>
+<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field | octranslate" (selectionChange)="onSelection($event)" (openedChange)="openedChange($event)"
 [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
 <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'">
 <mat-icon ngxMatSelectSearchClear>clear</mat-icon>
