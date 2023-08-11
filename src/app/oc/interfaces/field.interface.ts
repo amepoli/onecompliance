@@ -60,6 +60,7 @@ export interface FieldInputEvent {
 export interface FieldConfig {
   table?: string;
   label?: string;
+  translate?: string;
   name?: string;
   tooltip?: string;
   index?: number;

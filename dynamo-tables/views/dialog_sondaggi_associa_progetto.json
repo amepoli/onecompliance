@@ -1,0 +1,80 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_sondaggi_associa_progetto",
+  "origin": "entrasp.sondaggi",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "main",
+      "queryString": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto_ass$, $id_sondaggio$,  entrasp.evaluate_given_field_null('id_fase_parent', '$id_fase_parent$'));"
+    },
+    {
+      "operation": "insert",
+      "type": "main",
+      "queryString": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto_ass$, $id_sondaggio$,  entrasp.evaluate_given_field_null('id_fase_parent', '$id_fase_parent$'))"
+    },
+    {
+      "operation": "isInsert",
+      "queryString": "select $codice_azienda$ is null as label;",
+      "type": "main"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_sondaggio",
+      "newLine": false,
+      "readOnly": true,
+      "label": "id_sondaggio"
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT distinct prg.id_progetto AS id,CONCAT (prg.id_progetto, ' - ', prg.titolo) AS name FROM entrasp.progetti prg INNER JOIN entrasp.progetti_fasi pf USING (codice_azienda,id_progetto) LEFT JOIN entrasp.sondaggi snd ON pf.codice_azienda=snd.codice_azienda AND pf.id_sondaggio=snd.id_sondaggio WHERE prg.id_progetto IN (SELECT pf.id_progetto FROM entrasp.progetti_fasi pf INNER JOIN entrasp.sondaggi s ON pf.codice_azienda=s.codice_azienda AND pf.id_sondaggio=s.id_sondaggio WHERE s.id_centro_gest in (select id_centro_gest from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$) AND pf.codice_azienda=$codice_azienda$ UNION SELECT id_progetto FROM entrasp.progetti prg2 WHERE prg2.codice_azienda=$codice_azienda$ AND prg2.id_centro_gest in (select id_centro_gest from entrasp.sondaggi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$))AND prg.codice_azienda=$codice_azienda$ order by prg.id_progetto asc;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_progetto_ass",
+      "label": "Progetto",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select id_fase as id, titolo as name from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=£id_progetto_ass£;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_fase_parent",
+      "label": "Fase (opzionale)",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false
+    }
+  ]
+}

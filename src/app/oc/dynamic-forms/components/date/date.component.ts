@@ -5,7 +5,7 @@ import { FieldConfig } from 'app/oc/interfaces';
   selector: "app-date",
   template: `
 <mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" [formGroup]="group">
-<input matInput [matDatepicker]="picker" [formControlName]="field.name" [placeholder]="field.label" [readonly]="field.readonly || readOnlyPage" [matTooltip]="field.tooltip">
+<input matInput [matDatepicker]="picker" [formControlName]="field.name" [placeholder]="field | octranslate" [readonly]="field.readonly || readOnlyPage" [matTooltip]="field.tooltip">
 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 <mat-datepicker #picker></mat-datepicker>
 <mat-hint></mat-hint>

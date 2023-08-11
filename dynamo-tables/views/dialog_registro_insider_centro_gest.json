@@ -1,0 +1,78 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_registro_insider_centro_gest",
+  "origin": "entrasp.registro_insider",
+  "predefinedQueries": [
+    {
+      "operation": "update",
+      "type": "main",
+      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, null::varchar,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ ON CONFLICT DO NOTHING RETURNING 1;"
+    },
+    {
+      "operation": "insert",
+      "type": "main",
+      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, null::varchar,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ ON CONFLICT DO NOTHING RETURNING 1;"
+    },
+    {
+      "operation": "isInsert",
+      "queryString": "select $codice_part$ is null as label;",
+      "type": "main"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice_part",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "newLine": true,
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_registrazione",
+      "newLine": false,
+      "readOnly": true,
+      "label": "id_registrazione"
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT id_gruppo_lavoro AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' ORDER BY id_centro_gest ASC;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_gruppo_lavoro",
+      "label": "Centro Gestionale",
+      "newLine": false,
+      "readOnly": false,
+      "sameOrigin": false
+    }
+  ]
+}

@@ -707,6 +707,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             fieldValue = {
                 table: _this.formParams.entryName,
                 label: field.label,
+                translate: field.translate,
                 tooltip: field.tooltip,
                 name: field.key,
                 type: field.format.viewType,
