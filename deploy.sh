@@ -11,9 +11,6 @@ if [ ! -f ${1}_prod.json ]; then
     exit 0
 fi
 
-#copy amplify.js into amplify.ts just in case any api has been added
-cp src/aws-exports.js src/aws-exports.ts
-
 #remove previous buils
 rm -rf dist/*
 
