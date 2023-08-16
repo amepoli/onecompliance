@@ -18,13 +18,13 @@ cp src/aws-exports.js src/aws-exports.ts
 rm -rf dist/*
 
 #re-deploy dynamo-tables
-cd ../dynamo-tables
+cd dynamo-tables
 ./deploy_tables.sh $1_prod
 cd ..
 
 #compile application
 npm run build-prod
 #delete current distribution
-aws s3 rm s3://gorico2.cloud/$1 --recursive
+aws s3 rm s3://gorico2-cdk.cloud/$1 --recursive
 #upload files
-aws s3 cp ./dist s3://gorico2.cloud/$1 --recursive --acl public-read
+aws s3 cp ./dist s3://gorico2-cdk.cloud/$1 --recursive --acl public-read
