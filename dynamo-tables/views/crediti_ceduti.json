@@ -285,7 +285,7 @@
         "viewType": "input"
       },
       "label": "Tranche",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "tranche =$tranche_search_field$"
     },
     {
@@ -318,8 +318,19 @@
         "viewType": "combobox"
       },
       "label": "Contratto N.",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "id_contratto=$id_contratto_s$"
+    },
+    {
+      "fieldName": "id_tipo_doc_s",
+      "format": {
+        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Tipo documento",
+      "newLine": true,
+      "queryCond": "id_tipo_documento=$id_tipo_doc_s$"
     },
     {
       "fieldName": "flag_lav_legale",
@@ -591,7 +602,14 @@
         "viewType": "combobox",
         "value": "5342",
         "options": [],
-        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)"
+        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)",
+        "validations": [
+          {
+            "validator": "Validators.required",
+            "message": "Tipo documento richiesto",
+            "name": "required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -827,7 +845,7 @@
       "format": {
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=50664"
+        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=50664 and £id_tipo_documento£=5342"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -841,7 +859,7 @@
       "format": {
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=5342"
+        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=5342 and £id_tipo_documento£=50664"
       },
       "isHidden": false,
       "isPrimary": false,
