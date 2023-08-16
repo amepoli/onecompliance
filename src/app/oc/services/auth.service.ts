@@ -188,10 +188,12 @@ export class AuthService {
               headers: null,
             });
         } else {
-          this.awsService.setAuthState({
+          this.awsService.auth().loadSignInResponse(user);
+          /* this.awsService.setAuthState({
             state: "signedIn",
             user: user,
-          });
+            session: user.AuthenticationResult
+          }); */
           this.isSignedIn = true;
           // now get user and related menu info from backend
         if(user)

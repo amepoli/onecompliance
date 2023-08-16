@@ -423,7 +423,7 @@ class Auth {
         }
     }
 
-    private loadSignInResponse(result) {
+    public loadSignInResponse(result) {
         const _this = this;
         const accessTokenData = parseJwt(
             result.AuthenticationResult.AccessToken
@@ -628,7 +628,7 @@ class Api {
 
         // Check if refresh token and access token needs refresh
         await _this.awsService.auth().refreshToken();
-        console.log(_this.authStateChange$.value.session)
+        //console.log(_this.authStateChange$.value.session)
 
         // _this.awsService.auth().
         try {
@@ -643,7 +643,7 @@ class Api {
                                 Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
                                 "Content-Type": "text/plain",
                                 UserId: _this.authStateChange$.value.session
-                                    .sub,
+                                .sub,
                             },
                     params: request.queryStringParameters,
                 })
