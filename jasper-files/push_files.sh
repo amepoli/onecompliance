@@ -6,7 +6,7 @@ if [ $# -eq 0 ]
     exit 0
 fi
 
-if [ $# = "gorico_prod" ]
+if [ $1 == "gorico_prod" ]
   then
     ssh-keygen -f "/home/davide/.ssh/known_hosts" -R "[vm-prod.alacritas.eu]:5222"
     sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@vm-prod.alacritas.eu <<EOF
