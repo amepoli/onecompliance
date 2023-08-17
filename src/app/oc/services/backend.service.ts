@@ -579,7 +579,7 @@ export class BackendService {
   getSearchKeys(entryName: string, company: string, keys: any): Observable<any> {
     this.awsService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), isSearchKeyRequest: 1 };
-    return from(this.awsService.api().get(this.apiName, '/' + this.viewsApiName, this.myGetInit));
+    return from(this.awsService.api().get(this.apiName, this.viewsApiName, this.myGetInit));
   }
 
 }
