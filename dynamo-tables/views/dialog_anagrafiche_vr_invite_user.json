@@ -6,7 +6,7 @@
     {
       "operation": "selectForm",
       "type": "main",
-      "queryString": "SELECT '' as email_to, '' as associa_user, '' as email_text, 'OneCompliance is waiting for you to join the team' as email_subject, '' as email_cc, 'service@alacritas.eu' as email_sender, true as invia_mail, id_anagrafica, nome, cognome from entrasp.anagrafiche_id where codice_part=$codice_part$ and id_anagrafic=$id_anagrafica$;"
+      "queryString": "SELECT '' as email_to, '' as associa_user, '' as email_text, 'OneCompliance is waiting for you to join the team' as email_subject, email_sender as email_to,'' as email_cc, 'service@alacritas.eu' as email_sender, true as invia_mail, id_anagrafica, nome, cognome, codice_part from entrasp.anagrafiche_id where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$;"
     }
   ],
   "form_keys": [
@@ -16,12 +16,12 @@
         "dataType": "number",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "id_anagrafica",
       "label": "id_anagrafica",
       "readOnly": false,
-      "newLine": true
+      "newLine": false
     },
     {
       "autoGenerate": false,
@@ -29,12 +29,12 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": true,
       "key": "codice_part",
       "label": "codice part",
       "readOnly": false,
-      "newLine": true
+      "newLine": false
     },
     {
       "autoGenerate": false,
@@ -42,12 +42,12 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "nome",
       "label": "nome",
       "readOnly": false,
-      "newLine": true
+      "newLine": false
     },
     {
       "autoGenerate": false,
@@ -55,13 +55,57 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "isHidden": false,
+      "isHidden": true,
       "isPrimary": false,
       "key": "cognome",
       "label": "cognome",
       "readOnly": false,
-      "newLine": true,
-      "queryFunct": "SELECT cognome from entrasp.anagrafiche_id where codice_part=$codice_part$ and id_anagrafic=$id_anagrafica$;"
+      "newLine": false
+    },
+    
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "textarea",
+        "value": "Join the fucking team, asshole!"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "email_text",
+      "label": "Testo Email",
+      "newLine": false,
+      "readOnly": false,
+      "size": 0
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input",
+        "value": "OneCompliance is waiting for you to join the team"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "email_subject",
+      "label": "Oggetto email",
+      "newLine": false,
+      "readOnly": true,
+      "size": 0
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "email_cc",
+      "label": "email_cc",
+      "newLine": false,
+      "readOnly": false,
+      "size": 0
     },
     {
       "autoGenerate": false,
@@ -74,7 +118,8 @@
       "key": "email_to",
       "label": "Email",
       "readOnly": false,
-      "newLine": true
+      "newLine": true,
+      "size": 10
     },
     {
       "autoGenerate": false,
@@ -89,68 +134,8 @@
       "key": "associa_user",
       "label": "Associa BU come utente",
       "readOnly": false,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea",
-        "validations": [
-          {
-            "message": "Testo del messaggio obbligatorio!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "email_text",
-      "label": "Testo Email",
       "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "value": "OneCompliance is waiting for you to join the team"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "email_subject",
-      "label": "Oggetto email",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "email_cc",
-      "label": "email_cc",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "value": "service@alacritas.eu"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "email_sender",
-      "label": "email_sender",
-      "newLine": false,
-      "readOnly": false
+      "size": 10
     },
     {
       "autoGenerate": false,

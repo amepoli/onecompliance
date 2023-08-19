@@ -1264,94 +1264,31 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
                 else if (actionType === 'email' || actionType === 'create_user_and_email') {
 
-                    if(actionType === 'create_user_and_email') {
-                        ///TODO:
-                        //Perform create user here
-                    }
-
                     let formValues = _this.formArray.first.form.value;
-                    let emailActionParameters: EmailActionParameters = event.message.actionOnYes.emailActionParameters;
+                    
+                    
+                    if(actionType === 'create_user_and_email') {
+                        const username = formValues['email_to'];
+                        const email = username;
+                        const password = HelperService.generatePassword(8);
 
-                    // process the booleans (1/0 instead of true/false)
-                    for (const value in formValues) {
-                        if (formValues.hasOwnProperty(value)) {
-                            const element = formValues[value];
-                            if (element == null) {
-                                continue; // skip null entries
-                            }
-                            // decode combos
-                            if (element['id'] != null) {
-                                formValues[value] = element['id'];
-                            }
-                            // encode boolean
-                            else if (element === true) {
-                                formValues[value] = '1';
-                            }
-                            else if (element === false) {
-                                formValues[value] = '0';
-                            }
-                        }
+                       _this.authService.setUsername(username);
+                       _this.authService.setPassword(password);
+                       _this.authService.setEmail(email);
+                       _this.authService.signUp()
+                       .then((user) => {
+                         console.log(user);
+                         _this.performSendEmail(event, formValues, value);
+                    
+                        })
+                       .catch((err) => {
+                        _this._toastService.showErrorToast(err);
+                        //  this._setError(err);
+                       });                       
                     }
-
-                    let subject = 'OneCompliance';
-                    if (emailActionParameters.subjectKeys && emailActionParameters.subjectKeys.length) {
-                        subject = emailActionParameters.subjectKeys.map(key => formValues[key]).join(' ');
+                    else {
+                        _this.performSendEmail(event, formValues, value);
                     }
-                    if (emailActionParameters.subject && emailActionParameters.subject.length) {
-                        subject = emailActionParameters.subject;
-                    }
-
-                    let sender = null;
-                    if (emailActionParameters.senderKey && emailActionParameters.senderKey.length) {
-                        sender = formValues[emailActionParameters.senderKey];
-                    }
-                    if (emailActionParameters.sender && emailActionParameters.sender.length) {
-                        sender = emailActionParameters.sender;
-                    }
-
-                    let recipients = null;
-                    if (emailActionParameters.recipientKeys && emailActionParameters.recipientKeys.length) {
-                        recipients = emailActionParameters.recipientKeys.map(key => formValues[key]).join(',');
-                    }
-                    if (emailActionParameters.recipientList && emailActionParameters.recipientList.length) {
-                        recipients = emailActionParameters.recipientList.join(',');
-                    }
-                    let cc = null;
-                    if (emailActionParameters.ccKeys && emailActionParameters.ccKeys.length) {
-                        cc = emailActionParameters.ccKeys.map(key => formValues[key]).join(',');
-                    }
-                    if (emailActionParameters.ccList && emailActionParameters.ccList.length) {
-                        cc = emailActionParameters.ccList.join(',');
-                    }
-                    let ccn = null;
-                    if (emailActionParameters.ccnKeys && emailActionParameters.ccnKeys.length) {
-                        ccn = emailActionParameters.ccnKeys.map(key => formValues[key]).join(',');
-                    }
-                    if (emailActionParameters.ccnList && emailActionParameters.ccnList.length) {
-                        ccn = emailActionParameters.ccnList.join(',');
-                    }
-                    let body = null;
-                    if (emailActionParameters.bodyKeys && emailActionParameters.bodyKeys.length) {
-                        body = emailActionParameters.bodyKeys.filter(key => formValues[key.key] && formValues[key.key].length).map(key => `${key.label}${formValues[key.key]}`).join('\n');
-                    }
-                    if (emailActionParameters.body && emailActionParameters.body.length) {
-                        body = emailActionParameters.body;
-                    }
-
-                    _this.sendEmail(
-                        {
-                            subject: subject,
-                            header: body,
-                            footer: null,
-                            company: _this.authService.getCurrentCompany(_this.currentKeys),
-                            sender: sender,
-                            to: recipients,
-                            cc: cc,
-                            ccn: ccn
-                        },
-                        emailActionParameters.outputEventWhenComplete,
-                        value
-                    );
                     // _this._console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
                 }
@@ -1451,6 +1388,93 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             });
         }
+    }
+
+    private performSendEmail(event: any, formValues: any, value: any) {
+        let _this = this;
+        let emailActionParameters: EmailActionParameters = event.message.actionOnYes.emailActionParameters;
+
+        // process the booleans (1/0 instead of true/false)
+        for (const value in formValues) {
+            if (formValues.hasOwnProperty(value)) {
+                const element = formValues[value];
+                if (element == null) {
+                    continue; // skip null entries
+                }
+                // decode combos
+                if (element['id'] != null) {
+                    formValues[value] = element['id'];
+                }
+
+                // encode boolean
+                else if (element === true) {
+                    formValues[value] = '1';
+                }
+                else if (element === false) {
+                    formValues[value] = '0';
+                }
+            }
+        }
+
+        let subject = 'OneCompliance';
+        if (emailActionParameters.subjectKeys && emailActionParameters.subjectKeys.length) {
+            subject = emailActionParameters.subjectKeys.map(key => formValues[key]).join(' ');
+        }
+        if (emailActionParameters.subject && emailActionParameters.subject.length) {
+            subject = emailActionParameters.subject;
+        }
+
+        let sender = null;
+        if (emailActionParameters.senderKey && emailActionParameters.senderKey.length) {
+            sender = formValues[emailActionParameters.senderKey];
+        }
+        if (emailActionParameters.sender && emailActionParameters.sender.length) {
+            sender = emailActionParameters.sender;
+        }
+
+        let recipients = null;
+        if (emailActionParameters.recipientKeys && emailActionParameters.recipientKeys.length) {
+            recipients = emailActionParameters.recipientKeys.map(key => formValues[key]).join(',');
+        }
+        if (emailActionParameters.recipientList && emailActionParameters.recipientList.length) {
+            recipients = emailActionParameters.recipientList.join(',');
+        }
+        let cc = null;
+        if (emailActionParameters.ccKeys && emailActionParameters.ccKeys.length) {
+            cc = emailActionParameters.ccKeys.map(key => formValues[key]).join(',');
+        }
+        if (emailActionParameters.ccList && emailActionParameters.ccList.length) {
+            cc = emailActionParameters.ccList.join(',');
+        }
+        let ccn = null;
+        if (emailActionParameters.ccnKeys && emailActionParameters.ccnKeys.length) {
+            ccn = emailActionParameters.ccnKeys.map(key => formValues[key]).join(',');
+        }
+        if (emailActionParameters.ccnList && emailActionParameters.ccnList.length) {
+            ccn = emailActionParameters.ccnList.join(',');
+        }
+        let body = null;
+        if (emailActionParameters.bodyKeys && emailActionParameters.bodyKeys.length) {
+            body = emailActionParameters.bodyKeys.filter(key => formValues[key.key] && formValues[key.key].length).map(key => `${key.label}${formValues[key.key]}`).join('\n');
+        }
+        if (emailActionParameters.body && emailActionParameters.body.length) {
+            body = emailActionParameters.body;
+        }
+
+        _this.sendEmail(
+            {
+                subject: subject,
+                header: body,
+                footer: null,
+                company: _this.authService.getCurrentCompany(_this.currentKeys),
+                sender: sender,
+                to: recipients,
+                cc: cc,
+                ccn: ccn
+            },
+            emailActionParameters.outputEventWhenComplete,
+            value
+        );
     }
 
     async runGoogleEvent(event, value, keyListener) {

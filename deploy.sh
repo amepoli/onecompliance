@@ -11,24 +11,17 @@ if [ ! -f ${1}_prod.json ]; then
     exit 0
 fi
 
-#copy amplify.js into amplify.ts just in case any api has been added
-cp src/aws-exports.js src/aws-exports.ts
-
 #remove previous buils
 rm -rf dist/*
 
-#re-deploy lambdas
-cd lambda 
-./deploy_lambdas.sh $1_prod
-
 #re-deploy dynamo-tables
-cd ../dynamo-tables
+cd dynamo-tables
 ./deploy_tables.sh $1_prod
 cd ..
 
 #compile application
 npm run build-prod
 #delete current distribution
-aws s3 rm s3://gorico2.cloud/$1 --recursive
+aws s3 rm s3://gorico2-cdk.cloud/$1 --recursive
 #upload files
-aws s3 cp ./dist s3://gorico2.cloud/$1 --recursive --acl public-read
+aws s3 cp ./dist s3://gorico2-cdk.cloud/$1 --recursive --acl public-read

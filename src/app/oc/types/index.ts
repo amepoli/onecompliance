@@ -10,3 +10,4 @@ export * from './tab_event_action_type.type';
 export * from './tab_condition_type.type';
 export * from './view_type.type';
 export * from './form_widget_type.type';
+export * from './auth_state_type.type';

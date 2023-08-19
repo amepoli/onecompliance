@@ -156,8 +156,8 @@
                         "icon": "calculate",
                         "label": "Ricalcola tutti i presidi",
                         "outputEventName": "ricalcolo_presidi"
-                      },
-                      {
+                    },
+                    {
                         "icon": "calculate",
                         "label": "Ricalcola singolo presidio",
                         "outputEventName": "ricalcolo_singolo_presidio"
@@ -185,15 +185,15 @@
                     "successMessage": "Done!",
                     "values": [],
                     "queryFunct": "select entrasp.presidi_valutazione(codice_azienda, id_presidio) from entrasp.presidi where codice_azienda=$codice_azienda$;"
-                  },
-                  {
+                },
+                {
                     "eventName": "ricalcolo_singolo_presidio",
                     "actionType": "query",
                     "condition": "none",
                     "successMessage": "Done!",
                     "values": [],
                     "queryFunct": "select entrasp.presidi_valutazione($codice_azienda$, $id_presidio$);"
-                  }
+                }
             ],
             "isHidden": false,
             "isPrimary": false,
@@ -1041,7 +1041,15 @@
             },
             {
                 "label": "Presidi dettaglio",
-                "queryString": "select id_presidio,codice,descrizione_breve,descrizione,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as ufficio, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, entrasp.tipo_processo_descr(id_tipo_presidio, codice_azienda) as tipo, entrasp.argomenti_descr_breve(id_argomento_stato_automazione) as automazione from entrasp.presidi where codice_azienda=$codice_azienda$ order by id_presidio"
+                "queryString": "select id_presidio,codice,descrizione_breve,descrizione,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as ufficio, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) as stato_attuazione, entrasp.tipo_processo_descr(id_tipo_presidio, codice_azienda) as tipo, entrasp.argomenti_descr_breve_no_id(id_argomento_stato_automazione) as automazione, note from entrasp.presidi where codice_azienda=$codice_azienda$ order by id_presidio"
+            }
+        ]
+    },
+    "importQueries": {
+        "tableQueries": [
+            {
+                "label": "Aggiorna presidi",
+                "queryString": "select entrasp.import_presidi_update($codice_azienda$, $nome_file$, '€global_username€')"
             }
         ]
     },
