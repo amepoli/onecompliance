@@ -1386,6 +1386,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     ...event,
                     keys: _this.currentKeys    
                 }
+            })
+            
+            const dialogRefSub = dialogRef.afterClosed()
+            .subscribe((response: any) => {
+                dialogRefSub.unsubscribe();
+                if (event.outputEventWhenComplete != null) {
+                    _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                }
+            }, (error: any) => {
+                dialogRefSub.unsubscribe();
             });
         }
     }
