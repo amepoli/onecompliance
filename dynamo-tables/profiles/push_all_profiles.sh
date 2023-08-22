@@ -78,18 +78,29 @@ for ((i = 0; i < ${#files[@]}; i += n)); do
 done
 dynamo_files=(dynamo-input/*.json)
 
-for d in "${dynamo_files[@]}"; do
+if [ $1 == "gorico_prod" ] 
+    then
+    for d in "${dynamo_files[@]}"; do
 
-    while IFS= read -r name_value; do
-        aws lambda invoke \
-            --function-name ${LAMBDANAME} \
-            --cli-binary-format raw-in-base64-out \
-            --payload  '{ "Records": [ { "dynamodb": { "Keys": { "name": { "S": "'"$name_value"'"}}}}]}' \
-            result.json
-    done < <(jq -r '.profiles[].PutRequest.Item.name.S' "$d")
-    
-done
-
+        while IFS= read -r name_value; do
+            aws lambda invoke \
+                --function-name ${LAMBDANAME} \
+                --cli-binary-format raw-in-base64-out \
+                --payload  '{ "Records": [ { "dynamodb": { "Keys": { "name": { "S": "'"$name_value"'"}}}}]}' \
+                result.json
+        done < <(jq -r '.profiles_prod[].PutRequest.Item.name.S' "$d")
+    done
+else
+    for d in "${dynamo_files[@]}"; do
+        while IFS= read -r name_value; do
+            aws lambda invoke \
+                --function-name ${LAMBDANAME} \
+                --cli-binary-format raw-in-base64-out \
+                --payload  '{ "Records": [ { "dynamodb": { "Keys": { "name": { "S": "'"$name_value"'"}}}}]}' \
+                result.json
+        done < <(jq -r '.profiles[].PutRequest.Item.name.S' "$d")
+    done
+fi
 # # For aligning using S3 bucket
 # if [ $# -eq 2 ]
 #   then
