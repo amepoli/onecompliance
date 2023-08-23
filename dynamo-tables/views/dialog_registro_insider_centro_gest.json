@@ -6,12 +6,12 @@
     {
       "operation": "update",
       "type": "main",
-      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, null::varchar,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ ON CONFLICT DO NOTHING RETURNING 1;"
+      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, $note$,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ ON CONFLICT DO NOTHING RETURNING 1;"
     },
     {
       "operation": "insert",
       "type": "main",
-      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, null::varchar,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ ON CONFLICT DO NOTHING RETURNING 1;"
+      "queryString": "INSERT INTO entrasp.registro_insider_anagrafiche(codice_azienda, codice_part, id_registrazione, id_anagrafica, note, data_registrazione) SELECT $codice_azienda$,$codice_part$,$id_registrazione$,id_anagrafica, $note$,current_date from entrasp.gruppi_lavoro_membri where id_gruppo_lavoro=$id_gruppo_lavoro$ and codice_part=$codice_part$ ON CONFLICT DO NOTHING RETURNING 1;"
     },
     {
       "operation": "isInsert",
@@ -70,7 +70,21 @@
       "isPrimary": false,
       "key": "id_gruppo_lavoro",
       "label": "Centro Gestionale",
-      "newLine": false,
+      "newLine": true,
+      "readOnly": false,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+          "viewType": "input",
+          "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "label": "Note",
+      "newLine": true,
       "readOnly": false,
       "sameOrigin": false
     }
