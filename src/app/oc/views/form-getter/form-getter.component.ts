@@ -1270,7 +1270,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     if(actionType === 'create_user_and_email') {
                         const username = formValues['email_to'];
                         const email = username;
-                        const password = HelperService.generatePassword(8);
+                        const password = HelperService.generatePassword(9);
 
                        _this.authService.setUsername(username);
                        _this.authService.setPassword(password);

@@ -10,7 +10,7 @@ export class HelperService {
 
     // Event Emitter for naviate requests
     public static navigateRequested: EventEmitter<any> = new EventEmitter();
-    
+
     /**
      * Markers
      */
@@ -64,8 +64,8 @@ export class HelperService {
         // "2017-09-25T00:00:00.000Z"
         let date = new Date(dateTime);
         //We use dayCorrector to remove the timezone. We want brut date without any timezone
-        let dayCorrector = (date.getHours()>12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
-        date.setDate(date.getDate()+dayCorrector);
+        let dayCorrector = (date.getHours() > 12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
+        date.setDate(date.getDate() + dayCorrector);
         let dateFinal = `${date.getFullYear()}-${this.getTwoDigitText(date.getMonth() + 1)}-${this.getTwoDigitText(date.getDate())}T00:00:00.000Z`;
         return dateFinal;
 
@@ -85,8 +85,8 @@ export class HelperService {
         // "2017-09-25T00:00:00.000Z"
         let date = new Date(dateTime);
         //We use dayCorrector to remove the timezone. We want brut date without any timezone
-        let dayCorrector = (date.getHours()>12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
-        date.setDate(date.getDate()+dayCorrector);
+        let dayCorrector = (date.getHours() > 12) ? (1) : (0); //(date.getHours()<=12) ? (-1) : (0);
+        date.setDate(date.getDate() + dayCorrector);
         let dateFinal = `${date.getFullYear()}${this.getTwoDigitText(date.getMonth() + 1)}${this.getTwoDigitText(date.getDate())}`;
         return dateFinal;
 
@@ -102,7 +102,7 @@ export class HelperService {
      */
     public static getFormattedDateTime(dateTime: any, timezone: string = 'Z') {
         //Check the format and fix it is not Long Date time
-        if(dateTime.includes(',')) {
+        if (dateTime.includes(',')) {
             // This was manually added and so we need to format it
             const parts = dateTime.replace(' ', '').split(',');
             const dateParts = parts[0].split('/');
@@ -111,12 +111,12 @@ export class HelperService {
                 let dateTimeFinal = `${dateParts[2]}-${this.getTwoDigitText(parseInt(dateParts[1]))}-${this.getTwoDigitText(parseInt(dateParts[0]))}T${this.getTwoDigitText(parseInt(timeParts[0]))}:${this.getTwoDigitText(parseInt(timeParts[1]))}:${this.getTwoDigitText(parseInt(timeParts[2]))}.000${timezone}`;
                 return dateTimeFinal;
             }
-            catch(e) {
+            catch (e) {
                 console.log(e);
                 return null;
             }
 
-        } 
+        }
         else {
             // Example formatted date
             // "2017-09-25T00:00:00.000Z"
@@ -126,7 +126,7 @@ export class HelperService {
             // date.setDate(date.getDate()+dayCorrector);
             let dateTimeFinal = `${date.getFullYear()}-${this.getTwoDigitText(date.getMonth() + 1)}-${this.getTwoDigitText(date.getDate())}T${this.getTwoDigitText(date.getHours())}:${this.getTwoDigitText(date.getMinutes())}:${this.getTwoDigitText(date.getSeconds())}.000${timezone}`;
             return dateTimeFinal;
-    
+
             // Old method
             // let formattedDate = `${dateTime.getFullYear()}-${this.getTwoDigitText(dateTime.getMonth() + 1)}-${this.getTwoDigitText(dateTime.getDate())}T00:00:00.000Z`;
             // return formattedDate;
@@ -221,13 +221,13 @@ export class HelperService {
      */
     public static navigateTo(entry: string, type: string, keys: object) {
         let params = {
-            entry:{name: entry, type: type},
+            entry: { name: entry, type: type },
             index: 1,
             keys: [
                 keys
             ]
         };
-        
+
         this.navigateRequested.emit({ eventType: "navigate", queryParams: params });
     }
 
@@ -278,7 +278,7 @@ export class HelperService {
      */
     public static getValueInValueSet(valueSet: object, key: string) {
         const valueEl = valueSet[key];
-        if(isObject(valueEl)) {
+        if (isObject(valueEl)) {
             return valueEl['value'];
         }
         else {
@@ -293,14 +293,14 @@ export class HelperService {
     public static refreshApp() {
         return window.location.reload();
     }
-    
+
     /**
      * Add Short Date in File Name
      * @param fileName file name
      * @returns newFileNameWithDate
      */
-     public static addShortDateInFileName(fileName: string) {
-        if(fileName) {
+    public static addShortDateInFileName(fileName: string) {
+        if (fileName) {
             const fileNameParts = fileName.split('.');
             const ext = fileNameParts.pop();
             return `${fileNameParts.join('.')}_${this.getFormattedShortDate(new Date())}.ext`;
@@ -311,16 +311,27 @@ export class HelperService {
 
     public static generatePassword(pwLength: number = 8) {
         var pass = '';
-        var str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
-                'abcdefghijklmnopqrstuvwxyz0123456789@#$';
-         
-        for (let i = 1; i <= pwLength; i++) {
+        const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+        const numberChars = '0123456789';
+        const specialChars = '@$%!?&_';
+        const allChars = uppercaseChars + lowercaseChars + numberChars + specialChars;
+
+        pass += uppercaseChars.charAt(Math.floor(Math.random() * uppercaseChars.length));
+        pass += lowercaseChars.charAt(Math.floor(Math.random() * lowercaseChars.length));
+        pass += numberChars.charAt(Math.floor(Math.random() * numberChars.length));
+        pass += specialChars.charAt(Math.floor(Math.random() * specialChars.length));
+
+        for (let i = 5; i <= pwLength; i++) {
             var char = Math.floor(Math.random()
-                        * str.length + 1);
-             
-            pass += str.charAt(char)
+                * allChars.length + 1);
+
+            pass += allChars.charAt(char);
         }
-         
+
+        // Shuffle the password to randomize the positions of the required characters
+        pass = pass.split('').sort(() => Math.random() - 0.5).join('');
+
         return pass;
     }
 }
