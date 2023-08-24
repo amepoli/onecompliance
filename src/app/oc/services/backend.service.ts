@@ -28,6 +28,7 @@ export class BackendService {
   private regulatApiName = appData.lambdas.regulat.apiName;
   private regulatVPCApiName = appData.lambdas.regulat_VPC.apiName;
   private calendarApiName = appData.lambdas.calendar.apiName;
+  private cognitoDynamoUsersApiName = appData.lambdas.cognitoDynamoUsers.apiName; 
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -575,11 +576,17 @@ export class BackendService {
     this.myGetInit.queryStringParameters = { company: company };
     return from(this.awsService.api().get(this.apiName, this.calendarApiName, this.myGetInit));
   }
-  
+
   getSearchKeys(entryName: string, company: string, keys: any): Observable<any> {
     this.awsService.auth();
     this.myGetInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), isSearchKeyRequest: 1 };
     return from(this.awsService.api().get(this.apiName, this.viewsApiName, this.myGetInit));
+  }
+
+  setUserOnDynamo(username: string, company: string, associated_user: string, registry: string) {
+    this.awsService.auth();
+    this.myPutPostInit.queryStringParameters = { request_type: 'setUserOnDynamo', username: username, company: company, associated_user: associated_user, registry: registry };
+    return from(this.awsService.api().post(this.apiName, this.cognitoDynamoUsersApiName, this.myPutPostInit));
   }
 
 }

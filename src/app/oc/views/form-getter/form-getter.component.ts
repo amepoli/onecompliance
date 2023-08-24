@@ -1271,6 +1271,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         const username = formValues['email_to'];
                         const email = username;
                         const password = HelperService.generatePassword(9);
+                        const company = formValues['codice_azienda'];
+                        const associated_user = formValues['associa_user'];
+                        const registry = formValues['id_anagrafica'];
 
                        _this.authService.setUsername(username);
                        _this.authService.setPassword(password);
@@ -1279,6 +1282,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                        .then((user) => {
                          console.log(user);
                          _this.performSendEmail(event, formValues, value);
+
+                         _this.backendService.setUserOnDynamo(username,company,associated_user,registry);
                     
                         })
                        .catch((err) => {
