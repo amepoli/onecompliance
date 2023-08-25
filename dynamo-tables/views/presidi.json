@@ -838,25 +838,25 @@
         {
             "fieldName": "giudizio_mp_s",
             "format": {
-              "comboQuery": "select descrizione from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+              "comboQuery": "select soglia_a as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
               "options": [],
               "viewType": "combobox"
             },
-            "label": "Rischi (mp) superiore a",
+            "label": "Giudizio Rischi (moltipl. puro) superiore a",
             "newLine": false,
-            "queryCond": "select 1"
+            "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post > $giudizio_mp_s$ )"
           },
       
           {
             "fieldName": "giudizio_mt_s",
             "format": {
-              "comboQuery": "select descrizione from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+              "comboQuery": "select descrizione as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
               "options": [],
               "viewType": "combobox"
             },
-            "label": "Rischi (mt) superiore a",
+            "label": "Giudizio Rischi (moltipl. transcodificato) superiore a",
             "newLine": true,
-            "queryCond": "select 1"
+            "queryCond": "id_presidio in ("
           },
         {
             "fieldName": "flag_principali",
