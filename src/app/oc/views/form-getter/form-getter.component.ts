@@ -36,7 +36,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     @Output() onReload = new EventEmitter<any>();
 
     // Keys that are provided by external source and are passed to the values in onSave function
-    @Input () externalKeys: object = {};
+    @Input() externalKeys: object = {};
 
     @ViewChildren(DynamicFormComponent) formArray: QueryList<DynamicFormComponent>;
 
@@ -258,9 +258,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
     }
 
-    public showErrorToast(reason : any) {
+    public showErrorToast(reason: any) {
         this._toastService.showErrorToast(
-            "Error " ,
+            "Error ",
             reason.detail == undefined ? '' : JSON.stringify(reason.detail) + (reason.hint == undefined ? '' : JSON.stringify(reason.hint)),
             5000,
             true
@@ -270,7 +270,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     refreshView(reloadEvents: boolean = true) {
         const _this = this;
         _this.isLoading = true;
-        if(!_this.isDialog) {
+        if (!_this.isDialog) {
             _this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: null } }); // pass search keys to parent view 
         }
 
@@ -367,11 +367,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.formParams.keys);
                     _this.sendEvent.emit({ eventType: 'formData', queryParams: { label: params.label }, viewKeys: _this.currentKeys, tabKeys: params.subTables });
-                   if(!_this.isTabMode && !_this.isDialog)
-                   {
-                       _this.sendEvent.emit({ eventType: 'currentTableLabel', queryParams: { label: params.label } }); // pass current label to parent view 
-                   }
-                 
+                    if (!_this.isTabMode && !_this.isDialog) {
+                        _this.sendEvent.emit({ eventType: 'currentTableLabel', queryParams: { label: params.label } }); // pass current label to parent view 
+                    }
+
                     // handle input events
                     if (reloadEvents) {
                         if (params.inputEvents != null) {  // subscribe to global table events
@@ -379,7 +378,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 const event = params.inputEvents[i];
                                 const subcription = _this.pubSubService.subscribe(event.eventName,
                                     value => {
-                                        
+
                                         _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
                                     });
                                 _this.formSubscriptions.push(subcription);
@@ -501,7 +500,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         const _this = this; // useful to debug
         _this.isLoading = true;
 
-        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), {..._this.currentKeys, ..._this.externalKeys}, null, true, _this.formParams.isNew, null, false).subscribe(
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), { ..._this.currentKeys, ..._this.externalKeys }, null, true, _this.formParams.isNew, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -577,7 +576,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     addRow(default_keys: any): void {
         const _this = this;
         _this.isAddingNew = true;
-        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), {..._this.currentKeys, ..._this.externalKeys}, null, true, true, null, false).subscribe(
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), { ..._this.currentKeys, ..._this.externalKeys }, null, true, true, null, false).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {
@@ -1097,7 +1096,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 if (value.showEventProcessing === true) {
                     _this._dialogService.showLoadingDialog("Processing", "Please wait...");
                 }
-                const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), {..._this.currentKeys, ..._this.externalKeys}, keyListener, chiavi, event.eventName, event.actionType).subscribe(
+                const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), { ..._this.currentKeys, ..._this.externalKeys }, keyListener, chiavi, event.eventName, event.actionType).subscribe(
                     result => {
                         if (result.result === 'OK') {
                             if (event.successMessage) {
@@ -1265,26 +1264,32 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 else if (actionType === 'email' || actionType === 'create_user_and_email') {
 
                     let formValues = _this.formArray.first.form.value;
-                    
-                    
-                    if(actionType === 'create_user_and_email') {
+
+
+                    if (actionType === 'create_user_and_email') {
                         const username = formValues['email_to'];
                         const email = username;
-                        const password = HelperService.generatePassword(8);
+                        const password = HelperService.generatePassword(9);
+                        const company = formValues['codice_azienda'];
+                        const associated_user = formValues['associa_user'];
+                        const registry = formValues['id_anagrafica'];
+                        const tax_code = formValues['codice_fiscale'];
 
-                       _this.authService.setUsername(username);
-                       _this.authService.setPassword(password);
-                       _this.authService.setEmail(email);
-                       _this.authService.signUp()
-                       .then((user) => {
-                         console.log(user);
-                         _this.performSendEmail(event, formValues, value);
-                    
-                        })
-                       .catch((err) => {
-                        _this._toastService.showErrorToast(err);
-                        //  this._setError(err);
-                       });                       
+                        _this.authService.setUsername(username);
+                        _this.authService.setPassword(password);
+                        _this.authService.setEmail(email);
+                        _this.authService.signUp()
+                            .then((user) => {
+                                console.log(user);
+                                _this.performSendEmail(event, formValues, value);
+
+                                _this.backendService.setUserOnDynamo(username, company, associated_user, registry, tax_code);
+
+                            })
+                            .catch((err) => {
+                                _this._toastService.showErrorToast(err);
+                                //  this._setError(err);
+                            });
                     }
                     else {
                         _this.performSendEmail(event, formValues, value);
@@ -1336,7 +1341,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                         }
-                        const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), {..._this.currentKeys, ..._this.externalKeys}, keyListener, chiavi, event.eventName, action, true).subscribe(
+                        const subscription = _this.backendService.postEvent(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), { ..._this.currentKeys, ..._this.externalKeys }, keyListener, chiavi, event.eventName, action, true).subscribe(
                             result => {
                                 if (result.result === 'OK') {
                                     _this._console.table(result);
@@ -1363,7 +1368,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                                 else {
                                     _this._console.table(result);
-                                    _this._toastService.showErrorToast("Error " ,result.reason.detail == undefined ? '' : JSON.stringify(result.reason.detail) + (result.reason.hint == undefined ? '' : JSON.stringify(result.reason.hint)),5000,true);
+                                    _this._toastService.showErrorToast("Error ", result.reason.detail == undefined ? '' : JSON.stringify(result.reason.detail) + (result.reason.hint == undefined ? '' : JSON.stringify(result.reason.hint)), 5000, true);
                                 }
                             });
 
@@ -1384,19 +1389,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 height: 'auto',
                 data: {
                     ...event,
-                    keys: _this.currentKeys    
+                    keys: _this.currentKeys
                 }
             })
-            
+
             const dialogRefSub = dialogRef.afterClosed()
-            .subscribe((response: any) => {
-                dialogRefSub.unsubscribe();
-                if (event.outputEventWhenComplete != null) {
-                    _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
-                }
-            }, (error: any) => {
-                dialogRefSub.unsubscribe();
-            });
+                .subscribe((response: any) => {
+                    dialogRefSub.unsubscribe();
+                    if (event.outputEventWhenComplete != null) {
+                        _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
+                    }
+                }, (error: any) => {
+                    dialogRefSub.unsubscribe();
+                });
         }
     }
 

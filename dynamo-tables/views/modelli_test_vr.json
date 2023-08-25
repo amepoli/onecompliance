@@ -1466,6 +1466,7 @@
                 "viewType": "combobox"
             },
             "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
             "newLine": true,
             "queryCond": "mt.id_centro_gest= $id_centro_gest$"
         },
@@ -1981,6 +1982,7 @@
             "isPrimary": false,
             "key": "centro_gest",
             "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
             "width": "13%"
         },
         {
@@ -2350,6 +2352,10 @@
             {
                 "label": "Risp prev mod test no vers",
                 "queryString": "select distinct mt.id_modello_test, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mt.titolo, dm.id_domanda"
+            },
+            {
+                "label": "Modelli con domande doppie",
+                "queryString": "select descrizione, entrasp.domande_sezione_descr(codice_azienda, id_modello_test, id_modello_test_vr, id_sezione), id_argomento, id_modello_test, id_modello_test_vr, id_domanda, id_sezione from entrasp.domande where codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr in (select codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr from entrasp.domande where id_argomento is null) and codice_azienda=$codice_azienda$ order by codice_azienda, id_modello_test, id_modello_test_vr, descrizione, id_argomento"
             }
         ]
     },
