@@ -6,7 +6,7 @@
     {
       "operation": "selectForm",
       "type": "main",
-      "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,id_argomento, titolo,id_centro_gest, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
+      "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,id_argomento, titolo,id_centro_gest, entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0)) as intensita_totale_post_pi_descrizione, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
     },
     {
       "operation": "insert",
@@ -1170,7 +1170,7 @@
         "viewType": "input"
       },
       "label": "Codice",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "codice=$codice$"
     },
     {
@@ -1197,8 +1197,30 @@
         "viewType": "input"
       },
       "label": "Titolo",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "titolo Like '%€titolo€%'"
+    },
+    {
+      "fieldName": "data_comp_prevista_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Sondaggi con data competenza dal",
+      "newLine": false,
+      "size": 2,
+      "queryCond": "codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_min€')"
+    },
+    {
+      "fieldName": "data_comp_prevista_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Sondaggi con data competenza fino al",
+      "newLine":false,
+      "size": 2,
+      "queryCond": "codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_max€')"
     },
     {
       "fieldName": "rischio_inerente",
@@ -1207,7 +1229,7 @@
         "viewType": "input"
       },
       "label": "Rischio Inerente",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "rischio_inerente=$rischio_inerente$"
     },
     {
@@ -1240,30 +1262,32 @@
         "viewType": "combobox"
       },
       "label": "Tipo Rischio (tag)",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "codice_rischio in(select rsk.codice_rischio from entrasp.rischi rsk inner join entrasp.argomenti_argomenti aa on rsk.id_argomento=aa.id_argomento_son where rsk.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$id_tipo_rischio_tag_s$ and rsk.codice_rischio is not null)"
     },
     {
-      "fieldName": "data_comp_prevista_min",
+      "fieldName": "giudizio_mp_s",
       "format": {
-        "dataType": "date",
-        "viewType": "input"
+        "comboQuery": "select soglia_a as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+        "options": [],
+        "viewType": "combobox"
       },
-      "label": "Sondaggi con data competenza dal",
+      "label": "Con giudiz.post(moltipl. puro) > di",
       "newLine": false,
-      "size": 2,
-      "queryCond": "codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_min€')"
+      "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post > $giudizio_mp_s$ )"
+ 
     },
     {
-      "fieldName": "data_comp_prevista_max",
+      "fieldName": "giudizio_mt_s",
       "format": {
-        "dataType": "date",
-        "viewType": "input"
+        "comboQuery": "select descrizione as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
       },
-      "label": "Sondaggi con data competenza fino al",
+      "label": "Con giudiz.post(moltipl. transcod. (PI)) > di",
       "newLine": true,
-      "size": 2,
-      "queryCond": "codice_rischio in (select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_max€')"
+      "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0)) > $giudizio_mt_s$)"
     },
     {
       "fieldName": "rischi_without_procedure",

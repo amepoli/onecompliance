@@ -74,24 +74,24 @@
             "readOnly": true,
             "inputEvents": [
                 {
-                  "eventName": "duplica_presidio",
-                  "actionType": "show_message",
-                  "condition": "none",
-                  "values": [],
-                  "message": {
-                    "messageText": "Sei sicuro di voler duplicare questo presidio? (ATTENZIONE! Il nuovo presidio sarà creato e si verrà trasferiti allo stesso)",
-                    "actionOnNo": {
-                      "actionType": "query",
-                      "queryFunct": "select £id_presidio£ as id_presidio"
+                    "eventName": "duplica_presidio",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questo presidio? (ATTENZIONE! Il nuovo presidio sarà creato e si verrà trasferiti allo stesso)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select £id_presidio£ as id_presidio"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.presidio_duplica($codice_azienda$, '£id_presidio£');"
+                        }
                     },
-                    "actionOnYes": {
-                      "actionType": "query",
-                      "queryFunct": "select entrasp.presidio_duplica($codice_azienda$, '£id_presidio£');"
-                    }
-                  },
-                  "outputEventWhenComplete": "navigate_to_presidio_new"
+                    "outputEventWhenComplete": "navigate_to_presidio_new"
                 }
-              ]
+            ]
         },
         {
             "key": "id_anagrafica_societa",
@@ -161,12 +161,12 @@
                         "icon": "calculate",
                         "label": "Ricalcola singolo presidio",
                         "outputEventName": "ricalcolo_singolo_presidio"
-                      },
-                      {
+                    },
+                    {
                         "icon": "content_copy",
                         "label": "Duplica Presidio",
                         "outputEventName": "duplica_presidio"
-                      }
+                    }
                 ]
             },
             "inputEvents": [
@@ -838,26 +838,26 @@
         {
             "fieldName": "giudizio_mp_s",
             "format": {
-              "comboQuery": "select soglia_a as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
-              "options": [],
-              "viewType": "combobox"
+                "comboQuery": "select soglia_a as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+                "options": [],
+                "viewType": "combobox"
             },
-            "label": "Giudizio Rischi (moltipl. puro) superiore a",
+            "label": "Relativi a rischi con giudiz. (moltipl. puro) > di",
             "newLine": false,
             "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post > $giudizio_mp_s$ )"
-          },
-      
-          {
+        },
+        {
             "fieldName": "giudizio_mt_s",
             "format": {
-              "comboQuery": "select descrizione as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
-              "options": [],
-              "viewType": "combobox"
+                "comboQuery": "select descrizione as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
             },
-            "label": "Giudizio Rischi (moltipl. transcodificato) superiore a",
+            "label": "Relativi a rischi con di giudiz. (moltipl. transcod. (PI)) > di",
             "newLine": true,
-            "queryCond": "id_presidio in ("
-          },
+            "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(ri.codice_azienda, coalesce(ri.probabilita_post,0), coalesce(ri.intensita_singola_post,0)) > $giudizio_mt_s$)"
+        },
         {
             "fieldName": "flag_principali",
             "format": {
@@ -1042,22 +1042,22 @@
         },
         {
             "actionTarget": {
-              "name": "presidi_2",
-              "type": "form",
-              "keymap": [
-                {
-                  "source": "codice_azienda",
-                  "destination": "codice_azienda"
-                },
-                {
-                  "source": "id_presidio",
-                  "destination": "id_presidio"
-                }
-              ]
+                "name": "presidi_2",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    }
+                ]
             },
             "actionType": "navigate",
             "eventName": "navigate_to_presidio_new"
-          }
+        }
     ],
     "exportQueries": {
         "tableQueries": [
