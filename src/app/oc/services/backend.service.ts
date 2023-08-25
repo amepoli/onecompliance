@@ -28,7 +28,7 @@ export class BackendService {
   private regulatApiName = appData.lambdas.regulat.apiName;
   private regulatVPCApiName = appData.lambdas.regulat_VPC.apiName;
   private calendarApiName = appData.lambdas.calendar.apiName;
-  private cognitoDynamoUsersApiName = appData.lambdas.cognitoDynamoUsers.apiName; 
+  private insert_user_to_dynamoApiName = appData.lambdas.insert_user_to_dynamo.apiName; 
 
   private myGetInit = { // OPTIONAL
     headers: {
@@ -583,10 +583,10 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.viewsApiName, this.myGetInit));
   }
 
-  setUserOnDynamo(username: string, company: string, associated_user: string, registry: string) {
+  setUserOnDynamo(username: string, company: string, associated_user: string, registry: string, tax_code: string) {
     this.awsService.auth();
-    this.myPutPostInit.queryStringParameters = { request_type: 'setUserOnDynamo', username: username, company: company, associated_user: associated_user, registry: registry };
-    return from(this.awsService.api().post(this.apiName, this.cognitoDynamoUsersApiName, this.myPutPostInit));
+    this.myPutPostInit.queryStringParameters = { request_type: 'setUserOnDynamo', username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code };
+    return from(this.awsService.api().post(this.apiName, this.insert_user_to_dynamoApiName, this.myPutPostInit));
   }
 
 }
