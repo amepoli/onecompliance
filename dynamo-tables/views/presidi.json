@@ -696,8 +696,9 @@
             "isHidden": false,
             "isPrimary": false,
             "width": "10%",
-            "key": "livello",
-            "label": "Livello"
+            "key": "id_argomento_stato_automazione",
+            "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_stato_automazione)",
+            "label": "Automazione"
         }
     ],
     "search_keys": [
@@ -810,15 +811,15 @@
             "queryCond": "id_presidio in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp<='€data_comp_prevista_max€')"
         },
         {
-            "fieldName": "livello_s",
+            "fieldName": "id_argomento_stato_automazione_s",
             "format": {
-                "comboQuery": "SELECT distinct livello AS id, livello AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$ order by livello asc;",
+                "comboQuery": "select id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=48082;",
                 "options": [],
                 "viewType": "combobox"
             },
-            "label": "Livello",
+            "label": "Automazione",
             "newLine": false,
-            "queryCond": "livello=$livello_s$"
+            "queryCond": "id_argomento_stato_automazione=$id_argomento_stato_automazione_s$"
         },
         {
             "fieldName": "tag_s",
@@ -831,6 +832,29 @@
             "newLine": true,
             "queryCond": "(array[id_argomento]<@any(select entrasp.sotto_argomenti($tag_s$)) and id_argomento is not null)"
         },
+        {
+            "fieldName": "giudizio_mp_s",
+            "format": {
+              "comboQuery": "select descrizione from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "label": "Rischi (mp) superiore a",
+            "newLine": false,
+            "queryCond": "select 1"
+          },
+      
+          {
+            "fieldName": "giudizio_mt_s",
+            "format": {
+              "comboQuery": "select descrizione from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+              "options": [],
+              "viewType": "combobox"
+            },
+            "label": "Rischi (mt) superiore a",
+            "newLine": true,
+            "queryCond": "select 1"
+          },
         {
             "fieldName": "flag_principali",
             "format": {
@@ -981,6 +1005,17 @@
             "newLine": false,
             "size": 1,
             "queryCond": "id_presidio=(select max(id_presidio) from entrasp.presidi where codice_azienda='€global_codice_azienda€')"
+        },
+        {
+            "fieldName": "diverso_attivo",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Diverso da Attivo",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "stato_attuazione!='A'"
         }
     ],
     "inputEvents": [

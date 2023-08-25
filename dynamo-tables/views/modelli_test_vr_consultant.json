@@ -9,7 +9,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT mt.codice_azienda, entrasp.argomenti_descr_breve(mt.id_argomento) as argomento,mt.id_argomento, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test inner join entrasp.aziende az on mt.codice_azienda=az.codice_azienda WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test);"
+            "queryString": "SELECT mt.codice_azienda,mtvr.data_inizio_validita, entrasp.argomenti_descr_breve(mt.id_argomento) as argomento,mt.id_argomento, mt.id_modello_test, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test inner join entrasp.aziende az on mt.codice_azienda=az.codice_azienda WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test);"
         },
         {
             "type": "main",
@@ -25,6 +25,160 @@
             "type": "main",
             "operation": "update",
             "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>coalesce($descrizione$,$titolo$), flag_applicazione_singola=>$flag_applicazione_singola$::character, id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>$flag_sezioni$::character, giorni_anticipo_pres_doc=>coalesce($giorni_anticipo_pres_doc$,15),codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>$flag_mostra_punteggi$::character, id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::character, stopreplanningwhencontractsclosed=>coalesce($stop_replanning_when_contracts_closed$,false),titolocartella=>$titolo_cartella$,flagworkflow=>$flag_workflow$::character,flagripianificapercliente=>$flag_ripianifica_per_cliente$::character, rifnormativi => $rif_normativi$);"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": "$Q{is_hidden_codice_azienda}",
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "width": "9%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "width": "3%",
+            "label": "#"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "width": "5%",
+            "label": "Versione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "id_argomento",
+            "label": "Id_argomento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "width": "6%",
+            "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "599"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo",
+            "width": "39%",
+            "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "599"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "width": "13%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_inizio_validita",
+            "width": "7%",
+            "label": "Dt inizio validità"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_modello_test",
+            "label": ""
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fake",
+            "label": "",
+            "width": "1%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "id_risultato"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_son",
+            "label": "Id_argomento_son"
         }
     ],
     "subTables": [

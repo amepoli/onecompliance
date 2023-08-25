@@ -104,7 +104,7 @@
   ],
   "predefinedQueries": [
     {
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, entrasp.interessi_scaduto_pagato (id_cessione,codice_azienda) as interessi_legge from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
+      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, entrasp.interessi_scaduto_pagato (id_cessione,codice_azienda) as interessi_legge, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
       "operation": "selectTable",
       "type": "main"
     }
@@ -473,8 +473,19 @@
       "label": "Da lavorare",
       "newLine": false,
       "queryCond": "(azionato='0' and data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
-      "size": 0
+      "size": 2
+    },
+    {
+      "fieldName": "pool",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "In Pool",
+      "newLine": false,
+      "queryCond": "(flag_pool='1')",
+      "size": 2
     }
+
   ],
   "form_keys": [
     {
@@ -600,7 +611,7 @@
       "autoGenerate": false,
       "format": {
         "viewType": "combobox",
-        "value": "5342",
+        "value": 5342,
         "options": [],
         "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)",
         "validations": [
@@ -804,7 +815,7 @@
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
-      "size": 1.5,
+      "size": 1.67,
       "key": "data_incasso_parz",
       "label": "Data Incasso Parziale",
       "readOnly": false
@@ -820,7 +831,7 @@
       "isPrimary": false,
       "newLine": false,
       "key": "incasso_parz",
-      "size": 2,
+      "size": 1.67,
       "label": "Incasso Parziale",
       "readOnly": false
     },
@@ -835,7 +846,7 @@
       "newLine": false,
       "key": "importo_residuo",
       "label": "Importo Residuo",
-      "size": 2,
+      "size": 1.67,
       "queryFunct": "case when data_pagamento is null then importo-incasso_parz else 0 end",
       "readOnly": false,
       "sameOrigin": false
@@ -850,6 +861,7 @@
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
+      "size": 2.5,
       "key": "id_nc_associata",
       "label": "Nota Credito Associata",
       "readOnly": false
@@ -864,6 +876,7 @@
       "isHidden": false,
       "isPrimary": false,
       "newLine": true,
+      "size": 2.5,
       "key": "id_fattura_associata",
       "label": "Fattura Associata",
       "readOnly": false
@@ -1016,6 +1029,20 @@
             "isPrimary": false,
             "key": "accettazione_cessione",
             "label": "Accettazione Cessione",
+            "size": 3.4,
+            "readOnly": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "boolean",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_pool",
+            "label": "Acquisto Pool",
             "size": 3.4,
             "readOnly": false,
             "newLine": true
@@ -1693,6 +1720,10 @@
       {
         "label": "Modifica crediti",
         "queryString": "select entrasp.import_crediti_ceduti_modifiche($codice_azienda$, $nome_file$, '€global_username€')"
+      },
+      {
+        "label": "Importa crediti pool",
+        "queryString": "select entrasp.import_crediti_ceduti_pool($codice_azienda$, $nome_file$, '€global_username€')"
       }
     ]
   }
