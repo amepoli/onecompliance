@@ -1290,6 +1290,30 @@
       "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0)) > $giudizio_mt_s$)"
     },
     {
+      "fieldName": "giudizio_rett_mp_s",
+      "format": {
+        "comboQuery": "select soglia_a as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Con giudiz.rett.(moltipl. puro) > di",
+      "newLine": false,
+      "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post_rilevata > $giudizio_rett_mp_s$ )"
+ 
+    },
+    {
+      "fieldName": "giudizio_rett_mt_s",
+      "format": {
+        "comboQuery": "select descrizione as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "text"
+      },
+      "label": "Con giudiz.rett.(moltipl. transcod. (PI)) > di",
+      "newLine": true,
+      "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post_rilevata,0), coalesce(intensita_singola_post_rilevata,0)) > $giudizio_rett_mt_s$)"
+    },
+    {
       "fieldName": "rischi_without_procedure",
       "format": {
         "value": "0",
