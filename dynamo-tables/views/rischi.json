@@ -1262,7 +1262,7 @@
         "viewType": "combobox"
       },
       "label": "Tipo Rischio (tag)",
-      "newLine": false,
+      "newLine": true,
       "queryCond": "codice_rischio in(select rsk.codice_rischio from entrasp.rischi rsk inner join entrasp.argomenti_argomenti aa on rsk.id_argomento=aa.id_argomento_son where rsk.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$id_tipo_rischio_tag_s$ and rsk.codice_rischio is not null)"
     },
     {
@@ -1286,7 +1286,7 @@
         "dataType": "text"
       },
       "label": "Con giudiz.post(moltipl. transcod. (PI)) > di",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0)) > $giudizio_mt_s$)"
     },
     {
@@ -1298,8 +1298,7 @@
       },
       "label": "Con giudiz.rett.(moltipl. puro) > di",
       "newLine": false,
-      "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post_rilevata > $giudizio_rett_mp_s$ )"
- 
+      "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post_rilevata > $giudizio_rett_mp_s$ )" 
     },
     {
       "fieldName": "giudizio_rett_mt_s",
@@ -1517,7 +1516,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "width": "30%",
+      "width": "20%",
       "label": "Titolo"
     },
     {
@@ -1528,19 +1527,8 @@
       "isPrimary": false,
       "key": "centro_gest",
       "width": "10%",
-      "label": "Centro Gestionale Responsabile (liv.1)",
+      "label": "Centro Gestionale Resp. (liv.1)",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "centro_gest_liv2",
-      "width": "10%",
-      "label": "Centro Gestionale Monitoraggio/Segnalante (liv.2)",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_liv2)"
     },
     {
       "format": {
@@ -1684,6 +1672,142 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "width": "8%",
+      "key": "rischio_inerente_pi",
+      "label": "Risch.Inerente(mt)",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        },
+        {
+          "value": "0-Non applicabile",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "grey",
+          "text_align": "center"
+        },
+        {
+          "value": "Immateriale",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#68E7F4",
+          "text_align": "center"
+        },
+        {
+          "value": "1-Immateriale",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "green",
+          "text_align": "center"
+        },
+        {
+          "value": "Basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "2-Basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "Lieve",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "3-Medio",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#F2FD5F",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#F2FD5F",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio-basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#FFF59D",
+          "text_align": "center"
+        },
+        {
+          "value": "Media",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#FFF59D",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio-alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "Grave",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "4-Grave",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "Alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#FF7276",
+          "text_align": "center"
+        },
+        {
+          "value": "Gravissima",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#FF7276",
+          "text_align": "center"
+        },
+        {
+          "value": "5-Catastrofico",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "red",
+          "text_align": "center"
+        },
+        {
+          "value": "Catastrofico",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "red",
+          "text_align": "center"
+        }
+      ],
+      "queryFunct": "entrasp.srr_giudizio_pi($codice_azienda$, coalesce(probabilita_pre,0), coalesce(intensita_singola_pre,0))"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
       "key": "rischio_residuo",
       "width": "8%",
       "label": "Rischio Residuo",
@@ -1813,6 +1937,142 @@
         }
       ],
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "8%",
+      "key": "rischio_residuo_pi",
+      "label": "Risch.Residuo(mt)",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        },
+        {
+          "value": "0-Non applicabile",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "grey",
+          "text_align": "center"
+        },
+        {
+          "value": "Immateriale",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#68E7F4",
+          "text_align": "center"
+        },
+        {
+          "value": "1-Immateriale",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "green",
+          "text_align": "center"
+        },
+        {
+          "value": "Basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "2-Basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "Lieve",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "3-Medio",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#F2FD5F",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#F2FD5F",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio-basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#FFF59D",
+          "text_align": "center"
+        },
+        {
+          "value": "Media",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#FFF59D",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio-alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "Grave",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "4-Grave",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "Alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#FF7276",
+          "text_align": "center"
+        },
+        {
+          "value": "Gravissima",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#FF7276",
+          "text_align": "center"
+        },
+        {
+          "value": "5-Catastrofico",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "red",
+          "text_align": "center"
+        },
+        {
+          "value": "Catastrofico",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "red",
+          "text_align": "center"
+        }
+      ],
+      "queryFunct": "entrasp.srr_giudizio_pi($codice_azienda$, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0))"
     },
     {
       "format": {
@@ -1994,6 +2254,142 @@
         }
       ],
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post_rilevata)"
+    },
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "8%",
+      "key": "rischio_residuo_rett_pi",
+      "label": "Risch.Res.Rett.(mt)",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "center"
+        },
+        {
+          "value": "0-Non applicabile",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "grey",
+          "text_align": "center"
+        },
+        {
+          "value": "Immateriale",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#68E7F4",
+          "text_align": "center"
+        },
+        {
+          "value": "1-Immateriale",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "green",
+          "text_align": "center"
+        },
+        {
+          "value": "Basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "2-Basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "Lieve",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#8BC34A",
+          "text_align": "center"
+        },
+        {
+          "value": "3-Medio",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#F2FD5F",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#F2FD5F",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio-basso",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#FFF59D",
+          "text_align": "center"
+        },
+        {
+          "value": "Media",
+          "font_color": "Black",
+          "font_weight": "500",
+          "background_color": "#FFF59D",
+          "text_align": "center"
+        },
+        {
+          "value": "Medio-alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "Grave",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "4-Grave",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#ff9657",
+          "text_align": "center"
+        },
+        {
+          "value": "Alto",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#FF7276",
+          "text_align": "center"
+        },
+        {
+          "value": "Gravissima",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "#FF7276",
+          "text_align": "center"
+        },
+        {
+          "value": "5-Catastrofico",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "red",
+          "text_align": "center"
+        },
+        {
+          "value": "Catastrofico",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "red",
+          "text_align": "center"
+        }
+      ],
+      "queryFunct": "entrasp.srr_giudizio_pi($codice_azienda$, coalesce(probabilita_post_rilevata,0), coalesce(intensita_singola_post_rilevata,0))"
     },
     {
       "format": {
