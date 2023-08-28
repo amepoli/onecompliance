@@ -838,25 +838,48 @@
         {
             "fieldName": "giudizio_mp_s",
             "format": {
-                "comboQuery": "select soglia_a as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+                "comboQuery": "select distinct soglia_a as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by soglia_a, descrizione",
                 "options": [],
                 "viewType": "combobox"
             },
-            "label": "Relativi a rischi con giudiz. (moltipl. puro) > di",
+            "label": "Per rischi con giudiz.(moltipl. puro) > di",
             "newLine": false,
             "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post > $giudizio_mp_s$ )"
         },
         {
             "fieldName": "giudizio_mt_s",
             "format": {
-                "comboQuery": "select descrizione as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+                "comboQuery": "select distinct descrizione as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text"
             },
-            "label": "Relativi a rischi con di giudiz. (moltipl. transcod. (PI)) > di",
-            "newLine": true,
+            "label": "Per rischi con di giudiz. (moltipl. transcod. (PI)) > di",
+            "newLine": false,
             "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(ri.codice_azienda, coalesce(ri.probabilita_post,0), coalesce(ri.intensita_singola_post,0)) > $giudizio_mt_s$)"
+        },
+        {
+            "fieldName": "giudizio_rett_mp_s",
+            "format": {
+                "comboQuery": "select distinct soglia_a as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by soglia_a, descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Per rischi rett. con giudiz. (moltipl. puro) > di",
+            "newLine": false,
+            "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post_rett > $giudizio_rett_mp_s$ )"
+        },
+        {
+            "fieldName": "giudizio_rett_mt_s",
+            "format": {
+                "comboQuery": "select distinct  descrizione as ID, descrizione as name from entrasp.cpl_soglie where codice_azienda=$codice_azienda$ and tipo_soglia='T' order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Per rischi con giudiz. (moltipl. transcod. (PI)) > di",
+            "newLine": true,
+            "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(ri.codice_azienda, coalesce(ri.probabilita_post_rilevata,0), coalesce(ri.intensita_singola_post_rilevata,0)) > $giudizio_rett_mt_s$)"
         },
         {
             "fieldName": "flag_principali",
