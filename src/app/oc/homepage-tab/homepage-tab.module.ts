@@ -13,6 +13,7 @@ import { FormViewToolbarModule } from '../views/form-view-toolbar/form-view-tool
 import { BottomTabsModule } from 'app/oc/bottom-tabs/bottom-tabs.module';
 import { ImportDialogModule } from '../dialogs/import.dialog/import.dialog.module';
 import { ToolbarElementsModule } from '../toolbar-elements/toolbar-elements.module';
+import { OneCompliancePipesModule } from '../pipes/pipes.module';
 
 const routes = [
   {
@@ -35,7 +36,7 @@ const routes = [
     FormViewToolbarModule,
     BottomTabsModule,
     ImportDialogModule,
-
+    OneCompliancePipesModule,
     ToolbarElementsModule
   ],
   exports: [

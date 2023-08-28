@@ -42,6 +42,8 @@ export class ToolbarElementsComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     ngOnInit(): void {
+        this.toolbar_elements;
+        this.toolbar_elements;
     }
 
     ngOnChanges(changes: SimpleChanges) {

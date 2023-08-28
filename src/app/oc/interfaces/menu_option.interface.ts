@@ -2,6 +2,7 @@ export interface MenuOption {
   key?: string;
   icon: string;
   label: string;
+  translate?: string;
   isHidden?: boolean;
   tooltip?: string;  
   confirmAction?: boolean;
