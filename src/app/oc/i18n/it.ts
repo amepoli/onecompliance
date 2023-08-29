@@ -17,7 +17,10 @@ export const locale = {
             'reference_date': 'Data Competenza',
             'title': 'Titolo',
             'notes': 'Note',
-            'actions_updates': 'Azioni/Aggiornamenti'
+            'actions_updates': 'Azioni/Aggiornamenti',
+            'type':'Tipo',
+            'code': 'Codice',
+            'main_only':'Solo Principali'
         }
     }
 };

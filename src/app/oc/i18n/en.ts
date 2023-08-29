@@ -17,7 +17,10 @@ export const locale = {
             'reference_date': 'Reference Date',
             'title':'Title',
             'notes': 'Notes',
-            'actions_updates':'Actions/Updates'
+            'actions_updates':'Actions/Updates',
+            'type': 'Type',
+            'code': 'Code',
+            'main_only':'Main Only'
         }
     }
 };
