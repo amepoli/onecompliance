@@ -1202,6 +1202,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._console.log(result);
                             _this.showErrorToast(result.reason);
                         }
+                    },
+                    error => {
+                        _this._toastService.showErrorToast(error);
                     });
 
                 _this.generalSubscriptions.push(subscription);

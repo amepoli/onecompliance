@@ -62,7 +62,7 @@
                                 <mat-slide-toggle [color]="'primary'" [checked]="toggle.checked"
                                     (change)="updateSearchToggle(i, $event.checked)" style="margin: 6px;"
                                     [matTooltip]="toggle.tooltip">
-                                    {{toggle.label}}
+                                    {{toggle | octranslate}}
                                 </mat-slide-toggle>
                             </div>
                         </div>
@@ -190,7 +190,7 @@
                                         [style.white-space]="wrapView ? 'normal' : 'nowrap'" 
                                            *matHeaderCellDef
                                             mat-sort-header [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
-                                            {{entry.label}}
+                                            {{ entry | octranslate }}
                                     </th>
                                     </ng-container>
                                     <ng-container *ngIf="entry.isSelectCheckbox">
@@ -267,7 +267,7 @@
                                             [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
                                             [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matFooterCellDef
                                             mat-sort-header [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
-                                            {{totalRow[entry.key] ?? ''}}
+                                            {{totalRow[entry.key]? (totalRow[entry.key] | number : '1.2-2'): ''}}
                                     </td>
                                     </ng-container>
                                     <ng-container *ngIf="entry.isSelectCheckbox">

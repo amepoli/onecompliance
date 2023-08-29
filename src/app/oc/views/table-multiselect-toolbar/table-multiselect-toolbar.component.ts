@@ -34,10 +34,13 @@ export class TableMultiselectToolbarComponent implements DoCheck {
          public cutomDialog: MatDialog,
         
         ) {
-        // get user data after login
+          
+            // get user data after login
         this.userdata = this._authService.userinfo.getValue();
+      
         
     }
+   
 
     ngDoCheck() {
         this.cdr.detectChanges();

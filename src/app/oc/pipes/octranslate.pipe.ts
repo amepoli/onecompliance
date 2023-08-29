@@ -10,14 +10,14 @@ export class OCTranslatePipe implements PipeTransform {
     /**
      * Transform
      *
-     * @param {FieldConfig} value
+     * @param {any} value
      * @returns {string}
      */
-    transform(value: FieldConfig): string {
+    transform(value: any): string {
         if (value.translate) {
             return this._translateService.instant(value.translate);
         } else {
-            return value.label;
+            return value.label || value.name || value.title;
         }
 
     }

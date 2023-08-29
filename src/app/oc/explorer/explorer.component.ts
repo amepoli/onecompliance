@@ -627,6 +627,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
             }
             fieldValue = {
                 label: field.label,
+                translate: field.translate,
                 name: field.fieldName,
                 value: null,
                 type: field.format.viewType,
@@ -664,6 +665,7 @@ export class ExplorerComponent implements OnInit, AfterViewInit, OnChanges, OnDe
                 return {
                     fieldName: x.fieldName,
                     label: x.label,
+                    translate: x.translate,
                     checked: (x.format.value == 'true' || x.format.value == true || x.format.value == '1' || x.format.value == 1) ? true: false
                 };
             });
