@@ -1202,6 +1202,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             _this._console.log(result);
                             _this.showErrorToast(result.reason);
                         }
+                    },
+                    error => {
+                        _this._toastService.showErrorToast(error);
                     });
 
                 _this.generalSubscriptions.push(subscription);
@@ -1283,7 +1286,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 console.log(user);
                                 _this.performSendEmail(event, formValues, value);
 
-                                _this.backendService.setUserOnDynamo(username, company, associated_user, registry, tax_code);
+                                _this.backendService.setUserOnDynamo(username, company, associated_user, registry, tax_code, user.userSub);
 
                             })
                             .catch((err) => {

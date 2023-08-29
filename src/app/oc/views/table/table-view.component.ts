@@ -34,7 +34,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     format = {};
-    
+
     quickAddFormParams: FormViewParams = {
         entryName: '',
         keys: {},
@@ -76,12 +76,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     isAuthorized: boolean = true;
     viewKeys: TableViewKey[];  // view fields as specified by the backend
-    
+
     searchKeysLoaded: boolean = false;
     completeSearchKeys: SearchViewKey[]; // Also contains search toggles
     advancedSearchKeys: SearchViewKey[]; // Search keys to show Advanced search
     searchToggles: SearchToggle[];
-    
+
     currentKeys: any; // relevant keys passed by the parent component 
 
     keysArray: any[];  // list of primary keys values, one entry for each table row
@@ -118,7 +118,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     /** Whether the number of selected elements matches the total number of rows. */
     isAllSelected() {
         const numSelected = this.selection.selected.length;
-        const numRows = (this.dataSource && this.dataSource.data && this.dataSource.data.length)? this.dataSource.data.length: 0;
+        const numRows = (this.dataSource && this.dataSource.data && this.dataSource.data.length) ? this.dataSource.data.length : 0;
         return numSelected == numRows;
     }
 
@@ -132,7 +132,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     /** The label for the checkbox on the passed row */
     checkboxLabel(row?: any): string {
         if (!row) {
-        return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+            return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
         }
         return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
     }
@@ -164,12 +164,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _timeTrackerService: TimeTrackerService,
         private _googleAPIService: GoogleAPIService,
         private _dataSharingService: DataSharingService,
-        private changeDetector : ChangeDetectorRef
+        private changeDetector: ChangeDetectorRef
     ) {
         // Set selection model
         this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
-        
-        
+
+
         this.calculateTableHeight();
     }
 
@@ -188,7 +188,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 // Load main table data
                 _this.loadData(_this.tableData.searchKeys);
 
-                if(!_this._reportService.isLazyLoadingEnabled || _this._reportService.cache[_this.tableData.entryName]) {
+                if (!_this._reportService.isLazyLoadingEnabled || _this._reportService.cache[_this.tableData.entryName]) {
                     // Request to load reports
                     // _this._pubSubService.publishEvent(_this.pubMsgCmdTopic, { type: 'print_list' });
                     _this._reportService.requestReload(_this.tableData.entryName);
@@ -217,10 +217,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     ngAfterViewInit() {
         let _this = this;
-        
-        if(_this.isTabMode){
-            _this.subscriptions.push(_this._navigationService.onBottomTabRefreshRequested.subscribe( (value) => {
-                if(_this.isCurTab) {
+
+        if (_this.isTabMode) {
+            _this.subscriptions.push(_this._navigationService.onBottomTabRefreshRequested.subscribe((value) => {
+                if (_this.isCurTab) {
                     _this.loadData();
                 }
             }));
@@ -249,7 +249,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.dataSource = null;
 
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: search_keys } }); // pass search keys to parent view 
-    
+
     }
 
     public resetSelection() {
@@ -257,11 +257,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     public loadPaginationAndSort() {
-        if(this.dataSource && this.dataSource.data) {
-            if(this.sort) {
+        if (this.dataSource && this.dataSource.data) {
+            if (this.sort) {
                 this.dataSource.sort = this.sort;
             }
-            if(this.paginator) {
+            if (this.paginator) {
                 this.dataSource.paginator = this.paginator;
             }
         }
@@ -269,12 +269,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     public onPaginatorChange($event: Event): void {
         this.loadPaginationAndSort();
+        this.loadTotalRow();
     }
-    
+
     public onTableChange($event: Event): void {
         this.loadPaginationAndSort();
     }
- 
+
     public loadData(search_keys = null) {
         const _this = this;
         search_keys = search_keys || _this.tableData.searchKeys;
@@ -294,7 +295,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.completeSearchKeys = params.search_keys;
                     _this.updateAdvancedSearchKeys(params.search_keys);
                     _this.loadSearchToggles(params.search_keys, search_keys);
-                    
+
                     _this.searchKeysLoaded = false;
                     // _this.loadSearchKeys();
 
@@ -302,39 +303,39 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.displayedColumns = _this.getColumnLabels(_this.viewKeys);
                     _this.currentKeys = _this.getCurrentKeys(_this.viewKeys, _this.tableData.keys);
                     _this.sendEvent.emit({ eventType: 'currentTableKeys', queryParams: { keys: _this.currentKeys } }); // pass current keys to parent view 
-                    if(!_this.isTabMode) {
+                    if (!_this.isTabMode) {
                         _this.sendEvent.emit({ eventType: 'currentTableLabel', queryParams: { label: params.label } }); // pass current label to parent view 
                     }
-                    
-                    if(result.data.explorerOptions && result.data.explorerOptions.showExplorerView) {
+
+                    if (result.data.explorerOptions && result.data.explorerOptions.showExplorerView) {
                         _this.showExplorer = true;
                     }
                     else {
                         _this.showExplorer = false;
                     }
 
-                    if(result.data.explorerOptions && result.data.explorerOptions.levelTwoMask) {
+                    if (result.data.explorerOptions && result.data.explorerOptions.levelTwoMask) {
                         _this.explorerLevelTwoMask = result.data.explorerOptions.levelTwoMask;
                     }
                     else {
                         _this.explorerLevelTwoMask = 'folders_list_liv2';
                     }
-                    
-                    if(result.data.explorerOptions && result.data.explorerOptions.explorerSource) {
+
+                    if (result.data.explorerOptions && result.data.explorerOptions.explorerSource) {
                         _this.explorerSource = result.data.explorerOptions.explorerSource;
                     }
                     else {
                         _this.explorerSource = 'table-view';
                     }
-                    if(_this.explorerSource != 'google-drive') {
+                    if (_this.explorerSource != 'google-drive') {
                         _this.loadTable(search_keys);
                     }
                     else {
                         _this.loadDriveContents();
                     }
-                    
+
                     _this._console.log(_this.viewKeys);
-                    
+
                     const key_values = {};
                     const primaryKeys = _this.viewKeys.filter(entry => {
                         return entry.isPrimary;
@@ -344,12 +345,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     // }
                     // return key_values;
 
-                    
+
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
                     _this.loadFormat(params.table_keys);
                     // signal toolbar about a dashboard 
-                    _this._navigationService.onDashboardTableLoad.emit({origin: _this.tableData.entryName, dashboardTables: params.dashboardTables});
+                    _this._navigationService.onDashboardTableLoad.emit({ origin: _this.tableData.entryName, dashboardTables: params.dashboardTables });
 
                     // Load Messages if available
                     if (params.messages) {
@@ -361,11 +362,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
                     // Load Hide Actions if available
                     _this.hideActions = _this._navigationService.getTableHideActions(params.hideActions);
-                    if(params.profileHideActions) {
+                    if (params.profileHideActions) {
                         _this.hideActions = _this.hideActions.concat(params.profileHideActions);
                     }
 
-                    
+
                     // Load Import Queries list if available
                     if (params.importQueries && params.importQueries.tableQueries) {
                         _this.importList = params.importQueries.tableQueries;
@@ -382,7 +383,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.exportList = [];
                     }
 
-                    if (!_this.isTabMode){
+                    if (!_this.isTabMode) {
                         // Propogate Import Queries list if available
                         if (params.importQueries && params.importQueries.tableQueries) {
                             _this._console.log('importQueries', params.importQueries);
@@ -403,20 +404,20 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
                         // Load Hide actions if available
                         _this._navigationService.updateToolbarHideActions(_this.hideActions);
-                        
+
                         _this.onMessagesUpdated.emit(params.messages);
                     }
                 }
                 else {
                     _this.isLoading = false;
                     // Show error snackbar
-                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
+                    _this._toastService.showErrorToast("Error ", JSON.stringify(result.reason.detail));
                 }
             },
             error => {
                 _this.isLoading = false;
                 // Show error snackbar
-                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
+                _this._toastService.showErrorToast("Error ", JSON.stringify(error));
             }
         ));
         // Calculate table height
@@ -440,21 +441,21 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 else {
                     _this.isLoading = false;
                     // Show error snackbar
-                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail ?? result.reason ?? result));
+                    _this._toastService.showErrorToast("Error ", JSON.stringify(result.reason.detail ?? result.reason ?? result));
                 }
             },
             error => {
                 _this.isLoading = false;
                 // Show error snackbar
-                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
+                _this._toastService.showErrorToast("Error ", JSON.stringify(error));
             }
         ));
     }
 
     loadTableInfo(): void {
         const _this = this;
-        
-       // _this.loadTable(null);
+
+        // _this.loadTable(null);
 
         /*                                       Don't use it fro now, see and find the problem. 
 
@@ -465,7 +466,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         /*
             No need to use this function anymore since I (Zee) fixed the search keys stuff in SearchRequest. 
         */
-       
+
         _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
@@ -477,14 +478,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     }
                     _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
                     _this.loadTable(null);
-                  }
+                }
             },
             error => {
                 _this.isLoading = false;
-                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
-            })); 
-       }
-     
+                _this._toastService.showErrorToast("Error ", JSON.stringify(error));
+            }));
+    }
+
 
     loadTable(search_keys: any): void {
         const _this = this;
@@ -506,16 +507,16 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         results = results.table_data; // and get the table data
                     }
                     _this.searchData = _this.getSearchData(_this.advancedSearchKeys);
-                    if(_this.showExplorer) {
+                    if (_this.showExplorer) {
                         _this.loadExplorerData(results);
                     }
 
                     _this.dataSource = new MatTableDataSource(results);
                     _this.dataSource.sort = _this.sort;
-                    if(_this.paginator) {
+                    if (_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
                     }
-                    _this.loadTotalRow(results);
+                    _this.loadTotalRow();
                     //_this.adjustViewKeysWidths();
                     _this.autodetectViewMode();
                     // triggers any change in displayed datasource, setting the array of primary keys
@@ -536,13 +537,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.isLoading = false;
                 }
                 else {
-                    if(results.reason === 'Not Authorized') {
+                    if (results.reason === 'Not Authorized') {
                         _this._console.log('Not Authorized');
                         _this.isAuthorized = false;
                     }
                     else {
                         // Show error snackbar
-                        _this._toastService.showErrorToast("Error ",JSON.stringify(results.reason.detail));
+                        _this._toastService.showErrorToast("Error ", JSON.stringify(results.reason.detail));
                     }
                 }
 
@@ -550,7 +551,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             },
             error => {
                 _this.isLoading = false;
-                _this._toastService.showErrorToast("Error ",JSON.stringify(error));
+                _this._toastService.showErrorToast("Error ", JSON.stringify(error));
             }));
 
         // Calculate table height
@@ -560,9 +561,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     adjustViewKeysWidths() {
         let _this = this;
         const sum = _this.viewKeys.filter(x => !x.isHidden && x.width).map(x => parseFloat(x.width.replace('%', ''))).reduce((sum, n) => sum + n);
-        
+
         _this.viewKeys.forEach((x, i) => {
-            if(_this.viewKeys[i].width) {
+            if (_this.viewKeys[i].width) {
                 const width = (parseFloat(x.width.replace('%', '')) / (sum / 100)) + '%';
                 _this.viewKeys[i].width = width;
             }
@@ -575,15 +576,23 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         _this.wrapView = sum <= 100;
     }
 
-    loadTotalRow(results) {
+    loadTotalRow() {
+
         let _this = this;
         const totalKeys = _this.viewKeys.filter(x => x.showTotal).map(x => x.key);
-        
-        if(totalKeys && totalKeys.length > 0) {
+        if (totalKeys && totalKeys.length > 0) {
             let totalRow = {};
-    
+
+            let dataToProcess = _this.dataSource.data;
+            
+            if(_this.paginator) {
+                const skip = _this.paginator.pageSize * _this.paginator.pageIndex;
+                dataToProcess = _this.dataSource.sortData(_this.dataSource.filteredData, _this.dataSource.sort).filter((u, i) => i >= skip)
+                .filter((u: any, i: number) => i < _this.paginator.pageSize);
+            }
+
             totalKeys.forEach(key => {
-                totalRow[key] = (results.map(x => parseFloat(x[key] + '')).reduce((partialSum, a) => partialSum + a, 0)) + '';
+                totalRow[key] = (dataToProcess.map(x => parseFloat(x[key] + '')).reduce((partialSum, a) => partialSum + a, 0)) + '';
             });
             _this.totalRow = totalRow;
         }
@@ -618,7 +627,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     loadFormat(table_keys: TableViewKey[]) {
-        if(table_keys && table_keys.length) {
+        if (table_keys && table_keys.length) {
             this.format = {};
             table_keys.forEach(viewKey => {
                 this.format[viewKey.key] = {
@@ -630,9 +639,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     getLevel(row, key) {
-        if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key)) ) {
+        if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key))) {
             let text = row[this.isLevel] ? row[this.isLevel].split(this.levelIndentationMarker) : null;
-            return text ? (text.length -1) * this.levelIndentationValue : this.levelIndentationValue;
+            return text ? (text.length - 1) * this.levelIndentationValue : this.levelIndentationValue;
         }
         else {
             return 0;
@@ -656,11 +665,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     doesButtonIconExist(key: string) {
         let buttonIconExists = false;
-        if(this.styles && this.styles[key]) {
+        if (this.styles && this.styles[key]) {
             const keys = Object.keys(this.styles[key]);
-    
+
             keys.forEach(k => {
-                if(this.styles[key][k]['button_icon']) {
+                if (this.styles[key][k]['button_icon']) {
                     buttonIconExists = true;
                 }
             })
@@ -676,7 +685,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let styles = {};
         const styleKeysToIgnore = ['value', 'button_icon'];
 
-        const valueStr = value != null? value + '': null;
+        const valueStr = value != null ? value + '' : null;
         if (column && valueStr && this.styles[column]) {
             let values: string[] = Object.keys(this.styles[column]);
             if (valueStr && values.includes(valueStr)) {
@@ -699,8 +708,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     private loadRestrictions(restrictions: Restrictions) {
-        if(restrictions && Object.keys(restrictions).length > 0) {
-            this.restrictions = restrictions;            
+        if (restrictions && Object.keys(restrictions).length > 0) {
+            this.restrictions = restrictions;
         }
         else {
             this.restrictions = {
@@ -710,8 +719,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     private loadSelectionActions(actions: SelectionAction[]) {
-        if(actions && actions.length) {
-            this.selectionActions = actions.map( x => {
+        if (actions && actions.length) {
+            this.selectionActions = actions.map(x => {
                 return {
                     viewType: x.viewType,
                     key: x.key,
@@ -730,16 +739,16 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     private loadViewKeys(table_keys: any[]) {
-        if(this.selectionActions && this.selectionActions.length) {
+        if (this.selectionActions && this.selectionActions.length) {
             let selectTableKey: TableViewKey = {
-                format: {dataType: 'checkbox'},
+                format: { dataType: 'checkbox' },
                 isHidden: false,
                 isPrimary: false,
                 isSelectCheckbox: true,
-                key:'selectCheckbox',
-                label:'Select Checkbox'
+                key: 'selectCheckbox',
+                label: 'Select Checkbox',
             };
-            this.viewKeys = [selectTableKey].concat(table_keys);    
+            this.viewKeys = [selectTableKey].concat(table_keys);
         }
         else {
             this.viewKeys = table_keys;
@@ -763,6 +772,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             }
             fieldValue = {
                 label: field.label,
+                translate: field.translate,
                 tooltip: field.tooltip,
                 name: field.fieldName,
                 value: null,
@@ -783,8 +793,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     advSearch() {
-        if(!this.searchKeysLoaded)
-        {
+        if (!this.searchKeysLoaded) {
             this.loadSearchKeys();
         }
         else {
@@ -793,7 +802,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     updateAdvancedSearchKeys(searchKeys: SearchViewKey[]) {
-        if(searchKeys && searchKeys.length > 0) {
+        if (searchKeys && searchKeys.length > 0) {
             this.advancedSearchKeys = searchKeys.filter(x => x.format.viewType != 'toggle');
         }
         else {
@@ -802,18 +811,19 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     loadSearchToggles(completeSearchKeys: SearchViewKey[], searchKeys: any = null) {
-        if(completeSearchKeys && completeSearchKeys.length > 0) {
-            this.searchToggles = completeSearchKeys.filter(x => x.format.viewType == 'toggle').map( x => {
+        if (completeSearchKeys && completeSearchKeys.length > 0) {
+            this.searchToggles = completeSearchKeys.filter(x => x.format.viewType == 'toggle').map(x => {
                 let checked = false;
-                if(searchKeys && Object.keys(searchKeys).includes(x.fieldName)) {
+                if (searchKeys && Object.keys(searchKeys).includes(x.fieldName)) {
                     checked = searchKeys[x.fieldName];
                 }
                 else {
-                    checked = (x.format.value == 'true' || x.format.value == true || x.format.value == '1' || x.format.value == 1) ? true: false;
+                    checked = (x.format.value == 'true' || x.format.value == true || x.format.value == '1' || x.format.value == 1) ? true : false;
                 }
                 return {
                     fieldName: x.fieldName,
                     label: x.label,
+                    translate: x.translate,
                     tooltip: x.tooltip,
                     checked: checked
                 };
@@ -827,15 +837,15 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     updateSearchToggle(index: number, checked: boolean) {
-        let cleanedValues={};
+        let cleanedValues = {};
         this.searchToggles[index].checked = checked;
-        this.searchToggles.filter(x=> x.checked).forEach( x => {
+        this.searchToggles.filter(x => x.checked).forEach(x => {
             cleanedValues[x.fieldName] = x.checked
         });
-        
+
         this.loadTable(cleanedValues);
         this.sendEvent.emit({ eventType: 'searchKeys', queryParams: { keys: cleanedValues } }); // pass search keys to parent view 
-        
+
         // To navigate
         // const newTableParams: any = {
         //     entry:  {
@@ -844,21 +854,21 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         //     },
         //     keys: this.tableData.keys,
         //     searchKeys: cleanedValues
-            
+
         // }
         // this.navigate(newTableParams);
 
     }
-    
+
     applySearchToggles(cleanedValues: any) {
         // Apply toggles
-        if(this.searchToggles && this.searchToggles.length) {
+        if (this.searchToggles && this.searchToggles.length) {
             // clean-up null or empty values
-            if(!cleanedValues) {
+            if (!cleanedValues) {
                 cleanedValues = {};
             }
-        
-            this.searchToggles.filter(x => x.checked).forEach( x => {
+
+            this.searchToggles.filter(x => x.checked).forEach(x => {
                 cleanedValues[x.fieldName] = x.checked
             });
         }
@@ -869,12 +879,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     applyHomepageKeys(cleanedValues: any) {
         let keys = this._dataSharingService.getData('homepageSearchKeys');
         // Apply toggles
-        if(keys && Object.keys(keys).length) {
+        if (keys && Object.keys(keys).length) {
             // clean-up null or empty values
-            if(!cleanedValues) {
+            if (!cleanedValues) {
                 cleanedValues = {};
             }
-        
+
             cleanedValues = {
                 ...cleanedValues,
                 ...keys
@@ -893,20 +903,20 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     add() {
         let keys = {};
         this.viewKeys.filter(x => x.isPrimary).forEach(x => {
-            if(this.tableData.keys && this.tableData.keys[x.key]) {
+            if (this.tableData.keys && this.tableData.keys[x.key]) {
                 keys[x.key] = this.tableData.keys[x.key];
             }
             // else if(this.keysArray && this.keysArray.length && this.keysArray[0][x.key]) {
             //     keys[x.key] = this.keysArray[0][x.key];
             // }
         });
-        Object.keys(this.currentKeys).forEach( key => {
+        Object.keys(this.currentKeys).forEach(key => {
             keys[key] = this.currentKeys[key];
         });
 
-        
+
         const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: keys, index: 0, total: 0 };
-        setTimeout(() => { this.sendEvent.emit({ eventType: 'add', queryParams: mergedParams }); }, 50);    
+        setTimeout(() => { this.sendEvent.emit({ eventType: 'add', queryParams: mergedParams }); }, 50);
     }
 
     search_submit(value: any) {
@@ -923,13 +933,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         // New Logic, navigate to a new table view page with same params but with search Keys
         const newTableParams: any = {
-            entry:  {
+            entry: {
                 name: this.tableData.entryName,
                 type: 'table'
             },
             keys: this.tableData.keys,
             searchKeys: cleanedValues
-            
+
         }
         this.navigate(newTableParams);
 
@@ -962,8 +972,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     skipGetRecord = false;
     getRecord(index: number, row: MatRow) {
-        if(!this.restrictions || !this.restrictions.preventNavigationToForm) {
-            if(!this.skipGetRecord){
+        if (!this.restrictions || !this.restrictions.preventNavigationToForm) {
+            if (!this.skipGetRecord) {
                 this.selectedRow = row;
                 const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: this.keysArray, index: index + 1, total: this.keysArray.length };
                 this.navigate(mergedParams);
@@ -975,28 +985,28 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     loadExplorerData(results: any) {
-     let _this = this;
-     _this.foldersSource = results;
-     _this.folders = results.map(x => x.folder_name);
-     
-     _this.keysArray = results.map(row => {
-         const key_values = {};
-         const primaryKeys = _this.viewKeys.filter(entry => {
-             return entry.isPrimary;
-         });
-         for (const primaryKey of primaryKeys) {
-             key_values[primaryKey.key] = row[primaryKey.key];
-         }
-         return key_values;
-     });
+        let _this = this;
+        _this.foldersSource = results;
+        _this.folders = results.map(x => x.folder_name);
+
+        _this.keysArray = results.map(row => {
+            const key_values = {};
+            const primaryKeys = _this.viewKeys.filter(entry => {
+                return entry.isPrimary;
+            });
+            for (const primaryKey of primaryKeys) {
+                key_values[primaryKey.key] = row[primaryKey.key];
+            }
+            return key_values;
+        });
 
     }
 
     goInside(index: number, row: any) {
-        if(!this.restrictions || !this.restrictions.preventNavigationToForm) {
-            if(this.explorerSource == 'table-view') {
+        if (!this.restrictions || !this.restrictions.preventNavigationToForm) {
+            if (this.explorerSource == 'table-view') {
                 // table-view
-                if('' + row.id_risorsa == '0'){
+                if ('' + row.id_risorsa == '0') {
                     this.selectedRow = row;
                     this.currentKeys = row;
                     // this.currentKeys.liv++;
@@ -1014,7 +1024,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 this.loadDriveContents(this.foldersSource[index]['id']);
             }
 
-            
+
         }
     }
 
@@ -1024,17 +1034,17 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         _this.skipGetRecord = true;
         let selectedViewKey: TableViewKey = _this.viewKeys.filter(x => x.key == key)[0];
 
-        if(selectedViewKey && selectedViewKey.buttonAction) {
-            if(selectedViewKey.buttonAction.confirmAction) {
-                let confirmMessage: {title: string, text: string} = {
+        if (selectedViewKey && selectedViewKey.buttonAction) {
+            if (selectedViewKey.buttonAction.confirmAction) {
+                let confirmMessage: { title: string, text: string } = {
                     title: selectedViewKey.buttonAction.action,
                     text: 'Are you sure?'
                 };
 
-                if(selectedViewKey.buttonAction.confirmMessage ){
+                if (selectedViewKey.buttonAction.confirmMessage) {
                     confirmMessage = selectedViewKey.buttonAction.confirmMessage;
                 }
-                
+
                 // Show confirmation dialog to make sure user wants to perform action
                 _this._dialogService.showConfimationDialog(confirmMessage.title, confirmMessage.text, 'Yes', 'No', 'warning').then((result) => {
                     if (result.value === true) {
@@ -1046,13 +1056,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 _this.performButtonAction(selectedViewKey, row);
             }
         }
-        
+
     }
 
     performButtonAction(selectedViewKey: TableViewKey, row: MatRow) {
         let keys = {};
-        if(selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0){
-            selectedViewKey.buttonAction.keymap.forEach( map => {
+        if (selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0) {
+            selectedViewKey.buttonAction.keymap.forEach(map => {
                 keys[map.destination] = row[map.source];
             })
         }
@@ -1060,7 +1070,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (selectedViewKey.buttonAction.action == 'navigate') {
 
             let target = selectedViewKey.buttonAction.target;
-            
+
             if (selectedViewKey.buttonAction.keyToCheck && selectedViewKey.buttonAction.navigationConditions.length > 0) {
                 //console.log('yess');
                 let currentValue = row[selectedViewKey.buttonAction.keyToCheck];
@@ -1074,18 +1084,18 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         }
                     })
                 }
-            }           
+            }
 
             let mergedParams = { entry: { name: target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };
             this.navigate(mergedParams);
         }
-        else if(selectedViewKey.buttonAction.action == 'delete'){
+        else if (selectedViewKey.buttonAction.action == 'delete') {
             this.deleteRow(selectedViewKey, keys);
         }
-        else if(selectedViewKey.buttonAction.action == 'query'){
+        else if (selectedViewKey.buttonAction.action == 'query') {
             this.runCustomQuery(selectedViewKey, keys);
         }
-        else if(selectedViewKey.buttonAction.action == 'downloadAttachment') {
+        else if (selectedViewKey.buttonAction.action == 'downloadAttachment') {
             this.downloadAttachment(selectedViewKey, row);
         }
     }
@@ -1093,23 +1103,23 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     performOnSuccessAction(selectedViewKey: TableViewKey, initialKeys: any, responseKeys: any) {
         let _this = this;
         let action = selectedViewKey.buttonAction.onSuccessAction;
-        if(action == 'reload') {
+        if (action == 'reload') {
             // reload
             _this.loadData();
         }
-        else if(action == 'navigate') {
+        else if (action == 'navigate') {
             // navigate
             //Create complete keys lists by combining both initial and response keys
             let allKeys = JSON.parse(JSON.stringify(initialKeys));
-                if(responseKeys != null){
-                Object.keys(responseKeys).forEach( key => {
+            if (responseKeys != null) {
+                Object.keys(responseKeys).forEach(key => {
                     allKeys[key] = responseKeys[key];
                 });
             }
 
             let keys = {};
-            if(selectedViewKey.buttonAction.onSuccessActionKeymap && selectedViewKey.buttonAction.onSuccessActionKeymap.length > 0){
-                selectedViewKey.buttonAction.onSuccessActionKeymap.forEach( map => {
+            if (selectedViewKey.buttonAction.onSuccessActionKeymap && selectedViewKey.buttonAction.onSuccessActionKeymap.length > 0) {
+                selectedViewKey.buttonAction.onSuccessActionKeymap.forEach(map => {
                     keys[map.destination] = allKeys[map.source];
                 })
             }
@@ -1117,27 +1127,27 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 keys = allKeys;
             }
 
-            let mergedParams = { entry: { name: selectedViewKey.buttonAction.target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };            
-            _this.navigate(mergedParams);    
+            let mergedParams = { entry: { name: selectedViewKey.buttonAction.target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };
+            _this.navigate(mergedParams);
 
         }
-        else if(action == 'update_time_tracker') {
+        else if (action == 'update_time_tracker') {
             //_this._timeTrackerService.isTrStarted = !_this._timeTrackerService.isTrStarted;
             //_this._timeTrackerService.fromOtherPlaces = true;
             _this._timeTrackerService.checkStatus();
         }
-        else if(action == 'update_time_tracker_and_reload') {
+        else if (action == 'update_time_tracker_and_reload') {
             // check Timer Status first
             //_this._timeTrackerService.isTrStarted = !_this._timeTrackerService.isTrStarted;
             //_this._timeTrackerService.fromOtherPlaces = true;
             _this._timeTrackerService.checkStatus();
-            
+
             // reload
             _this.loadData();
         }
     }
 
-    navigate(params){
+    navigate(params) {
         setTimeout(() => { this.sendEvent.emit({ eventType: 'navigate', queryParams: params }); }, 50);
     }
 
@@ -1153,7 +1163,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
                 else {
                     // Show error snackbar
-                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
+                    _this._toastService.showErrorToast("Error ", JSON.stringify(result.reason.detail));
                 }
             },
             error => {
@@ -1167,8 +1177,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let _this = this;
         _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
             response => {
-                if(response.result == 'OK') {
-                    if(selectedViewKey.buttonAction.onSuccessAction != null) {
+                if (response.result == 'OK') {
+                    if (selectedViewKey.buttonAction.onSuccessAction != null) {
                         _this.performOnSuccessAction(selectedViewKey, keys, response.response);
                     }
                 }
@@ -1187,9 +1197,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         const file_id = data[0];
         const filename = data[1];
-        if(file_id && filename)
-        {
-            _this._dialogService.showLoadingDialog('Downloading attachment', 'Please wait...');            
+        if (file_id && filename) {
+            _this._dialogService.showLoadingDialog('Downloading attachment', 'Please wait...');
             const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
                 url => {
                     if (url != null) {
@@ -1397,7 +1406,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     importAdvanced(item: ImportItem) {
-        this._importExportService.importAdvancedCSV(this.tableData.entryName, this.tableData.keys, item.label, false);    
+        this._importExportService.importAdvancedCSV(this.tableData.entryName, this.tableData.keys, item.label, false);
     }
 
     downloadTemplateFile(): void {
@@ -1425,18 +1434,18 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         _this.isLoading = true;
         _this.authService.loadDriveContents(folder).subscribe(
             result => {
-                if(result['result'] === 'OK') {
+                if (result['result'] === 'OK') {
                     _this.foldersSource = result['data'].filter(x => x['mimeType'] === 'application/vnd.google-apps.folder');
-                    _this.folders = _this.foldersSource.map( x => x['name']);
+                    _this.folders = _this.foldersSource.map(x => x['name']);
                     _this.filesSource = result['data'].filter(x => x['mimeType'] !== 'application/vnd.google-apps.folder');
-                    _this.files = _this.filesSource.map( x => x['name']);
+                    _this.files = _this.filesSource.map(x => x['name']);
                 }
                 _this._console.log(result);
                 _this.isLoading = false;
             },
             error => {
-              console.error(error);
-              _this.isLoading = false;
+                console.error(error);
+                _this.isLoading = false;
             }
         );
     }

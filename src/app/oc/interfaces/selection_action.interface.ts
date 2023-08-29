@@ -4,6 +4,7 @@ export interface SelectionAction {
     viewType: 'button' | 'menu';
     key: string;
     label: string;
+    translate?: string;
     icon: string;
     confirmAction?: boolean;
     confirmActionMessage?: string;

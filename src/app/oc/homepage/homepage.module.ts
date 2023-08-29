@@ -14,6 +14,7 @@ import { BottomTabsModule } from 'app/oc/bottom-tabs/bottom-tabs.module';
 import { ImportDialogModule } from '../dialogs/import.dialog/import.dialog.module';
 import { HomepageTabModule } from '../homepage-tab/homepage-tab.module';
 import { MatBadgeModule } from '@angular/material/badge';
+import { OneCompliancePipesModule } from '../pipes/pipes.module';
 
 const routes = [
   {
@@ -37,8 +38,8 @@ const routes = [
     FormViewToolbarModule,
     BottomTabsModule,
     ImportDialogModule,
-
-    HomepageTabModule
+    HomepageTabModule,
+    OneCompliancePipesModule
   ],
   exports: [
     CommonModule,
