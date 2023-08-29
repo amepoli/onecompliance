@@ -257,8 +257,9 @@ class Auth {
             ],
             Username: username,
         });
+        let result;
         try {
-            const result = await client.send(command);
+            result = await client.send(command);
             _this.setAuthState({
                 state: "sign-up",
                 user: result,
@@ -267,6 +268,8 @@ class Auth {
             _this.errorInfo$.next(error);
             console.log(error.message ?? error);
         }
+
+        return result;
     }
 
     public async confirmSignUp(username: string, code: string) {
@@ -657,8 +660,8 @@ class Api {
     }
 
     public async post(api: string, apiName: string, request: PutPostRequest) {
-        const _this = this;
 
+        const _this = this;
         // Check if refresh token and access token needs refresh
         await _this.awsService.auth().refreshToken();
 

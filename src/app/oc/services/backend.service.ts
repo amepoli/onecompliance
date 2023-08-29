@@ -96,6 +96,7 @@ export class BackendService {
     this.awsService.auth();
     this.myPutPostInit.queryStringParameters = { entry_name: entryName, company: company, keys: JSON.stringify(keys), event: JSON.stringify({ name: event, type: actionType, field: field, isMessage: isMessage }) };
     this.myPutPostInit.body = data;
+    console.log(`Calling ${this.apiName} su ${JSON.stringify(this.myPutPostInit.queryStringParameters)}`);
     return from(this.awsService.api().post(this.apiName, this.tablesApiName, this.myPutPostInit));
   }
 
@@ -583,9 +584,9 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.viewsApiName, this.myGetInit));
   }
 
-  setUserOnDynamo(username: string, company: string, associated_user: string, registry: string, tax_code: string) {
+  setUserOnDynamo(username: string, company: string, associated_user: string, registry: string, tax_code: string, userSub: string) {
     this.awsService.auth();
-    this.myPutPostInit.queryStringParameters = { request_type: 'setUserOnDynamo', username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code };
+    this.myPutPostInit.queryStringParameters = { request_type: 'setUserOnDynamo', username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code, userSub: userSub };
     return from(this.awsService.api().post(this.apiName, this.insert_user_to_dynamoApiName, this.myPutPostInit));
   }
 

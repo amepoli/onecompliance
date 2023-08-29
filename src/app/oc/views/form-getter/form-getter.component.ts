@@ -1283,7 +1283,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 console.log(user);
                                 _this.performSendEmail(event, formValues, value);
 
-                                _this.backendService.setUserOnDynamo(username, company, associated_user, registry, tax_code);
+                                _this.backendService.setUserOnDynamo(username, company, associated_user, registry, tax_code, user.userSub);
 
                             })
                             .catch((err) => {
