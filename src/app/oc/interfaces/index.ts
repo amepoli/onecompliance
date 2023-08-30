@@ -42,3 +42,5 @@ export * from './widgets_configuration.interface';
 export * from './file_manager_view_type.interface';
 export * from './calendar_event_details.interface';
 export * from './oc_auth_state.interface';
+export * from './get_request.interface';
+export * from './post_request.interface';
