@@ -20,7 +20,8 @@ export const locale = {
             'actions_updates':'Actions/Updates',
             'type': 'Type',
             'code': 'Code',
-            'main_only':'Main Only'
+            'main_only':'Main Only',
+            'void': ''
         }
     }
 };
