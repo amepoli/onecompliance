@@ -479,7 +479,7 @@
       "isPrimary": false,
       "key": "verifica_id_descr",
       "label": "void",
-     	"translate": "RESOURCES.void",
+      "translate": "RESOURCES.void",
       "newLine": false,
       "readOnly": true,
       "sameOrigin": false,
@@ -915,18 +915,16 @@
       "label": "Incaricato Compilazione",
       "newLine": false,
       "readOnly": false,
+      "queryFunct": "SELECT id_anagrafica_assegnataria FROM entrasp.sondaggi WHERE id_sondaggio=$id_sondaggio$ AND codice_azienda=$codice_azienda$",
       "size": 3.33,
-      "outputEvent": {
-        "eventName": "update_id_anagrafica_assegnataria",
-        "eventTrigger": "select"
-      },
+      "sameOrigin": false,
       "inputEvents": [
         {
-          "eventName": "update_id_anagrafica_assegnataria",
+          "eventName": "onSaveSomministrazione",
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "update entrasp.sondaggi set id_anagrafica_assegnataria=£id_anagrafica_assegnataria£ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ returning 1"
+          "queryFunct": "update entrasp.sondaggi snd set id_anagrafica_assegnataria=£id_anagrafica_assegnataria£ where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ RETURNING 1;"
         }
       ]
     },
@@ -947,22 +945,25 @@
       "isPrimary": false,
       "key": "data_esecuzione",
       "label": "Data esecuzione",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.67,
-      "outputEvent": {
-        "eventName": "update_data_esecuzione",
-        "eventTrigger": "change"
-      },
       "inputEvents": [
         {
-          "eventName": "update_data_esecuzione",
+          "eventName": "onSaveSomministrazione",
           "actionType": "query",
           "condition": "none",
           "values": [],
-          "queryFunct": "update entrasp.sondaggi set data_esecuzione='£data_esecuzione£'::date where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ returning 1"
+          "queryFunct": "update entrasp.sondaggi snd set data_esecuzione=ss.data_esecuzione from entrasp.sondaggi_somministrati ss where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+        },
+        {
+          "eventName": "onSaveSomministrazione",
+          "actionType": "query",
+          "condition": "none",
+          "values": [],
+          "queryFunct": "update entrasp.sondaggi snd set data_prevista=$data_prevista$ from entrasp.sondaggi_somministrati ss, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
         }
-      ]
+      ],
+      "newLine": false,
+      "readOnly": false,
+      "size": 1.67
     },
     {
       "autoGenerate": false,
