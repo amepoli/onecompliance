@@ -20,7 +20,8 @@ export const locale = {
             'actions_updates': 'Azioni/Aggiornamenti',
             'type':'Tipo',
             'code': 'Codice',
-            'main_only':'Solo Principali'
+            'main_only':'Solo Principali',
+            'void': ''
         }
     }
 };
