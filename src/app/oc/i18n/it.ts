@@ -21,7 +21,7 @@ export const locale = {
             title: 'Titolo',
             type: 'Tipo',
             user: 'Utente',
-            void: '',
+            void: ''
         }
     }
 };
