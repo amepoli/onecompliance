@@ -1921,6 +1921,10 @@
       {
         "label": "Trasferte utente",
         "queryString": "select csn.codice_azienda, csn.id_cons, csn.km_percorsi, csn.date_time_begin, csn.date_time_end, extract(year from csn.data_intervento) as anno, csn.data_intervento, csn.id_risorsa, csn.indirizzo_partenza, csn.indirizzo_arrivo, an.dynamo_user from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part where km_percorsi is not null"
+      },
+      {
+        "label": "Compiti Utente",
+        "queryString": "select cmp.codice_azienda,EXTRACT (year from prg.data_competenza)||' - '||pf.titolo as compito, pf.titolo,EXTRACT (year from prg.data_competenza) as anno_compentenza, cmp.codice_compito, prg.id_progetto, pf.id_fase  from entrasp.compiti cmp inner join entrasp.progetti_fasi pf on cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase inner join entrasp.progetti prg on pf.codice_azienda=prg.codice_azienda and pf.id_progetto=prg.id_progetto inner join entrasp.compiti_collaboratori cmc on cmp.codice_azienda =cmc.codice_azienda and cmp.codice_compito = cmc.codice_compito where users like '%'||'€global_username€'||'%' and prg.stato='A'  order by codice_azienda ASC, EXTRACT (year from prg.data_competenza) DESC"
       }
     ]
   }
