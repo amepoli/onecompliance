@@ -1238,7 +1238,7 @@
       },
       {
         "label": "Compiti Utente",
-        "queryString": "select cmp.codice_azienda,EXTRACT (year from prg.data_competenza)||' - '||pf.titolo as compito, pf.titolo,EXTRACT (year from prg.data_competenza) as anno_compentenza, cmp.codice_compito, prg.id_progetto, pf.id_fase  from entrasp.compiti cmp inner join entrasp.progetti_fasi pf on cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase inner join entrasp.progetti prg on pf.codice_azienda=prg.codice_azienda and pf.id_progetto=prg.id_progetto where users like '%'||'€global_username€'||'%' and prg.stato='A'  order by codice_azienda ASC, EXTRACT (year from prg.data_competenza) DESC"
+        "queryString": "select cmp.codice_azienda,EXTRACT (year from prg.data_competenza)||'-'||pf.titolo as compito, pf.titolo,EXTRACT (year from prg.data_competenza) as anno_compentenza, cmp.codice_azienda||'-'||EXTRACT (year from prg.data_competenza)||'-'||pf.titolo as per_ricerca, cmp.codice_compito, prg.id_progetto, pf.id_fase  from entrasp.compiti cmp inner join entrasp.progetti_fasi pf on cmp.codice_azienda=pf.codice_azienda and cmp.id_fase=pf.id_fase inner join entrasp.progetti prg on pf.codice_azienda=prg.codice_azienda and pf.id_progetto=prg.id_progetto where entrasp.compito_belongs_user2('€global_username€', cmp.codice_compito, cmp.codice_azienda)=true and prg.stato='A'  order by codice_azienda ASC, EXTRACT (year from prg.data_competenza) DESC"
       }
     ]
   }
