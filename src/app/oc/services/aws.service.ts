@@ -553,49 +553,47 @@ class Auth {
                 const client = new CognitoIdentityProvider({
                     region: DEFAULT_REGION,
                 });
+                try {
+                    const data = await client.initiateAuth(params);
+                    console.log("RefreshTokenResponse: ", data);
+                    if (data != null) {
+                        var t = new Date();
+                        t.setSeconds(t.getSeconds() + 3600);
+                        let exp = Math.trunc(t.getTime() / 1000);
+                        session["exp"] = exp;
+                        session["AccessToken"] =
+                            data.AuthenticationResult.AccessToken;
+                        session["IdToken"] =
+                            data.AuthenticationResult.IdToken;
 
-                client.initiateAuth(params, (err, data) => {
-                    if (err) {
-                        _this.errorInfo$.next(err);
-                        console.log("RefreshTokenError: ", err.stack);
-                    } else {
-                        console.log("RefreshTokenResponse: ", data);
-                        if (data != null) {
-                            var t = new Date();
-                            t.setSeconds(t.getSeconds() + 3600);
-                            let exp = Math.trunc(t.getTime() / 1000);
-                            session["exp"] = exp;
-                            session["AccessToken"] =
-                                data.AuthenticationResult.AccessToken;
-                            session["IdToken"] =
-                                data.AuthenticationResult.IdToken;
-
-                            if (!_this.authStateChange$) {
-                                if (session) {
-                                    let authState: OCAuthState = {
-                                        session: JSON.parse(
-                                            localStorage.getItem("session")
-                                        ),
-                                        state: "signedIn",
-                                        user: JSON.parse(
-                                            localStorage.getItem("user")
-                                        ),
-                                    };
-                                    _this.authStateChange$.next(authState);
-                                }
-                            } else {
-                                let authStateChange: any =
-                                    _this.authStateChange$.value;
-                                authStateChange.session = session;
-                                localStorage.setItem(
-                                    "session",
-                                    JSON.stringify(authStateChange.session)
-                                );
-                                _this.authStateChange$.next(authStateChange);
+                        if (!_this.authStateChange$) {
+                            if (session) {
+                                let authState: OCAuthState = {
+                                    session: JSON.parse(
+                                        localStorage.getItem("session")
+                                    ),
+                                    state: "signedIn",
+                                    user: JSON.parse(
+                                        localStorage.getItem("user")
+                                    ),
+                                };
+                                _this.authStateChange$.next(authState);
                             }
+                        } else {
+                            let authStateChange: any =
+                                _this.authStateChange$.value;
+                            authStateChange.session = session;
+                            localStorage.setItem(
+                                "session",
+                                JSON.stringify(authStateChange.session)
+                            );
+                            _this.authStateChange$.next(authStateChange);
                         }
                     }
-                });
+                } catch (error) {
+                   console.log(error) 
+                }
+               
             }
         }
     }
