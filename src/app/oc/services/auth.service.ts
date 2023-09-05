@@ -299,11 +299,12 @@ export class AuthService {
 
   private async retrieveUserInfo() {
     const _this = this;
-       this.interval = setInterval(
-          () => this.awsService.auth().refreshToken(),
+       _this.interval = setInterval(
+          () => _this.awsService.auth().refreshToken(),
           1000
         );
     
+    await _this.awsService.auth().refreshToken();
     _this.backendService.getUserData().subscribe((ud) => {
       if (ud != null && ud.result === "OK") {
         if (ud.userdata.language == null) {
@@ -353,7 +354,7 @@ export class AuthService {
         _this.retrieveMenu();
       } else {
         // Show error snackbar
-        _this._toastService.showErrorToast(ud.reason);
+        _this._toastService.showErrorToast(ud?.reason ?? ud);
         _this.userinfo.next(null);
         _this._console.error(ud);
       }
