@@ -216,46 +216,36 @@
 		{
 			"autoGenerate": false,
 			"format": {
-				"viewType": "button"
+				"dataType": "date",
+				"viewType": "input",
+				"value": "€CURRENT_DATE€"
 			},
-			"isHidden": false,
-			"isPrimary": false,
-			"buttonIcon": "update",
-			"key": "avvia_progetti",
-			"label": "Avvia/aggiorna",
-			"newLine": false,
+			"label": "Data ins",
+			"key": "data_inserimento",
 			"outputEvent": {
-				"eventName": "progetti_avvia",
-				"eventTrigger": "press"
+				"eventName": "data_ins_change_progetti",
+				"eventTrigger": "change"
 			},
 			"inputEvents": [
 				{
-					"eventName": "progetti_avvia",
+					"eventName": "data_ins_change_progetti",
 					"actionType": "query",
 					"condition": "none",
 					"values": [],
-					"queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
-					"outputEventWhenComplete": "formReload"
-				},
-				{
-					"eventName": "onAddNewProgetti",
-					"actionType": "hide",
-					"condition": "none",
-					"values": []
+					"queryFunct": "entrasp.change_data_inserimento_progetto($codice_azienda$, $id_progetto$)"
 				}
 			],
 			"readOnly": false,
-			"sameOrigin": false,
+			"isHidden": false,
+			"isPrimary": false,
 			"size": 1.67,
-			"style": {
-				"background_color": "green"
-			}
+			"newLine": false
 		},
 		{
 			"format": {
 				"viewType": "invisible"
 			},
-			"size": 0.87,
+			"size": 1.07,
 			"isHidden": false,
 			"isPrimary": false,
 			"label": "invisible_2",
@@ -320,7 +310,7 @@
 			"buttonIcon": "more_vert",
 			"key": "progetti_actions",
 			"label": " ",
-			"newLine": false,
+			"newLine": true,
 			"readOnly": false,
 			"sameOrigin": false,
 			"size": 0.6,
@@ -427,17 +417,42 @@
 			]
 		},
 		{
+			"autoGenerate": false,
 			"format": {
-				"viewType": "invisible"
+				"viewType": "button"
 			},
-			"size": 0.2,
 			"isHidden": false,
 			"isPrimary": false,
-			"label": "invisible_3",
-			"key": "invisible_3",
+			"buttonIcon": "update",
+			"key": "avvia_progetti",
+			"label": "Avvia/aggiorna",
+			"newLine": false,
+			"outputEvent": {
+				"eventName": "progetti_avvia",
+				"eventTrigger": "press"
+			},
+			"inputEvents": [
+				{
+					"eventName": "progetti_avvia",
+					"actionType": "query",
+					"condition": "none",
+					"values": [],
+					"queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
+					"outputEventWhenComplete": "formReload"
+				},
+				{
+					"eventName": "onAddNewProgetti",
+					"actionType": "hide",
+					"condition": "none",
+					"values": []
+				}
+			],
+			"readOnly": false,
 			"sameOrigin": false,
-			"readOnly": true,
-			"newLine": true
+			"size": 1.1,
+			"style": {
+				"background_color": "green"
+			}
 		},
 		{
 			"autoGenerate": false,
@@ -471,34 +486,6 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"size": 0.83,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input",
-				"value": "€CURRENT_DATE€"
-			},
-			"label": "Data ins",
-			"key": "data_inserimento",
-			"outputEvent": {
-				"eventName": "data_ins_change_progetti",
-				"eventTrigger": "change"
-			},
-			"inputEvents": [
-				{
-					"eventName": "data_ins_change_progetti",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "entrasp.change_data_inserimento_progetto($codice_azienda$, $id_progetto$)"
-				}
-			],
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"size": 1.1,
 			"newLine": false
 		},
 		{
@@ -1347,7 +1334,7 @@
 			"width": "3%",
 			"key": "time_report_stop_active",
 			"label": " ",
-     		"style": [
+			"style": [
 				{
 					"button_icon": "stop",
 					"value": "*",
