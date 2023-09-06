@@ -237,7 +237,7 @@ class Auth {
         }
     }
 
-    public async signUp(username: string, password: string, email: string) {
+    public async signUp(username: string, password: string, email: string, isInvitedUser: boolean) {
         const _this = this;
 
         const secretHash = generateSecretHash(username);
@@ -260,10 +260,12 @@ class Auth {
         let result;
         try {
             result = await client.send(command);
-            _this.setAuthState({
-                state: "sign-up",
-                user: result,
-            });
+            if (!isInvitedUser) {
+                _this.setAuthState({
+                    state: "sign-up",
+                    user: result,
+                });
+            }
         } catch (error) {
             _this.errorInfo$.next(error);
             console.log(error.message ?? error);
@@ -591,9 +593,9 @@ class Auth {
                         }
                     }
                 } catch (error) {
-                   console.log(error) 
+                    console.log(error)
                 }
-               
+
             }
         }
     }
@@ -622,7 +624,7 @@ class Api {
         private authStateChange$: BehaviorSubject<OCAuthState>,
         private http: HttpClient,
         private awsService: AwsService
-    ) {}
+    ) { }
 
     public async get(api: string, apiName: string, request: GetRequest) {
         const _this = this;
@@ -638,13 +640,13 @@ class Api {
                 .get(url, {
                     headers:
                         request.headers &&
-                        Object.keys(request.headers).length > 0
+                            Object.keys(request.headers).length > 0
                             ? request.headers
                             : {
                                 Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
                                 "Content-Type": "text/plain",
                                 UserId: _this.authStateChange$.value.session
-                                .sub,
+                                    .sub,
                             },
                     params: request.queryStringParameters,
                 })
@@ -667,16 +669,17 @@ class Api {
             const url = environment.appData.awsSdk.GatewayURL + apiName; //'view?entry_name=progetti&company=TEST';
             const result = await _this.http
                 .post(url, request.body, {
-                    headers: 
+                    headers:
                         request.headers &&
-                        Object.keys(request.headers).length > 0
+                            Object.keys(request.headers).length > 0
                             ? request.headers
-                            : {
-                                Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
+                            : (_this.authStateChange$.value?.session ? {
+                                Authorization: `Bearer ${_this.authStateChange$.value?.session?.IdToken}`,
                                 "Content-Type": "text/plain",
-                                UserId: _this.authStateChange$.value.session
-                                    .sub,
-                            },
+                                UserId: _this.authStateChange$.value?.session?.sub,
+                            } : {
+                                "Content-Type": "text/plain"
+                            }),
                     params: request.queryStringParameters,
                 })
                 .toPromise();
@@ -698,9 +701,9 @@ class Api {
             const url = environment.appData.awsSdk.GatewayURL + apiName; //'view?entry_name=progetti&company=TEST';
             const result = await _this.http
                 .delete(url, {
-                    headers: 
+                    headers:
                         request.headers &&
-                        Object.keys(request.headers).length > 0
+                            Object.keys(request.headers).length > 0
                             ? request.headers
                             : {
                                 Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,
@@ -729,9 +732,9 @@ class Api {
             const url = environment.appData.awsSdk.GatewayURL + apiName; //'view?entry_name=progetti&company=TEST';
             const result = await _this.http
                 .put(url, request.body, {
-                    headers: 
+                    headers:
                         request.headers &&
-                        Object.keys(request.headers).length > 0
+                            Object.keys(request.headers).length > 0
                             ? request.headers
                             : {
                                 Authorization: `Bearer ${_this.authStateChange$.value.session.IdToken}`,

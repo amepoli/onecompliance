@@ -1281,7 +1281,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.authService.setUsername(username);
                         _this.authService.setPassword(password);
                         _this.authService.setEmail(email);
-                        _this.authService.signUp()
+                        _this.authService.signUp(true)
                             .then((user) => {
                                 console.log(user);
                                 _this.performSendEmail(event, formValues, value);
