@@ -229,10 +229,10 @@ export class AuthService {
     this.signOutGoogle();
   }
 
-  public signUp() {
+  public signUp(isInvitedUser: boolean = false) {
     return this.awsService
     .auth()
-    .signUp(this.username, this.password, this.email);
+    .signUp(this.username, this.password, this.email, isInvitedUser);
   }
 
   public confirmSignUp(code: string): void {
