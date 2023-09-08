@@ -18,6 +18,7 @@ export const locale = {
             report_date: 'Report Date',
             reporting_office: 'Reporting Office',
             state: 'State',
+            status: 'Status',
             title: 'Title',
             type: 'Type',
             Utente: 'User',

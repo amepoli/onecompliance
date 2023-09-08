@@ -18,6 +18,7 @@ export const locale = {
             report_date: 'Data Segnalazione',
             reporting_office: 'Centro Gestionale Segnalante',
             state: 'Stato',
+            status: 'Stato',
             title: 'Titolo',
             type: 'Tipo',
             user: 'Utente',
