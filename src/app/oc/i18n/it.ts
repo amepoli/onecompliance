@@ -11,6 +11,7 @@ export const locale = {
             creation_date: 'Data creazione',
             customer_fund: 'Cliente - Fondo',
             data_breach_code: 'Codice Data Breach',
+            Dettaglio: "Dettaglio",
             data_breach_code_parent: 'Codice Data Breach Parent',
             duplicate_survey: 'Duplica Sondaggio',
             id_responsible: 'ID Responsabile',
@@ -32,11 +33,16 @@ export const locale = {
             signal:'Report',
             state: 'Stato',
             status: 'Stato',
+            
             sync_folder_survey:'Sincr. Cartella Sondaggio',
+            Tabella : "Tabella",
             title: 'Titolo',
             type: 'Tipo',
             user: 'Utente',
             void: ''
+        },
+        'VIEWS': {
+            sondaggi: 'Sondaggi',
         }
     }
 };

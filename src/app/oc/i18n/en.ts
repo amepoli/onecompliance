@@ -12,6 +12,7 @@ export const locale = {
             customer_fund: 'Customer - Fund',
             data_breach_code: 'Data Breach Code',
             data_breach_code_parent: 'Data Breach Code Parent',
+            Dettaglio: "Detail",
             delete_survey_answer:'Delete Survey Answer',
             duplicate_survey: 'Duplicate Survey',
             id_responsible: 'ID Responsible',
@@ -33,11 +34,16 @@ export const locale = {
             signal: 'Report',
             state: 'State',
             status: 'Status',
+           
             sync_folder_survey: 'Sync. Folder Survey',
+            Tabella : "Table",
             title: 'Title',
             type: 'Type',
             Utente: 'User',
             void: ''
+        },
+        'VIEWS': {
+            sondaggi: 'Sondaggi',
         }
     }
 };

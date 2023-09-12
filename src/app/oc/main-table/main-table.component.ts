@@ -11,6 +11,11 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FormViewParams, MessageView, TableViewParams, TabType } from '../interfaces';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
+import { TranslateService } from '@ngx-translate/core';
+
+import { locale as english } from 'app/oc/i18n/en';
+import { locale as italian } from 'app/oc/i18n/it';
+import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
 @Component({
     selector: 'main-table',
@@ -23,6 +28,10 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     loadTable = false;
 
     showTabs = false;
+
+    tabellaResource = "";
+    dettaglioResource="";
+    
 
     fullScreenTab = false;
 
@@ -99,13 +108,21 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         private _navigationService: NavigationService,
         private _cdr: ChangeDetectorRef,
         private _timeTrackerService: TimeTrackerService,
-        private _console: ConsoleLoggerService) {
+        private _console: ConsoleLoggerService,
+        private _translateService: TranslateService,
+        private _fuseTranslationLoaderService: FuseTranslationLoaderService
+        ) {
+           
     }
 
     ngOnInit(): void {
 
         const _this = this;
-
+        _this._fuseTranslationLoaderService.loadTranslations(english, italian);
+        _this.tabellaResource = _this._translateService.instant('RESOURCES.Tabella');
+        _this.dettaglioResource = _this._translateService.instant('RESOURCES.Dettaglio')
+       
+     
         _this.subscriptions.push(_this.route.params
             .subscribe(params => {
                 _this.navigationHistory.length = 0;       // flush navigation history
@@ -113,7 +130,9 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 _this.resetFormParams();
                 _this.tableName = params.table_name;
                 _this.currentTableLabel = _this.tableName;
-                _this.currentDescription = 'Tabella ' + _this.currentTableLabel;
+                
+                _this.currentTableLabel = _this.tableName;
+                _this.currentDescription = _this.tabellaResource + ' '  + _this.getEntryResource(_this.currentTableLabel);
                 _this.tableType = 'table';           // only table views from left navigation bar
                 // check if we are coming from dashboard 
                 _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?
@@ -202,7 +221,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 // } else 
                 if (msg.type === 'add') { // toolbar asking for adding a new element
                     _this.historyPush();
-                    _this.currentDescription = 'Nuovo elemento tabella ' + _this.currentTableLabel;
+                    
+                    _this.currentDescription = 'Nuovo elemento tabellaResource ' + _this.getEntryResource(_this.currentTableLabel);
                     _this.formParams = {
                         entryName: _this.tableName,
                         index: 1,
@@ -305,6 +325,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     onEvent(event: any) {
 
         const _this = this;
+          
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
         let newTotal = _this.formParams.total;
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
@@ -322,8 +343,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.currentPrimaryKeys = [event.queryParams.keys]; // update
             _this.tableName = event.queryParams.entry.name;
             
-            _this.historyPush();            
-            _this.currentDescription = 'Nuovo elemento tabella ' + _this.currentTableLabel;
+            _this.historyPush(); 
+            _this.currentDescription = 'Nuovo elemento tabellaResource ' + _this.getEntryResource(_this.currentTableLabel);
             
             newIndex = event.queryParams.index;
             newTotal = event.queryParams.total;            
@@ -358,17 +379,16 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             if (event.queryParams.entry.type === 'table') {
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: event.queryParams.searchKeys  };
                 _this.tableType = 'table';
-                _this.currentDescription =  event.queryParams.searchKeys? 'Risultati ricerca' : ('Tabella ' + _this.currentTableLabel);
+                _this.currentDescription =  event.queryParams.searchKeys? 'Risultati ricerca' : ( _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
             }
             else if (event.queryParams.entry.type === 'explorer') {
                 _this.tableParams = { entryName: _this.tableName, keys: event.queryParams.keys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys  };
                 _this.tableType = 'table';
-                _this.currentDescription = 'Tabella ' + _this.currentTableLabel;
+                _this.currentDescription =  _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel);
             } else if (event.queryParams.entry.type === 'form') { // handled later on
                 newIndex = event.queryParams.index;
                 newTotal = event.queryParams.total;
-            _this.currentTableLabel = event.queryParams.label || _this.tableName;
-                _this.currentDescription = 'Dettaglio ' + _this.currentTableLabel;
+                _this.currentDescription = _this.dettaglioResource + ' ' + _this.getEntryResource(_this.currentTableLabel);
             }
 
         } else if (event.eventType === 'first') {
@@ -397,7 +417,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.currentTableKeys = event.queryParams.keys;
         } else if (event.eventType === 'currentTableLabel') {  // table in subtable view providing its current keys
             _this.currentTableLabel = event.queryParams.label || _this.tableName;
-            _this.currentDescription = _this.searchKeys? 'Risultati ricerca': (_this.tableType === 'table' ? 'Tabella ' + _this.currentTableLabel: 'Dettaglio ' + _this.currentTableLabel);
+            _this.currentDescription = _this.searchKeys? 'Risultati ricerca': (_this.tableType === 'table' ? _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel) : _this.dettaglioResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
         } else if (event.eventType === 'deletedForm') {
             _this.historyPop(_this.navigationHistory[_this.level - 1]); // go back
         } else if (event.eventType === 'gotSave') { // user pressed save button on form-view
@@ -430,6 +450,20 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // toggle full view
     }
 
+    getEntryResource(tableName: string) : any{
+        let _this = this;
+        let resource = _this._translateService.instant('VIEWS.' + tableName.toLowerCase())
+        
+        if(resource && !resource.includes('VIEWS'))
+        {
+            return resource;
+        }else
+        {
+            return tableName;
+        }
+
+    }
+
     // retrieve an element from history and handle the history list consequently
     historyPop(item: any): void {
         const _this = this;
@@ -445,15 +479,16 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.currentPrimaryKeys = item.primaryKeys;
         _this.searchKeys = item.searchKeys;
         _this.currentTableLabel = item.label;
-
+         
+          
         if (item.type === 'table') {
             _this.tableParams = item.params;
             _this.tableParams.searchKeys = item.searchKeys;
-            _this.currentDescription = item.searchKeys? 'Risultati ricerca': ('Tabella ' + _this.currentTableLabel);
+           _this.currentDescription = item.searchKeys? 'Risultati ricerca': ( _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
             _this.tableType = 'table';
         } else {
             _this.formParams = item.params;
-            _this.currentDescription = 'Dettaglio ' + _this.currentTableLabel;
+            _this.currentDescription = _this.dettaglioResource + ' ' + _this.getEntryResource(_this.currentTableLabel);
             _this.tableType = 'form';
         }
 
@@ -470,7 +505,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             tableName: _this.tableName,
             type: _this.tableType,
             tableKeys: _this.currentTableKeys,
-            label: _this.currentTableLabel,
+            label: _this.currentTableLabel.toLowerCase(),
             primaryKeys: _this.currentPrimaryKeys,
             searchKeys: _this.searchKeys,
             params: _this.tableType === 'table' ? _this.tableParams : _this.formParams,
