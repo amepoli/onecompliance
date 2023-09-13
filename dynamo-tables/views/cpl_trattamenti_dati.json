@@ -480,7 +480,7 @@
         "viewType": "input"
       },
       "label": "Id Trattamento Dati",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "id_trattamento_dati=$id_trattamento_dati$"
     },
     {
@@ -490,7 +490,7 @@
         "viewType": "input"
       },
       "label": "Descrizione",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "descrizione=$descrizione$"
     },
     {
@@ -500,7 +500,7 @@
         "viewType": "input"
       },
       "label": "flag_trattamento_conto_terzi",
-      "newLine": true,
+      "newLine": false,
       "queryCond": "flag_trattamento_conto_terzi='€flag_trattamento_conto_terzi€'"
     },
     {
@@ -513,6 +513,28 @@
       "label": "Centro Gestionale",
       "newLine": true,
       "queryCond": "(select id_centro_gest from entrasp.modello_test_fields(codice_azienda, id_modello_test))= $id_centro_gest$"
+    },
+    {
+      "format": {
+        "comboQuery": "SELECT id_argomento as id, id_argomento||'-'||descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=44987 order by descrizione_breve",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "fieldName": "id_argomento_finalita_s",
+      "label": "Finalità Trattamento",
+      "newLine": false,
+      "queryCond": "id_trattamento_dati in(select id_trattamento_dati from entrasp.cpl_trattamenti_dati_finalita where id_argomento_finalita=$id_argomento_finalita_s$ and codice_azienda=$codice_azienda$)"  
+    },
+    {
+      "format": {
+				"comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo;",
+				"options": [],
+				"viewType": "combobox"
+			},
+      "fieldName": "id_articolo_normativo_s",
+      "label": "Base giurifica",
+      "newLine": false,
+      "queryCond": "id_trattamento_dati in(select id_trattamento_dati from entrasp.cpl_trattamenti_dati_finalita fin inner join entrasp.argomenti_articoli_normativi an on xxxx where an.id_articolo_normativo=$id_articolo_normativo_s$ and fin.codice_azienda=$codice_azienda$)"  
     }
   ],
   "subTables": [
