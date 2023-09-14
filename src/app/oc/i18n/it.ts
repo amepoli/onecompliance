@@ -60,7 +60,7 @@ export const locale = {
             sync_folder_survey:'Sincr. Cartella Sondaggio',
             title: 'Titolo',
             type: 'Tipo',
-            Total_worst_version_scores:'Totale punteggi Ver.Peggiore',
+            total_worst_version_scores:'Totale punteggi Ver.Peggiore',
             updates: 'Aggiornamenti',
             user: 'Utente',
             void: ''
