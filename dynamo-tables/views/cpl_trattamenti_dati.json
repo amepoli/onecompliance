@@ -527,14 +527,14 @@
     },
     {
       "format": {
-				"comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo;",
+				"comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo INNER JOIN entrasp.argomenti_articoli_normativi aan on an.id_articolo_normativo=aan.id_articolo_normativo;",
 				"options": [],
 				"viewType": "combobox"
 			},
       "fieldName": "id_articolo_normativo_s",
       "label": "Base giurifica",
       "newLine": false,
-      "queryCond": "id_trattamento_dati in(select id_trattamento_dati from entrasp.cpl_trattamenti_dati_finalita fin inner join entrasp.argomenti_articoli_normativi an on xxxx where an.id_articolo_normativo=$id_articolo_normativo_s$ and fin.codice_azienda=$codice_azienda$)"  
+      "queryCond": "id_trattamento_dati in(select id_trattamento_dati from entrasp.cpl_trattamenti_dati_finalita fin inner join entrasp.argomenti_articoli_normativi an on fin.id_argomento_finalita=an.id_argomento where an.id_articolo_normativo=$id_articolo_normativo_s$ and fin.codice_azienda=$codice_azienda$)"  
     }
   ],
   "subTables": [
