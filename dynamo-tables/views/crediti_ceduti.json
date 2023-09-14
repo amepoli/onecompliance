@@ -19,6 +19,15 @@
           "customDialogTitle": "Modifica crediti selezionati"
         },
         {
+          "key": "cancella_data_pagamento",
+          "icon": "delete_aggiornamento",
+          "label": "Cancella data pagamento",
+          "query": "update entrasp.crediti_ceduti set data_pagamento=null::date where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€'",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Cancellare le date selezionate?"
+        },
+        {
           "key": "cancella_crediti",
           "icon": "delete_aggiornamento",
           "label": "Cancella",
