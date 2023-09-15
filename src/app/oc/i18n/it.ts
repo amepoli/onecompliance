@@ -17,6 +17,7 @@ export const locale = {
             contract: 'Contratto',
             customer_fund: 'Cliente - Fondo',
             data_breach_code: 'Codice Data Breach',
+            Dettaglio: "Dettaglio",
             data_breach_code_parent: 'Codice Data Breach Parent',
             delete_survey_answer:' Elmina Risposta Sondaggio',
             details:'Dettagli',
@@ -57,13 +58,18 @@ export const locale = {
             signal:'Report',
             state: 'Stato',
             status: 'Stato',
+            
             sync_folder_survey:'Sincr. Cartella Sondaggio',
+            Tabella : "Tabella",
             title: 'Titolo',
             type: 'Tipo',
             total_worst_version_scores:'Totale punteggi Ver.Peggiore',
             updates: 'Aggiornamenti',
             user: 'Utente',
             void: ''
+        },
+        'VIEWS': {
+            sondaggi: 'Sondaggi',
         }
     }
 };

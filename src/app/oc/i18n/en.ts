@@ -18,6 +18,7 @@ export const locale = {
             customer_fund: 'Customer - Fund',
             data_breach_code: 'Data Breach Code',
             data_breach_code_parent: 'Data Breach Code Parent',
+            Dettaglio: "Detail",
             delete_survey_answer:'Delete Survey Answer',
             details: 'Details',
             description: 'Description',
@@ -57,13 +58,18 @@ export const locale = {
             signal: 'Report',
             state: 'State',
             status: 'Status',
+           
             sync_folder_survey: 'Sync. Folder Survey',
+            Tabella : "Table",
             title: 'Title',
             type: 'Type',
             Total_worst_version_scores:'Total Worst Version Scores',
             updates: 'Updates',
             Utente: 'User',
             void: ''
+        },
+        'VIEWS': {
+            sondaggi: 'Sondaggi',
         }
     }
 };
