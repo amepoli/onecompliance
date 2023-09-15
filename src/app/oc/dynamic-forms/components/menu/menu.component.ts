@@ -17,7 +17,7 @@ import { PubSubService } from 'app/oc/services';
           <button mat-menu-item (click)="onClick(item)" [matTooltip]="item.tooltip">
             <span>
               <mat-icon>{{item.icon}}</mat-icon>
-            </span>{{item.label}}
+            </span>{{item | octranslate}}
           </button>
       </ng-container>
       <!-- <button mat-menu-item *ngIf="showKycTechButton" (click)="kycTech()">  
