@@ -59,13 +59,18 @@ export const locale = {
             signal: 'Report',
             state: 'State',
             status: 'Status',
+           
             sync_folder_survey: 'Sync. Folder Survey',
+            Tabella : "Table",
             title: 'Title',
             type: 'Type',
             Total_worst_version_scores:'Total Worst Version Scores',
             updates: 'Updates',
             Utente: 'User',
             void: ''
+        },
+        'VIEWS': {
+            sondaggi: 'Sondaggi',
         }
     }
 };
