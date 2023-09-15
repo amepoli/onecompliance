@@ -57,6 +57,7 @@ export const locale = {
             signal:'Report',
             state: 'Stato',
             status: 'Stato',
+            survey:'Survey',
             sync_folder_survey:'Sincr. Cartella Sondaggio',
             title: 'Titolo',
             type: 'Tipo',

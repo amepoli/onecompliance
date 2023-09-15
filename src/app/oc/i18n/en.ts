@@ -60,7 +60,7 @@ export const locale = {
             sync_folder_survey: 'Sync. Folder Survey',
             title: 'Title',
             type: 'Type',
-            Total_worst_version_scores:'Total Worst Version Scores',
+            total_worst_version_scores:'Total Worst Version Scores',
             updates: 'Updates',
             Utente: 'User',
             void: ''
