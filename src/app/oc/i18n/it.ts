@@ -44,6 +44,7 @@ export const locale = {
             preliminary_Data: 'Dati preliminari verifica',
             plan_series_of_surveys: 'Pianifica serie di sondaggi',
             project:'Progetto',
+            project_id:'ID Progetto',
             project_fase: 'Fase Progetto',
             recalculate_scores: 'Ricalcola Punteggi',
             recalculate_scores_worst:'Ricalcola Punteggi ver.Peggiore',
