@@ -17,6 +17,7 @@ export const locale = {
             contract: 'Contratto',
             customer_fund: 'Cliente - Fondo',
             data_breach_code: 'Codice Data Breach',
+            dialog_form_mt: 'Modifica domande del template',
             Dettaglio: "Dettaglio",
             data_breach_code_parent: 'Codice Data Breach Parent',
             delete_survey_answer:' Elmina Risposta Sondaggio',
