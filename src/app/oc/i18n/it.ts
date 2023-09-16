@@ -58,8 +58,7 @@ export const locale = {
             sample_Subject_to_the_survey:'Campione Oggetto del Sondaggio',
             signal:'Report',
             state: 'Stato',
-            status: 'Stato',
-            
+            status: 'Stato',       
             sync_folder_survey:'Sincr. Cartella Sondaggio',
             Tabella : "Tabella",
             title: 'Titolo',
