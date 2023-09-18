@@ -57,7 +57,7 @@ export const locale = {
             reporting_office: 'Centro Gestionale Segnalante',
             result_summary: 'Riepilogo Risultati',
             sample_Subject_to_the_survey:'Campione Oggetto del Sondaggio',
-            report:'Report',
+            report:'Segnalazione',
             state: 'Stato',
             status: 'Stato',       
             sync_folder_survey:'Sincr. Cartella Sondaggio',
