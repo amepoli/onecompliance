@@ -166,7 +166,7 @@
             "isPrimary": false,
             "key": "sondaggio_id_descr",
             "label": "void",
-     	    "translate": "RESOURCES.void",
+            "translate": "RESOURCES.void",
             "newLine": false,
             "readOnly": true,
             "sameOrigin": false,
@@ -315,7 +315,7 @@
                     },
                     {
                         "icon": "add",
-                         "label": "Dati preliminari verifica",
+                        "label": "Dati preliminari verifica",
                         "translate": "RESOURCES.preliminary_data",
                         "outputEventName": "sondaggi_ulteriori_elementi"
                     },
@@ -370,7 +370,7 @@
                     {
                         "icon": "sync",
                         "label": "Ricalcola punteggi",
-                        "translate":"RESOURCES.recalculate_scores",
+                        "translate": "RESOURCES.recalculate_scores",
                         "outputEventName": "ricalcola_punteggi"
                     },
                     {
@@ -601,7 +601,7 @@
             "buttonIcon": "more_vert",
             "key": "sondaggi_actions",
             "label": "void",
-     	    "translate": "RESOURCES.void",
+            "translate": "RESOURCES.void",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
@@ -658,7 +658,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_centro_gest",
-             "label": "Centro Gestionale",
+            "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
             "newLine": false,
             "size": 3.33,
@@ -1652,6 +1652,7 @@
                 "viewType": "input"
             },
             "label": "Data Competenza",
+            "translate": "RESOURCES.date_of_competence",
             "newLine": true,
             "size": 2.5,
             "queryCond": "snd.data_comp='€data_comp€'"
@@ -1663,7 +1664,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-             "label": "Centro Gestionale",
+            "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
             "newLine": false,
             "queryCond": "snd.id_centro_gest=$id_centro_gest$"
@@ -1676,6 +1677,7 @@
                 "viewType": "combobox"
             },
             "label": "Id Progetto",
+            "translate": "RESOURCES.Project_ID",
             "newLine": false,
             "queryCond": "snd.id_sondaggio in(select id_sondaggio from entrasp.progetti_fasi pf where pf.id_progetto=$id_progetto_s$ and pf.codice_azienda='€global_codice_azienda€' and pf.id_sondaggio is not null)"
         },
@@ -1708,6 +1710,7 @@
                 "viewType": "input"
             },
             "label": "Parola chiave",
+            "translate": "RESOURCES.key_word",
             "newLine": false,
             "size": 4,
             "queryCond": "(upper(mt.titolo) like '%'||upper('€parola_search€')||'%' or upper(snd.descrizione) like '%'||upper('€parola_search€')||'%' or upper(snd.titolo) like '%'||upper('€parola_search€')||'%')"
@@ -2616,7 +2619,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "centro_gest",
-             "label": "Centro Gestionale",
+            "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
             "width": "7%"
         },
@@ -2968,6 +2971,10 @@
             {
                 "label": "Domande e Risposte",
                 "queryString": "select id_somministrazione, id_domanda,descrizione,descrizione_sez,punteggio as punteggio_dom,risposta_rp, peso, punteggio_risposta from entrasp.select_domande_delle_risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ order by id_somministrazione, ordinamento_sezione, ordinamento"
+            },
+            {
+                "label": "RCM",
+                "queryString": "SELECT PRC.CODICE_AZIENDA, 'Procedure' AS PRC, PRC.ID_PROCEDURA, PRC.CODICE, PRC.DESCRIZIONE_BREVE, PRC.DESCRIZIONE, PRC.ORDINAMENTO, ENTRASP.CENTRI_GESTIONALI_DESCR(RS.CODICE_PART, RS.ID_CENTRO_GEST) AS CENTRO_GEST, PRC.DESCRIZIONE, PRC.STATO_ATTUAZIONE, 'Rischi' AS RS, RS.CODICE_RISCHIO, RS.DESCRIZIONE, RS.ID_CENTRO_GEST, ENTRASP.CENTRI_GESTIONALI_DESCR(RS.CODICE_PART, RS.ID_CENTRO_GEST) AS CENTRO_GESTMONIT_LIV1, RS.ID_CENTRO_GEST_LIV2, ENTRASP.CENTRI_GESTIONALI_DESCR(RS.CODICE_PART, RS.ID_CENTRO_GEST_LIV2) AS CENTRO_GESTMONIT_LIV1, 'Presidio' AS PRS, PRS.ID_PRESIDIO, PRS.DESCRIZIONE_BREVE, ENTRASP.CENTRI_GESTIONALI_DESCR(RS.CODICE_PART, PRS.ID_CENTRO_GEST) AS CENTRO_GESTPRES, DM.ID_DOMANDA, DM.DESCRIZIONE, DM.note FROM ENTRASP.PROCEDURE_AZIENDALI PRC LEFT JOIN ENTRASP.FONTI_RISCHIO FR ON PRC.CODICE_AZIENDA = FR.CODICE_AZIENDA AND PRC.ID_PROCEDURA = FR.ID_PROCEDURA LEFT JOIN ENTRASP.RISCHI RS ON FR.CODICE_RISCHIO = RS.CODICE_RISCHIO AND FR.CODICE_AZIENDA = RS.CODICE_AZIENDA LEFT JOIN ENTRASP.RISCHI_PRESIDI RP ON RS.CODICE_RISCHIO = RP.CODICE_RISCHIO AND RS.CODICE_AZIENDA = RP.CODICE_AZIENDA LEFT JOIN ENTRASP.PRESIDI PRS ON RP.ID_PRESIDIO = PRS.ID_PRESIDIO AND RP.CODICE_AZIENDA = PRS.CODICE_AZIENDA LEFT JOIN ENTRASP.DOMANDE_PRESIDI DP ON PRS.ID_PRESIDIO = DP.ID_PRESIDIO AND PRS.CODICE_AZIENDA = DP.CODICE_AZIENDA LEFT JOIN ENTRASP.DOMANDE DM ON DP.ID_DOMANDA = DM.ID_DOMANDA AND PRC.CODICE_AZIENDA = DM.CODICE_AZIENDA AND DP.ID_MODELLO_TEST = DM.ID_MODELLO_TEST AND DP.ID_MODELLO_TEST_VR = DM.ID_MODELLO_TEST_VR WHERE PRC.CODICE_AZIENDA = $codice_azienda$ ;"
             },
             {
                 "label": "Report",
