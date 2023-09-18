@@ -22,6 +22,7 @@ export const locale = {
             delete_survey_answer:'Delete Survey Answer',
             details: 'Details',
             description: 'Description',
+            dialog_form_mt: 'Edit questions of template',
             duplicate_survey: 'Duplicate Survey',
             execution_date: 'Execution Date',
             execution_date_after: 'Execution Date After',
