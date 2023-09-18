@@ -40,6 +40,7 @@ export const locale = {
             monitoring_office: 'Monitoring Office',
             next_survey: "Next Survey",
             notes: 'Notes',
+            no_project_associated:'No Project Associated'
             number_of_connected_survey:'N. of Connected Survey',
             office: 'Office',
             preliminary_data: 'Preliminary Data',
@@ -59,6 +60,7 @@ export const locale = {
             state: 'State',
             status: 'Status',
             sync_folder_survey: 'Sync. Folder Survey',
+            tag:'Tag',
             title: 'Title',
             type: 'Type',
             total_worst_version_scores:'Total Worst Version Scores',
