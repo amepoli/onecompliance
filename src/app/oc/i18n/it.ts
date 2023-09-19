@@ -28,19 +28,24 @@ export const locale = {
             execution_scheduled_after:'Esecuzione Prevista dopo il',
             execution_scheduled_by:'Execution Scheduled By',
             expected_execution: 'Prevista Esecuzione',
+            expired_survey:'Sondaggi Scaduti',
             folder: 'Cartella',
             id_responsible: 'ID Responsabile',
             id_survey: 'Id Sondaggio',
             id_next_survey:'ID Prossimo Sondaggio',
             id_check_template_list: 'Lista ID Modelli di Verifica',
+            incomplete:'Incompleto',
             insert_course_participants:'Inserisci partecipanti al corso',
             integrate_survey_checks: "Integra verifiche del sondaggio",
             key_word:'Parola Chiave',
+            last_check_template:'Ultimo Mod. Verif.',
+            last_rectified_check_template:'Ultimo Mod. Verif. Rett.',
             main_only: 'Solo Principali',
             monitoring_office: 'Centro Gestionale di Monitoraggio',
             next_survey:'Sondaggio Successivo',
             notes: 'Note',
             no_project_associated:'Non assoc. a prog.',
+            not_close:'Non Chiuso',
             number_of_connected_survey:'N. Sondaggi Connessi',
             office: 'Centro Gestionale',
             preliminary_data: 'Dati preliminari verifica',
@@ -54,6 +59,7 @@ export const locale = {
             reference_date: 'Data Competenza',
             report_date: 'Data Segnalazione',
             reporting_office: 'Centro Gestionale Segnalante',
+            rescheduled_survey:'Sondaggio Riprog.',
             result_summary: 'Riepilogo Risultati',
             sample_Subject_to_the_survey:'Campione Oggetto del Sondaggio',
             report:'Segnalazione',
@@ -67,7 +73,12 @@ export const locale = {
             total_worst_version_scores:'Totale punteggi Ver.Peggiore',
             updates: 'Aggiornamenti',
             user: 'Utente',
-            void: ''
+            void: '',
+            without_checks: 'Senza Verifiche',
+            with_subsequent_survey:'Con Sondaggio Succ.',
+            without_exevution_date:'Senza data esecuz.'
+
+
         }
     }
 };

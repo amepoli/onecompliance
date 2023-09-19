@@ -28,19 +28,24 @@ export const locale = {
             execution_scheduled_after:'Execution Scheduled After',
             execution_scheduled_by:'Execution Scheduled By',
             expected_execution:'Expected Execution',
+            expired_survey:'Expired Survey',
             folder: 'Folder',
             id_responsible: 'ID Responsible',
             id_survey: 'ID Survey',
             id_next_survey:'ID Next Survey',
             id_check_template_list:'ID Check Template List',
+            incomplete:'Incomplete',
             insert_course_participants:'Insert Course Partecipants',
             integrate_survey_checks: "Integrate Survey Checks",
             key_word:'Key Word',
+            last_check_template:'Last Check Template',
+            last_rectified_check_template:'Last Rectified Check Template',
             main_only: 'Main Only',
             monitoring_office: 'Monitoring Office',
             next_survey: "Next Survey",
             notes: 'Notes',
-            no_project_associated:'No Project Associated'
+            no_project_associated:'No Project Associated',
+            not_close:'Not Close',
             number_of_connected_survey:'N. of Connected Survey',
             office: 'Office',
             preliminary_data: 'Preliminary Data',
@@ -54,6 +59,7 @@ export const locale = {
             reopen_verification:'Reopen Verification',
             report_date: 'Report Date',
             reporting_office: 'Reporting Office',
+            rescheduled_survey:'Rescheduled Survey',
             result_summary:'Result Summary',
             sample_subject_to_the_survey:'Sample Subject to the Survey',
             report: 'Report',
@@ -66,7 +72,10 @@ export const locale = {
             total_worst_version_scores:'Total Worst Version Scores',
             updates: 'Updates',
             Utente: 'User',
-            void: ''
+            void: '',
+            without_checks:'Without Checks',
+            with_subsequent_survey:'With Subsequent Survey',
+            without_execution_date:'Without Execution Date'
         }
     }
 };
