@@ -41,6 +41,7 @@ export const locale = {
             id_survey: 'Id Sondaggio',
             id_next_survey:'ID Prossimo Sondaggio',
             id_check_template_list: 'Lista ID Modelli di Verifica',
+            id_contract:'Id Contratto',
             incomplete:'Incompleto',
             incomplete_documentation:'Doc. Incompleta',
             insert_course_participants:'Inserisci partecipanti al corso',
