@@ -40,7 +40,7 @@ export const URLs = {
     "procedure_aziendali":"https://wiki.auditft.it//index.php?title=Processi",
     "profilazione_aml": "https://wiki.auditft.it//index.php?title=Profili_AML_Clienti",
     "profiling_models":"https://wiki.auditft.it//index.php?title=Modelli_di_Profilazione",
-    "progetti": "https://wiki.auditft.it//index.php?title=Progetti",
+    "progetti": "https://onecomplianceguide.notion.site/Progetti-e95c9d8e194f40cdba0ce09972381ecb",
     "rapporti_pa":"https://wiki.auditft.it//index.php?title=Rapporti_P.A.",
     "reclami":"https://wiki.auditft.it//index.php?title=Reclami",
     "reports":"https://wiki.auditft.it//index.php?title=Reports",
