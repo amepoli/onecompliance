@@ -19,7 +19,7 @@ export const locale = {
             creation_date: 'Creation date',
             competence:'Competence',
             company_code:'Company Code',
-            complete:'Complete',
+            completed:'Completed',
             contract: 'Contract',
             current_reference:'Current Reference',
             customer_fund: 'Customer - Fund',
@@ -41,10 +41,11 @@ export const locale = {
             folder: 'Folder',
             id_responsible: 'ID Responsible',
             id_survey: 'ID Survey',
+            id_series:'ID Series',
             id_next_survey:'ID Next Survey',
             id_check_template_list:'ID Check Template List',
-            id_contract:'Id Contract',
-            id_check_template:'Id Check Template',
+            id_contract:'ID Contract',
+            id_check_template:'ID Check Template',
             incomplete:'Incomplete',
             incomplete_documentation:'Incomplete Documentation',
             insert_course_participants:'Insert Course Partecipants',
@@ -66,6 +67,7 @@ export const locale = {
             partition_code:'Partition Code',
             penalities:'Penalities',
             preliminary_data: 'Preliminary Data',
+            previous_survey:'Previous Survey',
             plan_series_of_surveys: 'Plan series of Survey',
             project: 'Project',
             project_fase:'Project Fase',
@@ -101,7 +103,7 @@ export const locale = {
             with_complete_documentation:'With Complete Documentation',
             without_execution_date:'Without Execution Date',
             worst_check:'Worst Check'
-
+            
 
 
         }   
