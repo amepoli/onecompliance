@@ -1271,28 +1271,31 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     if (actionType === 'create_user_and_email') {
                         const username = formValues['email_to'];
-                        const email = username;
-                        const password = HelperService.generatePassword(9);
+                        // const email = username;
+                        const temporaryPassword = HelperService.generatePassword(9);
                         const company = formValues['codice_azienda'];
                         const associated_user = formValues['associa_user'];
                         const registry = formValues['id_anagrafica'];
                         const tax_code = formValues['codice_fiscale'];
 
-                        _this.authService.setUsername(username);
-                        _this.authService.setPassword(password);
-                        _this.authService.setEmail(email);
-                        _this.authService.signUp(true)
-                            .then((user) => {
-                                console.log(user);
-                                _this.performSendEmail(event, formValues, value);
+                        _this.backendService.inviteUser(username, company, associated_user, registry, tax_code, temporaryPassword);
+                        //_this.performSendEmail(event, formValues, value);
 
-                                _this.backendService.setUserOnDynamo(username, company, associated_user, registry, tax_code, user.UserSub);
+                        // _this.authService.setUsername(username);
+                        // _this.authService.setPassword(password);
+                        // _this.authService.setEmail(email);
+                        // _this.authService.signUp(true)
+                        //     .then((user) => {
+                        //         console.log(user);
+                        //         _this.performSendEmail(event, formValues, value);
 
-                            })
-                            .catch((err) => {
-                                _this._toastService.showErrorToast(err);
-                                //  this._setError(err);
-                            });
+                        //         _this.backendService.setUserOnDynamo(username, company, associated_user, registry, tax_code, user.UserSub);
+
+                        //     })
+                        //     .catch((err) => {
+                        //         _this._toastService.showErrorToast(err);
+                        //         //  this._setError(err);
+                        //     });
                     }
                     else {
                         _this.performSendEmail(event, formValues, value);
