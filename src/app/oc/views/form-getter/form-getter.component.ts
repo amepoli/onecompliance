@@ -1270,8 +1270,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
 
                     if (actionType === 'create_user_and_email') {
+
+                        let loadingToast = _this._toastService.showLoadingToast("Inviting user", "Please wait, it may takes a few seconds");
+
                         const username = formValues['email_to'];
-                        // const email = username;
                         const temporaryPassword = HelperService.generatePassword(9);
                         const company = formValues['codice_azienda'];
                         const associated_user = formValues['associa_user'].id;
@@ -1279,6 +1281,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         const tax_code = formValues['codice_fiscale'];
 
                         _this.backendService.inviteUser(username, company, associated_user, registry, tax_code, temporaryPassword);
+
+                        _this._toastService.hideLoadingToast(loadingToast);
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showSuccessToast('User correctly invited'); // show success toast
+                        this.refreshView(); // refresh the view
+
+
                         //_this.performSendEmail(event, formValues, value);
 
                         // _this.authService.setUsername(username);
