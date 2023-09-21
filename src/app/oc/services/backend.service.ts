@@ -29,7 +29,7 @@ export class BackendService {
   private regulatApiName = appData.lambdas.regulat.apiName;
   private regulatVPCApiName = appData.lambdas.regulat_VPC.apiName;
   private calendarApiName = appData.lambdas.calendar.apiName;
-  private insert_user_to_dynamoApiName = appData.lambdas.insert_user_to_dynamo.apiName; 
+  private insert_user_to_dynamoApiName = appData.lambdas.insert_user_to_dynamo.apiName;
 
   // private myGetInit = { // OPTIONAL
   //   headers: {
@@ -130,7 +130,7 @@ export class BackendService {
   updateData(entryName: string, company: string, keys: any, data: any): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       body: JSON.parse(JSON.stringify(data, this.replacer)),
       headers: {},
       queryStringParameters: { entry_name: entryName, company: company, form: 1, keys: JSON.stringify(keys) }
@@ -142,7 +142,7 @@ export class BackendService {
   runCustomQuery(entryName: string, company: string, keys: any, buttonKey: string): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       body: keys,
       headers: {},
       queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify({}), custom_query: 1, custom_query_key: buttonKey }
@@ -153,7 +153,7 @@ export class BackendService {
   runTableMultiSelectionActionQuery(entryName: string, company: string, selection_params: any): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       body: selection_params,
       headers: {},
       queryStringParameters: { entry_name: entryName, company: company, table_multi_selection_action_query: 1 },
@@ -196,7 +196,7 @@ export class BackendService {
   }
 
   createFileURL(entryName: string, company: string, keys: any): Observable<any> {
-    
+
     this.awsService.auth();
     const putPostReq: PostRequest = {
       body: null,
@@ -209,7 +209,7 @@ export class BackendService {
   checkFile(entryName: string, company: string, keys: any, checksum: string, md5Checksum: string, filename: string, data: any): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename, checksum: checksum, md5_checksum: md5Checksum },
       body: data,
       headers: {},
@@ -260,7 +260,7 @@ export class BackendService {
   getReport(entryName: string, company: string, keys: any, reportName: string, isFormView: boolean, search_keys: any): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       body: reportName,
       headers: {},
       queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), form: isFormView ? 1 : 0 },
@@ -290,13 +290,23 @@ export class BackendService {
   refreshToken(secretHash, refreshToken) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { refresh_token: 1 },
       body: {
         secretHash,
         refreshToken
       },
+    };
+    return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
+  }
+
+  inviteUser(username: string, company: string, associated_user: string, registry: string, tax_code: string, temporaryPassword: string) {
+    this.awsService.auth();
+    const putPostReq: PostRequest = {
+      body: null,
+      headers: {},
+      queryStringParameters: { invite_user: 1, username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code, temporary_password: temporaryPassword },
     };
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
@@ -321,7 +331,7 @@ export class BackendService {
   createImportFileURL(): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       body: {},
       queryStringParameters: { request_type: 'createNewFile' },
@@ -379,7 +389,7 @@ export class BackendService {
   getCSV(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, formValues: any, advanced_query_label: string = null): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { entry_name: entryName, request_type: 'getCSV', company: company, keys: JSON.stringify(keys), is_form: is_form ? 1 : 0, is_csv: 1, is_advanced: is_advanced ? 1 : 0, advanced_query_label: advanced_query_label },
       body: JSON.parse(JSON.stringify(formValues, this.replacer))
@@ -394,7 +404,7 @@ export class BackendService {
   getExcel(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, formValues: any, advanced_query_label: string = null): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { entry_name: entryName, request_type: 'getCSV', company: company, keys: JSON.stringify(keys), is_form: is_form ? 1 : 0, is_csv: 0, is_advanced: is_advanced ? 1 : 0, advanced_query_label: advanced_query_label },
       body: JSON.parse(JSON.stringify(formValues, this.replacer))
@@ -432,7 +442,7 @@ export class BackendService {
   sendEmail(subject: string, header: string, footer: string, company: string, sender: string, to: string, cc: string, ccn: string): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { company: company },
       body: JSON.parse(JSON.stringify({
@@ -496,7 +506,7 @@ export class BackendService {
   saveAuthToken(token_type: string, authCode: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'saveAuthToken', token_type: token_type },
       body: { authCode: authCode }
@@ -523,7 +533,7 @@ export class BackendService {
   getEmailThreads(search: string, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'GetEmailThreads', search: search },
       body: authToken,
@@ -538,7 +548,7 @@ export class BackendService {
   getEmailsByCodiceAzienda(authToken, codiceAzienda) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'getEmailsByCodiceAzienda' },
       body: { codiceAzienda, authToken }
@@ -558,7 +568,7 @@ export class BackendService {
   createChangesToken(authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'createChangesToken' },
       body: authToken
@@ -569,7 +579,7 @@ export class BackendService {
   getChanges(authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'getChanges' },
       body: { authToken }
@@ -580,7 +590,7 @@ export class BackendService {
   getDriveContents(folder: string, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'getDriveContents', folder: folder },
       body: { authToken }
@@ -595,7 +605,7 @@ export class BackendService {
   createDriveFolder(folder: string, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'createDriveFolder', folder: folder },
       body: authToken
@@ -606,7 +616,7 @@ export class BackendService {
   copyFromS3ToDrive(s3FilePath: string, driveFilePath: string, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'copyFromS3ToDrive', s3FilePath: s3FilePath, driveFilePath: driveFilePath },
       body: authToken
@@ -618,7 +628,7 @@ export class BackendService {
   copyFromDriveToS3(driveFilePath: string, s3FilePath: string, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'copyFromDriveToS3', driveFilePath: driveFilePath, s3FilePath: s3FilePath },
       body: authToken
@@ -629,7 +639,7 @@ export class BackendService {
   syncDriveS3File(syncData: object, syncMode: string, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'syncDriveS3File', syncData: JSON.stringify(syncData), syncMode: syncMode },
       body: authToken,
@@ -640,7 +650,7 @@ export class BackendService {
   fixAnagraficaFolderByIdentifier(anagraficaFolders: any, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'fixAnagraficaFolderByIdentifier' },
       body: { anagraficaFolders, authToken }
@@ -651,7 +661,7 @@ export class BackendService {
   fixDriveFolderPathByIdentifier(anagraficaFolder: any, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'fixDriveFolderPathByIdentifier' },
       body: { anagraficaFolder, authToken }
@@ -662,7 +672,7 @@ export class BackendService {
   getDriveFolderDeepContents(anagraficaFolders: any, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'getDriveFolderDeepContents' },
       body: { anagraficaFolders, authToken }
@@ -673,7 +683,7 @@ export class BackendService {
   processDriveFolderDeepContents(deepContentsRequest: any, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'processDriveFolderDeepContents' },
       body: { deepContentsRequest, authToken }
@@ -684,7 +694,7 @@ export class BackendService {
   performDriveOperations(operations: any, authToken: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'performDriveOperations' },
       body: { operations, authToken }
@@ -703,7 +713,7 @@ export class BackendService {
   setProperFileFolder(input: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'setProperFileFolder' },
       body: input
@@ -714,7 +724,7 @@ export class BackendService {
   anagraficheToBeUpdated(input: any) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'anagraficheToBeUpdated' },
       body: input
@@ -725,7 +735,7 @@ export class BackendService {
   associateEmails(input: any, codiceAzienda) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
-      
+
       headers: {},
       queryStringParameters: { request_type: 'associateEmails' },
       body: { input, codiceAzienda }
@@ -769,7 +779,7 @@ export class BackendService {
     this.awsService.auth();
     const getReq: GetRequest = {
       queryStringParameters: { entry_name: entryName, company: company, homepage: 1 }
-    }  
+    }
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
@@ -777,7 +787,7 @@ export class BackendService {
     this.awsService.auth();
     const getReq: GetRequest = {
       queryStringParameters: { entry_name: entryName, company: company, homepagetab: 1 }
-    }  
+    }
     if (search_keys != null) {
       getReq.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
     }
@@ -798,16 +808,6 @@ export class BackendService {
       queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), isSearchKeyRequest: 1 }
     }
     return from(this.awsService.api().get(this.apiName, this.viewsApiName, getReq));
-  }
-
-  setUserOnDynamo(username: string, company: string, associated_user: string, registry: string, tax_code: string, userSub: string) {
-    this.awsService.auth();
-    const putPostReq: PostRequest = {
-      body: null,
-      headers: {},
-      queryStringParameters: { request_type: 'setUserOnDynamo', username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code, userSub: userSub },
-    };
-    return from(this.awsService.api().post(this.apiName, this.insert_user_to_dynamoApiName, putPostReq));
   }
 
 }
