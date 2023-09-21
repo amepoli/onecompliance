@@ -72,6 +72,7 @@ export const locale = {
             id_relative_survey:'ID Sondaggio Parent',
             id_personal_data: 'ID Anagrafica',
             id_previous_survey:'ID Sondaggio Precedente',
+            id_process:'ID Processo',
             id_reference_survey:'ID sondaggio Rif',
             id_check: 'ID Verifica',
             id_check_template:'ID Modello di Verifica',

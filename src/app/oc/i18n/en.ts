@@ -72,6 +72,7 @@ export const locale = {
             id_contract:'ID Contract',
             id_check:'ID Check:',
             id_check_template:'ID Check Template',
+            id_process:'id_process',
             id_relative_survey:"ID Relative Survey",
             id_reference_survey: 'ID Reference Survey',
             id_office:'ID Office',
