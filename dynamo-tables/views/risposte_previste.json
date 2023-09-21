@@ -45,9 +45,9 @@
       "menuOptions": [
         {
           "key": "unifica",
-          "icon": "merge_type",
+          "icon": "block",
           "label": "Escludi Risposte",
-          "query": "update entrasp.risposte_previste set flag_escludi_risposta='1' where id_risposta_prev IN (SELECT SPLIT_PART(ARR,'~',5)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€'",
+          "query": "update entrasp.risposte_previste set flag_escludi_risposta='1' where codice_azienda||id_modello_test||id_modello_test_vr||id_domanda||id_risposta_prev IN (SELECT SPLIT_PART(ARR,'~',1)||SPLIT_PART(ARR,'~',2)||SPLIT_PART(ARR,'~',3)||SPLIT_PART(ARR,'~',4)||SPLIT_PART(ARR,'~',5) FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR )",
           "confirmAction": true,
           "reloadOnSuccess": true,
           "confirmActionMessage": "Escludi le risposte selezionate?"
