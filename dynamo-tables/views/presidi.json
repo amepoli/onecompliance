@@ -101,6 +101,7 @@
                 "viewType": "combobox"
             },
             "label": "Società gruppo/cliente",
+            "translate": "RESOURCES.id_anagrafica_societa",
             "newLine": false,
             "readOnly": false,
             "isPrimary": false,
@@ -281,7 +282,8 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "stato_attuazione",
-            "label": "Stato Attuazione",
+           "label": "Stato Attuazione",
+            "translate": "RESOURCES.status",
             "newLine": true,
             "readOnly": false,
             "outputEvent": {
@@ -423,6 +425,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
+      "translate": "RESOURCES.descrizione",
             "textareaHeight": "L",
             "newLine": true,
             "readOnly": false
@@ -469,7 +472,8 @@
                     "son": "codice_azienda"
                 }
             ],
-            "label": "Rischi Associati"
+            "label": "Rischi associati",
+            "translate": "RESOURCES.rischi_sub_of_procedure"
         },
         {
             "entryKey": "presidi",
@@ -833,6 +837,7 @@
                 "viewType": "input"
             },
             "label": "Descrizione",
+      "translate": "RESOURCES.descrizione",
             "newLine": false,
             "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descrizione_s€')||'%' OR UPPER(descrizione_breve) like '%'||UPPER('€descrizione_s€')||'%')"
         },
@@ -855,7 +860,8 @@
                 "viewType": "combobox",
                 "dataType": "text"
             },
-            "label": "Stato attuazione",
+           "label": "Stato Attuazione",
+            "translate": "RESOURCES.status",
             "newLine": true,
             "queryCond": "stato_attuazione=$stato_attuazione$"
         },
@@ -865,7 +871,8 @@
                 "dataType": "date",
                 "viewType": "input"
             },
-            "label": "Sondaggi con data competenza dal",
+           "label": "Sondaggi con data competenza dal",
+            "translate": "RESOURCES.data_comp_prevista_min",
             "newLine": false,
             "size": 2,
             "queryCond": "id_presidio in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp>='€data_comp_prevista_min€')"
@@ -877,6 +884,7 @@
                 "viewType": "input"
             },
             "label": "Sondaggi con data competenza fino al",
+            "translate": "RESOURCES.data_comp_prevista_max",
             "newLine": false,
             "size": 2,
             "queryCond": "id_presidio in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C' and snd.data_comp<='€data_comp_prevista_max€')"
@@ -955,7 +963,8 @@
                 "value": "1",
                 "viewType": "checkbox"
             },
-            "label": "Solo Principali",
+             "label": "Solo Principali",
+            "translate": "RESOURCES.main_only",
             "newLine": false,
             "queryCond": "id_presidio_parent IS null"
         },
@@ -966,6 +975,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza rischi",
+            "translate": "RESOURCES.procedure_without_rischi",
             "newLine": false,
             "queryCond": "id_presidio not in(select id_presidio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
         },
@@ -976,6 +986,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con rischi",
+            "translate": "RESOURCES.procedure_with_rischi",
             "newLine": false,
             "queryCond": "id_presidio in(select id_presidio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
         },
@@ -1026,6 +1037,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza centro gestionale",
+            "translate": "RESOURCES.procedure_without_centro_gest",
             "newLine": false,
             "queryCond": "id_centro_gest is null"
         },
@@ -1035,7 +1047,8 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza Modelli di Verifica",
+           "label": "Senza modelli di verifica",
+            "translate": "RESOURCES.no_mdt",
             "newLine": false,
             "queryCond": "id_presidio not in (select id_presidio from entrasp.domande_presidi where codice_azienda = $codice_azienda$)"
         },
@@ -1045,7 +1058,8 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Con Modelli di Verifica",
+            "label": "Con modelli di verifica",
+            "translate": "RESOURCES.with_mdt",
             "newLine": false,
             "queryCond": "id_presidio in(select id_presidio from entrasp.domande_presidi where codice_azienda = $codice_azienda$)"
         },
@@ -1055,7 +1069,8 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Mai Verificati",
+           "label": "Mai verificati",
+            "translate": "RESOURCES.no_verif",
             "newLine": false,
             "queryCond": "id_presidio not in (select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         },
@@ -1065,7 +1080,8 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Già Verificati",
+            "label": "Già verificati",
+            "translate": "RESOURCES.verificati"
             "newLine": false,
             "queryCond": "id_presidio in(select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         },
