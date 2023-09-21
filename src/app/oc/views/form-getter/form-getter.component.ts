@@ -1274,7 +1274,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         // const email = username;
                         const temporaryPassword = HelperService.generatePassword(9);
                         const company = formValues['codice_azienda'];
-                        const associated_user = formValues['associa_user'];
+                        const associated_user = formValues['associa_user'].id;
                         const registry = formValues['id_anagrafica'];
                         const tax_code = formValues['codice_fiscale'];
 
