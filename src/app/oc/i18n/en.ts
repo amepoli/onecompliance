@@ -159,6 +159,7 @@ export const locale = {
             reference:'Reference',
             risk_code_pk:'Risk Code (PK)',
             rischi_sub_of_procedure: 'Associated Risk',
+            rr_ante:'Pre-Controls Risk Response',
             sample_subject_to_the_survey:'Sample Subject to the Survey',
             sample_description:'Sample Description',
             report: 'warning',

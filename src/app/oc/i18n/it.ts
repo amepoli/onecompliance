@@ -160,6 +160,7 @@ export const locale = {
             reference:'Comp.',
             risk_code_pk:'Codice Rischio (PK)',
             rischi_sub_of_procedure: 'Rischi Associati',
+            rr_ante:'Risk Resp. Ante',
             sample_Subject_to_the_survey:'Campione Oggetto del Sondaggio',
             scores_obtained:'Punti Ottenuti',
             report:'Segnalazione',
