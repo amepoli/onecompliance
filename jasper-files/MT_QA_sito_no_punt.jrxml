@@ -31,7 +31,7 @@
 	<queryString>
 		<![CDATA[select coalesce(ds.descrizione,'Sezione I - Default') as ds_descrizione, d.*, rp.id_risposta_prev, rp.risposta as rp_risposta, rp.ordinamento as rp_ordinamento, rp.note as rp_note, rp.peso as rp_peso, rp.punteggio as rp_punteggio 
 from entrasp.domande d 
-inner join entrasp.risposte_previste rp on d.codice_azienda=rp.codice_azienda 
+left join entrasp.risposte_previste rp on d.codice_azienda=rp.codice_azienda 
 and d.id_modello_test= rp.id_modello_test 
 and d.id_modello_test_vr= rp.id_modello_test_vr
 and d.id_domanda= rp.id_domanda
@@ -42,6 +42,8 @@ and d.id_sezione= ds.id_sezione
 where d.codice_azienda=  $P{codice_azienda}
 and d.id_modello_test= $P{id_modello_test}
 and d.id_modello_test_vr= $P{id_modello_test_vr}
+and d.flag_non_applicabile_domanda = '0'
+and (rp.flag_escludi_risposta = '0' or rp.flag_escludi_risposta is null)
 order by ds.ordinamento asc, d.ordinamento asc, rp.ordinamento asc]]>
 	</queryString>
 	<field name="ds_descrizione" class="java.lang.String">
