@@ -93,6 +93,8 @@ export const locale = {
             insert_course_participants:'Inserisci partecipanti al corso',
             intensita_singola_pre:'Impatto Ante Presidi',
             intensita_pre_descrizione:'Impatto Ante Presidi - Descrizione',
+            intensita_totale_pre:'Intensità totale Ante Presidi',
+            intensita_totale_pi_descrizione:'Giudizio PI Ante',
             integrate_survey_checks: "Integra verifiche del sondaggio",
             judgment:'Giudizio',
             key_word:'Parola Chiave',

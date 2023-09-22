@@ -93,6 +93,8 @@ export const locale = {
             integrate_survey_checks: "Integrate Survey Checks",
             intensita_singola_pre:'Pre-Controls Impact',
             intensita_pre_descrizione:'Pre-Controls Impact - Description',
+            intensita_totale_pre:'Total Pre-Cotnrols Intensity',
+            intensita_totale_pi_descrizione:'Pre-Controls PI Judgment',
             judgment:'Judgment',
             key_word:'Key Word',
             last_check_template:'Last Check Template',
