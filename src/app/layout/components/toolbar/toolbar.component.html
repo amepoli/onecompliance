@@ -227,15 +227,35 @@
 
 
         <div class="toolbar-separator"></div> -->
+        <button mat-button fxHide fxShow.gt-xs class="language-button" [matMenuTriggerFor]="languageMenu">
+            <div fxLayout="row" fxLayoutAlign="center center">
+                <img class="flag mr-8" [src]="'assets/images/flags/'+selectedLanguage.flag+'.png'">
+                <span class="iso text-uppercase">{{selectedLanguage.id}}</span>
+            </div>
+        </button>
+
+        <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
+
+            <button mat-menu-item *ngFor="let lang of languages" (click)="setLanguage(lang)">
+                <span fxLayout="row" fxLayoutAlign="start center">
+                    <img class="flag mr-16" [src]="'assets/images/flags/'+lang.flag+'.png'">
+                    <span class="iso">{{lang.title}}</span>
+                </span>
+            </button>
+
+        </mat-menu>
 
         <div class="" fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="start center">
 
             <button mat-button [matMenuTriggerFor]="userMenu" class="user-button">
-                <div fxLayout="row" fxLayoutAlign="center center">
+                <ng-container *ngIf="userdata.picture">
                     <img class="avatar mr-0 mr-sm-16" [src]="userdata.picture">
-                    <span class="username mr-12" fxHide fxShow.gt-sm>{{userdata.name}} {{userdata.lastname}}</span>
-                    <mat-icon class="s-16" fxHide.xs>keyboard_arrow_down</mat-icon>
-                </div>
+                </ng-container>
+                <ng-container *ngIf="!userdata.picture && userdata.name">
+                    <div class="user-avatar">
+                        <span class="username" fxHide fxShow.gt-sm>{{userdata.name[0]}}{{userdata.lastname? userdata.lastname[0]: userdata.name[1]}}</span>
+                    </div>
+                </ng-container>
             </button>
 
             <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
@@ -245,6 +265,7 @@
                     <span>Account</span>
                 </button>
 
+                <h3 style="margin-left: 56px; font-weight: bold;">{{userdata.name}} {{userdata.lastname}}</h3>
                 <mfa>
                 </mfa>
 
@@ -258,23 +279,7 @@
 
             <!-- <div class="toolbar-separator"></div> -->
 
-            <button mat-button fxHide fxShow.gt-xs class="language-button" [matMenuTriggerFor]="languageMenu">
-                <div fxLayout="row" fxLayoutAlign="center center">
-                    <img class="flag mr-8" [src]="'assets/images/flags/'+selectedLanguage.flag+'.png'">
-                    <span class="iso text-uppercase">{{selectedLanguage.id}}</span>
-                </div>
-            </button>
-
-            <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
-
-                <button mat-menu-item *ngFor="let lang of languages" (click)="setLanguage(lang)">
-                    <span fxLayout="row" fxLayoutAlign="start center">
-                        <img class="flag mr-16" [src]="'assets/images/flags/'+lang.flag+'.png'">
-                        <span class="iso">{{lang.title}}</span>
-                    </span>
-                </button>
-
-            </mat-menu>
+           
 
         </div>
 
