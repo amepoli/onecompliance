@@ -991,6 +991,7 @@
             "sameOrigin": false,
             "key": "probabilita_rett_descrizione",
             "label": "Prob.rett.- Descrizione",
+            "translate": "RESOURCES.probabilita_rett_descrizione",
             "size": 1.34,
             "newLine": false,
             "readOnly": true
@@ -1005,6 +1006,7 @@
             "isPrimary": false,
             "key": "intensita_singola_post_rilevata",
             "label": "Impatto rettificato",
+            "translate": "RESOURCES.intensita_singola_post_rilevata",
             "size": 1.1,
             "newLine": false,
             "outputEvent": {
@@ -1039,6 +1041,7 @@
             "isPrimary": false,
             "key": "intensita_singola_post_rett_descrizione",
             "label": "Impatto Rettificato - Descrizione",
+            "translate": "RESOURCES.intensita_singola_post_rett_descrizione",
             "newLine": false,
             "size": 1.34,
             "sameOrigin": false,
@@ -1070,6 +1073,7 @@
             "isPrimary": false,
             "key": "intensita_totale_post_rilevata",
             "label": "Rischio Totale Rettificato",
+            "translate": "RESOURCES.intensita_totale_post_rilevata",
             "size": 1.1,
             "newLine": false,
             "outputEvent": {
@@ -1104,6 +1108,7 @@
             "isPrimary": false,
             "key": "intensita_totale_post_rett_descrizione",
             "label": "Giudizio Rettificato",
+            "translate": "RESOURCES.intensita_totale_post_rett_descrizione",
             "size": 1.34,
             "newLine": false,
             "readOnly": true,
@@ -1135,6 +1140,7 @@
             "isPrimary": false,
             "key": "intensita_totale_rett_pi",
             "label": "Giudizio PI Rett",
+            "translate": "RESOURCES.intensita_totale_rett_pi",
             "size": 1.34,
             "newLine": false,
             "readOnly": true,
@@ -1166,6 +1172,7 @@
             "isPrimary": false,
             "key": "rr_rett",
             "label": "Risk Resp.Rett.",
+            "translate": "resource.rr_rett",
             "size": 1.34,
             "newLine": true,
             "readOnly": true,
@@ -1223,7 +1230,8 @@
           }
         ]
       },
-      "label": "Codice Rischio",
+       "label": "Codice Rischio",
+      "translate": "RESOURCES.risk_code_pk",
       "newLine": false,
       "queryCond": "codice_rischio=$codice_rischio$"
     },
@@ -1269,6 +1277,7 @@
         "viewType": "input"
       },
       "label": "Rischio Inerente",
+      "translate": "RESOURCES.rischio_inerente",
       "newLine": true,
       "queryCond": "rischio_inerente=$rischio_inerente$"
     },
@@ -1285,17 +1294,6 @@
       "queryCond": "id_centro_gest= $id_centro_gest$"
     },
     {
-      "fieldName": "id_tipo_rischio_s",
-      "format": {
-        "comboQuery": "SELECT id_tipo_rischio AS id, entrasp.tipi_rischio_descrizione(id_tipo_rischio, $codice_azienda$) AS name  FROM entrasp.tipi_rischio WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo Rischio",
-      "newLine": false,
-      "queryCond": "codice_rischio in(select codice_rischio from entrasp.rischi_tipi where codice_azienda=$codice_azienda$ and id_tipo_rischio= $id_tipo_rischio_s$)"
-    },
-    {
       "fieldName": "id_tipo_rischio_tag_s",
       "format": {
         "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(133, 349, 3425, 5328,5497,6154,6155,6156, 6157,6158,6721,6871,43448, 6837) order by id_argomento||'-'||descrizione_breve",
@@ -1303,6 +1301,7 @@
         "viewType": "combobox"
       },
       "label": "Tipo Rischio (tag)",
+      "translate": "RESOURCES.tag",
       "newLine": true,
       "queryCond": "codice_rischio in(select rsk.codice_rischio from entrasp.rischi rsk inner join entrasp.argomenti_argomenti aa on rsk.id_argomento=aa.id_argomento_son where rsk.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$id_tipo_rischio_tag_s$ and rsk.codice_rischio is not null)"
     },
@@ -1314,6 +1313,7 @@
         "viewType": "combobox"
       },
       "label": "Con giudiz.post(moltipl. puro) > di",
+      "translate": "RESOURCES.giudizio_mp",
       "newLine": false,
       "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post > $giudizio_mp_s$ )"
  
@@ -1327,6 +1327,7 @@
         "dataType": "text"
       },
       "label": "Con giudiz.post(moltipl. transcod. (PI)) > di",
+      "translate": "RESOURCES.giudizio_mt",
       "newLine": false,
       "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0)) > $giudizio_mt_s$)"
     },
@@ -1338,6 +1339,7 @@
         "viewType": "combobox"
       },
       "label": "Con giudiz.rett.(moltipl. puro) > di",
+      "translate": "RESOURCES.giudizio_rett_mp",
       "newLine": false,
       "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post_rilevata > $giudizio_rett_mp_s$ )" 
     },
@@ -1350,6 +1352,7 @@
         "dataType": "text"
       },
       "label": "Con giudiz.rett.(moltipl. transcod. (PI)) > di",
+      "translate": "RESOURCES.giudizio_rett_mt",
       "newLine": true,
       "queryCond": "codice_rischio in (select codice_rischio from entrasp.rischi ri where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post_rilevata,0), coalesce(intensita_singola_post_rilevata,0)) > $giudizio_rett_mt_s$)"
     },
@@ -1360,6 +1363,7 @@
         "viewType": "checkbox"
       },
       "label": "Senza Processi",
+      "translate": "RESOURCES.rischi_without_procedure",
       "newLine": false,
       "queryCond": "codice_rischio not in(select codice_rischio from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura is not null)"
     },
@@ -1370,6 +1374,7 @@
         "viewType": "checkbox"
       },
       "label": "Con Processi",
+      "translate": "RESOURCES.rischi_with_procedure",
       "newLine": false,
       "queryCond": "codice_rischio in(select codice_rischio from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura is not null)"
     },
@@ -1379,7 +1384,8 @@
         "value": "0",
         "viewType": "checkbox"
       },
-      "label": "Senza Presidi",
+     "label": "Senza Presidi",
+      "translate": "RESOURCES.rischi_without_presidi",
       "newLine": false,
       "queryCond": "codice_rischio not in(select codice_rischio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
     },
@@ -1390,6 +1396,7 @@
         "viewType": "checkbox"
       },
       "label": "Con Presidi",
+      "translate": "RESOURCES.rischi_with_presidi",
       "newLine": true,
       "queryCond": "codice_rischio in(select codice_rischio from entrasp.rischi_presidi where codice_azienda=$codice_azienda$)"
     },
@@ -1400,6 +1407,7 @@
         "viewType": "checkbox"
       },
       "label": "Verificati",
+      "translate": "RESOURCES.verificati",
       "newLine": false,
       "queryCond": "codice_rischio in(select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
     },
@@ -1410,7 +1418,8 @@
         "viewType": "checkbox"
       },
      "label": "Mai verificati",
-            "translate": "RESOURCES.no_verif",
+            "translate": "RESOURCES.mai_verif",
+
       "newLine": false,
       "queryCond": "codice_rischio not in(select ri.codice_rischio from entrasp.rischi ri inner join entrasp.rischi_presidi rp on ri.codice_rischio=rp.codice_rischio and ri.codice_azienda=rp.codice_azienda inner join entrasp.domande_presidi dpr on rp.id_presidio=dpr.id_presidio and rp.codice_azienda=dpr.codice_azienda inner join entrasp.sondaggi snd on dpr.codice_azienda = snd.codice_azienda and dpr.id_modello_test = snd.id_modello_test where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
     },
@@ -1450,11 +1459,13 @@
           "son": "codice_rischio"
         }
       ],
-      "label": "Articoli Normativi"
+      "label": "Articoli Normativi",
+      "translate": "RESOURCES.articoli_normativi"
     },
     {
       "entryKey": "presidi_sub_of_rischi",
-      "label": "Presidi (Controlli)",
+      "label": "Presidi (Controlli)" ,
+      "translate": "RESOURCES.presidi" ,
       "keys": [
         {
           "parent": "codice_azienda",
@@ -1478,7 +1489,8 @@
           "son": "codice_rischio"
         }
       ],
-      "label": "Processi"
+      "label": "Processi",
+      "translate": "RESOURCES.Processi"
     },
     {
       "entryKey": "trattamenti_dati_sub_of_rischi",
@@ -1493,7 +1505,9 @@
           "son": "codice_rischio"
         }
       ],
-      "label": "Trattamenti dati"
+      "label": "Trattamenti dati",
+      "translate": "RESOURCES.trattamenti_dati_sub_of_procedure"
+
     },
     {
       "entryKey": "tag_sub_of_rischi",
@@ -1503,7 +1517,8 @@
           "son": "id_argomento_son"
         }
       ],
-      "label": "TAG"
+       "label": "TAG",
+      "translate": "RESOURCES.tag"
     }
   ],
   "table_keys": [
@@ -1578,6 +1593,7 @@
       "key": "centro_gest",
       "width": "10%",
       "label": "Centro Gestionale Resp. (liv.1)",
+      "translate": "RESOURCES.id_centro_gest_lvl1",
       "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
     },
     {
@@ -1589,6 +1605,7 @@
       "width": "8%",
       "key": "rischio_inerente",
       "label": "Rischio Inerente",
+      "translate": "RESOURCES.rischio_inerente",
       "style": [
         {
           "value": "*",
@@ -1725,6 +1742,7 @@
       "width": "8%",
       "key": "rischio_inerente_pi",
       "label": "Risch.Inerente(mt)",
+      "translate": "RESOURCES.rischio_inerente_pi",
       "style": [
         {
           "value": "*",
@@ -1861,6 +1879,7 @@
       "key": "rischio_residuo",
       "width": "8%",
       "label": "Rischio Residuo",
+      "translate": "RESOURCES.rischio_residuo",
       "style": [
         {
           "value": "*",
@@ -1997,6 +2016,7 @@
       "width": "8%",
       "key": "rischio_residuo_pi",
       "label": "Risch.Residuo(mt)",
+      "translate": "RESOURCES.rischio_residuo_pi",
       "style": [
         {
           "value": "*",
@@ -2133,6 +2153,7 @@
       "key": "risk_response",
       "width": "8%",
       "label": "Risk Resp.",
+      "translate": "RESOURCES.risk_response",
       "style": [
         {
           "value": "*",
@@ -2178,6 +2199,7 @@
       "key": "rischio_residuo_rett",
       "width": "8%",
       "label": "Rischio Residuo Rett.",
+      "translate": "rischio_residuo_rett",
       "style": [
         {
           "value": "*",
@@ -2314,6 +2336,7 @@
       "width": "8%",
       "key": "rischio_residuo_rett_pi",
       "label": "Risch.Res.Rett.(mt)",
+      "translate": "rischio_residuo_rett",
       "style": [
         {
           "value": "*",
@@ -2450,6 +2473,7 @@
       "key": "risk_response_rett",
       "width": "8%",
       "label": "Risk Resp.Rett.",
+            "translate": "RESOURCES.rr_rett",
       "style": [
         {
           "value": "*",
@@ -2494,6 +2518,7 @@
       "isPrimary": false,
       "key": "probabilita",
       "label": "Probabilita",
+      "translate": "RESOURCES.probabilita",
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P',probabilita_post)"
     },
     {
@@ -2504,6 +2529,7 @@
       "isPrimary": false,
       "key": "impatto",
       "label": "Impatto",
+      "translate": "RESOURCES.impatto",
       "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I',intensita_singola_post)"
     },
     {
