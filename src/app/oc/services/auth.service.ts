@@ -53,6 +53,7 @@ export class AuthService {
   private confirmUser: any;
   private sync: any;
   private onekyc: boolean;
+  private allowedToInvite: boolean;
 
   // Google
   // googleUser: SocialUser;
@@ -349,6 +350,8 @@ export class AuthService {
 
         _this.onekyc = ud.userdata.onekyc;
 
+        _this.allowedToInvite = ud.userdata.allowedToInvite;
+
         _this._console.log(ud.userdata);
 
         //load default language for user
@@ -517,6 +520,10 @@ export class AuthService {
 
   public getOneKYCAuth(): boolean {
     return this.onekyc;
+  }
+
+  public getAllowedToInvite(): boolean {
+    return this.allowedToInvite;
   }
 
   /** Set last Company in local storage */
