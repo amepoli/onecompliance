@@ -26,7 +26,9 @@ export class LoginPageComponent implements OnInit {
 
     signedIn: boolean = false;
     signingIn: boolean = false;
-    
+    requireNewPassword: boolean = false;
+    forgotPassword: boolean = false;
+
     loadingSession: boolean = false;
 
     // Text to show on Login button
@@ -100,16 +102,28 @@ export class LoginPageComponent implements OnInit {
         this.authService.authStateChange$
             .subscribe(authState => {
                 this.confirmSignIn = authState.state === 'confirmSignIn';
+                this.signedIn = authState.state === 'signedIn';
+                this.requireNewPassword = authState.state === 'requireNewPassword';
+                this.forgotPassword = authState.state === 'forgotPassword';
                 if(this.confirmSignIn) {
                     this._dialogService.closeDialog();
                     this.signingIn = false;
                     this.loginButtonText = 'VERIFY OTP';
                 }
-                this.signedIn = authState.state === 'signedIn';
-                if (!authState.user) {
-                    this.user = null;
-                } else {
-                    this.user = authState.user;
+                else if(this.requireNewPassword) {
+                    this._dialogService.closeDialog();
+                    this.router.navigate(['/change-password']);
+                }
+                else if(this.forgotPassword) {
+                    this._dialogService.closeDialog();
+                    this.router.navigate(['/forgot-password']);
+                }
+                else {
+                    if (!authState.user) {
+                        this.user = null;
+                    } else {
+                        this.user = authState.user;
+                    }
                 }
             }, error => {
                 // Error occured!

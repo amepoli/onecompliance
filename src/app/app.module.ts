@@ -34,6 +34,7 @@ import { HomepageTabModule } from './oc/homepage-tab/homepage-tab.module';
 import { ToolbarElementsModule } from './oc/toolbar-elements/toolbar-elements.module';
 import { ExplorerModule } from './oc/explorer/explorer.module';
 import { CalendarModule } from './oc/calendar/calendar.module';
+import { ChangePasswordModule } from './oc/login-page/change-password.module';
 
 const appRoutes: Routes = [];
 
@@ -80,6 +81,7 @@ const appRoutes: Routes = [];
 
         // nikapov modules
         LoginPageModule,
+        ChangePasswordModule,
         RegisterModule,
         MailConfirmModule,
         ForgotPasswordModule,
