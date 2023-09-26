@@ -80,16 +80,16 @@ export class AuthService {
     this.initGoogleOAuth();
 
     this.awsService.errorInfo$
-    .subscribe(error => {
-     
-        this._setError(error); 
-    }, (err) => {
-        // Error occured!
-      this._setError(err);
-    });
-   
+      .subscribe(error => {
 
-    
+        this._setError(error);
+      }, (err) => {
+        // Error occured!
+        this._setError(err);
+      });
+
+
+
   }
 
   get authStateChange$(): BehaviorSubject<OCAuthState> | null {
@@ -97,8 +97,7 @@ export class AuthService {
   }
   // public errorInfo$ = new EventEmitter<any>();
 
-  get errorInfo$() :  BehaviorSubject<any> | null
-  {
+  get errorInfo$(): BehaviorSubject<any> | null {
     return this.awsService.errorInfo$;
   }
 
@@ -133,13 +132,13 @@ export class AuthService {
   public forgotPassword(username: string): void {
 
     try {
-      const data =  this.awsService
-      .auth()
-      .forgotPassword(username);
-        this._console.log(data);
+      const data = this.awsService
+        .auth()
+        .forgotPassword(username);
+      this._console.log(data);
     }
-    catch(err) {
-    
+    catch (err) {
+
       this._setError(err);
     }
   }
@@ -153,11 +152,16 @@ export class AuthService {
       const data = this.awsService
         .auth()
         .ConfirmForgotPassword(username, code, new_password);
-        this._console.log(data);
+      this._console.log(data);
     }
-    catch(err) {
+    catch (err) {
       this._setError(err);
     }
+  }
+
+  /** change password */
+  public async changePassword(newPassword: string) {
+    return this.awsService.auth().changePassword(newPassword);
   }
 
   /** signin */
@@ -166,7 +170,7 @@ export class AuthService {
       .auth()
       .signIn(this.username, this.password)
       .then((user) => {
-        
+
         if (
           user["ChallengeName"] === "SMS_MFA" ||
           user["ChallengeName"] === "SOFTWARE_TOKEN_MFA"
@@ -177,16 +181,16 @@ export class AuthService {
             user: user,
           });
         } else if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
-          this.awsService.setAuthState({
-            state: "requireNewPassword",
-            user: user,
-          });
-          this.awsService
-            .api()
-            .get("gorico", "test", {
-              queryStringParameters: {},
-              headers: null,
-            });
+          // this.awsService.setAuthState({
+          //   state: "requireNewPassword",
+          //   user: user,
+          // });
+          // this.awsService
+          //   .api()
+          //   .get("gorico", "test", {
+          //     queryStringParameters: {},
+          //     headers: null,
+          //   });
         } else {
           this.awsService.auth().loadSignInResponse(user);
           /* this.awsService.setAuthState({
@@ -196,12 +200,11 @@ export class AuthService {
           }); */
           this.isSignedIn = true;
           // now get user and related menu info from backend
-        if(user)
-        {
-          this.isSignedIn = true;
-          this.retrieveUserInfo();
-        }
-        
+          if (user) {
+            this.isSignedIn = true;
+            this.retrieveUserInfo();
+          }
+
         }
       })
       .catch((err) => {
@@ -212,8 +215,12 @@ export class AuthService {
   public signOut(): void {
     this.isSignedIn = false;
     this.currentCompany = null; // force default company for next login
-    this.awsService.auth().mfa="";
+    this.awsService.auth().mfa = "";
     this.awsService.auth().signOut();
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
     localStorage.clear();
     this.userinfo.next({
       name: null,
@@ -231,8 +238,8 @@ export class AuthService {
 
   public signUp(isInvitedUser: boolean = false) {
     return this.awsService
-    .auth()
-    .signUp(this.username, this.password, this.email, isInvitedUser);
+      .auth()
+      .signUp(this.username, this.password, this.email, isInvitedUser);
   }
 
   public confirmSignUp(code: string): void {
@@ -299,11 +306,11 @@ export class AuthService {
 
   private async retrieveUserInfo() {
     const _this = this;
-       _this.interval = setInterval(
-          () => _this.awsService.auth().refreshToken(),
-          1000
-        );
-    
+    //  _this.interval = setInterval(
+    //     () => _this.awsService.auth().refreshToken(),
+    //     1000
+    //   );
+
     await _this.awsService.auth().refreshToken();
     _this.backendService.getUserData().subscribe((ud) => {
       if (ud != null && ud.result === "OK") {
@@ -626,7 +633,7 @@ this.amplifyService.auth().currentCredentials()
     // let user = await _this.amplifyService.auth().currentAuthenticatedUser();
     try {
       const response = await _this.backendService.disableMFA().toPromise();
-      if(response && response.result == 'OK') {
+      if (response && response.result == 'OK') {
         return true;
       }
       else {
@@ -646,37 +653,37 @@ this.amplifyService.auth().currentCredentials()
     const result = await _this.awsService
       .auth()
       .confirmSignIn(_this.confirmUser, challenge, "SOFTWARE_TOKEN_MFA");
-    if(result) {
+    if (result) {
       _this.isSignedIn = true;
-          // now get user and related menu info from backend
+      // now get user and related menu info from backend
       _this.retrieveUserInfo();
     }
     else {
-              // _this.errorInfo$.emit(err);
+      // _this.errorInfo$.emit(err);
 
     }
 
-      // .then((user) => {
-      //   _this.isSignedIn = false;
-      //   if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
-      //     _this.amplifyService.setAuthState({
-      //       state: "requireNewPassword",
-      //       user: user,
-      //     });
-      //   } else {
-      //     _this.amplifyService.setAuthState({
-      //       state: "signedIn",
-      //       user: user,
-      //     });
-      //     _this.isSignedIn = true;
-      //     // now get user and related menu info from backend
-      //     _this.retrieveUserInfo();
-      //   }
-      // })
-      // .catch((err) => {
-      //   _this.errorInfo$.emit(err);
-      //   _this._setError(err);
-      // });
+    // .then((user) => {
+    //   _this.isSignedIn = false;
+    //   if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
+    //     _this.amplifyService.setAuthState({
+    //       state: "requireNewPassword",
+    //       user: user,
+    //     });
+    //   } else {
+    //     _this.amplifyService.setAuthState({
+    //       state: "signedIn",
+    //       user: user,
+    //     });
+    //     _this.isSignedIn = true;
+    //     // now get user and related menu info from backend
+    //     _this.retrieveUserInfo();
+    //   }
+    // })
+    // .catch((err) => {
+    //   _this.errorInfo$.emit(err);
+    //   _this._setError(err);
+    // });
   }
 
   async loadGoogleAuth(purpose: string) {
