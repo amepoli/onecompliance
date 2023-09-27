@@ -340,6 +340,13 @@ class Auth {
                 Password: new_password,
             });
             const result = await client.send(command);
+            let authState: OCAuthState = {
+                session: null,
+                state: null,
+                user: null,
+            };
+            this.authStateChange$.next(authState);
+
             return result;
         } catch (error) {
             _this.errorInfo$.next(error);
@@ -368,21 +375,117 @@ class Auth {
             const result = await client.send(command);
             _this.mfa = result.ChallengeName;
             if (
-                result.ChallengeName == ChallengeNameType.SOFTWARE_TOKEN_MFA ||
-                result.ChallengeName == ChallengeNameType.SMS_MFA
+                result.ChallengeName === ChallengeNameType.SOFTWARE_TOKEN_MFA ||
+                result.ChallengeName === ChallengeNameType.SMS_MFA
             ) {
                 _this.setAuthState({
                     state: "confirmSignIn",
                     user: result,
+                });
+            }
+            else if(
+                result.ChallengeName === 'NEW_PASSWORD_REQUIRED'
+            ) {
+                _this.setAuthState({
+                    state: "requireNewPassword",
+                    session: result,
                 });
             } else {
                 _this.loadSignInResponse(result);
             }
             return result;
         } catch (error) {
+            if(error && error.name && error.name === 'PasswordResetRequiredException') {
+                _this.setAuthState({
+                    state: "forgotPassword",
+                    session: null,
+                    user: null
+                });
+            }
             _this.errorInfo$.next(error);
             console.log(error.message ?? error);
         }
+    }
+
+    /** change password */
+    public async changePassword(newPassword: string) {
+        const _this = this;
+        const session = _this.authStateChange$.value.session;
+
+        console.log(session);
+        
+        const client = createClientForDefaultRegion(
+            CognitoIdentityProviderClient
+        );
+        const secretHash = generateSecretHash(
+            session.ChallengeParameters.USER_ID_FOR_SRP
+        );
+
+        const command = new RespondToAuthChallengeCommand({
+            ClientId: environment.appData.awsSdk.ClientId,
+            Session: session.Session,
+            ChallengeName: ChallengeNameType.NEW_PASSWORD_REQUIRED, 
+            ChallengeResponses: {
+                NEW_PASSWORD: newPassword, 
+                USERNAME: session.ChallengeParameters.USER_ID_FOR_SRP,
+                SECRET_HASH: secretHash
+            }
+        });
+
+        try {
+            let result = await client.send(command);
+            console.log(result);
+            if (result["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
+                _this.setAuthState({
+                    state: "requireNewPassword",
+                    user: result,
+                });
+            } else {
+                _this.loadSignInResponse(result);
+                return true;
+            }
+            return true;
+        } catch (e: any) {
+            console.log(e.message ?? e);
+            _this.errorInfo$.next(e);
+            // return e;
+        }
+
+        return false;
+        
+
+
+        // const accessTokenData = parseJwt(
+        //     result.AuthenticationResult.AccessToken
+        // );
+        // const idTokenData = parseJwt(
+        //     result.AuthenticationResult.IdToken
+        // );
+        // const user = {
+        //     attributes: {
+        //         email: idTokenData.email,
+        //         email_verified: idTokenData.email_verified,
+        //         sub: idTokenData.sub,
+        //     },
+        //     id: idTokenData.sub,
+        //     username: accessTokenData.username,
+        //     preferredMFA: _this.mfa,
+        // };
+
+        // _this.setAuthState({
+        //     state: "signedIn",
+        //     session: {
+        //         ...result.AuthenticationResult,
+        //         ...accessTokenData,
+        //     },
+        //     user: user,
+        // });
+
+        // localStorage.setItem(
+        //     "session",
+        //     JSON.stringify(_this.authStateChange$.value.session)
+        // );
+        // localStorage.setItem("user", JSON.stringify(user));
     }
 
     public async confirmSignIn(

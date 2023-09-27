@@ -1271,6 +1271,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     if (actionType === 'create_user_and_email') {
 
+                        console.log('getAllowedToInvite: ',_this.authService.getAllowedToInvite());
+                        if (_this.authService.getAllowedToInvite()) {
+
                         const username = formValues['email_to'];
                         const temporaryPassword = HelperService.generatePassword(9);
                         const company = formValues['codice_azienda'];
@@ -1284,6 +1287,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this._toastService.showSuccessToast('User correctly invited'); // show success toast
                         this.refreshView(); // refresh the view
 
+                        } else {
+                            _this._toastService.showInfoToast(`User isn't allowed to invite!`);
+                        }
 
                         //_this.performSendEmail(event, formValues, value);
 
