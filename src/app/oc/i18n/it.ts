@@ -51,6 +51,7 @@ export const locale = {
             delete_survey_answer:' Elmina Risposta Sondaggio',
             descrizione_breve: 'Descrizione Breve',
             details:'Dettagli',
+            descr_procedura:'Processo',
             description:'Descrizione',
             duplicate_survey: 'Duplica Sondaggio',
             domade_sub_of_presidi:'Domande Associate al Presidio',

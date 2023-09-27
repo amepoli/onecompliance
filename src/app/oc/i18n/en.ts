@@ -50,6 +50,7 @@ export const locale = {
             delete_survey_answer:'Delete Survey Answer',
             details: 'Details',
             description: 'Description',
+            descr_procedura:'Process',
             descrizione_breve: 'Short Description',
             id_procedura_parent: 'Parent Process',
             domade_sub_of_presidi:'Question Associated to Control',
