@@ -47,6 +47,7 @@ export const locale = {
             data_comp_prevista_min:'Sondaggi con Data Comp. da',
             data_comp_prevista_max: 'Sondaggi con Data Comp. al',
             data_breach_code_parent: 'Codice Data Breach Parent',
+            diverso_da_attivo:'Diverso da Attivo',
             delete_survey_answer:' Elmina Risposta Sondaggio',
             descrizione_breve: 'Descrizione Breve',
             details:'Dettagli',
@@ -101,6 +102,7 @@ export const locale = {
             id_presidio: 'ID Presidio',
             id_tipo_presidio: 'Tipo Presidio',
             id_presidio_parent: 'Presidio Superiore',
+            id_presidio_max:'Id Pres. Max',
             id_centro_gest_lvl1:"Centro Gestionale Resp. (liv 1)",
             id_centro_gest_lvl2:"Centro Gestionale Monitoraggio/Segnalante (liv 2)",
             incomplete:'Incompleto',
@@ -151,6 +153,8 @@ export const locale = {
             open:'Aperti',
             office: 'Centro Gestionale',
             penalties:'Penalizzazioni',
+            presidi_with_domande:'Con Domande',
+            presidi_without_domande:'Senza Domande',
             preliminary_data: 'Dati preliminari verifica',
             presidi_sub_of_procedure: 'Presidi Associati',
             modelli_test_sub_procedure:'Modelli di verifica Associati',
@@ -246,6 +250,8 @@ export const locale = {
             with_complete_documentation:'Con Doc. Completa',
             with_manual_judgement:'Con Giudizio Manuale',
             with_incomplete_documentation:'Con Doc. incompleta',
+            without_id_arg:"Senza Argomento",
+            with_id_arg:"Con Argomento",
             worst_check:'Verifica Peggiore'
 
 

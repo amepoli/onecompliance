@@ -46,6 +46,7 @@ export const locale = {
             data_comp_prevista_min:'Survey with Competence data from',
             data_comp_prevista_max:'Survey with Competence data to',
             data_breach_code_parent: 'Data Breach Code Parent',
+            diverso_attivo:'Other than Active',
             delete_survey_answer:'Delete Survey Answer',
             details: 'Details',
             description: 'Description',
@@ -100,6 +101,7 @@ export const locale = {
             id_centro_gest_lvl1:"Monitoring/Reporting Office (lvl 1)",
             id_centro_gest_lvl2:"Monitoring/Reporting Office (lvl 2)",
             id_presidio: 'ID Control',
+            id_presidio_max:'Max Id Process',
             id_tipo_presidio: 'Control Type',
             id_presidio_parent: 'Parent Control',
             impatto: 'Impact',
@@ -150,6 +152,8 @@ export const locale = {
             office: 'Office',
             partition_code:'Partition Code',
             presidi_sub_of_procedure: 'Associated Controls',
+            presidi_with_domande:'With Questions',
+            presidi_without_domande:'Without Questions',
             procedure_without_rischi:'Without Risks',
             modelli_test_sub_procedure:'Associated Check Templates',
             presidi: 'Controls',
@@ -246,6 +250,8 @@ export const locale = {
             with_manual_judgement:'With Manual Judgement',
             with_complete_documentation:'With Complete Documentation',
             without_execution_date:'Without Execution Date',
+            without_id_arg:"Without Tag",
+            with_id_arg:"With Tag",
             worst_check:'Worst Check'
             
 

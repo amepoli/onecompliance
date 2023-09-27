@@ -955,6 +955,7 @@
                 "viewType": "combobox"
             },
             "label": "Per rischi con giudiz.(moltipl. puro) > di",
+            "translate": "RESOURCES.giudizio_mp",
             "newLine": false,
             "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post > $giudizio_mp_s$ )"
         },
@@ -967,6 +968,7 @@
                 "dataType": "text"
             },
             "label": "Per rischi con di giudiz. (moltipl. transcod. (PI)) > di",
+            "translate": "RESOURCES.giudizio_mt",
             "newLine": false,
             "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(ri.codice_azienda, coalesce(ri.probabilita_post,0), coalesce(ri.intensita_singola_post,0)) > $giudizio_mt_s$)"
         },
@@ -978,6 +980,7 @@
                 "viewType": "combobox"
             },
             "label": "Per rischi rett. con giudiz. (moltipl. puro) > di",
+            "translate": "RESOURCES.giudizio_rett_mp",
             "newLine": false,
             "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and ri.intensita_totale_post_rett > $giudizio_rett_mp_s$ )"
         },
@@ -990,6 +993,7 @@
                 "dataType": "text"
             },
             "label": "Per rischi con giudiz. (moltipl. transcod. (PI)) > di",
+            "translate": "RESOURCES.giudizio_rett_mt",
             "newLine": true,
             "queryCond": "id_presidio in (select pr.id_presidio from entrasp.presidi pr inner join entrasp.rischi_presidi rpr on pr.id_presidio=rpr.id_presidio and pr.codice_azienda=rpr.codice_azienda inner join entrasp.rischi ri on rpr.codice_azienda=ri.codice_azienda and rpr.codice_rischio=ri.codice_rischio where ri.codice_azienda=$codice_azienda$ and entrasp.srr_giudizio_pi(ri.codice_azienda, coalesce(ri.probabilita_post_rilevata,0), coalesce(ri.intensita_singola_post_rilevata,0)) > $giudizio_rett_mt_s$)"
         },
@@ -1043,6 +1047,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza procedure",
+            "translate": "RESOURCES.rischi_without_procedure",
             "newLine": false,
             "queryCond": "id_presidio not in(select id_presidio from entrasp.procedure_aziendali_presidi where codice_azienda=$codice_azienda$)"
         },
@@ -1053,6 +1058,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con domande",
+            "translate": "RESOURCES.presidi_with_domande",
             "newLine": false,
             "queryCond": "id_presidio in(select id_presidio from entrasp.domande_presidi where codice_azienda=$codice_azienda$)"
         },
@@ -1062,7 +1068,8 @@
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza domande",
+             "label": "Senza domande",
+            "translate": "RESOURCES.presidi_without_domande",
             "newLine": true,
             "queryCond": "id_presidio not in(select id_presidio from entrasp.domande_presidi where codice_azienda=$codice_azienda$)"
         },
@@ -1122,12 +1129,13 @@
             "queryCond": "id_presidio in(select dpr.id_presidio from entrasp.sondaggi snd inner join entrasp.domande_presidi dpr on snd.id_modello_test = dpr.id_modello_test and snd.codice_azienda=dpr.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         },
         {
-            "fieldName": "withot_id_arg",
+            "fieldName": "without_id_arg",
             "format": {
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Senza argomento",
+             "label": "Senza argomento",
+            "translate": "RESOURCES.without_id_arg",
             "newLine": false,
             "queryCond": "id_argomento is null"
         },
@@ -1138,6 +1146,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con argomento",
+            "translate": "RESOURCES.with_id_arg",
             "newLine": true,
             "queryCond": "id_argomento is not null"
         },
@@ -1148,6 +1157,7 @@
                 "viewType": "checkbox"
             },
             "label": "Max id pres.",
+            "translate": "RESOURCES.id_presidio_max",
             "newLine": false,
             "size": 1,
             "queryCond": "id_presidio=(select max(id_presidio) from entrasp.presidi where codice_azienda='€global_codice_azienda€')"
@@ -1159,6 +1169,7 @@
                 "viewType": "checkbox"
             },
             "label": "Diverso da Attivo",
+            "translate": "RESOURCES.diverso_attivo",
             "newLine": false,
             "size": 1,
             "queryCond": "stato_attuazione!='A'"
