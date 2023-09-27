@@ -55,6 +55,7 @@ export const locale = {
             description:'Descrizione',
             duplicate_survey: 'Duplica Sondaggio',
             domade_sub_of_presidi:'Domande Associate al Presidio',
+            domandelabel:'Domanda',
             duplica_presidio: 'Duplica Presidio',
             duplicate_risk:'Duplica Rischio',
             executed_after_trenta_scheduled: 'Eseguito >30 prev.',

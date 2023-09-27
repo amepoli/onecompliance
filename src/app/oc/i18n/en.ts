@@ -52,6 +52,7 @@ export const locale = {
             description: 'Description',
             descr_procedura:'Process',
             descrizione_breve: 'Short Description',
+            domandelabel:'Question',
             id_procedura_parent: 'Parent Process',
             domade_sub_of_presidi:'Question Associated to Control',
             duplicate_survey: 'Duplicate Survey',
