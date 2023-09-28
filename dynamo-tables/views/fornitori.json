@@ -64,6 +64,48 @@
             "operation": "delete",
             "queryString": "SELECT entrasp.anagrafica_id_delete($codice_part$, '€global_codice_azienda€', $id_anagrafica$);",
             "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select codice_fiscale from entrasp.anagrafiche_vr where codice_part=$codice_part$ and UPPER(codice_fiscale)=UPPER($codice_fiscale$)",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select partita_iva from entrasp.anagrafiche_vr where codice_part=$codice_part$ and UPPER(partita_iva)=UPPER($partita_iva$)",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con la stessa partita IVA!"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null and $partita_iva$ is null limit 1",
+            "messageNotNull": "Attenzione: inserire codice fiscale o partita iva per continuare!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$ and id_anagrafica!= $id_anagrafica$",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select codice_fiscale from entrasp.anagrafiche_vr where codice_part=$codice_part$ and codice_fiscale=$codice_fiscale$ and id_anagrafica!= $id_anagrafica$",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select partita_iva from entrasp.anagrafiche_vr where codice_part=$codice_part$ and partita_iva=$partita_iva$ and id_anagrafica!= $id_anagrafica$",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con la stessa partita IVA!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null and $partita_iva$ is null limit 1",
+            "messageNotNull": "Attenzione: inserire codice fiscale o partita iva per continuare!"
         }
     ],
     "subTables": [
