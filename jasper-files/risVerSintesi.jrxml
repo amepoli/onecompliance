@@ -13,7 +13,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ConnexioInLocale"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
@@ -38,12 +38,12 @@
 		<defaultValueExpression><![CDATA[new BigDecimal(569)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select snd.id_sondaggio,  tmtrr.codice_azienda, tmtrr.prog_riga, tmtrr.descrizione, tmtrr.pct_da, ss.somministrazione_completata, ss.giudizio, ss.object_description, 
+		<![CDATA[select snd.id_sondaggio,  mtrr.codice_azienda, mtrr.prog_riga, mtrr.descrizione, mtrr.pct_da, ss.somministrazione_completata, ss.giudizio, ss.object_description, 
 round(ss.ris_percentuale,2) as ris_percentuale,
-case when tmtrr.codice_colore='darkviolet' then '#800080' 
-     when tmtrr.codice_colore='yellow' then '#FFCC00' 
-     when tmtrr.codice_colore='orange' then '#FF6600'
-     else coalesce(codice_colore,'grey')
+case when mtrr.colore='darkviolet' then '#800080' 
+     when mtrr.colore='yellow' then '#FFCC00' 
+     when mtrr.colore='orange' then '#FF6600'
+     else coalesce(mtrr.colore,'grey')
 end as codice_colore, case when ss.somministrazione_completata='Completo' then 'green' else 'yellow' end as codice_colore_completo
 
 from entrasp.sondaggi_somministrati ss
@@ -51,7 +51,6 @@ inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.i
 inner join entrasp.modelli_test_vr mtvr on snd.id_modello_test_vr=mtvr.id_modello_test_vr and snd.id_modello_test=mtvr.id_modello_test and snd.codice_azienda=mtvr.codice_azienda
 left join entrasp.modelli_test_risultati mtr on mtvr.codice_azienda=mtr.codice_azienda and mtvr.id_risultato=mtr.id_risultato
 left join entrasp.modelli_test_risultati_righe mtrr on mtr.codice_azienda=mtrr.codice_azienda and mtr.id_risultato=mtrr.id_risultato
-left join entrasp.tipi_modelli_test_risultati_righe tmtrr on mtrr.prog_riga=tmtrr.prog_riga and mtrr.codice_azienda=tmtrr.codice_azienda and mtrr.id_tipo_risultato=tmtrr.id_tipo_risultato
 where mtrr.pct_da=ss.pct_da and snd.codice_azienda= $P{codice_azienda} and snd.id_sondaggio=$P{id_sondaggio}]]>
 	</queryString>
 	<field name="id_sondaggio" class="java.math.BigDecimal">
@@ -62,22 +61,22 @@ where mtrr.pct_da=ss.pct_da and snd.codice_azienda= $P{codice_azienda} and snd.i
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
 		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test_risultati_righe"/>
 	</field>
 	<field name="prog_riga" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="prog_riga"/>
 		<property name="com.jaspersoft.studio.field.label" value="prog_riga"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test_risultati_righe"/>
 	</field>
 	<field name="descrizione" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
 		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test_risultati_righe"/>
 	</field>
 	<field name="pct_da" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="pct_da"/>
 		<property name="com.jaspersoft.studio.field.label" value="pct_da"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="tipi_modelli_test_risultati_righe"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test_risultati_righe"/>
 	</field>
 	<field name="somministrazione_completata" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="somministrazione_completata"/>

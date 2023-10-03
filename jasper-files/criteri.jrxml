@@ -37,18 +37,17 @@
 		<defaultValueExpression><![CDATA[new BigDecimal(423)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select snd.id_sondaggio,  tmtrr.codice_azienda, tmtrr.prog_riga, tmtrr.descrizione, tmtrr.pct_da, 
-case when tmtrr.codice_colore='darkviolet' then '#800080' 
-     when tmtrr.codice_colore='yellow' then '#FFCC00' 
-     when tmtrr.codice_colore='orange' then '#FF6600'
-     else coalesce(codice_colore,'grey')
+		<![CDATA[select snd.id_sondaggio,  mtrr.codice_azienda, mtrr.prog_riga, mtrr.descrizione, mtrr.pct_da, 
+case when mtrr.colore='darkviolet' then '#800080' 
+     when mtrr.colore='yellow' then '#FFCC00' 
+     when mtrr.colore='orange' then '#FF6600'
+     else coalesce(mtrr.colore,'grey')
 end as codice_colore
 
 from entrasp.sondaggi snd
 left join entrasp.modelli_test_vr mtvr on snd.id_modello_test_vr=mtvr.id_modello_test_vr and snd.id_modello_test=mtvr.id_modello_test and snd.codice_azienda=mtvr.codice_azienda
 left join entrasp.modelli_test_risultati mtr on mtvr.codice_azienda=mtr.codice_azienda and mtvr.id_risultato=mtr.id_risultato
 left join entrasp.modelli_test_risultati_righe mtrr on mtr.codice_azienda=mtrr.codice_azienda and mtr.id_risultato=mtrr.id_risultato
-left join entrasp.tipi_modelli_test_risultati_righe tmtrr on mtrr.prog_riga=tmtrr.prog_riga and mtrr.codice_azienda=tmtrr.codice_azienda and mtrr.id_tipo_risultato=tmtrr.id_tipo_risultato
 where snd.codice_azienda=$P{codice_azienda} and snd.id_sondaggio=$P{id_sondaggio}]]>
 	</queryString>
 	<field name="id_sondaggio" class="java.math.BigDecimal">
