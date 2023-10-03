@@ -1,0 +1,149 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_employers_user",
+  "origin": "entrasp.anagrafiche_id",
+  "predefinedQueries": [
+    {
+      "operation": "selectForm",
+      "type": "main",
+      "queryString": "SELECT av.codice_fiscale AS codice_fiscale,'€global_codice_azienda€' as codice_azienda,ai.id_anagrafica, ai.nome, ai.cognome, ai.codice_part from entrasp.anagrafiche_id ai inner join entrasp.anagrafiche_vr av using (codice_part,id_anagrafica) where codice_part=$codice_part$ and av.prog_vr=entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) and dynamo_user='$dynamo_user$';"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "id_anagrafica",
+      "label": "id_anagrafica",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_part",
+      "label": "codice part",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice azienda",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_fiscale",
+      "label": "codice_fiscale",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "nome",
+      "label": "nome",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "cognome",
+      "label": "cognome",
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "SELECT codice_azienda as name, codice_azienda as id FROM entrasp.aziende WHERE codice_azienda in (€global_user_companies€)",
+        "viewType": "combobox",
+        "options": [],
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "azienda_to_enable",
+      "label": "Azienda da aggiungere",
+      "readOnly": false,
+      "newLine": true,
+      "size": 10
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "button"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "enable_company",
+      "buttonIcon": "add",
+      "label": "Abilita azienda",
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "enable_company",
+        "eventTrigger": "press"
+      },
+      "inputEvents": [
+        {
+          "eventName": "enable_company",
+          "condition": "none",
+          "values": [],
+          "actionType": "show_message",
+          "message": {
+            "messageText": "Si intende procedere all'abilitazione?",
+            "actionOnYes": {
+              "actionType": "enable_company_to_user"
+            },
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select 1"
+            }
+          }
+        }
+      ],
+      "style": {
+        "background_color": "#25599C",
+        "font_color": "white"
+      },
+      "readOnly": false,
+      "sameOrigin": false,
+      "size": 1
+    }
+  ]
+}
