@@ -6,7 +6,7 @@
 		{
 			"operation": "selectTable",
 			"type": "main",
-			"queryString": "select *, entrasp.progetto_sal(pr.codice_azienda, pr.id_progetto) as avanzamento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as descr_stato, entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part,pr.id_cliente) as descr_cliente, entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest) as centro_gest from entrasp.progetti pr left join entrasp.attivita att on pr.codice_azienda=att.codice_azienda and pr.codice_attivita=att.codice_attivita and pr.attivita_vr=att.attivita_vr left join entrasp.argomenti arg on att.id_argomento=arg.id_argomento where pr.stato=$stato$ and pr.codice_azienda='€global_codice_azienda€' and att.id_argomento=$id_argomento$;"
+			"queryString": "select *, entrasp.percentuale_completamento_progetto(pr.id_progetto, pr.codice_azienda), entrasp.prima_fase_bloccata_progetto(pr.id_progetto, pr.codice_azienda) as prima_fase_bloccata, entrasp.progetto_sal(pr.codice_azienda, pr.id_progetto) as avanzamento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as descr_stato, entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part,pr.id_cliente) as descr_cliente, entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest) as centro_gest from entrasp.progetti pr left join entrasp.attivita att on pr.codice_azienda=att.codice_azienda and pr.codice_attivita=att.codice_attivita and pr.attivita_vr=att.attivita_vr left join entrasp.argomenti arg on att.id_argomento=arg.id_argomento where pr.stato=$stato$ and pr.codice_azienda='€global_codice_azienda€' and att.id_argomento=$id_argomento$;"
 		},
 		{
 			"operation": "selectForm",
@@ -61,6 +61,15 @@
 			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
 		}
 	],
+	"define": {
+		"is_hidden_codice_azienda": "true",
+		"width_codice_azienda": "5%",
+		"is_hidden_perc_completamento": "false",
+		"_and_": "true",
+		"is_hidden_ufficio": "true",
+		"is_hidden_stato": "true",
+		"is_hidden_fase_bloccata": "false"
+	},
 	"hideActions": [
 		{
 			"tableActionType": "add",
@@ -78,5 +87,8 @@
 			"formActionType": "quick-add",
 			"viewType": "form"
 		}
-	]
+	],
+	"querySuffixes": {
+		"tableViewSuffix": "order by percentuale_completamento_progetto asc"
+	}
 }
