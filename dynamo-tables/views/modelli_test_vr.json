@@ -1533,6 +1533,7 @@
                 "viewType": "combobox"
             },
             "label": "Tipo modello test",
+            "translate": "RESOURCES.check_template_type",
             "newLine": false,
             "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
         },
@@ -1543,6 +1544,7 @@
                 "viewType": "input"
             },
             "label": "Lista ID tipi modello test",
+            "translate": "RESOURCES.id_tipo_modello_test_list",
             "newLine": false,
             "queryCond": "mt.id_tipo_modello_test::varchar=any(string_to_array(replace($id_tipo_modello_test_list$, ' ', ''), ','))"
         },
@@ -1566,6 +1568,7 @@
                 "dataType": "text"
             },
             "label": "Associati al modello progetto",
+            "translate": "RESOURCES.associated_to_project_template",
             "newLine": false,
             "queryCond": "mt.id_modello_test in (select id_modello_test from entrasp.attivita where entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$ and id_modello_test is not null and codice_azienda='€global_codice_azienda€')"
         },
@@ -1589,6 +1592,7 @@
             },
             "fieldName": "id_argomento_tc_s",
             "label": "Tipi controllo",
+            "translate": "RESOURCES.tipi_controllo",
             "newLine": true,
             "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento_tc_s$))"
         },
@@ -1610,7 +1614,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza verifiche",
-            "translate": "RESOURCES.whitout checks",
+            "translate": "RESOURCES.whitout_checks",
             "newLine": false,
             "queryCond": "mt.id_modello_test not in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
         },
@@ -1621,6 +1625,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con Verifiche",
+            "translate": "RESOURCES.with_checks",
             "newLine": false,
             "queryCond": "mt.id_modello_test in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
         },
@@ -1631,6 +1636,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con Verifiche Chiuse",
+            "translate": "RESOURCES.with_closed_sondaggi",
             "newLine": false,
             "queryCond": "mt.id_modello_test in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$ and snd.stato='C')"
         },
@@ -1641,6 +1647,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza Processi",
+            "translate": "RESOURCES.without_process",
             "newLine": false,
             "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)"
         },
@@ -1651,6 +1658,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con TAG doppio",
+            "translate": "RESOURCES.doppio_tag",
             "newLine": true,
             "queryCond": "mt.codice_azienda||'-'||mt.id_argomento in(select distinct mt2.codice_azienda||'-'||mt2.id_argomento from entrasp.modelli_test mt2 where mt2.codice_azienda=$codice_azienda$ group by mt2.codice_azienda, mt2.id_argomento having count(id_modello_test)>1)"
         },
@@ -1672,6 +1680,7 @@
                 "viewType": "checkbox"
             },
             "label": "Con Presidi",
+            "translate": "RESOURCES.with_process",
             "newLine": false,
             "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=$codice_azienda$)"
         },
@@ -1693,6 +1702,7 @@
                 "viewType": "checkbox"
             },
             "label": "Senza Popolazione",
+            "translate": "RESOURCES.no_popolazione",
             "newLine": false,
             "queryCond": "mt.id_filtro_selezione is null"
         },
@@ -1714,6 +1724,7 @@
                 "viewType": "checkbox"
             },
             "label": "Ufficio non definito",
+            "translate": "RESOURCES.undefined_office",
             "newLine": true,
             "queryCond": "id_centro_gest=0"
         },
