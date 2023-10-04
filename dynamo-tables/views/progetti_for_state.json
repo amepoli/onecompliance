@@ -2,13 +2,13 @@
     "businessObjectName": "transcodifiche",
     "predefinedQueries": [
         {
-            "queryString": "select ts.tipo_dato, ts.codice,ts.transcodifica,count(distinct prg.id_progetto) as num_progetti from entrasp.transcodifiche ts inner join entrasp.progetti prg on ts.codice=prg.stato inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where ts.tipo_dato='STATO_SONDAGGI'  and prg.codice_azienda=('€global_codice_azienda€') group by ts.tipo_dato, ts.codice, ts.transcodifica, ts.ordinamento",
+            "queryString": "select ts.tipo_dato, arg.descrizione_breve, ts.codice,ts.transcodifica,count(distinct prg.id_progetto) as num_progetti from entrasp.transcodifiche ts inner join entrasp.progetti prg on ts.codice=prg.stato left join entrasp.attivita att on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita and prg.attivita_vr=att.attivita_vr left join entrasp.argomenti arg on att.id_argomento=arg.id_argomento inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where ts.tipo_dato='STATO_SONDAGGI' and prg.codice_azienda=('€global_codice_azienda€')",
             "operation": "selectTable",
             "type": "main"
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by ts.ordinamento"
+        "tableViewSuffix": "group by ts.tipo_dato, arg.descrizione_breve, ts.codice, ts.transcodifica, ts.ordinamento order by arg.descrizione_breve"
     },
     "search_keys": [
         {
@@ -32,7 +32,17 @@
                 "options": []
             },
             "label": "Tipo Dato"
-        }
+        },
+		{
+			"fieldName": "flag_progetti_aperti",
+			"format": {
+				"value": "1",
+				"viewType": "toggle"
+			},
+			"label": "In Svolgimento",
+			"newLine": false,
+			"queryCond": "ts.codice not in ('C', 'N', 'R')"
+		}
     ],
     "hideActions": [
         {
@@ -67,16 +77,39 @@
             "key": "codice",
 			"width": "8%"
         },
-        {
+		{
             "isPrimary": true,
-            "isHidden": true,
+            "isHidden": false,
             "format": {
                 "dataType": "text"
             },
-            "label": "Tipo Dato",
-            "key": "tipo_dato"
+            "label": "Tipo progetto",
+            "key": "descrizione_breve",
+			"style": [
+                {
+                    "background_color": "gainsboro",
+                    "font_weight": "500",
+                    "font_color": "grey",
+                    "text_align": "center",
+                    "value": "Amministrativi"
+                },
+                {
+                    "background_color": "Brown",
+                    "font_weight": "500",
+                    "font_color": "PaleBrown",
+                    "text_align": "center",
+                    "value": "Controllo"
+                },
+				{
+                    "background_color": "white",
+                    "font_weight": "500",
+                    "font_color": "grey",
+                    "text_align": "center",
+                    "value": "*"
+                }
+			]
         },
-        {
+		{
             "isPrimary": false,
             "isHidden": false,
             "format": {
@@ -129,6 +162,15 @@
                 }
             ],
             "key": "transcodifica"
+        },
+		{
+            "isPrimary": true,
+            "isHidden": true,
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Tipo Dato",
+            "key": "tipo_dato"
         },
         {
             "isPrimary": false,
