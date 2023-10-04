@@ -311,6 +311,16 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
 
+  enableCompanyToUser(username: string, companyPart: string, enableCompany: string, office: string) {
+    this.awsService.auth();
+    const putPostReq: PostRequest = {
+      body: null,
+      headers: {},
+      queryStringParameters: { request_type: 'enableCompanyToUser', username: username, companyPart: companyPart, enableCompany: enableCompany, office: office },
+    };
+    return from(this.awsService.api().post(this.apiName, this.insert_user_to_dynamoApiName, putPostReq));
+  }
+
   getMenu(keys: any): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {

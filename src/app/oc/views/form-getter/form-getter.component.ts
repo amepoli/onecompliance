@@ -1271,21 +1271,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     if (actionType === 'create_user_and_email') {
 
-                        console.log('getAllowedToInvite: ',_this.authService.getAllowedToInvite());
+                        console.log('getAllowedToInvite: ', _this.authService.getAllowedToInvite());
                         if (_this.authService.getAllowedToInvite()) {
 
-                        const username = formValues['email_to'];
-                        const temporaryPassword = HelperService.generatePassword(9);
-                        const company = formValues['codice_azienda'];
-                        const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
-                        const registry = formValues['id_anagrafica'];
-                        const tax_code = formValues['codice_fiscale'];
+                            const username = formValues['email_to'];
+                            const temporaryPassword = HelperService.generatePassword(9);
+                            const company = formValues['codice_azienda'];
+                            const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
+                            const registry = formValues['id_anagrafica'];
+                            const tax_code = formValues['codice_fiscale'];
 
-                        _this.backendService.inviteUser(username, company, associated_user, registry, tax_code, temporaryPassword);
+                            _this.backendService.inviteUser(username, company, associated_user, registry, tax_code, temporaryPassword);
 
-                        _this._dialogService.closeDialog();
-                        _this._toastService.showSuccessToast('User correctly invited'); // show success toast
-                        this.refreshView(); // refresh the view
+                            _this._dialogService.closeDialog();
+                            _this._toastService.showSuccessToast('User correctly invited'); // show success toast
+                            this.refreshView(); // refresh the view
 
                         } else {
                             _this._toastService.showInfoToast(`User isn't allowed to invite!`);
@@ -1314,6 +1314,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     // _this._console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
+                }
+                else if (actionType === 'enable_company_to_user') {
+
+                    let formValues = _this.formArray.first.form.value;
+
+                    const username = formValues['dynamo_user'];
+                    const companyPart = formValues['codice_part'];
+                    const enableCompany = formValues['azienda_to_enable'] ? formValues['azienda_to_enable'].id : null;
+                    const office = formValues['id_centro_gest'];
+
+                    _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office);
+
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showSuccessToast('User correctly invited'); // show success toast
+                    this.refreshView(); // refresh the view
+
                 }
                 else if (actionType === 'regulat_api') {
                     _this.runRegulatEvent(event.message.actionOnYes, value, keyListener);
