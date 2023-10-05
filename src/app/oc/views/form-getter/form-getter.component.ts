@@ -1321,13 +1321,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                     const username = formValues['dynamo_user'];
                     const companyPart = formValues['codice_part'];
+                    const profile = formValues['profile'] ? formValues['profile'].id : null;
                     const enableCompany = formValues['azienda_to_enable'] ? formValues['azienda_to_enable'].id : null;
                     const office = formValues['id_centro_gest'];
 
-                    _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office);
+                    _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office, profile);
 
                     _this._dialogService.closeDialog();
-                    _this._toastService.showSuccessToast('User correctly invited'); // show success toast
+                    _this._toastService.showSuccessToast('Company correctly enabled'); // show success toast
                     this.refreshView(); // refresh the view
 
                 }
