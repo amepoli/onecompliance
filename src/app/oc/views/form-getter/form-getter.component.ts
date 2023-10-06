@@ -1318,6 +1318,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 else if (actionType === 'enable_company_to_user') {
 
                     let formValues = _this.formArray.first.form.value;
+                    
 
                     const username = formValues['dynamo_user'];
                     const companyPart = formValues['codice_part'];
