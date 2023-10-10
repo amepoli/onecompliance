@@ -218,6 +218,7 @@
       "isPrimary": false,
       "key": "data_competenza",
       "label": "Data Competenza",
+            "translate": "RESOURCES.reference_date",
       "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
       "newLine": false,
       "readOnly": false
@@ -248,7 +249,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-      "label": "Titolo",
+       "label": "Titolo",
+            "translate": "RESOURCES.title",
       "newLine": false,
       "readOnly": false,
       "size": 4.6
@@ -292,6 +294,7 @@
         }
       ],
       "label": "Stato",
+      "translate": "RESOURCES.status",
       "key": "stato",
       "readOnly": false,
       "isHidden": false,
@@ -351,7 +354,8 @@
           "queryFunct": "select coalesce('£note£', '£titolo£')"
         }
       ],
-      "label": "Descrizione estesa",
+      "label": "Descrizione Estesa",
+            "translate": "RESOURCES.description",
       "newLine": true,
       "readOnly": false,
       "size": 10
@@ -574,6 +578,8 @@
       "isPrimary": false,
       "key": "maggiori_dettagli",
       "label": "Dettagli",
+      "translate": "RESOURCES.details",
+      "translate": "RESOURCES.details",
       "style": {
           "background_color": "transparent",
           "font_color": "black",
@@ -838,6 +844,7 @@
       "isPrimary": false,
       "key": "sezione_detail",
       "label": "Maggiori Dettagli",
+      "translate": "RESOURCES.more_details",
       "newLine": true,
       "readOnly": false,
       "sameOrigin": true,
@@ -905,6 +912,7 @@
         "viewType": "combobox"
       },
       "label": "Stato",
+      "translate": "RESOURCES.status",
       "newLine": false,
       "queryCond": "cmp.stato='€stato€'"
     },
@@ -937,7 +945,9 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "label": "Note",
+        "label": "Note",
+      "translate": "RESOURCES.notes",
+            "translate": "RESOURCES.notes",
       "newLine": false,
       "queryCond": "UPPER (cmp.note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
     },
@@ -957,7 +967,8 @@
         "dataType": "text",
         "viewType": "input"
       },
-      "label": "Titolo",
+       "label": "Titolo",
+            "translate": "RESOURCES.title",
       "newLine": true,
       "queryCond": "UPPER (cmp.titolo) like '%'||UPPER('€titolo_s€')||'%' or UPPER (note) like '%'||UPPER('€titolo_s€')||'%'"
     },
@@ -1002,7 +1013,8 @@
       "format": {
         "viewType": "checkbox"
       },
-      "label": "Solo Principali",
+       "label": "Solo Principali",
+            "translate": "RESOURCES.main_only",
       "newLine": false,
       "queryCond": "cmp.codice_compito_parent IS null"
     },
@@ -1013,6 +1025,7 @@
         "viewType": "toggle"
       },
       "label": "Miei/Mio Ufficio",
+            "translate": "RESOURCES.mine_my_office",
       "newLine": false,
       "queryCond": "(cmp.id_centro_gest||'-'||cmp.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€')) or cmp.id_centro_gest_monitor||'-'||cmp.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€')))"
     }
@@ -1058,7 +1071,8 @@
           "son": "codice_compito"
         }
       ],
-      "label": "Rischi Associati"
+      "label": "Rischi associati",
+            "translate": "RESOURCES.rischi_sub_of_procedure"
     },
     {
       "entryKey": "compiti_sub_of_compiti",
@@ -1165,7 +1179,8 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_somministrazione",
-      "label": "id_somministrazione"
+       "label": "id_somministrazione",
+            "translate": "RESOURCES.id_administration"
     },
     {
       "format": {
@@ -1174,7 +1189,8 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_sondaggio",
-      "label": "id_sondaggio"
+      "label": "id_sondaggio",
+            "translate": "RESOURCES.id_survey"
     },
     {
       "format": {
@@ -1183,7 +1199,8 @@
       "isHidden": true,
       "isPrimary": false,
       "key": "id_contratto",
-      "label": "id_contratto"
+      "label": "id_contratto",
+            "translate": "RESOURCES.id_contract"
     },
     {
       "format": {
@@ -1219,7 +1236,8 @@
       "isPrimary": false,
       "key": "titolo",
       "width": "36%",
-      "label": "Titolo",
+       "label": "Titolo",
+            "translate": "RESOURCES.title",
       "style": [
         {
           "value": "*",
@@ -1258,7 +1276,8 @@
       "isPrimary": false,
       "key": "tipo_segnalazione",
       "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
-      "label": "Tipo",
+       "label": "Tipo",
+            "translate": "RESOURCES.type",
       "width": "10%"
     },
     {
@@ -1309,7 +1328,8 @@
       "isHidden": true,
       "isPrimary": true,
       "key": "codice_azienda",
-      "label": "Codice Azienda"
+      "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code"
     },
     {
       "format": {
@@ -1367,6 +1387,7 @@
       "key": "stato",
       "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
       "label": "Stato",
+      "translate": "RESOURCES.status",
       "width": "6%",
       "style": [
         {

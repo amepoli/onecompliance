@@ -79,6 +79,8 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
+      "translate": "RESOURCES.company_code",
+            "translate": "RESOURCES.company_code",
             "newLine": true,
             "readOnly": true
         },
@@ -91,7 +93,8 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "id_sondaggio",
-            "label": "ID Sondaggio",
+             "label": "ID Sondaggio",
+      "translate": "RESOURCES.id_survey",
             "newLine": true,
             "readOnly": true
         },
@@ -104,7 +107,8 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_somministrazione",
-            "label": "ID Verifica",
+           "label": "Id Verifica",
+      "translate": "RESOURCES.id_check",
             "newLine": false,
             "readOnly": true,
             "size": 1
@@ -221,7 +225,8 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "risposte_k",
-            "label": "Risposte",
+             "label": "Risposte",
+      "translate": "RESOURCES.answers",
             "newLine": true,
             "inputEvents": [
                 {
@@ -360,7 +365,9 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "codice_azienda"
+            "label": "codice_azienda",
+      "translate": "RESOURCES.company_code",
+            "translate": "RESOURCES.company_code"
         },
         {
             "format": {
@@ -399,7 +406,8 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "id_sondaggio",
-            "label": "ID Sondaggio"
+             "label": "ID Sondaggio",
+      "translate": "RESOURCES.id_survey"
         },
         {
             "format": {
@@ -449,7 +457,8 @@
             "width": "10%",
             "isPrimary": false,
             "key": "giudizio",
-            "label": "Giudizio",
+           "label": "Giudizio",
+            "translate": "RESOURCES.judgment",
             "style": [
                 {
                     "value": "*",
@@ -699,6 +708,7 @@
             "key": "stato",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
             "label": "Stato",
+      "translate": "RESOURCES.status",
             "style": [
                 {
                     "value": "Chiuso",
@@ -777,6 +787,7 @@
                 "viewType": "combobox"
             },
             "label": "Oggetto di verifica",
+      "translate": "RESOURCES.check_subject",
             "newLine": false,
             "size": 3.5,
             "queryCond": "(UPPER (object_description) like '%'||UPPER('€object_description€')||'%')"
@@ -789,7 +800,8 @@
                 "dataType": "text"
             },
             "fieldName": "giudizio_s",
-            "label": "Giudizio",
+           "label": "Giudizio",
+            "translate": "RESOURCES.judgment",
             "newLine": false,
             "queryCond": "giudizio='€giudizio_s€'"
         },
@@ -802,6 +814,7 @@
             },
             "fieldName": "giudizio_manuale_s",
             "label": "Giudizio Manuale",
+      "translate": "RESOURCES.manual_judgment",
             "newLine": false,
             "queryCond": "(select descrizione from entrasp.tipi_modelli_test_risultati_righe_descr_from_pct(codice_azienda, pct_da_manuale, id_risultato))='€giudizio_manuale_s€'"
         },
@@ -814,6 +827,7 @@
             },
             "fieldName": "stato_s",
             "label": "Stato",
+      "translate": "RESOURCES.status",
             "newLine": true,
             "queryCond": "stato='€stato_s€'"
         },
@@ -824,6 +838,7 @@
                 "value": "0"
             },
             "label": "Scaduto",
+      "translate": "RESOURCES.expired",
             "newLine": false,
             "queryCond": "snd.data_prevista<=now() and stato!='C'"
         },
@@ -834,6 +849,7 @@
                 "viewType": "checkbox"
             },
             "label": "Riprogrammata",
+      "translate": "RESOURCES.rescheduled",
             "newLine": false,
             "queryCond": "id_sondaggio in(select id_sondaggio_succ from entrasp.sondaggi where id_sondaggio_succ is not null and codice_azienda=$codice_azienda$)"
         },
@@ -844,6 +860,7 @@
                 "value": "0"
             },
             "label": "Incompleto",
+            "translate": "RESOURCES.incomplete",
             "newLine": false,
             "queryCond": "somministrazione_completata!='Completo'"
         },
@@ -853,7 +870,8 @@
                 "viewType": "checkbox",
                 "value": "0"
             },
-            "label": "Senza giudizio",
+             "label": "Senza giudizio",
+      "translate": "RESOURCES.whitout_judgment",
             "newLine": false,
             "queryCond": "giudizio is null"
         },
@@ -862,7 +880,8 @@
             "format": {
                 "viewType": "checkbox"
             },
-            "label": "Con giudizio manuale",
+           "label": "Con giudizio manuale",
+      "translate": "RESOURCES.with_manual_judgment",
             "newLine": false,
             "queryCond": "pct_da_manuale is not null"
         },
@@ -872,6 +891,7 @@
                 "viewType": "checkbox"
             },
             "label": "Cessati",
+      "translate": "RESOURCES.ceased",
             "newLine": false,
             "queryCond": "(case when ss.object_name='anagraficheId' then nullif(split_part(ss.object_key,'|',2),'')::numeric else null::numeric end)::numeric IN(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato = 'C' and c2.id_cliente is not null GROUP BY c2.id_cliente)"
         },
@@ -881,6 +901,7 @@
                 "viewType": "checkbox"
             },
             "label": "Escluso Cessati",
+      "translate": "RESOURCES.excluding_ceased",
             "newLine": false,
             "queryCond": "(case when ss.object_name='anagraficheId' then nullif(split_part(ss.object_key,'|',2),'')::numeric else null::numeric end)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='€global_codice_azienda€' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='€global_codice_part€' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='€global_codice_azienda€' and cntx.id_cliente is not null)))"
         }

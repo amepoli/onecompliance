@@ -472,6 +472,7 @@
 				]
 			},
 			"label": "Codice",
+      "translate": "RESOURCES.code",
 			"key": "codice_progetto",
 			"outputEvent": {
 				"eventName": "codice_progetto_change",
@@ -542,7 +543,8 @@
 					}
 				]
 			},
-			"label": "Titolo",
+			 "label": "Titolo",
+            "translate": "RESOURCES.title",
 			"key": "titolo",
 			"readOnly": false,
 			"isHidden": false,
@@ -567,6 +569,7 @@
 				]
 			},
 			"label": "Stato",
+      "translate": "RESOURCES.status",
 			"key": "stato",
 			"readOnly": true,
 			"isHidden": false,
@@ -733,7 +736,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "id_centro_gest",
-			"label": "Centro Gestionale",
+			 "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
 			"newLine": false,
 			"size": 1.66,
 			"readOnly": false
@@ -745,6 +749,7 @@
 				"dataType": "date"
 			},
 			"label": "Data Competenza",
+            "translate": "RESOURCES.reference_date",
 			"key": "data_competenza",
 			"readOnly": false,
 			"isHidden": false,
@@ -778,7 +783,9 @@
 				"viewType": "textarea",
 				"dataType": "text"
 			},
-			"label": "Note",
+			  "label": "Note",
+      "translate": "RESOURCES.notes",
+            "translate": "RESOURCES.notes",
 			"key": "note",
 			"textareaHeight": "S",
 			"readOnly": false,
@@ -798,6 +805,7 @@
 			"key": "id_argomento",
 			"queryFunct": "select entrasp.argomenti_descr_breve(att.id_argomento) from entrasp.progetti pr inner join entrasp.attivita att on att.codice_azienda=pr.codice_azienda and att.codice_attivita=pr.codice_attivita and att.attivita_vr=pr.attivita_vr where id_progetto=$id_progetto$ and pr.codice_azienda=$codice_azienda$ limit 1",
 			"label": "Argomento",
+            "translate":"RESOURCES.tag",
 			"readOnly": true,
 			"newLine": false
 		}
@@ -854,6 +862,7 @@
 				"viewType": "combobox"
 			},
 			"label": "Stato",
+      "translate": "RESOURCES.status",
 			"newLine": false,
 			"queryCond": "stato='€stato€'"
 		},
@@ -864,7 +873,8 @@
 				"options": [],
 				"viewType": "combobox"
 			},
-			"label": "Centro Gestionale",
+			 "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
 			"newLine": true,
 			"queryCond": "id_centro_gest=$id_centro_gest$"
 		},
@@ -918,6 +928,7 @@
 				"viewType": "input"
 			},
 			"label": "Data Competenza",
+            "translate": "RESOURCES.reference_date",
 			"newLine": false,
 			"queryCond": "data_competenza>='€data_comp€'"
 		},
@@ -928,6 +939,7 @@
 				"viewType": "input"
 			},
 			"label": "Parola chiave",
+            "translate": "RESOURCES.key_word",
 			"newLine": true,
 			"queryCond": "(UPPER(titolo) like '%'||UPPER('€parola_s€')||'%')"
 		},
@@ -957,7 +969,8 @@
 				"viewType": "checkbox",
 				"value": "0"
 			},
-			"label": "Senza contratto",
+			"label": "Senza Contratto",
+      "translate": "RESOURCES.no_contract_associated",
 			"newLine": false,
 			"queryCond": "id_contratto is null"
 		},
@@ -978,6 +991,7 @@
 				"viewType": "toggle"
 			},
 			"label": "Miei/Mio Ufficio",
+            "translate": "RESOURCES.mine_my_office",
 			"newLine": false,
 			"queryCond": "prg.id_centro_gest||'-'||prg.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€'))"
 		}
@@ -1038,7 +1052,8 @@
 					"son": "codice_azienda"
 				}
 			],
-			"label": "Documenti Associati"
+			"label": "Documenti Associati",
+            "translate": "RESOURCES.associated_documents"
 		},
 		{
 			"entryKey": "anagrafiche_vr_sub_of_progetti",
@@ -1065,6 +1080,8 @@
 			"isPrimary": true,
 			"key": "codice_azienda",
 			"label": "codice_azienda",
+      "translate": "RESOURCES.company_code",
+            "translate": "RESOURCES.company_code",
 			"width": "7%"
 		},
 		{
@@ -1103,7 +1120,8 @@
 			"isHidden": "$Q{is_hidden_stato}",
 			"isPrimary": false,
 			"key": "stato",
-			"label": "Stato"
+			"label": "Stato",
+      "translate": "RESOURCES.status"
 		},
 		{
 			"format": {
@@ -1192,7 +1210,8 @@
 			"isHidden": false,
 			"isPrimary": false,
 			"key": "titolo",
-			"label": "Titolo",
+			 "label": "Titolo",
+            "translate": "RESOURCES.title",
 			"width": "21%",
 			"style": [
 				{
@@ -1228,6 +1247,7 @@
 			"key": "descr_stato",
 			"queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
 			"label": "Stato",
+      "translate": "RESOURCES.status",
 			"width": "8%",
 			"style": [
 				{
@@ -1274,7 +1294,8 @@
 			"isHidden": "$Q{is_hidden_ufficio}",
 			"isPrimary": false,
 			"key": "centro_gest",
-			"label": "Centro gestionale",
+			 "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
 			"width": "8%"
 		},
 		{
@@ -1303,7 +1324,8 @@
 			"isHidden": true,
 			"isPrimary": false,
 			"key": "id_contratto",
-			"label": "id_contratto"
+			"label": "id_contratto",
+            "translate": "RESOURCES.id_contract"
 		},
 		{
 			"format": {
