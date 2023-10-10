@@ -249,113 +249,36 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
 
     async onSave() {
         const _this = this;
-        _this._console.log(event);
-        _this.attach = false;
-        if (_this.file != null) {
-            _this.isSaving = true;
-            try {
-                // get the S3 URL 
-                const responseURL: any = await _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).toPromise();
-                _this._console.log(responseURL);
+        var mime = require('mime-types');
+        const fileParams = {
+            nickname: _this.form.value.fileName != null ? _this.form.value.fileName : null,
+            descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
+            data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
+            data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
+            url: _this.form.value.url != null ? _this.form.value.url : null,
+            descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
+            content_type: mime.lookup(_this.form.value.fileName),
+            id_odg: _this.getValue(_this.form.value.id_odg), //_this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
+            id_riunione: _this.getValue(_this.form.value.id_riunione), //_this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
+            id_centro_gest: _this.getValue(_this.form.value.id_centro_gest), //_this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+            id_argomento_tipo_allegato: _this.getValue(_this.form.value.id_argomento_tipo_allegato), //_this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
+            dimensione: _this.getValue(_this.form.value.dimensione), //_this.form.value.dimensione != null ? _this.form.value.dimensione : null,
+            id_anagrafica: _this.getValue(_this.form.value.id_anagrafica), //_this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
+            id_somministrazione: _this.getValue(_this.form.value.id_somministrazione), //_this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
+            id_sondaggio: _this.getValue(_this.form.value.id_sondaggio), //_this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
+            id_progetto: _this.getValue(_this.form.value.id_progetto), //_this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
+            prog_revisione: _this.getValue(_this.form.value.prog_revisione), //_this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
+            id_risorsa: _this.getValue(_this.form.value.id_risorsa), //_this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
+            id_domanda: _this.getValue(_this.form.value.id_domanda), //_this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
+            id_modello_test: _this.getValue(_this.form.value.id_modello_test), //_this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
+            id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
+            codice_compito: _this.getValue(_this.form.value.codice_compito), //_this.form.value.codice_compito != null ? _this.form.value.codice_compito.id : null,
+            autore: _this.authService.getUsername(),
+            businessObjectName: _this.data.businessObjectName
+        };
 
-                if (responseURL != null && responseURL.result === 'OK') {
-                    const blob = new Blob([_this.file]);
-                    // upload the file using obtained url
-                    const responsePut: any = await _this.httpClient.put(responseURL.url, blob).toPromise();
-                    _this._console.log('File uploaded with filename: ', responseURL.filename);
-                    // retrieve file content
-                    const content = await _this.file?.arrayBuffer();
-                    const hash = sha1(content);
-                    const md5hash = md5(content);
-                    // const hash = CryptoJS.SHA1(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
-                    // const md5hash = CryptoJS.MD5(_this._encryptionService.arrayBufferToWordArray(content)).toString(CryptoJS.enc.Hex);
-                    _this._console.log(hash);
-                    // check that the file has been correctly uploaded and pass file params to the backend
-                    var mime = require('mime-types');
-                    const fileParams = {
-                        nickname: _this.form.value.fileName != null ? _this.form.value.fileName : null,
-                        descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
-                        data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
-                        data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
-                        url: _this.form.value.url != null ? _this.form.value.url : null,
-                        descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
-                        content_type: mime.lookup(_this.form.value.fileName),
-                        id_odg: _this.getValue(_this.form.value.id_odg), //_this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
-                        id_riunione: _this.getValue(_this.form.value.id_riunione), //_this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
-                        id_centro_gest: _this.getValue(_this.form.value.id_centro_gest), //_this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
-                        id_argomento_tipo_allegato: _this.getValue(_this.form.value.id_argomento_tipo_allegato), //_this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
-                        dimensione: _this.getValue(_this.form.value.dimensione), //_this.form.value.dimensione != null ? _this.form.value.dimensione : null,
-                        id_anagrafica: _this.getValue(_this.form.value.id_anagrafica), //_this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
-                        id_somministrazione: _this.getValue(_this.form.value.id_somministrazione), //_this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
-                        id_sondaggio: _this.getValue(_this.form.value.id_sondaggio), //_this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
-                        id_progetto: _this.getValue(_this.form.value.id_progetto), //_this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
-                        prog_revisione: _this.getValue(_this.form.value.prog_revisione), //_this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
-                        id_risorsa: _this.getValue(_this.form.value.id_risorsa), //_this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
-                        id_domanda: _this.getValue(_this.form.value.id_domanda), //_this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
-                        id_modello_test: _this.getValue(_this.form.value.id_modello_test), //_this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
-                        id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
-                        codice_compito: _this.getValue(_this.form.value.codice_compito), //_this.form.value.codice_compito != null ? _this.form.value.codice_compito.id : null,
-                        autore: _this.authService.getUsername(),
-                        businessObjectName: _this.data.businessObjectName
-                    };
-                    const responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
-                    _this._console.log('responseCheck: ', responseCheck);
-                    if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
-                        _this._console.log(responseCheck);
-                        if (_this.authService.getSyncMode() === 'google') {
-                            try {
-                                const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).toPromise();
-                                _this._console.log('googleDriveFileCopyParamsResponse', googleDriveFileCopyParamsResponse);
-                                if (googleDriveFileCopyParamsResponse.result === 'OK') {
-                                    if (googleDriveFileCopyParamsResponse.response && googleDriveFileCopyParamsResponse.response.rows && googleDriveFileCopyParamsResponse.response.rows[0]) {
-                                        let auth = await _this.authService.loadGoogleAuth('gdrive');
-                                        let googledrivepath = googleDriveFileCopyParamsResponse.response.rows[0].googledrivepath;
-                                        let s3path = googleDriveFileCopyParamsResponse.response.rows[0].s3path;
-                                        const copyFromS3ToDriveResponse: any = await _this.backendService.copyFromS3ToDrive(s3path, googledrivepath, auth).toPromise();
-                                        _this._console.log(googledrivepath, s3path);
-                                        _this._console.log('copyFromS3ToDriveResponse', copyFromS3ToDriveResponse);
-                                    }
-                                }
-                            }
-                            catch (e) {
-                                _this._console.error("Google upload error: ", e);
-                            }
-                        }
-                        else {
-                            /* _this._console.error("You are not subscribed to use Google services");
-                            _this._dialogService.showErrorDialog("Error", "You are not subscribed to use Google services");     */
-                        }
-                        // Show success snackbar
-                        _this.isSaving = false;
-                        if (responseCheck.reason === 'File already loaded!') {
-                            _this._toastService.showInfoToast("File already loaded");
-                        }
-                        else {
-                            _this._toastService.showSuccessToast("File uploaded successfully");
-                        }
-                        _this.fileService.requestReload(_this.data.entryName);
-                        if (_this.data.onSave) {
-                            _this.data.onSave(true);
-                        }
-                    }
-                    else {
-                        // Show error snackbar
-                        _this.isSaving = false;
-                        _this._toastService.showErrorToast(responseCheck.reason);
-                    }
-                }
-                else {
-                    // Show error snackbar
-                    _this.isSaving = false;
-                    _this._toastService.showErrorToast(responseURL.reason);
-                }
-            }
-            catch (e) {
-                // Show error snackbar
-                _this.isSaving = false;
-                _this._toastService.showErrorToast(e);
-            }
-        }
+        _this.fileService.uploadFile(_this.file, _this.data, fileParams);
+        _this.dialogRef.close('forced');
     }
 
     getValue(val: any) {

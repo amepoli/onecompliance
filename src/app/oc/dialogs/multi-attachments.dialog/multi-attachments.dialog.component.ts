@@ -252,12 +252,89 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
         const _this = this;
         _this.attach = false;
         if (_this.files != null && _this.files.length > 0) {
-            _this.isSaving = true;
-            _this.savingFiles = true;
-            _this.filesSaved = 0;
-            let i = 0;
-            await _this.saveFile(i);
+            // _this.isSaving = true;
+            // _this.savingFiles = true;
+            // _this.filesSaved = 0;
+            // let i = 0;
+            // await _this.saveFile(i);
+            
+            const mime = require('mime-types');
+            const filesData: any[] = [];
+            _this.files.forEach((file, i) => {
+                filesData.push({
+                    file, 
+                    data: _this.data, 
+                    fileParams: {
+                        nickname: _this.files[i].name,// _this.form.value.fileName != null ? _this.form.value.fileName : null,
+                        descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
+                        data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
+                        data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
+                        url: _this.form.value.url != null ? _this.form.value.url : null,
+                        descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
+                        content_type: mime.lookup(_this.form.value.fileName),
+                        id_odg: _this.getValue(_this.form.value.id_odg), //_this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
+                        id_riunione: _this.getValue(_this.form.value.id_riunione), //_this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
+                        id_centro_gest: _this.getValue(_this.form.value.id_centro_gest), //_this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+                        id_argomento_tipo_allegato: _this.getValue(_this.form.value.id_argomento_tipo_allegato), //_this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
+                        dimensione: _this.getValue(_this.form.value.dimensione), //_this.form.value.dimensione != null ? _this.form.value.dimensione : null,
+                        id_anagrafica: _this.getValue(_this.form.value.id_anagrafica), //_this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
+                        id_somministrazione: _this.getValue(_this.form.value.id_somministrazione), //_this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
+                        id_sondaggio: _this.getValue(_this.form.value.id_sondaggio), //_this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
+                        id_progetto: _this.getValue(_this.form.value.id_progetto), //_this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
+                        prog_revisione: _this.getValue(_this.form.value.prog_revisione), //_this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
+                        id_risorsa: _this.getValue(_this.form.value.id_risorsa), //_this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
+                        id_domanda: _this.getValue(_this.form.value.id_domanda), //_this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
+                        id_modello_test: _this.getValue(_this.form.value.id_modello_test), //_this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
+                        id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
+                        codice_compito: _this.getValue(_this.form.value.codice_compito), //_this.form.value.codice_compito != null ? _this.form.value.codice_compito.id : null,
+                        autore: _this.authService.getUsername(),
+                        businessObjectName: _this.data.businessObjectName
+                    }
+                });
+            });
+
+            _this.fileService.uploadFiles(filesData);
+            _this.dialogRef.close('');
         }
+
+        // This is taken from single attachment but somehow doesn't work for multi
+        // const mime = require('mime-types');
+        // const filesData: any[] = [];
+        // _this.files.forEach((file, i) => {
+        //     filesData.push({
+        //         file, 
+        //         data: _this.data, 
+        //         fileParams: {
+        //             nickname: _this.files[i].name,// _this.form.value.fileName != null ? _this.form.value.fileName : null,
+        //             descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
+        //             data_scadenza: _this.form.value.data_scadenza != null ? _this.form.value.data_scadenza : null,
+        //             data_rif: _this.form.value.data_rif != null ? _this.form.value.data_rif : null,
+        //             url: _this.form.value.url != null ? _this.form.value.url : null,
+        //             descrizione_breve: _this.form.value.descrizione_breve != null ? _this.form.value.descrizione_breve : null,
+        //             content_type: mime.lookup(_this.form.value.fileName),
+        //             id_odg: _this.getValue(_this.form.value.id_odg), //_this.form.value.id_odg != null ? _this.form.value.id_odg.id : null,
+        //             id_riunione: _this.getValue(_this.form.value.id_riunione), //_this.form.value.id_riunione != null ? _this.form.value.id_riunione.id : null,
+        //             id_centro_gest: _this.getValue(_this.form.value.id_centro_gest), //_this.form.value.id_centro_gest != null ? _this.form.value.id_centro_gest.id : null,
+        //             id_argomento_tipo_allegato: _this.getValue(_this.form.value.id_argomento_tipo_allegato), //_this.form.value.id_argomento_tipo_allegato != null ? _this.form.value.id_argomento_tipo_allegato.id : null,
+        //             dimensione: _this.getValue(_this.form.value.dimensione), //_this.form.value.dimensione != null ? _this.form.value.dimensione : null,
+        //             id_anagrafica: _this.getValue(_this.form.value.id_anagrafica), //_this.form.value.id_anagrafica != null ? _this.form.value.id_anagrafica.id : null,
+        //             id_somministrazione: _this.getValue(_this.form.value.id_somministrazione), //_this.form.value.id_somministrazione != null ? _this.form.value.id_somministrazione.id : null,
+        //             id_sondaggio: _this.getValue(_this.form.value.id_sondaggio), //_this.form.value.id_sondaggio != null ? _this.form.value.id_sondaggio.id : null,
+        //             id_progetto: _this.getValue(_this.form.value.id_progetto), //_this.form.value.id_progetto != null ? _this.form.value.id_progetto.id : null,
+        //             prog_revisione: _this.getValue(_this.form.value.prog_revisione), //_this.form.value.prog_revisione != null ? _this.form.value.prog_revisione.id : null,
+        //             id_risorsa: _this.getValue(_this.form.value.id_risorsa), //_this.form.value.id_risorsa != null ? _this.form.value.id_risorsa.id : null,
+        //             id_domanda: _this.getValue(_this.form.value.id_domanda), //_this.form.value.id_domanda != null ? _this.form.value.id_domanda.id : null,
+        //             id_modello_test: _this.getValue(_this.form.value.id_modello_test), //_this.form.value.id_modello_test != null ? _this.form.value.id_modello_test.id : null,
+        //             id_modello_test_vr: _this.getValue(_this.form.value.id_modello_test_vr), //_this.form.value.id_modello_test_vr != null ? _this.form.value.id_modello_test_vr.id : null,
+        //             codice_compito: _this.getValue(_this.form.value.codice_compito), //_this.form.value.codice_compito != null ? _this.form.value.codice_compito.id : null,
+        //             autore: _this.authService.getUsername(),
+        //             businessObjectName: _this.data.businessObjectName
+        //         }
+        //     });
+        // });
+
+        // _this.fileService.uploadFiles(filesData);
+        // _this.dialogRef.close('forced');
     }
 
     async saveFile(i: number = 0) {

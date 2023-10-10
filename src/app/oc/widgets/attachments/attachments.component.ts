@@ -75,8 +75,10 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
         });
 
         _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
-            _this.getAttachList();
-            _this.onSave.emit(result);
+            if(result) {
+                _this.getAttachList();
+                _this.onSave.emit(result);
+            }
         }));
     }
 

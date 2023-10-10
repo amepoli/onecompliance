@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
+import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { FieldConfig } from 'app/oc/interfaces';
 import { ConsoleLoggerService, DialogService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
 import { TimezoneService } from 'app/oc/services/timezone.service';
@@ -36,9 +37,14 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
               private timezoneService: TimezoneService,
               private pubSubService: PubSubService,
               private _console: ConsoleLoggerService,
-              private _dialogService: DialogService) { }
+              private _dialogService: DialogService,
+              private fileService: FileManagerService) { }
+
   ngOnInit(): void {
-    
+    let _this = this;
+    _this.fileService.onSave.subscribe(entryName => {
+      _this.attachmentOnSave(entryName);
+    })
   }
 
   ngAfterViewInit(): void {
