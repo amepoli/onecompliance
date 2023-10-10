@@ -82,6 +82,7 @@ export const locale = {
             execution_date_by: 'Data Esecuzione entro il',
             execution_scheduled_after: 'Esecuzione Prevista dopo il',
             execution_scheduled_by: 'Esecuzione Prevista entro il',
+            expected_conclusion_date: 'Data prev.concl.',
             expected_date: 'Data Prevista',
             expected_date_previous_12_month: 'Data prevista antec. i 12 mesi',
             expected_execution: 'Prevista Esecuzione',

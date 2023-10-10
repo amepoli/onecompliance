@@ -80,6 +80,7 @@ export const locale = {
             execution_date_by: 'Execution Date By',
             execution_scheduled_after: 'Execution Scheduled After',
             execution_scheduled_by: 'Execution Scheduled By',
+            expected_conclusion_date: 'Expect.concl.date',
             expected_date: 'Expected Date',
             expected_date_previous_12_month: 'Expected Date Previous 12 Month',
             expected_execution: 'Expected Execution',
