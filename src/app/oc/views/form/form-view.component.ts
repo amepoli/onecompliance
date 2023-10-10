@@ -94,6 +94,11 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             }
         }));
 
+        _this.subscriptions.push(_this._fileService.onSave.subscribe(entryName => {
+            _this.getAttachList();
+        }));
+
+
         // _this.backendService.sendEmailUsingTemplate('email').subscribe(
         //     result => {
         //         _this._console.log(result);

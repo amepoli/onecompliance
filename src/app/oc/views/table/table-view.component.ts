@@ -30,7 +30,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
-    @ViewChild(MatPaginator) paginator: MatPaginator;
+    @ViewChild(MatPaginator,{ static: false }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     format = {};
@@ -77,6 +77,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     isAuthorized: boolean = true;
     viewKeys: TableViewKey[];  // view fields as specified by the backend
 
+    styleQueries: any;
+    
     searchKeysLoaded: boolean = false;
     completeSearchKeys: SearchViewKey[]; // Also contains search toggles
     advancedSearchKeys: SearchViewKey[]; // Search keys to show Advanced search
@@ -502,6 +504,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 if (results.result === 'OK') {
                     _this.showAdvSearch = false;
                     results = results.data;
+
+                    if(results['styleQueries']) {
+                        _this.styleQueries = results['styleQueries'];
+                        _this.loadStyle(_this.viewKeys);
+                    }
+
                     if (results.search_options) { // got some search combobox options
                         _this.searchOptions = results.search_options; // store them
                         results = results.table_data; // and get the table data
@@ -511,6 +519,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.loadExplorerData(results);
                     }
 
+                    
                     _this.dataSource = new MatTableDataSource(results);
                     _this.dataSource.sort = _this.sort;
                     if (_this.paginator) {
@@ -652,6 +661,14 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let _this = this;
         _this.styles = {};
         table_keys.forEach(key => {
+            if (_this.styleQueries && _this.styleQueries[key.key]) {
+                if (!_this.styles[key.key]) {
+                    _this.styles[key.key] = {};
+                }
+                Object.keys(_this.styleQueries[key.key]) .forEach(s => {
+                    _this.styles[key.key][s] = _this.styleQueries[key.key][s][0];
+                });
+            }
             if (key.style && key.style.length) {
                 key.style.forEach(style => {
                     if (!_this.styles[key.key]) {

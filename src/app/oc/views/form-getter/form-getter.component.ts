@@ -13,6 +13,7 @@ import { RegulatAPIParams } from 'app/oc/interfaces/regulat_api_params';
 import { exit } from 'process';
 import { MatDialog } from '@angular/material/dialog';
 import { MenuOptionsCustomDialogComponent } from 'app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component';
+import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
 @Component({
     selector: 'form-getter',
@@ -112,6 +113,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         private _timeTrackerService: TimeTrackerService,
         private _googleAPIService: GoogleAPIService,
         public cutomDialog: MatDialog,
+        private _fileService: FileManagerService
     ) {
         const _this = this;
 
@@ -168,6 +170,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         );
         _this.generalSubscriptions.push(subscription);
 
+        subscription = _this._fileService.onSave.subscribe(entryName => {
+            _this.attachmentsOnSave(entryName);
+        })
+        _this.generalSubscriptions.push(subscription);
 
         if (_this.isFormView && !_this.isTabMode) {
             subscription = _this.pubSubService.subscribe('navigate_on_save_button',
