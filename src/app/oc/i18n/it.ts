@@ -236,6 +236,7 @@ export const locale = {
             project: 'Progetto',
             project_fase: 'Fase Progetto',
             project_id: 'ID Progetto',
+            project_template: 'Modello di progetto',
             query_allegato: 'Query Allegato',
             query_risultato: 'Query Risposta',
             quesiton_not_applicable: 'Domanda non applicabile',
