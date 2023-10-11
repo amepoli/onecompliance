@@ -240,7 +240,7 @@ export const locale = {
             project_template: 'Modello di progetto',
             query_allegato: 'Query Allegato',
             query_risultato: 'Query Risposta',
-            quesiton_not_applicable: 'Domanda non applicabile',
+            question_not_applicable: 'Domanda non applicabile',
             questions_and_answers: 'Domande e Risposte',
             recalculate_all_risks: 'Ricalcola tutti i rischi',
             recalculate_scores: 'Ricalcola Punteggi',
