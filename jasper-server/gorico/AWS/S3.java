@@ -186,7 +186,7 @@ public class S3 {
             // Set the presigned URL to expire after one hour.
             java.util.Date expiration = new java.util.Date();
             long expTimeMillis = expiration.getTime();
-            expTimeMillis += 1000 * 60 * 60;
+            expTimeMillis += 1000 * 60 * 60 * 24 * 7;
             expiration.setTime(expTimeMillis);
             System.out.println("Generating pre-signed URL.");
             
