@@ -95,6 +95,7 @@ export const locale = {
             flag_mostra_punteggi: 'Mostra Giudizio (No punteggi)',
             flag_no_domande: 'No Domande',
             flag_non_applicabile_risposta_null: 'Ignora Punteggio se Risposta Mancante',
+            flag_ripianifica_per_cliente: 'Ripianifica per cliente',
             flag_sezioni: 'Domande a Sezioni',
             folder: 'Cartella',
             folder_title: 'Titolo Cartella',

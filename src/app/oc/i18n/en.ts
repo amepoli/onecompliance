@@ -93,6 +93,7 @@ export const locale = {
             flag_mostra_punteggi: 'Show Judgment (no scores)',
             flag_no_domande: 'No Question',
             flag_non_applicabile_risposta_null: 'Ignore Score If Answer Missing',
+            flag_ripianifica_per_cliente: 'Replan per customer',
             flag_sezioni: 'Phased Question',
             folder: 'Folder',
             folder_title: 'Folder Title',
