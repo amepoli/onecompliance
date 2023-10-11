@@ -25,7 +25,7 @@ export const locale = {
             check_subject: 'Oggetto di Verifica',
             check_template: 'Modello di Verifica',
             check_template_title: 'Titolo Modello Verifica',
-            check_templete_type: 'Tipo Modello Verifica',
+            check_template_type: 'Tipo Modello Verifica',
             check_to_copy_from: 'Verifica da cui copiare',
             checked_personal_data: 'Anagrafica Verificata',
             close_check: 'Chiudi Verifica',
