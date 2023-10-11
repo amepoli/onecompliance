@@ -339,7 +339,7 @@ export const locale = {
             without_checks: 'Without Checks',
             without_execution_date: 'Without Execution Date',
             without_id_arg: 'Without Tag',
-            without_judgement: 'Without Judgement',
+            without_judgment: 'Without Judgement',
             without_process: 'Without Process',
             worst_check: 'Worst Check',
         },
