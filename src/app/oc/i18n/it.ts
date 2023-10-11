@@ -178,7 +178,7 @@ export const locale = {
             main_only: 'Solo Principali',
             main_page: 'Maschera Principale',
             make_it_discursive: 'Rendi Discorsiva',
-            manual_judgement: 'Giudizio Manuale',
+            manual_judgment: 'Giudizio Manuale',
             merge_type: 'Unifica Modelli di Verifica',
             mine_my_office: 'Miei/Mio Ufficio',
             modelli_test_sub_procedure: 'Modelli di verifica Associati',
