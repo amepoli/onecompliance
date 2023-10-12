@@ -1,7 +1,5 @@
 package gorico;
-
-import gorico.Server;
-import gorico.Jasper;
+import gorico.helpers.Localizations;
 
 public class gorico {
 
@@ -21,15 +19,27 @@ public class gorico {
      *             holds the location of the Jasper Report file (.jrxml)
      */
     public static void main(String[] args) {
-        if (args.length == 4) {
+        if (args.length > 3) {
             String databaseName = args[0];
             String userName = args[1];
             String password = args[2];
             String reportFile = args[3];
+            String locale = "it";
+            if(args.length > 4) {
+                locale = args[4];
+            }
             Jasper jasper = new Jasper();
-            jasper.runReport(databaseName, userName, password, reportFile);
+            jasper.runReport(databaseName, userName, password, reportFile, locale);
         } else {
             // startServer();
+
+            try {
+                Localizations.DownloadLocalizationData();
+            }
+            catch(Exception e){
+                System.out.println(e.toString());
+            }
+
             Server server = new Server();
             //server.downloadLogos();
             System.out.println("Starting server...");

@@ -1,10 +1,4 @@
-package gorico;
-
-import javafx.util.Pair;
-import java.util.ArrayList;
-import java.util.Map;
-
-import gorico.*;
+package gorico.models;
 
 public class JasperData {
 

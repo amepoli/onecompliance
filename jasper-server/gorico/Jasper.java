@@ -16,36 +16,26 @@ import net.sf.jasperreports.engine.JRRectangle;
 import net.sf.jasperreports.engine.JRStyle;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrintManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
 
-import net.sf.jasperreports.engine.JRResultSetDataSource;
-
-import net.sf.jasperreports.engine.util.AbstractSampleApp;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.util.JRSaver;
+import net.sf.jasperreports.engine.JRParameter;
 
-import net.sf.jasperreports.engine.query.JsonQueryExecuterFactory;
-
-import net.sf.jasperreports.engine.design.JRDesignQuery;
-import net.sf.jasperreports.engine.JRResultSetDataSource;
-
-import net.sf.jasperreports.data.*;
-
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
 import java.util.*;
 
-import java.nio.charset.StandardCharsets;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 
 import java.nio.file.Paths;
 
-import net.sf.jasperreports.functions.standard.TextFunctions.*;
-
-import gorico.*;
+import gorico.helpers.Database;
+import gorico.helpers.Localizations;
+import gorico.models.DatabaseDetails;
+import gorico.models.JasperData;
+import gorico.models.JasperParam;
+import gorico.models.ReportInfo;
 
 public class Jasper {
 
@@ -130,12 +120,19 @@ public class Jasper {
      * @param userName     holds user name
      * @param password     holds password to connect the database,
      * @param reportFile   holds the location of the Jasper Report file (.jrxml)
+     * @param locale       holds the locale to use for internationalization
      */
-    public void runReport(String databaseName, String userName, String password, String reportFile) {
+    public void runReport(String databaseName, String userName, String password, String reportFile, String locale) {
         try {
             JasperDesign jasperDesign = JRXmlLoader.load(reportFile);
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
             Connection jdbcConnection = Database.getInstance().connectSqlDB(databaseName, userName, password);
+
+            // Load the locale
+            HashMap<String, Object> parameterMap = new HashMap<String, Object>();
+            parameterMap.put(JRParameter.REPORT_LOCALE, new Locale(locale));
+            parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(Constants.LOCALIZATIONS_BUCKET_KEY_EN));
+            
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, jdbcConnection);
             JasperViewer.viewReport(jasperPrint);
             jdbcConnection.close();

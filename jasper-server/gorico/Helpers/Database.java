@@ -1,4 +1,4 @@
-package gorico;
+package gorico.helpers;
 
 
 import java.sql.*;

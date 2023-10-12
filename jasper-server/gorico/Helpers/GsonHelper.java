@@ -1,14 +1,8 @@
-package gorico;
+package gorico.helpers;
 
 import com.google.gson.Gson;
 
-import javafx.util.Pair;
-import java.util.ArrayList;
-import java.util.Map;
-import java.lang.Class;
-
-import gorico.JasperData;
-
+import gorico.models.JasperData;
 public class GsonHelper {
 
     /**

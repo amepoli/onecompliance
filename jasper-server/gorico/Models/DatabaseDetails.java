@@ -1,4 +1,4 @@
-package gorico;
+package gorico.models;
 
 public class DatabaseDetails {
     public String host;

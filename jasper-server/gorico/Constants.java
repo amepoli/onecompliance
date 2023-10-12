@@ -1,33 +1,7 @@
 package gorico;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.OutputStream;
-import java.io.FileInputStream;
-import java.io.BufferedInputStream;
-
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import javafx.util.Pair;
-import java.util.ArrayList;
-
-import java.io.ByteArrayOutputStream;
-import java.net.InetSocketAddress;
-import java.net.URI;
-
-import com.sun.net.httpserver.Headers;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-
-import gorico.Jasper;
-import gorico.JasperData;
-import gorico.GsonHelper;
 
 public class Constants {
 
@@ -41,6 +15,13 @@ public class Constants {
 
     public static final String DATE_FORMAT = "yyyy-MM-dd_HH-mm-ss";
 
+    public static final String LOCALIZATIONS_BUCKET_NAME = "gorico2-reports";
+    public static final String LOCALIZATIONS_BUCKET_PATH = "Jasper-localization/";
+    public static final String LOCALIZATIONS_BUCKET_KEY_EN =  "en.properties";
+    public static final String LOCALIZATIONS_BUCKET_KEY_IT =  "it.properties";
+    public static final String LOCALIZATIONS_DIR = "./files/";
+   
+    
     /**
      * Constructor for Constants
      */
