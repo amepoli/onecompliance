@@ -1,32 +1,19 @@
-package gorico;
+package gorico.aws;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 import com.amazonaws.services.s3.model.S3Object;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.*;
-import java.io.InputStreamReader;
 
 // import javax.print.DocFlavor.URL;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
-import com.amazonaws.SdkClientException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import java.io.IOException;
 import java.net.URL;
 
 public class S3 {
@@ -84,23 +71,16 @@ public class S3 {
         }
     }
 
-    public void GetObject(String key, String path, boolean overwrite) throws IOException {
+    public void DownloadObject(String key, File file, boolean overwrite) throws IOException {
+        DownloadObject(this.bucketName, key, file, overwrite);
+    }
+
+    public void DownloadObject(String bucket, String key, File file, boolean overwrite) throws IOException {
         this.InitS3();
         S3Object fullObject = null, objectPortion = null, headerOverrideObject = null;
         try {
-
-            // Get an object and print its contents.
-            System.out.println("Downloading " + key + " to: " + path + key);
-            File file = new File(path + key);
-
-            // Check if overwrite is set to false and the file already exists
-            if (!overwrite && file.exists()) {
-                System.out.println("File: " + key + " already exists!");
-                return;
-            }
-
             // Method 1
-            ObjectMetadata object = s3Client.getObject(new GetObjectRequest(bucketName, key), file);
+            s3Client.getObject(new GetObjectRequest(bucketName, key), file);
 
             // Method 2
             // fullObject = s3Client.getObject(new GetObjectRequest(bucketName, key));
@@ -168,21 +148,16 @@ public class S3 {
     public String PutObject(String key, File file) {
         try {
             this.s3Client.putObject(this.bucketName, key, file);
+            return this.s3Client.getUrl(this.bucketName, key).toExternalForm();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-            return this.s3Client.getUrl(this.bucketName, key).toExternalForm();
         }
     }
 
     public String PutPreSignedObject(String key, File file) {
         try {
             this.s3Client.putObject(this.bucketName, key, file);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        } finally {
             // Set the presigned URL to expire after one hour.
             java.util.Date expiration = new java.util.Date();
             long expTimeMillis = expiration.getTime();
@@ -201,10 +176,13 @@ public class S3 {
             return url.toString();
 
             // return this.s3Client.getUrl(this.bucketName, key).toExternalForm();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    private void displayTextInputStream(InputStream input) throws IOException {
+    public void displayTextInputStream(InputStream input) throws IOException {
         // Read the text input stream one line at a time and display each line.
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         String line = null;
