@@ -1,6 +1,7 @@
 package gorico;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.text.SimpleDateFormat;
 
 public class Constants {
@@ -21,13 +22,16 @@ public class Constants {
     public static final String LOCALIZATIONS_BUCKET_KEY_IT =  "it.properties";
     public static final String LOCALIZATIONS_DIR = "./files/";
     public static final String LOCALIZATIONS_DEFAULT = "it";
-   
+
+    public static HashMap<String, String> LOCALIZATIONS_KEYS = new HashMap<String, String>() {{
+        put("en", LOCALIZATIONS_BUCKET_KEY_EN);
+        put("it", LOCALIZATIONS_BUCKET_KEY_IT);
+    }};
     
     /**
      * Constructor for Constants
      */
     public Constants() {
-
     }
 
     public static String GET_CURRENT_DATE_TIME() {

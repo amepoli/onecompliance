@@ -23,20 +23,26 @@ public class Localizations {
         try {
             boolean overwrite = true;
             String dir = Constants.LOCALIZATIONS_DIR;
-            String keyEn = Constants.LOCALIZATIONS_BUCKET_KEY_EN;
 
-            // Get an object and print its contents.
-            System.out.println("Downloading " + keyEn + " to: " + dir + keyEn);
-            File file = new File(dir + keyEn);
+            for (String key : Constants.LOCALIZATIONS_KEYS.keySet()) {
+                String s3Key = Constants.LOCALIZATIONS_KEYS.get(key);
+                // Get an object and print its contents.
+                System.out.println("Downloading " + s3Key + " to: " + dir + s3Key);
+                File file = new File(dir + s3Key);
 
-            // Check if overwrite is set to false and the file already exists
-            if (!overwrite && file.exists()) {
-                System.out.println("File: " + keyEn + " already exists!");
-                return;
+                // Check if overwrite is set to false and the file already exists
+                if (!overwrite && file.exists()) {
+                    System.out.println("File: " + s3Key + " already exists!");
+                    return;
+                }
+
+                // Method 1
+                S3.getInstance().DownloadObject(Constants.LOCALIZATIONS_BUCKET_NAME, Constants.LOCALIZATIONS_BUCKET_PATH + s3Key, file, true);
+            
             }
 
-            // Method 1
-            S3.getInstance().DownloadObject(Constants.LOCALIZATIONS_BUCKET_NAME, Constants.LOCALIZATIONS_BUCKET_PATH + keyEn, file, true);
+
+            
             
             // Method 2
             // fullObject = s3Client.getObject(new GetObjectRequest(bucketName, key));
@@ -102,7 +108,7 @@ public class Localizations {
     }
 
     public static ResourceBundle GetResourceBundle(String locale) throws FileNotFoundException, IOException {
-        try(FileInputStream fis = new FileInputStream (Constants.LOCALIZATIONS_DIR + locale)) {
+        try(FileInputStream fis = new FileInputStream (Constants.LOCALIZATIONS_DIR + Constants.LOCALIZATIONS_KEYS.get(locale))) {
             return new PropertyResourceBundle(fis);
         }
     }

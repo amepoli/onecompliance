@@ -89,7 +89,7 @@ public class Jasper {
         // Load the locale
         HashMap<String, Object> parameterMap = new HashMap<String, Object>();
         parameterMap.put(JRParameter.REPORT_LOCALE, new Locale(locale));
-        parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(Constants.LOCALIZATIONS_BUCKET_KEY_EN));
+        parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(locale));
         
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameterMap, (JRDataSource) null);
 
@@ -136,7 +136,7 @@ public class Jasper {
             // Load the locale
             HashMap<String, Object> parameterMap = new HashMap<String, Object>();
             parameterMap.put(JRParameter.REPORT_LOCALE, new Locale(locale));
-            parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(Constants.LOCALIZATIONS_BUCKET_KEY_EN));
+            parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(locale));
             
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameterMap, jdbcConnection);
             JasperViewer.viewReport(jasperPrint);
@@ -225,7 +225,7 @@ public class Jasper {
 
             // Load the locale
             params.put(JRParameter.REPORT_LOCALE, new Locale(locale));
-            params.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(Constants.LOCALIZATIONS_BUCKET_KEY_EN));
+            params.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(locale));
             
             System.out.println("Logos Path: " + logos_path);
 
