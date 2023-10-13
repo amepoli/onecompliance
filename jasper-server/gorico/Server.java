@@ -162,7 +162,7 @@ public class Server {
         @Override
         public void handle(HttpExchange t) throws IOException {
             try {
-                jasper.fill();
+                jasper.fill(Constants.LOCALIZATIONS_DEFAULT);
                 jasper.pdf();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
