@@ -60,7 +60,7 @@ public class Jasper {
         return ds;
     }
 
-    public void fill() throws JRException {
+    public void fill(String locale) throws Exception {
         long start = System.currentTimeMillis();
 
         // File sourceFile = new File("build/reports/AlterDesignReport.jasper");
@@ -86,7 +86,12 @@ public class Jasper {
         style.setFontSize(16f);
         style.setItalic(Boolean.TRUE);
 
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, (JRDataSource) null);
+        // Load the locale
+        HashMap<String, Object> parameterMap = new HashMap<String, Object>();
+        parameterMap.put(JRParameter.REPORT_LOCALE, new Locale(locale));
+        parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(Constants.LOCALIZATIONS_BUCKET_KEY_EN));
+        
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameterMap, (JRDataSource) null);
 
         File destFile = new File("./samples/", jasperReport.getName() + ".jrprint");
         JRSaver.saveObject(jasperPrint, destFile);
@@ -133,7 +138,7 @@ public class Jasper {
             parameterMap.put(JRParameter.REPORT_LOCALE, new Locale(locale));
             parameterMap.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(Constants.LOCALIZATIONS_BUCKET_KEY_EN));
             
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, null, jdbcConnection);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameterMap, jdbcConnection);
             JasperViewer.viewReport(jasperPrint);
             jdbcConnection.close();
         } catch (Exception ex) {
@@ -157,6 +162,9 @@ public class Jasper {
             // params.put("LOGO", "Report title 101");
 
             params.put("mainQuery", data.mainReport.query);
+
+            // Load locale
+            String locale = (data.locale != null && !data.locale.trim().isEmpty()) ? data.locale: Constants.LOCALIZATIONS_DEFAULT;
 
             HashMap<String, Object> reportMap = new HashMap<String, Object>();
 
@@ -215,6 +223,10 @@ public class Jasper {
             params.put("PATH_IMG", logos_path);
             params.put("REPORTS_MAP", reportMap);
 
+            // Load the locale
+            params.put(JRParameter.REPORT_LOCALE, new Locale(locale));
+            params.put(JRParameter.REPORT_RESOURCE_BUNDLE, Localizations.GetResourceBundle(Constants.LOCALIZATIONS_BUCKET_KEY_EN));
+            
             System.out.println("Logos Path: " + logos_path);
 
             // params.put("modelloTestVr.domandeSezioni", "modelloTestVr.domandeSezioni");

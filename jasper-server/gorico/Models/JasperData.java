@@ -5,6 +5,7 @@ public class JasperData {
     public ReportInfo mainReport;
     public ReportInfo[] subReports;
     public JasperParam[] params;
+    public String locale;
 
     /**
      * Constructor for JasperData

@@ -20,6 +20,7 @@ public class Constants {
     public static final String LOCALIZATIONS_BUCKET_KEY_EN =  "en.properties";
     public static final String LOCALIZATIONS_BUCKET_KEY_IT =  "it.properties";
     public static final String LOCALIZATIONS_DIR = "./files/";
+    public static final String LOCALIZATIONS_DEFAULT = "it";
    
     
     /**
