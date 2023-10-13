@@ -1,0 +1,59 @@
+{
+  "$schema": "../views.schema.json",
+  "origin": "entrasp.argomenti",
+  "businessObjectName": "controlli",
+  "entryKey": "presidi_sub_of_regolamenti",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "queryString": "select distinct (entrasp.argomenti_descr_breve(aa.id_argomento_son)) as presidio from entrasp.argomenti_argomenti aa inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (5328,48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and aa.id_argomento_father=$id_argomento_son$ and vaf.codice_azienda='€global_codice_azienda€'",
+      "type": "main"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_argomento_son",
+      "label": "id_argomento_son"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "width": "10%",
+      "key": "presidio",
+      "label": "presidio"
+    }
+  ],
+  "hideActions": [
+    {
+      "formActionType": "add",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "startEvent",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    },
+    {
+      "formActionType": "stopEvent",
+      "viewType": "form"
+    },
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    }
+  ],
+  "restrictions": {
+    "preventNavigationToForm": true
+  }
+}
