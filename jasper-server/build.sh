@@ -18,5 +18,5 @@ javac -Xlint:unchecked -Xlint:deprecation -classpath ".:libs/*" -d ./build ./gor
 
 echo "Making jar..."
 cd ./build
-jar cfm gorico.jar ../Manifest.txt gorico/*.class
+jar cfm gorico.jar ../Manifest.txt gorico/*.class gorico/*/*.class
 echo "Build successful!"

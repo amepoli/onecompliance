@@ -1,6 +1,5 @@
 package gorico;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.FileInputStream;
@@ -8,10 +7,7 @@ import java.io.BufferedInputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
-import javafx.util.Pair;
-import java.util.ArrayList;
 
 import java.io.ByteArrayOutputStream;
 import java.net.InetSocketAddress;
@@ -23,9 +19,9 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import gorico.Jasper;
-import gorico.JasperData;
-import gorico.GsonHelper;
+import gorico.aws.S3;
+import gorico.helpers.GsonHelper;
+import gorico.models.JasperData;
 
 public class Server {
 
@@ -283,7 +279,8 @@ public class Server {
             (new File("images")).mkdir();
 
             for (String logo : Constants.LOGOS) {
-                S3.getInstance().GetObject(logo, Constants.LOGOS_DIR, false);
+                File file = new File(Constants.LOGOS_DIR + logo);
+                S3.getInstance().DownloadObject(logo, file, false);
             }
 
             System.out.println("Logos downloaded successfully!");
@@ -297,7 +294,7 @@ public class Server {
      * Starts the server
      */
     public void startServer() {
-        try {
+        try {            
             HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
             server.createContext("/", new IndexHandler());
             server.createContext("/json", new JsonIndexHandler());
