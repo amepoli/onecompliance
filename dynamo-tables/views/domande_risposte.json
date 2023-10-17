@@ -221,7 +221,8 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",	        "newLine": true,
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
             "format": {
                 "viewType": "input",
                 "dataType": "text"
@@ -301,7 +302,7 @@
             "isPrimary": true,
             "key": "id_modello_test_vr",
             "label": "id_modello_test_vr",
-      "translate": "RESOURCES.version",
+            "translate": "RESOURCES.version",
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -327,7 +328,7 @@
             "isPrimary": false,
             "sameOrigin": false,
             "key": "id_somministrazione",
-             "label": "id_somministrazione",
+            "label": "id_somministrazione",
             "translate": "RESOURCES.id_administration",
             "format": {
                 "viewType": "input",
@@ -353,7 +354,7 @@
             "sameOrigin": false,
             "key": "id_anagrafica",
             "label": "id_anagrafica",
-      "translate": "RESOURCES.id_personal_data",
+            "translate": "RESOURCES.id_personal_data",
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -381,10 +382,6 @@
             "format": {
                 "viewType": "input",
                 "dataType": "number"
-            },
-            "outputEvent": {
-                "eventName": "idRispostaChange",
-                "eventTrigger": "change"
             },
             "inputEvents": [
                 {
@@ -442,7 +439,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Domanda",
-      "translate": "RESOURCES.domandalabel",
+            "translate": "RESOURCES.domandalabel",
             "outputEvent": {
                 "eventName": "domande_button_dettaglio",
                 "eventTrigger": "press"
@@ -460,8 +457,8 @@
             "readOnly": true,
             "isPrimary": false,
             "key": "punteggio",
-          "label": "Punteggio",
-      "translate": "RESOURCES.score",
+            "label": "Punteggio",
+            "translate": "RESOURCES.score",
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -485,7 +482,7 @@
             "isPrimary": false,
             "key": "penalizzazione",
             "label": "Penalizzazione",
-      "translate": "RESOURCES.penalties",
+            "translate": "RESOURCES.penalties",
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -632,7 +629,7 @@
                         "actionOnYes": {
                             "actionType": "query",
                             "queryFunct": "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$, $id_domanda$, false) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
-                          }
+                        }
                     },
                     "successMessage": "Risposte copiate correttamente"
                 }
@@ -642,7 +639,7 @@
             "buttonIcon": "more_vert",
             "key": "domande_actions",
             "label": "void",
-     	    "translate": "RESOURCES.void",
+            "translate": "RESOURCES.void",
             "newLine": false,
             "readOnly": false,
             "sameOrigin": false,
@@ -1038,6 +1035,13 @@
                                 "condition": "none",
                                 "values": [],
                                 "queryFunct": "select case when flag_risposta_aperta='1' then false else true end  from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '£id_risposta_prev_radio£') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                            },
+                            {
+                                "eventName": "toggle_question",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
                             }
                         ],
                         "sameOrigin": false,
@@ -1077,6 +1081,19 @@
                             "viewType": "textarea",
                             "dataType": "text"
                         },
+                        "outputEvent": {
+                            "eventName": "blur_nota",
+                            "eventTrigger": "blur"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "blur_nota",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
+                            }
+                        ],
                         "textareaHeight": "M",
                         "newLine": true,
                         "size": 10
@@ -1271,8 +1288,21 @@
                         "isPrimary": false,
                         "key": "note_mc",
                         "sameOrigin": false,
-                          "label": "Note",
-             "translate": "RESOURCES.notes",
+                        "label": "Note",
+                        "outputEvent": {
+                            "eventName": "blur_nota_mc",
+                            "eventTrigger": "blur"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "blur_nota_mc",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
+                            }
+                        ],
+                        "translate": "RESOURCES.notes",
                         "format": {
                             "viewType": "textarea",
                             "dataType": "text"
