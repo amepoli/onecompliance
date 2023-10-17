@@ -301,12 +301,12 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
 
-  inviteUser(username: string, company: string, associated_user: string, registry: string, tax_code: string, temporaryPassword: string) {
+  inviteUser(username: string, company: string, associated_user: string, registry: string, tax_code: string, temporaryPassword: string, profile: string) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
       body: null,
       headers: {},
-      queryStringParameters: { invite_user: 1, username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code, temporary_password: temporaryPassword },
+      queryStringParameters: { invite_user: 1, username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code, temporary_password: temporaryPassword, profile: profile },
     };
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
