@@ -178,7 +178,7 @@
     {
       "operation": "selectForm",
       "type": "postProcessing",
-      "queryString": "select round(percentuale,2) as ris_percentuale, giudizio, punteggio_description from entrasp.grc_punteggi_giudizi_finali($codice_azienda$, $id_somministrazione$);"
+      "queryString": "select round(ris_percentuale,2) as ris_percentuale, ss.giudizio, ss.punteggio_description from entrasp.sondaggi_somministrati ss where codice_azienda=$codice_azienda$ and id_somministrazione=£id_somministrazione£;"
     },
     {
       "operation": "selectForm",
@@ -200,7 +200,9 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
+      "translate": "RESOURCES.company_code"
+    },
+    {
       "format": {
         "dataType": "number"
       },
@@ -236,7 +238,7 @@
       "isHidden": false,
       "isPrimary": true,
       "key": "id_sondaggio",
-       "label": "ID Sondaggio",
+      "label": "ID Sondaggio",
       "translate": "RESOURCES.id_survey",
       "width": "5%"
     },
@@ -248,7 +250,7 @@
       "isPrimary": false,
       "key": "id_modello_test",
       "label": "id_modello_test",
-            "translate": "RESOURCES.id_check_template",
+      "translate": "RESOURCES.id_check_template",
       "width": "5%"
     },
     {
@@ -258,8 +260,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "titolo",
-       "label": "Titolo",
-            "translate": "RESOURCES.title",
+      "label": "Titolo",
+      "translate": "RESOURCES.title",
       "width": "25%"
     },
     {
@@ -304,8 +306,8 @@
       "isPrimary": false,
       "key": "giudizio",
       "queryFunct": "entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da, codice_azienda)",
-     "label": "Giudizio",
-            "translate": "RESOURCES.judgment",
+      "label": "Giudizio",
+      "translate": "RESOURCES.judgment",
       "width": "10%"
     }
   ],
