@@ -302,6 +302,7 @@ export const locale = {
             sotto_presidi: 'Sotto Presidi',
             state: 'Stato',
             status: 'Stato',
+            situazione_post_presidi:'Situazione Post Presidi (Rischio Residuo)',
             stop_replanning_when_contracts_closed: 'No ripetizione se contrratto chiuso',
             survey: 'Survey',
             survey_subject: 'Oggetto del Sondaggio',
