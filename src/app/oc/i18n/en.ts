@@ -301,6 +301,7 @@ export const locale = {
             select_sample: 'Select Sample',
             situazione_ante_presidi: 'Situation before Controls (Inherent Risks)',
             situazione_rettificata: 'Adjusted Situation',
+            situazione_post_presidi:"Situation Post Controls (Residual Risks)",
             sotto_presidi: 'Sub-Controls',
             state: 'State',
             status: 'Status',
