@@ -1284,10 +1284,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             const temporaryPassword = HelperService.generatePassword(9);
                             const company = formValues['codice_azienda'];
                             const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
+                            const profile = formValues['profile'] ? formValues['profile'].id : null;
                             const registry = formValues['id_anagrafica'];
                             const tax_code = formValues['codice_fiscale'];
 
-                            _this.backendService.inviteUser(username, company, associated_user, registry, tax_code, temporaryPassword);
+                            _this.backendService.inviteUser(username, company, associated_user, registry, tax_code, temporaryPassword, profile);
 
                             _this._dialogService.closeDialog();
                             _this._toastService.showSuccessToast('User correctly invited'); // show success toast
