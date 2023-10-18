@@ -159,6 +159,7 @@ export const locale = {
             intensita_singola_post_rett_descrizione: 'Impatto rettificato - Description',
             intensita_singola_post_rilevata: 'Impatto rettificato',
             intensita_singola_pre: 'Impatto Ante Presidi',
+            intensita_singola_post:'Impatto Post Presidi',
             intensita_totale_pi_descrizione: 'Giudizio PI Ante',
             intensita_totale_post: 'Intensità totale Post Presidi',
             intensita_totale_post_descrizione: 'Giudio Totale Post',

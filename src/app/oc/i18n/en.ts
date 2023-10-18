@@ -158,6 +158,7 @@ export const locale = {
             intensita_pre_descrizione: 'Pre-Controls Impact - Description',
             intensita_singola_post_rett_descrizione: 'Adjusted Impact - Description',
             intensita_singola_post_rilevata: 'Adjusted Impact',
+            intensita_singola_post:'Post-Controls Impact',
             intensita_singola_pre: 'Pre-Controls Impact',
             intensita_totale_pi_descrizione: 'Pre-Controls PI Judgment',
             intensita_totale_post: 'Total Post-Controls Intensity',
