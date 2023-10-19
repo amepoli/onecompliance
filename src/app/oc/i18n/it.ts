@@ -297,7 +297,7 @@ export const locale = {
             scores_type: 'Tipo Punteggio',
             select_popolation: 'Selezione Popolazione',
             select_sample: 'Seleziona Campione',
-            situation_rectified: 'Situazione Rettificata',
+            situation_rectified: 'Situazione Post Presidi Rettificata (Rischio residio rettificato)',
             situazione_ante_presidi: 'Situazione Ante Presidi (Rischio inerente)',
             sotto_presidi: 'Sotto Presidi',
             state: 'Stato',
