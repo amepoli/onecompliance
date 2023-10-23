@@ -8,17 +8,17 @@ fi
 
 if [ $1 == "gorico_prod" ]
   then
-    ssh-keygen -f "/home/davide/.ssh/known_hosts" -R "[vm-prod.alacritas.eu]:5222"
-    sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@vm-prod.alacritas.eu <<EOF
+    ssh-keygen -f "/home/davide/.ssh/known_hosts" -R "[18.193.201.111]:5222"
+    sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@18.193.201.111 <<EOF
 exit
 EOF
-    HOSTNAME="vm-prod.alacritas.eu"
+    HOSTNAME="18.193.201.111"
 else
-    ssh-keygen -f "/home/davide/.ssh/known_hosts" -R "[vm-dev.alacritas.eu]:5222"
-    sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@vm-dev.alacritas.eu <<EOF
+    ssh-keygen -f "/home/davide/.ssh/known_hosts" -R "[3.124.34.69]:5222"
+    sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@3.124.34.69 <<EOF
 exit
 EOF
-    HOSTNAME="vm-dev.alacritas.eu"
+    HOSTNAME="3.124.34.69"
 fi
 
 aws s3 cp . s3://gorico2-reports/Jasper/ --recursive --exclude "*" --include "*.jasper" --exclude "MyReports/*" 
