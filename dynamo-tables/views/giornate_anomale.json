@@ -5,7 +5,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti, gdr.motivo_validazione_tr, gdr.validata from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users mr on gdr.giorno=mr.data_rend and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='€global_username€' and (coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))>min_extra_anomali_tr",
+      "queryString": "select coalesce((coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))-min_extra_anomali_tr,0) as minuti_eccesso, true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti, gdr.motivo_validazione_tr, gdr.validata from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users mr on gdr.giorno=mr.data_rend and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='€global_username€' and (coalesce(min_rendicontati,0)-coalesce(gdr.min_richiesti,0))>min_extra_anomali_tr",
       "type": "main"
     }
   ],
@@ -43,7 +43,8 @@
   "define": {
     "hide_buttons": "true",
     "hide_giustificazione": "false",
-    "hide_date": "false"
+    "hide_date": "false",
+    "hide_minuti_eccesso": "false"
   },
   "form_keys": [
     {
@@ -142,7 +143,7 @@
       "width": "5%",
       "key": "inv_field3",
       "label": "void",
-     	"translate": "RESOURCES.void"
+      "translate": "RESOURCES.void"
     },
     {
       "format": {
@@ -182,7 +183,49 @@
       "isPrimary": false,
       "key": "minuti_mancanti",
       "label": "Minuti mancanti",
-      "width": "10%"
+      "width": "10%",
+      "style": [
+        {
+          "value": "0",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "*",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#e6e600",
+          "text_align": "center"
+        }
+      ]
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": "$Q{hide_minuti_eccesso}",
+      "isPrimary": false,
+      "key": "minuti_eccesso",
+      "label": "Minuti in eccesso",
+      "width": "10%",
+      "style": [
+        {
+          "value": "0",
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
+        },
+        {
+          "value": "*",
+          "font_color": "black",
+          "font_weight": "500",
+          "background_color": "#e6e600",
+          "text_align": "center"
+        }
+      ]
     },
     {
       "format": {
@@ -321,7 +364,7 @@
       "width": "0%",
       "queryFunct": "select true",
       "key": "dettaglio",
-     "label": "Dettaglio",
+      "label": "Dettaglio",
       "translate": "RESOURCES.details",
       "isButton": true,
       "buttonAction": {
