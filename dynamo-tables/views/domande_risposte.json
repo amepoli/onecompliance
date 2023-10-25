@@ -1019,7 +1019,7 @@
                                 "actionType": "query",
                                 "condition": "none",
                                 "values": [],
-                                "queryFunct": "select peso as peso_rb from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '$id_risposta_prev_radio$') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                                "queryFunct": "select peso as peso_rb from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '$id_risposta_prev_radio$') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>entrasp.evaluate_given_field_null('id_risposta_prev_radio', '$id_risposta_prev_radio$')::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
                             },
                             {
                                 "eventName": "toggle_question",
@@ -1035,13 +1035,6 @@
                                 "condition": "none",
                                 "values": [],
                                 "queryFunct": "select case when flag_risposta_aperta='1' then false else true end  from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_radio', '£id_risposta_prev_radio£') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
-                            },
-                            {
-                                "eventName": "toggle_question",
-                                "actionType": "query",
-                                "condition": "none",
-                                "values": [],
-                                "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>entrasp.evaluate_given_field_null('id_risposta_prev_radio', '$id_risposta_prev_radio$')::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
                             }
                         ],
                         "sameOrigin": false,
@@ -1270,7 +1263,7 @@
                                 "actionType": "query",
                                 "condition": "none",
                                 "values": [],
-                                "queryFunct": "select round(coalesce($penalizzazione$/nullif($punteggio$,0),0)*100+sum(peso),2) as peso_mc from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                                "queryFunct": "select round(coalesce($penalizzazione$/nullif($punteggio$,0),0)*100+sum(peso),2) as peso_mc from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>entrasp.evaluate_given_field_null('id_risposta_prev_radio', '$id_risposta_prev_radio$')::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
                             },
                             {
                                 "eventName": "toggle_question_mc",
@@ -1279,13 +1272,6 @@
                                 "actionType": "query_style",
                                 "styleAttribute": "background_color",
                                 "queryFunct": "select codice_colore as peso_mc_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select sum(peso) from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=any(entrasp.evaluate_given_field_multiple('risposta_multipla', '$risposta_multipla$')) and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
-                            },
-                            {
-                                "eventName": "toggle_question_mc",
-                                "actionType": "query",
-                                "condition": "none",
-                                "values": [],
-                                "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>entrasp.evaluate_given_field_null('id_risposta_prev_radio', '$id_risposta_prev_radio$')::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
                             }
                         ]
                     },
