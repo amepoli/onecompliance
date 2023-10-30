@@ -1270,78 +1270,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     // = true;
                     _this._timeTrackerService.checkStatus();
                 }
-                else if (actionType === 'email' || actionType === 'create_user_and_email') {
+                else if (actionType === 'email') {
 
                     let formValues = _this.formArray.first.form.value;
 
 
-                    if (actionType === 'create_user_and_email') {
 
-                        console.log('getAllowedToInvite: ', _this.authService.getAllowedToInvite());
-                        if (_this.authService.getAllowedToInvite()) {
+                    _this.performSendEmail(event, formValues, value);
 
-                            const username = formValues['email_to'];
-                            const temporaryPassword = HelperService.generatePassword(9);
-                            const company = formValues['codice_azienda'];
-                            const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
-                            const profile = formValues['profile'] ? formValues['profile'].id : null;
-                            const registry = formValues['id_anagrafica'];
-                            const tax_code = formValues['codice_fiscale'];
-
-                            _this.backendService.inviteUser(username, company, associated_user, registry, tax_code, temporaryPassword, profile);
-
-                            _this._dialogService.closeDialog();
-                            _this._toastService.showSuccessToast('User correctly invited'); // show success toast
-                            this.refreshView(); // refresh the view
-
-                        } else {
-                            _this._toastService.showInfoToast(`User isn't allowed to invite!`);
-                        }
-
-                        //_this.performSendEmail(event, formValues, value);
-
-                        // _this.authService.setUsername(username);
-                        // _this.authService.setPassword(password);
-                        // _this.authService.setEmail(email);
-                        // _this.authService.signUp(true)
-                        //     .then((user) => {
-                        //         console.log(user);
-                        //         _this.performSendEmail(event, formValues, value);
-
-                        //         _this.backendService.setUserOnDynamo(username, company, associated_user, registry, tax_code, user.UserSub);
-
-                        //     })
-                        //     .catch((err) => {
-                        //         _this._toastService.showErrorToast(err);
-                        //         //  this._setError(err);
-                        //     });
-                    }
-                    else {
-                        _this.performSendEmail(event, formValues, value);
-                    }
                     // _this._console.log(JSON.stringify(event));
                     // _this.sendEmail({ templateKey: 'test' });
                 }
-                else if (actionType === 'enable_company_to_user') {
-
-                    let formValues = _this.formArray.first.form.value;
-                    
-
-                    const username = formValues['dynamo_user'];
-                    const companyPart = formValues['codice_part'];
-                    const profile = formValues['profile'] ? formValues['profile'].id : null;
-                    const enableCompany = formValues['azienda_to_enable'] ? formValues['azienda_to_enable'].id : null;
-                    const office = formValues['id_centro_gest'];
-
-                    _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office, profile);
-
-                    _this._dialogService.closeDialog();
-                    _this._toastService.showSuccessToast('Company correctly enabled'); // show success toast
-                    this.refreshView(); // refresh the view
-
-                }
                 else if (actionType === 'regulat_api') {
                     _this.runRegulatEvent(event.message.actionOnYes, value, keyListener);
+                }
+                else if (actionType === 'user_api') {
+                    _this.runUserManagementEvent(event, value, keyListener);
                 }
                 else {
                     // Run query
@@ -1426,6 +1370,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             _this.runGoogleEvent(event, value, keyListener);
         } else if (event.actionType === 'regulat_api') {
             _this.runRegulatEvent(event, value, keyListener);
+        } else if (event.actionType === 'user_api') {
+            _this.runUserManagementEvent(event, value, keyListener);
         } else if (event.actionType === 'dialog') {
             const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
                 width: '1280px',
@@ -2105,6 +2051,81 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             } else {
                 _this._console.error("You are not subscribed to use OneKYC service");
                 _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to use OneKYC service");
+            }
+        }
+    }
+
+    async runUserManagementEvent(event, value, keyListener) {
+        let _this = this;
+        const userAPIParams = event.userAPIParams || event.message.actionOnYes.userAPIParams;
+        let formValues = _this.formArray.first.form.value;
+        if (!userAPIParams || !userAPIParams.actionType) {
+            _this._toastService.showErrorToast("Missing User API params");
+        }
+        else if (userAPIParams.actionType === 'invite_user') {
+            if (_this.authService.getAllowedToManage()) {
+
+                let loadingToast = _this._toastService.showLoadingToast("Inviting user...", "Please wait");
+
+                const username = formValues['email_to'];
+                const temporaryPassword = HelperService.generatePassword(9);
+                const company = formValues['codice_azienda'];
+                const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
+                const profile = formValues['profile'] ? formValues['profile'].id : null;
+                const registry = formValues['id_anagrafica'];
+                const tax_code = formValues['codice_fiscale'];
+
+                let inviteUser: any = await _this.backendService.inviteUser(username, company, associated_user, registry, tax_code, temporaryPassword, profile).toPromise();
+                if (inviteUser.result === 'KO') {
+                    _this._toastService.hideLoadingToast(loadingToast);
+                    _this._toastService.showErrorToast(inviteUser.reason.message);
+                } else {
+                    _this._toastService.hideLoadingToast(loadingToast);
+                    _this._toastService.showSuccessToast('User invited successfully');
+                    _this._dialogService.closeDialog();
+                    this.refreshView();
+                }
+            } else {
+                _this._console.error("User isn't allowed to invite!");
+                _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to invite users");
+            }
+        }
+        else if (userAPIParams.actionType === 'invite_user_again') {
+            if (_this.authService.getAllowedToManage()) {
+                const email = formValues[userAPIParams.userParams.email];
+                const temporaryPassword = HelperService.generatePassword(9);
+                let inviteUserAgain: any = await _this.backendService.inviteUserAgain(email, temporaryPassword).toPromise();
+                // _this._console.log(inviteUserAgain);
+                if (inviteUserAgain.result === 'KO') {
+                    _this._toastService.showErrorToast(inviteUserAgain.reason.message);
+                } else {
+                    _this._toastService.showSuccessToast('New invitation sent successfully');
+                    this.refreshView();
+                }
+
+            } else {
+                _this._console.error("User isn't allowed to invite!");
+                _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to invite users");
+            }
+        }
+        else if (userAPIParams.actionType === 'enable_company_to_user') {
+            if (_this.authService.getAllowedToManage()) {
+                const username = formValues['dynamo_user'];
+                const companyPart = formValues['codice_part'];
+                const profile = formValues['profile'] ? formValues['profile'].id : null;
+                const enableCompany = formValues['azienda_to_enable'] ? formValues['azienda_to_enable'].id : null;
+                const office = formValues['id_centro_gest'];
+                let enableCompanyToUser: any = await _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office, profile).toPromise();
+                if (enableCompanyToUser.result === 'KO') {
+                    _this._toastService.showErrorToast(enableCompanyToUser.reason.message);
+                } else {
+                    _this._toastService.showSuccessToast('Company enabled successfully');
+                    this.refreshView();
+                }
+
+            } else {
+                _this._console.error("User isn't allowed to invite!");
+                _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to invite users");
             }
         }
     }

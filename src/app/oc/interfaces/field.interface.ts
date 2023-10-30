@@ -20,7 +20,7 @@ export interface Key {
 }
 
 export interface FieldInputEvent {
-  actionType: 'hide' | 'show' | 'readOnly' | 'query' | 'query_style' | 'show_message' | 'toggle' | 'update' | 'update_style' | 'update_time_tracker' | 'google_api' | 'regulat_api' | 'dialog';
+  actionType: 'hide' | 'show' | 'readOnly' | 'query' | 'query_style' | 'show_message' | 'toggle' | 'update' | 'update_style' | 'update_time_tracker' | 'google_api' | 'regulat_api' | 'user_api' | 'dialog';
   eventName: string;
   values: any[];
   condition: 'equalTo' | 'notEqualTo' | 'greatorThan' | 'lessThan' | 'none';

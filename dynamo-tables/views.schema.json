@@ -1785,6 +1785,18 @@
                                     "properties": {
                                         "actionType": {
                                             "enum": [
+                                                "user_api"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "userAPIParams"
+                                    ]
+                                },
+                                {
+                                    "properties": {
+                                        "actionType": {
+                                            "enum": [
                                                 "dialog"
                                             ]
                                         }
@@ -1817,6 +1829,7 @@
                                         "update_time_tracker",
                                         "google_api",
                                         "regulat_api",
+                                        "user_api",
                                         "dialog"
                                     ]
                                 },
@@ -1883,6 +1896,18 @@
                                                     "properties": {
                                                         "actionType": {
                                                             "enum": [
+                                                                "user_api"
+                                                            ]
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "userAPIParams"
+                                                    ]
+                                                },
+                                                {
+                                                    "properties": {
+                                                        "actionType": {
+                                                            "enum": [
                                                                 "create_user_and_email"
                                                             ]
                                                         }
@@ -1932,7 +1957,8 @@
                                                         "create_user_and_email",
                                                         "enable_company_to_user",
                                                         "query",
-                                                        "regulat_api"
+                                                        "regulat_api",
+                                                        "user_api"
                                                     ]
                                                 },
                                                 "queryFunct": {
@@ -2143,6 +2169,51 @@
                                                                 "is_light_scan": {
                                                                     "description": "M: Is the button related to light scan?",
                                                                     "type": "boolean"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "userAPIParams": {
+                                                    "type": "object",
+                                                    "description": "?: User API Action Params",
+                                                    "required": [
+                                                        "actionType"
+                                                    ],
+                                                    "anyOf": [
+                                                        {
+                                                            "properties": {
+                                                                "actionType": {
+                                                                    "enum": [
+                                                                        "invite_user",
+                                                                        "invite_user_again",
+                                                                        "enable_company_to_user"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    ],
+                                                    "properties": {
+                                                        "actionType": {
+                                                            "type": "string",
+                                                            "description": "M: action type when main actionType is invite_user_again",
+                                                            "enum": [
+                                                                "invite_user",
+                                                                "invite_user_again",
+                                                                "enable_company_to_user"
+                                                            ]
+                                                        },
+                                                        "userParams": {
+                                                            "type": "object",
+                                                            "description": "?: user parameters",
+                                                            "required": [
+                                                                "email"
+                                                            ],
+                                                            "additionalProperties": false,
+                                                            "properties": {
+                                                                "email": {
+                                                                    "description": "M: The email belonging to the user to be re-invited",
+                                                                    "type": "string"
                                                                 }
                                                             }
                                                         }
@@ -2596,6 +2667,49 @@
                                                 "is_light_scan": {
                                                     "description": "M: Is the button related to light scan?",
                                                     "type": "boolean"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "userAPIParams": {
+                                    "type": "object",
+                                    "description": "?: User API Action Params",
+                                    "required": [
+                                        "actionType"
+                                    ],
+                                    "anyOf": [
+                                        {
+                                            "properties": {
+                                                "actionType": {
+                                                    "enum": [
+                                                        "invite_user",
+                                                        "invite_user_again",
+                                                        "enable_company_to_user"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "properties": {
+                                        "actionType": {
+                                            "type": "string",
+                                            "description": "M: action type when main actionType is invite_user_again",
+                                            "enum": [
+                                                "invite_user_again"
+                                            ]
+                                        },
+                                        "userParams": {
+                                            "type": "object",
+                                            "description": "?: user parameters",
+                                            "required": [
+                                                "email"
+                                            ],
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "email": {
+                                                    "description": "M: The email belonging to the user to be re-invited",
+                                                    "type": "string"
                                                 }
                                             }
                                         }

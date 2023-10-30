@@ -522,7 +522,7 @@ export class AuthService {
     return this.onekyc;
   }
 
-  public getAllowedToInvite(): boolean {
+  public getAllowedToManage(): boolean {
     return this.allowedToInvite;
   }
 

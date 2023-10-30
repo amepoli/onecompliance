@@ -311,7 +311,17 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
 
-  enableCompanyToUser(username: string, companyPart: string, enableCompany: string, office: string,  profile: string) {
+  inviteUserAgain(email: string, temporaryPassword: string) {
+    this.awsService.auth();
+    const putPostReq: PostRequest = {
+      body: null,
+      headers: {},
+      queryStringParameters: { invite_user_again: 1, email: email, temporary_password: temporaryPassword },
+    };
+    return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
+  }
+
+  enableCompanyToUser(username: string, companyPart: string, enableCompany: string, office: string, profile: string) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
       body: null,
