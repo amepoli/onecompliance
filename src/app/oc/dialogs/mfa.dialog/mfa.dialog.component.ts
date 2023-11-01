@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { AuthService, ConsoleLoggerService, DialogService, EncryptionService, ToastService } from 'app/oc/services';
+import { AuthService, AwsService, BackendService, ConsoleLoggerService, DialogService, EncryptionService, ToastService } from 'app/oc/services';
 
 @Component({
     selector: 'app-mfa.dialog',
@@ -24,6 +24,8 @@ export class MFADialogComponent implements OnInit, AfterViewInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data: any,
         private _dialogService: DialogService,
         private _authService: AuthService,
+        private _backendService: BackendService,
+        private _awsService: AwsService,
         private _toastService: ToastService,
         private _console: ConsoleLoggerService) {
         
@@ -50,24 +52,26 @@ export class MFADialogComponent implements OnInit, AfterViewInit, OnDestroy {
     async generateTOTPToken() {
         let _this = this;
         _this.isLoading = true;
-        _this.token = await _this._authService.generateTOTPToken();
+        const token = await _this._authService.generateTOTPToken();
         _this.token = 
-        "otpauth://totp/AWSCognito:"+ _this._authService.getUsername() + "?secret=" + _this.token +
+        "otpauth://totp/AWSCognito:"+ _this._authService.getUsername() + "?secret=" + token +
 "&issuer=" + 'OneCompliance.cloud';
         _this.isLoading = false;
     }
 
     async verifyCode() {
-        let _this = this;        
-        let result = await _this._authService.VerifyTOTP(_this.verificationCode);
-        if(result === 'SUCCESS') {
+        let _this = this;
+        let result: any = await _this._authService.VerifyTotp(this.verificationCode);
+        if(result.result === 'OK') {
+            let mfaresult = await _this._backendService.enableMFA().toPromise();
             _this._dialogService.showSuccessDialog('Success', 'Multi-Factor Authentication successfully enabled on your account. You might have to logout and login again to complete the process.');
-            _this.dialogRef.close();
+            _this.dialogRef.close(true);
         }
         else {
             _this._dialogService.showErrorDialog('Error', 'Multi-Factor Authentication could not be activated. Please try again.');
-            _this.dialogRef.close();
+            _this.dialogRef.close(false);
         }
         // console.log(result);
     }
+    
 }

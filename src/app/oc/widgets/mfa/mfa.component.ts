@@ -14,7 +14,7 @@ import 'rxjs/add/operator/filter';
 export class MFAComponent implements OnInit, AfterViewInit {
 
     
-    preferredMFA: string = '';
+    preferredMFA: string = 'NOMFA';
     subscriptions: Subscription[] = [];
 
     constructor(
@@ -39,18 +39,20 @@ export class MFAComponent implements OnInit, AfterViewInit {
     }
 
     async disableMFA() {
-        this._authService.disableTOTP().then(result => {
+        let _this = this;
+        _this._authService.disableTOTP().then(result => {
             if(result) {
-                this._dialogService.showSuccessDialog("Success", "Multi-factor Authentication has been disabled on your account. You might have to logout and login again to complete the process.");
-                this.getMFAStatus();
+                _this._authService.setUserMFA('NOMFA');
+                _this.preferredMFA = 'NOMFA';
+                _this._dialogService.showSuccessDialog("Success", "Multi-factor Authentication has been disabled on your account. You might have to logout and login again to complete the process.");
             }
             else {
-                this._dialogService.showErrorDialog("Error", "Error occured while setting the MFA!");
+                _this._dialogService.showErrorDialog("Error", "Error occured while setting the MFA!");
             }
         });
     }
 
-    showMFADialog() {
+    async showMFADialog() {
         const _this = this;
 
         // Pop-up example
@@ -61,10 +63,22 @@ export class MFAComponent implements OnInit, AfterViewInit {
         });
 
         _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
-            _this.getMFAStatus();
-            if (result) {
+            if(result) {
+                _this.enableMFATotp();
             }
+            else {
+                _this._dialogService.showErrorDialog('Error', 'Multi-Factor Authentication could not be activated. Please try again.');
+            }
+
         }));
+    }
+
+    private async enableMFATotp() {
+        let _this = this;
+        await _this._authService.enableMFA();
+        _this._authService.setUserMFA('SOFTWARE_TOKEN_MFA');
+        _this.preferredMFA = 'SOFTWARE_TOKEN_MFA';
+        _this._dialogService.showSuccessDialog('Success', 'Multi-Factor Authentication successfully enabled on your account. You might have to logout and login again to complete the process.');
     }
 
     private async getMFAStatus() {
