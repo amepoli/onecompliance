@@ -294,6 +294,7 @@ export const locale = {
             rr_rett: 'Risk Resp. Rett.',
             sample_of_the_survey: 'Campione del Sondaggio',
             score: 'Punteggio',
+            score_short: 'Punt.',       
             scores_obtained: 'Punti Ottenuti',
             scores_type: 'Tipo Punteggio',
             select_popolation: 'Selezione Popolazione',

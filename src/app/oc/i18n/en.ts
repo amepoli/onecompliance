@@ -296,6 +296,7 @@ export const locale = {
             sample_description: 'Sample Description',
             sample_of_the_survey: 'Sample of the Survey',
             score: 'Score',
+            score_short: 'Score',      
             scores_obtained: 'scores_obtained',
             scores_type: 'Scores Type',
             select_popolation: 'Select Popolation',
