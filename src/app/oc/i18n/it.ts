@@ -305,7 +305,7 @@ export const locale = {
             state: 'Stato',
             status: 'Stato',
             situazione_post_presidi:'Situazione Post Presidi (Rischio Residuo)',
-            stop_replanning_when_contracts_closed: 'No ripetizione se contrratto chiuso',
+            stop_replanning_when_contracts_closed: 'No ripetizione se contratto chiuso',
             survey: 'Survey',
             survey_subject: 'Oggetto del Sondaggio',
             sync_folder_survey: 'Sincr. Cartella Sondaggio',
