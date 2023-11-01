@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MFADialogComponent } from 'app/oc/dialogs/mfa.dialog/mfa.dialog.component';
 import { AuthService, DialogService, ToastService } from 'app/oc/services';
@@ -11,28 +11,36 @@ import 'rxjs/add/operator/filter';
     templateUrl: './mfa.component.html',
     styleUrls: ['./mfa.component.scss']
 })
-export class MFAComponent implements OnInit, AfterViewInit {
+export class MFAComponent implements OnInit, AfterViewInit, OnDestroy {
 
     
-    preferredMFA: string = 'NOMFA';
+    preferredMFA: "SOFTWARE_TOKEN_MFA" | "NOMFA" | "" = '';
     subscriptions: Subscription[] = [];
 
     constructor(
         public mfaDialog: MatDialog,
         private _authService: AuthService,
         private _dialogService: DialogService,
-        private _toastService: ToastService
         ) {
     }
 
     ngOnInit() {
-
+        let _this = this;
+        _this.subscriptions.push(_this._authService.authStateChange$.subscribe(authState => {
+            console.log(authState);
+            if(authState && authState.user) {
+                _this.preferredMFA = authState.user.preferredMFA ?? "NOMFA";
+            }
+        }));
     }
     
     ngAfterViewInit() {
-        this.getMFAStatus();
     }
     
+    ngOnDestroy(): void {
+        this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+
     enableMFA(){
         // this.onClick.emit(true);
         this.showMFADialog();
@@ -79,11 +87,6 @@ export class MFAComponent implements OnInit, AfterViewInit {
         _this._authService.setUserMFA('SOFTWARE_TOKEN_MFA');
         _this.preferredMFA = 'SOFTWARE_TOKEN_MFA';
         _this._dialogService.showSuccessDialog('Success', 'Multi-Factor Authentication successfully enabled on your account. You might have to logout and login again to complete the process.');
-    }
-
-    private async getMFAStatus() {
-        const _this = this;
-        _this.preferredMFA = await _this._authService.getMFAStatus();
     }
 
 }
