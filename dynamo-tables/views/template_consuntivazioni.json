@@ -1,0 +1,163 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "template_consuntivazioni",
+    "origin": "entrasp.template_consuntivazioni",
+    "form_keys": [
+      {
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_template_consuntivazioni",
+            "label": "# template",
+            "size": 1
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ord.",
+            "translate": "RESOURCES.ordinamento",
+            "size": 1
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "size": 5
+        },
+        {
+            "format": {
+                "comboQuery": "SELECT id_tipo_segnalazione AS id, id_tipo_segnalazione||'-'||descrizione AS name  FROM entrasp.tipi_segnalazioni order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "readOnly": false,
+            "key": "id_tipo_segnalazione",
+            "label": "Tipo segnalazioni"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_template_cons",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "template_consuntivazioni",
+                "viewType": "form",
+                "query": "delete from entrasp.template_consuntivazioni tc where id_template_consuntivazioni=$id_template_consuntivazioni$",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "id_template_consuntivazioni",
+                        "destination": "id_template_consuntivazioni"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "text": "Sei sicuro di voler cancellare la fase?",
+                    "title": "Cancellazione fase"
+                },
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_template_consuntivazioni",
+            "label": "# template",
+            "width": "4%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ord.",
+            "translate": "RESOURCES.ordinamento",
+            "width": "4%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "width": "35%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_segnalazione",
+            "label": "id_tipo_segnalazione"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by ordinamento asc"
+    },
+    "hideActions": [
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "documentation"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "add"
+        }
+    ]
+}
