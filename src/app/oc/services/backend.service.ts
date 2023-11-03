@@ -321,6 +321,16 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
 
+  deleteUser(username: string) {
+    this.awsService.auth();
+    const putPostReq: PostRequest = {
+      body: null,
+      headers: {},
+      queryStringParameters: { delete_user: 1, username: username},
+    };
+    return from(this.awsService.api().del(this.apiName, this.usersApiName, putPostReq));
+  }
+
   enableCompanyToUser(username: string, companyPart: string, enableCompany: string, office: string, profile: string) {
     this.awsService.auth();
     const putPostReq: PostRequest = {

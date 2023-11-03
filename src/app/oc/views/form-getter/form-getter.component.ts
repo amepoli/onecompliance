@@ -2108,6 +2108,23 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to invite users");
             }
         }
+        else if (userAPIParams.actionType === 'delete_user') {
+            if (_this.authService.getAllowedToManage()) {
+                const username = formValues[userAPIParams.userParams.username];
+                let deleteUser: any = await _this.backendService.deleteUser(username).toPromise();
+                // _this._console.log(deleteUser);
+                if (deleteUser.result === 'KO') {
+                    _this._toastService.showErrorToast(deleteUser.reason.message);
+                } else {
+                    _this._toastService.showSuccessToast('New delete done successfully');
+                    this.refreshView();
+                }
+
+            } else {
+                _this._console.error("User isn't allowed to invite!");
+                _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to delete users");
+            }
+        }
         else if (userAPIParams.actionType === 'enable_company_to_user') {
             if (_this.authService.getAllowedToManage()) {
                 const username = formValues['dynamo_user'];
