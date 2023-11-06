@@ -279,12 +279,48 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.usersApiName, getReq));
   }
 
+  
+  enableMFA(): Observable<any> {
+    this.awsService.auth();
+    const getReq: GetRequest = {
+      queryStringParameters: { mfa_enable: 1 }
+    }
+    return from(this.awsService.api().get(this.apiName, this.usersApiName, getReq));
+  }
+
   disableMFA(): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
       queryStringParameters: { mfa_disable: 1 }
     }
     return from(this.awsService.api().get(this.apiName, this.usersApiName, getReq));
+  }
+
+  setupTotp(accessToken: string): Observable<any> {
+    this.awsService.auth();
+    const putPostReq: PostRequest = {
+
+      headers: {},
+      queryStringParameters: { setup_totp: 1 },
+      body: {
+        accessToken
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
+  }
+
+  verifyTotp(accessToken: string, totp: string): Observable<any> {
+    this.awsService.auth();
+    const putPostReq: PostRequest = {
+
+      headers: {},
+      queryStringParameters: { verify_totp: 1 },
+      body: {
+        totp,
+        accessToken
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
 
   refreshToken(secretHash, refreshToken) {

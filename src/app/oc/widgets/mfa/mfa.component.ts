@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MFADialogComponent } from 'app/oc/dialogs/mfa.dialog/mfa.dialog.component';
 import { AuthService, DialogService, ToastService } from 'app/oc/services';
@@ -11,46 +11,56 @@ import 'rxjs/add/operator/filter';
     templateUrl: './mfa.component.html',
     styleUrls: ['./mfa.component.scss']
 })
-export class MFAComponent implements OnInit, AfterViewInit {
+export class MFAComponent implements OnInit, AfterViewInit, OnDestroy {
 
     
-    preferredMFA: string = '';
+    preferredMFA: "SOFTWARE_TOKEN_MFA" | "NOMFA" | "" = '';
     subscriptions: Subscription[] = [];
 
     constructor(
         public mfaDialog: MatDialog,
         private _authService: AuthService,
         private _dialogService: DialogService,
-        private _toastService: ToastService
         ) {
     }
 
     ngOnInit() {
-
+        let _this = this;
+        _this.subscriptions.push(_this._authService.authStateChange$.subscribe(authState => {
+            console.log(authState);
+            if(authState && authState.user) {
+                _this.preferredMFA = authState.user.preferredMFA ?? "NOMFA";
+            }
+        }));
     }
     
     ngAfterViewInit() {
-        this.getMFAStatus();
     }
     
+    ngOnDestroy(): void {
+        this.subscriptions.forEach(subscription => subscription.unsubscribe());
+    }
+
     enableMFA(){
         // this.onClick.emit(true);
         this.showMFADialog();
     }
 
     async disableMFA() {
-        this._authService.disableTOTP().then(result => {
+        let _this = this;
+        _this._authService.disableTOTP().then(result => {
             if(result) {
-                this._dialogService.showSuccessDialog("Success", "Multi-factor Authentication has been disabled on your account. You might have to logout and login again to complete the process.");
-                this.getMFAStatus();
+                _this._authService.setUserMFA('NOMFA');
+                _this.preferredMFA = 'NOMFA';
+                _this._dialogService.showSuccessDialog("Success", "Multi-factor Authentication has been disabled on your account. You might have to logout and login again to complete the process.");
             }
             else {
-                this._dialogService.showErrorDialog("Error", "Error occured while setting the MFA!");
+                _this._dialogService.showErrorDialog("Error", "Error occured while setting the MFA!");
             }
         });
     }
 
-    showMFADialog() {
+    async showMFADialog() {
         const _this = this;
 
         // Pop-up example
@@ -61,15 +71,22 @@ export class MFAComponent implements OnInit, AfterViewInit {
         });
 
         _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
-            _this.getMFAStatus();
-            if (result) {
+            if(result) {
+                _this.enableMFATotp();
             }
+            else {
+                _this._dialogService.showErrorDialog('Error', 'Multi-Factor Authentication could not be activated. Please try again.');
+            }
+
         }));
     }
 
-    private async getMFAStatus() {
-        const _this = this;
-        _this.preferredMFA = await _this._authService.getMFAStatus();
+    private async enableMFATotp() {
+        let _this = this;
+        await _this._authService.enableMFA();
+        _this._authService.setUserMFA('SOFTWARE_TOKEN_MFA');
+        _this.preferredMFA = 'SOFTWARE_TOKEN_MFA';
+        _this._dialogService.showSuccessDialog('Success', 'Multi-Factor Authentication successfully enabled on your account. You might have to logout and login again to complete the process.');
     }
 
 }

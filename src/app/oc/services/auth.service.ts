@@ -305,14 +305,18 @@ export class AuthService {
     this.errorMessage = err.message || err;
   }
 
-  private async retrieveUserInfo() {
+  public setUserMFA(mfa) {
+    this.awsService.auth().setUserMFA(mfa);
+  }
+
+  public async retrieveUserInfo(forced: boolean = false) {
     const _this = this;
     //  _this.interval = setInterval(
     //     () => _this.awsService.auth().refreshToken(),
     //     1000
     //   );
 
-    await _this.awsService.auth().refreshToken();
+    await _this.awsService.auth().refreshToken(forced);
     _this.backendService.getUserData().subscribe((ud) => {
       if (ud != null && ud.result === "OK") {
         if (ud.userdata.language == null) {
@@ -617,27 +621,32 @@ this.amplifyService.auth().currentCredentials()
     return user?.preferredMFA ?? "";
   }
 
+  public async enableMFA() {
+    return await this.backendService.enableMFA().toPromise();
+  }
+
   public async generateTOTPToken() {
     let _this = this;
-    _this.code = await _this.awsService.auth().setupTOTP();
+    const session = _this.awsService.auth().currentSessionInfo();
+    let result = await _this.backendService.setupTotp(session.AccessToken).toPromise();
+    if(result.result === 'OK') {
+      _this.code = result.SecretCode; 
+    }
+    else {
+      _this.code = null;
+    }
     return _this.code;
   }
 
-  public async VerifyTOTP(challengeAnswer) {
+  public async VerifyTotp(challengeAnswer) {
     let _this = this;
-    let user = _this.awsService.auth().currentUserInfo();
-    let result = await _this.awsService
-      .auth()
-      .VerifyTOTP(challengeAnswer);
-    if (result.Status === "SUCCESS") {
-      _this.awsService.auth().setPreferredMFA(true);
-    }
-    return result.Status;
+    const session = _this.awsService.auth().currentSessionInfo();
+    let result: any = await _this.backendService.verifyTotp( session.AccessToken, challengeAnswer).toPromise();
+    return result;
   }
 
   public async disableTOTP() {
     let _this = this;
-    // let user = await _this.amplifyService.auth().currentAuthenticatedUser();
     try {
       const response = await _this.backendService.disableMFA().toPromise();
       if (response && response.result == 'OK') {

@@ -75,7 +75,7 @@ class Auth {
     public errorInfo$: BehaviorSubject<any> = null;
 
     // Used to get user's mfa status
-    public mfa: string;
+    public mfa: string = 'NOMFA';
 
     public setAuthState(state: OCAuthState) {
         this.authStateChange$.next(state);
@@ -87,7 +87,10 @@ class Auth {
             let authState: OCAuthState = {
                 session: JSON.parse(localStorage.getItem("session")),
                 state: "signedIn",
-                user: JSON.parse(localStorage.getItem("user")),
+                user: {
+                    preferredMFA: 'NOMFA',
+                    ...(JSON.parse(localStorage.getItem("user"))),
+                }
             };
             this.authStateChange$.next(authState);
         }
@@ -131,7 +134,7 @@ class Auth {
                     region: DEFAULT_REGION,
                 });
 
-                let result = client.associateSoftwareToken(params);
+                let result = await client.associateSoftwareToken(params);
                 if (result != null) {
                     secretcode = result["SecretCode"];
                 }
@@ -144,7 +147,7 @@ class Auth {
 
     public async VerifyTOTP(code: any): Promise<any> {
         const _this = this;
-
+        
         try {
             let session = this.currentSessionInfo();
             if (session) {
@@ -156,7 +159,7 @@ class Auth {
                     region: DEFAULT_REGION,
                 });
 
-                let result = client.verifySoftwareToken(params);
+                let result = await client.verifySoftwareToken(params);
                 return result;
             }
         } catch (error) {
@@ -181,59 +184,6 @@ class Auth {
             _this.errorInfo$.next(e);
             console.log(e);
             return null;
-        }
-    }
-
-    public async setPreferredMFA(isEnabled: boolean) {
-        const _this = this;
-        let session = this.currentSessionInfo();
-        if (session) {
-            // var role = await this.getRoleArn();
-
-            var params = {
-                AccessToken: session.AccessToken, //AccessToken,
-                SMSMfaSettings: {
-                    Enabled: false,
-                    PreferredMfa: false,
-                },
-                SoftwareTokenMfaSettings: {
-                    Enabled: isEnabled,
-                    PreferredMfa: isEnabled,
-                },
-                // Username: session.username, // required
-                // UserPoolId: environment.appData.awsSdk.UserPoolId,
-            };
-
-            // const client = createClientForDefaultRegion(CognitoIdentityProviderClient);
-
-            // const client = new CognitoIdentityProviderClient({
-            //   region: DEFAULT_REGION,
-            // });
-
-            const client = new CognitoIdentityProvider({
-                region: DEFAULT_REGION,
-                credentials: fromWebToken({
-                    // Required. ARN of the role that the caller is assuming.
-                    // roleArn: "arn:aws:iam::1234567890:role/RoleA",
-                    roleArn:
-                        "arn:aws:iam::360720986746:role/fuseangular-20181004222815-authRole",
-                    // roleArn: "arn:aws:iam::360720986746:role/service-role/users_role",
-                    // Required. The OAuth 2.0 access token or OpenID Connect ID token that is provided by the
-                    // identity provider.
-                    webIdentityToken: session.IdToken,
-                }),
-            });
-
-            const command = new SetUserMFAPreferenceCommand(params);
-
-            try {
-                const response = await client.send(command); //setUserMFAPreference(params); // .
-                return true;
-            } catch (e) {
-                _this.errorInfo$.next(e);
-                console.log(e);
-                return false;
-            }
         }
     }
 
@@ -450,42 +400,7 @@ class Auth {
             _this.errorInfo$.next(e);
             // return e;
         }
-
         return false;
-        
-
-
-        // const accessTokenData = parseJwt(
-        //     result.AuthenticationResult.AccessToken
-        // );
-        // const idTokenData = parseJwt(
-        //     result.AuthenticationResult.IdToken
-        // );
-        // const user = {
-        //     attributes: {
-        //         email: idTokenData.email,
-        //         email_verified: idTokenData.email_verified,
-        //         sub: idTokenData.sub,
-        //     },
-        //     id: idTokenData.sub,
-        //     username: accessTokenData.username,
-        //     preferredMFA: _this.mfa,
-        // };
-
-        // _this.setAuthState({
-        //     state: "signedIn",
-        //     session: {
-        //         ...result.AuthenticationResult,
-        //         ...accessTokenData,
-        //     },
-        //     user: user,
-        // });
-
-        // localStorage.setItem(
-        //     "session",
-        //     JSON.stringify(_this.authStateChange$.value.session)
-        // );
-        // localStorage.setItem("user", JSON.stringify(user));
     }
 
     public async confirmSignIn(
@@ -589,7 +504,7 @@ class Auth {
         this.authStateChange$.next(authStateChange);
     }
 
-    public async refreshToken() {
+    public async refreshToken(forced: boolean = false) {
         const _this = this;
         if (localStorage.getItem("session")) {
             const session = JSON.parse(localStorage.getItem("session"));
@@ -598,7 +513,7 @@ class Auth {
             if (session["exp"] != null) {
                 expiry = session["exp"];
             }
-            if (currentDateTime > expiry) {
+            if (currentDateTime > expiry || forced) {
                 const secretHash = generateSecretHash(session["username"]);
                 // const myPutPostInit = { // OPTIONAL
                 //   body: {
@@ -678,9 +593,12 @@ class Auth {
                                         localStorage.getItem("session")
                                     ),
                                     state: "signedIn",
-                                    user: JSON.parse(
+                                    user: {
+                                        preferredMFA: 'NOMFA',
+                                        ...(JSON.parse(
                                         localStorage.getItem("user")
-                                    ),
+                                        )),
+                                    }
                                 };
                                 _this.authStateChange$.next(authState);
                             }
