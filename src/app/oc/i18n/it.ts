@@ -295,6 +295,7 @@ export const locale = {
             sample_of_the_survey: 'Campione del Sondaggio',
             score: 'Punteggio',
             score_short: 'Punt.',       
+            short_description:'Descrizione Breve',
             scores_obtained: 'Punti Ottenuti',
             scores_type: 'Tipo Punteggio',
             select_popolation: 'Selezione Popolazione',
