@@ -29,7 +29,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp inner join entrasp.anagrafiche_id an on cmp.codice_part=an.codice_part and cmp.id_responsabile=an.id_anagrafica where cmp.codice_azienda=$codice_azienda$ and id_tipo_segnalazione=700 and (an.dynamo_user='€global_username€' or entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, '€global_codice_part€')::numeric in (select id_anagrafica from entrasp.gruppi_lavoro_membri where codice_part='€global_codice_part€' and id_gruppo_lavoro=-1)) "
+      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_WHISTLE', stato) as stato from entrasp.compiti cmp inner join entrasp.anagrafiche_id an on cmp.codice_part=an.codice_part and cmp.id_responsabile=an.id_anagrafica where cmp.codice_azienda=$codice_azienda$ and id_tipo_segnalazione=700 and (an.dynamo_user='€global_username€' or entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, '€global_codice_part€')::numeric in (select id_anagrafica from entrasp.gruppi_lavoro_membri where codice_part='€global_codice_part€' and id_gruppo_lavoro=-1)) "
     },
     {
       "operation": "update",
@@ -79,7 +79,7 @@
     {
       "autoGenerate": false,
       "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_WHISTLE';",
         "options": [],
         "viewType": "combobox",
         "dataType": "text",
@@ -197,7 +197,7 @@
       "label": "Centro Gestionale Segnalante",
       "newLine": false,
       "readOnly": false,
-      "size": 2.5
+      "size": 2
     },
     {
       "autoGenerate": false,
@@ -211,10 +211,68 @@
       "isPrimary": false,
       "key": "id_centro_gest_monitor",
       "label": "Ufficio responsabile",
-      "newLine": true,
+      "newLine": false,
       "readOnly": true,
-      "size": 2.5
+      "size": 2
     },
+    {
+      "autoGenerate": false,
+      "format": {
+        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51459 order by id_argomento;",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_priorita",
+      "size": 2.5,
+      "label": "Fondatezza",
+      "readOnly": false,
+      "newLine": false,
+      "outputEvent": {
+        "eventName": "codice_colore_priorita",
+        "eventTrigger": "load"
+      },
+      "inputEvents": [
+        {
+          "eventName": "codice_colore_priorita",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select case when id_argomento_priorita in(51461,51462,51463,51464) then 'Green' when id_argomento_priorita=51460 then 'fireBrick' end as id_argomento_priorita_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+          "eventName": "codice_colore_testo_priorita",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "font_color",
+          "queryFunct": "select case when id_argomento_priorita in(51461,51462,51463,51464) then 'PaleGreen' when id_argomento_priorita=51460 then 'DarkRed' end as id_argomento_priorita_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        }
+      ]
+    },
+    {
+    "autoGenerate": false,
+    "format": {
+      "dataType": "text",
+      "viewType": "input",
+      "validations": [
+        {
+          "message": "Email necessaria",
+          "name": "required",
+          "validator": "Validators.required"
+        }
+      ]
+    },
+    "isHidden": false,
+    "isPrimary": false,
+    "key": "email_to",
+    "label": "E-mail di contatto",
+    "newLine": true,
+    "readOnly": false,
+    "size": 3.5
+  },
     {
       "autoGenerate": true,
       "format": {
@@ -355,8 +413,8 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
+      "label": "Descrizione",
+      "translate": "RESOURCES.description",
       "newLine": true,
       "readOnly": false,
       "size": 10
