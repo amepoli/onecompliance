@@ -68,6 +68,25 @@
             "queryString": "select entrasp.campione_insert($codice_azienda$, $id_sondaggio$, $object_key$, $id_anagrafica$) as id_somministrazione;"
         }
     ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menumdt",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "cancella_campione",
+                    "icon": "delete",
+                    "label": "Elimina campione",
+                    "query": "select entrasp.sondaggio_somministrato_delete(s.codiceazienda::varchar, s.idsomministrazione::integer) from (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS idsomministrazione FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s;",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Eliminare i campioni selezionati?"
+                  }
+            ]
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -258,50 +277,7 @@
         }
     ],
     "table_keys": [
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "4%",
-            "queryFunct": "select true",
-            "key": "delete_somministrazioni",
-            "label": "",
-            "style": [
-                {
-                    "button_icon": "delete",
-                    "value": "*"
-                }
-            ],
-            "isButton": true,
-            "buttonAction": {
-                "target": "seleziona_campione",
-                "viewType": "form",
-                "query": "select entrasp.sondaggio_somministrato_delete('£codice_azienda£', £id_somministrazione£);",
-                "action": "query",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_sondaggio",
-                        "destination": "id_sondaggio"
-                    },
-                    {
-                        "source": "id_somministrazione",
-                        "destination": "id_somministrazione"
-                    }
-                ],
-                "confirmAction": true,
-                "confirmMessage": {
-                    "text": "Sei sicuro di voler cancellare la verifica sull'elemento selezionato?",
-                    "title": "Cancellazione verifica"
-                },
-                "onSuccessAction": "reload"
-            }
-        },
+       
         {
             "format": {
                 "dataType": "number"
