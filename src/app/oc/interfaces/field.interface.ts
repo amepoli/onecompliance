@@ -90,6 +90,7 @@ export interface FieldConfig {
   conditionalQuery?: string;
   subform?: FieldConfig[];
   fullValueSet?: any;
+  primaryKeys?: any;
   inputEvents?: FieldInputEvent[];
   lazyLoading?: boolean;
   widgetType?: FormWidgetType;

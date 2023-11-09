@@ -719,6 +719,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 widgetType: field.format.widgetType,
                 index: index,
                 fullValueSet: values[index],
+                primaryKeys: _this.currentKeys,
                 value: (element != null) ? ((element.options != null) ? element.value : element) : null,
                 inputType: (field.format.dataType != null) ? field.format.dataType : 'text',
                 prefix: field.format.prefix,
