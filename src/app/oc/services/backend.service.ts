@@ -376,6 +376,16 @@ export class BackendService {
     };
     return from(this.awsService.api().post(this.apiName, this.insert_user_to_dynamoApiName, putPostReq));
   }
+  
+  dissociatesCompanyFromUser(username: string, dissociatesCompany: string) {
+    this.awsService.auth();
+    const putPostReq: PostRequest = {
+      body: null,
+      headers: {},
+      queryStringParameters: { request_type: 'dissociatesCompanyFromUser', username: username, dissociatesCompany: dissociatesCompany },
+    };
+    return from(this.awsService.api().post(this.apiName, this.insert_user_to_dynamoApiName, putPostReq));
+  }
 
   getMenu(keys: any): Observable<any> {
     this.awsService.auth();

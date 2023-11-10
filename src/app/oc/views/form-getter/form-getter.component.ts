@@ -2117,7 +2117,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 if (deleteUser.result === 'KO') {
                     _this._toastService.showErrorToast(deleteUser.reason.message);
                 } else {
-                    _this._toastService.showSuccessToast('New delete done successfully');
+                    _this._toastService.showSuccessToast('Successfully delete');
                     this.refreshView();
                 }
 
@@ -2143,6 +2143,22 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
             } else {
                 _this._console.error("User isn't allowed to invite!");
+                _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to invite users");
+            }
+        } else if (userAPIParams.actionType === 'dissociates_company') {
+            if (_this.authService.getAllowedToManage()) {
+                const username = formValues['username'];
+                const dissociatesCompany = formValues['company_to_dissociate'] ? formValues['company_to_dissociate'].id : null;
+                let dissociatesCompanyResult: any = await _this.backendService.dissociatesCompanyFromUser(username, dissociatesCompany).toPromise();
+                if (dissociatesCompanyResult.result === 'KO') {
+                    _this._toastService.showErrorToast(dissociatesCompanyResult.reason.message);
+                } else {
+                    _this._toastService.showSuccessToast('Company successfully dissociates');
+                    this.refreshView();
+                }
+
+            } else {
+                _this._console.error("User isn't allowed to dissociates!");
                 _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to invite users");
             }
         }
