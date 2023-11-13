@@ -20,13 +20,12 @@
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
 	<parameter name="mainQuery" class="java.lang.String">
-		<defaultValueExpression><![CDATA["select  snd.*, cr.codice_azienda ,cr.id_risultato, cr.id_giudizio, cr.risultati_emersi ,cr.proposte_formulate ,cr.decisioni_assunte, cr.id_somministrazione ,cr.follow_up ,cr.id_giudizio_follow_up ,cr.id_giudizio_livello_1 ,cr.id_giudizio_livello_2, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as incaricato_compilazione, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr,funct.giudizio as giudizio_trans,entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', ss.stato) as stato_transcodificato, funct.percentuale ,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up ,ss.id_somministrazione as ss_id_somm from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio and ss.id_somministrazione=cr.id_somministrazione left join entrasp.grc_punteggi_giudizi_finali(ss.codice_azienda, ss.id_somministrazione) funct on snd.id_sondaggio=funct.idsondaggio and snd.codice_azienda=funct.codiceazienda where snd.codice_azienda = 'FININTSGR' and snd.id_sondaggio = 4794 and ss.id_somministrazione=4634"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["select snd.codice_azienda, snd.id_sondaggio, snd.titolo, snd.descrizione, snd.data_rilevazione_Da, snd.data_rilevazione_a, snd.stato, snd.data_prevista, snd.data_esecuzione, snd.id_centro_gest, snd.id_modello_test, snd.id_modello_test_vr, snd.codice_part, cr.codice_azienda ,cr.id_risultato, cr.id_giudizio, cr.risultati_emersi, cr.proposte_formulate ,cr.decisioni_assunte, cr.follow_up, cr.id_giudizio_follow_up ,cr.id_giudizio_livello_1 ,cr.id_giudizio_livello_2, entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica_assegnataria) as incaricato_compilazione, mt.titolo as mt_titolo,entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as cg_descr, ss.giudizio as giudizio_trans, entrasp.transcodifiche_transcodifica( 'STATO_SONDAGGI', ss.stato) as stato_transcodificato, ss.object_description, ss.object_key, ss.ris_percentuale as percentuale, entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio) as giudizio_complessivo,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_1) as giudizio_1,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_livello_2) as giudizio_2,entrasp.cpl_giudizi_verifiche_descrizione(snd.codice_azienda, cr.id_giudizio_follow_up) as giudizio_follow_up, ss.id_somministrazione from entrasp.sondaggi_somministrati ss join entrasp.sondaggi snd on ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=snd.codice_azienda left join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda  and snd.id_modello_test =mt.id_modello_test left join entrasp.cpl_risultati cr on ss.codice_azienda = cr.codice_azienda  and ss.id_sondaggio =cr.id_sondaggio and ss.id_somministrazione=cr.id_somministrazione where snd.codice_azienda = 'FININTSGR' and snd.id_sondaggio = 4794 and ss.id_somministrazione=4634"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="codice_azienda" class="java.lang.String">
 		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="id_sondaggio" class="java.math.BigDecimal"/>
-	<parameter name="user_id_anagrafica" class="java.math.BigDecimal"/>
 	<queryString>
 		<![CDATA[$P!{mainQuery}]]>
 	</queryString>
@@ -61,18 +60,13 @@
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
 	<field name="object_description" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="object_key"/>
-		<property name="com.jaspersoft.studio.field.label" value="object_key"/>
+		<property name="com.jaspersoft.studio.field.name" value="object_description"/>
+		<property name="com.jaspersoft.studio.field.label" value="object_description"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
 	<field name="stato" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="stato"/>
 		<property name="com.jaspersoft.studio.field.label" value="stato"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="data_prevista" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="data_prevista"/>
-		<property name="com.jaspersoft.studio.field.label" value="data_prevista"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
 	<field name="data_esecuzione" class="java.sql.Date">
@@ -85,44 +79,14 @@
 		<property name="com.jaspersoft.studio.field.label" value="codice_part"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
-	<field name="id_gruppo_lavoro" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_gruppo_lavoro"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_gruppo_lavoro"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
 	<field name="id_centro_gest" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_centro_gest"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_centro_gest"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
-	<field name="flag_utenti" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="flag_utenti"/>
-		<property name="com.jaspersoft.studio.field.label" value="flag_utenti"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="id_anagrafica" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_anagrafica"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_anagrafica"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="data_comp" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="data_comp"/>
-		<property name="com.jaspersoft.studio.field.label" value="data_comp"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
 	<field name="id_modello_test_vr" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="id_modello_test_vr"/>
 		<property name="com.jaspersoft.studio.field.label" value="id_modello_test_vr"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="data_riferimento_da" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="data_riferimento_da"/>
-		<property name="com.jaspersoft.studio.field.label" value="data_riferimento_da"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="data_riferimento_a" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="data_riferimento_a"/>
-		<property name="com.jaspersoft.studio.field.label" value="data_riferimento_a"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
 	</field>
 	<field name="id_somministrazione" class="java.math.BigDecimal">
@@ -134,206 +98,6 @@
 		<property name="com.jaspersoft.studio.field.name" value="titolo"/>
 		<property name="com.jaspersoft.studio.field.label" value="titolo"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="id_serie" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_serie"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_serie"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="selezione_campione" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="selezione_campione"/>
-		<property name="com.jaspersoft.studio.field.label" value="selezione_campione"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="documentazione_analizzata" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="documentazione_analizzata"/>
-		<property name="com.jaspersoft.studio.field.label" value="documentazione_analizzata"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="metodologia_presentazione_risultati" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="metodologia_presentazione_risultati"/>
-		<property name="com.jaspersoft.studio.field.label" value="metodologia_presentazione_risultati"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="ts_last_state" class="java.sql.Timestamp">
-		<property name="com.jaspersoft.studio.field.name" value="ts_last_state"/>
-		<property name="com.jaspersoft.studio.field.label" value="ts_last_state"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="flag_annullamento_manuale" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="flag_annullamento_manuale"/>
-		<property name="com.jaspersoft.studio.field.label" value="flag_annullamento_manuale"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="pct_da" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="pct_da"/>
-		<property name="com.jaspersoft.studio.field.label" value="pct_da"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="pct_da_manuale" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="pct_da_manuale"/>
-		<property name="com.jaspersoft.studio.field.label" value="pct_da_manuale"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="id_sondaggio_succ" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio_succ"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio_succ"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="azione_richiesta" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="azione_richiesta"/>
-		<property name="com.jaspersoft.studio.field.label" value="azione_richiesta"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="link" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="link"/>
-		<property name="com.jaspersoft.studio.field.label" value="link"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="sondaggio_completato" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="sondaggio_completato"/>
-		<property name="com.jaspersoft.studio.field.label" value="sondaggio_completato"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="budgeted_time" class="java.lang.Integer">
-		<property name="com.jaspersoft.studio.field.name" value="budgeted_time"/>
-		<property name="com.jaspersoft.studio.field.label" value="budgeted_time"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="id_anagrafica_assegnataria" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_anagrafica_assegnataria"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_anagrafica_assegnataria"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="codice_compito" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="codice_compito"/>
-		<property name="com.jaspersoft.studio.field.label" value="codice_compito"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="id_sondaggio_parent" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio_parent"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio_parent"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="ris_percentuale" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ris_percentuale"/>
-		<property name="com.jaspersoft.studio.field.label" value="ris_percentuale"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="giudizio" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="giudizio"/>
-		<property name="com.jaspersoft.studio.field.label" value="giudizio"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="giudizio_manuale" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="giudizio_manuale"/>
-		<property name="com.jaspersoft.studio.field.label" value="giudizio_manuale"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="email_to" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="email_to"/>
-		<property name="com.jaspersoft.studio.field.label" value="email_to"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="email_text" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="email_text"/>
-		<property name="com.jaspersoft.studio.field.label" value="email_text"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="email_subject" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="email_subject"/>
-		<property name="com.jaspersoft.studio.field.label" value="email_subject"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="email_cc" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="email_cc"/>
-		<property name="com.jaspersoft.studio.field.label" value="email_cc"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="email_ccn" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="email_ccn"/>
-		<property name="com.jaspersoft.studio.field.label" value="email_ccn"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="id_centro_gest_verificato" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_centro_gest_verificato"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_centro_gest_verificato"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="id_contratto" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_contratto"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_contratto"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="data_inserimento" class="java.sql.Date">
-		<property name="com.jaspersoft.studio.field.name" value="data_inserimento"/>
-		<property name="com.jaspersoft.studio.field.label" value="data_inserimento"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="ris_percentuale_worst" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ris_percentuale_worst"/>
-		<property name="com.jaspersoft.studio.field.label" value="ris_percentuale_worst"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="giudizio_worst" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="giudizio_worst"/>
-		<property name="com.jaspersoft.studio.field.label" value="giudizio_worst"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="pct_da_worst" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="pct_da_worst"/>
-		<property name="com.jaspersoft.studio.field.label" value="pct_da_worst"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="titolo_cartella" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="titolo_cartella"/>
-		<property name="com.jaspersoft.studio.field.label" value="titolo_cartella"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
-	</field>
-	<field name="id_risultato" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_risultato"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_risultato"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
-	</field>
-	<field name="id_giudizio" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_giudizio"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_giudizio"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
-	</field>
-	<field name="risultati_emersi" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="risultati_emersi"/>
-		<property name="com.jaspersoft.studio.field.label" value="risultati_emersi"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
-	</field>
-	<field name="proposte_formulate" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="proposte_formulate"/>
-		<property name="com.jaspersoft.studio.field.label" value="proposte_formulate"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
-	</field>
-	<field name="decisioni_assunte" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="decisioni_assunte"/>
-		<property name="com.jaspersoft.studio.field.label" value="decisioni_assunte"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
-	</field>
-	<field name="follow_up" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="follow_up"/>
-		<property name="com.jaspersoft.studio.field.label" value="follow_up"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
-	</field>
-	<field name="id_giudizio_follow_up" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_giudizio_follow_up"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_giudizio_follow_up"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
-	</field>
-	<field name="id_giudizio_livello_1" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_giudizio_livello_1"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_giudizio_livello_1"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
-	</field>
-	<field name="id_giudizio_livello_2" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_giudizio_livello_2"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_giudizio_livello_2"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="cpl_risultati"/>
 	</field>
 	<field name="incaricato_compilazione" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="incaricato_compilazione"/>
@@ -359,22 +123,6 @@
 	<field name="percentuale" class="java.math.BigDecimal">
 		<property name="com.jaspersoft.studio.field.name" value="percentuale"/>
 		<property name="com.jaspersoft.studio.field.label" value="percentuale"/>
-	</field>
-	<field name="giudizio_complessivo" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="giudizio_complessivo"/>
-		<property name="com.jaspersoft.studio.field.label" value="giudizio_complessivo"/>
-	</field>
-	<field name="giudizio_1" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="giudizio_1"/>
-		<property name="com.jaspersoft.studio.field.label" value="giudizio_1"/>
-	</field>
-	<field name="giudizio_2" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="giudizio_2"/>
-		<property name="com.jaspersoft.studio.field.label" value="giudizio_2"/>
-	</field>
-	<field name="giudizio_follow_up" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="giudizio_follow_up"/>
-		<property name="com.jaspersoft.studio.field.label" value="giudizio_follow_up"/>
 	</field>
 	<background>
 		<band splitType="Stretch"/>
