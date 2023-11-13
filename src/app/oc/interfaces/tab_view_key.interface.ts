@@ -3,6 +3,7 @@ import { TabConditionType, TabEventActionType, TabViewType } from "../types";
 export interface TabViewKey { // as per API specification
     label: string;
     entryKey: string;
+    translate: string;
     type: TabViewType;
     keys: [
         {

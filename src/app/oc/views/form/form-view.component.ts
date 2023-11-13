@@ -185,6 +185,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             const tab: TabType = {
                 table: tabKey.entryKey,
                 label: tabKey.label,
+                translate: tabKey.translate,
                 type: (tabKey.type != null && tabKey.type === 'tableForm') ? 'tableForm' : 'table',  // if not defined is a table 
                 keys: {},
                 inputEvents: tabKey.inputEvents,

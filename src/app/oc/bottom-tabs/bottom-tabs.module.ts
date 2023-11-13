@@ -4,6 +4,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { BottomTabsComponent } from './bottom-tabs.component';
 import { TableViewModule } from '../views/table/table-view.module';
 import { FormTableViewModule } from '../views/form-table/form-table-view.module';
+import { OneCompliancePipesModule } from '../pipes/pipes.module';
+
 
 @NgModule({
   declarations: [BottomTabsComponent],
@@ -11,7 +13,8 @@ import { FormTableViewModule } from '../views/form-table/form-table-view.module'
     CommonModule,
     MatTabsModule,
     TableViewModule,
-    FormTableViewModule
+    FormTableViewModule,
+    OneCompliancePipesModule
   ],
   exports: [BottomTabsComponent]
 })
