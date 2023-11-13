@@ -6,7 +6,7 @@
     {
       "operation": "selectForm",
       "type": "main",
-      "queryString": "SELECT ai.id_anagrafica,ai.codice_part,ai.id_centro_gest,ai.dynamo_user as username,'€global_codice_azienda€' as azienda_to_enable,true as enable_company FROM entrasp.anagrafiche_id ai INNER JOIN entrasp.anagrafiche_vr av USING (codice_part,id_anagrafica) WHERE codice_part=$codice_part$ AND av.prog_vr=entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) AND dynamo_user='$username$';"
+      "queryString": "SELECT ai.id_anagrafica,ai.codice_part,ai.id_centro_gest,$username$ as username, true as enable_company FROM entrasp.anagrafiche_id ai INNER JOIN entrasp.anagrafiche_vr av USING (codice_part,id_anagrafica) WHERE codice_part=$codice_part$ AND av.prog_vr=entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) AND dynamo_user=$username$;"
     }
   ],
   "form_keys": [
@@ -57,7 +57,7 @@
       },
       "isHidden": true,
       "isPrimary": true,
-      "key": "dynamo_user",
+      "key": "username",
       "label": "Username",
       "readOnly": false,
       "newLine": true
@@ -68,14 +68,7 @@
         "comboQuery": "SELECT name as id, description as name FROM entrasp.profiles  WHERE aziende_list && ARRAY[€global_user_companies€]::character varying[] OR aziende_list IS NULL ORDER BY name;",
         "viewType": "combobox",
         "options": [],
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Inserire un profilo!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -91,14 +84,7 @@
         "comboQuery": "SELECT codice_azienda as name, codice_azienda as id FROM entrasp.aziende WHERE codice_azienda in (€global_user_companies€)",
         "viewType": "combobox",
         "options": [],
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Inserire un'azienda!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
+        "dataType": "text"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -111,13 +97,28 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT DISTINCT us.username as id, us.username as name FROM entrasp.users us INNER JOIN entrasp.anagrafiche_id an ON us.username=an.dynamo_user INNER JOIN entrasp.aziende az ON an.codice_part=az.codice_part WHERE az.codice_azienda IN (€global_user_companies€)",
+        "viewType": "combobox",
+        "options": [],
+        "dataType": "text"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "associa_user",
+      "label": "Utente dal quale copiare le autorizzazioni",
+      "readOnly": false,
+      "newLine": true,
+      "size": 10
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "viewType": "button"
       },
       "isHidden": false,
       "isPrimary": false,
       "key": "enable_company",
-      "buttonIcon": "add",
-      "label": "Abilita azienda",
+      "label": "Abilita",
       "newLine": false,
       "outputEvent": {
         "eventName": "enable_company",

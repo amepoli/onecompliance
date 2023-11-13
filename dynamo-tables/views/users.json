@@ -95,6 +95,11 @@
             "icon": "delete",
             "label": "Cancellazione utente",
             "outputEventName": "delete_user"
+          },
+          {
+            "icon": "forward",
+            "label": "Aggiorna invito utente",
+            "outputEventName": "invite_user_again"
           }
         ]
       },
@@ -128,13 +133,35 @@
         },
         {
           "eventName": "delete_user",
+          "condition": "none",
+          "values": [],
+          "actionType": "show_message",
+          "message": {
+            "messageText": "Si intende procedere alla cancellazione dell'utente?",
+            "actionOnYes": {
+              "actionType": "user_api",
+              "userAPIParams": {
+                "actionType": "delete_user",
+                "userParams": {
+                  "username": "username"
+                }
+              }
+            },
+            "actionOnNo": {
+              "actionType": "query",
+              "queryFunct": "select 1"
+            }
+          }
+        },
+        {
+          "eventName": "invite_user_again",
           "actionType": "user_api",
           "condition": "none",
           "values": [],
           "userAPIParams": {
-            "actionType": "delete_user",
+            "actionType": "invite_user_again",
             "userParams": {
-              "username": "username"
+              "email": "email"
             }
           }
         }

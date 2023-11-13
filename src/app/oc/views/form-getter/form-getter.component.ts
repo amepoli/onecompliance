@@ -2128,12 +2128,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
         else if (userAPIParams.actionType === 'enable_company_to_user') {
             if (_this.authService.getAllowedToManage()) {
-                const username = formValues['dynamo_user'];
+                const username = formValues['username'];
                 const companyPart = formValues['codice_part'];
                 const profile = formValues['profile'] ? formValues['profile'].id : null;
                 const enableCompany = formValues['azienda_to_enable'] ? formValues['azienda_to_enable'].id : null;
+                const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
                 const office = formValues['id_centro_gest'];
-                let enableCompanyToUser: any = await _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office, profile).toPromise();
+                let enableCompanyToUser: any = await _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office, profile, associated_user).toPromise();
                 if (enableCompanyToUser.result === 'KO') {
                     _this._toastService.showErrorToast(enableCompanyToUser.reason.message);
                 } else {
