@@ -17,7 +17,6 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
 
     @Input("entryName") entryName: string;    
     @Input("keys") keys: any;
-    @Input("primaryKeys") primaryKeys: any;
     @Input("tooltip") tooltip: any;
     @Input("businessObjectName") businessObjectName: any;
     
@@ -72,7 +71,7 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
         // Pop-up example
         const dialogRef = _this.attachDialog.open(AttachDialogComponent, {
             width: '1280px',
-            data: { entryName: _this.entryName, keys: _this.primaryKeys ?? _this.keys, businessObjectName: this.businessObjectName}
+            data: { entryName: _this.entryName, keys: _this.keys, businessObjectName: this.businessObjectName}
         });
 
         _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
