@@ -74,6 +74,25 @@
             "queryString": "update entrasp.sondaggi_somministrati set id_anagrafica=split_part(object_key, '|', 2)::numeric where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
         }
     ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menumdt",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "cancella_campione",
+                    "icon": "delete",
+                    "label": "Elimina partecipante",
+                    "query": "select entrasp.sondaggio_somministrato_delete(s.codiceazienda::varchar, s.idsomministrazione::integer) from (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS idsomministrazione FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s;",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Eliminare i campioni selezionati?"
+                  }
+            ]
+        }
+    ],
     "hideActions": [
         {
             "tableActionType": "add",
