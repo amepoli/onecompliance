@@ -367,12 +367,12 @@ export class BackendService {
     return from(this.awsService.api().del(this.apiName, this.usersApiName, putPostReq));
   }
 
-  enableCompanyToUser(username: string, companyPart: string, enableCompany: string, office: string, profile: string, associated_user: string) {
+  enableCompanyToUser(username: string, companyPart: string, enableCompany: string, office: string, profile: string, associated_user: string, registry: string) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
       body: null,
       headers: {},
-      queryStringParameters: { request_type: 'enableCompanyToUser', username: username, companyPart: companyPart, enableCompany: enableCompany, office: office, profile: profile, associated_user: associated_user },
+      queryStringParameters: { request_type: 'enableCompanyToUser', username: username, companyPart: companyPart, enableCompany: enableCompany, office: office, profile: profile, associated_user: associated_user, registry: registry },
     };
     return from(this.awsService.api().post(this.apiName, this.insert_user_to_dynamoApiName, putPostReq));
   }
