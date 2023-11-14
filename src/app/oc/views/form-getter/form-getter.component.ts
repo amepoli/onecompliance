@@ -2093,13 +2093,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
         else if (userAPIParams.actionType === 'invite_user_again') {
             if (_this.authService.getAllowedToManage()) {
+                let loadingToast = _this._toastService.showLoadingToast("Inviting user again...", "Please wait");
                 const email = formValues[userAPIParams.userParams.email];
                 const temporaryPassword = HelperService.generatePassword(9);
                 let inviteUserAgain: any = await _this.backendService.inviteUserAgain(email, temporaryPassword).toPromise();
                 // _this._console.log(inviteUserAgain);
                 if (inviteUserAgain.result === 'KO') {
+                    _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showErrorToast(inviteUserAgain.reason.message);
                 } else {
+                    _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showSuccessToast('New invitation sent successfully');
                     this.refreshView();
                 }
@@ -2111,13 +2114,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
         else if (userAPIParams.actionType === 'delete_user') {
             if (_this.authService.getAllowedToManage()) {
+                let loadingToast = _this._toastService.showLoadingToast("Deleting user...", "Please wait");
                 const username = formValues[userAPIParams.userParams.username];
                 let deleteUser: any = await _this.backendService.deleteUser(username).toPromise();
                 // _this._console.log(deleteUser);
                 if (deleteUser.result === 'KO') {
+                    _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showErrorToast(deleteUser.reason.message);
                 } else {
-                    _this._toastService.showSuccessToast('Successfully delete');
+                    _this._toastService.hideLoadingToast(loadingToast);
+                    _this._toastService.showSuccessToast('User deleted successfully');
                     this.refreshView();
                 }
 
@@ -2128,18 +2134,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
         else if (userAPIParams.actionType === 'enable_company_to_user') {
             if (_this.authService.getAllowedToManage()) {
+                let loadingToast = _this._toastService.showLoadingToast("Enabling companies to user...", "Please wait");
                 const username = formValues['username'];
                 const registry = formValues['id_anagrafica'];
                 const companyPart = formValues['codice_part'];
                 const profile = formValues['profile'] ? formValues['profile'].id : null;
                 const enableCompany = formValues['azienda_to_enable'] ? formValues['azienda_to_enable'].id : null;
                 const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
-                const office = formValues['id_centro_gest'];
+                const office = formValues['id_centro_gest_default'];
                 let enableCompanyToUser: any = await _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office, profile, associated_user, registry).toPromise();
                 if (enableCompanyToUser.result === 'KO') {
+                    _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showErrorToast(enableCompanyToUser.reason.message);
                 } else {
-                    _this._toastService.showSuccessToast('Company enabled successfully');
+                    _this._toastService.hideLoadingToast(loadingToast);
+                    _this._toastService.showSuccessToast('Companies enabled successfully');
                     this.refreshView();
                 }
 
@@ -2149,12 +2158,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             }
         } else if (userAPIParams.actionType === 'dissociates_company') {
             if (_this.authService.getAllowedToManage()) {
+                let loadingToast = _this._toastService.showLoadingToast("Dissociating companies from user...", "Please wait");
                 const username = formValues['username'];
                 const dissociatesCompany = formValues['company_to_dissociate'] ? formValues['company_to_dissociate'].id : null;
                 let dissociatesCompanyResult: any = await _this.backendService.dissociatesCompanyFromUser(username, dissociatesCompany).toPromise();
                 if (dissociatesCompanyResult.result === 'KO') {
+                    _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showErrorToast(dissociatesCompanyResult.reason.message);
                 } else {
+                    _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showSuccessToast('Company successfully dissociates');
                     this.refreshView();
                 }
