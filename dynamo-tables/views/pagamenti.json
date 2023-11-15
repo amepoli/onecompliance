@@ -1,0 +1,188 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "pagamenti",
+  "origin": "entrasp.pagamenti_crediti",
+  "label": "Pagamenti",
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "translate": "RESOURCES.company_code",
+      "readOnly": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "newLine": false,
+      "key": "id_pagamento",
+      "label": "ID Pagamento",
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_pagamento",
+      "label": "Data Pagamento",
+      "newLine": false,
+      "size": 1.5,
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": true,
+      "key": "importo",
+      "label": "Importo",
+      "readOnly": false,
+      "size": 2
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "comboQuery": "select id_cessione as ID, id_cessione||' - '||entrasp.contratti_descr(id_contratto, codice_azienda)||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente)||' - '||n_fattura||' - '||data_fattura as name from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$",
+        "options": []
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "newLine": false,
+      "key": "id_cessione",
+      "label": "Credito",
+      "readOnly": false
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "translate": "RESOURCES.company_code"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_pagamento",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "key": "id_cessione",
+      "label": "Cessione"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_pagamento",
+      "label": "Data pagamento",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "importo",
+      "label": "Importo",
+      "width": "6%",
+      "style": [
+        {
+          "value": "*",
+          "text_align": "end"
+        }
+      ]
+    }
+    
+    
+  
+    
+  ],
+  "search_keys": [
+    {
+      "fieldName": "id_cedente_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cedente",
+      "newLine": false,
+      "queryCond": "id_cedente=$id_cedente_s$"
+    },
+    {
+      "fieldName": "id_mandante_s",
+      "format": {
+        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Mandante",
+      "newLine": false,
+      "queryCond": "id_mandante=$id_mandante_s$"
+    }
+  ],
+  "querySuffixes": {
+    "tableViewSuffix": "order by data_pagamento desc"
+  },
+  "hideActions": [
+    {
+      "formActionType": "attachments",
+      "viewType": "form"
+    }
+  ],
+  "subTables": [
+    {
+      "entryKey": "crediti_ceduti_sub_of_mandati",
+      "type": "table",
+      "label": "Crediti associati",
+      "keys": [
+        {
+          "parent": "n_mandato",
+          "son": "n_mandato"
+        },
+        {
+          "parent": "codice_azienda",
+          "son": "codice_azienda"
+        }
+      ]
+    }
+  ]
+}
