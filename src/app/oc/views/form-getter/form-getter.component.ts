@@ -2068,7 +2068,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
                 let loadingToast = _this._toastService.showLoadingToast("Inviting user...", "Please wait");
 
-                const username = formValues['email_to'];
+                const username = formValues['email_to'].trim();
                 const temporaryPassword = HelperService.generatePassword(9);
                 const company = formValues['codice_azienda'];
                 const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
