@@ -3,6 +3,7 @@
   "entryKey": "pagamenti",
   "origin": "entrasp.pagamenti_crediti",
   "label": "Pagamenti",
+  "businessObjectName": "pagamenti_crediti",
   "form_keys": [
     {
       "autoGenerate": false,
@@ -18,7 +19,7 @@
       "readOnly": true
     },
     {
-      "autoGenerate": false,
+      "autoGenerate": true,
       "format": {
         "dataType": "number",
         "viewType": "input"
@@ -28,7 +29,7 @@
       "newLine": false,
       "key": "id_pagamento",
       "label": "ID Pagamento",
-      "readOnly": false,
+      "readOnly": true,
       "size": 1.5
     },
     {
@@ -57,7 +58,21 @@
       "key": "importo",
       "label": "Importo",
       "readOnly": false,
-      "size": 2
+      "size": 2,
+      "outputEvent": {
+        "eventName": "colore_importo",
+        "eventTrigger": "load"
+      },
+      "inputEvents": [
+        {
+          "eventName": "colore_importo",
+          "condition": "none",
+          "values": [],
+          "actionType": "query_style",
+          "styleAttribute": "background_color",
+          "queryFunct": "select case when importo<0 then'red' else 'green' end as importo_background_color from entrasp.pagamenti_crediti where codice_azienda=$codice_azienda$ and id_pagamento=$id_pagamento$"
+        }
+      ]
     },
     {
       "autoGenerate": false,
@@ -72,6 +87,21 @@
       "newLine": false,
       "key": "id_cessione",
       "label": "Credito",
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "comboQuery": "select descrizione as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
+        "options": []
+      },
+      "isHidden": false,
+      "isPrimary": true,
+      "newLine": false,
+      "key": "id_argomento_tipo_pag",
+      "label": "Causale",
       "readOnly": false
     }
   ],
@@ -100,7 +130,17 @@
         "dataType": "number"
       },
       "isHidden": false,
-      "isPrimary": true,
+      "isPrimary": false,
+      "key": "id_argomento_tipo_pag",
+      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_pag)",
+      "label": "Causale"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
       "key": "id_cessione",
       "label": "Cessione"
     },
@@ -130,59 +170,15 @@
         }
       ]
     }
-    
-    
-  
-    
   ],
-  "search_keys": [
-    {
-      "fieldName": "id_cedente_s",
-      "format": {
-        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Cedente",
-      "newLine": false,
-      "queryCond": "id_cedente=$id_cedente_s$"
-    },
-    {
-      "fieldName": "id_mandante_s",
-      "format": {
-        "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Mandante",
-      "newLine": false,
-      "queryCond": "id_mandante=$id_mandante_s$"
-    }
-  ],
+  "search_keys": [],
   "querySuffixes": {
-    "tableViewSuffix": "order by data_pagamento desc"
+    "tableViewSuffix": "order by data_pagamento desc limit 200"
   },
   "hideActions": [
     {
       "formActionType": "attachments",
       "viewType": "form"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "crediti_ceduti_sub_of_mandati",
-      "type": "table",
-      "label": "Crediti associati",
-      "keys": [
-        {
-          "parent": "n_mandato",
-          "son": "n_mandato"
-        },
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        }
-      ]
     }
   ]
 }
