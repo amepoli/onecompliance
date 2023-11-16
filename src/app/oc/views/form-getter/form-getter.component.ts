@@ -280,8 +280,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         );
     }
     public showMainToolbarDialog(outputEventName: string) {
-        this.pubSubService.publishEvent(outputEventName, {  origin: "main_toolbar_dialogs", index: 0, data: this.filteredFormData,
-        valueSet: [], type: 'dialog' }); 
+        if(this.filteredFormData != null)
+        {
+            let field=this.filteredFormData[0][0];
+            this.pubSubService.publishEvent(outputEventName, {  origin: "toolbar", index: 0,
+            valueSet: field.fullValueSet, type: 'menu' }); 
+        }
     
     }
 
