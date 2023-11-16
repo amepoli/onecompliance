@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import Swal, { SweetAlertResult, SweetAlertIcon, SweetAlertOptions, SweetAlertPosition } from 'sweetalert2'
+import { MainToolbarDialog } from '../interfaces/main_toolbar_dialog.interface';
+import { BehaviorSubject } from 'rxjs';
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class DialogService {
+    public onMainToolbarDialogLoaded: BehaviorSubject<MainToolbarDialog[]>;
+    public onShowMainToolbarDialog: BehaviorSubject<string>;
 
     // Examples:
     // this.DialogService.setDialogTheme('top-end', 240);
@@ -34,6 +38,10 @@ export class DialogService {
      */
     constructor(
     ) {
+        const _this = this;
+        _this.onMainToolbarDialogLoaded = new BehaviorSubject([]);
+        _this.onShowMainToolbarDialog = new BehaviorSubject(null);
+
     }
 
 
@@ -50,6 +58,24 @@ export class DialogService {
     closeDialog(): void {
         Swal.close();
     }
+
+       /**
+     * Update main toolbar dialog
+    * @param dialogs  
+     */
+       updateMainToolbarDialogs(dialogs: any) {
+        const _this = this;
+        _this.onMainToolbarDialogLoaded.next(dialogs);
+        }
+
+          /**
+     * Show main toolbar dialog
+    * @param outputEventName  
+     */
+       showMainToolbarDialog(outputEventName: string) {
+        const _this = this;
+        _this.onShowMainToolbarDialog.next(outputEventName);
+        }
 
     //----------------------------- Loading Dialogs -----------------------------------
 

@@ -1,16 +1,14 @@
 import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { DynamicFormComponent } from 'app/oc/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { ComboboxComponent } from 'app/oc/dynamic-forms/components/combobox/combobox.component';
-import { forkJoin, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
 import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
 import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
-import { InputComponent } from 'app/oc/dynamic-forms/components/input/input.component';
 import { RegulatAPIParams } from 'app/oc/interfaces/regulat_api_params';
-import { exit } from 'process';
 import { MatDialog } from '@angular/material/dialog';
 import { MenuOptionsCustomDialogComponent } from 'app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
@@ -115,7 +113,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         public cutomDialog: MatDialog,
         private _fileService: FileManagerService
     ) {
-        const _this = this;
 
     }
 
@@ -182,11 +179,23 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 });
             _this.generalSubscriptions.push(subscription);
         }
-        console.log(_this.externalKeys);
+       
+        const mainToolbarDialogsSubscription = _this._dialogService.onShowMainToolbarDialog.subscribe(
+            outputEventName => {
+              console.log(outputEventName)
+                 if (outputEventName) {
+                   _this.showMainToolbarDialog(outputEventName);
+                }
+            }
+        );
+        _this.generalSubscriptions.push(mainToolbarDialogsSubscription); 
+
 
     }
 
     ngOnDestroy() {
+        this._dialogService.updateMainToolbarDialogs([]);
+
         this.generalSubscriptions.forEach(subscription => {
             subscription.unsubscribe();
         });
@@ -272,6 +281,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             true
         );
     }
+    public showMainToolbarDialog(outputEventName: string) {
+        if(this.filteredFormData != null)
+        {
+            let field=this.filteredFormData[0][0];
+            this.pubSubService.publishEvent(outputEventName, {  origin: "toolbar", index: 0,
+            valueSet: field.fullValueSet, type: 'menu' }); 
+        }
+    
+    }
 
     refreshView(reloadEvents: boolean = true) {
         const _this = this;
@@ -285,6 +303,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this._console.log(results);
                 if (results.result === 'OK') {
                     const params = results.data;
+                    
+                    const mainToolbarDialogs= params.main_toolbar_dialogs;
+                    if(_this.isFormView && !this.isTabMode && mainToolbarDialogs)
+                    {
+                        _this._dialogService.updateMainToolbarDialogs(mainToolbarDialogs);
+                    }
+                    else {
+                        _this._dialogService.updateMainToolbarDialogs([]);
+                    }
+
                     _this.viewKeys = params.form_keys;
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
@@ -596,7 +624,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     }
                     // update the status to prevent the whole table refresh
                     _this.addingNew = true;
-
                     // process the new row
                     const filteredFormData = _this.getFormData(_this.viewKeys, result);
                     _this.process_form(filteredFormData);
