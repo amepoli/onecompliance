@@ -194,6 +194,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
     }
 
     ngOnDestroy() {
+        this._dialogService.updateMainToolbarDialogs([]);
+
         this.generalSubscriptions.forEach(subscription => {
             subscription.unsubscribe();
         });
@@ -301,12 +303,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this._console.log(results);
                 if (results.result === 'OK') {
                     const params = results.data;
-                     const mainToolbarDialogs= params.main_toolbar_dialogs;
-                     if(mainToolbarDialogs)
-                     {
-                     _this._dialogService.updateMainToolbarDialogs(mainToolbarDialogs);
-                     }
-                      
+                    
+                    const mainToolbarDialogs= params.main_toolbar_dialogs;
+                    if(_this.isFormView && !this.isTabMode && mainToolbarDialogs)
+                    {
+                        _this._dialogService.updateMainToolbarDialogs(mainToolbarDialogs);
+                    }
+                    else {
+                        _this._dialogService.updateMainToolbarDialogs([]);
+                    }
+
                     _this.viewKeys = params.form_keys;
                     if (_this.viewKeys == null) {
                         return;                         // no formKeys defined for the table, stop here
