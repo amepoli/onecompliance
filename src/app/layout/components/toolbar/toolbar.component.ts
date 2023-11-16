@@ -23,8 +23,9 @@ import { ImportExportService } from 'app/oc/services/import_export.service';
 import { NavigationService } from 'app/oc/services/navigation.service';
 import { ConsoleLoggerService } from 'app/oc/services/console_logger.service';
 import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/oc/interfaces';
-import { HelperService, TimeTrackerService } from 'app/oc/services';
+import { DialogService, HelperService, TimeTrackerService } from 'app/oc/services';
 import { MatButton } from '@angular/material/button';
+import { MainToolbarDialog } from 'app/oc/interfaces/main_toolbar_dialog.interface';
 
 @Component({
     selector: 'toolbar',
@@ -44,6 +45,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     reportList: { 'alias': string, 'descrizione': string }[] = [];
     importList: ImportItem[] = [];
     exportList: ExportItem[] = [];
+    mainToolbarDialogList: MainToolbarDialog[] = [];
+
 
     userCompanies: string[] = [];
 
@@ -90,7 +93,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         private _importExportService: ImportExportService,
         private _navigationService: NavigationService,
         private _console: ConsoleLoggerService,
-        private _timeTrackerService: TimeTrackerService
+        private _timeTrackerService: TimeTrackerService,
+        private _dialogService: DialogService,
     ) {
         // Set the defaults
         this.userStatusOptions = [
@@ -193,6 +197,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
         _this._importExportService.onExportListLoaded.subscribe((data) => {
             _this.exportList = data.items;
+        });
+        _this._dialogService.onMainToolbarDialogLoaded.subscribe((data) => {
+            _this.mainToolbarDialogList = data;
         });
 
         _this._navigationService.onToolbarHideActionsChanged.subscribe(hideActions => {
@@ -360,6 +367,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
     importAdvanced(item: ImportItem) {
         this._importExportService.requestAdvancedImport(item.label);
+    }
+    showMainToolbarDialog(dialog: MainToolbarDialog) {
+         const _this=this;
+        _this._dialogService.showMainToolbarDialog(dialog.outputEventName);
     }
 
     downloadTemplateFile(): void {
