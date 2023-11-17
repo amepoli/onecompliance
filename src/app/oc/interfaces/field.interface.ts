@@ -40,7 +40,7 @@ export interface FieldInputEvent {
   message?: {
     messageText: string,
     actionOnYes: {
-      actionType: 'reload' | 'query' | 'email' | 'create_user_and_email' | 'enable_company_to_user' | 'dissociates_company',
+      actionType: 'reload' | 'query' | 'email' | 'create_user_and_email' | 'enable_company_to_user' | 'dissociates_company' | 'multi_enablement_company_to_users',
       queryFunct?: string,
       emailActionParameters?: EmailActionParameters
     },

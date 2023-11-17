@@ -179,16 +179,16 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 });
             _this.generalSubscriptions.push(subscription);
         }
-       
+
         const mainToolbarDialogsSubscription = _this._dialogService.onShowMainToolbarDialog.subscribe(
             outputEventName => {
-              console.log(outputEventName)
-                 if (outputEventName) {
-                   _this.showMainToolbarDialog(outputEventName);
+                console.log(outputEventName)
+                if (outputEventName) {
+                    _this.showMainToolbarDialog(outputEventName);
                 }
             }
         );
-        _this.generalSubscriptions.push(mainToolbarDialogsSubscription); 
+        _this.generalSubscriptions.push(mainToolbarDialogsSubscription);
 
 
     }
@@ -282,13 +282,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         );
     }
     public showMainToolbarDialog(outputEventName: string) {
-        if(this.filteredFormData != null)
-        {
-            let field=this.filteredFormData[0][0];
-            this.pubSubService.publishEvent(outputEventName, {  origin: "toolbar", index: 0,
-            valueSet: field.fullValueSet, type: 'menu' }); 
+        if (this.filteredFormData != null) {
+            let field = this.filteredFormData[0][0];
+            this.pubSubService.publishEvent(outputEventName, {
+                origin: "toolbar", index: 0,
+                valueSet: field.fullValueSet, type: 'menu'
+            });
         }
-    
+
     }
 
     refreshView(reloadEvents: boolean = true) {
@@ -303,10 +304,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this._console.log(results);
                 if (results.result === 'OK') {
                     const params = results.data;
-                    
-                    const mainToolbarDialogs= params.main_toolbar_dialogs;
-                    if(_this.isFormView && !this.isTabMode && mainToolbarDialogs)
-                    {
+
+                    const mainToolbarDialogs = params.main_toolbar_dialogs;
+                    if (_this.isFormView && !this.isTabMode && mainToolbarDialogs) {
                         _this._dialogService.updateMainToolbarDialogs(mainToolbarDialogs);
                     }
                     else {
@@ -2178,6 +2178,46 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this._toastService.showSuccessToast('Companies enabled successfully');
                     this.refreshView();
                 }
+
+            } else {
+                _this._console.error("User isn't allowed to invite!");
+                _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to invite users");
+            }
+        } else if (userAPIParams.actionType === 'multi_enablement_company_to_users') {
+            if (_this.authService.getAllowedToManage()) {
+                let loadingToast = _this._toastService.showLoadingToast("Enabling companies to user...", "Please wait");
+                const profile = formValues['profile'] ? formValues['profile'].id : null;
+                const enableCompany = formValues['azienda_to_enable'] ? formValues['azienda_to_enable'].id : null;
+                const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
+                const companyPart = formValues['codice_part'];
+                try {
+                    for (const [index, username] of formValues["usernames"].entries()) {
+                        let registry = formValues['id_anagrafiche'][index];
+                        let office = formValues['id_centri_gest'][index];
+
+                        let enableCompanyToUser: any = await _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office, profile, associated_user, registry).toPromise();
+
+                        if (enableCompanyToUser.result === 'KO') {
+                            _this._toastService.showErrorToast(enableCompanyToUser.reason.message);
+                            // return; // Stop processing if an error occurs
+                        }
+                    }
+                } catch (error) {
+                    console.error("An error occurred:", error);
+                    // Handle the error as needed
+                }
+                // formValues["usernames"].forEach(async (username, index) => {
+                //     let registry = formValues['id_anagrafica'][index];
+                //     let office = formValues['id_centro_gest_default'][index];
+                //     let enableCompanyToUser: any = await _this.backendService.enableCompanyToUser(username, companyPart, enableCompany, office, profile, associated_user, registry).toPromise();
+                //     if (enableCompanyToUser.result === 'KO') {
+                //         _this._toastService.hideLoadingToast(loadingToast);
+                //         _this._toastService.showErrorToast(enableCompanyToUser.reason.message,null,5);
+                //     }
+                // });
+                _this._toastService.hideLoadingToast(loadingToast);
+                _this._toastService.showSuccessToast('Companies enabled successfully');
+                this.refreshView();
 
             } else {
                 _this._console.error("User isn't allowed to invite!");
