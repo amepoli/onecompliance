@@ -19,6 +19,18 @@
       "readOnly": true
     },
     {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "codice_part",
+      "label": "codice_part",
+      "readOnly": true
+    },
+    {
       "autoGenerate": true,
       "format": {
         "dataType": "number",
@@ -92,9 +104,8 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "text",
         "viewType": "combobox",
-        "comboQuery": "select descrizione as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
+        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
         "options": []
       },
       "isHidden": false,
@@ -103,7 +114,49 @@
       "key": "id_argomento_tipo_pag",
       "label": "Causale",
       "readOnly": false
-    }
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_controparte",
+      "label": "Controparte",
+      "size": 5,
+      "readOnly": false,
+      "newLine": true
+    },
+    {"autoGenerate": false,
+    "format": {
+      "dataType": "number",
+      "viewType": "input"
+    },
+    "isHidden": false,
+    "isPrimary": false,
+    "key": "n_mandato",
+    "label": "N. Mandato",
+    "readOnly": false,
+    "size": 1,
+    "newLine": false
+  },
+  {
+    "autoGenerate": false,
+    "format": {
+      "dataType": "date",
+      "viewType": "input"
+    },
+    "isHidden": false,
+    "isPrimary": false,
+    "key": "data_mandato",
+    "label": "Data Mandato",
+    "readOnly": false,
+    "size": 1.5,
+    "newLine": true
+  }
   ],
   "table_keys": [
     {
@@ -171,7 +224,79 @@
       ]
     }
   ],
-  "search_keys": [],
+  "search_keys": [
+    {
+      "fieldName": "id_cessione",
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "label": "ID Cessione",
+      "newLine": false,
+      "size": 3.3,
+      "queryCond": "id_cessione=$id_cessione$"
+    },
+    {
+      "fieldName": "id_controparte_s",
+      "format": {
+        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Acquirente",
+      "newLine": false,
+      "size": 3.3,
+      "queryCond": "id_controparte_=$id_controparte_s"
+    },
+    {
+      "fieldName": "n_mandato_s",
+      "format": {
+        "comboQuery": "SELECT distinct n_mandato AS id, n_mandato as name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "options": [],
+        "viewType": "combobox",
+        "dataType": "number"
+      },
+      "label": "N mandato",
+      "newLine": true,
+      "size": 3.4,
+      "queryCond": "n_mandato=$n_mandato_s$"
+    },
+    {
+      "fieldName": "data_pagamento_min",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Pagamento dopo il",
+      "newLine": false,
+      "size": 3.3,
+      "queryCond": "data_pagamento>='€data_pagamento_min€'"
+    },
+    {
+      "fieldName": "data_pagamento_max",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Pagamento entro il",
+      "newLine": false,
+      "size": 3.3,
+      "queryCond": "data_pagamento<='€data_pagamento_max€'"
+    },
+    {
+      "fieldName": "id_argomento_tipo_pag_s",
+      "format": {
+        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Tipo Pagamento",
+      "newLine": true,
+      "size": 3.4,
+      "queryCond": "id_argomento_tipo_pag=$id_argomento_tipo_pag_s$"
+    }
+    
+  ],
   "querySuffixes": {
     "tableViewSuffix": "order by data_pagamento desc limit 200"
   },
