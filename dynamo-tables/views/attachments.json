@@ -14,7 +14,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "SELECT rev.cod_rev, rev.data_creazione::date, rev.codice_azienda,b.codice_part,coalesce( rev.id_argomento_stato_approvazione, 6150) as id_argomento_stato_approvazione, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato) AS descr_stato,( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$"
+      "queryString": "SELECT rev.cod_rev, rev.data_creazione::date, rev.codice_azienda,b.codice_part,coalesce( rev.id_argomento_stato_approvazione, 6150) as id_argomento_stato_approvazione, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato) AS descr_stato,entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato_approvazione) AS descr_stato_approv, ( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$"
     },
     {
       "type": "preProcessing",
@@ -555,31 +555,46 @@
       "format": {
         "dataType": "text"
       },
-      "isHidden": true,
+      "isHidden": false,
       "isPrimary": false,
       "key": "descr_stato_approv",
-      "width": "5%",
+      "width": "6%",
       "label": "Stato appr.",
       "style": [
         {
           "value": "Non definito",
-          "font_color": "grey",
-          "font_weight": "500"
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "Grey",
+          "text_align": "center"
+        },
+        {
+          "value": "Non presente",
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "Grey",
+          "text_align": "center"
         },
         {
           "value": "Bozza",
-          "font_color": "#FF8100",
-          "font_weight": "500"
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "Red",
+          "text_align": "center"
         },
         {
           "value": "Attesa approvazione",
-          "font_color": "#FF8100",
-          "font_weight": "500"
+          "font_color": "white",
+          "font_weight": "500",
+          "background_color": "orange",
+          "text_align": "center"
         },
         {
           "value": "Approvato",
-          "font_color": "green",
-          "font_weight": "500"
+          "font_color": "PaleGreen",
+          "font_weight": "500",
+          "background_color": "Green",
+          "text_align": "center"
         }
       ]
     },
