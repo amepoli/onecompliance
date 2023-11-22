@@ -1,6 +1,6 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "reclami",
+  "entryKey": "contenziosi",
   "inheritsFrom": "data_breach",
   "dashboardTables": [
     "dashboard_compiti"
@@ -19,7 +19,7 @@
     {
       "operation": "selectTable",
       "type": "main",
-      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=200"
+      "queryString": "select codice_compito,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=5 OR flag_causa_legale ='1'"
     },
     {
       "operation": "update",
@@ -71,7 +71,19 @@
       "newLine": false,
       "readOnly": false
     },
-    
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_contenzioso",
+      "label": "Data Contenzioso",
+      "newLine": false,
+      "readOnly": false
+    },
     {
       "autoGenerate": false,
       "format": {
@@ -122,22 +134,8 @@
       "isPrimary": false,
       "key": "id_responsabile",
       "label": "Responsabile",
-      "newLine": false,
+      "newLine": true,
       "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_causa_legale",
-      "size": 1.25,
-      "label": "Contenzioso",
-      "readOnly": false,
-      "newLine": true
     },
     {
       "autoGenerate": false,
