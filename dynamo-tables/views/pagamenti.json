@@ -306,15 +306,15 @@
         "options": [],
         "viewType": "combobox"
       },
-      "label": "Acquirente",
+      "label": "Controparte",
       "newLine": false,
       "size": 3.3,
-      "queryCond": "id_controparte_=$id_controparte_s"
+      "queryCond": "id_controparte=$id_controparte_s$"
     },
     {
       "fieldName": "n_mandato_s",
       "format": {
-        "comboQuery": "SELECT distinct n_mandato AS id, n_mandato as name  FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+        "comboQuery": "SELECT distinct n_mandato AS id, n_mandato as name  FROM entrasp.pagamenti_crediti WHERE codice_azienda=$codice_azienda$;",
         "options": [],
         "viewType": "combobox",
         "dataType": "number"
@@ -357,6 +357,17 @@
       "newLine": true,
       "size": 3.4,
       "queryCond": "id_argomento_tipo_pag=$id_argomento_tipo_pag_s$"
+    },
+    {
+      "fieldName": "id_argomento_inatteso_s",
+      "format": {
+        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Intatteso",
+      "newLine": true,
+      "queryCond": "id_argomento_inatteso=$id_argomento_inatteso_s$"
     }
     
   ],

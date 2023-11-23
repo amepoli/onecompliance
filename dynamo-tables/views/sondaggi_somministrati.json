@@ -3395,8 +3395,11 @@
         "queryString": "select * from entrasp.punteggi_domande_delle_risposte_estesa where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
       },
       {
+        "label": "Verifica completa",
+        "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.punteggio, ri.peso, ri.penalizzazione from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$"
+      },
+      {
         "label": "Template Risposte",
-        "translate": "RESOURCES.template_risposte",
         "queryString": "select id_domanda, '' as codice_esterno, '' as note FROM entrasp.domande dmd INNER JOIN entrasp.sondaggi snd USING (codice_azienda,id_modello_test,id_modello_test_vr) INNER JOIN entrasp.sondaggi_somministrati ss USING (codice_azienda,id_sondaggio) left join entrasp.domande_sezioni ds on dmd.codice_azienda = ds.codice_azienda and dmd.id_modello_test = ds.id_modello_test and dmd.id_modello_test_vr= ds.id_modello_test_vr and dmd.id_sezione = ds.id_sezione WHERE ss.id_somministrazione=$id_somministrazione$ and dmd.codice_azienda=$codice_azienda$ ORDER BY ds.ordinamento ASC, dmd.ordinamento ASC"
       }
     ]
