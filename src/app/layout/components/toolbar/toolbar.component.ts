@@ -46,6 +46,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     importList: ImportItem[] = [];
     exportList: ExportItem[] = [];
     mainToolbarDialogList: MainToolbarDialog[] = [];
+    timereport: Boolean = false;
 
 
     userCompanies: string[] = [];
@@ -225,6 +226,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
         // get user data after login
         _this.userdata = _this._authService.userinfo.getValue();
+
+        _this.timereport = _this._authService.getTimeReport();
 
         // set the company set
         _this.userCompanies = _this.userdata.companies;

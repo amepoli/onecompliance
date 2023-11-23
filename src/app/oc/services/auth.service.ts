@@ -52,6 +52,7 @@ export class AuthService {
   private currentCompany: string;
   private confirmUser: any;
   private sync: any;
+  private timereport: boolean;
   private onekyc: boolean;
   private allowedToInvite: boolean;
 
@@ -354,6 +355,8 @@ export class AuthService {
 
         _this.onekyc = ud.userdata.onekyc;
 
+        _this.timereport = ud.userdata.timereport;
+
         _this.allowedToInvite = ud.userdata.allowedToInvite;
 
         _this._console.log(ud.userdata);
@@ -524,6 +527,10 @@ export class AuthService {
 
   public getOneKYCAuth(): boolean {
     return this.onekyc;
+  }
+  
+  public getTimeReport(): boolean {
+    return this.timereport;
   }
 
   public getAllowedToManage(): boolean {
