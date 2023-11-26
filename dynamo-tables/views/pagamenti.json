@@ -4,6 +4,9 @@
   "origin": "entrasp.pagamenti_crediti",
   "label": "Pagamenti",
   "businessObjectName": "pagamenti_crediti",
+  "define": {
+    "is_hidden_cessione": "false"
+  },
   "form_keys": [
     {
       "autoGenerate": false,
@@ -48,7 +51,14 @@
       "autoGenerate": false,
       "format": {
         "dataType": "date",
-        "viewType": "input"
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Data pagamento necessaria",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -62,7 +72,14 @@
       "autoGenerate": false,
       "format": {
         "dataType": "number",
-        "viewType": "input"
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Importo necessario",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -92,10 +109,17 @@
         "dataType": "text",
         "viewType": "combobox",
         "comboQuery": "select id_cessione as ID, id_cessione||' - '||entrasp.contratti_descr(id_contratto, codice_azienda)||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente)||' - '||n_fattura||' - '||data_fattura as name from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$",
-        "options": []
+        "options": [],
+        "validations": [
+          {
+            "message": "ID cessione necessaria",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
-      "isHidden": false,
-      "isPrimary": true,
+      "isHidden": "$Q{is_hidden_cessione}",
+      "isPrimary": false,
       "newLine": true,
       "size": 3.5,
       "key": "id_cessione",
@@ -107,10 +131,17 @@
       "format": {
         "viewType": "combobox",
         "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
-        "options": []
+        "options": [],
+        "validations": [
+          {
+            "message": "Causale necessaria",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
-      "isPrimary": true,
+      "isPrimary": false,
       "newLine": false,
       "key": "id_argomento_tipo_pag",
       "label": "Causale",
@@ -122,7 +153,14 @@
       "format": {
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'",
+        "validations": [
+          {
+            "message": "Controparte necessaria",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -132,89 +170,90 @@
       "readOnly": false,
       "newLine": false
     },
-    {"autoGenerate": false,
-    "format": {
-      "dataType": "number",
-      "viewType": "input"
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_mandato",
+      "label": "N. Mandato",
+      "readOnly": false,
+      "size": 2.5,
+      "newLine": false
     },
-    "isHidden": false,
-    "isPrimary": false,
-    "key": "n_mandato",
-    "label": "N. Mandato",
-    "readOnly": false,
-    "size": 2.5,
-    "newLine": false
-  },
-  {
-    "autoGenerate": false,
-    "format": {
-      "dataType": "date",
-      "viewType": "input"
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_mandato",
+      "label": "Data Mandato",
+      "readOnly": false,
+      "size": 2.5,
+      "newLine": true
     },
-    "isHidden": false,
-    "isPrimary": false,
-    "key": "data_mandato",
-    "label": "Data Mandato",
-    "readOnly": false,
-    "size": 2.5,
-    "newLine": true
-  },
-  {"autoGenerate": false,
-    "format": {
-      "dataType": "number",
-      "viewType": "input"
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "interessi",
+      "label": "Interessi Legali",
+      "readOnly": true,
+      "size": 3.3,
+      "newLine": false
     },
-    "isHidden": false,
-    "isPrimary": false,
-    "key": "interessi",
-    "label": "Interessi Legali",
-    "queryFunct": "select entrasp.int_singolo_pag_crediti(id_cessione, codice_azienda, current_date, 'leg')",
-    "readOnly": false,
-    "size": 3.3,
-    "newLine": false
-  },
-  {
-    "autoGenerate": false,
-    "format": {
-      "dataType": "date",
-      "viewType": "input"
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_scadenza",
+      "label": "Scadenza Credito",
+      "size": 3.3,
+      "readOnly": true,
+      "newLine": false
     },
-    "isHidden": false,
-    "isPrimary": false,
-    "key": "data_scadenza",
-    "label": "Scadenza Credito",
-    "size": 3.3,
-    "readOnly": false,
-    "newLine": false
-  },
-  {
-    "autoGenerate": false,
-    "format": {
-      "viewType": "combobox",
-      "options": [],
-      "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920"
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_inatteso",
+      "label": "Inatteso",
+      "size": 3.3,
+      "readOnly": false,
+      "newLine": true
     },
-    "isHidden": false,
-    "isPrimary": false,
-    "key": "id_argomento_inatteso",
-    "label": "Inatteso",
-    "size": 3.3,
-    "readOnly": false,
-    "newLine": true
-  },
-  {
-    "autoGenerate": false,
-    "format": {
-      "dataType": "text",
-      "viewType": "input"
-    },
-    "isHidden": false,
-    "isPrimary": false,
-    "key": "note",
-    "label": "Note",
-    "readOnly": false,
-    "newLine": true
-  }
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "label": "Note",
+      "readOnly": false,
+      "newLine": true
+    }
   ],
   "table_keys": [
     {
@@ -232,8 +271,18 @@
         "dataType": "number"
       },
       "isHidden": false,
+      "width": "5%",
       "isPrimary": true,
       "key": "id_pagamento",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_cessione",
       "label": "ID"
     },
     {
@@ -243,6 +292,7 @@
       "isHidden": false,
       "isPrimary": false,
       "key": "id_argomento_tipo_pag",
+      "width": "15%",
       "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_pag)",
       "label": "Causale"
     },
@@ -250,11 +300,12 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
       "isPrimary": false,
+      "isHidden": "$Q{is_hidden_cessione}",
       "queryFunct": "entrasp.cessione_descr(id_cessione, codice_azienda)",
-      "key": "id_cessione",
-      "label": "Cessione"
+      "key": "descr_cessione",
+      "label": "Cessione",
+      "width": "25%"
     },
     {
       "format": {
@@ -275,17 +326,27 @@
       "key": "importo",
       "label": "Importo",
       "width": "6%"
-      
     },
     {
-    "format": {
-      "dataType": "number"
+      "format": {
+        "dataType": "number"
+      },
+      "isPrimary": false,
+      "isHidden": false,
+      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte)",
+      "key": "descr_controparte",
+      "label": "Controparte",
+      "width": "18%"
     },
-    "isHidden": false,
-    "isPrimary": false,
-    "key": "interessi",
-    "label": "Interessi"
-  }
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "interessi",
+      "label": "Interessi"
+    }
   ],
   "search_keys": [
     {
@@ -369,7 +430,6 @@
       "newLine": true,
       "queryCond": "id_argomento_inatteso=$id_argomento_inatteso_s$"
     }
-    
   ],
   "querySuffixes": {
     "tableViewSuffix": "order by data_pagamento desc limit 200"

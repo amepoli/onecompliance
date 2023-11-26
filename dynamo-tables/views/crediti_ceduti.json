@@ -113,7 +113,7 @@
   ],
   "predefinedQueries": [
     {
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr,entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, entrasp.interessi_scaduto_pagato (id_cessione,codice_azienda) as interessi_legge, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
+      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
       "operation": "selectTable",
       "type": "main"
     }
@@ -575,7 +575,34 @@
       "label": "ID cessione",
       "readOnly": true,
       "newLine": false,
-      "size": 0.7
+      "size": 1
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "value": 5342,
+        "options": [],
+        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)",
+        "validations": [
+          {
+            "validator": "Validators.required",
+            "message": "Tipo documento richiesto",
+            "name": "required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_tipo_documento",
+      "label": "Tipo Documento",
+      "outputEvent": {
+        "eventName": "combo_tipo_documento",
+        "eventTrigger": "select"
+      },
+      "readOnly": false,
+      "newLine": false,
+      "size": 1.55
     },
     {
       "autoGenerate": false,
@@ -641,29 +668,16 @@
     {
       "autoGenerate": false,
       "format": {
-        "viewType": "combobox",
-        "value": 5342,
-        "options": [],
-        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)",
-        "validations": [
-          {
-            "validator": "Validators.required",
-            "message": "Tipo documento richiesto",
-            "name": "required"
-          }
-        ]
+        "dataType": "date",
+        "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "id_tipo_documento",
-      "label": "Tipo Documento",
-      "outputEvent": {
-        "eventName": "combo_tipo_documento",
-        "eventTrigger": "select"
-      },
-      "readOnly": false,
+      "key": "data_fattura",
+      "label": "Data Documento",
       "newLine": false,
-      "size": 1.3
+      "size": 1.50,
+      "readOnly": false
     },
     {
       "autoGenerate": false,
@@ -673,11 +687,11 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "data_fattura",
-      "label": "Data Documento",
-      "newLine": false,
-      "size": 1.25,
-      "readOnly": false
+      "newLine": true,
+      "key": "data_scadenza",
+      "label": "Data Scadenza",
+      "readOnly": false,
+      "size": 1.50
     },
     {
       "autoGenerate": false,
@@ -692,36 +706,6 @@
       "size": 1.25,
       "readOnly": false,
       "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "importo",
-      "label": "Importo",
-      "readOnly": false,
-      "size": 1.25
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "queryFunct": "entrasp.capitale_netto_crediti($id_cessione$, $codice_azienda$)",
-      "sameOrigin": false,
-      "key": "importo_netto_nc",
-      "label": "Importo netto nc",
-      "readOnly": false,
-      "size": 1.25
     },
     {
       "autoGenerate": false,
@@ -754,44 +738,32 @@
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_acquisto",
-      "label": "Data acquisto",
-      "size": 1.66,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
+        "dataType": "number",
         "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
-      "key": "data_pagamento",
-      "label": "Data Pagamento",
+      "key": "importo",
+      "label": "Importo",
       "readOnly": false,
-      "size": 1.66
+      "size": 1.25
     },
     {
       "autoGenerate": false,
       "format": {
-        "dataType": "date",
+        "dataType": "number",
         "viewType": "input"
       },
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
-      "key": "data_scadenza",
-      "label": "Data Scadenza",
+      "key": "importo_residuo",
+      "label": "Importo Residuo",
+      "size": 1.67,
+      "queryFunct": "select entrasp.capitale_residuo(id_cessione, codice_azienda, current_date, 'leg')",
       "readOnly": false,
-      "size": 1.67
+      "sameOrigin": false
     },
     {
       "autoGenerate": false,
@@ -834,83 +806,8 @@
       "label": "Utente ultimo update",
       "size": 1.67,
       "readOnly": true,
-      "newLine": true,
+      "newLine": false,
       "insertUpdateFunct": "SELECT '€global_username€'"
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "newLine": false,
-      "size": 1.67,
-      "key": "data_incasso_parz",
-      "label": "Data Incasso Parziale",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input",
-        "value": "0"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "incasso_parz",
-      "size": 1.67,
-      "label": "Incasso Parziale",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "importo_residuo",
-      "label": "Importo Residuo",
-      "size": 1.67,
-      "queryFunct": "select entrasp.capitale_residuo(id_cessione, codice_azienda, current_date, 'leg')",
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=50664 and £id_tipo_documento£=5342"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "size": 2.5,
-      "key": "id_nc_associata",
-      "label": "Nota Credito Associata",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=5342 and £id_tipo_documento£=50664"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "size": 2.5,
-      "key": "id_fattura_associata",
-      "label": "Fattura Associata",
-      "readOnly": false
     },
     {
       "format": {
@@ -924,7 +821,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "situazione_ante_presidi",
-            "label": "Acquisti",
+            "label": "Scadenze e Tassi",
             "style": {
               "background_color": "#03a9f4",
               "font_color": "white",
@@ -939,16 +836,17 @@
           {
             "autoGenerate": false,
             "format": {
-              "viewType": "combobox",
-              "options": [],
-              "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+              "dataType": "number",
+              "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_acquirente",
-            "label": "Acquirente",
-            "size": 2.5,
-            "readOnly": false,
+            "key": "check_scad",
+            "label": "Check Scadenza",
+            "sameOrigin": false,
+            "queryFunct": "data_scadenza - data_fattura",
+            "size": 1.5,
+            "readOnly": true,
             "newLine": false
           },
           {
@@ -959,66 +857,146 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_ricessione",
-            "label": "Data Ricessione",
-            "size": 2.5,
+            "key": "scadenza_convenz",
+            "label": "Scadenza Convenzionale",
+            "size": 1.5,
+            "sameOrigin": false,
+            "queryFunct": "data_fattura + interval '60 days'",
             "readOnly": false,
             "newLine": false
           },
           {
             "autoGenerate": false,
             "format": {
-              "dataType": "date",
+              "dataType": "number",
               "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_riacquisto",
-            "label": "Data Riacquisto",
-            "size": 2.5,
+            "key": "giorni_scad",
+            "label": "Giorni di Scaduto",
+            "size": 1.5,
+            "sameOrigin": false,
+            "queryFunct": "entrasp.calcola_scaduto(data_fattura, data_pagamento)",
+            "readOnly": false,
+            "newLine": false,
+            "outputEvent": {
+              "eventName": "colore_scaduto",
+              "eventTrigger": "load"
+            },
+            "inputEvents": [
+              {
+                "eventName": "colore_scaduto",
+                "condition": "none",
+                "values": [],
+                "actionType": "query_style",
+                "styleAttribute": "background_color",
+                "queryFunct": "select case when entrasp.calcola_scaduto(data_fattura,data_pagamento)>90 then'firebrick' else 'green' end as giorni_scad_background_color from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_cessione=$id_cessione$"
+              }
+            ]
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "boolean",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "recupero_interessi",
+            "label": "Recupero Interessi",
+            "size": 1.5,
             "readOnly": false,
             "newLine": false
           },
           {
             "autoGenerate": false,
             "format": {
-              "dataType": "date",
+              "dataType": "boolean",
+              "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fasc_archiviato",
+            "label": "Fascicolo Archiviato",
+            "size": 1.5,
+            "readOnly": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "old_",
+            "label": "Old",
+            "sameOrigin": false,
+            "queryFunct": "select 1",
+            "size": 1.5,
+            "readOnly": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "scaduto_grave",
+            "label": "Scaduto Grave",
+            "sameOrigin": false,
+            "queryFunct": "select 1",
+            "size": 1.5,
+            "readOnly": false,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
               "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_restituzione",
-            "label": "Data Restituzione",
-            "size": 2.5,
+            "key": "interessi_legali",
+            "label": "Interessi di Legge",
+            "sameOrigin": false,
+            "size": 1.5,
+            "readOnly": true,
+            "newLine": false
+          },
+          {
+            "autoGenerate": false,
+            "format": {
+              "dataType": "number",
+              "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "interessi_legge_non_inc",
+            "label": "Interesse di Legge non Incassati",
+            "sameOrigin": false,
+            "queryFunct": "select 1",
+            "size": 1.5,
             "readOnly": false,
             "newLine": true
           },
           {
             "autoGenerate": false,
             "format": {
-              "dataType": "date",
-              "viewType": "input"
+              "dataType": "boolean",
+              "viewType": "checkbox"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_inatteso",
-            "label": "Data Inatteso",
-            "size": 2.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "viewType": "combobox",
-              "options": [],
-              "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento_inatteso",
-            "label": "Inatteso",
-            "size": 2.5,
+            "key": "interessi_non_dovuti",
+            "label": "Interessi non dovuti",
+            "size": 1.5,
             "readOnly": false,
             "newLine": false
           },
@@ -1030,65 +1008,10 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "note_inatteso",
-            "label": "Note Inatteso",
-            "size": 5,
-            "readOnly": false,
-            "newLine": true
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "notifica_ricessione",
-            "label": "Notifica Ricessione",
-            "size": 3.3,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "pagam_cedente",
-            "label": "Pagamento Cedente",
-            "size": 3.3,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "accettazione_cessione",
-            "label": "Accettazione Cessione",
-            "size": 3.4,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "flag_pool",
-            "label": "Acquisto Pool",
-            "size": 3.4,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "size": 8.5,
             "readOnly": false,
             "newLine": true
           },
@@ -1225,237 +1148,6 @@
             "size": 2,
             "readOnly": false,
             "newLine": true
-          },
-          {
-            "format": {
-              "dataType": "text",
-              "viewType": "label"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "situazione_ante_presidi",
-            "label": "Scadenze e Tassi",
-            "style": {
-              "background_color": "#03a9f4",
-              "font_color": "white",
-              "font_size": "1.3em",
-              "font_style": "italic",
-              "font_weight": "400"
-            },
-            "newLine": true,
-            "readOnly": true,
-            "sameOrigin": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "check_scad",
-            "label": "Check Scadenza",
-            "sameOrigin": false,
-            "queryFunct": "data_scadenza - data_fattura",
-            "size": 1.5,
-            "readOnly": true,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "date",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "scadenza_convenz",
-            "label": "Scadenza Convenzionale",
-            "size": 1.5,
-            "sameOrigin": false,
-            "queryFunct": "data_fattura + interval '60 days'",
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "giorni_scad",
-            "label": "Giorni di Scaduto",
-            "size": 1.5,
-            "sameOrigin": false,
-            "queryFunct": "entrasp.calcola_scaduto(data_fattura, data_pagamento)",
-            "readOnly": false,
-            "newLine": false,
-            "outputEvent": {
-              "eventName": "colore_scaduto",
-              "eventTrigger": "load"
-            },
-            "inputEvents": [
-              {
-                "eventName": "colore_scaduto",
-                "condition": "none",
-                "values": [],
-                "actionType": "query_style",
-                "styleAttribute": "background_color",
-                "queryFunct": "select case when entrasp.calcola_scaduto(data_fattura,data_pagamento)>90 then'firebrick' else 'green' end as giorni_scad_background_color from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_cessione=$id_cessione$"
-              }
-            ]
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "old_",
-            "label": "Old",
-            "sameOrigin": false,
-            "queryFunct": "select 1",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "scaduto_grave",
-            "label": "Scaduto Grave",
-            "sameOrigin": false,
-            "queryFunct": "select 1",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "n_mandato",
-            "label": "N. Mandato",
-            "readOnly": false,
-            "size": 1,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "date",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_mandato",
-            "label": "Data Mandato",
-            "readOnly": false,
-            "size": 1.5,
-            "newLine": true
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "interessi_legge",
-            "label": "Interessi di Legge",
-            "sameOrigin": false,
-            "queryFunct": "entrasp.interessi_scaduto_pagato (id_cessione,codice_azienda)",
-            "size": 1.5,
-            "readOnly": true,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "interessi_legge_non_inc",
-            "label": "Interesse di Legge non Incassati",
-            "sameOrigin": false,
-            "queryFunct": "select 1",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "interessi_non_dovuti",
-            "label": "Interessi non dovuti",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "text",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "note",
-            "label": "Note",
-            "translate": "RESOURCES.notes",
-            "size": 5,
-            "readOnly": false,
-            "newLine": true
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "recupero_interessi",
-            "label": "Recupero Interessi",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "fasc_archiviato",
-            "label": "Fascicolo Archiviato",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
           }
         ]
       },
@@ -1629,8 +1321,7 @@
       "key": "interessi_legge",
       "label": "Interesse di Legge",
       "sameOrigin": false,
-      "width": "5%",
-      "queryFunct": "entrasp.interessi_scaduto_pagato (id_cessione,codice_azienda)"
+      "width": "5%"
     },
     {
       "format": {
