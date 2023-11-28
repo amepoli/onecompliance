@@ -18,6 +18,7 @@ export const URLs = {
     "contratti":"https://wiki.auditft.it//index.php?title=1._Contratti",
     "contratti_fornitori": "https://wiki.auditft.it//index.php?title=Contratti_Fornitori",
     "cpl_trattamenti_dati":"https://wiki.auditft.it//index.php?title=Trattamenti_Dati",
+    "crediti_ceduti":"https://wiki.auditft.it//index.php?title=5._Valutazioni_Contratti",
     "criticita":"https://wiki.auditft.it//index.php?title=Criticit%C3%A0_Gestionali",
     "data_breach":"https://wiki.auditft.it//index.php?title=Data_Breach",
     "domande_dettaglio":"https://wiki.auditft.it//index.php?title=Domande",
