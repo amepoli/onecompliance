@@ -251,6 +251,7 @@ export const locale = {
             reference: 'Reference',
             reference_date: 'Reference Date',
             reference_survey: 'Reference Surveys',
+            registry_under_users: 'Associated Registries',
             relative_survey: 'Parent Survey',
             reopen_verification_verification: 'Reopen Verification',
             report: 'warning',
