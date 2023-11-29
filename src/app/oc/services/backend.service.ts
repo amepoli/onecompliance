@@ -7,7 +7,7 @@ import { environment } from 'environments/environment';
 import { AwsService } from './aws.service';
 import { GetRequest, PostRequest } from '../interfaces';
 
-const appData = (environment.appData as any).default;
+const appData = (environment.appData as any).default; //appData contains gorico_dev.json or gorico_prod.json
 @Injectable({
   providedIn: 'root'
 })
