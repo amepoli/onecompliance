@@ -53,6 +53,7 @@ export class AuthService {
   private confirmUser: any;
   private sync: any;
   private timereport: boolean;
+  private tables: any;
   private onekyc: boolean;
   private allowedToInvite: boolean;
 
@@ -357,6 +358,8 @@ export class AuthService {
 
         _this.timereport = ud.userdata.timereport;
 
+        _this.tables = ud.userdata.tables;
+
         _this.allowedToInvite = ud.userdata.allowedToInvite;
 
         _this._console.log(ud.userdata);
@@ -527,6 +530,10 @@ export class AuthService {
 
   public getOneKYCAuth(): boolean {
     return this.onekyc;
+  }
+
+  public getTables(): any {
+    return this.tables;
   }
   
   public getTimeReport(): boolean {
