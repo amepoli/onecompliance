@@ -1,0 +1,63 @@
+{
+  "$schema": "../profiles.schema.json",
+  "name": "just_projects_ro",
+  "includes": ["just_projects"],
+  "menu": {
+    "allow": [
+      "projects",
+      "projecttypes",
+      "project_state",
+      "progetti_for_state",
+      "progetti_for_state_and_type",
+      "workflow"
+    ],
+    "deny": []
+  },
+  "tables": {
+    "allow": [],
+    "deny": [
+      "*"
+    ],
+    "form_keys": [
+    ],
+    "readOnly": [
+      "attivita",
+      "attivita_sub_of_attivita",
+      "consuntivazioni_sub_of_attivita",
+      "progetti_sub_of_attivita",
+      "attivita_versioni",
+      "same_attivita_sub_of_attivita",
+      "fasi_sub_of_attivita_import",
+      "progetti",
+      "progetti_consulenti",
+      "progetti_consultant_hp",
+      "progetti_fasi",
+      "progetti_fasi_sub_of_progetti_fasi",
+      "consuntivazioni_sub_of_progetti_fasi",
+      "consuntivazioni_sub_of_progetti",
+      "user_sub_of_progetti",
+      "consuntivazioni_consultant_sub_of_compiti_consultant",
+      "compiti_consultant_sub_of_compiti_consultant",
+      "user_sub_of_compiti_consultant",
+      "progetti_attachments",
+      "anagrafiche_vr_sub_of_progetti",
+      "progetti_for_state",
+      "progetti_for_state_and_type",
+      "progetti_sub_of_progetti_for_state",
+      "progetti_sub_of_progetti_for_state_and_type"
+    ],
+    "table_keys": [],
+    "queryCond": [
+      {
+      "entry": "progetti_consulenti",
+      "viewType": "table",
+      "queryString": "(prg.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and codice_part='€global_codice_part€') or id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where s.id_centro_gest=id_centro_gest))"
+      },
+      {
+        "entry": "progetti_for_state_consultant",
+        "viewType": "table",
+        "queryString": "(prg.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and codice_part='€global_codice_part€') or id_progetto in (select pf.id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi s on pf.codice_azienda=s.codice_azienda and pf.id_sondaggio=s.id_sondaggio where s.id_centro_gest=id_centro_gest))"
+      }
+    ]
+  }
+}

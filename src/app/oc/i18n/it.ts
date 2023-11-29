@@ -251,6 +251,7 @@ export const locale = {
             reference: 'Comp.',
             reference_date: 'Data Competenza',
             reference_survey: 'Sondaggi Connessi',
+            registry_under_users: 'Anagrafiche Associate',
             relative_survey: 'Sondaggio Parent',
             reopen_verification: 'Riapri Verifica',
             report: 'Segnalazione',
