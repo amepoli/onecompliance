@@ -22,7 +22,7 @@
                         <mat-icon matSuffix>filter_alt</mat-icon>
                     </mat-form-field>
 
-                    <table-multiselect-toolbar (onReload)="loadData()"
+                    <table-multiselect-toolbar *ngIf="!readOnly" (onReload)="loadData()"
                         [hidden]="isLoading || !selectionActions || !selectionActions.length"
                         [entryKey]="tableData.entryName" [selection]="selection" [actions]="selectionActions"
                         [viewKeys]="viewKeys">
@@ -195,7 +195,7 @@
                                     </ng-container>
                                     <ng-container *ngIf="entry.isSelectCheckbox">
                                         <th mat-header-cell *matHeaderCellDef class="mat-header-cell table-column">
-                                            <mat-checkbox (change)="$event ? masterToggle() : null"
+                                            <mat-checkbox *ngIf="!readOnly" (change)="$event ? masterToggle() : null"
                                                 [checked]="selection.hasValue() && isAllSelected()"
                                                 [indeterminate]="selection.hasValue() && !isAllSelected()"
                                                 [aria-label]="checkboxLabel()" [matTooltip]="entry.tooltip">
@@ -252,7 +252,7 @@
                                     </ng-container>
                                     <ng-container *ngIf="entry.isSelectCheckbox">
                                         <td mat-cell class="mat-cell table-column" *matCellDef="let row" style="justify-content: start;">
-                                            <mat-checkbox (click)="$event.stopPropagation()"
+                                            <mat-checkbox *ngIf="!readOnly" (click)="$event.stopPropagation()"
                                                 (change)="$event ? selection.toggle(row) : null"
                                                 [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
                                             </mat-checkbox>
@@ -266,18 +266,15 @@
                                             [disabled]="true"
                                             [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
                                             [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matFooterCellDef
-                                            mat-sort-header [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
+                                           [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
                                             {{totalRow[entry.key]? (totalRow[entry.key] | number : '1.2-2'): ''}}
                                     </td>
                                     </ng-container>
                                     <ng-container *ngIf="entry.isSelectCheckbox">
                                             <td mat-footer-cell *matFooterCellDef [disabled]="true" class="mat-header-cell table-column">
-                                                <!-- <mat-checkbox (change)="$event ? masterToggle() : null"
-                                                    [checked]="selection.hasValue() && isAllSelected()"
-                                                    [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                                    [aria-label]="checkboxLabel()" [matTooltip]="entry.tooltip">
-                                                </mat-checkbox> -->
-                                                Total
+                                               <ng-container>
+                                                   Total
+                                               </ng-container>
                                             </td>
                                     </ng-container>
     
