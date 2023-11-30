@@ -93,6 +93,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     // Height available for table
     tableHeight = 1000;
 
+    readOnly: Boolean;
+
     // Level related stuff
     isLevel: string = null;
     hasLevel: string[] = null;
@@ -166,7 +168,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _timeTrackerService: TimeTrackerService,
         private _googleAPIService: GoogleAPIService,
         private _dataSharingService: DataSharingService,
-        private changeDetector: ChangeDetectorRef
+        private changeDetector: ChangeDetectorRef,
+        private _authService: AuthService,
     ) {
         // Set selection model
         this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
@@ -280,6 +283,16 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     public loadData(search_keys = null) {
         const _this = this;
+
+        var tables= _this._authService.getTables();
+        if(tables && tables.readOnly && tables.readOnly.includes(_this.tableData.entryName))
+        {
+          _this.readOnly = true;
+        }
+        else{
+          _this.readOnly = false;
+        }
+
         search_keys = search_keys || _this.tableData.searchKeys;
         _this.resetView(search_keys);
         _this.resetSelection();
