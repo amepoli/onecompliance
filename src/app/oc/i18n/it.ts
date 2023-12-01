@@ -12,7 +12,7 @@ export const locale = {
             articoli_normativi: 'Articoli Normativi',
             assigned_to: 'Assegnato a',
             associate_project: 'Associa Progetto',
-            associate_survey: 'Associa Sondaggio',
+            associate_survey: 'Sondaggio Associati',
             associated_documents: 'Documenti Associati',
             associated_process: 'Processi Associati',
             associated_to_project_template: 'Associati al Modello Progetto',
