@@ -7,6 +7,114 @@
   "define": {
     "is_hidden_cessione": "false"
   },
+  "table_multiselection_actions": [
+    {
+      "viewType": "menu",
+      "key": "menuanag",
+      "label": "Actions",
+      "icon": "more_vert",
+      "menuOptions": [
+        {
+          "key": "modifica_crediti",
+          "icon": "edit",
+          "label": "Modifica crediti",
+          "reloadOnSuccess": true,
+          "customDialogEntryName": "dialog_pagamenti_crediti",
+          "customDialogTitle": "Modifica crediti selezionati"
+        },
+        {
+          "key": "cancella_data_pagamento",
+          "icon": "delete_aggiornamento",
+          "label": "Cancella data pagamento",
+          "query": "update entrasp.crediti_ceduti set data_pagamento=null::date where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€'",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Cancellare le date selezionate?"
+        },
+        {
+          "key": "cancella_crediti",
+          "icon": "delete_aggiornamento",
+          "label": "Cancella",
+          "query": "delete from entrasp.crediti_ceduti where codice_azienda||'~'||id_cessione in ($selected_rows_data$)",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Cancellare le fatture selezionate?"
+        },
+        {
+          "key": "flag_lavorazione_legale",
+          "icon": "date",
+          "label": "Segnare Lavorazione Legale",
+          "query": "update entrasp.crediti_ceduti set lavorazione_legale = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag lavorazione_legale alla selezione?"
+        },
+        {
+          "key": "flag_ricessione",
+          "icon": "date",
+          "label": "Segnare Ricessione",
+          "query": "update entrasp.crediti_ceduti set ricessione = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag ricessione alla selezione?"
+        },
+        {
+          "key": "flag_esecutivo",
+          "icon": "date",
+          "label": "Segnare Esecutivo",
+          "query": "update entrasp.crediti_ceduti set esecutivo = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag esecutivo alla selezione?"
+        },
+        {
+          "key": "flag_azionati",
+          "icon": "date",
+          "label": "Segnare come azionati",
+          "query": "update entrasp.crediti_ceduti set azionato = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag azionati alla selezione?"
+        },
+        {
+          "key": "flag_opposti",
+          "icon": "date",
+          "label": "Segnare come opposti",
+          "query": "update entrasp.crediti_ceduti set opposto = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag opposti alla selezione?"
+        },
+        {
+          "key": "flag_pagam_cedente",
+          "icon": "date",
+          "label": "Segnare pagamento cedente",
+          "query": "update entrasp.crediti_ceduti set pagam_cedente = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il pagamento al cedente alla selezione?"
+        },
+        {
+          "key": "flag_fasc_archiviato",
+          "icon": "date",
+          "label": "Segnare archiviazione fascicolo",
+          "query": "update entrasp.crediti_ceduti set fasc_archiviato = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Inserire il flag fascicolo archiviato alla selezione?"
+        },
+        {
+          "key": "flag_interessi_non_dovuti",
+          "icon": "date",
+          "label": "Esclusione Interessi",
+          "query": "update entrasp.crediti_ceduti set interessi_non_dovuti = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+          "confirmAction": true,
+          "reloadOnSuccess": true,
+          "confirmActionMessage": "Escludere il calcolo degli interessi alla selezione?"
+        }
+      ]
+    }
+  ],
   "form_keys": [
     {
       "autoGenerate": false,

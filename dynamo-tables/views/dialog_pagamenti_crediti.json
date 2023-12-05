@@ -1,6 +1,6 @@
 {
   "$schema": "../views.schema.json",
-  "entryKey": "dialog_crediti_ceduti_dt_pagamento",
+  "entryKey": "dialog_pagamenti_crediti",
   "predefinedQueries": [
     {
       "operation": "update",
@@ -173,6 +173,34 @@
     {
       "autoGenerate": false,
       "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_acquisto",
+      "label": "Data acquisto",
+      "size": 1.5,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false,
+      "key": "data_pagamento",
+      "label": "Data Pagamento",
+      "readOnly": false,
+      "size": 1.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
         "viewType": "combobox",
         "options": [],
         "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)"
@@ -228,13 +256,218 @@
       "size": 1.25
     },
     {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false,
+      "key": "data_incasso_parz",
+      "label": "Data Incasso Parziale",
+      "readOnly": false,
+      "size": 5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input",
+        "value": "0"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": true,
+      "key": "incasso_parz",
+      "label": "Incasso Parziale",
+      "readOnly": false,
+      "size": 5
+    },
+    {
       "format": {
         "dataType": "text",
         "viewType": "label"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "Legale Azionato",
+      "key": "situazione_ante_presidi",
+      "label": "Acquisti",
+      "style": {
+        "background_color": "#03a9f4",
+        "font_color": "white",
+        "font_size": "1.3em",
+        "font_style": "italic",
+        "font_weight": "400"
+      },
+      "newLine": true,
+      "readOnly": true,
+      "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_acquirente",
+      "label": "Acquirente",
+      "size": 2.5,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "format": {
+        "value": "0",
+        "viewType": "checkbox",
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_acquirente_checkbox",
+      "label": "Azzera acquirente",
+      "readOnly": false,
+      "newLine": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_ricessione",
+      "label": "Data Ricessione",
+      "size": 2.5,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "format": {
+        "value": "0",
+        "viewType": "checkbox",
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_ricessione_checkbox",
+      "label": "Azzera data ricessione",
+      "readOnly": false,
+      "newLine": true,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_riacquisto",
+      "label": "Data  Riacquisto",
+      "size": 2.5,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "format": {
+        "value": "0",
+        "viewType": "checkbox",
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_riacquisto_checkbox",
+      "label": "Azzera data riacquisto",
+      "readOnly": false,
+      "newLine": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_inatteso",
+      "label": "Data Inatteso",
+      "size": 2.5,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_inatteso",
+      "label": "Inatteso",
+      "size": 2.5,
+      "readOnly": false,
+      "newLine": true
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_restituzione",
+      "label": "Data Restituzione",
+      "size": 2.5,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "format": {
+        "value": "0",
+        "viewType": "checkbox",
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_restituzione_checkbox",
+      "label": "Azzera data restituzione",
+      "readOnly": false,
+      "newLine": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note_inatteso",
+      "label": "Note Inatteso",
+      "size": 5,
+      "readOnly": false,
+      "newLine": true
+    },
+    {
+      "format": {
+        "dataType": "text",
+        "viewType": "label"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "situazione_ante_presidi",
       "label": "Legale Azionato",
       "style": {
         "background_color": "#03a9f4",
@@ -401,6 +634,62 @@
       "newLine": true,
       "readOnly": true,
       "sameOrigin": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_mandato",
+      "label": "N. Mandato",
+      "readOnly": false,
+      "size": 2.5,
+      "newLine": false
+    },
+    {
+      "format": {
+        "value": "0",
+        "viewType": "checkbox",
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "n_mandato_checkbox",
+      "label": "Azzera numero mandato",
+      "readOnly": false,
+      "newLine": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_mandato",
+      "label": "Data Mandato",
+      "readOnly": false,
+      "size": 2.5,
+      "newLine": false
+    },
+    {
+      "format": {
+        "value": "0",
+        "viewType": "checkbox",
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_mandato_checkbox",
+      "label": "Azzera data mandato",
+      "readOnly": false,
+      "newLine": true,
+      "size": 2.5
     },
     {
       "autoGenerate": false,
