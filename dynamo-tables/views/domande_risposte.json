@@ -144,7 +144,7 @@
         },
         {
             "operation": "insert",
-            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, rispostadate=>$risposta_date$::date,rispostanum=>$risposta_num$::numeric, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
             "type": "main"
         },
         {
@@ -154,7 +154,7 @@
         },
         {
             "operation": "delete",
-            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
+            "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, rispostadate=>$risposta_date$::date,rispostanum=>$risposta_num$::numeric, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);",
             "type": "main"
         },
         {
@@ -1201,6 +1201,239 @@
                         "sameOrigin": false,
                         "newLine": true,
                         "readOnly": true
+                    }
+                ]
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "key": "risposte_num",
+            "sameOrigin": false,
+            "label": "risposte_num",
+            "saveWhenHidden": false,
+            "inputEvents": [
+                {
+                    "eventName": "domande_risposte_multipla_aperta",
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "values": [
+                        5
+                    ]
+                }
+            ],
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "newLine": false,
+                        "key": "peso_num",
+                        "sameOrigin": false,
+                        "label": "Risultato %",
+                        "inputEvents": [
+                            {
+                                "eventName": "event_flag_mostra_punteggi",
+                                "actionType": "hide",
+                                "condition": "equalTo",
+                                "values": [
+                                    "0"
+                                ]
+                            },
+                            {
+                                "eventName": "codice_colore_change_peso_num",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "update_style",
+                                "styleAttribute": "background_color",
+                                "updateFunct": "'£codice_colore_peso_num£'"
+                            }
+                        ],
+                        "size": 1,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "number",
+                            "value": "0",
+                            "validations": [
+                                {
+                                    "message": "Indicare risultato % ottenuto!",
+                                    "validator": "Validators.required",
+                                    "name": "required"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "newLine": false,
+                        "key": "risposta_num",
+                        "label": "Valore",
+                        "size": 2,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "number",
+                            "value": "0",
+                            "validations": [
+                                {
+                                    "message": "Inserire il valore!",
+                                    "validator": "Validators.required",
+                                    "name": "required"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "size": 1,
+                        "isPrimary": false,
+                        "key": "codice_colore_peso_num_k",
+                        "outputEvent": {
+                            "eventName": "codice_colore_change_peso_num",
+                            "eventTrigger": "change"
+                        },
+                        "label": "codice_colore",
+                        "sameOrigin": false,
+                        "newLine": false,
+                        "readOnly": true
+                    },
+                    {
+                        "format": {
+                            "viewType": "invisible"
+                        },
+                        "size": 6,
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "label": "invisible_num",
+                        "key": "invisible_num",
+                        "sameOrigin": false,
+                        "readOnly": true,
+                        "newLine": true
+                    }
+                ]
+            }
+        },
+        {
+            "isHidden": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "key": "risposte_data",
+            "sameOrigin": false,
+            "label": "risposte_data",
+            "saveWhenHidden": false,
+            "inputEvents": [
+                {
+                    "eventName": "domande_risposte_multipla_aperta",
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "values": [
+                        6
+                    ]
+                }
+            ],
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "newLine": false,
+                        "key": "peso_data",
+                        "sameOrigin": false,
+                        "label": "Risultato %",
+                        "inputEvents": [
+                            {
+                                "eventName": "event_flag_mostra_punteggi",
+                                "actionType": "hide",
+                                "condition": "equalTo",
+                                "values": [
+                                    "0"
+                                ]
+                            },
+                            {
+                                "eventName": "codice_colore_change_peso_data",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "update_style",
+                                "styleAttribute": "background_color",
+                                "updateFunct": "'£codice_colore_peso_data£'"
+                            }
+                        ],
+                        "size": 1,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "number",
+                            "value": "0",
+                            "validations": [
+                                {
+                                    "message": "Indicare risultato % ottenuto!",
+                                    "validator": "Validators.required",
+                                    "name": "required"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "newLine": false,
+                        "key": "risposta_date",
+                        "label": "Data",
+                        "size": 1.5,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "date",
+                            "validations": [
+                                {
+                                    "message": "Inserire la data!",
+                                    "validator": "Validators.required",
+                                    "name": "required"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "size": 1,
+                        "isPrimary": false,
+                        "key": "codice_colore_peso_data_k",
+                        "outputEvent": {
+                            "eventName": "codice_colore_change_peso_data",
+                            "eventTrigger": "change"
+                        },
+                        "label": "codice_colore",
+                        "sameOrigin": false,
+                        "newLine": true,
+                        "readOnly": true
+                    },
+                    {
+                        "format": {
+                            "viewType": "invisible"
+                        },
+                        "size": 6.5,
+                        "isHidden": "false",
+                        "isPrimary": false,
+                        "label": "invisible_data",
+                        "key": "invisible_data",
+                        "sameOrigin": false,
+                        "readOnly": true,
+                        "newLine": true
                     }
                 ]
             }

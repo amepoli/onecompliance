@@ -65,7 +65,7 @@ export const locale = {
             dialog_form_mt: 'Modifica domande del template',
             diverso_da_attivo: 'Diverso da Attivo',
             documenti_necessari: 'Documenti Necessari per la Verifica',
-            domade_sub_of_presidi: 'Domande Associate al Presidio',
+            domande_sub_of_presidi: 'Domande Associate al Presidio',
             domande_condizionate: 'Domande Condizionate',
             domande_da_copiare: 'Domande da Copiare',
             domandelabel: 'Domanda',
