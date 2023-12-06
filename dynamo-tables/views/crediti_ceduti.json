@@ -35,6 +35,22 @@
           "customDialogTitle": "Inserisci ricessioni crediti selezionati"
         },
         {
+          "key": "inserisci_pagamenti_totali",
+          "icon": "attach_money",
+          "label": "Incassi Totali",
+          "reloadOnSuccess": true,
+          "customDialogEntryName": "dialog_pag_debi_ced",
+          "customDialogTitle": "Inserisci incassi integrale dei crediti selezionati"
+        },
+        {
+          "key": "inserisci_pagamenti_diversi",
+          "icon": "currency_exchange",
+          "label": "Incassi Diversi",
+          "reloadOnSuccess": true,
+          "customDialogEntryName": "dialog_pag_diversi",
+          "customDialogTitle": "Inserisci incassi diversi dei crediti selezionati"
+        },
+        {
           "key": "cancella_crediti",
           "icon": "delete_aggiornamento",
           "label": "Cancella",
@@ -51,15 +67,6 @@
           "confirmAction": true,
           "reloadOnSuccess": true,
           "confirmActionMessage": "Inserire il flag lavorazione_legale alla selezione?"
-        },
-        {
-          "key": "flag_ricessione",
-          "icon": "date",
-          "label": "Segnare Ricessione",
-          "query": "update entrasp.crediti_ceduti set ricessione = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Inserire il flag ricessione alla selezione?"
         },
         {
           "key": "flag_esecutivo",
@@ -87,16 +94,7 @@
           "confirmAction": true,
           "reloadOnSuccess": true,
           "confirmActionMessage": "Inserire il flag opposti alla selezione?"
-        },
-        {
-          "key": "flag_pagam_cedente",
-          "icon": "date",
-          "label": "Segnare pagamento cedente",
-          "query": "update entrasp.crediti_ceduti set pagam_cedente = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Inserire il pagamento al cedente alla selezione?"
-        },
+        },      
         {
           "key": "flag_fasc_archiviato",
           "icon": "date",
@@ -210,7 +208,7 @@
       },
       "label": "Pagamento dopo il",
       "newLine": false,
-      "queryCond": "data_pagamento>='€data_pagamento_min€'"
+      "queryCond": "id_cessione in (select id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento>='€data_pagamento_max€')"
     },
     {
       "fieldName": "data_scadenza_min",
@@ -250,7 +248,7 @@
       },
       "label": "Pagamento entro il",
       "newLine": false,
-      "queryCond": "data_pagamento<='€data_pagamento_max€'"
+      "queryCond": "id_cessione in (select id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento<='€data_pagamento_max€')"
     },
     {
       "fieldName": "data_scadenza_max",
@@ -509,16 +507,6 @@
       "label": "Fattura duplicata",
       "newLine": false,
       "queryCond": "extract(year from data_fattura)||n_fattura||id_cedente in (select extract(year from data_fattura)||n_fattura||id_cedente from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
-      "size": 0
-    },
-    {
-      "fieldName": "max_tranche",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Ultima tranche",
-      "newLine": true,
-      "queryCond": "tranche IN (SELECT max(tranche) FROM entrasp.crediti_ceduti cci WHERE codice_azienda=crediti_ceduti.codice_azienda and id_contratto=crediti_ceduti.id_contratto)",
       "size": 0
     },
     {
@@ -828,7 +816,7 @@
         "dataType": "text",
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€"
+        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'"
       },
       "isHidden": false,
       "isPrimary": false,
