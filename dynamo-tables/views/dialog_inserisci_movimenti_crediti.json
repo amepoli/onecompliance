@@ -5,7 +5,12 @@
     {
       "operation": "insert",
       "type": "main",
-      "queryString": "entrasp.insert_movimenti_crediti($selected_rows_data$, $data_pagamento$, $importo$, $note$, $id_argomento_tipo_pag$, $id_controparte$, $n_mandato$, $data_mandato$, $id_argomento_inatteso$, $id_conto_corrente$);"
+      "queryString": "select entrasp.insert_movimenti_crediti(($selected_rows_data$)::varchar, $data_pagamento$::date, $importo$, $note$, $id_argomento_tipo_pag$, $id_controparte$, $n_mandato$, $data_mandato$::date, $id_argomento_inatteso$, $id_conto_corrente$);"
+    },
+    {
+      "operation": "isInsert",
+      "queryString": "select true as label;",
+      "type": "main"
     }
   ],
   "form_keys": [
@@ -13,7 +18,14 @@
       "autoGenerate": false,
       "format": {
         "dataType": "date",
-        "viewType": "input"
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Data necessaria",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -21,13 +33,20 @@
       "key": "data_pagamento",
       "label": "Data Pagamento",
       "readOnly": false,
-      "size": 3.3
+      "size": 2.5
     },
     {
       "autoGenerate": false,
       "format": {
         "dataType": "number",
-        "viewType": "input"
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Importo necessario!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -35,14 +54,21 @@
       "key": "importo",
       "label": "Importo",
       "readOnly": false,
-      "size": 3.3
+      "size": 2.5
     },
     {
       "autoGenerate": false,
       "format": {
         "viewType": "combobox",
         "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
-        "options": []
+        "options": [],
+        "validations": [
+          {
+            "message": "Causale necessaria!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
       },
       "isHidden": false,
       "isPrimary": false,
@@ -121,7 +147,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "newLine": false,
+      "newLine": true,
       "size": 2.5,
       "key": "id_conto_corrente",
       "label": "Conto Corrente",
