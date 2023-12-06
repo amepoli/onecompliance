@@ -1,0 +1,119 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "dialog_ricessioni",
+  "predefinedQueries": [
+    {
+      "operation": "insert",
+      "type": "main",
+      "queryString": "select entrasp.insert_ricessioni(($selected_rows_data$)::varchar, $data_pagamento$::date, $note$, $percentuale$, $commissione$, $id_controparte$, $id_conto_corrente$)"
+      
+    },
+    {
+      "operation": "isInsert",
+      "queryString": "select true as label;",
+      "type": "main"
+    }
+  ],
+  "form_keys": [
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "date",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Data necessaria",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false,
+      "key": "data_pagamento",
+      "label": "Data Pagamento",
+      "readOnly": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input",
+        "validations": [
+          {
+            "message": "Percentuale necessaria!",
+            "name": "required",
+            "validator": "Validators.required"
+          }
+        ]
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": false,
+      "key": "percentuale",
+      "label": "Percentuale",
+      "readOnly": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "number",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": true,
+      "key": "commissione",
+      "label": "Commissione",
+      "readOnly": false,
+      "size": 2.5
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_controparte",
+      "label": "Controparte",
+      "size": 3.3,
+      "readOnly": false,
+      "newLine": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "comboQuery": "select id_conto_corrente as ID, RIGHT(iban,12) as name from entrasp.conti_correnti where codice_azienda='€global_codice_azienda€'",
+        "options": []
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "newLine": true,
+      "size": 3.4,
+      "key": "id_conto_corrente",
+      "label": "Conto Corrente",
+      "readOnly": false
+    },
+    {
+      "autoGenerate": false,
+      "format": {
+        "dataType": "text",
+        "viewType": "input"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "note",
+      "label": "Note",
+      "readOnly": false,
+      "newLine": true
+    }
+  ]
+}
