@@ -4,7 +4,7 @@
   "inheritsFrom": "crediti_ceduti",
   "predefinedQueries": [
     {
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, id_ricessione, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda=$codice_azienda$ and id_ricessione=$id_ricessione$;",
+      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, id_ricessione, (case when id_ricessione is not null then 1 else 0 end) as cessionato, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda=$codice_azienda$ and id_ricessione=$id_ricessione$;",
       "operation": "selectTable",
       "type": "main"
     }
