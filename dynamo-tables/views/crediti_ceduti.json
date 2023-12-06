@@ -120,7 +120,7 @@
   ],
   "predefinedQueries": [
     {
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, id_ricessione, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
+      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, id_ricessione,(case when id_ricessione is not null then '1' else '0' end) as cessionato, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
       "operation": "selectTable",
       "type": "main"
     }
@@ -349,6 +349,17 @@
       "queryCond": "id_tipo_documento=$id_tipo_doc_s$"
     },
     {
+      "fieldName": "id_ricessione_s",
+      "format": {
+        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'",
+        "options": [],
+        "viewType": "combobox"
+      },
+      "label": "Cessione",
+      "newLine": false,
+      "queryCond": "id_ricessione=$id_ricessione_s$"
+    },
+    {
       "fieldName": "id_argomento_inatteso_s",
       "format": {
         "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920",
@@ -403,6 +414,15 @@
       "label": "Opposti",
       "newLine": false,
       "queryCond": "opposto = '1'"
+    },
+    {
+      "fieldName": "flag_cessionati",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Cessionati",
+      "newLine": false,
+      "queryCond": "id_ricessione is not null"
     },
     {
       "fieldName": "flag_esecutivo",
@@ -508,8 +528,8 @@
       },
       "label": "Da lavorare",
       "newLine": false,
-      "queryCond": "(azionato='0' and data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
-      "tooltip": "Non azionati, con pagamento avvenuto e interessi maggiori di 0",
+      "queryCond": "(azionato='0' and flag_pool !='1' and  data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
+      "tooltip": "Non azionati, con pagamento avvenuto, non in pool e interessi maggiori di 0",
       "size": 2
     },
     {
@@ -808,7 +828,7 @@
         "dataType": "text",
         "viewType": "combobox",
         "options": [],
-        "comboQuery": "select id_ricessione as ID, id_ricessione|| '-' ||data_cessione as name from entrasp.ricessioni where codice_azienda=$codice_azienda$"
+        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€"
       },
       "isHidden": false,
       "isPrimary": false,
@@ -1417,6 +1437,19 @@
       "isCheckbox": true,
       "width": "4%",
       "label": "Azion."
+    },
+    {
+      "format": {
+        "dataType": "boolean"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "cessionato",
+      "queryFunct": "case when id_ricessione is not null then '1' else '0' end",
+      "sameOrigin": false,
+      "isCheckbox": true,
+      "width": "4%",
+      "label": "Cessionato"
     },
     {
       "format": {
