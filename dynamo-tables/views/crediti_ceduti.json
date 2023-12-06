@@ -19,14 +19,6 @@
           "customDialogTitle": "Modifica crediti selezionati"
         },
         {
-          "key": "inserisci_movimenti",
-          "icon": "list",
-          "label": "Ins.movimenti crediti sel.",
-          "reloadOnSuccess": true,
-          "customDialogEntryName": "dialog_inserisci_movimenti_crediti",
-          "customDialogTitle": "Inserisci movimenti crediti selezionati"
-        },
-        {
           "key": "inserisci_ricessioni",
           "icon": "sync",
           "label": "Erogazioni",
@@ -47,7 +39,7 @@
           "icon": "currency_exchange",
           "label": "Incassi Diversi",
           "reloadOnSuccess": true,
-          "customDialogEntryName": "dialog_pag_diversi",
+          "customDialogEntryName": "dialog_inserisci_movimenti_crediti",
           "customDialogTitle": "Inserisci incassi diversi dei crediti selezionati"
         },
         {
@@ -208,7 +200,7 @@
       },
       "label": "Pagamento dopo il",
       "newLine": false,
-      "queryCond": "id_cessione in (select id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento>='€data_pagamento_max€')"
+      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_pagamenti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento>='€data_pagamento_max€')"
     },
     {
       "fieldName": "data_scadenza_min",
@@ -248,7 +240,7 @@
       },
       "label": "Pagamento entro il",
       "newLine": false,
-      "queryCond": "id_cessione in (select id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento<='€data_pagamento_max€')"
+      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento<='€data_pagamento_max€')"
     },
     {
       "fieldName": "data_scadenza_max",
@@ -270,7 +262,7 @@
       },
       "label": "N mandato",
       "newLine": false,
-      "queryCond": "n_mandato=$n_mandato_s$"
+      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.n_mandato=$n_mandato_s$)"
     },
     {
       "fieldName": "giorni_scad_max",
