@@ -200,7 +200,7 @@
       },
       "label": "Pagamento dopo il",
       "newLine": false,
-      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_pagamenti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento>='€data_pagamento_max€')"
+      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento>='€data_pagamento_min€')"
     },
     {
       "fieldName": "data_scadenza_min",
@@ -330,13 +330,23 @@
     {
       "fieldName": "id_tipo_doc_s",
       "format": {
-        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)",
+        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342,50664,50677)",
         "options": [],
         "viewType": "combobox"
       },
       "label": "Tipo documento",
       "newLine": true,
       "queryCond": "id_tipo_documento=$id_tipo_doc_s$"
+    },
+    {
+      "fieldName": "data_pagamento",
+      "format": {
+        "dataType": "date",
+        "viewType": "input"
+      },
+      "label": "Pagamento dopo il",
+      "newLine": false,
+      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento='€data_pagamento€')"
     },
     {
       "fieldName": "id_ricessione_s",
@@ -346,19 +356,8 @@
         "viewType": "combobox"
       },
       "label": "Cessione",
-      "newLine": false,
-      "queryCond": "id_ricessione=$id_ricessione_s$"
-    },
-    {
-      "fieldName": "id_argomento_inatteso_s",
-      "format": {
-        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Intatteso",
       "newLine": true,
-      "queryCond": "id_argomento_inatteso=$id_argomento_inatteso_s$"
+      "queryCond": "id_ricessione=$id_ricessione_s$"
     },
     {
       "fieldName": "flag_lav_legale",
@@ -413,6 +412,15 @@
       "label": "Cessionati",
       "newLine": false,
       "queryCond": "id_ricessione is not null"
+    },
+    {
+      "fieldName": "flag_cessionati_pagati",
+      "format": {
+        "viewType": "checkbox"
+      },
+      "label": "Cessionati e incassati",
+      "newLine": false,
+      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc where cc.codice_azienda|| '-'||cc.id_cessione in (select pc.codice_azienda|| '-'||pc.id_cessione from entrasp.pagamenti_crediti pc where pc.id_argomento_tipo_pag in (51488,51489)) and cc.id_ricessione is not null and cc.codice_azienda=$codice_azienda$)"
     },
     {
       "fieldName": "flag_esecutivo",
@@ -808,7 +816,7 @@
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
-      "key": "importo_residuo_fin",
+      "key": "capitale_residuo_fin",
       "label": "Importo Residuo Finanziario",
       "size": 1.67,
       "queryFunct": "select entrasp.capitale_residuo(id_cessione, codice_azienda, current_date, 'fin')",
@@ -824,7 +832,7 @@
       "isHidden": false,
       "isPrimary": false,
       "newLine": false,
-      "key": "importo_residuo",
+      "key": "capitale_residuo",
       "label": "Importo Residuo Legale",
       "size": 1.67,
       "queryFunct": "select entrasp.capitale_residuo(id_cessione, codice_azienda, current_date, 'leg')",
