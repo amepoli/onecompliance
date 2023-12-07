@@ -339,14 +339,15 @@
       "queryCond": "id_tipo_documento=$id_tipo_doc_s$"
     },
     {
-      "fieldName": "data_pagamento",
+      "fieldName": "data_pagamento_il",
       "format": {
         "dataType": "date",
         "viewType": "input"
       },
-      "label": "Pagamento dopo il",
+      "label": "Data pagamento il",
       "newLine": false,
-      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento='€data_pagamento€')"
+      "tooltip": "",
+      "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento='€data_pagamento_il€')"
     },
     {
       "fieldName": "id_ricessione_s",
@@ -447,7 +448,7 @@
       },
       "label": "Crediti non incassati",
       "newLine": true,
-      "queryCond": "data_pagamento is null"
+      "queryCond": "codice_azienda||'-'||id_cessione not in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in(51488))"
     },
     {
       "fieldName": "data_pagamento_not_null",
@@ -456,7 +457,7 @@
       },
       "label": "Crediti incassati",
       "newLine": false,
-      "queryCond": "data_pagamento is not null",
+      "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in(51488))",
       "size": 0
     },
     {
@@ -486,7 +487,7 @@
       },
       "label": "Data Pagamento Precedente a Data Fattura",
       "newLine": false,
-      "queryCond": "data_pagamento<data_fattura",
+      "queryCond": "entrasp.crediti_pag_precede_dt_fattura(codice_azienda, id_cessione)",
       "size": 0
     },
     {
