@@ -487,7 +487,7 @@
       },
       "label": "Data Pagamento Precedente a Data Fattura",
       "newLine": false,
-      "queryCond": "entrasp.crediti_pag_precede_dt_fattura(codice_azienda, id_cessione)",
+      "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)",
       "size": 0
     },
     {
