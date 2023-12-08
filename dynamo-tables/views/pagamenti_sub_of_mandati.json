@@ -1,5 +1,96 @@
 {
   "$schema": "../views.schema.json",
   "entryKey": "pagamenti_sub_of_mandati",
-  "inheritsFrom": "pagamenti"
+  "inheritsFrom": "pagamenti",
+  "predefinedQueries": [
+    {
+      "queryString": "select id_cessione, codice_azienda, id_pagamento, entrasp.argomenti_descr_breve(id_argomento_tipo_pag) as id_argomento_tipo_pag, entrasp.cessione_descr(id_cessione, codice_azienda) as descr_cessione, data_pagamento, importo, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte) as descr_controparte from entrasp.pagamenti_crediti where codice_azienda=$codice_azienda$ and id_argomento_tipo_pag in (51488,51487);",
+      "operation": "selectTable",
+      "type": "main"
+    }
+  ],
+  "table_keys": [
+    {
+      "format": {
+        "dataType": "text"
+      },
+      "isHidden": true,
+      "isPrimary": true,
+      "key": "codice_azienda",
+      "label": "codice_azienda",
+      "translate": "RESOURCES.company_code"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "width": "5%",
+      "isPrimary": true,
+      "key": "id_pagamento",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_cessione",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "id_argomento_tipo_pag",
+      "width": "15%",
+      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_pag)",
+      "label": "Causale"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isPrimary": false,
+      "isHidden": "$Q{is_hidden_cessione}",
+      "queryFunct": "entrasp.cessione_descr(id_cessione, codice_azienda)",
+      "key": "descr_cessione",
+      "label": "Cessione (id - contr - ceden - n_fatt - data_fatt)",
+      "width": "25%"
+    },
+    {
+      "format": {
+        "dataType": "date"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "data_pagamento",
+      "label": "Data pagamento",
+      "width": "8%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "importo",
+      "label": "Importo",
+      "width": "6%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isPrimary": false,
+      "isHidden": false,
+      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte)",
+      "key": "descr_controparte",
+      "label": "Controparte",
+      "width": "18%"
+    }
+  ]
 }
