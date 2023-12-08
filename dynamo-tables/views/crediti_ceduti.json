@@ -457,7 +457,7 @@
       },
       "label": "Crediti incassati",
       "newLine": false,
-      "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in(51488))",
+      "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda='€global_codice_azienda€' and pag.id_argomento_tipo_pag in(51488))",
       "size": 0
     },
     {
@@ -1606,7 +1606,7 @@
       },
       {
         "label": "Crediti per importazione pagamenti",
-        "queryString": "SELECT id_cessione, codice_azienda, NULL AS data_pagamento,importo, NULL AS id_argomento_tipo_pag, NULL AS id_controparte, NULL AS n_mandato, NULL AS data_mandato, note, NULL as id_conto_corrente FROM entrasp.crediti_ceduti WHERE codice_azienda= $codice_azienda$"
+        "queryString": "select id_cessione, entrasp.contratti_descr(id_contratto, codice_azienda) as id_n_contratto, tranche, n_fattura, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente, id_debitore_ceduto, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as debitore_ceduto, importo, data_fattura, azionato, fascicolo, entrasp.ricessione_descr(id_ricessione, codice_azienda) as ricessione, null as data_pagamento, null as id_argomento_tipo_pag, null as id_controparte, null as incasso, null as n_mandato, note, null as id_conto_corrente from entrasp.crediti_ceduti where codice_azienda= $codice_azienda$"
       }
     ]
   },
