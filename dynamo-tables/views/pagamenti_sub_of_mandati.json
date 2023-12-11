@@ -4,7 +4,7 @@
   "inheritsFrom": "pagamenti",
   "predefinedQueries": [
     {
-      "queryString": "select id_cessione, codice_azienda, id_pagamento, entrasp.argomenti_descr_breve(id_argomento_tipo_pag) as id_argomento_tipo_pag, entrasp.cessione_descr(id_cessione, codice_azienda) as descr_cessione, data_pagamento, importo, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte) as descr_controparte from entrasp.pagamenti_crediti where codice_azienda=$codice_azienda$ and id_argomento_tipo_pag in (51488,51487);",
+      "queryString": "select id_cessione,n_mandato,id_controparte, codice_azienda, id_pagamento, entrasp.argomenti_descr_breve(id_argomento_tipo_pag) as id_argomento_tipo_pag, entrasp.cessione_descr(id_cessione, codice_azienda) as descr_cessione, data_pagamento, importo, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte) as descr_controparte from entrasp.pagamenti_crediti where codice_azienda=$codice_azienda$ and id_argomento_tipo_pag in (51488,51487);",
       "operation": "selectTable",
       "type": "main"
     }
@@ -36,7 +36,25 @@
       },
       "isHidden": true,
       "isPrimary": false,
+      "key": "n_mandato",
+      "label": "n_mandato"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
       "key": "id_cessione",
+      "label": "ID"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": true,
+      "isPrimary": false,
+      "key": "id_controparte",
       "label": "ID"
     },
     {
@@ -77,6 +95,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
+      "showTotal": true,
       "key": "importo",
       "label": "Importo",
       "width": "6%"
