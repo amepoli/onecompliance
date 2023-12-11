@@ -33,6 +33,7 @@ export const locale = {
             close_survey_checks: 'Chiudi verifiche del sondaggio',
             closing_date: 'Data Chiusura',
             code: 'Codice',
+            code_update: 'Aggiorna Codici',
             codice_part: 'Codice Partizione',
             company_code: 'Codice Azienda',
             competence: 'Competenza',

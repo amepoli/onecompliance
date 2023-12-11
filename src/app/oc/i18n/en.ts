@@ -34,6 +34,7 @@ export const locale = {
             code: 'Code',
             codice_part: 'Partition Code',
             company_code: 'Company Code',
+            code_update:'Update Code',
             competence: 'Competence',
             complete: 'Complete',
             complete_documentation: 'Complete Documentation',
