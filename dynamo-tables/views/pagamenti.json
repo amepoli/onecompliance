@@ -5,7 +5,9 @@
   "label": "Pagamenti",
   "businessObjectName": "pagamenti_crediti",
   "define": {
-    "is_hidden_cessione": "false"
+    "is_hidden_cessione": "false",
+    "is_hidden_interessi": "true"
+
   },
   "table_multiselection_actions": [
     {
@@ -422,7 +424,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{is_hidden_cessione}",
       "isPrimary": false,
       "key": "interessi",
       "label": "Interessi.leg."
@@ -431,7 +433,7 @@
       "format": {
         "dataType": "number"
       },
-      "isHidden": false,
+      "isHidden": "$Q{is_hidden_cessione}",
       "isPrimary": false,
       "key": "interessi_fin",
       "label": "Interessi.fin."
@@ -482,7 +484,6 @@
       },
       "label": "Pagamento dopo il",
       "newLine": false,
-      "size": 3.3,
       "queryCond": "data_pagamento>='€data_pagamento_min€'"
     },
     {
@@ -493,7 +494,6 @@
       },
       "label": "Pagamento entro il",
       "newLine": false,
-      "size": 3.3,
       "queryCond": "data_pagamento<='€data_pagamento_max€'"
     },
     {
@@ -514,8 +514,7 @@
         "viewType": "combobox"
       },
       "label": "Tipo Pagamento",
-      "newLine": true,
-      "size": 3.4,
+      "newLine": false,
       "queryCond": "id_argomento_tipo_pag=$id_argomento_tipo_pag_s$"
     },
     {
