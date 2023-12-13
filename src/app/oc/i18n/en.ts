@@ -282,6 +282,7 @@ export const locale = {
     reference_survey: 'Reference Surveys',
     registry_under_users: 'Associated Registries',
     relative_survey: 'Parent Survey',
+    regolamenti_sub_of_presidi:'Associated Regulations',
     reopen_verification_verification: 'Reopen Verification',
     report: 'warning',
     report_date: 'Report Date',
