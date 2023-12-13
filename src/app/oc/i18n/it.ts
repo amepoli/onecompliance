@@ -313,7 +313,7 @@ export const locale = {
     rischio_residuo_pi: 'Rischio Residuo (mt)',
     rischio_residuo_rett: 'Rischio Residuo Rett',
     rischio_residuo_rett_pi: 'Rischio Residuo Rett (mt)',
-    risk_code_pk: 'Codice Rischio (PK)',
+    risk_code_pk: 'Codice Rischio',
     risk_response: 'Risk Resp.',
     risk_response_rett: 'Risk Resp. Rett.',
     risposte_previste: 'Risposte Previste',
