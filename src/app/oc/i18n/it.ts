@@ -23,7 +23,7 @@ export const locale = {
     attachment_type_expected: 'Tipo allegato previsto',
     attendees: 'Partecipanti',
     average_section_result: 'Risultati medi sezione',
-    cancel_project: 'Cancella Progetto',
+    cancel_project: 'Annulla Progetto',
     ceased: 'Cessati',
     change_check_template: 'Cambia Modello di Verifica',
     check_completion: 'Completamento Verifica',
