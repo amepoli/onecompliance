@@ -7,7 +7,6 @@
   "define": {
     "is_hidden_cessione": "false",
     "is_hidden_interessi": "true"
-
   },
   "table_multiselection_actions": [
     {
@@ -22,7 +21,7 @@
           "label": "Gestisci movimenti",
           "reloadOnSuccess": true,
           "customDialogEntryName": "dialog_pagamenti_crediti",
-          "customDialogTitle": "Modifica movimenti selezionati"          
+          "customDialogTitle": "Modifica movimenti selezionati"
         }
       ]
     }
@@ -355,6 +354,22 @@
       "isHidden": "$Q{is_hidden_cessione}",
       "queryFunct": "entrasp.cessione_descr(id_cessione, codice_azienda)",
       "key": "descr_cessione",
+      "isInputButton": true,
+      "buttonAction": {
+        "target": "crediti_ceduti",
+        "viewType": "form",
+        "action": "navigate",
+        "keymap": [
+          {
+            "source": "codice_azienda",
+            "destination": "codice_azienda"
+          },
+          {
+            "source": "id_cessione",
+            "destination": "id_cessione"
+          }
+        ]
+      },
       "label": "Cessione",
       "width": "25%"
     },
@@ -388,7 +403,7 @@
       "key": "descr_controparte",
       "label": "Controparte",
       "width": "18%"
-    },  
+    },
     {
       "format": {
         "dataType": "boolean"
@@ -477,9 +492,22 @@
       "queryCond": "n_mandato=$n_mandato_s$"
     },
     {
+      "format": {
+        "dataType": "text",
+        "viewType": "combobox",
+        "options": [],
+        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'"
+      },
+      "newLine": false,
+      "fieldName": "id_ricessione_s",
+      "label": "Ricessione",
+      "queryCond": "id_cessione in(select id_cessione from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_ricessione=$id_ricessione_s$)",
+      "size": 2.0
+    },
+    {
       "fieldName": "cessionato_s",
       "format": {
-            "viewType": "checkbox"
+        "viewType": "checkbox"
       },
       "label": "Cessionato",
       "newLine": true,
@@ -541,7 +569,7 @@
     {
       "fieldName": "inatteso",
       "format": {
-            "viewType": "checkbox"
+        "viewType": "checkbox"
       },
       "label": "Inatteso",
       "newLine": true,
