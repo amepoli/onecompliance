@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostBinding, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
 import { UntypedFormGroup } from "@angular/forms";
-import { ConsoleLoggerService, DialogService, HelperService, PubSubService, TimezoneService } from "app/oc/services";
+import { ConsoleLoggerService, DialogService, HelperService, PubSubService, TimezoneService, ValidationsService } from "app/oc/services";
 import { FieldConfig } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { AngularEditorConfig } from "@kolkov/angular-editor";
@@ -69,6 +69,8 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
       [] //['fontSize']
     ]
   };
+  isRequired = false; // field is required or not
+
 
   constructor(private timezoneService: TimezoneService,
     private pubSubService: PubSubService,
@@ -86,6 +88,12 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     // if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
     //   setTimeout(() => _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'blur' }), 50);
     // }
+
+     // Check if required
+     if (_this.field.validations) {
+      _this.isRequired = ValidationsService.checkIfRequired(_this.field.validations);
+    }
+
   }
   
   setHeights() {
