@@ -1,0 +1,342 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "esg_models",
+    "inheritsFrom": "modelli_test_vr",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test in ($P{lista_id_tipi_modelli_test});"
+        },
+        {
+            "type": "preProcessing",
+            "operation": "selectForm",
+            "queryString": "update entrasp.modelli_test mt1 set titolo_cartella=coalesce(mt1.titolo_cartella, mt2.titolo_cartella) from entrasp.modelli_test mt2 where mt1.id_argomento=mt2.id_argomento and mt1.titolo_cartella is null and mt2.titolo_cartella is not null;"
+        },
+        {
+            "type": "main",
+            "operation": "delete",
+            "queryString": "select entrasp.modello_test_delete($codice_azienda$, $id_modello_test$);"
+        },
+        {
+            "type": "preCheck",
+            "operation": "share",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda='$codice_azienda$' and id_modello_test=$id_modello_test$ and id_argomento is null;",
+            "messageNotNull": "Necessario attribuire un argomento al modello di test prima di condividerlo!"
+        },
+        {
+            "type": "main",
+            "operation": "share",
+            "queryString": "select entrasp.grc_accoda_singolo_modello_test('$codice_azienda$', '$chosen_azienda$', $id_modello_test$, $id_modello_test_vr$);"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£'",
+            "messageNotNull": "Inserimento: il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzare un codice diverso"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and (titolo='£titolo£' or descrizione='£descrizione£')",
+            "messageNotNull": "Inserimento: il titolo o la descrizione sono già stati utilizzati per un altro modello di test: si prega di controllare o fornire una descrizione più precisa"
+        },
+        {
+            "operation": "selectTable",
+            "type": "preProcessing",
+            "queryString": "select entrasp.argomenti_create_and_update(codice_azienda, id_modello_test, titolo, descrizione , codice, 45) from entrasp.modelli_test where id_argomento is null and codice_azienda=$codice_azienda$"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£' and id_modello_test!=$id_modello_test$",
+            "messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.argomenti_create_and_update(codice_azienda, id_modello_test, titolo, descrizione , codice, 45) from entrasp.modelli_test where id_argomento is null and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_modello_test$ is null as label;",
+            "type": "main"
+        },
+        {
+            "type": "main",
+            "operation": "insert",
+            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=>$descrizione$, flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar) , id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>'€flag_no_domande€', stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean,titolocartella=>$titolo_cartella$, flagworkflow=>$flag_workflow$::character, rifnormativi => $rif_normativi$, prezzo_ => $prezzo$);"
+        },
+        {
+            "type": "main",
+            "operation": "update",
+            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>coalesce($descrizione$,$titolo$), flag_applicazione_singola=>$flag_applicazione_singola$::character, id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>$flag_sezioni$::character, giorni_anticipo_pres_doc=>coalesce($giorni_anticipo_pres_doc$,15),codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>$flag_mostra_punteggi$::character, id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::character, stopreplanningwhencontractsclosed=>$stop_replanning_when_contracts_closed$::boolean,titolocartella=>$titolo_cartella$,flagworkflow=>$flag_workflow$::character,flagripianificapercliente=>$flag_ripianifica_per_cliente$::character, rifnormativi => $rif_normativi$, prezzo_ => $prezzo$);"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento=£id_argomento£ and id_centro_gest=£id_centro_gest£",
+            "messageNotNull": "Inserimento: l'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.modelli_test set id_argomento=coalesce(id_argomento, 3456) where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento=£id_argomento£ and id_centro_gest=£id_centro_gest£ and id_modello_test!=$id_modello_test$",
+            "messageNotNull": "Aggiornamento: l'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'modelli_test', $id_modello_test$, '$codice_azienda$'::varchar)"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        }
+    ],
+    "define": {
+        "label_crea_sondaggio": "Crea valutazione",
+        "lista_id_tipi_modelli_test": "60",
+        "tipo_sondaggio": "valutazione ESG"
+    },
+    "messages": [
+        {
+            "viewType": "form",
+            "formMessageType": "delete",
+            "message": {
+                "title": "Cancellazione modello di test",
+                "text": "Cancellare il modello di test e tutte le domande collegate?"
+            }
+        },
+        {
+            "viewType": "form",
+            "formMessageType": "share",
+            "message": {
+                "title": "Condivisione modello di test",
+                "text": "Condividere il modello di test nell'azienda selezionata?"
+            }
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "width": "5%",
+            "label": "#"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "width": "6%",
+            "label": "Versione",
+            "translate": "RESOURCES.version"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "width": "10%",
+            "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "599"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo",
+            "translate": "RESOURCES.title",
+            "width": "38%",
+            "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "599"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "width": "13%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_modello_test",
+            "label": ""
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_tipo",
+            "width": "12%",
+            "label": "Tipo",
+            "translate": "RESOURCES.type"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_survey"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
+            "translate": "RESOURCES.id_administration"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "12%",
+            "queryFunct": "select true",
+            "key": "create_somministrazione",
+            "label": "$P{label_crea_sondaggio}",
+            "isButton": true,
+            "style": [
+                {
+                    "button_icon": "add",
+                    "value": "*"
+                }
+            ],
+            "buttonAction": {
+                "target": "sondaggi_somministrati",
+                "viewType": "form",
+                "keyToCheck": "id_tipo_modello_test",
+                "navigationConditions": [
+                    {
+                        "ifValue": "52",
+                        "newTarget": "lessons"
+                    },
+                    {
+                        "ifValue": "5",
+                        "newTarget": "lessons"
+                    }
+                ],
+                "action": "query",
+                "query": "select codaz as codice_azienda, idsnd as new_id_sondaggio, idss as new_id_somministrazione from entrasp.crea_singola_verifica('£codice_azienda£', £id_modello_test£)",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Nuova $P{tipo_sondaggio}",
+                    "text": "Si vuole creare una nuova $P{tipo_sondaggio}?"
+                },
+                "onSuccessAction": "navigate",
+                "onSuccessActionKeymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "new_id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "new_id_somministrazione",
+                        "destination": "id_somministrazione"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fake",
+            "label": "",
+            "width": "1%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "id_risultato"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "ID argomento"
+        }
+    ]
+}
