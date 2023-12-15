@@ -11,11 +11,11 @@ import { PubSubService } from 'app/oc/services';
 </span>`,
   styles: [],
   host: {
-    '[style.padding-top.px]': 'field.isVisible? "8": "0"',
+    '[style.padding-top.px]': 'field.isVisible? "20": "0"',
     '[style.margin-right]': 'field.isVisible? "1%": "0"',
     '[style.margin-left]': 'field.isVisible? "1%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"',
-    '[style.height.px]': 'field.isVisible? "48": "0"',
+    '[style.height.px]': 'field.isVisible? "100%": "0"',
   }
 })
 export class CheckboxComponent implements OnInit {

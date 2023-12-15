@@ -17,9 +17,9 @@ import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-
     .subform-style {
       margin-right: 2%;
       margin-left: 2%;
-      display: flex;
-      flex-direction: row;
+      display: flex !important;
       flex-wrap: wrap;
+      align-items: center;
       width: 96%;
     }
   `],
