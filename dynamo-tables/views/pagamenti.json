@@ -6,7 +6,8 @@
   "businessObjectName": "pagamenti_crediti",
   "define": {
     "is_hidden_cessione": "false",
-    "is_hidden_interessi": "true"
+    "is_hidden_interessi": "true",
+    "is_hidden_mandato": "true"
   },
   "table_multiselection_actions": [
     {
@@ -192,13 +193,13 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT id_mandato AS id, n_mandato||-||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
         "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select distinct n_mandato as id, n_mandato ||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante) as name from entrasp.mandati where codice_azienda='€global_codice_azienda€' "
+        "options": []
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "n_mandato",
+      "key": "id_mandato",
       "label": "N. Mandato",
       "readOnly": false,
       "size": 2.5,
@@ -452,6 +453,15 @@
       "isPrimary": false,
       "key": "interessi_fin",
       "label": "Interessi.fin."
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": "$Q{is_hidden_mandato}",
+      "isPrimary": false,
+      "key": "id_mandato",
+      "label": "id_mandato"
     }
   ],
   "search_keys": [
@@ -479,9 +489,9 @@
       "queryCond": "id_controparte=$id_controparte_s$"
     },
     {
-      "fieldName": "n_mandato_s",
+      "fieldName": "id_mandato_s",
       "format": {
-        "comboQuery": "SELECT distinct n_mandato AS id, n_mandato as name  FROM entrasp.pagamenti_crediti WHERE codice_azienda=$codice_azienda$;",
+        "comboQuery": "SELECT id_mandato AS id, n_mandato||-||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
         "options": [],
         "viewType": "combobox",
         "dataType": "number"
@@ -489,7 +499,7 @@
       "label": "N mandato",
       "newLine": false,
       "size": 3.0,
-      "queryCond": "n_mandato=$n_mandato_s$"
+      "queryCond": "id_mandato=$id_mandato_s$"
     },
     {
       "format": {

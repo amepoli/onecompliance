@@ -5,7 +5,7 @@
     {
       "operation": "insert",
       "type": "main",
-      "queryString": "select entrasp.insert_movimenti_crediti(($selected_rows_data$)::varchar, $data_pagamento$::date, $importo$, $note$, $id_argomento_tipo_pag$, $id_controparte$, $n_mandato$, $data_mandato$::date, $id_argomento_inatteso$, $id_conto_corrente$);"
+      "queryString": "select entrasp.insert_movimenti_crediti(($selected_rows_data$)::varchar, $data_pagamento$::date, $importo$, $note$, $id_argomento_tipo_pag$, $id_controparte$, $id_mandato$, $data_mandato$::date, $id_argomento_inatteso$, $id_conto_corrente$);"
     },
     {
       "operation": "isInsert",
@@ -96,13 +96,13 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT id_mandato AS id, n_mandato||-||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
         "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select distinct n_mandato as id, n_mandato as name from entrasp.mandati where codice_azienda='€global_codice_azienda€'"
+        "options": []
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "n_mandato",
+      "key": "id_mandato",
       "label": "N. Mandato",
       "readOnly": false,
       "size": 2.5,

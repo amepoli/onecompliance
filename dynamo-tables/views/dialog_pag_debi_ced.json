@@ -5,8 +5,7 @@
     {
       "operation": "insert",
       "type": "main",
-      "queryString": "select entrasp.insert_ricessioni(($selected_rows_data$)::varchar, $data_pagamento$::date, $note$, 100::numeric, null::numeric, entrasp.debitore_ceduto_da_chiave(($selected_rows_data$)::varchar), $id_conto_corrente$,51488, $n_mandato$)"
-    
+      "queryString": "select entrasp.insert_ricessioni(($selected_rows_data$)::varchar, $data_pagamento$::date, $note$, 100::numeric, null::numeric, entrasp.debitore_ceduto_da_chiave(($selected_rows_data$)::varchar), $id_conto_corrente$,51488, $id_mandato$)"
     },
     {
       "operation": "isInsert",
@@ -39,13 +38,13 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT id_mandato AS id, n_mandato||-||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
         "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select distinct n_mandato as id, n_mandato as name from entrasp.mandati where codice_azienda='€global_codice_azienda€'"
+        "options": []
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "n_mandato",
+      "key": "id_mandato",
       "label": "N. Mandato",
       "readOnly": false,
       "size": 2.5,

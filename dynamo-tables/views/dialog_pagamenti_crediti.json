@@ -5,7 +5,7 @@
     {
       "operation": "update",
       "type": "main",
-      "queryString": "update entrasp.pagamenti_crediti cc1 set data_pagamento = coalesce($data_pagamento$::date,cc2.data_pagamento), importo = coalesce($importo$, cc2.importo), id_cessione = coalesce ($id_cessione$, cc2.id_cessione), id_argomento_tipo_pag = coalesce ($id_argomento_tipo_pag$, cc2.id_argomento_tipo_pag), id_controparte = coalesce($id_controparte$, cc2.id_controparte), n_mandato = case when coalesce($n_mandato_checkbox$::boolean,false) then null else coalesce($n_mandato$, cc2.n_mandato) end, data_mandato = case when coalesce($data_mandato_checkbox$::boolean,false) then null else coalesce($data_mandato$::date, cc2.data_mandato) end, id_argomento_inatteso = coalesce($id_argomento_inatteso$, cc2.id_argomento_inatteso), id_conto_corrente = case when coalesce($id_conto_corrente_checkbox$::boolean,false) then null else coalesce($id_conto_corrente$, cc2.id_conto_corrente)end,  note = coalesce($note$, cc2.note) from entrasp.pagamenti_crediti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_pagamento = cc2.id_pagamento and cc1.id_pagamento in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
+      "queryString": "update entrasp.pagamenti_crediti cc1 set data_pagamento = coalesce($data_pagamento$::date,cc2.data_pagamento), importo = coalesce($importo$, cc2.importo), id_cessione = coalesce ($id_cessione$, cc2.id_cessione), id_argomento_tipo_pag = coalesce ($id_argomento_tipo_pag$, cc2.id_argomento_tipo_pag), id_controparte = coalesce($id_controparte$, cc2.id_controparte), id_mandato = case when coalesce($id_mandato_checkbox$::boolean,false) then null else coalesce($id_mandato$, cc2.id_mandato) end, data_mandato = case when coalesce($data_mandato_checkbox$::boolean,false) then null else coalesce($data_mandato$::date, cc2.data_mandato) end, id_argomento_inatteso = coalesce($id_argomento_inatteso$, cc2.id_argomento_inatteso), id_conto_corrente = case when coalesce($id_conto_corrente_checkbox$::boolean,false) then null else coalesce($id_conto_corrente$, cc2.id_conto_corrente)end,  note = coalesce($note$, cc2.note) from entrasp.pagamenti_crediti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_pagamento = cc2.id_pagamento and cc1.id_pagamento in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
     }
   ],
   "form_keys": [
@@ -85,13 +85,13 @@
     {
       "autoGenerate": false,
       "format": {
+        "comboQuery": "SELECT id_mandato AS id, n_mandato||-||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
         "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select distinct n_mandato as id, n_mandato as name from entrasp.mandati where codice_azienda='€global_codice_azienda€'"
+        "options": []
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "n_mandato",
+      "key": "id_mandato",
       "label": "N. Mandato",
       "readOnly": false,
       "size": 2.5,
@@ -105,7 +105,7 @@
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "n_mandato_checkbox",
+      "key": "id_mandato_checkbox",
       "label": "Azzera Mandato",
       "readOnly": false,
       "newLine": false,
