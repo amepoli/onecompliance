@@ -10,7 +10,7 @@ import { FieldConfig } from 'app/oc/interfaces';
 <mat-datepicker #picker></mat-datepicker>
 <mat-hint></mat-hint>
 <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
-<mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation.message}}</mat-error>
+<mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslate}}</mat-error>
 </ng-container>
 </mat-form-field>
 `,
