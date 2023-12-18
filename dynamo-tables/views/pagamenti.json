@@ -515,6 +515,18 @@
       "size": 2.0
     },
     {
+      "format": {
+        "comboQuery": "SELECT distinct id_cessionario AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario) AS name  FROM entrasp.ricessioni WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario);",
+        "options": [],
+        "viewType": "combobox"
+      }, 
+      "newLine": false,
+      "fieldName": "id_cessionario_s",
+      "label": "Cessionario",
+      "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.ricessioni rc on cc.codice_azienda=rc.codice_Azienda and cc.id_ricessione=rc.id_ricessione where cc.codice_azienda=$codice_azienda$ and rc.id_cessionario=$id_cessionario_s$)",
+      "size": 2.0
+    },
+    {
       "fieldName": "cessionato_s",
       "format": {
         "viewType": "checkbox"
