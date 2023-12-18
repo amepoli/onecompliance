@@ -1628,10 +1628,6 @@
   "exportQueries": {
     "tableQueries": [
       {
-        "label": "Crediti non pagati",
-        "queryString": "select id_cessione, entrasp.contratti_descr(id_contratto, codice_azienda) as id_contratto, tranche, n_fattura, entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_cedente) as id_cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_debitore_ceduto) as id_debitore_ceduto, importo, data_fattura, coalesce(cig,'') as cig, null as id_mandato, fascicolo, azionato, (case when id_ricessione is not null then '1' else '0' end) as cessionato, entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_acquirente) as acquirente, note from entrasp.crediti_ceduti where codice_azienda||'-'||id_cessione not in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in(51488))and codice_azienda=$codice_azienda$"
-      },
-      {
         "label": "Modifiche Crediti",
         "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.n_mandato,cre.data_mandato, cre.id_argomento_inatteso, cre.data_inatteso,cre.note_inatteso, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi,cre.data_incasso_parz,cre.incasso_parz, cre.note from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.codice_azienda=$codice_azienda$"
       },
@@ -1648,8 +1644,8 @@
         "queryString": "select id_cessione, id_contratto, entrasp.anagrafiche_cognnome($codice_azienda$, id_debitore_ceduto)as debitore_ceduto, entrasp.anagrafiche_cognnome($codice_azienda$, id_cedente)as cedente, n_fattura, data_fattura, importo from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ AND data_pagamento IS NULL AND data_fattura IS NOT NULL"
       },
       {
-        "label": "Crediti per importazione pagamenti",
-        "queryString": "select id_cessione,entrasp.contratti_descr(id_contratto, codice_azienda) as id_n_contratto, tranche, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as debitore_ceduto, n_fattura, data_fattura, importo, null as data_pagamento, null as id_mandato, azionato, fascicolo, entrasp.ricessione_descr(id_ricessione, codice_azienda) as ricessione, 51488 as id_causale_pagamento, id_debitore_ceduto as id_controparte, importo as incasso, note, null as id_conto_corrente from entrasp.crediti_ceduti where codice_azienda= $codice_azienda$"
+        "label": "Crediti non pagati per import",
+        "queryString": "select id_cessione,entrasp.contratti_descr(id_contratto, codice_azienda) as id_n_contratto, tranche, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as debitore_ceduto, n_fattura, data_fattura, importo, null as data_pagamento, null as id_mandato, azionato, fascicolo, entrasp.ricessione_descr(id_ricessione, codice_azienda) as ricessione, 51488 as id_causale_pagamento, id_debitore_ceduto as id_controparte, importo as incasso, note, null as id_conto_corrente from entrasp.crediti_ceduti where codice_azienda= $codice_azienda$ and codice_azienda||'-'||id_cessione not in(select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.id_argomento_tipo_pag in(51488))"
       }
     ]
   },
