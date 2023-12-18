@@ -27,13 +27,6 @@
       ]
     }
   ],
-  "predefinedQueries": [
-    {
-      "type": "main",
-      "operation": "selectTable",
-      "queryString": "select codice_azienda, id_pagamento, id_cessione,entrasp.argomenti_descr_breve(id_argomento_tipo_pag)as id_argomento_tipo_pag,entrasp.cessione_descr(id_cessione, codice_azienda) as descr_cessione,data_pagamento,importo, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte) as descr_controparte, entrasp.mandati_descr(id_mandato, codice_azienda) as descr_mandato, capitale_residuo_leg, capitale_residuo, entrasp.ricessione_descr_pag(id_pagamento, codice_azienda) as descr_ricessione from entrasp.pagamenti_crediti where codice_azienda=$codice_azienda$ "
-    }
-  ],
   "form_keys": [
     {
       "autoGenerate": false,
@@ -414,24 +407,16 @@
     },
     {
       "format": {
-        "dataType": "number"
+        "dataType": "boolean"
       },
       "isHidden": false,
       "isPrimary": false,
-      "key": "descr_mandato",
-      "queryFunct": "entrasp.mandati_descr(id_mandato, codice_azienda)",
-      "label": "n_mandato",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_ricessione",
-      "label": "Ricessione",
-      "width": "6%"
+      "key": "cessionato",
+      "queryFunct": "entrasp.cessionato(id_cessione, codice_azienda)",
+      "sameOrigin": false,
+      "isCheckbox": true,
+      "width": "5%",
+      "label": "Cessionato"
     },
     {
       "format": {
@@ -554,7 +539,7 @@
         "comboQuery": "SELECT distinct id_cessionario AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario) AS name  FROM entrasp.ricessioni WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario);",
         "options": [],
         "viewType": "combobox"
-      }, 
+      },
       "newLine": false,
       "fieldName": "id_cessionario_s",
       "label": "Cessionario",
