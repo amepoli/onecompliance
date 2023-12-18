@@ -17,6 +17,11 @@
       "operation": "isInsert",
       "queryString": "select $codice_azienda$ is null as label;",
       "type": "main"
+    },
+    {
+      "operation": "insert",
+      "type": "postProcessing",
+      "queryString": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$"
     }
   ],
   "form_keys": [
@@ -30,7 +35,8 @@
       "isPrimary": true,
       "key": "codice_azienda",
       "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",	  "newLine": true,
+      "translate": "RESOURCES.company_code",
+      "newLine": true,
       "readOnly": true
     },
     {
@@ -45,7 +51,7 @@
       "newLine": false,
       "readOnly": true,
       "label": "id_sondaggio",
-            "translate": "RESOURCES.id_survey"
+      "translate": "RESOURCES.id_survey"
     },
     {
       "autoGenerate": false,
