@@ -594,7 +594,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     autodetectViewMode() {
         let _this = this;
-        const sum = _this.viewKeys.filter(x => !x.isHidden && x.width).map(x => parseFloat(x.width.replace('%', ''))).reduce((sum, n) => sum + n);
+        const sum = _this.viewKeys.filter(x => !x.isHidden && x.width).map(x => parseFloat(x.width.replace('%', ''))).reduce((sum, n) => sum + n , 0);
         _this.wrapView = sum <= 100;
     }
 
@@ -812,7 +812,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 options: options,
                 validations: [],
                 isVisible: true,
-                width: null
+                width: (field.size != null) ? (field.size * 10) : null, // leave a 1% margin left and right   
             };
             fieldValues.push(fieldValue);
         });
