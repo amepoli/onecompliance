@@ -5,6 +5,7 @@ export interface SearchViewKey { // as per API specification
     label: string;		// displayed key name
     translate?: string;    
     tooltip?: string;
+    size? : number;
     queryCond: string; 	// postgres query condition (after WHERE clause), mandatory to link w/ a Postgres column
     format: {		//  DataFormat type
         viewType: string; 		// form view type, one among “input” | “combobox” | “checkbox” | “radiobutton” 
