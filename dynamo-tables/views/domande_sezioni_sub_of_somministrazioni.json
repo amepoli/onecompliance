@@ -7,7 +7,7 @@
   "predefinedQueries": [
     {
       "operation": "selectTable",
-      "queryString": "select ssrs.sezione_completata, ssrs.denominatore, ssrs.pct_risultato_ottenuto_calcolato_ponderato, round(ssrs.punteggio_ottenuto,2) as punteggio, pct_risultato_ottenuto_calcolato, ds.peso as pesosezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi_somministrati_risultati_sezioni ssrs inner join  entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$ and ds.flag_non_applicabile_sezione='0';",
+      "queryString": "select ssrs.sezione_completata, ssrs.denominatore, ssrs.pct_risultato_ottenuto_calcolato_ponderato, round(ssrs.punteggio_ottenuto,2) as punteggio, pct_risultato_ottenuto_calcolato, ds.peso as pesosezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.pct_risultato_peggiore, ssrs.punteggio_peggiore, ssrs.giudizio_worst, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi_somministrati_risultati_sezioni ssrs inner join  entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$ and ds.flag_non_applicabile_sezione='0';",
       "type": "main"
     },
     {
@@ -379,7 +379,7 @@
       "key": "descr_sezione",
       "label": "Sezione",
       "translate": "RESOURCES.id_sezione",
-      "width": "35%"
+      "width": "20%"
     },
     {
       "format": {
@@ -447,6 +447,26 @@
       "key": "pct_risultato_ottenuto_calcolato_ponderato",
       "label": "Risultato % ponderato",
       "width": "15%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "punteggio_peggiore",
+      "label": "Punt.peggiore",
+      "width": "10%"
+    },
+    {
+      "format": {
+        "dataType": "number"
+      },
+      "isHidden": false,
+      "isPrimary": false,
+      "key": "pct_risultato_peggiore",
+      "label": "Ris.pegg. sez. %",
+      "width": "10%"
     }
   ],
   "subTables": [
