@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="risSezVerSintesi" pageWidth="537" pageHeight="800" columnWidth="537" leftMargin="0" rightMargin="0" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="risSezVerPeggioreSintesi" pageWidth="537" pageHeight="800" columnWidth="537" leftMargin="0" rightMargin="0" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
 	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
@@ -26,7 +26,7 @@
 	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapterOneComplianceSS"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -35,7 +35,7 @@
 		<defaultValueExpression><![CDATA["INVESTIRE"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="id_sondaggio" class="java.math.BigDecimal" isForPrompting="false">
-		<defaultValueExpression><![CDATA[new BigDecimal(569)]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[new BigDecimal(750)]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT ssrs.codice_azienda, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione AS descr_sezione, ssrs.sezione_completata, round(avg(round(ssrs.punteggio_peggiore,2)),2) AS punteggio_medio, round(avg(pct_risultato_peggiore),2) AS pct_ottenuto_medio, entrasp.giudizio_da_pct(ssrs.codice_azienda,mtvr.id_risultato, round(avg(pct_risultato_peggiore),2)) AS giudizio_automatico, entrasp.codice_colore_da_pct(ssrs.codice_azienda,mtvr.id_risultato, round(avg(pct_risultato_peggiore),2)) AS codice_colore FROM entrasp.sondaggi_somministrati_risultati_sezioni ssrs 	INNER JOIN entrasp.domande_sezioni ds ON ssrs.id_sezione=ds.id_sezione AND ssrs.codice_azienda=ds.codice_azienda AND ssrs.id_modello_test=ds.id_modello_test AND ssrs.id_modello_test_vr=ds.id_modello_test_vr INNER JOIN entrasp.modelli_test_vr mtvr ON ds.codice_azienda=mtvr.codice_azienda 			AND mtvr.id_modello_test=ds.id_modello_test AND mtvr.id_modello_test_vr=ds.id_modello_test_vr WHERE ssrs.codice_azienda=$P{codice_azienda} AND ssrs.id_sondaggio=$P{id_sondaggio} AND ds.flag_non_applicabile_sezione='0' GROUP BY ssrs.sezione_completata, ssrs.codice_azienda, ssrs.id_sondaggio,ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione, mtvr.id_risultato ORDER BY ds.ordinamento ASC]]>
@@ -88,10 +88,6 @@
 		<property name="com.jaspersoft.studio.field.name" value="pct_ottenuto_medio"/>
 		<property name="com.jaspersoft.studio.field.label" value="pct_ottenuto_medio"/>
 	</field>
-	<field name="ponderato_medio" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="ponderato_medio"/>
-		<property name="com.jaspersoft.studio.field.label" value="ponderato_medio"/>
-	</field>
 	<field name="giudizio_automatico" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="giudizio_automatico"/>
 		<property name="com.jaspersoft.studio.field.label" value="giudizio_automatico"/>
@@ -143,7 +139,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Punt. Medio]]></text>
+				<text><![CDATA[Punteggio]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="331" y="0" width="80" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="b8155605-ea95-4633-9c09-f54d72d4bc66">
@@ -159,7 +155,7 @@
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<text><![CDATA[Perc. media]]></text>
+				<text><![CDATA[Percentuale]]></text>
 			</staticText>
 			<staticText>
 				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="8" y="0" width="32" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" forecolor="#FFFFFF" backcolor="#25599C" uuid="81584a80-1ef1-4197-a679-ee966c04f053">
