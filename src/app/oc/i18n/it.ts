@@ -111,7 +111,7 @@ export const locale = {
     fasi: 'Fasi',
     first_time: 'Prima Visita',
     flag_applicazione_singola: 'Mono Verifica',
-    flag_apri_nc_automaticamente: 'Apri NON Conformità?',
+    flag_apri_nc_automaticamente: 'Apri NON Conformità automaticamente?',
     flag_escludi_risposta: 'Escludi Risposta',
     flag_inversione_pct_efficacia_presidi: 'Inverti Efficacia Presidi',
     flag_mostra_punteggi: 'Mostra Giudizio (No punteggi)',
