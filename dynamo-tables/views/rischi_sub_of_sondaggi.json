@@ -1,0 +1,29 @@
+{
+  "$schema": "../views.schema.json",
+  "entryKey": "rischi_sub_of_sondaggi",
+  "inheritsFrom": "rischi_sub_of_procedure",
+  "predefinedQueries": [
+    {
+      "operation": "selectTable",
+      "type": "main",
+      "queryString": "select distinct rs.codice_azienda, snd.id_sondaggio, rs.codice_rischio, entrasp.rischi_titolo_cod(rs.codice_rischio, rs.codice_azienda)as  desc_codice_rischio from entrasp.sondaggi snd inner join entrasp.domande_presidi dp using(codice_azienda, id_modello_test, id_modello_test_vr) inner join entrasp.rischi_presidi ps using(codice_azienda, id_presidio) inner join entrasp.rischi rs using(codice_azienda, codice_rischio) where codice_azienda=$codice_azienda and id_sondaggio=$id_sondaggio$"
+    }
+  ],
+  "hideActions": [
+    {
+      "tableActionType": "add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "quick-add",
+      "viewType": "table"
+    },
+    {
+      "tableActionType": "upload_csv",
+      "viewType": "table"
+    }
+  ],
+  "restrictions": {
+    "preventNavigationToForm": true
+  }
+}
