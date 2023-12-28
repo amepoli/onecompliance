@@ -769,7 +769,9 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 eventName: (field.outputEvent != null) ? field.outputEvent.eventName : null,  // output events are directly handled by the target field component
                 eventTrigger: (field.outputEvent != null) ? field.outputEvent.eventTrigger : null, // at the moment only implemented by input element for focus/blur
                 conditionalQuery: (field.outputEvent != null && field.outputEvent.conditionalQuery != null) ? field.outputEvent.conditionalQuery : null,
-                subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null
+                subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null,
+                isMultiSelect: field.isMultiSelect != null ? field.isMultiSelect : false,
+                showTagsView: field.showTagsView != null ? field.showTagsView : false,
             };
         }
         /*
@@ -1174,16 +1176,36 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             } else if (event.actionType === 'combo_lazy_loading') {
-                                // Issue #178
+                                // Issue #178              
                                 let comboboxEl = _this.findElementInDynamicFields(current_line.dynamicFields, keyListener);
                                 if (comboboxEl) {
                                     let combobox: ComboboxComponent = null;
                                     combobox = <ComboboxComponent>comboboxEl.componentRef.instance;
-                                    const comboValue = combobox.field.value != null ? combobox.field.value.id : null;
-                                    combobox.setOptions(result, true, true);
-                                    if (comboValue != null) {
-                                        combobox.setValue(comboValue);
+                                    if(combobox.field.isMultiSelect || combobox.field.showTagsView) 
+                                    {
+                                        let comboValues = [];
+                                        if(combobox.field.value != null)
+                                        {
+                                            combobox.field.value.forEach(comboValue => {
+
+                                                comboValues.push(comboValue.id)
+                                            });
+                                        }
+
+                                        combobox.setOptions(result, true, true);
+                                        if (comboValues != null) {
+                                            combobox.setValue(comboValues);
+                                        }
+
+                                    }else
+                                    {
+                                        const comboValue = combobox.field.value != null ? combobox.field.value.id : null;
+                                        combobox.setOptions(result, true, true);
+                                        if (comboValue != null) {
+                                            combobox.setValue(comboValue);
+                                        }
                                     }
+                                  
                                 }
                             } else {  // query_style
                                 const filterFormData = (dataset, param) => {
