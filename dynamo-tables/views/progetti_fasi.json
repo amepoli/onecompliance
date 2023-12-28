@@ -51,11 +51,20 @@
 				{
 					"key": "elimina_fase",
 					"icon": "delete",
-					"label": "Elimina",
+					"label": "Elimina fase e sondaggi associati",
 					"query": "select entrasp.progetto_fase_delete(s.codiceazienda, s.idfase::numeric) from ( SELECT SPLIT_PART(ARR,'~',1) as codiceazienda,SPLIT_PART(ARR,'~',2) as idfase FROM UNNEST(ARRAY[$selected_rows_data$]) ARR) AS s;",
 					"confirmAction": true,
 					"reloadOnSuccess": true,
 					"confirmActionMessage": "Eliminare la fase, il sondaggio associato e tutte le risposte?"
+				},
+				{
+					"key": "elimina_solo_fase",
+					"icon": "delete",
+					"label": "Elimina SOLO fase",
+					"query": "select entrasp.progetto_solo_fase_delete(s.codiceazienda, s.idfase::numeric) from ( SELECT SPLIT_PART(ARR,'~',1) as codiceazienda,SPLIT_PART(ARR,'~',2) as idfase FROM UNNEST(ARRAY[$selected_rows_data$]) ARR) AS s;",
+					"confirmAction": true,
+					"reloadOnSuccess": true,
+					"confirmActionMessage": "Eliminare la sola fase (e non il sondaggio associato)?"
 				},
 				{
 					"key": "stato_non_previsto",
