@@ -11,6 +11,8 @@ export interface FormViewKey { // as per API specification
     isLevel?: boolean;
     hasLevel?: boolean;
     newLine: boolean;
+    isMultiSelect?: boolean;
+    showTagsView?: boolean;
     textareaHeight?: 'S' | 'M' | 'L' | 'XL';
     showTextAreaRichFormatter?: boolean;
     buttonIcon?: string;

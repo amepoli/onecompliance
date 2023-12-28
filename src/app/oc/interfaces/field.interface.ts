@@ -79,6 +79,8 @@ export interface FieldConfig {
   width?: number;
   style?: { background_color?: string, font_color?: string, font_size?: string, font_style?: 'italic' | 'normal', font_weight?: string };
   options?: Item[];
+  isMultiSelect?: boolean;
+  showTagsView?: boolean;
   menuOptions?: MenuOption[],
   collections?: any;
   type: string;

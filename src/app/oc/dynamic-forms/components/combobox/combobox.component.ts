@@ -1,46 +1,20 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef, OnChanges, SimpleChanges, HostBinding } from '@angular/core';
 import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { FieldConfig, Item } from 'app/oc/interfaces';
 import { ConsoleLoggerService, PubSubService, ValidationsService } from 'app/oc/services';
+import { debug } from 'console';
 import { ReplaySubject, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'combobox',
-  template: `
-<mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline">
-<mat-label style="font-size: large;">{{field | octranslate}}</mat-label>
-<mat-select [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field | octranslate" (selectionChange)="onSelection($event)" (openedChange)="openedChange($event)"
-[style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
-<ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'">
-<mat-icon ngxMatSelectSearchClear>clear</mat-icon>
-</ngx-mat-select-search>
-<mat-option *ngIf="isLazyLoading" value="" [style.color]="'grey'"><span ><mat-icon>cached</mat-icon></span>Loading...</mat-option>
-<mat-option *ngIf="!isLazyLoading" value="" [style.color]="'grey'">Seleziona</mat-option>
-<mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage">{{item.name}}</mat-option>
-</mat-select>
-
-<ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
-<mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslate }}</mat-error>
-</ng-container>
-
-</mat-form-field>
-`,
-  styles: [`
-  :host ::ng-deep .mat-form-field-type-mat-select:not(.mat-form-field-disabled) .mat-form-field-flex {
-      background-color: aliceblue !important;
-      border-radius: 8px;
-    }  
-  :host ::ng-deep .mat-form-field-flex {
-      background-color: aliceblue !important;
-      border-radius: 8px;
-    }
-  `],
+  templateUrl: './combobox.component.html',
+  styleUrls: ['./combobox.component.scss'],
   host: {
-    '[style.padding-top.px]': 'field.isVisible? "10": "0"',
+    '[style.padding-top.px]': 'field.isVisible? "20": "0"',
     '[style.margin-right]': 'field.isVisible? "1%": "0"',
     '[style.margin-left]': 'field.isVisible? "1%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"',
-    '[style.height.px]': 'field.isVisible? "96": "0"',
+    // '[style.height.px]': 'field.isVisible? "96": "0"',
   }
 })
 export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -49,16 +23,26 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   readOnlyPage: boolean; // field.readonly overridden by page
   isRequired = false; // field is required or not
   subscription: Subscription;
-
+  @HostBinding('style.height') ComboBoxHeight = 'field.isVisible? "96px": "0px"';
   completeOptions: Item[]; // complete options list
   isLazyLoading = false; // lazy loading in progress
   isLazyLoaded = false; // Options set by calling setOptions() function
+  isMultiSelect = false;
+  showTagsView = false;
+  debugMode = false;
+  readOnly = false;
+  tags =  [];
+  value: any;
+ 
 
   /** control for the MatSelect filter keyword */
   public itemFilterCtrl: UntypedFormControl = new UntypedFormControl();
+  public tagsFilterCtrl: UntypedFormControl = new UntypedFormControl();
+
 
   /** list of items filtered by search keyword */
   public filteredItems: ReplaySubject<Item[]> = new ReplaySubject<Item[]>(1);
+  public filteredTagsItems: ReplaySubject<Item[]> = new ReplaySubject<Item[]>(1);
 
   /** Subject that emits when the component has been destroyed. */
   private _onDestroy = new Subject<void>();
@@ -78,28 +62,47 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     _this.field.style.font_color = _this.field.style.font_color != null ? _this.field.style.font_color : 'black';
     // filter out null values
 
+    _this.isMultiSelect = _this.isMultiSelect != null ? _this.field.isMultiSelect : false;
+    _this.showTagsView = _this.field.showTagsView !=null ? _this.field.showTagsView : false;
+    
+
+    if(_this.isMultiSelect || _this.showTagsView)
+    { 
+      _this.field.value = _this.field.value != null ? (Array.isArray(_this.field.value) ? _this.field.value : [_this.field.value]) : null;
+    }
     _this.setOptions(_this.field.options, false);
-
     _this.setValue(_this.field.value);
-    // if (_this.field.value != null) {
-    //   // possibly compare object w/ subkeys value, let's stringify first
-    //   _this.field.value = _this.field.options.find(x => JSON.stringify(x.id) === JSON.stringify(_this.field.value));
-    //   // setTimeout(() => {_this.pubSubService.publishEvent(_this.field.eventName, {origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value.id, type: 'combobox'})}, 50); 
-    // }
-    // else {
-    //   _this.field.value = '';
-    //   _this.group.get(_this.field.name).setValue(null);
-    // }
 
-    // load the initial bank list
-    // _this.filteredItems.next(_this.field.options.slice());
-
+    if(_this.showTagsView)
+    {
+      _this.isMultiSelect=true;
+      if(_this.field.value)
+      {
+        this.tags = _this.field.value.map(fieldValue=>{
+          return {
+             id: fieldValue.id,
+             name : fieldValue.name
+             }
+        });  
+      }
+    }
+  
     // listen for search field value changes
     _this.subscription = _this.itemFilterCtrl.valueChanges
       .pipe(takeUntil(_this._onDestroy))
       .subscribe(() => {
         _this.filterItems();
       });
+
+      if(this.showTagsView)
+      {
+        _this.subscription = _this.tagsFilterCtrl.valueChanges
+        .pipe(takeUntil(_this._onDestroy))
+        .subscribe(() => {
+          _this.filterTagItems();
+        });
+      }
+     
 
     // Check if required
     if (_this.field.validations) {
@@ -135,6 +138,20 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // load the initial bank list
     this.filteredItems.next(this.field.options.slice());
+
+
+    if(this.showTagsView)
+    {
+      if(isLazyLoaded)
+      {
+        this.filterOptionsBasedOnSelectedTags(this.field.options);
+      }
+      else
+      {
+        this.filteredTagsItems.next(this.field.options.slice());
+      }
+    }
+  
     this.skipNextEvent = skipNextEvent;
 
     // if lazy loading called this function, we stop the loading indicator
@@ -147,19 +164,55 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     
     // Check if the selected item is inside the 20 items selected,
     // add if doesn't exist
+
     if (this.field.value != null && this.field.value != '') {
-      if(filteredOptions.indexOf(this.field.value) < 0) {
-        filteredOptions = [this.field.value, ...filteredOptions.slice(0, Math.min(19, filteredOptions.length))]        
-      }  
+      if(this.isMultiSelect || this.showTagsView)
+      {
+        this.field.value.forEach(value => {
+          let isExist =  filteredOptions.some(option=> option.id == (value ?? null) || option.id == value.id );
+          if(!isExist ) {
+          filteredOptions = [this.field.value, ...filteredOptions.slice(0, Math.min(19, filteredOptions.length))]        
+          }  
+        });
+      }
+      else{
+        let isExist =  filteredOptions.some(option=> option.id == (this.field.value ?? null) || option.id == this.field.value.id );
+        if(!isExist ) {
+          filteredOptions = [this.field.value, ...filteredOptions.slice(0, Math.min(19, filteredOptions.length))]        
+        }  
+      }
     }
+    // if (this.field.value != null && this.field.value != '') {
+    //     if(filteredOptions.indexOf(this.field.value) < 0 ) {
+    //       filteredOptions = [this.field.value, ...filteredOptions.slice(0, Math.min(19, filteredOptions.length))]        
+    //     }
+    // }
     return filteredOptions;
   }
 
-
-  setValue(id){
+  setValue(ids: any){
     const _this = this;
-    if(id != null && id !== ''){
-      // id = JSON.stringify(id);
+    if(ids != null && ids !== ''){
+    if(_this.isMultiSelect || _this.showTagsView)
+    {
+      let values=[];
+      ids.forEach(id => {
+        if(typeof id === 'object'){
+           let value = _this.completeOptions.find(x => JSON.stringify(x.id) == JSON.stringify(id));
+           values.push(value);
+        }
+        else{
+          let value = _this.completeOptions.find(x => '' + x.id == '' + id);
+          values.push(value);
+        }
+        
+      });
+     _this.field.value = values;
+
+    }
+    else
+    {
+      let id = ids;
       if(typeof id === 'object'){
         _this.field.value = _this.completeOptions.find(x => JSON.stringify(x.id) == JSON.stringify(id));
       }
@@ -167,6 +220,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
         _this.field.value = _this.completeOptions.find(x => '' + x.id == '' + id);
       }
     }
+  }
     else{
       _this.field.value = '';
       _this.group.get(_this.field.name).setValue(null);
@@ -197,6 +251,66 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       this.sendEvent();
     }
+  }
+
+  onTagsSelection(event : any)
+  {
+    const _this = this;
+    if (event.value != null) 
+    {
+      let value = event.value;
+
+      _this.field.value.push(event.value);
+      _this.tags.push(event.value)
+
+      _this.group.get(_this.field.name).setValue(this.field.value);
+      _this.cdr.detectChanges();
+      this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
+      _this.filterOptionsBasedOnSelectedTags(_this.field.options)
+    }
+  }
+
+  private filterOptionsBasedOnSelectedTags(options : any)
+  {
+    const _this = this;
+    let newOptions =  [...options];
+    _this.field.value.forEach(field=>{
+    if(newOptions.some(option=> option.id == field.id))
+    {
+      let index= newOptions.findIndex(option=> option.id == field.id);
+      if (index > -1) 
+      { 
+        newOptions.splice(index, 1); 
+      }     
+      }
+    });
+    _this.filteredTagsItems.next(newOptions.slice());
+  }
+
+  onRemoveTag(tag: any)
+  {
+    const _this = this;
+
+    // Removing selected tag from tags list
+    let index = _this.tags.indexOf(tag);
+    if(index > -1)
+    {
+      _this.tags.splice(index, 1);
+    }
+
+    // Removing selected tag value from field values
+    if(_this.field.value && _this.field.value.some(value=> value.id== tag.id) )
+    {
+      let index= _this.field.value.findIndex(value=> value.id== tag.id);
+      if (index > -1) { 
+        _this.field.value.splice(index, 1); 
+      }
+    }
+    this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
+    _this.filterOptionsBasedOnSelectedTags(_this.field.options);  
+    _this.value = null;
+
+
   }
 
   openedChange(opened): void {
@@ -245,6 +359,27 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     
     this.filteredItems.next(this.field.options.slice());
+
+    return;
+
+  }
+
+  private filterTagItems() {
+    if (!this.field.options) {
+      return;
+    }
+    // get the search keyword
+    let search = this.tagsFilterCtrl.value;
+    if (!search) {
+      this.field.options = this.getOptionsWithCurrentSelection(this.completeOptions);      
+    }
+    else {
+      search = search.toLowerCase();
+      this.field.options = this.getOptionsWithCurrentSelection(this.completeOptions.filter(item => item.name.toLowerCase().indexOf(search) > -1));
+    }
+    
+    this.filterOptionsBasedOnSelectedTags(this.field.options.slice());
+
     return;
 
   }
@@ -255,12 +390,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sendEvent() {
-    // if (!this.skipNextEvent) {
-    // }
-    // else {
-    //   this.skipNextEvent = false;
-    // }
-
+  
     let value = this.group.get(this.field.name).value != null ? this.getFormattedId(this.group.get(this.field.name).value.id) : null;
     if (!value) {
       value = this.field.value && this.field.value.id ? this.field.value.id : null;
