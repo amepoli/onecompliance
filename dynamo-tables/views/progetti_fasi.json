@@ -166,7 +166,7 @@
 				"dataType": "text"
 			},
 			"label": "Codice",
-      "translate": "RESOURCES.code",
+			"translate": "RESOURCES.code",
 			"key": "codice",
 			"inputEvents": [
 				{
@@ -190,8 +190,8 @@
 				"viewType": "input",
 				"dataType": "text"
 			},
-			 "label": "Titolo",
-            "translate": "RESOURCES.title",
+			"label": "Titolo",
+			"translate": "RESOURCES.title",
 			"key": "titolo",
 			"readOnly": false,
 			"isHidden": false,
@@ -206,7 +206,7 @@
 				"dataType": "number"
 			},
 			"label": "Ordinamento",
-      "translate": "RESOURCES.ordinamento",
+			"translate": "RESOURCES.ordinamento",
 			"key": "ordinamento",
 			"readOnly": false,
 			"isHidden": false,
@@ -231,7 +231,7 @@
 				]
 			},
 			"label": "Stato",
-      "translate": "RESOURCES.status",
+			"translate": "RESOURCES.status",
 			"key": "stato",
 			"readOnly": false,
 			"isHidden": false,
@@ -284,7 +284,7 @@
 				"dataType": "number"
 			},
 			"label": "Progetto",
-      "translate": "RESOURCES.project",
+			"translate": "RESOURCES.project",
 			"key": "id_progetto",
 			"translate": "RESOURCES.id_project",
 			"size": 1.11,
@@ -319,7 +319,7 @@
 				"dataType": "text"
 			},
 			"label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
+			"translate": "RESOURCES.company_code",
 			"key": "codice_azienda",
 			"readOnly": false,
 			"isHidden": true,
@@ -623,7 +623,7 @@
 			"isPrimary": false,
 			"key": "sezione_detail",
 			"label": "Maggiori Dettagli",
-      "translate": "RESOURCES.more_details",
+			"translate": "RESOURCES.more_details",
 			"newLine": true,
 			"readOnly": false,
 			"sameOrigin": true,
@@ -633,7 +633,7 @@
 	"search_keys": [
 		{
 			"label": "Stato",
-      "translate": "RESOURCES.status",
+			"translate": "RESOURCES.status",
 			"format": {
 				"comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
 				"options": [],
@@ -662,8 +662,8 @@
 				"value": "0",
 				"viewType": "checkbox"
 			},
-			 "label": "Solo Principali",
-            "translate": "RESOURCES.main_only",
+			"label": "Solo Principali",
+			"translate": "RESOURCES.main_only",
 			"newLine": false,
 			"queryCond": "pf.id_fase_sup IS null"
 		},
@@ -706,7 +706,7 @@
 			"isPrimary": true,
 			"key": "codice_azienda",
 			"label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+			"translate": "RESOURCES.company_code"
 		},
 		{
 			"format": {
@@ -777,7 +777,7 @@
 			"isPrimary": false,
 			"key": "codice",
 			"label": "Codice",
-      "translate": "RESOURCES.code",
+			"translate": "RESOURCES.code",
 			"width": "11%",
 			"style": [
 				{
@@ -794,8 +794,8 @@
 			"isPrimary": false,
 			"key": "titolo",
 			"hasLevel": true,
-			 "label": "Titolo",
-            "translate": "RESOURCES.title",
+			"label": "Titolo",
+			"translate": "RESOURCES.title",
 			"isInputButton": true,
 			"buttonAction": {
 				"target": "sondaggi",
@@ -889,7 +889,7 @@
 			"isPrimary": false,
 			"key": "stato_trans",
 			"label": "Stato",
-      "translate": "RESOURCES.status",
+			"translate": "RESOURCES.status",
 			"width": "6%",
 			"style": [
 				{
@@ -952,7 +952,7 @@
 			"key": "id_sondaggio",
 			"hasLevel": true,
 			"label": "# Sondaggio",
-      "translate": "RESOURCES.id_survey"
+			"translate": "RESOURCES.id_survey"
 		},
 		{
 			"format": {
@@ -995,7 +995,7 @@
 			"key": "id_modello_test",
 			"hasLevel": true,
 			"label": "# Mod. Ver.",
-      "translate": "RESOURCES.id_check_template",
+			"translate": "RESOURCES.id_check_template",
 			"width": "6%",
 			"isInputButton": true,
 			"buttonAction": {
@@ -1036,7 +1036,7 @@
 			"key": "competenza",
 			"width": "7%",
 			"label": "Competenza",
-            "translate": "RESOURCES.competence"
+			"translate": "RESOURCES.competence"
 		},
 		{
 			"format": {
@@ -1555,9 +1555,9 @@
 				"queryString": "select extract(year from snd.data_comp) as anno_competenza, count(id_sondaggio) from entrasp.sondaggi snd where snd.codice_azienda=$codice_azienda$ and id_sondaggio in (select pf.id_sondaggio from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$) group by extract(year from snd.data_comp)"
 			},
 			{
-                "label": "Per relazione annuale",
-                "queryString": "select snd.data_comp, snd.data_esecuzione, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, snd.id_sondaggio, snd.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, entrasp.html_pulisci(cp.risultati_emersi) as risultati_emersi, cp.proposte_formulate, cp.follow_up, entrasp.codici_compito_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as codici_compito, snd.stato from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.progetti_fasi pf on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$"
-            }
+				"label": "Per relazione annuale",
+				"queryString": "select snd.data_comp, snd.data_esecuzione, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, snd.id_sondaggio, snd.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, entrasp.html_pulisci(cp.risultati_emersi) as risultati_emersi, cp.proposte_formulate, cp.follow_up, entrasp.codici_compito_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as codici_compito, snd.stato from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.progetti_fasi pf on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$"
+			}
 		]
 	}
 }
