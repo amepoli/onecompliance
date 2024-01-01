@@ -365,6 +365,7 @@ export const locale = {
     sync_folder_survey: 'Sync. Folder Survey',
     Tabella: 'Table',
     tag: 'Tag',
+    tags: 'Tags',
     tag_all_answers: 'Tag All Answers',
     tag_all_question: 'Tag All Questions',
     tag_code: 'TAG Code',

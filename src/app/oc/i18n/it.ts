@@ -364,6 +364,7 @@ export const locale = {
     sync_folder_survey: 'Sincr. Cartella Sondaggio',
     Tabella: 'Tabella',
     tag: 'Argomento',
+    tags: 'Tags',
     tag_all_answers: 'Tagga tutte le Risposte',
     tag_all_question: 'Tagga tutte le Domande',
     tag_code: 'Codice TAG',

@@ -21,7 +21,7 @@
         {
             "type": "main",
             "operation": "delete",
-            "queryString": "select entrasp.modello_test_delete($codice_azienda$, $id_modello_test$);"
+            "queryString": "select '€global_username€' as user, entrasp.modello_test_delete($codice_azienda$, $id_modello_test$);"
         },
         {
             "type": "preCheck",
@@ -1037,6 +1037,24 @@
                         "newLine": true,
                         "readOnly": false,
                         "size": 3.23
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(133, 349, 3425, 5328,5497, 6154, 6155, 6156, 6157, 6158, 6721, 6871, 43448, 6837, 48418, 4016, 43670, 49500, 49507, 49511, 48662,49061, 48976, 51499) order by arg.id_argomento",
+                            "options": [],
+                            "viewType": "combobox"
+                        },
+                        "queryFunct": "entrasp.create_multiselect('modelliTest', $codice_azienda$||'~$id_modello_test$')",
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "tags",
+                        "label": "Tags",
+                        "translate": "RESOURCES.tags",
+                        "newLine": true,
+                        "readOnly": false,
+                        "isMultiSelect": true,
+                        "showTagsView": true
                     },
                     {
                         "autoGenerate": false,
