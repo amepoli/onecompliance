@@ -213,6 +213,7 @@ export const locale = {
     main_only: 'Solo Principali',
     main_page: 'Maschera Principale',
     make_it_discursive: 'Rendi Discorsiva',
+    max_char_20: 'Massimo numero di caratteri: 20',
     manual_judgment: 'Giudizio Manuale',
     merge_type: 'Unifica Modelli di Verifica',
     mine_my_office: 'Miei/Mio Ufficio',

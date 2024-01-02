@@ -213,6 +213,7 @@ export const locale = {
     main_page: 'Main Page',
     make_it_discursive: 'Make It Discursive',
     manual_judgment: 'Manual Judgement',
+    max_char_20: 'Characters maximum number: 20',
     merge_type: 'Merge Checks Template',
     mine_my_office: 'Myne/My Office',
     modelli_test_sub_procedure: 'Associated Check Templates',
