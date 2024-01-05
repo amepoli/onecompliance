@@ -24,6 +24,16 @@
       "operation": "insert",
       "type": "postProcessing",
       "queryString": "select entrasp.whistle_blowing_after_insertupdate($codice_azienda$, '€global_username€'::varchar, $codice_compito$);"
+    },
+    {
+      "operation": "startEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+    },
+    {
+      "operation": "stopEvent",
+      "type": "main",
+      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
     }
   ],
   "define": {
