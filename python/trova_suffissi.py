@@ -5,7 +5,7 @@ import json
 json_directory_path = "/home/apoli/Development/onecompliance/dynamo-tables/views"
 
 # Percorso del file che contiene l'elenco dei suffissi
-elenco_file_path = "/home/apoli/Development/onecompliance/python/elenco_translate.txt"
+elenco_file_path = "/home/apoli/Development/onecompliance/python/elenco_translate.json"
 
 # Leggere l'elenco esistente dei suffissi dal file
 def leggi_elenco_suffissi(file_path):
@@ -18,8 +18,9 @@ def aggiorna_suffissi(json_directory_path, elenco_file_path):
 
     # Scansione di tutti i file JSON nella directory
     for filename in os.listdir(json_directory_path):
-        if filename.endswith(".json"):
-            file_path = os.path.join(json_directory_path, filename)
+          if filename.endswith(".json"):
+            print(f"Elaborazione dell file: {filename}")  # Stampa di debug
+            file_path = os.path.join(json_directory_path, filename)       
             with open(file_path, 'r', encoding='utf-8') as file:
                 data = json.load(file)
                 # Cerca tutti gli elementi con la proprietà "translate" che inizia con "RESOURCES."
