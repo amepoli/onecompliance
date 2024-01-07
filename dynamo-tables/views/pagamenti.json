@@ -1,644 +1,674 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "pagamenti",
-  "origin": "entrasp.pagamenti_crediti",
-  "label": "Pagamenti",
-  "businessObjectName": "pagamenti_crediti",
-  "define": {
-    "is_hidden_cessione": "false",
-    "is_hidden_interessi": "true",
-    "is_hidden_mandato": "false"
-  },
-  "table_multiselection_actions": [
-    {
-      "viewType": "menu",
-      "key": "menuanag",
-      "label": "Actions",
-      "icon": "more_vert",
-      "menuOptions": [
+    "$schema": "../views.schema.json",
+    "entryKey": "pagamenti",
+    "origin": "entrasp.pagamenti_crediti",
+    "label": "Pagamenti",
+    "businessObjectName": "pagamenti_crediti",
+    "define": {
+        "is_hidden_cessione": "false",
+        "is_hidden_interessi": "true",
+        "is_hidden_mandato": "false"
+    },
+    "table_multiselection_actions": [
         {
-          "key": "modifica_pagamenti",
-          "icon": "edit",
-          "label": "Gestisci movimenti",
-          "reloadOnSuccess": true,
-          "customDialogEntryName": "dialog_pagamenti_crediti",
-          "customDialogTitle": "Modifica movimenti selezionati"
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "modifica_pagamenti",
+                    "icon": "edit",
+                    "label": "Gestisci movimenti",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_pagamenti_crediti",
+                    "customDialogTitle": "Modifica movimenti selezionati"
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "newLine": false,
-      "key": "id_pagamento",
-      "label": "ID Pagamento",
-      "readOnly": true,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Data pagamento necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_pagamento",
-      "label": "Data Pagamento",
-      "newLine": false,
-      "size": 2.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Importo necessario",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "importo",
-      "label": "Importo",
-      "readOnly": false,
-      "size": 1.5,
-      "outputEvent": {
-        "eventName": "colore_importo",
-        "eventTrigger": "load"
-      },
-      "inputEvents": [
+    ],
+    "form_keys": [
         {
-          "eventName": "colore_importo",
-          "condition": "none",
-          "values": [],
-          "actionType": "query_style",
-          "styleAttribute": "background_color",
-          "queryFunct": "select case when importo<0 then'red' else 'green' end as importo_background_color from entrasp.pagamenti_crediti where codice_azienda=$codice_azienda$ and id_pagamento=$id_pagamento$"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "readOnly": true,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "key": "id_pagamento",
+            "label": "ID Pagamento",
+            "readOnly": true,
+            "size": 2.5,
+            "translate": "RESOURCES.id_pagamento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Data pagamento necessaria",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_pagamento",
+            "label": "Data Pagamento",
+            "newLine": false,
+            "size": 2.5,
+            "readOnly": false,
+            "translate": "RESOURCES.data_pagamento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Importo necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "importo",
+            "label": "Importo",
+            "readOnly": false,
+            "size": 1.5,
+            "outputEvent": {
+                "eventName": "colore_importo",
+                "eventTrigger": "load"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "colore_importo",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when importo<0 then'red' else 'green' end as importo_background_color from entrasp.pagamenti_crediti where codice_azienda=$codice_azienda$ and id_pagamento=$id_pagamento$"
+                }
+            ],
+            "translate": "RESOURCES.importo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "comboQuery": "select id_cessione as ID, id_cessione||' - '||entrasp.contratti_descr(id_contratto, codice_azienda)||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente)||' - '||n_fattura||' - '||data_fattura as name from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$",
+                "options": [],
+                "validations": [
+                    {
+                        "message": "ID cessione necessaria",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": "$Q{is_hidden_cessione}",
+            "isPrimary": false,
+            "newLine": true,
+            "size": 3.5,
+            "key": "id_cessione",
+            "label": "Credito",
+            "readOnly": false,
+            "translate": "RESOURCES.id_cessione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
+                "options": [],
+                "validations": [
+                    {
+                        "message": "Causale necessaria",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "id_argomento_tipo_pag",
+            "label": "Causale",
+            "size": 2.5,
+            "readOnly": false,
+            "translate": "RESOURCES.id_argomento_tipo_pag"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'",
+                "validations": [
+                    {
+                        "message": "Controparte necessaria",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_controparte",
+            "label": "Controparte",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_controparte"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
+                "viewType": "combobox",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_mandato",
+            "label": "N. Mandato",
+            "readOnly": false,
+            "size": 2.5,
+            "newLine": false,
+            "translate": "RESOURCES.id_mandato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interessi",
+            "label": "Interessi Legali",
+            "readOnly": true,
+            "size": 1.5,
+            "newLine": false,
+            "translate": "RESOURCES.interessi"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_scadenza",
+            "label": "Scadenza Credito",
+            "size": 1.5,
+            "readOnly": true,
+            "newLine": false,
+            "translate": "RESOURCES.data_scadenza"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_inatteso",
+            "label": "Inatteso",
+            "size": 2,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_argomento_inatteso"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "comboQuery": "select id_conto_corrente as ID, RIGHT(iban,12) as name from entrasp.conti_correnti where codice_azienda=$codice_azienda$",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2,
+            "key": "id_conto_corrente",
+            "label": "Conto Corrente",
+            "readOnly": false,
+            "translate": "RESOURCES.id_conto_corrente"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "percentuale",
+            "label": "Percentuale",
+            "readOnly": true,
+            "size": 1.5,
+            "translate": "RESOURCES.percentuale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "commissione",
+            "label": "Commissione",
+            "readOnly": true,
+            "size": 1.5,
+            "translate": "RESOURCES.commissione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.note"
         }
-      ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "width": "5%",
+            "isPrimary": true,
+            "key": "id_pagamento",
+            "label": "ID",
+            "translate": "RESOURCES.id_pagamento"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_cessione",
+            "label": "ID",
+            "translate": "RESOURCES.id_cessione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_pag",
+            "width": "15%",
+            "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_pag)",
+            "label": "Causale",
+            "translate": "RESOURCES.id_argomento_tipo_pag"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isPrimary": false,
+            "isHidden": "$Q{is_hidden_cessione}",
+            "queryFunct": "entrasp.cessione_descr(id_cessione, codice_azienda)",
+            "key": "descr_cessione",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "crediti_ceduti",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_cessione",
+                        "destination": "id_cessione"
+                    }
+                ]
+            },
+            "label": "Cessione",
+            "width": "25%",
+            "translate": "RESOURCES.descr_cessione"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_pagamento",
+            "label": "Data pagamento",
+            "width": "8%",
+            "translate": "RESOURCES.data_pagamento"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "importo",
+            "label": "Importo",
+            "width": "6%",
+            "translate": "RESOURCES.importo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isPrimary": false,
+            "isHidden": false,
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte)",
+            "key": "descr_controparte",
+            "label": "Controparte",
+            "width": "18%",
+            "translate": "RESOURCES.descr_controparte"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cessionato",
+            "queryFunct": "entrasp.cessionato(id_cessione, codice_azienda)",
+            "sameOrigin": false,
+            "isCheckbox": true,
+            "width": "5%",
+            "label": "Cessionato",
+            "translate": "RESOURCES.cessionato"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_mandato",
+            "label": "id_mandato",
+            "translate": "RESOURCES.id_mandato"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": "$Q{is_hidden_mandato}",
+            "isPrimary": false,
+            "queryFunct": "entrasp.mandati_descr(id_mandato, codice_azienda)",
+            "key": "descr_mandato",
+            "label": "Mandato",
+            "translate": "RESOURCES.descr_mandato"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "entrasp.ricessione_descr_pag(id_pagamento, codice_azienda)",
+            "key": "descr_ricessione",
+            "label": "Ricessione",
+            "translate": "RESOURCES.descr_ricessione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "capitale_residuo_leg",
+            "label": "Cap.res.legale",
+            "translate": "RESOURCES.capitale_residuo_leg"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "capitale_residuo",
+            "label": "Cap.res.fin.",
+            "translate": "RESOURCES.capitale_residuo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": "$Q{is_hidden_interessi}",
+            "isPrimary": false,
+            "key": "interessi",
+            "label": "Interessi.leg.",
+            "translate": "RESOURCES.interessi"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": "$Q{is_hidden_interessi}",
+            "isPrimary": false,
+            "key": "interessi_fin",
+            "label": "Interessi.fin.",
+            "translate": "RESOURCES.interessi_fin"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_cessione",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Cessione",
+            "newLine": false,
+            "size": 3.3,
+            "queryCond": "id_cessione=$id_cessione$"
+        },
+        {
+            "fieldName": "id_controparte_s",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Controparte",
+            "newLine": false,
+            "size": 3.0,
+            "queryCond": "id_controparte=$id_controparte_s$"
+        },
+        {
+            "fieldName": "id_mandato_s",
+            "format": {
+                "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "number"
+            },
+            "label": "N mandato",
+            "newLine": false,
+            "size": 3.0,
+            "queryCond": "id_mandato=$id_mandato_s$"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'"
+            },
+            "newLine": false,
+            "fieldName": "id_ricessione_s",
+            "label": "Ricessione",
+            "queryCond": "id_cessione in(select id_cessione from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_ricessione=$id_ricessione_s$)",
+            "size": 2.0
+        },
+        {
+            "format": {
+                "comboQuery": "SELECT distinct id_cessionario AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario) AS name  FROM entrasp.ricessioni WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "newLine": false,
+            "fieldName": "id_cessionario_s",
+            "label": "Cessionario",
+            "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.ricessioni rc on cc.codice_azienda=rc.codice_Azienda and cc.id_ricessione=rc.id_ricessione where cc.codice_azienda=$codice_azienda$ and rc.id_cessionario=$id_cessionario_s$)",
+            "size": 2.0
+        },
+        {
+            "fieldName": "cessionato_s",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Cessionato",
+            "newLine": true,
+            "size": 0.8,
+            "queryCond": "entrasp.cessionato(id_cessione, codice_azienda)='1'"
+        },
+        {
+            "fieldName": "data_pagamento_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Pagamento dopo il",
+            "newLine": false,
+            "size": 1.9,
+            "queryCond": "data_pagamento>='€data_pagamento_min€'"
+        },
+        {
+            "fieldName": "data_pagamento_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Pagamento entro il",
+            "newLine": false,
+            "size": 1.9,
+            "queryCond": "data_pagamento<='€data_pagamento_max€'"
+        },
+        {
+            "fieldName": "data_pagamento_",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Pagamento",
+            "newLine": false,
+            "size": 1.9,
+            "queryCond": "data_pagamento='€data_pagamento_€'"
+        },
+        {
+            "fieldName": "id_argomento_tipo_pag_s",
+            "format": {
+                "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo Pagamento",
+            "newLine": false,
+            "size": 1.9,
+            "queryCond": "id_argomento_tipo_pag=$id_argomento_tipo_pag_s$"
+        },
+        {
+            "fieldName": "id_argomento_inatteso_s",
+            "format": {
+                "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo Inatteso",
+            "newLine": false,
+            "size": 1.9,
+            "queryCond": "id_argomento_inatteso=$id_argomento_inatteso_s$"
+        },
+        {
+            "fieldName": "inatteso",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Inatteso",
+            "newLine": true,
+            "size": 0.5,
+            "queryCond": "id_argomento_inatteso in(50664, 49921, 49922, 49925, 49926, 49927, 49928)"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by data_pagamento desc limit 200"
     },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "comboQuery": "select id_cessione as ID, id_cessione||' - '||entrasp.contratti_descr(id_contratto, codice_azienda)||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente)||' - '||n_fattura||' - '||data_fattura as name from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$",
-        "options": [],
-        "validations": [
-          {
-            "message": "ID cessione necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ],
+    "importQueries": {
+        "tableQueries": [
+            {
+                "label": "Importa movimenti crediti",
+                "queryString": "select entrasp.import_crediti_da_cedere($codice_azienda$, $nome_file$, '€global_username€')"
+            }
         ]
-      },
-      "isHidden": "$Q{is_hidden_cessione}",
-      "isPrimary": false,
-      "newLine": true,
-      "size": 3.5,
-      "key": "id_cessione",
-      "label": "Credito",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
-        "options": [],
-        "validations": [
-          {
-            "message": "Causale necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "id_argomento_tipo_pag",
-      "label": "Causale",
-      "size": 2.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'",
-        "validations": [
-          {
-            "message": "Controparte necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_controparte",
-      "label": "Controparte",
-      "size": 2.5,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
-        "viewType": "combobox",
-        "options": []
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_mandato",
-      "label": "N. Mandato",
-      "readOnly": false,
-      "size": 2.5,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "interessi",
-      "label": "Interessi Legali",
-      "readOnly": true,
-      "size": 1.5,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_scadenza",
-      "label": "Scadenza Credito",
-      "size": 1.5,
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento_inatteso",
-      "label": "Inatteso",
-      "size": 2,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "comboQuery": "select id_conto_corrente as ID, RIGHT(iban,12) as name from entrasp.conti_correnti where codice_azienda=$codice_azienda$",
-        "options": []
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "size": 2,
-      "key": "id_conto_corrente",
-      "label": "Conto Corrente",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "percentuale",
-      "label": "Percentuale",
-      "readOnly": true,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "key": "commissione",
-      "label": "Commissione",
-      "readOnly": true,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "readOnly": false,
-      "newLine": true
     }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "width": "5%",
-      "isPrimary": true,
-      "key": "id_pagamento",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_cessione",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento_tipo_pag",
-      "width": "15%",
-      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_pag)",
-      "label": "Causale"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isPrimary": false,
-      "isHidden": "$Q{is_hidden_cessione}",
-      "queryFunct": "entrasp.cessione_descr(id_cessione, codice_azienda)",
-      "key": "descr_cessione",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "crediti_ceduti",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_cessione",
-            "destination": "id_cessione"
-          }
-        ]
-      },
-      "label": "Cessione",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_pagamento",
-      "label": "Data pagamento",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "importo",
-      "label": "Importo",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isPrimary": false,
-      "isHidden": false,
-      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte)",
-      "key": "descr_controparte",
-      "label": "Controparte",
-      "width": "18%"
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cessionato",
-      "queryFunct": "entrasp.cessionato(id_cessione, codice_azienda)",
-      "sameOrigin": false,
-      "isCheckbox": true,
-      "width": "5%",
-      "label": "Cessionato"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_mandato",
-      "label": "id_mandato"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": "$Q{is_hidden_mandato}",
-      "isPrimary": false,
-      "queryFunct": "entrasp.mandati_descr(id_mandato, codice_azienda)",
-      "key": "descr_mandato",
-      "label": "Mandato"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "queryFunct": "entrasp.ricessione_descr_pag(id_pagamento, codice_azienda)",
-      "key": "descr_ricessione",
-      "label": "Ricessione"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "capitale_residuo_leg",
-      "label": "Cap.res.legale"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "capitale_residuo",
-      "label": "Cap.res.fin."
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": "$Q{is_hidden_interessi}",
-      "isPrimary": false,
-      "key": "interessi",
-      "label": "Interessi.leg."
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": "$Q{is_hidden_interessi}",
-      "isPrimary": false,
-      "key": "interessi_fin",
-      "label": "Interessi.fin."
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_cessione",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Cessione",
-      "newLine": false,
-      "size": 3.3,
-      "queryCond": "id_cessione=$id_cessione$"
-    },
-    {
-      "fieldName": "id_controparte_s",
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Controparte",
-      "newLine": false,
-      "size": 3.0,
-      "queryCond": "id_controparte=$id_controparte_s$"
-    },
-    {
-      "fieldName": "id_mandato_s",
-      "format": {
-        "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "number"
-      },
-      "label": "N mandato",
-      "newLine": false,
-      "size": 3.0,
-      "queryCond": "id_mandato=$id_mandato_s$"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'"
-      },
-      "newLine": false,
-      "fieldName": "id_ricessione_s",
-      "label": "Ricessione",
-      "queryCond": "id_cessione in(select id_cessione from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_ricessione=$id_ricessione_s$)",
-      "size": 2.0
-    },
-    {
-      "format": {
-        "comboQuery": "SELECT distinct id_cessionario AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario) AS name  FROM entrasp.ricessioni WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario);",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "newLine": false,
-      "fieldName": "id_cessionario_s",
-      "label": "Cessionario",
-      "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.ricessioni rc on cc.codice_azienda=rc.codice_Azienda and cc.id_ricessione=rc.id_ricessione where cc.codice_azienda=$codice_azienda$ and rc.id_cessionario=$id_cessionario_s$)",
-      "size": 2.0
-    },
-    {
-      "fieldName": "cessionato_s",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Cessionato",
-      "newLine": true,
-      "size": 0.8,
-      "queryCond": "entrasp.cessionato(id_cessione, codice_azienda)='1'"
-    },
-    {
-      "fieldName": "data_pagamento_min",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Pagamento dopo il",
-      "newLine": false,
-      "size": 1.9,
-      "queryCond": "data_pagamento>='€data_pagamento_min€'"
-    },
-    {
-      "fieldName": "data_pagamento_max",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Pagamento entro il",
-      "newLine": false,
-      "size": 1.9,
-      "queryCond": "data_pagamento<='€data_pagamento_max€'"
-    },
-    {
-      "fieldName": "data_pagamento_",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data Pagamento",
-      "newLine": false,
-      "size": 1.9,
-      "queryCond": "data_pagamento='€data_pagamento_€'"
-    },
-    {
-      "fieldName": "id_argomento_tipo_pag_s",
-      "format": {
-        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=51485",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo Pagamento",
-      "newLine": false,
-      "size": 1.9,
-      "queryCond": "id_argomento_tipo_pag=$id_argomento_tipo_pag_s$"
-    },
-    {
-      "fieldName": "id_argomento_inatteso_s",
-      "format": {
-        "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo Inatteso",
-      "newLine": false,
-      "size": 1.9,
-      "queryCond": "id_argomento_inatteso=$id_argomento_inatteso_s$"
-    },
-    {
-      "fieldName": "inatteso",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Inatteso",
-      "newLine": true,
-      "size": 0.5,
-      "queryCond": "id_argomento_inatteso in(50664, 49921, 49922, 49925, 49926, 49927, 49928)"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by data_pagamento desc limit 200"
-  },
-  "hideActions": [
-    {
-      "formActionType": "attachments",
-      "viewType": "form"
-    }
-  ],
-  "importQueries": {
-    "tableQueries": [
-      {
-        "label": "Importa movimenti crediti",
-        "queryString": "select entrasp.import_crediti_da_cedere($codice_azienda$, $nome_file$, '€global_username€')"
-      }
-    ]
-  }
 }

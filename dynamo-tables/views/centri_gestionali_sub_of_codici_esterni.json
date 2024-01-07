@@ -1,165 +1,169 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "centri_gestionali_sub_of_codici_esterni",
-  "inheritsFrom": "centri_gestionali",
-  "predefinedQueries": [
-    {
-      "operation": "insert",
-      "queryString": "SELECT coalesce(MAX(id_gruppo_lavoro),0)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "isInsert",
-      "queryString": "select $id_centro_gest$ is null as label;",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ('€global_codice_part€',£next_id_gruppo£, $descrizione$, 0);",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "SELECT coalesce(MAX(id_centro_gest),0)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ('€global_codice_part€', £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£) returning id_centro_gest;",
-      "type": "main"
-    },
-    {
-      "operation": "delete",
-      "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
-      "type": "main"
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_centro_gest",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID",
-      "newLine": false,
-      "queryCond": "id_centro_gest=$id_centro_gest$"
-    },
-    {
-      "fieldName": "codice",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "newLine": true,
-      "queryCond": "codice=$codice$"
-    },
-    {
-      "fieldName": "descrizione",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "newLine": true,
-      "queryCond": "descrizione Like '%€descrizione€%'"
-    },
-    {
-      "fieldName": "id_responsabile",
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Responsabile",
-      "newLine": false,
-      "queryCond": "id_responsabile=$id_responsabile$"
-    },
-    {
-      "fieldName": "flag_principali",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-       "label": "Solo Principali",
+    "$schema": "../views.schema.json",
+    "entryKey": "centri_gestionali_sub_of_codici_esterni",
+    "inheritsFrom": "centri_gestionali",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "queryString": "SELECT coalesce(MAX(id_gruppo_lavoro),0)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_centro_gest$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ('€global_codice_part€',£next_id_gruppo£, $descrizione$, 0);",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT coalesce(MAX(id_centro_gest),0)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "insert",
+            "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ('€global_codice_part€', £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£) returning id_centro_gest;",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
+            "type": "main"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_centro_gest",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID",
+            "newLine": false,
+            "queryCond": "id_centro_gest=$id_centro_gest$"
+        },
+        {
+            "fieldName": "codice",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "newLine": true,
+            "queryCond": "codice=$codice$"
+        },
+        {
+            "fieldName": "descrizione",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": true,
+            "queryCond": "descrizione Like '%€descrizione€%'"
+        },
+        {
+            "fieldName": "id_responsabile",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Responsabile",
+            "newLine": false,
+            "queryCond": "id_responsabile=$id_responsabile$"
+        },
+        {
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
             "translate": "RESOURCES.main_only",
-      "newLine": false,
-      "queryCond": "id_centro_gest_parent IS null"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text",
-        "value": "DEMO"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_part",
-      "label": "codice_part",
+            "newLine": false,
+            "queryCond": "id_centro_gest_parent IS null"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text",
+                "value": "DEMO"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
             "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_centro_gest",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica",
-      "label": "ID Anagrafica",
-      "sameOrigin": false
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice",
-      "label": "Codice",
-      "translate": "RESOURCES.code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "responsabile",
-      "label": "Responsabile",
-      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "parente",
-      "label": "Centro Superiore",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent)"
-    }
-  ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_centro_gest",
+            "label": "ID",
+            "translate": "RESOURCES.id_centro_gest"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "ID Anagrafica",
+            "sameOrigin": false,
+            "translate": "RESOURCES.id_anagrafica"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "responsabile",
+            "label": "Responsabile",
+            "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_responsabile)",
+            "translate": "RESOURCES.responsabile"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "parente",
+            "label": "Centro Superiore",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part,id_centro_gest_parent)",
+            "translate": "RESOURCES.parente"
+        }
+    ]
 }

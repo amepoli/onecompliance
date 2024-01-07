@@ -1,83 +1,87 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "dialog_pag_debi_ced",
-  "predefinedQueries": [
-    {
-      "operation": "insert",
-      "type": "main",
-      "queryString": "select entrasp.insert_ricessioni(($selected_rows_data$)::varchar, $data_pagamento$::date, $note$, 100::numeric, null::numeric, entrasp.debitore_ceduto_da_chiave(($selected_rows_data$)::varchar), $id_conto_corrente$,51488, $id_mandato$)"
-    },
-    {
-      "operation": "isInsert",
-      "queryString": "select true as label;",
-      "type": "main"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Data necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "data_pagamento",
-      "label": "Data Pagamento",
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda='€global_codice_azienda€';",
-        "viewType": "combobox",
-        "options": []
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_mandato",
-      "label": "N. Mandato",
-      "readOnly": false,
-      "size": 2.5,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "comboQuery": "select id_conto_corrente as ID, RIGHT(iban,12) ||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_banca) as name from entrasp.conti_correnti where codice_azienda='€global_codice_azienda€'",
-        "options": []
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "size": 3.4,
-      "key": "id_conto_corrente",
-      "label": "Conto Corrente",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "readOnly": false,
-      "newLine": true
-    }
-  ]
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_pag_debi_ced",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.insert_ricessioni(($selected_rows_data$)::varchar, $data_pagamento$::date, $note$, 100::numeric, null::numeric, entrasp.debitore_ceduto_da_chiave(($selected_rows_data$)::varchar), $id_conto_corrente$,51488, $id_mandato$)"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select true as label;",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Data necessaria",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "data_pagamento",
+            "label": "Data Pagamento",
+            "readOnly": false,
+            "size": 2.5,
+            "translate": "RESOURCES.data_pagamento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda='€global_codice_azienda€';",
+                "viewType": "combobox",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_mandato",
+            "label": "N. Mandato",
+            "readOnly": false,
+            "size": 2.5,
+            "newLine": false,
+            "translate": "RESOURCES.id_mandato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "comboQuery": "select id_conto_corrente as ID, RIGHT(iban,12) ||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_banca) as name from entrasp.conti_correnti where codice_azienda='€global_codice_azienda€'",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 3.4,
+            "key": "id_conto_corrente",
+            "label": "Conto Corrente",
+            "readOnly": false,
+            "translate": "RESOURCES.id_conto_corrente"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.note"
+        }
+    ]
 }

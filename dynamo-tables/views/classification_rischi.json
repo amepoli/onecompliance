@@ -1,149 +1,149 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "classification_rischi",
-  "inheritsFrom": "argomenti",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=210",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 210) as id_argomento;",
-      "type": "main"
-    },
-    {
-      "operation": "delete",
-      "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=210 and id_argomento_son=$id_argomento$;",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "isInsert",
-      "queryString": "select $id_argomento$ is null as label;",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "type": "preCheck",
-      "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
-      "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-    },
-    {
-      "operation": "update",
-      "type": "preCheck",
-      "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
-      "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_argomento_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID",
-      "newLine": false,
-      "queryCond": "arg.id_argomento=$id_argomento_s$"
-    },
-    {
-      "fieldName": "codice",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "newLine": false,
-      "queryCond": "arg.codice=$codice$"
-    },
-    {
-      "fieldName": "descr_rs",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "newLine": true,
-      "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€descr_rs')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
-    },
-    {
-      "fieldName": "no_modello_test",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Senza modelli di test",
-      "newLine": true,
-      "size": 1,
-      "queryCond": "arg.id_argomento not in(select mt.id_argomento from entrasp.modelli_test mt)"
-    },
-    {
-      "fieldName": "no_modello_test",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Con modelli di test",
-      "newLine": true,
-      "size": 1,
-      "queryCond": "arg.id_argomento in(select mt.id_argomento from entrasp.modelli_test mt)"
-    },
-    {
-      "fieldName": "categorie_modello_test_s",
-      "format": {
-          "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
-          "options": [],
-          "viewType": "combobox",
-          "dataType": "text"
-      },
-      "label": "Categorie modelli test",
-      "newLine": false,
-      "queryCond": "array[arg.id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
-  }
-  ],
-  "subTables": [
-    {
-      "entryKey": "argomenti_sub_of_argomenti_son",
-      "keys": [
+    "$schema": "../views.schema.json",
+    "entryKey": "classification_rischi",
+    "inheritsFrom": "argomenti",
+    "predefinedQueries": [
         {
-          "parent": "id_argomento",
-          "son": "id_argomento_father"
-        }
-      ],
-      "label": "Argomenti figli"
-    },
-    {
-      "entryKey": "argomenti_sub_of_argomenti_father",
-      "keys": [
+            "operation": "selectTable",
+            "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=210",
+            "type": "main"
+        },
         {
-          "parent": "id_argomento",
-          "son": "id_argomento_son"
-        }
-      ],
-      "label": "Argomenti padre"
-    },
-    {
-      "entryKey": "modelli_test_vr_sub_of_argomenti",
-      "keys": [
+            "operation": "insert",
+            "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 210) as id_argomento;",
+            "type": "main"
+        },
         {
-          "parent": "id_argomento",
-          "son": "id_argomento"
-        }
-      ],
-      "label": "Modelli test associati"
-    },
-    {
-      "entryKey": "modelli_test_extended_sub_of_argomenti",
-      "keys": [
+            "operation": "delete",
+            "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=210 and id_argomento_son=$id_argomento$;",
+            "type": "preProcessing"
+        },
         {
-          "parent": "id_argomento",
-          "son": "id_argomento"
+            "operation": "isInsert",
+            "queryString": "select $id_argomento$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
+            "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
         }
-      ],
-      "label": "Modelli test estesi"
-    }
-  ]
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_argomento_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID",
+            "newLine": false,
+            "queryCond": "arg.id_argomento=$id_argomento_s$"
+        },
+        {
+            "fieldName": "codice",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "newLine": false,
+            "queryCond": "arg.codice=$codice$"
+        },
+        {
+            "fieldName": "descr_rs",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": true,
+            "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€descr_rs')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
+        },
+        {
+            "fieldName": "no_modello_test",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza modelli di test",
+            "newLine": true,
+            "size": 1,
+            "queryCond": "arg.id_argomento not in(select mt.id_argomento from entrasp.modelli_test mt)"
+        },
+        {
+            "fieldName": "no_modello_test",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con modelli di test",
+            "newLine": true,
+            "size": 1,
+            "queryCond": "arg.id_argomento in(select mt.id_argomento from entrasp.modelli_test mt)"
+        },
+        {
+            "fieldName": "categorie_modello_test_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3425 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Categorie modelli test",
+            "newLine": false,
+            "queryCond": "array[arg.id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "argomenti_sub_of_argomenti_son",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_father"
+                }
+            ],
+            "label": "Argomenti figli"
+        },
+        {
+            "entryKey": "argomenti_sub_of_argomenti_father",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "Argomenti padre"
+        },
+        {
+            "entryKey": "modelli_test_vr_sub_of_argomenti",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento"
+                }
+            ],
+            "label": "Modelli test associati"
+        },
+        {
+            "entryKey": "modelli_test_extended_sub_of_argomenti",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento"
+                }
+            ],
+            "label": "Modelli test estesi"
+        }
+    ]
 }

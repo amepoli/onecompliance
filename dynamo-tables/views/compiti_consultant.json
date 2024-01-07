@@ -1,510 +1,518 @@
 {
-  "$schema": "../views.schema.json",
-  "origin": "entrasp.compiti",
-  "entryKey": "compiti_consultant",
-  "businessObjectName": "compiti",
-  "inheritsFrom": "compiti",
-  "define": {
-    "is_hidden_compiti": "true",
-    "is_hidden_compiti_consultant": "false"
-  },
-  "hideActions": [
-    {
-      "formActionType": "share",
-      "viewType": "form"
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.compiti",
+    "entryKey": "compiti_consultant",
+    "businessObjectName": "compiti",
+    "inheritsFrom": "compiti",
+    "define": {
+        "is_hidden_compiti": "true",
+        "is_hidden_compiti_consultant": "false"
     },
-    {
-      "formActionType": "quick-add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "attachments",
-      "viewType": "form"
-    }
-  ],
-  "outputEvents": [
-    {
-      "eventName": "compiti_consultant_load",
-      "eventTrigger": "onReload"
-    }
-  ],
-  "predefinedQueries": [
-    {
-      "type": "main",
-      "operation": "selectTable",
-      "queryString": "select cmp.codice_azienda, cmp.foreseen_date, cmp.codice_compito, cmp.codice, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti, codice_compito_parent from entrasp.compiti cmp WHERE cmp.codice_azienda in(€global_user_companies€) and cmp.id_tipo_segnalazione!=700"
-    },
-    {
-      "operation": "selectForm",
-      "type": "main",
-      "queryString": "select * from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "select entrasp.assegna_compito_user_centro_gest_default_insert((€global_id_anagrafiche€)::text, $titolo$, $codice_azienda$);"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
-    },
-    {
-      "operation": "startEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$')"
-    },
-    {
-      "operation": "stopEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "codice_azienda_s",
-      "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Azienda",
-      "newLine": false,
-      "queryCond": "codice_azienda='€codice_azienda_s€'"
-    },
-    {
-      "fieldName": "stato",
-      "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "newLine": true,
-      "queryCond": "stato='€stato€'"
-    },
-    {
-      "fieldName": "note_search",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Note/Titolo",
-      "newLine": false,
-      "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
-    },
-    {
-      "fieldName": "codice_compito_s",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Codice Compito",
-      "newLine": false,
-      "queryCond": "codice_compito=$codice_compito_s$"
-    },
-    {
-      "fieldName": "titolo",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-       "label": "Titolo",
+    "hideActions": [
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ],
+    "outputEvents": [
+        {
+            "eventName": "compiti_consultant_load",
+            "eventTrigger": "onReload"
+        }
+    ],
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select cmp.codice_azienda, cmp.foreseen_date, cmp.codice_compito, cmp.codice, cmp.titolo, sustring(cmp.note from 1 to 239) as note, cmp.data_segnalazione, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, cmp.codice_compito, cmp.codice_azienda), true as time_report_play, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as compiti_aperti, codice_compito_parent from entrasp.compiti cmp WHERE cmp.codice_azienda in(€global_user_companies€) and cmp.id_tipo_segnalazione!=700"
+        },
+        {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select * from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "select entrasp.assegna_compito_user_centro_gest_default_insert((€global_id_anagrafiche€)::text, $titolo$, $codice_azienda$);"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$')"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "codice_azienda_s",
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Azienda",
+            "newLine": false,
+            "queryCond": "codice_azienda='€codice_azienda_s€'"
+        },
+        {
+            "fieldName": "stato",
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "newLine": true,
+            "queryCond": "stato='€stato€'"
+        },
+        {
+            "fieldName": "note_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Note/Titolo",
+            "newLine": false,
+            "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+        },
+        {
+            "fieldName": "codice_compito_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice Compito",
+            "newLine": false,
+            "queryCond": "codice_compito=$codice_compito_s$"
+        },
+        {
+            "fieldName": "titolo",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Titolo",
             "translate": "RESOURCES.title",
-      "newLine": true,
-      "queryCond": "titolo=$titolo$"
-    },
-    {
-      "fieldName": "id_tipo_segnalazione",
-      "format": {
-        "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni order by descrizione;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "ID Tipo Segnal.",
-      "newLine": false,
-      "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione$"
-    },
-    {
-      "fieldName": "id_centro_gest",
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, codice_azienda||'-'||entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti order by codice_azienda;",
-        "options": [],
-        "viewType": "combobox"
-      },
-       "label": "Centro Gestionale",
+            "newLine": true,
+            "queryCond": "titolo=$titolo$"
+        },
+        {
+            "fieldName": "id_tipo_segnalazione",
+            "format": {
+                "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni order by descrizione;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "ID Tipo Segnal.",
+            "newLine": false,
+            "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione$"
+        },
+        {
+            "fieldName": "id_centro_gest",
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, codice_azienda||'-'||entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
-      "newLine": false,
-      "queryCond": "id_centro_gest=$id_centro_gest$"
-    },
-    {
-      "fieldName": "dynamo_user_s",
-      "format": {
-        "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.anagrafiche_id order by dynamo_user;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "User",
-      "newLine": true,
-      "queryCond": "codice_part||'-'||id_anagrafica in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
-    },
-    {
-      "fieldName": "main_s",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Principali (no sovracompiti)",
-      "newLine": false,
-      "size": 1,
-      "queryCond": "cmp.codice_compito_parent is null"
-    },
-    {
-      "fieldName": "main_s",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Includi tutti i sotto compiti",
-      "newLine": false,
-      "size": 1,
-      "queryCond": "(1=1 or entrasp.codice_compito_parent_ver2(cmp.codice_azienda, cmp.codice_compito)=cmp.codice_compito_parent)"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "consuntivazioni_consultant_sub_of_compiti_consultant",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "newLine": false,
+            "queryCond": "id_centro_gest=$id_centro_gest$"
         },
         {
-          "parent": "codice_compito",
-          "son": "codice_compito"
-        }
-      ],
-      "label": "Aggiornamenti e Time Report",
-      "translate": "RESOURCES.update_and_time_report"
-    },
-    {
-      "entryKey": "compiti_consultant_sub_of_compiti_consultant",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "fieldName": "dynamo_user_s",
+            "format": {
+                "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.anagrafiche_id order by dynamo_user;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "User",
+            "newLine": true,
+            "queryCond": "codice_part||'-'||id_anagrafica in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
         },
         {
-          "parent": "codice_compito",
-          "son": "codice_compito_parent"
-        }
-      ],
-      "label": "Sotto Compiti"
-    },
-    {
-      "entryKey": "user_sub_of_compiti_consultant",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "fieldName": "main_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Principali (no sovracompiti)",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "cmp.codice_compito_parent is null"
         },
         {
-          "parent": "codice_compito",
-          "son": "codice_compito"
+            "fieldName": "main_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Includi tutti i sotto compiti",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "(1=1 or entrasp.codice_compito_parent_ver2(cmp.codice_azienda, cmp.codice_compito)=cmp.codice_compito_parent)"
         }
-      ],
-      "label": "Utenti impegnati"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
+    ],
+    "subTables": [
+        {
+            "entryKey": "consuntivazioni_consultant_sub_of_compiti_consultant",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "codice_compito",
+                    "son": "codice_compito"
+                }
+            ],
+            "label": "Aggiornamenti e Time Report",
+            "translate": "RESOURCES.update_and_time_report"
+        },
+        {
+            "entryKey": "compiti_consultant_sub_of_compiti_consultant",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "codice_compito",
+                    "son": "codice_compito_parent"
+                }
+            ],
+            "label": "Sotto Compiti"
+        },
+        {
+            "entryKey": "user_sub_of_compiti_consultant",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "codice_compito",
+                    "son": "codice_compito"
+                }
+            ],
+            "label": "Utenti impegnati"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
             "translate": "RESOURCES.company_code",
-      "width": "7%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_segnalazione",
-       "label": "Tipo",
+            "width": "7%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_segnalazione",
+            "label": "Tipo",
             "translate": "RESOURCES.type",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "width": "5%",
-      "style": [
-        {
-          "value": "Chiuso",
-          "font_color": "green",
-          "font_weight": "500"
+            "width": "10%"
         },
         {
-          "value": "Provvisorio",
-          "font_color": "#D97F02",
-          "font_weight": "500"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "width": "5%",
+            "style": [
+                {
+                    "value": "Chiuso",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Provvisorio",
+                    "font_color": "#D97F02",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Aperto",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ]
         },
         {
-          "value": "Aperto",
-          "font_color": "red",
-          "font_weight": "500"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_compito",
-        "label": "codice_compito",
-      "translate": "RESOURCES.task_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice",
-      "width": "5%",
-      "label": "Codice Compito"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_segnalazione",
-      "width": "8%",
-      "label": "Data Segnalazione"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "foreseen_date",
-      "width": "8%",
-      "label": "Data Scadenza"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "width": "20%",
-       "label": "Titolo",
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_compito",
+            "label": "codice_compito",
+            "translate": "RESOURCES.task_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "width": "5%",
+            "label": "Codice Compito",
+            "translate": "RESOURCES.codice"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_segnalazione",
+            "width": "8%",
+            "label": "Data Segnalazione",
+            "translate": "RESOURCES.data_segnalazione"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "foreseen_date",
+            "width": "8%",
+            "label": "Data Scadenza",
+            "translate": "RESOURCES.foreseen_date"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "width": "20%",
+            "label": "Titolo",
             "translate": "RESOURCES.title"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "width": "20%",
-        "label": "Note",
-             "translate": "RESOURCES.notes"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "compiti_aperti",
-      "width": "6%",
-      "label": "N.compiti aperti"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_compito_parent",
-      "label": "Codice Compito"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "3%",
-      "key": "time_report_play",
-      "label": "",
-      "style": [
+        },
         {
-          "button_icon": "play_arrow",
-          "value": "*"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
-        "viewType": "form",
-        "action": "query",
-        "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          },
-          {
-            "source": "user_companies",
-            "destination": "user_companies"
-          }
-        ],
-        "confirmAction": false,
-        "onSuccessAction": "update_time_tracker_and_reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "time_report_stop_active",
-      "label": "",
-      "style": [
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "width": "20%",
+            "label": "Note",
+            "translate": "RESOURCES.notes"
+        },
         {
-          "button_icon": "stop",
-          "value": "*",
-          "background_color": "crimson"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "compiti_consultant_to_do_open",
-        "viewType": "form",
-        "action": "query",
-        "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          },
-          {
-            "source": "user_companies",
-            "destination": "user_companies"
-          }
-        ],
-        "confirmAction": false,
-        "onSuccessAction": "update_time_tracker_and_reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "user_companies",
-      "label": "user_companies"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-     "label": "id_centro_gest",
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "compiti_aperti",
+            "width": "6%",
+            "label": "N.compiti aperti",
+            "translate": "RESOURCES.compiti_aperti"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_compito_parent",
+            "label": "Codice Compito",
+            "translate": "RESOURCES.codice_compito_parent"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "3%",
+            "key": "time_report_play",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "play_arrow",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "compiti_consultant_to_do_open",
+                "viewType": "form",
+                "action": "query",
+                "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito",
+                        "destination": "codice_compito"
+                    },
+                    {
+                        "source": "user_companies",
+                        "destination": "user_companies"
+                    }
+                ],
+                "confirmAction": false,
+                "onSuccessAction": "update_time_tracker_and_reload"
+            },
+            "translate": "RESOURCES.time_report_play"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "time_report_stop_active",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "stop",
+                    "value": "*",
+                    "background_color": "crimson"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "compiti_consultant_to_do_open",
+                "viewType": "form",
+                "action": "query",
+                "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito",
+                        "destination": "codice_compito"
+                    },
+                    {
+                        "source": "user_companies",
+                        "destination": "user_companies"
+                    }
+                ],
+                "confirmAction": false,
+                "onSuccessAction": "update_time_tracker_and_reload"
+            },
+            "translate": "RESOURCES.time_report_stop_active"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "user_companies",
+            "label": "user_companies",
+            "translate": "RESOURCES.user_companies"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "id_centro_gest",
             "translate": "RESOURCES.id_office"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
             "translate": "RESOURCES.partition_code"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "compiti_consultant_reload"
+        },
+        {
+            "actionType": "navigate",
+            "eventName": "navigate_to_new_cons",
+            "actionTarget": {
+                "name": "consuntivazioni_consultant_sub_of_compiti_consultant",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "id_cons",
+                        "destination": "id_cons"
+                    },
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    }
+                ]
+            }
+        }
+    ],
+    "messages": [
+        {
+            "viewType": "form",
+            "formMessageType": "delete",
+            "message": {
+                "title": "Cancellazione compito",
+                "text": "Sei sicuro di voler cancellare il compito?"
+            }
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by time_report_stop_active desc, foreseen_date asc"
     }
-  ],
-  "inputEvents": [
-    {
-      "actionType": "reload",
-      "eventName": "compiti_consultant_reload"
-    },
-    {
-      "actionType": "navigate",
-      "eventName": "navigate_to_new_cons",
-      "actionTarget": {
-        "name": "consuntivazioni_consultant_sub_of_compiti_consultant",
-        "type": "form",
-        "keymap": [
-          {
-            "source": "id_cons",
-            "destination": "id_cons"
-          },
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          }
-        ]
-      }
-    }
-  ],
-  "messages": [
-    {
-      "viewType": "form",
-      "formMessageType": "delete",
-      "message": {
-        "title": "Cancellazione compito",
-        "text": "Sei sicuro di voler cancellare il compito?"
-      }
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by time_report_stop_active desc, foreseen_date asc"
-  }
 }

@@ -1,26 +1,26 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "reports",
-	"businessObjectName": "report",
-	"origin": "entrasp.report",
-	"predefinedQueries": [
-		{
-			"type": "main",
-			"operation": "selectTable",
-			"queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse) =0 order by id_report asc" 
-		}
-	],
-	"form_keys": [
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "id_report",
-			"key": "id_report",
-			"readOnly": true,
-			"inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "reports",
+    "businessObjectName": "report",
+    "origin": "entrasp.report",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse) =0 order by id_report asc"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_report",
+            "key": "id_report",
+            "readOnly": true,
+            "inputEvents": [
                 {
                     "eventName": "report_duplica",
                     "actionType": "query",
@@ -30,43 +30,46 @@
                     "queryFunct": "select entrasp.duplica_report($id_report$) as id_report;"
                 }
             ],
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false,
-			"size": 1.4
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_report AS id, descrizione AS name FROM entrasp.report where codice_azienda='€global_codice_azienda€' or codice_azienda is null and id_report!=£id_report£;",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Report padre",
-			"key": "id_report_parent",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 2.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice_part AS id, codice_part AS name FROM entrasp.partizioni;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"label": "Partizione",
-			"key": "codice_part",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 2.5
-		},
-		{
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 1.4,
+            "translate": "RESOURCES.id_report"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_report AS id, descrizione AS name FROM entrasp.report where codice_azienda='€global_codice_azienda€' or codice_azienda is null and id_report!=£id_report£;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Report padre",
+            "key": "id_report_parent",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "translate": "RESOURCES.id_report_parent"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_part AS id, codice_part AS name FROM entrasp.partizioni;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Partizione",
+            "key": "codice_part",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
             "autoGenerate": false,
             "format": {
                 "viewType": "menu",
@@ -78,177 +81,184 @@
                     }
                 ]
             },
-            "inputEvents": [
-            ],
+            "inputEvents": [],
             "isHidden": false,
             "isPrimary": false,
             "buttonIcon": "more_vert",
             "key": "report_actions",
             "label": "void",
-     		"translate": "RESOURCES.void",
+            "translate": "RESOURCES.void",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
             "size": 0.6
         },
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Report",
-			"key": "descrizione",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"label": "Data esecuzione da",
-			"key": "data_esec_da",
-			"sameOrigin": false,
-			"readOnly": false, 
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"label": "Data esecuzione a",
-			"key": "data_esec_a",
-			"readOnly": false,
-			"isHidden": false,
-			"sameOrigin": false,
-			"isPrimary": false,
-			"newLine": false
-		}
-	],
-	"exportQueries": {
-		"formQueries": [
-			{
-				"label": "Valore indicatori dell'azienda",
-				"queryString": "select ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, cia.valore_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),$codice_azienda$::varchar,ir.codice_tipo_indicatore::varchar, $codice_part$) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=$id_report$"
-			},
-			{
-				"label": "Valore indicatori trasversali",
-				"queryString": "select az.codice_azienda, ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, mn.menu, ind.parametri_menu, ir.codice_tipo_indicatore::varchar, entrasp.transcodifiche_transcodifica (ir.tipo_dato_indicatore,ir.codice_tipo_indicatore) as Desc_tipo_indicatore, ir.descrizione_indicatore, cia.valore_indicatore, cia.stringa_indicatore from entrasp.aziende az, entrasp.indicatori ind left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),az.codice_azienda::varchar,ir.codice_tipo_indicatore::varchar, az.codice_part) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=133 and az.codice_azienda in(€global_user_companies€) order by ind.id_indicatore, az.codice_azienda"
-			},
-			{
-				"label": "Report",
-				"queryString": "select * from entrasp.report_data('€global_codice_azienda€',$id_report$);",
-				"isReport": true
-			}
-		]
-	},
-	"subTables": [
-		{
-			"entryKey": "indicators_sub_of_reports",
-			"keys": [
-				{
-					"parent": "id_report",
-					"son": "id_report"
-				}
-			],
-			"label": "Indicatori associati"
-		},
-		{
-			"entryKey": "reports_sub_of_reports",
-			"keys": [
-				{
-					"parent": "id_report",
-					"son": "id_report_parent"
-				}
-			],
-			"label": "Sotto Reports"
-		},
-		{
-			"entryKey": "destinatari_report",
-			"keys": [
-				{
-					"parent": "id_report",
-					"son": "id_report"
-				}
-			],
-			"label": "Destinatari"
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"width": "10%",
-			"isPrimary": true,
-			"key": "id_report",
-			"label": "#"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"width": "10%",
-			"isPrimary": false,
-			"key": "codice_azienda",
-			"label": "Azienda"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"width": "10%",
-			"key": "codice_part",
-			"label": "Partizione"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione",
-			"label": "Report"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"width": "10%",
-			"isPrimary": false,
-			"key": "id_report_parent",
-			"label": "ID Report"
-		}
-	],
-	"hideActions": [
-		{
-			"formActionType": "attachments",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "share",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "startEvent",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "stopEvent",
-			"viewType": "form"
-		}
-	]
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Report",
+            "key": "descrizione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.descrizione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "label": "Data esecuzione da",
+            "key": "data_esec_da",
+            "sameOrigin": false,
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.data_esec_da"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "label": "Data esecuzione a",
+            "key": "data_esec_a",
+            "readOnly": false,
+            "isHidden": false,
+            "sameOrigin": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.data_esec_a"
+        }
+    ],
+    "exportQueries": {
+        "formQueries": [
+            {
+                "label": "Valore indicatori dell'azienda",
+                "queryString": "select ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, cia.valore_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),$codice_azienda$::varchar,ir.codice_tipo_indicatore::varchar, $codice_part$) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=$id_report$"
+            },
+            {
+                "label": "Valore indicatori trasversali",
+                "queryString": "select az.codice_azienda, ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, mn.menu, ind.parametri_menu, ir.codice_tipo_indicatore::varchar, entrasp.transcodifiche_transcodifica (ir.tipo_dato_indicatore,ir.codice_tipo_indicatore) as Desc_tipo_indicatore, ir.descrizione_indicatore, cia.valore_indicatore, cia.stringa_indicatore from entrasp.aziende az, entrasp.indicatori ind left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),az.codice_azienda::varchar,ir.codice_tipo_indicatore::varchar, az.codice_part) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=133 and az.codice_azienda in(€global_user_companies€) order by ind.id_indicatore, az.codice_azienda"
+            },
+            {
+                "label": "Report",
+                "queryString": "select * from entrasp.report_data('€global_codice_azienda€',$id_report$);",
+                "isReport": true
+            }
+        ]
+    },
+    "subTables": [
+        {
+            "entryKey": "indicators_sub_of_reports",
+            "keys": [
+                {
+                    "parent": "id_report",
+                    "son": "id_report"
+                }
+            ],
+            "label": "Indicatori associati"
+        },
+        {
+            "entryKey": "reports_sub_of_reports",
+            "keys": [
+                {
+                    "parent": "id_report",
+                    "son": "id_report_parent"
+                }
+            ],
+            "label": "Sotto Reports"
+        },
+        {
+            "entryKey": "destinatari_report",
+            "keys": [
+                {
+                    "parent": "id_report",
+                    "son": "id_report"
+                }
+            ],
+            "label": "Destinatari"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": true,
+            "key": "id_report",
+            "label": "#",
+            "translate": "RESOURCES.id_report"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Azienda",
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "codice_part",
+            "label": "Partizione",
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Report",
+            "translate": "RESOURCES.descrizione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "id_report_parent",
+            "label": "ID Report",
+            "translate": "RESOURCES.id_report_parent"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        }
+    ]
 }

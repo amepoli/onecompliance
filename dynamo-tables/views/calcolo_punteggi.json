@@ -1,479 +1,498 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "calcolo_punteggi",
-  "origin": "entrasp.modelli_test_risultati_righe_vr",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select pr.codice_azienda,pr.id_sondaggio,pr.id_somministrazione,pr.pct_da,pr.descrizione,pr.flag_non_applicabile_sezione,pr.flag_non_applicabile_domanda,pr.flag_non_applicabile_risposta,pr.base,count(pr.id_domanda) as conta_domande,round(pr2.punt_limite*pct_limite/100, 2) as punteggio_risposte_limit, round(pr2.punt_limite*pr.pct_limite_floor/100, 2) as punteggio_risposte_floor, sum(pr.punteggio_risposta) as punteggio_risposte,round(sum(pr.punteggio_risposta)*base^count(pr.id_domanda),2) as punteggio_risposte_penalizzato,entrasp.valore_intervallo( sum(pr.punteggio_risposta)*base^count(pr.id_domanda), pr2.punt_limite*pct_limite_floor/100, pr2.punt_limite*pct_limite/100) as punteggio_risposte_limitato, pr.pct_limite_floor, pr.pct_limite, sum(pr.punteggio) as punteggio_domande from entrasp.punteggi_domande_delle_risposte pr inner join (select id_sondaggio, id_somministrazione, codice_azienda, id_modello_test, id_modello_test_vr, sum(punteggio) as punt_limite from entrasp.punteggi_domande_delle_risposte  group by id_sondaggio, id_somministrazione, codice_azienda, id_modello_test, id_modello_test_vr) pr2 on pr.codice_azienda=pr2.codice_azienda and pr.id_modello_test=pr2.id_modello_test and pr.id_modello_test_vr=pr2.id_modello_test_vr and pr.id_sondaggio=pr2.id_sondaggio and pr.id_somministrazione=pr2.id_somministrazione where pr.codice_azienda=$codice_azienda$ and pr.id_sondaggio=$id_sondaggio$ and pr.id_somministrazione=$id_somministrazione$ group by pr.codice_azienda,pr.id_sondaggio,pr.pct_limite, pr.pct_limite_floor, pr.num_criticita,pr.id_somministrazione,pr.descrizione,pr.pct_da,pr.flag_non_applicabile_sezione,pr.flag_non_applicabile_domanda,pr.flag_non_applicabile_risposta,pr.base,pr.id_modello_test,pr.id_modello_test_vr,pr2.punt_limite"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_somministrazione",
-       "label": "id_somministrazione",
+    "$schema": "../views.schema.json",
+    "entryKey": "calcolo_punteggi",
+    "origin": "entrasp.modelli_test_risultati_righe_vr",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select pr.codice_azienda,pr.id_sondaggio,pr.id_somministrazione,pr.pct_da,pr.descrizione,pr.flag_non_applicabile_sezione,pr.flag_non_applicabile_domanda,pr.flag_non_applicabile_risposta,pr.base,count(pr.id_domanda) as conta_domande,round(pr2.punt_limite*pct_limite/100, 2) as punteggio_risposte_limit, round(pr2.punt_limite*pr.pct_limite_floor/100, 2) as punteggio_risposte_floor, sum(pr.punteggio_risposta) as punteggio_risposte,round(sum(pr.punteggio_risposta)*base^count(pr.id_domanda),2) as punteggio_risposte_penalizzato,entrasp.valore_intervallo( sum(pr.punteggio_risposta)*base^count(pr.id_domanda), pr2.punt_limite*pct_limite_floor/100, pr2.punt_limite*pct_limite/100) as punteggio_risposte_limitato, pr.pct_limite_floor, pr.pct_limite, sum(pr.punteggio) as punteggio_domande from entrasp.punteggi_domande_delle_risposte pr inner join (select id_sondaggio, id_somministrazione, codice_azienda, id_modello_test, id_modello_test_vr, sum(punteggio) as punt_limite from entrasp.punteggi_domande_delle_risposte  group by id_sondaggio, id_somministrazione, codice_azienda, id_modello_test, id_modello_test_vr) pr2 on pr.codice_azienda=pr2.codice_azienda and pr.id_modello_test=pr2.id_modello_test and pr.id_modello_test_vr=pr2.id_modello_test_vr and pr.id_sondaggio=pr2.id_sondaggio and pr.id_somministrazione=pr2.id_somministrazione where pr.codice_azienda=$codice_azienda$ and pr.id_sondaggio=$id_sondaggio$ and pr.id_somministrazione=$id_somministrazione$ group by pr.codice_azienda,pr.id_sondaggio,pr.pct_limite, pr.pct_limite_floor, pr.num_criticita,pr.id_somministrazione,pr.descrizione,pr.pct_da,pr.flag_non_applicabile_sezione,pr.flag_non_applicabile_domanda,pr.flag_non_applicabile_risposta,pr.base,pr.id_modello_test,pr.id_modello_test_vr,pr2.punt_limite"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
             "translate": "RESOURCES.id_administration"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "label": "id_sondaggio"
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isCheckbox": true,
-      "isPrimary": false,
-      "key": "flag_non_applicabile_sezione",
-      "label": "Sez.non.appl.",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isCheckbox": true,
-      "isPrimary": false,
-      "key": "flag_non_applicabile_domanda",
-      "label": "Dom.non.appl.",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isCheckbox": true,
-      "isPrimary": false,
-      "key": "flag_non_applicabile_risposta",
-      "label": "Risp.non.appl.",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_risultato",
-      "label": "id risultato"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "fake",
-      "label": "void",
-     	"translate": "RESOURCES.void",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "pct_da",
-      "label": "Percentuale da"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "showTotal": true,
-      "key": "conta_domande",
-      "label": "Num.domande",
-      "style": [
+        },
         {
-          "value": "*",
-          "font_weight": "500",
-          "font_size": "medium"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_sondaggio"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isCheckbox": true,
+            "isPrimary": false,
+            "key": "flag_non_applicabile_sezione",
+            "label": "Sez.non.appl.",
+            "width": "6%",
+            "translate": "RESOURCES.flag_non_applicabile_sezione"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isCheckbox": true,
+            "isPrimary": false,
+            "key": "flag_non_applicabile_domanda",
+            "label": "Dom.non.appl.",
+            "width": "6%",
+            "translate": "RESOURCES.flag_non_applicabile_domanda"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isCheckbox": true,
+            "isPrimary": false,
+            "key": "flag_non_applicabile_risposta",
+            "label": "Risp.non.appl.",
+            "width": "6%",
+            "translate": "RESOURCES.flag_non_applicabile_risposta"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_risultato",
+            "label": "id risultato",
+            "translate": "RESOURCES.id_risultato"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fake",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "pct_da",
+            "label": "Percentuale da",
+            "translate": "RESOURCES.pct_da"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "showTotal": true,
+            "key": "conta_domande",
+            "label": "Num.domande",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.conta_domande"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "base",
+            "label": "Base (penalizzatore)",
+            "translate": "RESOURCES.base"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "showTotal": true,
+            "key": "punteggio_risposte",
+            "label": "Punt.risposte",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.punteggio_risposte"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "showTotal": true,
+            "key": "punteggio_risposte_penalizzato",
+            "label": "Punt.risp.penalizz.",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.punteggio_risposte_penalizzato"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "showTotal": true,
+            "key": "pct_limite_floor",
+            "label": "% Limite Floor",
+            "translate": "RESOURCES.pct_limite_floor"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "showTotal": true,
+            "key": "pct_limite",
+            "label": "% Limite Sup.",
+            "translate": "RESOURCES.pct_limite"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "punteggio_risposte_floor",
+            "showTotal": true,
+            "label": "Punt.risp.floor",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.punteggio_risposte_floor"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "punteggio_risposte_limit",
+            "showTotal": true,
+            "label": "Punt.risp.limite",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.punteggio_risposte_limit"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "showTotal": true,
+            "key": "punteggio_risposte_limitato",
+            "label": "Punt.risp.limitato",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.punteggio_risposte_limitato"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "showTotal": true,
+            "key": "punteggio_domande",
+            "label": "Punt.domande",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.punteggio_domande"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Giudizio Corrispondente",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Favorevole",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Adeguato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In prevalenza favorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Irrilevante",
+                    "font_color": "DarkBlue",
+                    "font_weight": "500",
+                    "background_color": "GhostWhite",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non significativo",
+                    "font_color": "DarkBlue",
+                    "font_weight": "500",
+                    "background_color": "GhostWhite",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Poco significativo",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Prevalentemente adeguato",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-Basso",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Abbastanza significativo",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente favorevole",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-Alto",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente adeguato",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente sfavorevole",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Molto significativo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In prevalenza sfavorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non adeguato",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Sfavorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "black",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Obbligo di Astensione",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ],
+            "translate": "RESOURCES.descrizione"
         }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "base",
-      "label": "Base (penalizzatore)"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "showTotal": true,
-      "key": "punteggio_risposte",
-      "label": "Punt.risposte",
-      "style": [
+    ],
+    "hideActions": [
         {
-          "value": "*",
-          "font_weight": "500",
-          "font_size": "medium"
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "import_export",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "documentation",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "import_export",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "multi-attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "delete",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
         }
-      ]
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "ORDER BY pct_da"
     },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "showTotal": true,
-      "key": "punteggio_risposte_penalizzato",
-      "label": "Punt.risp.penalizz.",
-      "style": [
-        {
-          "value": "*",
-          "font_weight": "500",
-          "font_size": "medium"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "showTotal": true,
-      "key": "pct_limite_floor",
-      "label": "% Limite Floor"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "showTotal": true,
-      "key": "pct_limite",
-      "label": "% Limite Sup."
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "punteggio_risposte_floor",
-      "showTotal": true,
-      "label": "Punt.risp.floor",
-      "style": [
-        {
-          "value": "*",
-          "font_weight": "500",
-          "font_size": "medium"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "punteggio_risposte_limit",
-      "showTotal": true,
-      "label": "Punt.risp.limite",
-      "style": [
-        {
-          "value": "*",
-          "font_weight": "500",
-          "font_size": "medium"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "showTotal": true,
-      "key": "punteggio_risposte_limitato",
-      "label": "Punt.risp.limitato",
-      "style": [
-        {
-          "value": "*",
-          "font_weight": "500",
-          "font_size": "medium"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "showTotal": true,
-      "key": "punteggio_domande",
-      "label": "Punt.domande",
-      "style": [
-        {
-          "value": "*",
-          "font_weight": "500",
-          "font_size": "medium"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Giudizio Corrispondente",
-      "style": [
-        {
-          "value": "*",
-          "text_align": "center"
-        },
-        {
-          "value": "Basso",
-          "font_color": "PaleGreen",
-          "font_weight": "500",
-          "background_color": "Green",
-          "text_align": "center"
-        },
-        {
-          "value": "Favorevole",
-          "font_color": "PaleGreen",
-          "font_weight": "500",
-          "background_color": "Green",
-          "text_align": "center"
-        },
-        {
-          "value": "Adeguato",
-          "font_color": "PaleGreen",
-          "font_weight": "500",
-          "background_color": "Green",
-          "text_align": "center"
-        },
-        {
-          "value": "In prevalenza favorevole",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "royalblue",
-          "text_align": "center"
-        },
-        {
-          "value": "Irrilevante",
-          "font_color": "DarkBlue",
-          "font_weight": "500",
-          "background_color": "GhostWhite",
-          "text_align": "center"
-        },
-        {
-          "value": "Non significativo",
-          "font_color": "DarkBlue",
-          "font_weight": "500",
-          "background_color": "GhostWhite",
-          "text_align": "center"
-        },
-        {
-          "value": "Poco significativo",
-          "font_color": "PaleGreen",
-          "font_weight": "500",
-          "background_color": "Green",
-          "text_align": "center"
-        },
-        {
-          "value": "Prevalentemente adeguato",
-          "font_color": "black",
-          "font_weight": "500",
-          "background_color": "#e6e600",
-          "text_align": "center"
-        },
-        {
-          "value": "Medio-Basso",
-          "font_color": "black",
-          "font_weight": "500",
-          "background_color": "#e6e600",
-          "text_align": "center"
-        },
-        {
-          "value": "Abbastanza significativo",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
-        },
-        {
-          "value": "Medio",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
-        },
-        {
-          "value": "Parzialmente favorevole",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
-        },
-        {
-          "value": "Medio-Alto",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
-        },
-        {
-          "value": "Parzialmente adeguato",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
-        },
-        {
-          "value": "Parzialmente sfavorevole",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
-        },
-        {
-          "value": "Molto significativo",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "firebrick",
-          "font_size": "medium",
-          "text_align": "center"
-        },
-        {
-          "value": "Alto",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "firebrick",
-          "font_size": "medium",
-          "text_align": "center"
-        },
-        {
-          "value": "In prevalenza sfavorevole",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "firebrick",
-          "font_size": "medium",
-          "text_align": "center"
-        },
-        {
-          "value": "Non adeguato",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "firebrick",
-          "font_size": "medium",
-          "text_align": "center"
-        },
-        {
-          "value": "Sfavorevole",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "black",
-          "font_size": "medium",
-          "text_align": "center"
-        },
-        {
-          "value": "Obbligo di Astensione",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "firebrick",
-          "font_size": "medium",
-          "text_align": "center"
-        }
-      ]
-    }   
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "import_export",
-      "viewType": "table"
-    },
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "attachments",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "documentation",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "import_export",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "multi-attachments",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "quick-add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "share",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "startEvent",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "stopEvent",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "delete",
-      "viewType": "form"
-    },
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
+    "restrictions": {
+        "preventNavigationToForm": true
     }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "ORDER BY pct_da"
-  },
-  "restrictions": {
-    "preventNavigationToForm": true
-  }
 }

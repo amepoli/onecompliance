@@ -1,285 +1,285 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "documents_hp",
-  "inheritsFrom": "information_flows",
-  "define": {
-    "is_hidden_codice_azienda": "false",
-    "toggle_miei_uffici": "0",
-    "id_argomento_father": "3576",
-    "id_anagrafica_if_clientela": "true"
-  },
-  "toolbar_elements": [
-    {
-      "fieldName": "dynamo_s",
-      "viewType": "combobox",
-      "position": "left",
-      "label": "Miei",
-      "options": [],
-      "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
-      "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
-    }
-  ],
-  "tiles": [
-    {
-      "title": "Documenti allegati",
-      "content": {
-        "contentType": "value",
-        "value": "Scooby Doo",
-        "query": "select count(crs.prog_revisione) as documenti_allegati FROM entrasp.cdms_risorse_revisioni crs where id_argomento_stato!=4034 and crs.codice_azienda in (€global_user_companies€)",
-        "queryCond": "",
-        "fieldName": "documenti_allegati",
-        "value_color": "green",
-				"title_color": "green",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "id_argomento_stato": "4035"
-      }	
-      },
-      "new_line": false
+    "$schema": "../views.schema.json",
+    "entryKey": "documents_hp",
+    "inheritsFrom": "information_flows",
+    "define": {
+        "is_hidden_codice_azienda": "false",
+        "toggle_miei_uffici": "0",
+        "id_argomento_father": "3576",
+        "id_anagrafica_if_clientela": "true"
     },
-    {
-      "title": "Documenti non allegati",
-      "content": {
-        "contentType": "value",
-        "value": "Scooby Doo",
-        "query": "select count(crs.prog_revisione) as documenti_non_allegati FROM entrasp.cdms_risorse_revisioni crs where id_argomento_stato=4034 and crs.codice_azienda in (€global_user_companies€)",
-        "queryCond": "",
-        "fieldName": "documenti_non_allegati",
-        "value_color": "red",
-        "title_color": "red",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "id_argomento_stato": "4034"
-      }	
-      },
-      "new_line": true
-    },
-    {
-      "title": "Documenti non richiesti",
-      "content": {
-        "contentType": "value",
-        "value": "Scooby Doo",
-        "query": "select count(crs.prog_revisione) as documenti_non_richiesti FROM entrasp.cdms_risorse_revisioni crs where id_argomento_stato=5327 and crs.codice_azienda in (€global_user_companies€)",
-        "queryCond": "",
-        "fieldName": "documenti_non_richiesti",
-        "value_color": "grey",
-        "title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "id_argomento_stato": "5327"
-      }	
-      },
-      "new_line": false
-    },
-    {
-      "title": "Documenti da definire",
-      "content": {
-        "contentType": "value",
-        "value": "Scooby Doo",
-        "query": "select count(crs.prog_revisione) as documenti_da_definire FROM entrasp.cdms_risorse_revisioni crs where id_argomento_stato=6150 and crs.codice_azienda in (€global_user_companies€)",
-        "queryCond": "",
-        "fieldName": "documenti_da_definire",
-        "value_color": "#BA68C8",
-				"title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "id_argomento_stato": "6150"
-      }	
-      },
-      "new_line": false
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_risorsa_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Documento",
-      "newLine": false,
-      "queryCond": "crs.id_risorsa=$id_risorsa_s$"
-    },
-    {
-      "fieldName": "id_argomento_tipo_allegato_s",
-      "format": {
-        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') order by descrizione asc;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo Documento",
-      "newLine": false,
-      "queryCond": "crs.id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
-    },
-    {
-      "fieldName": "id_centro_gest_s",
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, id_centro_gest||'-'||descrizione AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' order by descrizione;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Centro Gestionale Responsabile",
-      "newLine": false,
-      "queryCond": "crs.id_centro_gest=$id_centro_gest_s$"
-    },
-    {
-      "fieldName": "id_anagrafica_s",
-      "format": {
-        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) asc;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Cliente/Fornitore/Dipendente",
-      "newLine": false,
-      "queryCond": "crs.id_anagrafica=$id_anagrafica_s$"
-    },
-    {
-      "fieldName": "id_anagrafica_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Anagrafica",
-      "newLine": true,
-      "queryCond": "crs.id_anagrafica=$id_anagrafica_s$"
-    },
-    {
-      "fieldName": "autore_s",
-      "format": {
-        "comboQuery": "select distinct autore as id, autore as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Utente",
-      "newLine": false,
-      "queryCond": "crs.autore=$autore_s$"
-    },
-    {
-      "fieldName": "data_da_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data creazione da",
-      "newLine": false,
-      "queryCond": "crs.data_creazione>=$data_da_s$"
-    },
-    {
-      "fieldName": "data_a_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data creazione a",
-      "newLine": false,
-      "queryCond": "crs.data_creazione<=$data_a_s$"
-    },
-    {
-      "fieldName": "data_scad_da_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data scad. da",
-      "newLine": false,
-      "queryCond": "crs.data_scadenza>=$data_scad_da_s$"
-    },
-    {
-      "fieldName": "data_scad_a_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data scad. a",
-      "newLine": false,
-      "queryCond": "crs.data_scadenza<=$data_scad_a_s$"
-    },
-    {
-      "fieldName": "parola_search_s",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Parola chiave",
+    "toolbar_elements": [
+        {
+            "fieldName": "dynamo_s",
+            "viewType": "combobox",
+            "position": "left",
+            "label": "Miei",
+            "options": [],
+            "comboQuery": "select distinct dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
+            "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
+        }
+    ],
+    "tiles": [
+        {
+            "title": "Documenti allegati",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(crs.prog_revisione) as documenti_allegati FROM entrasp.cdms_risorse_revisioni crs where id_argomento_stato!=4034 and crs.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "documenti_allegati",
+                "value_color": "green",
+                "title_color": "green",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "id_argomento_stato": "4035"
+                }
+            },
+            "new_line": false
+        },
+        {
+            "title": "Documenti non allegati",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(crs.prog_revisione) as documenti_non_allegati FROM entrasp.cdms_risorse_revisioni crs where id_argomento_stato=4034 and crs.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "documenti_non_allegati",
+                "value_color": "red",
+                "title_color": "red",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "id_argomento_stato": "4034"
+                }
+            },
+            "new_line": true
+        },
+        {
+            "title": "Documenti non richiesti",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(crs.prog_revisione) as documenti_non_richiesti FROM entrasp.cdms_risorse_revisioni crs where id_argomento_stato=5327 and crs.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "documenti_non_richiesti",
+                "value_color": "grey",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "id_argomento_stato": "5327"
+                }
+            },
+            "new_line": false
+        },
+        {
+            "title": "Documenti da definire",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(crs.prog_revisione) as documenti_da_definire FROM entrasp.cdms_risorse_revisioni crs where id_argomento_stato=6150 and crs.codice_azienda in (€global_user_companies€)",
+                "queryCond": "",
+                "fieldName": "documenti_da_definire",
+                "value_color": "#BA68C8",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "id_argomento_stato": "6150"
+                }
+            },
+            "new_line": false
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_risorsa_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Documento",
+            "newLine": false,
+            "queryCond": "crs.id_risorsa=$id_risorsa_s$"
+        },
+        {
+            "fieldName": "id_argomento_tipo_allegato_s",
+            "format": {
+                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') order by descrizione asc;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo Documento",
+            "newLine": false,
+            "queryCond": "crs.id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
+        },
+        {
+            "fieldName": "id_centro_gest_s",
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, id_centro_gest||'-'||descrizione AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' order by descrizione;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale Responsabile",
+            "newLine": false,
+            "queryCond": "crs.id_centro_gest=$id_centro_gest_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) asc;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cliente/Fornitore/Dipendente",
+            "newLine": false,
+            "queryCond": "crs.id_anagrafica=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Anagrafica",
+            "newLine": true,
+            "queryCond": "crs.id_anagrafica=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "autore_s",
+            "format": {
+                "comboQuery": "select distinct autore as id, autore as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Utente",
+            "newLine": false,
+            "queryCond": "crs.autore=$autore_s$"
+        },
+        {
+            "fieldName": "data_da_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data creazione da",
+            "newLine": false,
+            "queryCond": "crs.data_creazione>=$data_da_s$"
+        },
+        {
+            "fieldName": "data_a_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data creazione a",
+            "newLine": false,
+            "queryCond": "crs.data_creazione<=$data_a_s$"
+        },
+        {
+            "fieldName": "data_scad_da_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data scad. da",
+            "newLine": false,
+            "queryCond": "crs.data_scadenza>=$data_scad_da_s$"
+        },
+        {
+            "fieldName": "data_scad_a_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data scad. a",
+            "newLine": false,
+            "queryCond": "crs.data_scadenza<=$data_scad_a_s$"
+        },
+        {
+            "fieldName": "parola_search_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parola chiave",
             "translate": "RESOURCES.key_word",
-      "newLine": false,
-      "queryCond": "(upper(crs.client_file_name) like '%'||upper('€parola_search_s€')||'%')"
-    },
-    {
-      "fieldName": "stato_search",
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "comboQuery": "select distinct id_argomento_stato as id, entrasp.argomenti_descr_stato(id_argomento_stato) as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
-        "options": []
-      },
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "newLine": true,
-      "queryCond": "crs.id_argomento_stato=$stato_search$"
-    },
-    {
-      "fieldName": "scaduto_s",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Scaduto",
-      "translate": "RESOURCES.expired",
-      "newLine": false,
-      "queryCond": "data_scadenza<=current_date and id_argomento_stato not in(4035, 5327)"
-    },
-    {
-      "fieldName": "scaduto_s_togg",
-      "format": {
-        "value": "0",
-        "viewType": "toggle"
-      },
-      "label": "Scaduto",
-      "translate": "RESOURCES.expired",
-      "newLine": false,
-      "queryCond": "data_scadenza<=current_date and id_argomento_stato not in(4035, 5327)"
-    },
-    {
-      "fieldName": "non_allegato",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Non allegato",
-      "newLine": false,
-      "queryCond": "id_argomento_stato not in(4035, 5327)"
-    },
-    {
-      "fieldName": "non_richiesto",
-      "format": {
-        "value": "0",
-        "viewType": "toggle"
-      },
-      "label": "Non Richiesto",
-      "newLine": false,
-      "queryCond": "id_argomento_stato=5327"
-    },
-    {
-      "fieldName": "non_allegato_toggle",
-      "format": {
-        "value": "1",
-        "viewType": "toggle"
-      },
-      "label": "Non allegato",
-      "newLine": false,
-      "queryCond": "id_argomento_stato not in(4035, 5327)"
-    },
-    {
-      "fieldName": "my_offices_t",
-      "format": {
-        "value": "0",
-        "viewType": "toggle"
-      },
-      "label": "Miei uffici",
-      "newLine": false,
-      "queryCond": "crs.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and crs.codice_part='€global_codice_part€')"
-    }
-  ]
+            "newLine": false,
+            "queryCond": "(upper(crs.client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+        },
+        {
+            "fieldName": "stato_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "comboQuery": "select distinct id_argomento_stato as id, entrasp.argomenti_descr_stato(id_argomento_stato) as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
+                "options": []
+            },
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "newLine": true,
+            "queryCond": "crs.id_argomento_stato=$stato_search$"
+        },
+        {
+            "fieldName": "scaduto_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Scaduto",
+            "translate": "RESOURCES.expired",
+            "newLine": false,
+            "queryCond": "data_scadenza<=current_date and id_argomento_stato not in(4035, 5327)"
+        },
+        {
+            "fieldName": "scaduto_s_togg",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Scaduto",
+            "translate": "RESOURCES.expired",
+            "newLine": false,
+            "queryCond": "data_scadenza<=current_date and id_argomento_stato not in(4035, 5327)"
+        },
+        {
+            "fieldName": "non_allegato",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Non allegato",
+            "newLine": false,
+            "queryCond": "id_argomento_stato not in(4035, 5327)"
+        },
+        {
+            "fieldName": "non_richiesto",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Non Richiesto",
+            "newLine": false,
+            "queryCond": "id_argomento_stato=5327"
+        },
+        {
+            "fieldName": "non_allegato_toggle",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Non allegato",
+            "newLine": false,
+            "queryCond": "id_argomento_stato not in(4035, 5327)"
+        },
+        {
+            "fieldName": "my_offices_t",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Miei uffici",
+            "newLine": false,
+            "queryCond": "crs.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and crs.codice_part='€global_codice_part€')"
+        }
+    ]
 }

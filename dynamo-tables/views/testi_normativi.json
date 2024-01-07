@@ -1,355 +1,364 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "testi_normativi",
-  "origin": "entrasp.testi_normativi",
-  "businessObjectName": "testiNormativi",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select tn.*, (entrasp.ultimo_aggiornamento_testo_normativo(tn.id_testo_normativo)) as ultima_data_aggiornamento,  (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn WHERE true",
-      "type": "main"
-    }
-  ],
-  "table_multiselection_actions": [
-    {
-      "viewType": "menu",
-      "key": "menuanag",
-      "label": "Actions",
-      "icon": "more_vert",
-      "menuOptions": [
+    "$schema": "../views.schema.json",
+    "entryKey": "testi_normativi",
+    "origin": "entrasp.testi_normativi",
+    "businessObjectName": "testiNormativi",
+    "predefinedQueries": [
         {
-          "key": "unifica",
-          "icon": "merge_type",
-          "label": "Unifica testi normativi",
-          "query": "select entrasp.unifica_testi_normativi(array[$selected_rows_data$], '€global_codice_azienda€')",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Unificare i testi normativi selezionati?"
+            "operation": "selectTable",
+            "queryString": "select tn.*, (entrasp.ultimo_aggiornamento_testo_normativo(tn.id_testo_normativo)) as ultima_data_aggiornamento,  (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn WHERE true",
+            "type": "main"
         }
-      ]
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_testo_normativo",
-      "label": "ID",
-      "newLine": false,
-      "readOnly": true,
-      "size": 1
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "unifica",
+                    "icon": "merge_type",
+                    "label": "Unifica testi normativi",
+                    "query": "select entrasp.unifica_testi_normativi(array[$selected_rows_data$], '€global_codice_azienda€')",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Unificare i testi normativi selezionati?"
+                }
+            ]
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_testo_normativo",
+            "label": "ID",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1,
+            "translate": "RESOURCES.id_testo_normativo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": false,
+            "size": 8.5,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "class",
+                        "label": "Crea e associa argomento",
+                        "translate": "RESOURCES.create_and_associate_tag",
+                        "outputEventName": "create_associate_argomento"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "testi_normativi_reload",
+                    "queryFunct": "select entrasp.argomenti_testi_normativi_create_and_update($id_testo_normativo$, $riferimenti$, $descrizione$ , 48418)"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "testi_normativi_actions",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "riferimenti",
+            "label": "Riferimenti",
+            "newLine": false,
+            "size": 6,
+            "readOnly": false,
+            "translate": "RESOURCES.riferimenti"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_entrata_vigore",
+            "label": "Data entrata in vigore",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false,
+            "translate": "RESOURCES.data_entrata_vigore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_aggiornamento",
+            "label": "Data ultimo aggiornamento",
+            "queryFunct": "select max(data_aggiornamento) from entrasp.testi_normativi_aggiornamenti where id_testo_normativo=$id_testo_normativo$",
+            "newLine": true,
+            "size": 2,
+            "readOnly": true,
+            "translate": "RESOURCES.data_aggiornamento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Argomento",
+            "translate": "RESOURCES.tag",
+            "readOnly": false,
+            "size": 3.5,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "link_ipertestuale",
+            "label": "Link ipertestuale",
+            "size": 6.5,
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.link_ipertestuale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "newLine": false,
+            "readOnly": false
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_testo_normativi_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista id",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "id_testo_normativo::text=any(string_to_array(replace($id_testo_normativi_list$, ' ', ''), ','))"
+        },
+        {
+            "fieldName": "id_testo_normativo",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID",
+            "newLine": true,
+            "queryCond": "id_testo_normativo=$id_testo_normativo$"
+        },
+        {
+            "fieldName": "descrizione",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": true,
+            "queryCond": "descrizione like '%€descrizione€%'"
+        },
+        {
+            "fieldName": "riferimenti",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Riferimenti",
+            "newLine": true,
+            "queryCond": "riferimenti like '%€riferimenti€%'"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "articoli_normativi_sub_of_testi_normativi",
+            "keys": [
+                {
+                    "parent": "id_testo_normativo",
+                    "son": "id_testo_normativo"
+                }
+            ],
+            "label": "Articoli"
+        },
+        {
+            "entryKey": "testi_normativi_aggiornamenti",
+            "keys": [
+                {
+                    "parent": "id_testo_normativo",
+                    "son": "id_testo_normativo"
+                }
+            ],
+            "label": "Aggiornamenti",
+            "translate": "RESOURCES.updates"
+        },
+        {
+            "entryKey": "tag_sub_of_modelli_test_vr",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG",
+            "translate": "RESOURCES.tag"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_testo_normativo",
+            "label": "ID Testo",
+            "width": "8%",
+            "translate": "RESOURCES.id_testo_normativo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "riferimenti",
+            "label": "Riferimenti",
+            "width": "30%",
+            "translate": "RESOURCES.riferimenti"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_entrata_vigore",
+            "label": "Entrata in vigore",
+            "width": "8%",
+            "translate": "RESOURCES.data_entrata_vigore"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ultima_data_aggiornamento",
+            "label": "Ultimo aggiornamento",
+            "queryFunct": "select max(tna.data_aggiornamento) from entrasp.testi_normativi_aggiornamenti tna where tna.id_testo_normativo=tn.id_testo_normativo",
+            "width": "8%",
+            "translate": "RESOURCES.ultima_data_aggiornamento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tag",
+            "label": "TAG",
+            "translate": "RESOURCES.tag",
+            "queryFunct": "select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418",
+            "width": "20%"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ],
+    "inputEvents": [
+        {
+            "eventName": "testi_normativi_reload",
+            "actionType": "reload"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by greatest(entrasp.ultimo_aggiornamento_testo_normativo(tn.id_testo_normativo), data_entrata_vigore) desc"
     },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "newLine": false,
-      "size": 8.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "menu",
-        "menuOptions": [
-          {
-            "icon": "class",
-            "label": "Crea e associa argomento",
-            "translate": "RESOURCES.create_and_associate_tag",
-            "outputEventName": "create_associate_argomento"
-          }
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Estrazione per mailing list",
+                "queryString": "select tn.id_testo_normativo, riferimenti, tn.descrizione, data_entrata_vigore, tn.note, link_ipertestuale, tna.data_aggiornamento, tna.note as note_aggiornamento, articoli_commento, (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn left join entrasp.testi_normativi_aggiornamenti tna on tn.id_testo_normativo=tna.id_testo_normativo order by greatest(data_aggiornamento, data_entrata_vigore) desc"
+            }
         ]
-      },
-      "inputEvents": [
-        {
-          "eventName": "create_associate_argomento",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "outputEventWhenComplete": "testi_normativi_reload",
-          "queryFunct": "select entrasp.argomenti_testi_normativi_create_and_update($id_testo_normativo$, $riferimenti$, $descrizione$ , 48418)"
-        }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "more_vert",
-      "key": "testi_normativi_actions",
-      "label": "void",
-      "translate": "RESOURCES.void",
-      "newLine": true,
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "riferimenti",
-      "label": "Riferimenti",
-      "newLine": false,
-      "size": 6,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_entrata_vigore",
-      "label": "Data entrata in vigore",
-      "newLine": false,
-      "size": 2,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_aggiornamento",
-      "label": "Data ultimo aggiornamento",
-      "queryFunct": "select max(data_aggiornamento) from entrasp.testi_normativi_aggiornamenti where id_testo_normativo=$id_testo_normativo$",
-      "newLine": true,
-      "size": 2,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento",
-      "label": "Argomento",
-      "translate": "RESOURCES.tag",
-      "readOnly": false,
-      "size": 3.5,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "link_ipertestuale",
-      "label": "Link ipertestuale",
-      "size": 6.5,
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "newLine": false,
-      "readOnly": false
     }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_testo_normativi_list",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Lista id",
-      "newLine": false,
-      "size": 2.5,
-      "queryCond": "id_testo_normativo::text=any(string_to_array(replace($id_testo_normativi_list$, ' ', ''), ','))"
-    },
-    {
-      "fieldName": "id_testo_normativo",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID",
-      "newLine": true,
-      "queryCond": "id_testo_normativo=$id_testo_normativo$"
-    },
-    {
-      "fieldName": "descrizione",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "newLine": true,
-      "queryCond": "descrizione like '%€descrizione€%'"
-    },
-    {
-      "fieldName": "riferimenti",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Riferimenti",
-      "newLine": true,
-      "queryCond": "riferimenti like '%€riferimenti€%'"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "articoli_normativi_sub_of_testi_normativi",
-      "keys": [
-        {
-          "parent": "id_testo_normativo",
-          "son": "id_testo_normativo"
-        }
-      ],
-      "label": "Articoli"
-    },
-    {
-      "entryKey": "testi_normativi_aggiornamenti",
-      "keys": [
-        {
-          "parent": "id_testo_normativo",
-          "son": "id_testo_normativo"
-        }
-      ],
-      "label": "Aggiornamenti",
-      "translate": "RESOURCES.updates"
-    },
-    {
-      "entryKey": "tag_sub_of_modelli_test_vr",
-      "keys": [
-        {
-          "parent": "id_argomento",
-          "son": "id_argomento_son"
-        }
-      ],
-      "label": "TAG",
-      "translate": "RESOURCES.tag"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_testo_normativo",
-      "label": "ID Testo",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "riferimenti",
-      "label": "Riferimenti",
-      "width": "30%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_entrata_vigore",
-      "label": "Entrata in vigore",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ultima_data_aggiornamento",
-      "label": "Ultimo aggiornamento",
-      "queryFunct": "select max(tna.data_aggiornamento) from entrasp.testi_normativi_aggiornamenti tna where tna.id_testo_normativo=tn.id_testo_normativo",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tag",
-      "label": "TAG",
-      "translate": "RESOURCES.tag",
-      "queryFunct": "select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418",
-      "width": "20%"
-    }
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    }
-  ],
-  "inputEvents": [
-    {
-      "eventName": "testi_normativi_reload",
-      "actionType": "reload"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by greatest(entrasp.ultimo_aggiornamento_testo_normativo(tn.id_testo_normativo), data_entrata_vigore) desc"
-  },
-  "exportQueries": {
-    "tableQueries": [
-      {
-        "label": "Estrazione per mailing list",
-        "queryString": "select tn.id_testo_normativo, riferimenti, tn.descrizione, data_entrata_vigore, tn.note, link_ipertestuale, tna.data_aggiornamento, tna.note as note_aggiornamento, articoli_commento, (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn left join entrasp.testi_normativi_aggiornamenti tna on tn.id_testo_normativo=tna.id_testo_normativo order by greatest(data_aggiornamento, data_entrata_vigore) desc"
-      }
-    ]
-  }
 }

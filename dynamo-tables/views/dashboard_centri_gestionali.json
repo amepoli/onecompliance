@@ -1,114 +1,111 @@
 {
-  "$schema": "../views.schema.json",
-  "dashboards": [
-    {
-      "width": "792px",
-      "height": "320px",
-      "dashboardHeight": "212",
-      "title": "SATURAZIONE CENTRI GESTIONALI",  
-      "conditions": [
+    "$schema": "../views.schema.json",
+    "dashboards": [
         {
-          "format": {
-            "backgroundColor": "white",
-            "color": "blak",
-            "fontFamily": "Arial",
-            "fontSize": "14px"
-          },
-          "formula": "!isNaN(#value)"
-        }
-      ],
-      "dataSource": {
-        "data": [
-
-        ]
-      },
-      "labels": {
-        "colorsQuery": {
-          "query": "",
-          "type": "full"
-        },
-        "columnsQuery": {
-          "key": "fascia",
-          "query": "select distinct entrasp.transcodifiche_transcodifica('FASCIA_TEMPORALE', codice) as label from entrasp.transcodifiche order by label"
-        },
-        "rowsQuery": {
-          "key": "centro_gest",
-          "query": "select distinct entrasp.centri_gestionali_descr(codice_part,cg.id_centro_gest) as label from entrasp.centri_gestionali cg where codice_part =$codice_part$"
-        }
-      },
-      "localization": "it",
-      "options": {
-        "drillThrough": false,
-        "grid": {
-          "showHeaders": false
-        }
-      },
-      "slice": {
-        "columns": [
-          {
-            "uniqueName": "Measures"
-          },
-          {
-            "uniqueName": "Fascia"
-          }
-        ],
-        "measures": [
-          {
-            "aggregation": "count",
-            "availableAggregations": [
-              "count",
-              "distinctcount"
+            "width": "792px",
+            "height": "320px",
+            "dashboardHeight": "212",
+            "title": "SATURAZIONE CENTRI GESTIONALI",
+            "conditions": [
+                {
+                    "format": {
+                        "backgroundColor": "white",
+                        "color": "blak",
+                        "fontFamily": "Arial",
+                        "fontSize": "14px"
+                    },
+                    "formula": "!isNaN(#value)"
+                }
             ],
-            "uniqueName": "Centro_gest"
-          }
-        ],
-        "rows": [
-          {
-            "uniqueName": "Centro_gest"
-          }
-        ]
-      }
-    }
-  ] ,
-  "inheritsFrom": "centri_gestionali",
-  "entryKey": "dashboard_centri_gestionali",
-  "search_keys": [],
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "SELECT distinct entrasp.centri_gestionali_descr(cg.codice_part,cg.id_centro_gest) as centro_gest,entrasp.transcodifiche_transcodifica('FASCIA_TEMPORALE',entrasp.stato_rettificato(snd.data_prevista,snd.stato)) as dashboard,cg.codice_part,entrasp.saturazione_cg_fascia_temporale(cg.id_centro_gest, snd.codice_azienda, 'tutti','A') AS next_id_gruppo FROM entrasp.centri_gestionali cg inner join entrasp.sondaggi snd on snd.codice_part=cg.codice_part and snd.id_centro_gest = cg.id_centro_gest WHERE snd.codice_azienda='DEMO';",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "queryString": "SELECT coalesce(MAX(id_gruppo_lavoro),0)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ('€global_codice_part€',£next_id_gruppo£, $descrizione$, 0);",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "isInsert",
-      "queryString": "select $id_centro_gest$ is null as label;",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "queryString": "SELECT coalesce(MAX(id_centro_gest),0)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ('€global_codice_part€', £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£) returning id_centro_gest;",
-      "type": "main"
-    },
-    {
-      "operation": "delete",
-      "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
-      "type": "main"
-    }
-  ]
-
+            "dataSource": {
+                "data": []
+            },
+            "labels": {
+                "colorsQuery": {
+                    "query": "",
+                    "type": "full"
+                },
+                "columnsQuery": {
+                    "key": "fascia",
+                    "query": "select distinct entrasp.transcodifiche_transcodifica('FASCIA_TEMPORALE', codice) as label from entrasp.transcodifiche order by label"
+                },
+                "rowsQuery": {
+                    "key": "centro_gest",
+                    "query": "select distinct entrasp.centri_gestionali_descr(codice_part,cg.id_centro_gest) as label from entrasp.centri_gestionali cg where codice_part =$codice_part$"
+                }
+            },
+            "localization": "it",
+            "options": {
+                "drillThrough": false,
+                "grid": {
+                    "showHeaders": false
+                }
+            },
+            "slice": {
+                "columns": [
+                    {
+                        "uniqueName": "Measures"
+                    },
+                    {
+                        "uniqueName": "Fascia"
+                    }
+                ],
+                "measures": [
+                    {
+                        "aggregation": "count",
+                        "availableAggregations": [
+                            "count",
+                            "distinctcount"
+                        ],
+                        "uniqueName": "Centro_gest"
+                    }
+                ],
+                "rows": [
+                    {
+                        "uniqueName": "Centro_gest"
+                    }
+                ]
+            }
+        }
+    ],
+    "inheritsFrom": "centri_gestionali",
+    "entryKey": "dashboard_centri_gestionali",
+    "search_keys": [],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "SELECT distinct entrasp.centri_gestionali_descr(cg.codice_part,cg.id_centro_gest) as centro_gest,entrasp.transcodifiche_transcodifica('FASCIA_TEMPORALE',entrasp.stato_rettificato(snd.data_prevista,snd.stato)) as dashboard,cg.codice_part,entrasp.saturazione_cg_fascia_temporale(cg.id_centro_gest, snd.codice_azienda, 'tutti','A') AS next_id_gruppo FROM entrasp.centri_gestionali cg inner join entrasp.sondaggi snd on snd.codice_part=cg.codice_part and snd.id_centro_gest = cg.id_centro_gest WHERE snd.codice_azienda='DEMO';",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT coalesce(MAX(id_gruppo_lavoro),0)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "insert",
+            "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ('€global_codice_part€',£next_id_gruppo£, $descrizione$, 0);",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_centro_gest$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT coalesce(MAX(id_centro_gest),0)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "insert",
+            "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ('€global_codice_part€', £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£) returning id_centro_gest;",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
+            "type": "main"
+        }
+    ]
 }

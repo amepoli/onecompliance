@@ -1,167 +1,172 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "tipi_rischio_sub_of_rischi",
-  "origin": "entrasp.rischi_tipi",
-  "businessObjectName": "rischi_tipi",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cancella_t_rischio",
-      "label": "delete",
-      "buttonIcon": "delete",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "cancella_tipi_rischio",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "tipi_rischio_sub_of_rischi",
+    "origin": "entrasp.rischi_tipi",
+    "businessObjectName": "rischi_tipi",
+    "form_keys": [
         {
-          "eventName": "cancella_tipi_rischio",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "delete from entrasp.rischi_tipi where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_tipo_rischio=$id_tipo_rischio$",
-          "outputEventWhenComplete": "update_rischi_articoli_normativi"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_tipo_rischio AS id, entrasp.tipi_rischio_descrizione(id_tipo_rischio, $codice_azienda$) AS name  FROM entrasp.tipi_rischio WHERE codice_azienda=$codice_azienda$ order by name ;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_tipo_rischio",
-      "label": "Tipo Rischio",
-      "translate": "RESOURCES.id_tipo_rischio",
-      "readOnly": false,
-      "size": 9,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_rischio",
-      "label": "Codice Rischio",
-      "translate": "resource.risk_code_pk",
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": true,
-      "newLine": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "6%",
-      "queryFunct": "select true",
-      "key": "delete_rischi_tipi",
-      "label": "",
-      "style": [
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_t_rischio",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "cancella_tipi_rischio",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "cancella_tipi_rischio",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "delete from entrasp.rischi_tipi where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_tipo_rischio=$id_tipo_rischio$",
+                    "outputEventWhenComplete": "update_rischi_articoli_normativi"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.cancella_t_rischio"
+        },
         {
-          "button_icon": "delete",
-          "value": "*"
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_tipo_rischio AS id, entrasp.tipi_rischio_descrizione(id_tipo_rischio, $codice_azienda$) AS name  FROM entrasp.tipi_rischio WHERE codice_azienda=$codice_azienda$ order by name ;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_tipo_rischio",
+            "label": "Tipo Rischio",
+            "translate": "RESOURCES.id_tipo_rischio",
+            "readOnly": false,
+            "size": 9,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_rischio",
+            "label": "Codice Rischio",
+            "translate": "resource.risk_code_pk",
+            "readOnly": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true,
+            "newLine": false
         }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "tipi_rischio_sub_of_rischi",
-        "viewType": "form",
-        "query": "delete from entrasp.rischi_tipi where codice_azienda='£codice_azienda£' AND codice_rischio='£codice_rischio£' AND id_tipo_rischio=£id_tipo_rischio£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_tipo_rischio",
-            "destination": "id_tipo_rischio"
-          },
-          {
-            "source": "codice_rischio",
-            "destination": "codice_rischio"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "queryFunct": "entrasp.tipi_rischio_descrizione(id_tipo_rischio, $codice_azienda$)",
-      "key": "descr_tipo_rischio",
-      "label": "Id Tipo Rischio"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_tipo_rischio",
-      "label": "Id Tipo Rischio"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_rischio",
-      "label": "codice_rischio"
-    }
-  ],
-  "inputEvents": [
-    {
-      "eventName": "update_rischi_articoli_normativi",
-      "actionType": "reload"
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_rischi_tipi",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "tipi_rischio_sub_of_rischi",
+                "viewType": "form",
+                "query": "delete from entrasp.rischi_tipi where codice_azienda='£codice_azienda£' AND codice_rischio='£codice_rischio£' AND id_tipo_rischio=£id_tipo_rischio£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_tipo_rischio",
+                        "destination": "id_tipo_rischio"
+                    },
+                    {
+                        "source": "codice_rischio",
+                        "destination": "codice_rischio"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_rischi_tipi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "queryFunct": "entrasp.tipi_rischio_descrizione(id_tipo_rischio, $codice_azienda$)",
+            "key": "descr_tipo_rischio",
+            "label": "Id Tipo Rischio",
+            "translate": "RESOURCES.descr_tipo_rischio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_tipo_rischio",
+            "label": "Id Tipo Rischio",
+            "translate": "RESOURCES.id_tipo_rischio"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_rischio",
+            "label": "codice_rischio",
+            "translate": "RESOURCES.codice_rischio"
+        }
+    ],
+    "inputEvents": [
+        {
+            "eventName": "update_rischi_articoli_normativi",
+            "actionType": "reload"
+        }
+    ]
 }

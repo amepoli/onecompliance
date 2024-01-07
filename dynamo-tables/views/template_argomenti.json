@@ -1,443 +1,448 @@
 {
-	"$schema": "../views.schema.json",
-	"origin": "entrasp.argomenti",
-	"entryKey": "template_argomenti",
-	"businessObjectName": "argomenti",
-	"define": {
-		"id_argomento_father": "3576",
-		"array_argomenti_father_da_aggiungere": "array[3576]",
-		"label_id": "ID Documento",
-		"campo_id_argomento": "id_argomento_tipo_allegato",
-		"label_unifica": "Unifica id_allegato",
-		"is_hidden_unifica_all": "false",
-		"id_argomento_bigger_than": "and true",
-		"id_argomento_father_s2": "3368",
-		"label_argomento_s2": "Livello di controllo"
-	},
-	"predefinedQueries": [
-		{
-			"type": "main",
-			"operation": "selectTable",
-			"queryString": "select arg.*, (select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as num_argomenti_padre from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') $P{id_argomento_bigger_than};"
-		},
-		{
-			"operation": "insert",
-			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{array_argomenti_father_da_aggiungere}) as id_argomento;",
-			"type": "main"
-		},
-		{
-			"operation": "update",
-			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)",
-			"type": "postProcessing"
-		},
-		{
-			"operation": "delete",
-			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
-			"type": "preProcessing"
-		},
-		{
-			"operation": "isInsert",
-			"queryString": "select $id_argomento$ is null as label;",
-			"type": "main"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE descrizione_breve='£descrizione_breve£'",
-			"messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione breve diversa"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti where descrizione_breve='£descrizione_breve£' and id_argomento!=$id_argomento$",
-			"messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione breve diversa"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE descrizione='£descrizione£'",
-			"messageNotNull": "La descrizione è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti where descrizione='£descrizione£' and id_argomento!=$id_argomento$",
-			"messageNotNull": "La descrizione è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE nickname='£nickname£'",
-			"messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire un nickname diverso"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti where nickname='£dnickname£' and id_argomento!=$id_argomento$",
-			"messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire un nickname diverso"
-		}
-	],
-	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "codice_azienda",
-			"translate": "RESOURCES.company_code",
-			"key": "codice_azienda",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text",
-				"validations": [
-					{
-						"message": "Codice necessario",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Codice",
-			"translate": "RESOURCES.code",
-			"key": "codice",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "ID",
-			"key": "id_argomento",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Descrizione Breve",
-			"translate": "RESOURCES.short_description",
-			"key": "descrizione_breve",
-			"size": 7.5,
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Nickname (nome cartella)",
-			"translate": "RESOURCES.nickname",
-			"key": "nickname",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true,
-			"size": 2.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "textarea",
-				"dataType": "text"
-			},
-			"label": "Descrizione",
-			"translate": "RESOURCES.description",
-			"key": "descrizione",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_argomento_nuovo",
-			"label": "Argomento con cui unire il presente",
-			"translate": "RESOURCES.id_argomento_nuovo",
-			"sameOrigin": false,
-			"newLine": false,
-			"readOnly": false,
-			"size": 6
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "argomento_unifica_k",
-			"buttonIcon": "merge_type",
-			"label": "$P{label_unifica}",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "argomento_unifica",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "argomento_unifica",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
-					"successMessage": "Done!"
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 2
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": "$Q{is_hidden_unifica_all}",
-			"isPrimary": false,
-			"key": "argomento_unifica_all_k",
-			"buttonIcon": "merge_type",
-			"label": "Unifica tutti i duplicati",
-			"translate": "RESOURCES.argomento_unifica_all_k",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "argomento_unifica_all",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "argomento_unifica_all",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.unifica_argomento(a1.id_argomento, a2.id_argomento) from entrasp.argomenti a1 inner join entrasp.argomenti a2 on trim(a1.descrizione)=trim(a2.descrizione) where a1.id_argomento!=a2.id_argomento and a1.id_argomento<a2.id_argomento",
-					"successMessage": "Done!"
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 2
-		}
-	],
-	"search_keys": [
-		{
-			"label": "codice_azienda_s",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"fieldName": "codice_azienda",
-			"newLine": false,
-			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
-		},
-		{
-			"fieldName": "stringa_s",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "Stringa di ricerca",
-			"newLine": true,
-			"queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€stringa_s€')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€stringa_s€')||'%')"
-		},
-		{
-			"fieldName": "id_argomento_list",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "Lista id argomenti",
-			"translate": "RESOURCES.id_tag_list",
-			"newLine": false,
-			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
-		},
-		{
-			"fieldName": "argomento_s",
-			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} order by descrizione",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "TAG (argomento padre)",
-			"newLine": false,
-			"queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
-		},
-		{
-			"fieldName": "argomento_s2",
-			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father_s2} order by descrizione",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "$P{label_argomento_s2}",
-			"newLine": false,
-			"queryCond": "id_argomento in(select id_argomento_descendants from entrasp.descendants_of_argomento($argomento_s2$, 1))"
-		},
-		{
-			"fieldName": "num_argomenti_padre_max",
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Numero argomenti padre minore di",
-			"newLine": true,
-			"queryCond": "(select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento)<=$num_argomenti_padre_max$"
-		}
-	],
-	"table_multiselection_actions": [
-		{
-			"viewType": "menu",
-			"key": "menutest",
-			"label": "Options",
-			"icon": "more_vert",
-			"menuOptions": [
-				{
-					"key": "Unifica argomenti",
-					"icon": "merge_type",
-					"label": "Unifica argomenti",
-					"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
-				}
-			]
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice",
-			"label": "Codice",
-			"translate": "RESOURCES.code",
-			"width": "8%"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"key": "id_argomento",
-			"label": "ID",
-			"width": "8%"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "num_argomenti_padre",
-			"label": "num_argomenti_padre",
-			"width": "8%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione_breve",
-			"label": "Titolo",
-			"translate": "RESOURCES.title",
-			"width": "25%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione",
-			"label": "Descrizione",
-			"translate": "RESOURCES.description",
-			"width": "30%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_azienda",
-			"label": "Azienda",
-			"width": "15%"
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "argomenti_sub_of_argomenti_father_sterile",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_son"
-				}
-			],
-			"label": "Argomenti padre"
-		},
-		{
-			"entryKey": "argomenti_sub_of_argomenti_son",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_father"
-				}
-			],
-			"label": "Argomenti figli"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
-	},
-	"hideActions": [
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"formActionType": "startEvent",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "stopEvent",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "share",
-			"viewType": "form"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "attachments"
-		}
-	]
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.argomenti",
+    "entryKey": "template_argomenti",
+    "businessObjectName": "argomenti",
+    "define": {
+        "id_argomento_father": "3576",
+        "array_argomenti_father_da_aggiungere": "array[3576]",
+        "label_id": "ID Documento",
+        "campo_id_argomento": "id_argomento_tipo_allegato",
+        "label_unifica": "Unifica id_allegato",
+        "is_hidden_unifica_all": "false",
+        "id_argomento_bigger_than": "and true",
+        "id_argomento_father_s2": "3368",
+        "label_argomento_s2": "Livello di controllo"
+    },
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select arg.*, (select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as num_argomenti_padre from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') $P{id_argomento_bigger_than};"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{array_argomenti_father_da_aggiungere}) as id_argomento;",
+            "type": "main"
+        },
+        {
+            "operation": "update",
+            "queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "delete",
+            "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_argomento$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE descrizione_breve='£descrizione_breve£'",
+            "messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione breve diversa"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti where descrizione_breve='£descrizione_breve£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione breve diversa"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE descrizione='£descrizione£'",
+            "messageNotNull": "La descrizione è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti where descrizione='£descrizione£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "La descrizione è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE nickname='£nickname£'",
+            "messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire un nickname diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti where nickname='£dnickname£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire un nickname diverso"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Codice necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "key": "codice",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "ID",
+            "key": "id_argomento",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": true,
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Descrizione Breve",
+            "translate": "RESOURCES.short_description",
+            "key": "descrizione_breve",
+            "size": 7.5,
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Nickname (nome cartella)",
+            "translate": "RESOURCES.nickname",
+            "key": "nickname",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "textarea",
+                "dataType": "text"
+            },
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "key": "descrizione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_nuovo",
+            "label": "Argomento con cui unire il presente",
+            "translate": "RESOURCES.id_argomento_nuovo",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 6
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "argomento_unifica_k",
+            "buttonIcon": "merge_type",
+            "label": "$P{label_unifica}",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "argomento_unifica",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "argomento_unifica",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
+                    "successMessage": "Done!"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2,
+            "translate": "RESOURCES.argomento_unifica_k"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": "$Q{is_hidden_unifica_all}",
+            "isPrimary": false,
+            "key": "argomento_unifica_all_k",
+            "buttonIcon": "merge_type",
+            "label": "Unifica tutti i duplicati",
+            "translate": "RESOURCES.argomento_unifica_all_k",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "argomento_unifica_all",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "argomento_unifica_all",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.unifica_argomento(a1.id_argomento, a2.id_argomento) from entrasp.argomenti a1 inner join entrasp.argomenti a2 on trim(a1.descrizione)=trim(a2.descrizione) where a1.id_argomento!=a2.id_argomento and a1.id_argomento<a2.id_argomento",
+                    "successMessage": "Done!"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2
+        }
+    ],
+    "search_keys": [
+        {
+            "label": "codice_azienda_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "fieldName": "codice_azienda",
+            "newLine": false,
+            "queryCond": "arg.codice_azienda=$codice_azienda_s$"
+        },
+        {
+            "fieldName": "stringa_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Stringa di ricerca",
+            "newLine": true,
+            "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€stringa_s€')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€stringa_s€')||'%')"
+        },
+        {
+            "fieldName": "id_argomento_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista id argomenti",
+            "translate": "RESOURCES.id_tag_list",
+            "newLine": false,
+            "queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+        },
+        {
+            "fieldName": "argomento_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father} order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "TAG (argomento padre)",
+            "newLine": false,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+        },
+        {
+            "fieldName": "argomento_s2",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=$P{id_argomento_father_s2} order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "$P{label_argomento_s2}",
+            "newLine": false,
+            "queryCond": "id_argomento in(select id_argomento_descendants from entrasp.descendants_of_argomento($argomento_s2$, 1))"
+        },
+        {
+            "fieldName": "num_argomenti_padre_max",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Numero argomenti padre minore di",
+            "newLine": true,
+            "queryCond": "(select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento)<=$num_argomenti_padre_max$"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Options",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "Unifica argomenti",
+                    "icon": "merge_type",
+                    "label": "Unifica argomenti",
+                    "query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+                }
+            ]
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento",
+            "label": "ID",
+            "width": "8%",
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "num_argomenti_padre",
+            "label": "num_argomenti_padre",
+            "width": "8%",
+            "translate": "RESOURCES.num_argomenti_padre"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Titolo",
+            "translate": "RESOURCES.title",
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "width": "30%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Azienda",
+            "width": "15%",
+            "translate": "RESOURCES.codice_azienda"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "argomenti_sub_of_argomenti_father_sterile",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "Argomenti padre"
+        },
+        {
+            "entryKey": "argomenti_sub_of_argomenti_son",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_father"
+                }
+            ],
+            "label": "Argomenti figli"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
+    },
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ]
 }

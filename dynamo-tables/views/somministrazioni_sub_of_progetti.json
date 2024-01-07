@@ -1,287 +1,294 @@
 {
-  "$schema": "../views.schema.json",
-  "inheritsFrom": "sondaggi_somministrati",
-  "entryKey": "somministrazioni_sub_of_progetti",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select pf.*, ss.somministrazione_completata, entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_esecuzione, snd.data_prevista, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$ order by pf.codice;",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
-    },
-    {
-      "operation": "delete",
-      "type": "main",
-      "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
-    }
-   
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "label": "id_progetto"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_fase",
-      "label": "id_fase"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isLevel": true,
-      "hasLevel": true,
-      "isPrimary": false,
-      "key": "codice",
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "hasLevel": true,
-       "label": "Titolo",
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "sondaggi_somministrati",
+    "entryKey": "somministrazioni_sub_of_progetti",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select pf.*, ss.somministrazione_completata, entrasp.transcodifiche_transcodifica('STATO', pf.stato) as stato_trans, snd.sondaggio_completato, snd.data_esecuzione, snd.data_prevista, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio limit 1) as id_somministrazione from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio left join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr where pf.id_progetto=$id_progetto$ and pf.codice_azienda=$codice_azienda$ order by pf.codice;",
+            "type": "main"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "delete",
+            "type": "main",
+            "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "label": "id_progetto",
+            "translate": "RESOURCES.id_progetto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_fase",
+            "label": "id_fase",
+            "translate": "RESOURCES.id_fase"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isLevel": true,
+            "hasLevel": true,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "hasLevel": true,
+            "label": "Titolo",
             "translate": "RESOURCES.title",
-      "width": "30%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato_trans",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "width": "8%",
-      "style": [
-        {
-          "value": "Chiuso",
-          "font_color": "green",
-          "font_weight": "500"
+            "width": "30%"
         },
         {
-          "value": "Provvisorio",
-          "font_color": "#D97F02",
-          "font_weight": "500"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato_trans",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "width": "8%",
+            "style": [
+                {
+                    "value": "Chiuso",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Provvisorio",
+                    "font_color": "#D97F02",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Attivo",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ]
         },
         {
-          "value": "Attivo",
-          "font_color": "red",
-          "font_weight": "500"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-       "label": "ID Sondaggio",
-      "translate": "RESOURCES.id_survey"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_esecuzione",
-      "label": "Dt esecuzione"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "data_prevista",
-      "label": "Dt prevista"
-    }, 
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_somministrazione",
-      "label": "Verifica"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "giudizio",
-      "width": "12%",
-     "label": "Giudizio",
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "ID Sondaggio",
+            "translate": "RESOURCES.id_survey"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_esecuzione",
+            "label": "Dt esecuzione",
+            "translate": "RESOURCES.data_esecuzione"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "data_prevista",
+            "label": "Dt prevista",
+            "translate": "RESOURCES.data_prevista"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_somministrazione",
+            "label": "Verifica",
+            "translate": "RESOURCES.id_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio",
+            "width": "12%",
+            "label": "Giudizio",
             "translate": "RESOURCES.judgment",
-      "style": [
-        {
-          "value": "Favorevole",
-          "font_color": "green",
-          "font_weight": "500"
+            "style": [
+                {
+                    "value": "Favorevole",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Parzialmente favorevole",
+                    "font_color": "yellow",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Parzialmente sfavorevole",
+                    "font_color": "orange",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Sfavorevole",
+                    "font_color": "red",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Irrilevante",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "#D97F02",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "red",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Non significativo",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Poco significativo",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Abbastanza significativo",
+                    "font_color": "#D97F02",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Molto significativo",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ]
         },
         {
-          "value": "Parzialmente favorevole",
-          "font_color": "yellow",
-          "font_weight": "500"
-        },
-        {
-          "value": "Parzialmente sfavorevole",
-          "font_color": "orange",
-          "font_weight": "500"
-        },
-        {
-          "value": "Sfavorevole",
-          "font_color": "red",
-          "font_weight": "500"
-        },
-        {
-          "value": "Irrilevante",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Medio",
-          "font_color": "#D97F02",
-          "font_weight": "500"
-        },
-        {
-          "value": "Alto",
-          "font_color": "red",
-          "font_weight": "500"
-        },
-        {
-          "value": "Non significativo",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Poco significativo",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Abbastanza significativo",
-          "font_color": "#D97F02",
-          "font_weight": "500"
-        },
-        {
-          "value": "Molto significativo",
-          "font_color": "red",
-          "font_weight": "500"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "sondaggio_completato",
+            "label": "Completo Sì/No",
+            "style": [
+                {
+                    "value": "Completo",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Incompleto",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ],
+            "translate": "RESOURCES.sondaggio_completato"
         }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "10%",
-      "key": "sondaggio_completato",
-      "label": "Completo Sì/No",
-      "style": [
+    ],
+    "search_keys": [
         {
-          "value": "Completo",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Incompleto",
-          "font_color": "red",
-          "font_weight": "500"
-        }
-      ]
-    }
-  ],
-  "search_keys": [
-		{
-			"label": "Stato",
-      "translate": "RESOURCES.status",
-			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text"
             },
-			"fieldName": "stato_s",
-			"newLine": false,
-			"queryCond": "snd.stato=$stato_s$"
-		},
-		{
+            "fieldName": "stato_s",
+            "newLine": false,
+            "queryCond": "snd.stato=$stato_s$"
+        },
+        {
             "fieldName": "flag_principali",
             "format": {
                 "value": "0",
                 "viewType": "checkbox"
             },
-             "label": "Solo Principali",
+            "label": "Solo Principali",
             "translate": "RESOURCES.main_only",
             "newLine": false,
             "queryCond": "pf.id_fase_sup IS null"
         },
-		{
+        {
             "fieldName": "dt_competenza_da",
             "format": {
                 "viewType": "input",
-				"dataType": "date"
+                "dataType": "date"
             },
             "label": "Data competenza DA",
             "newLine": false,
             "queryCond": "snd.data_comp >= $dt_competenza_da$"
         },
-		{
+        {
             "fieldName": "dt_competenza_a",
             "format": {
                 "viewType": "input",
-				"dataType": "date"
+                "dataType": "date"
             },
             "label": "Data competenza A",
             "newLine": false,
             "queryCond": "snd.data_comp <= $dt_competenza_a$"
         }
-	]
+    ]
 }

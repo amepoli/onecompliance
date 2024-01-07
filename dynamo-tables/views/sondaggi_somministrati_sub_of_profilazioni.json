@@ -1,47 +1,47 @@
 {
-  "$schema": "../views.schema.json",
-  "origin": "entrasp.sondaggi_somministrati",
-  "businessObjectName": "sondaggiSomministrati",
-  "entryKey": "sondaggi_somministrati_sub_of_profilazioni",
-  "inheritsFrom": "profilazione_aml",
-  "predefinedQueries": [
-    {
-      "operation": "selectForm",
-      "queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
-    },
-    {
-      "operation": "delete",
-      "type": "main",
-      "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
-    },
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select pf.id_progetto, snd.id_sondaggio_succ, snd.id_modello_test||'-'||snd.id_modello_test_vr as id_e_vr, snd.id_modello_test, snd.id_modello_test_vr, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, snd.data_esecuzione, snd.data_prevista, nullif(split_part(ss.object_key, '|', 2),'')::numeric as id_anagrafica, entrasp.giudizio_da_pct(ss.codice_azienda, mtvr.id_risultato, ss.pct_da_manuale) as giudizio_manuale, ss.giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test left join entrasp.progetti_fasi pf on snd.id_sondaggio=pf.id_sondaggio and snd.codice_azienda=pf.codice_azienda inner join entrasp.aziende az on mtvr.codice_azienda=az.codice_azienda where ss.codice_azienda='€global_codice_azienda€' and az.codice_part='€global_codice_part€' and nullif(split_part(ss.object_key, '|', 2),'')::numeric=$id_anagrafica_somministrazione$ and ss.object_name='anagraficheId' and mt.id_tipo_modello_test in(9, 50, 51)"
-    },
-    {
-      "operation": "stopEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
-    },
-    {
-      "operation": "startEvent",
-      "type": "main",
-      "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, '$codice_azienda$'::varchar) as play_time_report"
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.sondaggi_somministrati",
+    "businessObjectName": "sondaggiSomministrati",
+    "entryKey": "sondaggi_somministrati_sub_of_profilazioni",
+    "inheritsFrom": "profilazione_aml",
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "delete",
+            "type": "main",
+            "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
+        },
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select pf.id_progetto, snd.id_sondaggio_succ, snd.id_modello_test||'-'||snd.id_modello_test_vr as id_e_vr, snd.id_modello_test, snd.id_modello_test_vr, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, snd.data_esecuzione, snd.data_prevista, nullif(split_part(ss.object_key, '|', 2),'')::numeric as id_anagrafica, entrasp.giudizio_da_pct(ss.codice_azienda, mtvr.id_risultato, ss.pct_da_manuale) as giudizio_manuale, ss.giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test left join entrasp.progetti_fasi pf on snd.id_sondaggio=pf.id_sondaggio and snd.codice_azienda=pf.codice_azienda inner join entrasp.aziende az on mtvr.codice_azienda=az.codice_azienda where ss.codice_azienda='€global_codice_azienda€' and az.codice_part='€global_codice_part€' and nullif(split_part(ss.object_key, '|', 2),'')::numeric=$id_anagrafica_somministrazione$ and ss.object_name='anagraficheId' and mt.id_tipo_modello_test in(9, 50, 51)"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, '$codice_azienda$'::varchar) as play_time_report"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by coalesce(snd.data_esecuzione, snd.data_prevista) desc limit 100"
     }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by coalesce(snd.data_esecuzione, snd.data_prevista) desc limit 100"
-  }
 }

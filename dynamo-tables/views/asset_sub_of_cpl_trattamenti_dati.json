@@ -1,168 +1,175 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "asset_sub_of_cpl_trattamenti_dati",
-  "origin": "entrasp.asset_trattamenti_dati",
-  "businessObjectName": "asset_trattamenti_dati",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_asset AS id, id_asset||' - '||titolo AS name FROM entrasp.asset WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_asset",
-      "label": "Asset",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_trattamento_dati",
-      "label": "id_trattamento_dati",
-      "readOnly": true,
-      "newLine": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "4%",
-      "queryFunct": "select true",
-      "key": "delete_asset_trattamenti",
-      "label": "",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "asset_sub_of_cpl_trattamenti_dati",
+    "origin": "entrasp.asset_trattamenti_dati",
+    "businessObjectName": "asset_trattamenti_dati",
+    "form_keys": [
         {
-          "button_icon": "delete",
-          "value": "*"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "asset_sub_of_cpl_trattamenti_dati",
-        "viewType": "form",
-        "query": "delete from entrasp.asset_trattamenti_dati where codice_azienda='£codice_azienda£' AND id_asset=£id_asset£ AND id_trattamento_dati=£id_trattamento_dati£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_asset",
-            "destination": "id_asset"
-          },
-          {
-            "source": "id_trattamento_dati",
-            "destination": "id_trattamento_dati"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_asset",
-      "label": "Asset"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "queryFunct": "entrasp.asset_descr(id_asset, codice_azienda)",
-      "key": "asset_desc",
-      "sameOrigin": false,
-      "label": "Asset"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_trattamento_dati",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "7.5%",
-      "key": "visible_button_presidio",
-      "label": "Asset",
-      "queryFunct": "select true",
-      "isButton": true,
-      "buttonAction": {
-        "target": "asset",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_asset",
-            "destination": "id_asset"
-          }
-        ]
-      },
-      "style": [
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true
+        },
         {
-          "button_icon": "",
-          "value": "*"
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_asset AS id, id_asset||' - '||titolo AS name FROM entrasp.asset WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_asset",
+            "label": "Asset",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_asset"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "id_trattamento_dati",
+            "readOnly": true,
+            "newLine": false,
+            "translate": "RESOURCES.id_trattamento_dati"
         }
-      ]
-    }
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_asset_trattamenti",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "asset_sub_of_cpl_trattamenti_dati",
+                "viewType": "form",
+                "query": "delete from entrasp.asset_trattamenti_dati where codice_azienda='£codice_azienda£' AND id_asset=£id_asset£ AND id_trattamento_dati=£id_trattamento_dati£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_asset",
+                        "destination": "id_asset"
+                    },
+                    {
+                        "source": "id_trattamento_dati",
+                        "destination": "id_trattamento_dati"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_asset_trattamenti"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_asset",
+            "label": "Asset",
+            "translate": "RESOURCES.id_asset"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "entrasp.asset_descr(id_asset, codice_azienda)",
+            "key": "asset_desc",
+            "sameOrigin": false,
+            "label": "Asset",
+            "translate": "RESOURCES.asset_desc"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "ID",
+            "translate": "RESOURCES.id_trattamento_dati"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "7.5%",
+            "key": "visible_button_presidio",
+            "label": "Asset",
+            "queryFunct": "select true",
+            "isButton": true,
+            "buttonAction": {
+                "target": "asset",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_asset",
+                        "destination": "id_asset"
+                    }
+                ]
+            },
+            "style": [
+                {
+                    "button_icon": "",
+                    "value": "*"
+                }
+            ],
+            "translate": "RESOURCES.visible_button_presidio"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
 }

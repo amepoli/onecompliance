@@ -1,167 +1,167 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "fogli_informativi",
-	"inheritsFrom": "contracts_investment",
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_ruolo='CLI' and cnt.id_argomento_contratto=49580"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
-		}
-	],
-	"subTables": [
-		{
-			"label": "Files associati",
-			"entryKey": "attachments_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Attività/Segnalazioni associate",
-			"entryKey": "compiti_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		}
-	],
-	"search_keys": [
-		{
-			"fieldName": "id_contratto_s",
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"label": "Identificativo contratto",
-			"newLine": false,
-			"queryCond": "id_contratto=$id_contratto_s$"
-		},
-		{
-			"fieldName": "id_anagrafica_s",
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "$P{label_controparte}",
-			"newLine": false,
-			"queryCond": "id_cliente=$id_anagrafica_s$"
-		},
-		{
-			"fieldName": "nome_rs",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "Nome/Cognome/Ragione Sociale",
-			"newLine": false,
-			"queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
-		},
-		{
-			"fieldName": "tipi_contratto_s",
-			"format": {
-				"comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (5402,3526)",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Tipo Contratti",
-			"newLine": true,
-			"queryCond": "id_argomento_contratto='€tipi_contratto_s€'"
-		},
-		{
-			"fieldName": "numero_contratto_s",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "Numero Contratto",
-			"newLine": false,
-			"queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
-		},
-		{
-			"fieldName": "stato",
-			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Stato",
-			"translate": "RESOURCES.status",
-			"newLine": false,
-			"queryCond": "cnt.stato='€stato€'"
-		},
-		{
-			"fieldName": "id_strumento_fin_s",
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and ra.codice_ruolo = 'FONDO';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Fondo/strumento finanziario",
-			"newLine": false,
-			"queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
-		},
-		{
-			"format": {
-				"viewType": "combobox",
-				"options": [],
-				"dataType": "text",
-				"comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
-			},
-			"label": "Giudizio Appropriatezza",
-			"fieldName": "giudizio_s",
-			"newLine": true,
-			"queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$"
-		},
-		{
-			"fieldName": "profilazioni_n",
-			"format": {
-				"viewType": "checkbox",
-				"value": "0"
-			},
-			"label": "Senza Profilazioni Aml",
-			"newLine": false,
-			"queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
-		},
-		{
-			"fieldName": "no_progetto",
-			"format": {
-				"viewType": "checkbox",
-				"value": "0"
-			},
-			"label": "Aperti senza progetto associato",
-			"newLine": false,
-			"queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
-		},
-		{
-			"fieldName": "rischio_conflitto",
-			"format": {
-				"value": "0",
-				"viewType": "toggle"
-			},
-			"label": "Rischio conflitti",
-			"newLine": false,
-			"size": 1.5,
-			"queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'"
-		}
-	]
+    "$schema": "../views.schema.json",
+    "entryKey": "fogli_informativi",
+    "inheritsFrom": "contracts_investment",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_ruolo='CLI' and cnt.id_argomento_contratto=49580"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+        }
+    ],
+    "subTables": [
+        {
+            "label": "Files associati",
+            "entryKey": "attachments_sub_of_contratti",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "label": "Attività/Segnalazioni associate",
+            "entryKey": "compiti_sub_of_contratti",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_contratto_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Identificativo contratto",
+            "newLine": false,
+            "queryCond": "id_contratto=$id_contratto_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "$P{label_controparte}",
+            "newLine": false,
+            "queryCond": "id_cliente=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "nome_rs",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Nome/Cognome/Ragione Sociale",
+            "newLine": false,
+            "queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
+        },
+        {
+            "fieldName": "tipi_contratto_s",
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (5402,3526)",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo Contratti",
+            "newLine": true,
+            "queryCond": "id_argomento_contratto='€tipi_contratto_s€'"
+        },
+        {
+            "fieldName": "numero_contratto_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Numero Contratto",
+            "newLine": false,
+            "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
+        },
+        {
+            "fieldName": "stato",
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "newLine": false,
+            "queryCond": "cnt.stato='€stato€'"
+        },
+        {
+            "fieldName": "id_strumento_fin_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and ra.codice_ruolo = 'FONDO';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Fondo/strumento finanziario",
+            "newLine": false,
+            "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
+        },
+        {
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text",
+                "comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
+            },
+            "label": "Giudizio Appropriatezza",
+            "fieldName": "giudizio_s",
+            "newLine": true,
+            "queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$"
+        },
+        {
+            "fieldName": "profilazioni_n",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Senza Profilazioni Aml",
+            "newLine": false,
+            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
+        },
+        {
+            "fieldName": "no_progetto",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Aperti senza progetto associato",
+            "newLine": false,
+            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
+        },
+        {
+            "fieldName": "rischio_conflitto",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Rischio conflitti",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'"
+        }
+    ]
 }

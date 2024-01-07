@@ -1,384 +1,393 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "compiti_rif_bo_keys",
-  "origin": "entrasp.compiti_rif_bo_keys",
-  "search_keys": [],
-  "predefinedQueries": [
-    {
-      "operation": "selectForm",
-      "type": "main",
-      "queryString": "select *, codice_compito as codice_compito_titolo from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
-    },
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select distinct codice_azienda,id_sondaggio,id_somministrazione, codice_compito, data_segnalazione, entrasp.compito_titolo($codice_azienda$, codice_compito) as codice_compito_titolo, true as delete_compiti_verifiche, true as visible_button_compiti from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
-    }
-  ],
-  "inputEvents": [
-    {
-      "eventName": "to_compiti_from_keys",
-      "actionType": "navigate",
-      "actionTarget": {
-        "name": "compiti",
-        "type": "form",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          }
-        ]
-      }
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "compiti_rif_bo_keys",
+    "origin": "entrasp.compiti_rif_bo_keys",
+    "search_keys": [],
+    "predefinedQueries": [
         {
-          "eventName": "titolo_change",
-          "actionType": "update",
-          "updateFunct": "'£codice_compito_titolo£'",
-          "condition": "none",
-          "values": []
-        }
-      ],
-      "outputEvent": {
-        "eventName": "codice_compito_change",
-        "eventTrigger": "select"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_compito",
-      "label": "Codice Compito",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_segnalazione",
-      "label": "Data",
-      "newLine": false,
-      "readOnly": true,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice_compito AS id, codice_compito||'-'||titolo AS name FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$ order by titolo;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "inputEvents": [
-        {
-          "eventName": "codice_compito_change",
-          "actionType": "update",
-          "updateFunct": "'£codice_compito£'",
-          "condition": "none",
-          "values": [
-            ""
-          ]
-        }
-      ],
-      "outputEvent": {
-        "eventName": "titolo_change",
-        "eventTrigger": "select"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_compito_titolo",
-      "label": "Titolo",
-      "translate": "RESOURCES.title",
-      "newLine": false,
-      "sameOrigin": false,
-      "readOnly": false,
-      "size": 6
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "compiti_dettaglio",
-      "label": "Compiti",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "to_compiti_from_keys",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "label": "id_verifica",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica",
-      "label": "id_anagrafica",
-      "translate": "RESOURCES.id_personal_data",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_somministrazione",
-      "label": "id_somministrazione",
-      "translate": "RESOURCES.id_administration",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_domanda",
-      "label": "id_domanda",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_modello_test",
-      "label": "Modello di Verifica",
-      "translate": "RESOURCES.check_template",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_modello_test_vr",
-      "label": "Versione",
-      "translate": "RESOURCES.version",
-      "newLine": false,
-      "readOnly": true
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "label": "id_sondaggio",
-      "translate": "RESOURCES.id_survey"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_somministrazione",
-      "label": "id_somministrazione",
-      "translate": "RESOURCES.id_administration"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "4%",
-      "key": "delete_compiti_verifiche",
-      "label": "",
-      "style": [
-        {
-          "button_icon": "delete",
-          "value": "*"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "compiti_rif_bo_keys",
-        "viewType": "form",
-        "confirmAction": true,
-        "confirmMessage": {
-          "text": "Sei sicuro di voler cancellare la segnalazione selezionata?",
-          "title": "Conferma cancellazione della segnalazione"
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select *, codice_compito as codice_compito_titolo from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
         },
-        "query": "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' AND codice_compito='£codice_compito£' AND id_somministrazione=£id_somministrazione£ AND id_sondaggio=£id_sondaggio£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_somministrazione",
-            "destination": "id_somministrazione"
-          },
-          {
-            "source": "id_sondaggio",
-            "destination": "id_sondaggio"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "width": "5%",
-      "key": "codice_compito",
-      "label": "Codice Compito"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "8%",
-      "key": "data_segnalazione",
-      "label": "Data"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_compito_titolo",
-      "queryFunct": "entrasp.compito_titolo($codice_azienda$, codice_compito)",
-      "label": "Titolo",
-      "translate": "RESOURCES.title"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "10%",
-      "key": "visible_button_compiti",
-      "label": "Compito",
-      "queryFunct": "select true",
-      "isButton": true,
-      "buttonAction": {
-        "target": "compiti",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "codice_compito",
-            "destination": "codice_compito"
-          }
-        ]
-      },
-      "style": [
         {
-          "button_icon": "",
-          "value": "*"
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select distinct codice_azienda,id_sondaggio,id_somministrazione, codice_compito, data_segnalazione, entrasp.compito_titolo($codice_azienda$, codice_compito) as codice_compito_titolo, true as delete_compiti_verifiche, true as visible_button_compiti from entrasp.compiti_rif_bo_keys where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
         }
-      ]
+    ],
+    "inputEvents": [
+        {
+            "eventName": "to_compiti_from_keys",
+            "actionType": "navigate",
+            "actionTarget": {
+                "name": "compiti",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito",
+                        "destination": "codice_compito"
+                    }
+                ]
+            }
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "titolo_change",
+                    "actionType": "update",
+                    "updateFunct": "'£codice_compito_titolo£'",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "outputEvent": {
+                "eventName": "codice_compito_change",
+                "eventTrigger": "select"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_compito",
+            "label": "Codice Compito",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "translate": "RESOURCES.codice_compito"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_segnalazione",
+            "label": "Data",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.5,
+            "translate": "RESOURCES.data_segnalazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_compito AS id, codice_compito||'-'||titolo AS name FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$ order by titolo;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "codice_compito_change",
+                    "actionType": "update",
+                    "updateFunct": "'£codice_compito£'",
+                    "condition": "none",
+                    "values": [
+                        ""
+                    ]
+                }
+            ],
+            "outputEvent": {
+                "eventName": "titolo_change",
+                "eventTrigger": "select"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_compito_titolo",
+            "label": "Titolo",
+            "translate": "RESOURCES.title",
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 6
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "compiti_dettaglio",
+            "label": "Compiti",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "to_compiti_from_keys",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.compiti_dettaglio"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_verifica",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.id_sondaggio"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica",
+            "translate": "RESOURCES.id_personal_data",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
+            "translate": "RESOURCES.id_administration",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_domanda",
+            "label": "id_domanda",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.id_domanda"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "Modello di Verifica",
+            "translate": "RESOURCES.check_template",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
+            "translate": "RESOURCES.version",
+            "newLine": false,
+            "readOnly": true
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_survey"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
+            "translate": "RESOURCES.id_administration"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "key": "delete_compiti_verifiche",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "compiti_rif_bo_keys",
+                "viewType": "form",
+                "confirmAction": true,
+                "confirmMessage": {
+                    "text": "Sei sicuro di voler cancellare la segnalazione selezionata?",
+                    "title": "Conferma cancellazione della segnalazione"
+                },
+                "query": "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' AND codice_compito='£codice_compito£' AND id_somministrazione=£id_somministrazione£ AND id_sondaggio=£id_sondaggio£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_somministrazione",
+                        "destination": "id_somministrazione"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "codice_compito",
+                        "destination": "codice_compito"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_compiti_verifiche"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "codice_compito",
+            "label": "Codice Compito",
+            "translate": "RESOURCES.codice_compito"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "8%",
+            "key": "data_segnalazione",
+            "label": "Data",
+            "translate": "RESOURCES.data_segnalazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_compito_titolo",
+            "queryFunct": "entrasp.compito_titolo($codice_azienda$, codice_compito)",
+            "label": "Titolo",
+            "translate": "RESOURCES.title"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "visible_button_compiti",
+            "label": "Compito",
+            "queryFunct": "select true",
+            "isButton": true,
+            "buttonAction": {
+                "target": "compiti",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito",
+                        "destination": "codice_compito"
+                    }
+                ]
+            },
+            "style": [
+                {
+                    "button_icon": "",
+                    "value": "*"
+                }
+            ],
+            "translate": "RESOURCES.visible_button_compiti"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by codice_compito"
     }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "share",
-      "viewType": "form"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by codice_compito"
-  }
 }

@@ -1,353 +1,366 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "posizioni",
-  "origin": "entrasp.posizioni",
-  "businessObjectName": "posizioni",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_posizione",
-      "label": "ID posizione",
-      "readOnly": true,
-      "newLine": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "codice",
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_rif",
-      "label": "Data Riferimento",
-      "newLine": false,
-      "size": 3,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "options": [],
-        "value": "A",
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ASSET'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica_portafoglio",
-      "size": 3.3,
-      "label": "Portafoglio",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_anagrafica_posizione",
-      "size": 3.3,
-      "label": "Posizione",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "key": "valore",
-      "label": "Valore",
-      "readOnly": false,
-      "size": 3.4
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_asset AS id, id_asset||' - '||descrizione AS name FROM entrasp.asset WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_asset",
-      "label": "Asset",
-      "readOnly": false,
-      "newLine": false,
-      "size": 3.3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father in (3391,3392,3393,3394,3395,3396,3397) order by descrizione"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento",
-      "label": "Argomento",
-      "translate": "RESOURCES.tag",
-      "readOnly": false,
-      "newLine": false,
-      "size": 3.3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "key": "id_contratto",
-      "label": "Contratto",
-      "readOnly": false,
-      "size": 3.4
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "readOnly": false,
-      "newLine": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_posizione",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica_portafoglio",
-      "label": "id_anagrafica_portafoglio"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica_posizione",
-      "label": "Posizione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "anagrafica_posizione",
-      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_posizione)",
-      "label": "Posizione"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_asset",
-      "label": "Asset"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "asset_descr",
-      "queryFunct": "entrasp.asset_descr(id_asset, codice_azienda)",
-      "label": "Asset"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "valore",
-      "label": "Codice",
-      "translate": "RESOURCES.code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "stato",
-      "label": "Stato",
-      "translate": "RESOURCES.status"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato_descr",
-      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ASSET', stato)",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "width": "10%",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "posizioni",
+    "origin": "entrasp.posizioni",
+    "businessObjectName": "posizioni",
+    "form_keys": [
         {
-          "value": "Attivo",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "royalblue",
-          "text_align": "center"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code",
+            "readOnly": true
         },
         {
-          "value": "Dismesso",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_posizione",
+            "label": "ID posizione",
+            "readOnly": true,
+            "newLine": false,
+            "size": 1,
+            "translate": "RESOURCES.id_posizione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "readOnly": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif",
+            "label": "Data Riferimento",
+            "newLine": false,
+            "size": 3,
+            "readOnly": false,
+            "translate": "RESOURCES.data_rif"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "value": "A",
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ASSET'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "readOnly": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica_portafoglio",
+            "size": 3.3,
+            "label": "Portafoglio",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_anagrafica_portafoglio"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_anagrafica_posizione",
+            "size": 3.3,
+            "label": "Posizione",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_anagrafica_posizione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "valore",
+            "label": "Valore",
+            "readOnly": false,
+            "size": 3.4,
+            "translate": "RESOURCES.valore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_asset AS id, id_asset||' - '||descrizione AS name FROM entrasp.asset WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_asset",
+            "label": "Asset",
+            "readOnly": false,
+            "newLine": false,
+            "size": 3.3,
+            "translate": "RESOURCES.id_asset"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father in (3391,3392,3393,3394,3395,3396,3397) order by descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Argomento",
+            "translate": "RESOURCES.tag",
+            "readOnly": false,
+            "newLine": false,
+            "size": 3.3
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_contratto",
+            "label": "Contratto",
+            "readOnly": false,
+            "size": 3.4,
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "readOnly": false,
+            "newLine": false
         }
-      ]
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_asset",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Asset",
-      "newLine": false,
-      "queryCond": "id_asset=$id_asset$"
-    },
-    {
-      "fieldName": "parola_search",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Parola chiave",
-      "translate": "RESOURCES.key_word",
-      "newLine": true,
-      "queryCond": "upper(note) like '%'||upper('€parola_search€')||'%'"
-    }
-  ],
-  "hideActions": [
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_posizione",
+            "label": "ID",
+            "translate": "RESOURCES.id_posizione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica_portafoglio",
+            "label": "id_anagrafica_portafoglio",
+            "translate": "RESOURCES.id_anagrafica_portafoglio"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica_posizione",
+            "label": "Posizione",
+            "translate": "RESOURCES.id_anagrafica_posizione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "anagrafica_posizione",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_posizione)",
+            "label": "Posizione",
+            "translate": "RESOURCES.anagrafica_posizione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_asset",
+            "label": "Asset",
+            "translate": "RESOURCES.id_asset"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "asset_descr",
+            "queryFunct": "entrasp.asset_descr(id_asset, codice_azienda)",
+            "label": "Asset",
+            "translate": "RESOURCES.asset_descr"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore",
+            "label": "Codice",
+            "translate": "RESOURCES.code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "translate": "RESOURCES.status"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato_descr",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ASSET', stato)",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "width": "10%",
+            "style": [
+                {
+                    "value": "Attivo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Dismesso",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                }
+            ]
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_asset",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Asset",
+            "newLine": false,
+            "queryCond": "id_asset=$id_asset$"
+        },
+        {
+            "fieldName": "parola_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parola chiave",
+            "translate": "RESOURCES.key_word",
+            "newLine": true,
+            "queryCond": "upper(note) like '%'||upper('€parola_search€')||'%'"
+        }
+    ],
+    "hideActions": [
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ]
 }

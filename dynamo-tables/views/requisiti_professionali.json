@@ -1,138 +1,141 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "requisiti_professionali",
-  "origin": "entrasp.centri_gestionali_requisiti",
-  "businessObjectName": "centri_gestionali_requisiti",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_centro_gest",
-      "label": "id_centro_gest",
-      "translate": "RESOURCES.id_office",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "dataType": "number",
-        "options": [],
-        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6665 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and (position('€global_codice_azienda€' in arg.codice_aziende_escluse)=0 or position('€global_codice_azienda€' in arg.codice_aziende_escluse) is null) order by arg.descrizione"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_argomento_requisito",
-      "label": "Requisito professionale",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "textareaHeight": "M",
-      "newLine": true,
-      "readOnly": false
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "centri_gestionali",
-      "keys": [
+    "$schema": "../views.schema.json",
+    "entryKey": "requisiti_professionali",
+    "origin": "entrasp.centri_gestionali_requisiti",
+    "businessObjectName": "centri_gestionali_requisiti",
+    "form_keys": [
         {
-          "parent": "id_argomento_requisito",
-          "son": "id_argomento_requisito"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_centro_gest",
+            "label": "id_centro_gest",
+            "translate": "RESOURCES.id_office",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "number",
+                "options": [],
+                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6665 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and (position('€global_codice_azienda€' in arg.codice_aziende_escluse)=0 or position('€global_codice_azienda€' in arg.codice_aziende_escluse) is null) order by arg.descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_requisito",
+            "label": "Requisito professionale",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_argomento_requisito"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "textareaHeight": "M",
+            "newLine": true,
+            "readOnly": false
         }
-      ],
-      "type": "tableForm",
-      "label": "Centri gestionali associati"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "translate": "RESOURCES.office"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_argomento_requisito",
-      "label": "id_argomento_requisito"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_requisito",
-      "label": "Requisito",
-      "width": "25%",
-      "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_requisito)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "width": "25%"
-    }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    }
-  ]
+    ],
+    "subTables": [
+        {
+            "entryKey": "centri_gestionali",
+            "keys": [
+                {
+                    "parent": "id_argomento_requisito",
+                    "son": "id_argomento_requisito"
+                }
+            ],
+            "type": "tableForm",
+            "label": "Centri gestionali associati"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_requisito",
+            "label": "id_argomento_requisito",
+            "translate": "RESOURCES.id_argomento_requisito"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_requisito",
+            "label": "Requisito",
+            "width": "25%",
+            "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_requisito)",
+            "translate": "RESOURCES.descr_requisito"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "width": "25%"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        }
+    ]
 }

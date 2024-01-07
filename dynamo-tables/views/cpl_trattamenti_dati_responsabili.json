@@ -1,273 +1,286 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "cpl_trattamenti_dati_responsabili",
-  "origin": "entrasp.cpl_trattamenti_dati_responsabili",
-  "businessObjectName": "cplTrattamentiDatiResp",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code",
-      "insertUpdateFunct": "select '€global_codice_part€'",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_trattamento_dati",
-      "label": "ID",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) as name from entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_responsabile",
-      "label": "Responsabile Esterno",
-      "readOnly": false,
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "cpl_trattamenti_dati_responsabili",
+    "origin": "entrasp.cpl_trattamenti_dati_responsabili",
+    "businessObjectName": "cplTrattamentiDatiResp",
+    "form_keys": [
         {
-          "eventName": "contratto_select",
-          "actionType": "query",
-          "queryFunct": "select cnt.id_cliente as id_responsabile from entrasp.contratti cnt where cnt.codice_azienda=$codice_azienda$ and cnt.id_contratto=£id_contratto£",
-          "condition": "none",
-          "values": []
-        }
-      ],
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "select id_contratto as id, concat (id_contratto, '-' ,descrizione) as name from entrasp.contratti where codice_azienda=$codice_azienda$",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_contratto",
-      "label": "Contratto",
-      "outputEvent": {
-        "eventName": "contratto_select",
-        "eventTrigger": "select"
-      },
-      "inputEvents": [
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": false,
+            "newLine": false
+        },
         {
-          "eventName": "contratto_select",
-          "actionType": "query",
-          "queryFunct": "update entrasp.cpl_trattamenti_dati_responsabili ctdr set id_responsabile=cnt.id_cliente, data_firma_contratto=cnt.data_stipulazione, data_chiusura_contratto=cnt.data_cessazione from entrasp.contratti cnt where ctdr.id_contratto=cnt.id_contratto and ctdr.codice_azienda=cnt.codice_azienda and cnt.codice_azienda=$codice_azienda$ and cnt.id_contratto=£id_contratto£",
-          "condition": "none",
-          "values": []
-        }
-      ],
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_firma_contratto",
-      "label": "Data Firma Contratto",
-      "readOnly": false,
-      "newLine": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_chiusura_contratto",
-      "label": "Data Chiusura Contratto",
-      "readOnly": false,
-      "newLine": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_amministratore_di_sistema",
-      "label": "Ammm.sistema",
-      "readOnly": false,
-      "size": 1.5,
-      "newLine": true
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_trattamento_dati",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_responsabile",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "4%",
-      "queryFunct": "select true",
-      "key": "delete_trattamenti_responsabili",
-      "label": "",
-      "style": [
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code",
+            "insertUpdateFunct": "select '€global_codice_part€'",
+            "readOnly": false,
+            "newLine": false
+        },
         {
-          "button_icon": "delete",
-          "value": "*"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "ID",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_trattamento_dati"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) as name from entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_responsabile",
+            "label": "Responsabile Esterno",
+            "readOnly": false,
+            "inputEvents": [
+                {
+                    "eventName": "contratto_select",
+                    "actionType": "query",
+                    "queryFunct": "select cnt.id_cliente as id_responsabile from entrasp.contratti cnt where cnt.codice_azienda=$codice_azienda$ and cnt.id_contratto=£id_contratto£",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "newLine": false,
+            "translate": "RESOURCES.id_responsabile"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_contratto as id, concat (id_contratto, '-' ,descrizione) as name from entrasp.contratti where codice_azienda=$codice_azienda$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_contratto",
+            "label": "Contratto",
+            "outputEvent": {
+                "eventName": "contratto_select",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "contratto_select",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.cpl_trattamenti_dati_responsabili ctdr set id_responsabile=cnt.id_cliente, data_firma_contratto=cnt.data_stipulazione, data_chiusura_contratto=cnt.data_cessazione from entrasp.contratti cnt where ctdr.id_contratto=cnt.id_contratto and ctdr.codice_azienda=cnt.codice_azienda and cnt.codice_azienda=$codice_azienda$ and cnt.id_contratto=£id_contratto£",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_firma_contratto",
+            "label": "Data Firma Contratto",
+            "readOnly": false,
+            "newLine": false,
+            "size": 1.5,
+            "translate": "RESOURCES.data_firma_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_chiusura_contratto",
+            "label": "Data Chiusura Contratto",
+            "readOnly": false,
+            "newLine": false,
+            "size": 1.5,
+            "translate": "RESOURCES.data_chiusura_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_amministratore_di_sistema",
+            "label": "Ammm.sistema",
+            "readOnly": false,
+            "size": 1.5,
+            "newLine": true,
+            "translate": "RESOURCES.flag_amministratore_di_sistema"
         }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "cpl_trattamenti_dati_responsabili",
-        "viewType": "form",
-        "query": "delete from entrasp.cpl_trattamenti_dati_responsabili where codice_azienda='£codice_azienda£' AND id_responsabile=£id_responsabile£ AND id_trattamento_dati=£id_trattamento_dati£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_responsabile",
-            "destination": "id_responsabile"
-          },
-          {
-            "source": "id_trattamento_dati",
-            "destination": "id_trattamento_dati"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "responsabile_esterno",
-      "width": "40%",
-      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_responsabile)",
-      "label": "Responsabile Esterno"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_firma_contratto",
-      "width": "10%",
-      "label": "Data firma contratto"
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isCheckbox": true,
-      "isPrimary": false,
-      "key": "flag_amministratore_di_sistema",
-      "queryFunct": "flag_amministratore_di_sistema::boolean",
-      "width": "6%",
-      "label": "Amm.sistema"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_chiusura_contratto",
-      "width": "10%",
-      "label": "Data chiusura contratto"
-    }
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "ID",
+            "translate": "RESOURCES.id_trattamento_dati"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_responsabile",
+            "label": "ID",
+            "translate": "RESOURCES.id_responsabile"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_trattamenti_responsabili",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "cpl_trattamenti_dati_responsabili",
+                "viewType": "form",
+                "query": "delete from entrasp.cpl_trattamenti_dati_responsabili where codice_azienda='£codice_azienda£' AND id_responsabile=£id_responsabile£ AND id_trattamento_dati=£id_trattamento_dati£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_responsabile",
+                        "destination": "id_responsabile"
+                    },
+                    {
+                        "source": "id_trattamento_dati",
+                        "destination": "id_trattamento_dati"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_trattamenti_responsabili"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "responsabile_esterno",
+            "width": "40%",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_responsabile)",
+            "label": "Responsabile Esterno",
+            "translate": "RESOURCES.responsabile_esterno"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_firma_contratto",
+            "width": "10%",
+            "label": "Data firma contratto",
+            "translate": "RESOURCES.data_firma_contratto"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isCheckbox": true,
+            "isPrimary": false,
+            "key": "flag_amministratore_di_sistema",
+            "queryFunct": "flag_amministratore_di_sistema::boolean",
+            "width": "6%",
+            "label": "Amm.sistema",
+            "translate": "RESOURCES.flag_amministratore_di_sistema"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_chiusura_contratto",
+            "width": "10%",
+            "label": "Data chiusura contratto",
+            "translate": "RESOURCES.data_chiusura_contratto"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ]
 }

@@ -1,214 +1,218 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "progetti_attachments",
-  "origin": "entrasp.views_attachments_fast",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select distinct rev.prog_revisione, rev.codice_azienda, rev.codice_part, rev.id_risorsa, rev.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, rev.stringa, rev.tipo_allegato, rev.id_sondaggio, rev.id_progetto, left(rev.rev_descrizione, 120) as rev_descrizione, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a, entrasp.argomenti_descr_stato(rev.id_argomento_stato) as descr_stato from entrasp.views_attachments_fast rev inner join entrasp.progetti_fasi pf on rev.codice_azienda=pf.codice_azienda and rev.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where rev.codice_azienda=$codice_azienda$ and rev.id_progetto=$id_progetto$"
-    },
-    {
-      "type": "main",
-      "operation": "selectForm",
-      "queryString": "SELECT rev.codice_azienda,b.codice_part, rev.cod_rev, rev.descrizione, rev.id_argomento_stato as rev_id_argomento_stato, rev.data_rif_a, rev.id_risorsa, rev.prog_revisione, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(rev.file_id::text||'^')::text||rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo(rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_risorsa=$id_risorsa$ AND rev.prog_revisione=$prog_revisione$"
-    },
-    {
-      "type": "main",
-      "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, cod_rev=$cod_rev$,data_rif_a=$data_rif_a$, id_odg=$id_odg$, descrizione=$descrizione$, id_argomento_stato=$rev_id_argomento_stato$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
-    },
-    {
-      "type": "postProcessing",
-      "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name=$client_file_name$, client_file_name= 'n/a', content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' and codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
-    },
-    {
-      "type": "main",
-      "operation": "delete",
-      "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
-    }
-  ],
-  "inheritsFrom": "attachments",
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
+    "$schema": "../views.schema.json",
+    "entryKey": "progetti_attachments",
+    "origin": "entrasp.views_attachments_fast",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select distinct rev.prog_revisione, rev.codice_azienda, rev.codice_part, rev.id_risorsa, rev.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, rev.stringa, rev.tipo_allegato, rev.id_sondaggio, rev.id_progetto, left(rev.rev_descrizione, 120) as rev_descrizione, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a, entrasp.argomenti_descr_stato(rev.id_argomento_stato) as descr_stato from entrasp.views_attachments_fast rev inner join entrasp.progetti_fasi pf on rev.codice_azienda=pf.codice_azienda and rev.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where rev.codice_azienda=$codice_azienda$ and rev.id_progetto=$id_progetto$"
+        },
+        {
+            "type": "main",
+            "operation": "selectForm",
+            "queryString": "SELECT rev.codice_azienda,b.codice_part, rev.cod_rev, rev.descrizione, rev.id_argomento_stato as rev_id_argomento_stato, rev.data_rif_a, rev.id_risorsa, rev.prog_revisione, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(rev.file_id::text||'^')::text||rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo(rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_risorsa=$id_risorsa$ AND rev.prog_revisione=$prog_revisione$"
+        },
+        {
+            "type": "main",
+            "operation": "update",
+            "queryString": "update entrasp.cdms_risorse_revisioni set data_rif=$data_rif$, id_riunione=$id_riunione$, cod_rev=$cod_rev$,data_rif_a=$data_rif_a$, id_odg=$id_odg$, descrizione=$descrizione$, id_argomento_stato=$rev_id_argomento_stato$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "update",
+            "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name=$client_file_name$, client_file_name= 'n/a', content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' and codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+        },
+        {
+            "type": "main",
+            "operation": "delete",
+            "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+        }
+    ],
+    "inheritsFrom": "attachments",
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
             "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "width": "5%",
-      "key": "id_risorsa",
-      "label": "ID Flusso Informativo",
-      "translate": "RESOURCES.id_flusso_informativo"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "width": "3%",
-      "key": "prog_revisione",
-      "label": "Rev"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "client_file_name",
-      "width": "20%",
-      "label": "Nome file",
-      "translate": "RESOURCES.nome_file"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo_fase",
-      "width": "20%",
-      "label": "Fase",
-      "translate": "RESOURCES.fase",
-      "queryFunct": "entrasp.progetti_fasi_titolo(codice_azienda,id_fase)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_allegato",
-      "width": "17%",
-      "label": "Tipo Documento",
-      "translate": "RESOURCES.tipo_documento"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_stato",
-      "width": "5%",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "style": [
-        {
-          "value": "Non Richiesto",
-          "font_color": "grey",
-          "font_weight": "500"
         },
         {
-          "value": "Da Definire",
-          "font_color": "#FF8100",
-          "font_weight": "500"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "id_risorsa",
+            "label": "ID Flusso Informativo",
+            "translate": "RESOURCES.id_flusso_informativo"
         },
         {
-          "value": "Da Allegare",
-          "font_color": "#FF8100",
-          "font_weight": "500"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "3%",
+            "key": "prog_revisione",
+            "label": "Rev",
+            "translate": "RESOURCES.prog_revisione"
         },
         {
-          "value": "Allegato",
-          "font_color": "green",
-          "font_weight": "500"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "client_file_name",
+            "width": "20%",
+            "label": "Nome file",
+            "translate": "RESOURCES.nome_file"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo_fase",
+            "width": "20%",
+            "label": "Fase",
+            "translate": "RESOURCES.fase",
+            "queryFunct": "entrasp.progetti_fasi_titolo(codice_azienda,id_fase)"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_allegato",
+            "width": "17%",
+            "label": "Tipo Documento",
+            "translate": "RESOURCES.tipo_documento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "width": "5%",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "style": [
+                {
+                    "value": "Non Richiesto",
+                    "font_color": "grey",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Da Definire",
+                    "font_color": "#FF8100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Da Allegare",
+                    "font_color": "#FF8100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Allegato",
+                    "font_color": "green",
+                    "font_weight": "500"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "hasLevel": true,
+            "label": "Id Sond.",
+            "width": "6%",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "sondaggi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "width": "0%",
+            "label": "Progetto",
+            "translate": "RESOURCES.project"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "stringa",
+            "label": "",
+            "isButton": true,
+            "style": [
+                {
+                    "button_icon": "cloud_download",
+                    "value": "*"
+                }
+            ],
+            "buttonAction": {
+                "target": "attachments",
+                "viewType": "form",
+                "action": "downloadAttachment",
+                "keymap": []
+            },
+            "translate": "RESOURCES.stringa"
         }
-      ]
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by pf.ordinamento"
     },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "translate": "RESOURCES.id_survey",
-      "hasLevel": true,
-      "label": "Id Sond.",
-      "width": "6%",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "sondaggi",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_sondaggio",
-            "destination": "id_sondaggio"
-          }
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "queryString": "select distinct rev.prog_revisione, rev.codice_azienda, rev.codice_part, rev.id_risorsa, rev.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, rev.stringa, rev.tipo_allegato, rev.id_sondaggio, rev.id_progetto, left(rev.rev_descrizione, 120) as rev_descrizione, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a, entrasp.argomenti_descr_stato(rev.id_argomento_stato) as descr_stato from entrasp.views_attachments_fast vaf inner join entrasp.progetti_fasi pf on rev.codice_azienda=pf.codice_azienda and rev.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where rev.codice_azienda=$codice_azienda$ and rev.id_progetto=$id_progetto$",
+                "label": "Documenti progetto"
+            }
         ]
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "width": "0%",
-      "label": "Progetto",
-      "translate": "RESOURCES.project"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "stringa",
-      "label": "",
-      "isButton": true,
-      "style": [
-        {
-          "button_icon": "cloud_download",
-          "value": "*"
-        }
-      ],
-      "buttonAction": {
-        "target": "attachments",
-        "viewType": "form",
-        "action": "downloadAttachment",
-        "keymap": []
-      }
     }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by pf.ordinamento"
-  },
-  "exportQueries": {
-    "tableQueries": [
-      {
-        "queryString": "select distinct rev.prog_revisione, rev.codice_azienda, rev.codice_part, rev.id_risorsa, rev.client_file_name, pf.ordinamento, pf.titolo as titolo_fase, rev.stringa, rev.tipo_allegato, rev.id_sondaggio, rev.id_progetto, left(rev.rev_descrizione, 120) as rev_descrizione, snd.data_esecuzione, snd.data_riferimento_da, snd.data_riferimento_a, entrasp.argomenti_descr_stato(rev.id_argomento_stato) as descr_stato from entrasp.views_attachments_fast vaf inner join entrasp.progetti_fasi pf on rev.codice_azienda=pf.codice_azienda and rev.id_sondaggio=pf.id_sondaggio inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where rev.codice_azienda=$codice_azienda$ and rev.id_progetto=$id_progetto$",
-        "label": "Documenti progetto"
-      }
-    ]
-  }
 }

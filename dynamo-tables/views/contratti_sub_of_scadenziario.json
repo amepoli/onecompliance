@@ -1,41 +1,41 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "contratti_sub_of_scadenziario",
-	"businessObjectName": "contratti",
-	"inheritsFrom": "contracts_investment",
-	"origin": "entrasp.contratti",
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where cnt.codice_azienda=$codice_azienda$ and cnt.id_argomento_evento=$id_argomento_evento$"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
-		}
-	],
-	"hideActions": [
-		{
-			"formActionType": "share",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "quick-add",
-			"viewType": "form"
-		},
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"tableActionType": "add",
-			"viewType": "table"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "attachments"
-		}
-	]
+    "$schema": "../views.schema.json",
+    "entryKey": "contratti_sub_of_scadenziario",
+    "businessObjectName": "contratti",
+    "inheritsFrom": "contracts_investment",
+    "origin": "entrasp.contratti",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where cnt.codice_azienda=$codice_azienda$ and cnt.id_argomento_evento=$id_argomento_evento$"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ]
 }

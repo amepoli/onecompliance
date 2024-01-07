@@ -1,324 +1,332 @@
 {
-  "$schema": "../views.schema.json",
-  "businessObjectName": "modelliTest",
-  "entryKey": "modelli_test",
-  "predefinedQueries": [
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "update entrasp.modelli_test set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",	  "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_tipo_modello_test AS id, entrasp.tipo_modello_test_descr(id_tipo_modello_test) AS name  FROM entrasp.tipi_modello_test;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_modello_test",
-      "label": "Tipo modello test",
+    "$schema": "../views.schema.json",
+    "businessObjectName": "modelliTest",
+    "entryKey": "modelli_test",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.sondaggi set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.modelli_test set codice_part='£global_codice_part£', pct_da=(select pct_da from entrasp.grc_punteggi_giudizi_finali_per_sondaggio($codice_azienda$, $id_sondaggio$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$)  WHERE codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$;"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_tipo_modello_test AS id, entrasp.tipo_modello_test_descr(id_tipo_modello_test) AS name  FROM entrasp.tipi_modello_test;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_modello_test",
+            "label": "Tipo modello test",
             "translate": "RESOURCES.check_templete_type",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "ID",
-      "newLine": false,
-      "readOnly": true,
-      "inputEvents": [
+            "newLine": true,
+            "readOnly": false
+        },
         {
-          "eventName": "modelli_test_button_duplica",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select idnew as id_modello_test, cod as codice from entrasp.grc_accoda_singolo_modello_test($codice_azienda$, $codice_azienda$, $id_modello_test$);"
-        }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "duplica",
-      "label": "Duplica",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "modelli_test_button_duplica",
-        "eventTrigger": "press"
-      },
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice",
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_modello_test_vr",
-    "label": "Versione",
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "ID",
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "modelli_test_button_duplica",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select idnew as id_modello_test, cod as codice from entrasp.grc_accoda_singolo_modello_test($codice_azienda$, $codice_azienda$, $id_modello_test$);"
+                }
+            ],
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "duplica",
+            "label": "Duplica",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "modelli_test_button_duplica",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.duplica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
             "translate": "RESOURCES.version",
-      "newLine": false,
-      "readOnly": true,
-      "inputEvents": [
-        {
-          "eventName": "modelli_test_button_nuova_versione",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select grc_modello_test_nuova_versione as id_modello_test_vr from entrasp.grc_modello_test_nuova_versione($codice_azienda$,$id_modello_test$, $id_modello_test_vr$)"
-        }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "nuova_versione",
-      "label": "Nuova versione",
-                        "translate": "RESOURCES.nuova_versione",
-      "newLine": true,
-      "outputEvent": {
-        "eventName": "modelli_test_button_nuova_versione",
-        "eventTrigger": "press"
-      },
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-       "label": "Centro Gestionale",
-             "translate": "RESOURCES.office",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-       "label": "Titolo",
-            "translate": "RESOURCES.title",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_sezioni",
-      "label": "Gestione domande a sezioni",
-      "outputEvent": {
-        "eventName": "flag_sezioni",
-        "eventTrigger": "change"
-      },
-      "readOnly": false
-    }
-  ],
-  "origin": "entrasp.modelli_test",
-  "subTables": [
-    {
-      "entryKey": "domande",
-      "inputEvents": [
-        {
-          "actionType": "show",
-          "eventName": "flag_sezioni",
-          "condition": "equalTo",
-          "values": [
-            "false"
-          ]
-        }
-      ],
-      "isHidden": true,
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "modelli_test_button_nuova_versione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select grc_modello_test_nuova_versione as id_modello_test_vr from entrasp.grc_modello_test_nuova_versione($codice_azienda$,$id_modello_test$, $id_modello_test_vr$)"
+                }
+            ]
         },
         {
-          "parent": "id_modello_test",
-          "son": "id_modello_test"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nuova_versione",
+            "label": "Nuova versione",
+            "translate": "RESOURCES.nuova_versione",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "modelli_test_button_nuova_versione",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false
         },
         {
-          "parent": "id_modello_test_vr",
-          "son": "id_modello_test_vr"
-        }
-      ],
-     "label": "Domande",
-            "translate": "RESOURCES.domandelabel",
-      "type": "tableForm"
-    },
-    {
-      "entryKey": "domande_sezioni",
-      "inputEvents": [
-        {
-          "actionType": "show",
-          "eventName": "flag_sezioni",
-          "condition": "equalTo",
-          "values": [
-            "true"
-          ]
-        }
-      ],
-      "isHidden": true,
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_modello_test",
-          "son": "id_modello_test"
-        },
-        {
-          "parent": "id_modello_test_vr",
-          "son": "id_modello_test_vr"
-        }
-      ],
-      "label": "Domande - Sezioni",
-      "type": "table"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text",
-        "value": "DEMO"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_modello_test_vr",
-      "label": "ID Versione"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice",
-      "label": "Codice",
-      "translate": "RESOURCES.code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-       "label": "Titolo",
-            "translate": "RESOURCES.title"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "centro_gest",
-       "label": "Centro Gestionale",
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
-    }
-  ]
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo",
+            "translate": "RESOURCES.title",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_sezioni",
+            "label": "Gestione domande a sezioni",
+            "outputEvent": {
+                "eventName": "flag_sezioni",
+                "eventTrigger": "change"
+            },
+            "readOnly": false,
+            "translate": "RESOURCES.flag_sezioni"
+        }
+    ],
+    "origin": "entrasp.modelli_test",
+    "subTables": [
+        {
+            "entryKey": "domande",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "flag_sezioni",
+                    "condition": "equalTo",
+                    "values": [
+                        "false"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                }
+            ],
+            "label": "Domande",
+            "translate": "RESOURCES.domandelabel",
+            "type": "tableForm"
+        },
+        {
+            "entryKey": "domande_sezioni",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "flag_sezioni",
+                    "condition": "equalTo",
+                    "values": [
+                        "true"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                }
+            ],
+            "label": "Domande - Sezioni",
+            "type": "table"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text",
+                "value": "DEMO"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "ID Versione",
+            "translate": "RESOURCES.id_modello_test_vr"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "ID",
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo",
+            "translate": "RESOURCES.title"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
+        }
+    ]
 }

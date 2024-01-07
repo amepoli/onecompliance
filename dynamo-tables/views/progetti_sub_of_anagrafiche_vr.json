@@ -1,25 +1,25 @@
 {
-	"$schema": "../views.schema.json",
-	"inheritsFrom": "progetti",
-	"entryKey": "progetti_sub_of_anagrafiche_vr",
-	"predefinedQueries": [
-		{
-			"operation": "selectForm",
-			"type": "preProcessing",
-			"queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
-		},
-		{
-			"queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
-			"type": "postProcessing",
-			"operation": "selectForm"
-		},
-		{
-			"operation": "selectTable",
-			"queryString": "select *, entrasp.centri_gestionali_descr(prg.codice_part, prg.id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO', stato) as stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) as descr_cliente from entrasp.progetti prg where prg.codice_azienda='€global_codice_azienda€' and id_cliente=$id_cliente$",
-			"type": "main"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "limit 20"
-	}
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "progetti",
+    "entryKey": "progetti_sub_of_anagrafiche_vr",
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "update entrasp.progetti snd set codice_part='€global_codice_part€' WHERE snd.codice_azienda=$codice_azienda$ AND id_progetto=$id_progetto$;"
+        },
+        {
+            "queryString": "select case when count(id_fase)=0 and (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)>0 then 'C' when (select  count(id_fase)  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$)=0 then 'P' else 'A' end as stato  from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$ and stato='P'",
+            "type": "postProcessing",
+            "operation": "selectForm"
+        },
+        {
+            "operation": "selectTable",
+            "queryString": "select *, entrasp.centri_gestionali_descr(prg.codice_part, prg.id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO', stato) as stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) as descr_cliente from entrasp.progetti prg where prg.codice_azienda='€global_codice_azienda€' and id_cliente=$id_cliente$",
+            "type": "main"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "limit 20"
+    }
 }

@@ -1,317 +1,322 @@
 {
-  "$schema": "../views.schema.json",
-  "dashboards": [
-    {
-      "width": "900px",
-      "height": "310px",
-      "dashboardHeight": "330",
-      "dashboardWidth": "400",
-      "title": "DASH STATO RETTIFICATO SONDAGGI",
-      "conditions": [
+    "$schema": "../views.schema.json",
+    "dashboards": [
         {
-          "format": {
-            "backgroundColor": "white",
-            "color": "blak",
-            "fontFamily": "Arial",
-            "fontSize": "11px"
-          },
-          "formula": "!isNaN(#value)"
-        }
-      ],
-      "dataSource": {
-        "data": []
-      },
-      "labels": {
-        "colorsQuery": {
-          "query": "select background_color as color from entrasp.transcodifiche where tipo_dato='STATO_RETTIFICATO' order by transcodifica",
-          "type": "column"
-        },
-        "columnsQuery": {
-          "key": "stato_rettificato",
-          "query": "select distinct entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO', codice) as label from entrasp.transcodifiche order by label"
-        },
-        "rowsQuery": {
-          "key": "centro_gest",
-          "query": "select distinct entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as label from entrasp.sondaggi"
-        }
-      },
-      "localization": "it",
-      "options": {
-        "drillThrough": false,
-        "grid": {
-          "showGrandTotals": "rows",
-          "showHeaders": false
-        }
-      },
-      "slice": {
-        "reportFilters": [
-          {
-            "uniqueName": "anno_esecuzione"
-          },
-          {
-            "uniqueName": "mese_esecuzione"
-          }
-        ],
-        "columns": [
-          {
-            "uniqueName": "Measures"
-          },
-          {
-            "uniqueName": "Stato_rettificato"
-          }
-        ],
-        "measures": [
-          {
-            "aggregation": "count",
-            "availableAggregations": [
-              "count",
-              "distinctcount"
+            "width": "900px",
+            "height": "310px",
+            "dashboardHeight": "330",
+            "dashboardWidth": "400",
+            "title": "DASH STATO RETTIFICATO SONDAGGI",
+            "conditions": [
+                {
+                    "format": {
+                        "backgroundColor": "white",
+                        "color": "blak",
+                        "fontFamily": "Arial",
+                        "fontSize": "11px"
+                    },
+                    "formula": "!isNaN(#value)"
+                }
             ],
-            "uniqueName": "Stato_rettificato"
-          }
-        ],
-        "rows": [
-          {
-            "filter": {
-              "members": [],
-              "negation": true
+            "dataSource": {
+                "data": []
             },
-            "uniqueName": "Centro_gest"
-          }
-        ]
-      }
-    },
-    {
-      "width": "900px",
-      "height": "310px",
-      "dashboardHeight": "300",
-      "dashboardWidth": "400",
-      "title": "DASH GIUDIZIO SONDAGGI",
-      "conditions": [
+            "labels": {
+                "colorsQuery": {
+                    "query": "select background_color as color from entrasp.transcodifiche where tipo_dato='STATO_RETTIFICATO' order by transcodifica",
+                    "type": "column"
+                },
+                "columnsQuery": {
+                    "key": "stato_rettificato",
+                    "query": "select distinct entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO', codice) as label from entrasp.transcodifiche order by label"
+                },
+                "rowsQuery": {
+                    "key": "centro_gest",
+                    "query": "select distinct entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as label from entrasp.sondaggi"
+                }
+            },
+            "localization": "it",
+            "options": {
+                "drillThrough": false,
+                "grid": {
+                    "showGrandTotals": "rows",
+                    "showHeaders": false
+                }
+            },
+            "slice": {
+                "reportFilters": [
+                    {
+                        "uniqueName": "anno_esecuzione"
+                    },
+                    {
+                        "uniqueName": "mese_esecuzione"
+                    }
+                ],
+                "columns": [
+                    {
+                        "uniqueName": "Measures"
+                    },
+                    {
+                        "uniqueName": "Stato_rettificato"
+                    }
+                ],
+                "measures": [
+                    {
+                        "aggregation": "count",
+                        "availableAggregations": [
+                            "count",
+                            "distinctcount"
+                        ],
+                        "uniqueName": "Stato_rettificato"
+                    }
+                ],
+                "rows": [
+                    {
+                        "filter": {
+                            "members": [],
+                            "negation": true
+                        },
+                        "uniqueName": "Centro_gest"
+                    }
+                ]
+            }
+        },
         {
-          "format": {
-            "backgroundColor": "white",
-            "color": "blak",
-            "fontFamily": "Arial",
-            "fontSize": "11px"
-          },
-          "formula": "!isNaN(#value)"
-        }
-      ],
-      "dataSource": {
-        "data": []
-      },
-      "labels": {
-        "colorsQuery": {
-          "query": "select codice_colore as color from entrasp.tipi_modelli_test_risultati_righe where codice_azienda=$codice_azienda$ order by prog_riga",
-          "type": "column"
-        },
-        "columnsQuery": {
-          "key": "giudizio",
-          "query": "select descrizione as label from entrasp.tipi_modelli_test_risultati_righe where codice_azienda=$codice_azienda$ order by prog_riga"
-        },
-        "rowsQuery": {
-          "key": "id_modello_test",
-          "query": "select distinct id_modello_test as label from entrasp.sondaggi where codice_azienda='FININTSGR'"
-        }
-      },
-      "localization": "it",
-      "options": {
-        "drillThrough": false,
-        "grid": {
-          "showGrandTotals": "rows",
-          "showHeaders": false
-        }
-      },
-      "slice": {
-        "reportFilters": [
-          {
-            "uniqueName": "anno_esecuzione"
-          },
-          {
-            "uniqueName": "mese_esecuzione"
-          }
-        ],
-        "columns": [
-          {
-            "uniqueName": "Measures"
-          },
-          {
-            "uniqueName": "Giudizio"
-          }
-        ],
-        "measures": [
-          {
-            "aggregation": "count",
-            "availableAggregations": [
-              "count",
-              "distinctcount"
+            "width": "900px",
+            "height": "310px",
+            "dashboardHeight": "300",
+            "dashboardWidth": "400",
+            "title": "DASH GIUDIZIO SONDAGGI",
+            "conditions": [
+                {
+                    "format": {
+                        "backgroundColor": "white",
+                        "color": "blak",
+                        "fontFamily": "Arial",
+                        "fontSize": "11px"
+                    },
+                    "formula": "!isNaN(#value)"
+                }
             ],
-            "uniqueName": "Giudizio"
-          }
-        ],
-        "rows": [
-          {
-            "filter": {
-              "members": [],
-              "negation": true
+            "dataSource": {
+                "data": []
             },
-            "uniqueName": "Id_modello_test"
-          }
-        ]
-      }
+            "labels": {
+                "colorsQuery": {
+                    "query": "select codice_colore as color from entrasp.tipi_modelli_test_risultati_righe where codice_azienda=$codice_azienda$ order by prog_riga",
+                    "type": "column"
+                },
+                "columnsQuery": {
+                    "key": "giudizio",
+                    "query": "select descrizione as label from entrasp.tipi_modelli_test_risultati_righe where codice_azienda=$codice_azienda$ order by prog_riga"
+                },
+                "rowsQuery": {
+                    "key": "id_modello_test",
+                    "query": "select distinct id_modello_test as label from entrasp.sondaggi where codice_azienda='FININTSGR'"
+                }
+            },
+            "localization": "it",
+            "options": {
+                "drillThrough": false,
+                "grid": {
+                    "showGrandTotals": "rows",
+                    "showHeaders": false
+                }
+            },
+            "slice": {
+                "reportFilters": [
+                    {
+                        "uniqueName": "anno_esecuzione"
+                    },
+                    {
+                        "uniqueName": "mese_esecuzione"
+                    }
+                ],
+                "columns": [
+                    {
+                        "uniqueName": "Measures"
+                    },
+                    {
+                        "uniqueName": "Giudizio"
+                    }
+                ],
+                "measures": [
+                    {
+                        "aggregation": "count",
+                        "availableAggregations": [
+                            "count",
+                            "distinctcount"
+                        ],
+                        "uniqueName": "Giudizio"
+                    }
+                ],
+                "rows": [
+                    {
+                        "filter": {
+                            "members": [],
+                            "negation": true
+                        },
+                        "uniqueName": "Id_modello_test"
+                    }
+                ]
+            }
+        }
+    ],
+    "inheritsFrom": "sondaggi",
+    "entryKey": "dashboard_sondaggi",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select codice_azienda, id_modello_test, giudizio, id_sondaggio, titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO',entrasp.stato_rettificato(data_prevista,stato)) as stato_rettificato from entrasp.sondaggi where codice_azienda=$codice_azienda$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "select entrasp.aggiorna_sondaggi_pre_loading($codice_azienda$, $id_sondaggio$);"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "select round(ris_percentuale,2) as ris_percentuale, ss.giudizio, ss.punteggio_description from entrasp.sondaggi_somministrati ss where codice_azienda=$codice_azienda$ and id_somministrazione=£id_somministrazione£;"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "delete",
+            "type": "main",
+            "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "anno_esecuzione",
+            "queryFunct": "date_part('year', data_esecuzione)",
+            "label": "Anno Esec.",
+            "translate": "RESOURCES.anno_esecuzione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "mese_esecuzione",
+            "queryFunct": "date_part('month', data_esecuzione)",
+            "label": "Mese Esec.",
+            "translate": "RESOURCES.mese_esecuzione"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_esecuzione",
+            "label": "Data Esec.",
+            "translate": "RESOURCES.data_esecuzione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "ID Sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
+            "translate": "RESOURCES.id_check_template",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo",
+            "translate": "RESOURCES.title",
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "queryFunct": "coalesce(entrasp.centri_gestionali_descr(codice_part, id_centro_gest), 'Non specificato')",
+            "label": "centro_gest",
+            "width": "15%",
+            "translate": "RESOURCES.centro_gest"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato_rettificato",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO', entrasp.stato_rettificato(data_prevista,stato))",
+            "label": "stato_rettificato",
+            "width": "10%",
+            "translate": "RESOURCES.stato_rettificato"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio",
+            "queryFunct": "entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da, codice_azienda)",
+            "label": "Giudizio",
+            "translate": "RESOURCES.judgment",
+            "width": "10%"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_sondaggio"
     }
-  ],
-  "inheritsFrom": "sondaggi",
-  "entryKey": "dashboard_sondaggi",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select codice_azienda, id_modello_test, giudizio, id_sondaggio, titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO',entrasp.stato_rettificato(data_prevista,stato)) as stato_rettificato from entrasp.sondaggi where codice_azienda=$codice_azienda$"
-    },
-    {
-      "operation": "selectForm",
-      "type": "preProcessing",
-      "queryString": "select entrasp.aggiorna_sondaggi_pre_loading($codice_azienda$, $id_sondaggio$);"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "select round(ris_percentuale,2) as ris_percentuale, ss.giudizio, ss.punteggio_description from entrasp.sondaggi_somministrati ss where codice_azienda=$codice_azienda$ and id_somministrazione=£id_somministrazione£;"
-    },
-    {
-      "operation": "selectForm",
-      "type": "postProcessing",
-      "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
-    },
-    {
-      "operation": "delete",
-      "type": "main",
-      "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "anno_esecuzione",
-      "queryFunct": "date_part('year', data_esecuzione)",
-      "label": "Anno Esec."
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "mese_esecuzione",
-      "queryFunct": "date_part('month', data_esecuzione)",
-      "label": "Mese Esec."
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_esecuzione",
-      "label": "Data Esec."
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "label": "ID Sondaggio",
-      "translate": "RESOURCES.id_survey",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_modello_test",
-      "label": "id_modello_test",
-      "translate": "RESOURCES.id_check_template",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "label": "Titolo",
-      "translate": "RESOURCES.title",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "centro_gest",
-      "queryFunct": "coalesce(entrasp.centri_gestionali_descr(codice_part, id_centro_gest), 'Non specificato')",
-      "label": "centro_gest",
-      "width": "15%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato",
-      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato_rettificato",
-      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_RETTIFICATO', entrasp.stato_rettificato(data_prevista,stato))",
-      "label": "stato_rettificato",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "giudizio",
-      "queryFunct": "entrasp.modelli_test_risultati_righe_descr(entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio), pct_da, codice_azienda)",
-      "label": "Giudizio",
-      "translate": "RESOURCES.judgment",
-      "width": "10%"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by id_sondaggio"
-  }
 }

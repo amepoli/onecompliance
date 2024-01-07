@@ -1,651 +1,679 @@
 {
-  "$schema": "../views.schema.json",
-  "origin": "entrasp.sondaggi snd",
-  "entryKey": "sondaggi_ulteriori_elementi",
-  "businessObjectName": "sondaggi",
-  "inheritsFrom": "sondaggi",
-  "predefinedQueries": [
-    {
-      "operation": "selectForm",
-      "queryString": "update entrasp.sondaggi set metodologia_presentazione_risultati=entrasp.metodologia_risultati(metodologia_presentazione_risultati) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "stopEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
-    },
-    {
-      "operation": "startEvent",
-      "type": "main",
-      "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, '$codice_azienda$'::varchar) as play_time_report"
-    }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "delete",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "attachments",
-      "viewType": "form"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",	  "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "label": "ID",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "user_upd",
-      "label": "",
-      "readOnly": false,
-      "sameOrigin": true,
-      "insertUpdateFunct": "SELECT '€global_username€'"
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Inserire una data pianificata di esecuzione!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_prevista",
-      "label": "Prevista esecuzione",
-            "translate": "RESOURCES.expected_date",
-      "newLine": false,
-      "size": 2,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_rilevazione_da",
-      "label": "Eseguito dal",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_rilevazione_a",
-      "label": "al",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_riferimento_da",
-      "label": "Riferimento dal",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_riferimento_a",
-      "label": "al",
-      "newLine": true,
-      "readOnly": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "sameOrigin": false,
-      "key": "data_richiesta_doc",
-      "label": "Dt. richiesta doc.",
-      "tooltip": "Data in cui è stata richiesta alla controparte la documentazione strumentale all'attività/verifica",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.6
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "sameOrigin": false,
-      "key": "data_ricezione_doc",
-      "label": "Dt. ricez. doc.",
-      "tooltip": "Data in cui è stata ricevuta dalla controparte la documentazione strumentale all'attività/verifica",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.6
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_esecuzione",
-      "label": "Data esecuzione",
-      "translate": "RESOURCES.execution_date",
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.sondaggi snd",
+    "entryKey": "sondaggi_ulteriori_elementi",
+    "businessObjectName": "sondaggi",
+    "inheritsFrom": "sondaggi",
+    "predefinedQueries": [
         {
-          "eventName": "onSaveSondaggio",
-          "actionType": "query",
-          "queryFunct": "select 1",
-          "condition": "none",
-          "values": [],
-          "outputEventWhenComplete": "data_esecuzione_update"
+            "operation": "selectForm",
+            "queryString": "update entrasp.sondaggi set metodologia_presentazione_risultati=entrasp.metodologia_risultati(metodologia_presentazione_risultati) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$;",
+            "type": "preProcessing"
         },
         {
-          "eventName": "data_esecuzione_update",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "update entrasp.sondaggi_somministrati ss set data_esecuzione=coalesce(ss.data_esecuzione,snd.data_esecuzione) from entrasp.sondaggi snd where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'sondaggi', $id_sondaggio$, '$codice_azienda$'::varchar) as play_time_report"
         }
-      ],
-      "newLine": false,
-      "size": 1.6,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "sameOrigin": false,
-      "isPrimary": false,
-      "key": "data_invio_rendiconto",
-      "label": "Dt invio rend.",
-      "tooltip": "Data in cui è stata inviata alla controparte la rendicontazione finale dell'attività svolta",
-      "newLine": false,
-      "size": 1.6,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_scadenza",
-      "label": "Scadenza sondaggio",
-      "newLine": false,
-      "size": 1.6,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Inserire ultimo giorno esercizio di competenza",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_comp",
-      "label": "Competenza",
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "delete",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "ID",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.id_sondaggio"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "user_upd",
+            "label": "",
+            "readOnly": false,
+            "sameOrigin": true,
+            "insertUpdateFunct": "SELECT '€global_username€'",
+            "translate": "RESOURCES.user_upd"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire una data pianificata di esecuzione!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_prevista",
+            "label": "Prevista esecuzione",
+            "translate": "RESOURCES.expected_date",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rilevazione_da",
+            "label": "Eseguito dal",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.data_rilevazione_da"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rilevazione_a",
+            "label": "al",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.data_rilevazione_a"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_riferimento_da",
+            "label": "Riferimento dal",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.data_riferimento_da"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_riferimento_a",
+            "label": "al",
+            "newLine": true,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.data_riferimento_a"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "data_richiesta_doc",
+            "label": "Dt. richiesta doc.",
+            "tooltip": "Data in cui è stata richiesta alla controparte la documentazione strumentale all'attività/verifica",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.6,
+            "translate": "RESOURCES.data_richiesta_doc"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "data_ricezione_doc",
+            "label": "Dt. ricez. doc.",
+            "tooltip": "Data in cui è stata ricevuta dalla controparte la documentazione strumentale all'attività/verifica",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.6,
+            "translate": "RESOURCES.data_ricezione_doc"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_esecuzione",
+            "label": "Data esecuzione",
+            "translate": "RESOURCES.execution_date",
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSondaggio",
+                    "actionType": "query",
+                    "queryFunct": "select 1",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "data_esecuzione_update"
+                },
+                {
+                    "eventName": "data_esecuzione_update",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi_somministrati ss set data_esecuzione=coalesce(ss.data_esecuzione,snd.data_esecuzione) from entrasp.sondaggi snd where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+                }
+            ],
+            "newLine": false,
+            "size": 1.6,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "sameOrigin": false,
+            "isPrimary": false,
+            "key": "data_invio_rendiconto",
+            "label": "Dt invio rend.",
+            "tooltip": "Data in cui è stata inviata alla controparte la rendicontazione finale dell'attività svolta",
+            "newLine": false,
+            "size": 1.6,
+            "readOnly": false,
+            "translate": "RESOURCES.data_invio_rendiconto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_scadenza",
+            "label": "Scadenza sondaggio",
+            "newLine": false,
+            "size": 1.6,
+            "readOnly": false,
+            "translate": "RESOURCES.data_scadenza"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire ultimo giorno esercizio di competenza",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_comp",
+            "label": "Competenza",
             "translate": "RESOURCES.competence",
-      "newLine": true,
-      "size": 1.7,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "selezione_campione",
-      "label": "Selezione Campione",
-      "newLine": true,
-      "textareaHeight": "L",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "documentazione_analizzata",
-      "label": "Documentazione Analizzata",
-      "newLine": false,
-      "textareaHeight": "L",
-      "readOnly": false,
-      "size": 8.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "update_doc",
-      "buttonIcon": "refresh",
-      "label": "Carica e aggiorna",
-      "newLine": true,
-      "outputEvent": {
-        "eventName": "update_doc_analizzata",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
+            "newLine": true,
+            "size": 1.7,
+            "readOnly": false
+        },
         {
-          "eventName": "update_doc_analizzata",
-          "actionType": "query",
-          "queryFunct": "SELECT entrasp.sondaggio_carica_e_aggiorna($codice_azienda$,$id_sondaggio$,'€global_username€')",
-          "condition": "none",
-          "values": [],
-          "outputEventWhenComplete": "survey_reload"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "metodologia_presentazione_risultati",
-      "label": "Metodologia di presentazione dei risultati",
-      "newLine": true,
-      "textareaHeight": "L",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "azione_richiesta",
-      "label": "Azione richiesta alla funzione auditata",
-      "newLine": true,
-      "textareaHeight": "L",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "link",
-      "label": "Link dove caricare la documentazione",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "select id_centro_gest as id, id_centro_gest||'-'||descrizione as name from entrasp.centri_gestionali where codice_part='€global_codice_part€'",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest_verificato",
-      "size": 2,
-      "label": "Centro gestionale da verificare",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "input_per_verifica",
-      "size": 8.5,
-      "label": "Input per verifica con intelligenza artificiale",
-      "tooltip": "Input per intelligenza artificiale",
-      "newLine": false,
-      "sameOrigin": false,
-      "readOnly": false,
-      "inputEvents": [
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "selezione_campione",
+            "label": "Selezione Campione",
+            "newLine": true,
+            "textareaHeight": "L",
+            "readOnly": false,
+            "translate": "RESOURCES.selezione_campione"
+        },
         {
-          "eventName": "input_chat_pdf",
-          "actionType": "query",
-          "queryFunct": "SELECT entrasp.input_ai_per_verifica($codice_azienda$,$id_sondaggio$) as input_per_verifica",
-          "condition": "none",
-          "values": []
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "documentazione_analizzata",
+            "label": "Documentazione Analizzata",
+            "newLine": false,
+            "textareaHeight": "L",
+            "readOnly": false,
+            "size": 8.5,
+            "translate": "RESOURCES.documentazione_analizzata"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "update_doc",
+            "buttonIcon": "refresh",
+            "label": "Carica e aggiorna",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "update_doc_analizzata",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "update_doc_analizzata",
+                    "actionType": "query",
+                    "queryFunct": "SELECT entrasp.sondaggio_carica_e_aggiorna($codice_azienda$,$id_sondaggio$,'€global_username€')",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "survey_reload"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5,
+            "translate": "RESOURCES.update_doc"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "metodologia_presentazione_risultati",
+            "label": "Metodologia di presentazione dei risultati",
+            "newLine": true,
+            "textareaHeight": "L",
+            "readOnly": false,
+            "translate": "RESOURCES.metodologia_presentazione_risultati"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "azione_richiesta",
+            "label": "Azione richiesta alla funzione auditata",
+            "newLine": true,
+            "textareaHeight": "L",
+            "readOnly": false,
+            "translate": "RESOURCES.azione_richiesta"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "link",
+            "label": "Link dove caricare la documentazione",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.link"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_centro_gest as id, id_centro_gest||'-'||descrizione as name from entrasp.centri_gestionali where codice_part='€global_codice_part€'",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest_verificato",
+            "size": 2,
+            "label": "Centro gestionale da verificare",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.id_centro_gest_verificato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "input_per_verifica",
+            "size": 8.5,
+            "label": "Input per verifica con intelligenza artificiale",
+            "tooltip": "Input per intelligenza artificiale",
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": false,
+            "inputEvents": [
+                {
+                    "eventName": "input_chat_pdf",
+                    "actionType": "query",
+                    "queryFunct": "SELECT entrasp.input_ai_per_verifica($codice_azienda$,$id_sondaggio$) as input_per_verifica",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "translate": "RESOURCES.input_per_verifica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "domande_per_ai",
+            "label": "Input per AI",
+            "buttonIcon": "psychology",
+            "tooltip": "Input per intelligenza Chat PDF",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "input_chat_pdf",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5,
+            "translate": "RESOURCES.domande_per_ai"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "invia_mail",
+            "buttonIcon": "email",
+            "label": "Invia mail",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "send_email",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.invia_mail"
         }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "domande_per_ai",
-      "label": "Input per AI",
-      "buttonIcon": "psychology",
-      "tooltip": "Input per intelligenza Chat PDF",
-      "newLine": true,
-      "outputEvent": {
-        "eventName": "input_chat_pdf",
-        "eventTrigger": "press"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "invia_mail",
-      "buttonIcon": "email",
-      "label": "Invia mail",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "send_email",
-        "eventTrigger": "press"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
             "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "sondaggi",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_sondaggio",
-            "destination": "id_sondaggio"
-          }
-        ]
-      },
-      "label": "#",
-      "width": "5%",
-      "style": [
+        },
         {
-          "value": "*",
-          "background_color": "lightblue",
-          "text_align": "center",
-          "font_weight": "599",
-          "font_size": "medium"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "width": "25%",
-       "label": "Titolo",
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "sondaggi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "label": "#",
+            "width": "5%",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "599",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.id_sondaggio"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "width": "25%",
+            "label": "Titolo",
             "translate": "RESOURCES.title"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_comp",
-      "label": "Data Competenza",
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_comp",
+            "label": "Data Competenza",
             "translate": "RESOURCES.reference_date",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_prevista",
-      "label": "Data Prevista",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_prevista",
+            "label": "Data Prevista",
             "translate": "RESOURCES.expected_date",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_esecuzione",
-      "label": "Data esecuzione",
-      "translate": "RESOURCES.execution_date",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_richiesta_doc",
-      "label": "Dt rich.doc.",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_ricezione_doc",
-      "label": "Data ric.doc.",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_riferimento_da",
-      "label": "Data rif.da",
-      "width": "6%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_riferimento_a",
-      "label": "Data rif. a",
-      "width": "6%"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "tipi_allegati_sub_of_sondaggi_ulteriori_elementi",
-      "isHidden": false,
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "width": "6%"
         },
         {
-          "parent": "id_sondaggio",
-          "son": "id_sondaggio"
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_esecuzione",
+            "label": "Data esecuzione",
+            "translate": "RESOURCES.execution_date",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_richiesta_doc",
+            "label": "Dt rich.doc.",
+            "width": "6%",
+            "translate": "RESOURCES.data_richiesta_doc"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_ricezione_doc",
+            "label": "Data ric.doc.",
+            "width": "6%",
+            "translate": "RESOURCES.data_ricezione_doc"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_riferimento_da",
+            "label": "Data rif.da",
+            "width": "6%",
+            "translate": "RESOURCES.data_riferimento_da"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_riferimento_a",
+            "label": "Data rif. a",
+            "width": "6%",
+            "translate": "RESOURCES.data_riferimento_a"
         }
-      ],
-      "label": "Documenti necessari per la verifica",
+    ],
+    "subTables": [
+        {
+            "entryKey": "tipi_allegati_sub_of_sondaggi_ulteriori_elementi",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Documenti necessari per la verifica",
             "translate": "RESOURCES.documenti_necessari"
-    },
-    {
-      "entryKey": "segnalazione_associata_sub_of_sondaggi_ulteriori_elementi",
-      "type": "table",
-      "label": "Richieste documentazione",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
         },
         {
-          "parent": "id_sondaggio",
-          "son": "id_sondaggio"
+            "entryKey": "segnalazione_associata_sub_of_sondaggi_ulteriori_elementi",
+            "type": "table",
+            "label": "Richieste documentazione",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ]
         }
-      ]
+    ],
+    "inputEvents": [
+        {
+            "actionType": "navigate",
+            "eventName": "send_email",
+            "actionTarget": {
+                "name": "sondaggi_send_email",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            }
+        },
+        {
+            "actionType": "reload",
+            "eventName": "survey_reload"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_sondaggio desc limit 100"
     }
-  ],
-  "inputEvents": [
-    {
-      "actionType": "navigate",
-      "eventName": "send_email",
-      "actionTarget": {
-        "name": "sondaggi_send_email",
-        "type": "form",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_sondaggio",
-            "destination": "id_sondaggio"
-          }
-        ]
-      }
-    },
-    {
-      "actionType": "reload",
-      "eventName": "survey_reload"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by id_sondaggio desc limit 100"
-  }
 }

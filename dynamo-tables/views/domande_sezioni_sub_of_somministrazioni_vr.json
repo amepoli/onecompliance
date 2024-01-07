@@ -1,480 +1,496 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "domande_sezioni_sub_of_somministrazioni_vr",
-  "origin": "entrasp.sondaggi_somministrati_risultati_sezioni_vr",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select ssrs.sezione_completata, ssrs.id_somministrazione_vr, ssrs.pct_risultato_ottenuto_calcolato_ponderato, round(ssrs.punteggio_ottenuto,2) as punteggio, pct_risultato_ottenuto_calcolato, ds.peso as pesosezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi_somministrati_risultati_sezioni_vr ssrs inner join  entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$ and ssrs.id_somministrazione_vr=$id_somministrazione_vr$ and ds.flag_non_applicabile_sezione='0';",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select '€global_username€' as username, id_somministrazione_vr, case when object_name = 'anagraficheId' then coalesce(ss.id_anagrafica, nullif(split_part(ss.object_key,'|',2),'')::numeric) else null end as id_anagrafica, round(ssrs.punteggio_ottenuto,2) as punteggio, round(ssrs.pct_risultato_ottenuto_calcolato, 2) as risultatopercsezione, ds.peso as pesosezione, ds.note as notesezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione, ss.object_description from entrasp.sondaggi_somministrati_risultati_sezioni_vr ssrs inner join entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr inner join entrasp.sondaggi_somministrati ss on ssrs.codice_azienda=ss.codice_azienda and ssrs.id_sondaggio=ss.id_sondaggio and ssrs.id_somministrazione=ss.id_somministrazione where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_modello_test=$id_modello_test$ and ssrs.id_modello_test_vr=$id_modello_test_vr$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$ and ssrs.id_somministrazione_vr=$id_somministrazione_vr$ and ssrs.id_sezione=$id_sezione$",
-      "type": "main"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "ID Modello di Test",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_modello_test_vr",
-    "label": "Versione",
-            "translate": "RESOURCES.version",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "label": "id_sondaggio",
-            "translate": "RESOURCES.id_survey",
-      "newLine": true,
-      "sameOrigin": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_somministrazione",
-       "label": "id_somministrazione",
-            "translate": "RESOURCES.id_administration",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_somministrazione_vr",
-      "label": "id_somministrazione_vr",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_sezione",
-      "label": "id_sezione",
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "domande_sezioni_sub_of_somministrazioni_vr",
+    "origin": "entrasp.sondaggi_somministrati_risultati_sezioni_vr",
+    "predefinedQueries": [
         {
-          "eventName": "onSave_domande_sezioni_sub",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": ""
+            "operation": "selectTable",
+            "queryString": "select ssrs.sezione_completata, ssrs.id_somministrazione_vr, ssrs.pct_risultato_ottenuto_calcolato_ponderato, round(ssrs.punteggio_ottenuto,2) as punteggio, pct_risultato_ottenuto_calcolato, ds.peso as pesosezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione from entrasp.sondaggi_somministrati_risultati_sezioni_vr ssrs inner join  entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$ and ssrs.id_somministrazione_vr=$id_somministrazione_vr$ and ds.flag_non_applicabile_sezione='0';",
+            "type": "main"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "select '€global_username€' as username, id_somministrazione_vr, case when object_name = 'anagraficheId' then coalesce(ss.id_anagrafica, nullif(split_part(ss.object_key,'|',2),'')::numeric) else null end as id_anagrafica, round(ssrs.punteggio_ottenuto,2) as punteggio, round(ssrs.pct_risultato_ottenuto_calcolato, 2) as risultatopercsezione, ds.peso as pesosezione, ds.note as notesezione, round(ssrs.pct_risultato_ottenuto_calcolato*ds.peso, 2), ssrs.codice_azienda, ssrs.id_somministrazione, ssrs.id_sondaggio, ssrs.id_modello_test, ssrs.id_modello_test_vr, ssrs.id_sezione, ds.ordinamento, ds.descrizione as descr_sezione, ss.object_description from entrasp.sondaggi_somministrati_risultati_sezioni_vr ssrs inner join entrasp.domande_sezioni ds on ssrs.id_sezione=ds.id_sezione and ssrs.codice_azienda=ds.codice_azienda and ssrs.id_modello_test=ds.id_modello_test and ssrs.id_modello_test_vr=ds.id_modello_test_vr inner join entrasp.sondaggi_somministrati ss on ssrs.codice_azienda=ss.codice_azienda and ssrs.id_sondaggio=ss.id_sondaggio and ssrs.id_somministrazione=ss.id_somministrazione where ssrs.codice_azienda=$codice_azienda$ and ssrs.id_modello_test=$id_modello_test$ and ssrs.id_modello_test_vr=$id_modello_test_vr$ and ssrs.id_sondaggio=$id_sondaggio$ and ssrs.id_somministrazione=$id_somministrazione$ and ssrs.id_somministrazione_vr=$id_somministrazione_vr$ and ssrs.id_sezione=$id_sezione$",
+            "type": "main"
         }
-      ],
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "Ord.",
-      "translate": "RESOURCES.ordinamento",
-      "newLine": false,
-      "sameOrigin": false,
-      "readOnly": true,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_sezione",
-      "label": "Sezione",
-      "translate": "RESOURCES.id_sezione",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": true,
-      "outputEvent": {
-        "eventName": "sezione_dettaglio",
-        "eventTrigger": "press"
-      },
-      "size": 3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "pesosezione",
-      "label": "Peso sezione",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": true,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "risultatopercsezione",
-      "label": "Punteggio %",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": true,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "pct_risultato_ottenuto_calcolato_ponderato",
-      "label": "Punteggio % pesato sezione",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "object_description",
-     "label": "Verifica su/di",
-            "translate": "RESOURCES.verifica_su",
-      "newLine": false,
-      "readOnly": true,
-      "size": 3.4
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "menu",
-        "menuOptions": [
-          {
-            "icon": "speaker_notes_off",
-            "label": "Rispondi non applicabile",
-            "translate": "RESOURCES.answer_not_applicable_to_all",
-            "outputEventName": "risp_non_applicabile"
-          }
-        ]
-      },
-      "inputEvents": [
+    ],
+    "form_keys": [
         {
-          "eventName": "risp_non_applicabile",
-          "actionType": "show_message",
-          "condition": "none",
-          "successMessage": "Inserite risposte non applicabili",
-          "values": [],
-          "message": {
-            "messageText": "Rispondere 'Non Applicicabile' a tutte le domande che lo prevedono?",
-            "actionOnNo": {
-              "actionType": "query",
-              "queryFunct": "select 1"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
             },
-            "actionOnYes": {
-              "actionType": "query",
-              "queryFunct": "SELECT entrasp.verifica_non_applicabile($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_sezione$)"
-            }
-          },
-          "outputEventWhenComplete": "sezioni_reload"
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "ID Modello di Test",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
+            "translate": "RESOURCES.version",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
+            "translate": "RESOURCES.id_administration",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_somministrazione_vr",
+            "label": "id_somministrazione_vr",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_somministrazione_vr"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_sezione",
+            "label": "id_sezione",
+            "inputEvents": [
+                {
+                    "eventName": "onSave_domande_sezioni_sub",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": ""
+                }
+            ],
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_sezione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ord.",
+            "translate": "RESOURCES.ordinamento",
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": true,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_sezione",
+            "label": "Sezione",
+            "translate": "RESOURCES.id_sezione",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "outputEvent": {
+                "eventName": "sezione_dettaglio",
+                "eventTrigger": "press"
+            },
+            "size": 3
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "pesosezione",
+            "label": "Peso sezione",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "size": 1,
+            "translate": "RESOURCES.pesosezione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risultatopercsezione",
+            "label": "Punteggio %",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "size": 1,
+            "translate": "RESOURCES.risultatopercsezione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "pct_risultato_ottenuto_calcolato_ponderato",
+            "label": "Punteggio % pesato sezione",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.pct_risultato_ottenuto_calcolato_ponderato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "object_description",
+            "label": "Verifica su/di",
+            "translate": "RESOURCES.verifica_su",
+            "newLine": false,
+            "readOnly": true,
+            "size": 3.4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "speaker_notes_off",
+                        "label": "Rispondi non applicabile",
+                        "translate": "RESOURCES.answer_not_applicable_to_all",
+                        "outputEventName": "risp_non_applicabile"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "risp_non_applicabile",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "successMessage": "Inserite risposte non applicabili",
+                    "values": [],
+                    "message": {
+                        "messageText": "Rispondere 'Non Applicicabile' a tutte le domande che lo prevedono?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "SELECT entrasp.verifica_non_applicabile($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_sezione$)"
+                        }
+                    },
+                    "outputEventWhenComplete": "sezioni_reload"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "sezioni_actions",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "size": 0.6
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "username",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "notesezione",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true
         }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "more_vert",
-      "key": "sezioni_actions",
-      "label": "void",
-     	"translate": "RESOURCES.void",
-      "newLine": false,
-      "readOnly": true,
-      "sameOrigin": false,
-      "size": 0.6
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica",
-      "label": "void",
-     	"translate": "RESOURCES.void",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "username",
-      "label": "void",
-     	"translate": "RESOURCES.void",
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "notesezione",
-        "label": "Note",
-      "translate": "RESOURCES.notes",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": true
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_sezione",
-      "label": "ID Sezione"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "ID Modello di Test"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_modello_test_vr",
-    "label": "Versione",
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_sezione",
+            "label": "ID Sezione",
+            "translate": "RESOURCES.id_sezione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "ID Modello di Test",
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
             "translate": "RESOURCES.version"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "label": "id_sondaggio",
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
             "translate": "RESOURCES.id_survey"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_somministrazione",
-       "label": "id_somministrazione",
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
             "translate": "RESOURCES.id_administration"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_somministrazione_vr",
-      "label": "id_somministrazione_vr"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "N.",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_sezione",
-      "label": "Sezione",
-      "translate": "RESOURCES.id_sezione",
-      "width": "40%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "pct_risultato_ottenuto_calcolato",
-      "label": "Risultato sez. %",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "sezione_completata",
-      "label": "Sezione Completa",
-      "style": [
+        },
         {
-          "value": "Completo",
-          "font_color": "green",
-          "font_weight": "500"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_somministrazione_vr",
+            "label": "id_somministrazione_vr",
+            "translate": "RESOURCES.id_somministrazione_vr"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "N.",
+            "width": "5%",
+            "translate": "RESOURCES.ordinamento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_sezione",
+            "label": "Sezione",
+            "translate": "RESOURCES.id_sezione",
+            "width": "40%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "pct_risultato_ottenuto_calcolato",
+            "label": "Risultato sez. %",
+            "width": "10%",
+            "translate": "RESOURCES.pct_risultato_ottenuto_calcolato"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sezione_completata",
+            "label": "Sezione Completa",
+            "style": [
+                {
+                    "value": "Completo",
+                    "font_color": "green",
+                    "font_weight": "500"
+                }
+            ],
+            "width": "10%",
+            "translate": "RESOURCES.sezione_completata"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "pesosezione",
+            "label": "Peso sezione",
+            "width": "10%",
+            "translate": "RESOURCES.pesosezione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "pct_risultato_ottenuto_calcolato_ponderato",
+            "label": "Risultato % ponderato",
+            "width": "15%",
+            "translate": "RESOURCES.pct_risultato_ottenuto_calcolato_ponderato"
         }
-      ],
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "pesosezione",
-      "label": "Peso sezione",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "pct_risultato_ottenuto_calcolato_ponderato",
-      "label": "Risultato % ponderato",
-      "width": "15%"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "domande_risposte_sezione_vr",
-      "keys": [
+    ],
+    "subTables": [
         {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_modello_test",
-          "son": "id_modello_test"
-        },
-        {
-          "parent": "id_modello_test_vr",
-          "son": "id_modello_test_vr"
-        },
-        {
-          "parent": "id_sondaggio",
-          "son": "id_sondaggio"
-        },
-        {
-          "parent": "id_somministrazione",
-          "son": "id_somministrazione"
-        },
-        {
-          "parent": "id_somministrazione_vr",
-          "son": "id_somministrazione_vr"
-        },
-        {
-          "parent": "id_sezione",
-          "son": "id_sezione"
+            "entryKey": "domande_risposte_sezione_vr",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                },
+                {
+                    "parent": "id_somministrazione_vr",
+                    "son": "id_somministrazione_vr"
+                },
+                {
+                    "parent": "id_sezione",
+                    "son": "id_sezione"
+                }
+            ],
+            "label": "Domande e Risposte",
+            "translate": "RESOURCES.questions_and_answers",
+            "type": "tableForm"
         }
-      ],
-      "label": "Domande e Risposte",
-      "translate": "RESOURCES.questions_and_answers",
-      "type": "tableForm"
-    }
-  ]
+    ]
 }

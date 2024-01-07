@@ -1,510 +1,526 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "cdms_risorse_oggetti",
-  "origin": "entrasp.cdms_risorse_oggetti",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select *, '€global_codice_part€' as codice_part from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$ and prog_revisione=$prog_revisione$ and (id_risorsa=$id_risorsa$ or id_risorsa=(select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))",
-      "type": "main"
-    }
-  ],
-  "businessObjectName": "cdms_risorse_oggetti",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_risorsa",
-      "label": "Id flusso informativo",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_anagrafica",
-      "label": "ID Anagrafica",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "label": "Id Progetto",
-      "translate": "RESOURCES.Project_ID",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stringa",
-      "label": "Download",
-      "isDownloadButton": true,
-      "newLine": false,
-      "size": 0.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "client_file_name",
-      "label": "Nome file",
-      "newLine": false,
-      "size": 5.5,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_allegato",
-      "label": "Tipo Documento",
-      "newLine": true,
-      "size": 4,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "autore",
-      "label": "Utente",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_creazione",
-      "label": "Data Creazione",
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_ultimo_accesso",
-      "label": "Data Ultimo Accesso",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "nome_business_object",
-      "size": 4,
-      "label": "Oggetto coll.",
-      "readOnly": true
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "6%",
-      "queryFunct": "select true",
-      "key": "delete_documents",
-      "label": "",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "cdms_risorse_oggetti",
+    "origin": "entrasp.cdms_risorse_oggetti",
+    "predefinedQueries": [
         {
-          "button_icon": "delete",
-          "value": "*"
+            "operation": "selectTable",
+            "queryString": "select *, '€global_codice_part€' as codice_part from entrasp.cdms_risorse_oggetti where codice_azienda=$codice_azienda$ and prog_revisione=$prog_revisione$ and (id_risorsa=$id_risorsa$ or id_risorsa=(select id_risorsa from entrasp.cdms_risorse_oggetti ro where ro.nome_business_object='cdms_risorse' and ro.codice_azienda=$codice_azienda$ and replace(ro.chiave, ro.codice_azienda||'^', '')::numeric=$id_risorsa$ limit 1))",
+            "type": "main"
         }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "documents",
-        "viewType": "form",
-        "query": "delete from entrasp.cdms_risorse_oggetti where id_risorsa=£id_risorsa£ and codice_azienda='£codice_azienda£';",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "id_risorsa",
-            "destination": "id_risorsa"
-          },
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
+    ],
+    "businessObjectName": "cdms_risorse_oggetti",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_risorsa",
+            "label": "Id flusso informativo",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.id_risorsa"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "ID Anagrafica",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.id_anagrafica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "label": "Id Progetto",
+            "translate": "RESOURCES.Project_ID",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stringa",
+            "label": "Download",
+            "isDownloadButton": true,
+            "newLine": false,
+            "size": 0.5,
+            "readOnly": false,
+            "translate": "RESOURCES.stringa"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "client_file_name",
+            "label": "Nome file",
+            "newLine": false,
+            "size": 5.5,
+            "readOnly": true,
+            "translate": "RESOURCES.client_file_name"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_allegato",
+            "label": "Tipo Documento",
+            "newLine": true,
+            "size": 4,
+            "readOnly": true,
+            "translate": "RESOURCES.tipo_allegato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "autore",
+            "label": "Utente",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.autore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_creazione",
+            "label": "Data Creazione",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.data_creazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_ultimo_accesso",
+            "label": "Data Ultimo Accesso",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.data_ultimo_accesso"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nome_business_object",
+            "size": 4,
+            "label": "Oggetto coll.",
+            "readOnly": true,
+            "translate": "RESOURCES.nome_business_object"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_documents",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "documents",
+                "viewType": "form",
+                "query": "delete from entrasp.cdms_risorse_oggetti where id_risorsa=£id_risorsa£ and codice_azienda='£codice_azienda£';",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "id_risorsa",
+                        "destination": "id_risorsa"
+                    },
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_documents"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_risorsa",
+            "label": "ID Documento",
+            "translate": "RESOURCES.id_risorsa"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "prog_revisione",
+            "width": "4%",
+            "label": "Rev",
+            "translate": "RESOURCES.prog_revisione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "nome_business_object",
+            "width": "10%",
+            "label": "Tipo oggetto collegato",
+            "translate": "RESOURCES.nome_business_object"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "chiave",
+            "width": "20%",
+            "label": "Chiave",
+            "translate": "RESOURCES.chiave"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "width": "8%",
+            "label": "Sondaggio",
+            "translate": "RESOURCES.survey",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "sondaggi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "width": "8%",
+            "label": "Verifica",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "sondaggi_somministrati",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "id_somministrazione",
+                        "destination": "id_somministrazione"
+                    }
+                ]
+            },
+            "translate": "RESOURCES.id_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "width": "8%",
+            "label": "Anagrafica",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "anagrafiche_vr",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    }
+                ]
+            },
+            "translate": "RESOURCES.id_anagrafica"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "width": "8%",
+            "label": "Progetto",
+            "translate": "RESOURCES.project",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "progetti",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_progetto",
+                        "destination": "id_progetto"
+                    }
+                ]
+            }
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_risorsa_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Documento",
+            "newLine": false,
+            "queryCond": "id_risorsa=$id_risorsa_s$"
+        },
+        {
+            "fieldName": "id_sondaggio_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "newLine": false,
+            "queryCond": "snd.id_sondaggio=$id_sondaggio_s$"
+        },
+        {
+            "fieldName": "id_somministrazione_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Verifica",
+            "translate": "RESOURCES.id_check",
+            "newLine": false,
+            "queryCond": "snd.id_somministrazione=$id_somministrazione_s$"
+        },
+        {
+            "fieldName": "id_argomento_tipo_allegato_s",
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo Documento",
+            "newLine": true,
+            "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cliente",
+            "translate": "RESOURCES.customer",
+            "newLine": false,
+            "queryCond": "id_anagrafica=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Anagrafica",
+            "newLine": false,
+            "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "autore_s",
+            "format": {
+                "comboQuery": "select distinct autore as id, autore as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Utente",
+            "newLine": true,
+            "queryCond": "autore=$autore_s$"
+        },
+        {
+            "fieldName": "data_da_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data da",
+            "newLine": false,
+            "queryCond": "data_creazione>=$data_da_s$"
+        },
+        {
+            "fieldName": "data_a_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data a",
+            "newLine": false,
+            "queryCond": "data_creazione<=$data_a_s$"
+        },
+        {
+            "fieldName": "parola_search_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parola chiave",
+            "translate": "RESOURCES.key_word",
+            "newLine": false,
+            "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "save",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "delete",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "limit 100"
     },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_risorsa",
-      "label": "ID Documento"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "prog_revisione",
-      "width": "4%",
-      "label": "Rev"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "nome_business_object",
-      "width": "10%",
-      "label": "Tipo oggetto collegato"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "chiave",
-      "width": "20%",
-      "label": "Chiave"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "width": "8%",
-     "label": "Sondaggio",
-      "translate": "RESOURCES.survey",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "sondaggi",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_sondaggio",
-            "destination": "id_sondaggio"
-          }
-        ]
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_somministrazione",
-      "width": "8%",
-      "label": "Verifica",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "sondaggi_somministrati",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_sondaggio",
-            "destination": "id_sondaggio"
-          },
-          {
-            "source": "id_somministrazione",
-            "destination": "id_somministrazione"
-          }
-        ]
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_anagrafica",
-      "width": "8%",
-      "label": "Anagrafica",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "anagrafiche_vr",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_part",
-            "destination": "codice_part"
-          },
-          {
-            "source": "id_anagrafica",
-            "destination": "id_anagrafica"
-          }
-        ]
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "width": "8%",
-      "label": "Progetto",
-      "translate": "RESOURCES.project",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "progetti",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_progetto",
-            "destination": "id_progetto"
-          }
-        ]
-      }
+    "restrictions": {
+        "preventNavigationToForm": true
     }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_risorsa_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Documento",
-      "newLine": false,
-      "queryCond": "id_risorsa=$id_risorsa_s$"
-    },
-    {
-      "fieldName": "id_sondaggio_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Sondaggio",
-      "translate": "RESOURCES.id_survey",
-      "newLine": false,
-      "queryCond": "snd.id_sondaggio=$id_sondaggio_s$"
-    },
-    {
-      "fieldName": "id_somministrazione_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "Id Verifica",
-      "translate": "RESOURCES.id_check",
-      "newLine": false,
-      "queryCond": "snd.id_somministrazione=$id_somministrazione_s$"
-    },
-    {
-      "fieldName": "id_argomento_tipo_allegato_s",
-      "format": {
-        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo Documento",
-      "newLine": true,
-      "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
-    },
-    {
-      "fieldName": "id_anagrafica_s",
-      "format": {
-        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Cliente",
-			"translate": "RESOURCES.customer",
-      "newLine": false,
-      "queryCond": "id_anagrafica=$id_anagrafica_s$"
-    },
-    {
-      "fieldName": "id_anagrafica_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Anagrafica",
-      "newLine": false,
-      "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
-    },
-    {
-      "fieldName": "autore_s",
-      "format": {
-        "comboQuery": "select distinct autore as id, autore as name from entrasp.cdms_risorse where codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Utente",
-      "newLine": true,
-      "queryCond": "autore=$autore_s$"
-    },
-    {
-      "fieldName": "data_da_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data da",
-      "newLine": false,
-      "queryCond": "data_creazione>=$data_da_s$"
-    },
-    {
-      "fieldName": "data_a_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data a",
-      "newLine": false,
-      "queryCond": "data_creazione<=$data_a_s$"
-    },
-    {
-      "fieldName": "parola_search_s",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Parola chiave",
-      "translate": "RESOURCES.key_word",
-      "newLine": false,
-      "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
-    }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "save",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "delete",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "share",
-      "viewType": "form"
-    },
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "limit 100"
-  },
-  "restrictions": {
-    "preventNavigationToForm": true
-  }
 }

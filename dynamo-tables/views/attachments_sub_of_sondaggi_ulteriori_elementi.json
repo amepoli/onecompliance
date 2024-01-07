@@ -1,401 +1,415 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "attachments_sub_of_sondaggi_ulteriori_elementi",
-  "inheritsFrom": "information_flows",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select distinct codice_azienda,id_risorsa,$id_risorsa_sopra$ as id_risorsa_sopra,codice_part,client_file_name,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as denominazione, entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, data_creazione, stringa, tipo_allegato, true as unifica_risorse from entrasp.views_attachments_fast_no_bo where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$ and id_risorsa != $id_risorsa_sopra$",
-      "type": "main"
-    }
-  ],
-  "businessObjectName": "cdms_risorse",
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
+    "$schema": "../views.schema.json",
+    "entryKey": "attachments_sub_of_sondaggi_ulteriori_elementi",
+    "inheritsFrom": "information_flows",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select distinct codice_azienda,id_risorsa,$id_risorsa_sopra$ as id_risorsa_sopra,codice_part,client_file_name,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as denominazione, entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, data_creazione, stringa, tipo_allegato, true as unifica_risorse from entrasp.views_attachments_fast_no_bo where id_argomento_tipo_allegato = $id_argomento_tipo_allegato$ and codice_azienda=$codice_azienda$ and id_risorsa != $id_risorsa_sopra$",
+            "type": "main"
+        }
+    ],
+    "businessObjectName": "cdms_risorse",
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
             "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "width": "5%",
-      "key": "id_risorsa",
-      "label": "ID Documento"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "id_risorsa_sopra",
-      "label": "Id risorsa sopra"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "client_file_name",
-      "width": "20%",
-      "label": "Nome file"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "denominazione",
-      "width": "13%",
-      "label": "Nome/rag sociale",
-      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_stato",
-      "width": "6%",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "style": [
-        {
-          "value": "Non Richiesto",
-          "font_color": "grey",
-          "font_weight": "500"
         },
         {
-          "value": "Da Allegare",
-          "font_color": "#FF8100",
-          "font_weight": "500"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "id_risorsa",
+            "label": "ID Documento",
+            "translate": "RESOURCES.id_risorsa"
         },
         {
-          "value": "Allegato",
-          "font_color": "green",
-          "font_weight": "500"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_creazione",
-      "width": "6%",
-      "label": "Data Creazione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "7%",
-      "key": "revisore",
-      "label": "Utente"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "6%",
-      "key": "stringa",
-      "label": "",
-      "isButton": true,
-      "style": [
-        {
-          "button_icon": "cloud_download",
-          "value": "*"
-        }
-      ],
-      "buttonAction": {
-        "target": "attachments",
-        "viewType": "form",
-        "action": "downloadAttachment",
-        "keymap": []
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_allegato",
-      "width": "18%",
-      "label": "Tipo Documento"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "nome_business_object",
-      "width": "10%",
-      "label": "Oggetto coll."
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-     "label": "Sondaggio",
-      "translate": "RESOURCES.survey"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_somministrazione",
-      "label": "Verifica"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica",
-      "label": "Cliente",
-			"translate": "RESOURCES.customer"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "label": "Progetto",
-      "translate": "RESOURCES.project"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento_tipo_allegato",
-      "label": "id_argomento_tipo_allegato"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "15%",
-      "key": "unifica_risorse",
-      "label": "Unisci flusso informativo",
-      "style": [
-        {
-          "button_icon": "join_full",
-          "value": "*"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "sondaggi_ulteriori_elementi",
-        "viewType": "form",
-        "action": "query",
-        "query": "select entrasp.unifica_risorse(£id_risorsa_sopra£,£id_risorsa£,'£codice_azienda£')",
-        "keymap": [
-          {
-            "source": "id_risorsa_sopra",
-            "destination": "id_risorsa_sopra"
-          },
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_risorsa",
-            "destination": "id_risorsa"
-          }
-        ],
-        "confirmAction": true,
-        "confirmMessage": {
-          "title": "Unifica",
-          "text": "Si vuole unificare con questa risorsa?"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "id_risorsa_sopra",
+            "label": "Id risorsa sopra",
+            "translate": "RESOURCES.id_risorsa_sopra"
         },
-        "onSuccessAction": "reload"
-      }
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_risorsa_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Documento",
-      "newLine": false,
-      "queryCond": "id_risorsa=$id_risorsa_s$"
-    },
-    {
-      "fieldName": "id_sondaggio_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-       "label": "ID Sondaggio",
-      "translate": "RESOURCES.id_survey",
-      "newLine": false,
-      "queryCond": "snd.id_sondaggio=$id_sondaggio_s$"
-    },
-    {
-      "fieldName": "id_somministrazione_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-     "label": "Id Verifica",
-      "translate": "RESOURCES.id_check",
-      "newLine": false,
-      "queryCond": "snd.id_somministrazione=$id_somministrazione_s$"
-    },
-    {
-      "fieldName": "id_argomento_tipo_allegato_s",
-      "format": {
-        "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo Documento",
-      "newLine": true,
-      "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
-    },
-    {
-      "fieldName": "id_anagrafica_s",
-      "format": {
-        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Cliente",
-			"translate": "RESOURCES.customer",
-      "newLine": false,
-      "queryCond": "id_anagrafica=$id_anagrafica_s$"
-    },
-    {
-      "fieldName": "id_anagrafica_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Anagrafica",
-      "newLine": false,
-      "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
-    },
-    {
-      "fieldName": "revisore_s",
-      "format": {
-        "comboQuery": "select distinct revisore as id, revisore as name from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Utente",
-      "newLine": true,
-      "queryCond": "revisore=$revisore_s$"
-    },
-    {
-      "fieldName": "data_da_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data da",
-      "newLine": false,
-      "queryCond": "data_creazione>=$data_da_s$"
-    },
-    {
-      "fieldName": "data_a_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data a",
-      "newLine": false,
-      "queryCond": "data_creazione<=$data_a_s$"
-    },
-    {
-      "fieldName": "parola_search_s",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Parola chiave",
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "client_file_name",
+            "width": "20%",
+            "label": "Nome file",
+            "translate": "RESOURCES.client_file_name"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "denominazione",
+            "width": "13%",
+            "label": "Nome/rag sociale",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)",
+            "translate": "RESOURCES.denominazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "width": "6%",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "style": [
+                {
+                    "value": "Non Richiesto",
+                    "font_color": "grey",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Da Allegare",
+                    "font_color": "#FF8100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Allegato",
+                    "font_color": "green",
+                    "font_weight": "500"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_creazione",
+            "width": "6%",
+            "label": "Data Creazione",
+            "translate": "RESOURCES.data_creazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "7%",
+            "key": "revisore",
+            "label": "Utente",
+            "translate": "RESOURCES.revisore"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "key": "stringa",
+            "label": "",
+            "isButton": true,
+            "style": [
+                {
+                    "button_icon": "cloud_download",
+                    "value": "*"
+                }
+            ],
+            "buttonAction": {
+                "target": "attachments",
+                "viewType": "form",
+                "action": "downloadAttachment",
+                "keymap": []
+            },
+            "translate": "RESOURCES.stringa"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_allegato",
+            "width": "18%",
+            "label": "Tipo Documento",
+            "translate": "RESOURCES.tipo_allegato"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nome_business_object",
+            "width": "10%",
+            "label": "Oggetto coll.",
+            "translate": "RESOURCES.nome_business_object"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "Sondaggio",
+            "translate": "RESOURCES.survey"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "Verifica",
+            "translate": "RESOURCES.id_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "Cliente",
+            "translate": "RESOURCES.customer"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "label": "Progetto",
+            "translate": "RESOURCES.project"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_allegato",
+            "label": "id_argomento_tipo_allegato",
+            "translate": "RESOURCES.id_argomento_tipo_allegato"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "15%",
+            "key": "unifica_risorse",
+            "label": "Unisci flusso informativo",
+            "style": [
+                {
+                    "button_icon": "join_full",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "sondaggi_ulteriori_elementi",
+                "viewType": "form",
+                "action": "query",
+                "query": "select entrasp.unifica_risorse(£id_risorsa_sopra£,£id_risorsa£,'£codice_azienda£')",
+                "keymap": [
+                    {
+                        "source": "id_risorsa_sopra",
+                        "destination": "id_risorsa_sopra"
+                    },
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_risorsa",
+                        "destination": "id_risorsa"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Unifica",
+                    "text": "Si vuole unificare con questa risorsa?"
+                },
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.unifica_risorse"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_risorsa_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Documento",
+            "newLine": false,
+            "queryCond": "id_risorsa=$id_risorsa_s$"
+        },
+        {
+            "fieldName": "id_sondaggio_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "newLine": false,
+            "queryCond": "snd.id_sondaggio=$id_sondaggio_s$"
+        },
+        {
+            "fieldName": "id_somministrazione_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Verifica",
+            "translate": "RESOURCES.id_check",
+            "newLine": false,
+            "queryCond": "snd.id_somministrazione=$id_somministrazione_s$"
+        },
+        {
+            "fieldName": "id_argomento_tipo_allegato_s",
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo Documento",
+            "newLine": true,
+            "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cliente",
+            "translate": "RESOURCES.customer",
+            "newLine": false,
+            "queryCond": "id_anagrafica=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Anagrafica",
+            "newLine": false,
+            "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "revisore_s",
+            "format": {
+                "comboQuery": "select distinct revisore as id, revisore as name from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Utente",
+            "newLine": true,
+            "queryCond": "revisore=$revisore_s$"
+        },
+        {
+            "fieldName": "data_da_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data da",
+            "newLine": false,
+            "queryCond": "data_creazione>=$data_da_s$"
+        },
+        {
+            "fieldName": "data_a_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data a",
+            "newLine": false,
+            "queryCond": "data_creazione<=$data_a_s$"
+        },
+        {
+            "fieldName": "parola_search_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parola chiave",
             "translate": "RESOURCES.key_word",
-      "newLine": false,
-      "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+            "newLine": false,
+            "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "delete",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ],
+    "outputEvents": [
+        {
+            "eventName": "onSave",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoad",
+            "eventTrigger": "onReload"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "limit 100"
     }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "delete",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "share",
-      "viewType": "form"
-    },
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    }
-  ],
-  "outputEvents": [
-    {
-      "eventName": "onSave",
-      "eventTrigger": "onSave"
-    },
-    {
-      "eventName": "onLoad",
-      "eventTrigger": "onReload"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "limit 100"
-  }
 }

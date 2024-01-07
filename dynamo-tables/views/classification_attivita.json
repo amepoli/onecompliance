@@ -1,40 +1,39 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "classification_attivita",
-  "inheritsFrom": "argomenti",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=3417",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 3417) as id_argomento;",
-      "type": "main"
-    },
-    {
-      "operation": "delete",
-      "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=45 and id_argomento_son=$id_argomento$;",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "isInsert",
-      "queryString": "select $id_argomento$ is null as label;",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "type": "preCheck",
-      "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
-      "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-    },
-    {
-      "operation": "update",
-      "type": "preCheck",
-      "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
-      "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-    }
-  ]
- 
+    "$schema": "../views.schema.json",
+    "entryKey": "classification_attivita",
+    "inheritsFrom": "argomenti",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=3417",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 3417) as id_argomento;",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=45 and id_argomento_son=$id_argomento$;",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_argomento$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
+            "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+        }
+    ]
 }

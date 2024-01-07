@@ -1,288 +1,297 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "contratti_fornitori",
-	"businessObjectName": "contratti",
-	"origin": "entrasp.contratti",
-	"inheritsFrom": "contracts_investment",
-	"predefinedQueries": [
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
-		},
-		{
-			"operation": "insert",
-			"type": "postProcessing",
-			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-		},
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select *,(select a.descrizione from entrasp.asset a where a.id_asset = c.id_asset and codice_azienda=$codice_azienda$ and a.id_asset is not null) as descr_asset,c.codice_azienda||'|'||c.id_contratto as object_key, (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_tipo_modello_test=54 limit 1), true as create_somministrazione, entrasp.argomenti_descr(c.id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as id_cliente,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti c where codice_ruolo='FOR' and c.codice_azienda=$codice_azienda$"
-		}
-	],
-	"outputEvents": [
-		{
-			"eventName": "onSaveContratto",
-			"eventTrigger": "onSave"
-		},
-		{
-			"eventName": "onLoadContratto",
-			"eventTrigger": "onReload"
-		}
-	],
-	"define": {
-		"is_hidden_conflicts": "true",
-		"is_hidden_invisible_field": "true",
-		"label_id_controparte": "id_fornitore",
-		"label_controparte": "Fornitore",
-		"is_hidden_mifid": "false",
-		"size_with_or_without_mifid": "1.57",
-		"is_hidden_fornitori": "false",
-		"id_argomento_tipo_contratto": "3428",
-		"is_hidden_finanziamenti": "true",
-		"codice_ruolo": "FOR"
-	},
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"width": "5%",
-			"key": "id_contratto",
-			"label": "#"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": true,
-			"key": "codice_azienda",
-			"label": "codice_azienda",
-       "translate": "RESOURCES.company_code"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"width": "10%",
-			"isPrimary": false,
-			"key": "numero_contratto",
-			"label": "N° Contratto",
-			"style": [
-				{
-					"value": "*",
-					"background_color": "lightblue",
-					"text_align": "center",
-					"font_weight": "599"
-				}
-			]
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_strumento_finanziario",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario)",
-			"label": "Fondo",
-			"width": "20%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "fornitore",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore)",
-			"label": "Fornitore",
-			"width": "20%",
-			"style": [
-				{
-					"value": "*",
-					"font_weight": "599"
-				}
-			]
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "tipo_contratto",
-			"queryFunct": "entrasp.argomenti_descr(id_argomento_contratto)",
-			"label": "Tipo Contratto"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_stipulazione",
-			"width": "10%",
-			"label": "Data Stipula"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "12%",
-			"key": "create_somministrazione",
-			"label": "Valuta fornitura",
-			"isButton": true,
-			"buttonAction": {
-				"target": "sondaggi_somministrati",
-				"viewType": "form",
-				"action": "query",
-				"query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.somministrazione_insert_from_list('£codice_azienda£', £id_modello_test£, 'contratti', '£object_key£')",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_modello_test",
-						"destination": "id_modello_test"
-					},
-					{
-						"source": "object_key",
-						"destination": "object_key"
-					}
-				],
-				"confirmAction": true,
-				"confirmMessage": {
-					"title": "Valutazione contratto di fornitura",
-					"text": "Si vuole inserire una valutazione della fornitura?"
-				},
-				"onSuccessAction": "navigate",
-				"onSuccessActionKeymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_sondaggio",
-						"destination": "id_sondaggio"
-					},
-					{
-						"source": "id_somministrazione",
-						"destination": "id_somministrazione"
-					}
-				]
-			},
-			"style": [
-				{
-					"button_icon": "",
-					"value": "*"
-				}
-			]
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"width": "23%",
-			"key": "descr_asset",
-			"label": "Asset"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "object_key",
-			"label": "object_key"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_modello_test",
-			"label": "id_modello_test",
+    "$schema": "../views.schema.json",
+    "entryKey": "contratti_fornitori",
+    "businessObjectName": "contratti",
+    "origin": "entrasp.contratti",
+    "inheritsFrom": "contracts_investment",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+        },
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select *,(select a.descrizione from entrasp.asset a where a.id_asset = c.id_asset and codice_azienda=$codice_azienda$ and a.id_asset is not null) as descr_asset,c.codice_azienda||'|'||c.id_contratto as object_key, (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_tipo_modello_test=54 limit 1), true as create_somministrazione, entrasp.argomenti_descr(c.id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as id_cliente,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti c where codice_ruolo='FOR' and c.codice_azienda=$codice_azienda$"
+        }
+    ],
+    "outputEvents": [
+        {
+            "eventName": "onSaveContratto",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadContratto",
+            "eventTrigger": "onReload"
+        }
+    ],
+    "define": {
+        "is_hidden_conflicts": "true",
+        "is_hidden_invisible_field": "true",
+        "label_id_controparte": "id_fornitore",
+        "label_controparte": "Fornitore",
+        "is_hidden_mifid": "false",
+        "size_with_or_without_mifid": "1.57",
+        "is_hidden_fornitori": "false",
+        "id_argomento_tipo_contratto": "3428",
+        "is_hidden_finanziamenti": "true",
+        "codice_ruolo": "FOR"
+    },
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "id_contratto",
+            "label": "#",
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "numero_contratto",
+            "label": "N° Contratto",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "599"
+                }
+            ],
+            "translate": "RESOURCES.numero_contratto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_strumento_finanziario",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario)",
+            "label": "Fondo",
+            "width": "20%",
+            "translate": "RESOURCES.id_strumento_finanziario"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fornitore",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore)",
+            "label": "Fornitore",
+            "width": "20%",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "599"
+                }
+            ],
+            "translate": "RESOURCES.fornitore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "tipo_contratto",
+            "queryFunct": "entrasp.argomenti_descr(id_argomento_contratto)",
+            "label": "Tipo Contratto",
+            "translate": "RESOURCES.tipo_contratto"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_stipulazione",
+            "width": "10%",
+            "label": "Data Stipula",
+            "translate": "RESOURCES.data_stipulazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "12%",
+            "key": "create_somministrazione",
+            "label": "Valuta fornitura",
+            "isButton": true,
+            "buttonAction": {
+                "target": "sondaggi_somministrati",
+                "viewType": "form",
+                "action": "query",
+                "query": "select codice_azienda, id_sondaggio, id_somministrazione from entrasp.somministrazione_insert_from_list('£codice_azienda£', £id_modello_test£, 'contratti', '£object_key£')",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "object_key",
+                        "destination": "object_key"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Valutazione contratto di fornitura",
+                    "text": "Si vuole inserire una valutazione della fornitura?"
+                },
+                "onSuccessAction": "navigate",
+                "onSuccessActionKeymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "id_somministrazione",
+                        "destination": "id_somministrazione"
+                    }
+                ]
+            },
+            "style": [
+                {
+                    "button_icon": "",
+                    "value": "*"
+                }
+            ],
+            "translate": "RESOURCES.create_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "23%",
+            "key": "descr_asset",
+            "label": "Asset",
+            "translate": "RESOURCES.descr_asset"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "object_key",
+            "label": "object_key",
+            "translate": "RESOURCES.object_key"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
             "translate": "RESOURCES.id_check_template"
-		}
-	],
-	"search_keys": [
-		{
-			"fieldName": "id_anagrafica_s",
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"label": "ID Cliente",
-			"newLine": false,
-			"queryCond": "avr.id_cliente=$id_anagrafica_s$"
-		},
-		{
-			"fieldName": "nome_rs",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "Nome/Cognome/Ragione Sociale",
-			"newLine": true,
-			"queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%' or UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore)) like '%'||UPPER('€nome_rs€')||'%' or UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario)) like '%'||UPPER('€nome_rs€')||'%')"
-		},
-		{
-			"fieldName": "numero_contratto_s",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "Numero Contratto",
-			"newLine": false,
-			"queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
-		},
-		{
-			"fieldName": "id_strumento_fin_s",
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Fondo/strumento finanziario",
-			"newLine": false,
-			"queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "order by id_contratto desc limit 100"
-	},
-	"subTables": [
-		{
-			"entryKey": "sondaggi_somministrati_sub_of_contratti_fornitori",
-			"isHidden": false,
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_cliente",
-					"son": "id_anagrafica"
-				}
-			],
-			"label": "Valutazioni contratti"
-		}
-	]
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Cliente",
+            "newLine": false,
+            "queryCond": "avr.id_cliente=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "nome_rs",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Nome/Cognome/Ragione Sociale",
+            "newLine": true,
+            "queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%' or UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_fornitore)) like '%'||UPPER('€nome_rs€')||'%' or UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_strumento_finanziario)) like '%'||UPPER('€nome_rs€')||'%')"
+        },
+        {
+            "fieldName": "numero_contratto_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Numero Contratto",
+            "newLine": false,
+            "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
+        },
+        {
+            "fieldName": "id_strumento_fin_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Fondo/strumento finanziario",
+            "newLine": false,
+            "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_contratto desc limit 100"
+    },
+    "subTables": [
+        {
+            "entryKey": "sondaggi_somministrati_sub_of_contratti_fornitori",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_cliente",
+                    "son": "id_anagrafica"
+                }
+            ],
+            "label": "Valutazioni contratti"
+        }
+    ]
 }

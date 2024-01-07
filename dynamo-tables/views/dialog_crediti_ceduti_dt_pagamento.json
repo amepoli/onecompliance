@@ -1,436 +1,463 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "dialog_crediti_ceduti_dt_pagamento",
-  "predefinedQueries": [
-    {
-      "operation": "update",
-      "type": "main",
-      "queryString": "update entrasp.crediti_ceduti cc1 set id_ricessione = coalesce($id_ricessione$, cc2.id_ricessione), opposto=coalesce($opposto_combobox$,cc2.opposto),azionato=coalesce($azionato_combobox$,cc2.azionato),lavorazione_legale=coalesce($lavorazione_legale_combobox$,cc2.lavorazione_legale), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_scadenza = coalesce($data_scadenza$::date, cc2.data_scadenza), data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), id_tipo_documento = coalesce ($id_tipo_documento$, cc2.id_tipo_documento), cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($fascicolo$, cc2.fascicolo) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
-    }
-  ],
-  "form_keys": [
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "label"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "anagraf",
-      "label": "Anagrafiche",
-      "style": {
-        "background_color": "#03a9f4",
-        "font_color": "white",
-        "font_size": "1.3em",
-        "font_style": "italic",
-        "font_weight": "400"
-      },
-      "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "lotto",
-      "label": "Lotto",
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "format": {
-        "value": "0",
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "lotto_checkbox",
-      "label": "Azzera lotto",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "tranche",
-      "label": "Tranche",
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "format": {
-        "value": "0",
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tranche_checkbox",
-      "label": "Azzera tranche",
-      "readOnly": false,
-      "newLine": true,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_fattura",
-      "label": "Data Fattura",
-      "newLine": false,
-      "size": 2.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "n_fattura",
-      "label": "N° Fattura",
-      "size": 2.5,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "importo",
-      "label": "Importo",
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select id_contratto as id, numero_contratto as name from entrasp.contratti where codice_azienda='€global_codice_azienda€'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_contratto",
-      "label": "Contratto",
-      "readOnly": false,
-      "newLine": true,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda='€global_codice_azienda€'), an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "id_cedente",
-      "label": "Cedente",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "key": "id_debitore_ceduto",
-      "label": "Debitore Ceduto",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_documento",
-      "label": "Tipo Doc.",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "data_scadenza",
-      "label": "Data Scadenza",
-      "readOnly": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "cig",
-      "label": "CIG",
-      "readOnly": false,
-      "size": 1.25
-    },
-    {
-      "format": {
-        "value": "0",
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cig_checkbox",
-      "label": "Azzera cig",
-      "readOnly": false,
-      "newLine": true,
-      "size": 1.25
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "key": "id_ricessione",
-      "label": "Cessione",
-      "readOnly": false,
-      "size": 1.66
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "label"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "Legale Azionato",
-      "label": "Legale Azionato",
-      "style": {
-        "background_color": "#03a9f4",
-        "font_color": "white",
-        "font_size": "1.3em",
-        "font_style": "italic",
-        "font_weight": "400"
-      },
-      "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_avvocato",
-      "label": "ID Avvocato",
-      "size": 2.5,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "format": {
-        "value": "0",
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_avvocato_checkbox",
-      "label": "Azzera avvocato",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father = 49571",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "autorita_giudiziaria",
-      "label": "Autorità Giudiziaria",
-      "size": 2.5,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "format": {
-        "value": "0",
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "autorita_giudiziaria_checkbox",
-      "label": "Azzera autoritá giudiziaria",
-      "readOnly": false,
-      "newLine": true,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "fascicolo",
-      "label": "Fascicolo",
-      "size": 2.5,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "format": {
-        "value": "0",
-        "viewType": "checkbox",
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "fascicolo_checkbox",
-      "label": "Azzera fascicolo",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "opposto_combobox",
-      "label": "Opposto?",
-      "size": 1.66,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "azionato_combobox",
-      "label": "Azionato?",
-      "size": 1.66,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "lavorazione_legale_combobox",
-      "label": "Lavorazione Legale?",
-      "size": 1.66,
-      "readOnly": false,
-      "newLine": true
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "label"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "situazione_ante_presidi",
-      "label": "Scadenze e Tassi",
-      "style": {
-        "background_color": "#03a9f4",
-        "font_color": "white",
-        "font_size": "1.3em",
-        "font_style": "italic",
-        "font_weight": "400"
-      },
-      "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-        "label": "Note",
-             "translate": "RESOURCES.notes",
-      "readOnly": false,
-      "newLine": true
-    }
-  ]
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_crediti_ceduti_dt_pagamento",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "update entrasp.crediti_ceduti cc1 set id_ricessione = coalesce($id_ricessione$, cc2.id_ricessione), opposto=coalesce($opposto_combobox$,cc2.opposto),azionato=coalesce($azionato_combobox$,cc2.azionato),lavorazione_legale=coalesce($lavorazione_legale_combobox$,cc2.lavorazione_legale), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_scadenza = coalesce($data_scadenza$::date, cc2.data_scadenza), data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), id_tipo_documento = coalesce ($id_tipo_documento$, cc2.id_tipo_documento), cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($fascicolo$, cc2.fascicolo) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
+        }
+    ],
+    "form_keys": [
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "anagraf",
+            "label": "Anagrafiche",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.anagraf"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "lotto",
+            "label": "Lotto",
+            "readOnly": false,
+            "size": 2.5,
+            "translate": "RESOURCES.lotto"
+        },
+        {
+            "format": {
+                "value": "0",
+                "viewType": "checkbox",
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "lotto_checkbox",
+            "label": "Azzera lotto",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2.5,
+            "translate": "RESOURCES.lotto_checkbox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "tranche",
+            "label": "Tranche",
+            "readOnly": false,
+            "size": 2.5,
+            "translate": "RESOURCES.tranche"
+        },
+        {
+            "format": {
+                "value": "0",
+                "viewType": "checkbox",
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tranche_checkbox",
+            "label": "Azzera tranche",
+            "readOnly": false,
+            "newLine": true,
+            "size": 2.5,
+            "translate": "RESOURCES.tranche_checkbox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fattura",
+            "label": "Data Fattura",
+            "newLine": false,
+            "size": 2.5,
+            "readOnly": false,
+            "translate": "RESOURCES.data_fattura"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "n_fattura",
+            "label": "N° Fattura",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.n_fattura"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "importo",
+            "label": "Importo",
+            "readOnly": false,
+            "size": 2.5,
+            "translate": "RESOURCES.importo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_contratto as id, numero_contratto as name from entrasp.contratti where codice_azienda='€global_codice_azienda€'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_contratto",
+            "label": "Contratto",
+            "readOnly": false,
+            "newLine": true,
+            "size": 2.5,
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda='€global_codice_azienda€'), an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "id_cedente",
+            "label": "Cedente",
+            "readOnly": false,
+            "translate": "RESOURCES.id_cedente"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_debitore_ceduto",
+            "label": "Debitore Ceduto",
+            "readOnly": false,
+            "translate": "RESOURCES.id_debitore_ceduto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_documento",
+            "label": "Tipo Doc.",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2,
+            "translate": "RESOURCES.id_tipo_documento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "data_scadenza",
+            "label": "Data Scadenza",
+            "readOnly": false,
+            "size": 2.5,
+            "translate": "RESOURCES.data_scadenza"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "cig",
+            "label": "CIG",
+            "readOnly": false,
+            "size": 1.25,
+            "translate": "RESOURCES.cig"
+        },
+        {
+            "format": {
+                "value": "0",
+                "viewType": "checkbox",
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cig_checkbox",
+            "label": "Azzera cig",
+            "readOnly": false,
+            "newLine": true,
+            "size": 1.25,
+            "translate": "RESOURCES.cig_checkbox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_ricessione",
+            "label": "Cessione",
+            "readOnly": false,
+            "size": 1.66,
+            "translate": "RESOURCES.id_ricessione"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "Legale Azionato",
+            "label": "Legale Azionato",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.Legale Azionato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_avvocato",
+            "label": "ID Avvocato",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_avvocato"
+        },
+        {
+            "format": {
+                "value": "0",
+                "viewType": "checkbox",
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_avvocato_checkbox",
+            "label": "Azzera avvocato",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2.5,
+            "translate": "RESOURCES.id_avvocato_checkbox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father = 49571",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "autorita_giudiziaria",
+            "label": "Autorità Giudiziaria",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.autorita_giudiziaria"
+        },
+        {
+            "format": {
+                "value": "0",
+                "viewType": "checkbox",
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "autorita_giudiziaria_checkbox",
+            "label": "Azzera autoritá giudiziaria",
+            "readOnly": false,
+            "newLine": true,
+            "size": 2.5,
+            "translate": "RESOURCES.autorita_giudiziaria_checkbox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fascicolo",
+            "label": "Fascicolo",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.fascicolo"
+        },
+        {
+            "format": {
+                "value": "0",
+                "viewType": "checkbox",
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fascicolo_checkbox",
+            "label": "Azzera fascicolo",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2.5,
+            "translate": "RESOURCES.fascicolo_checkbox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "opposto_combobox",
+            "label": "Opposto?",
+            "size": 1.66,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.opposto_combobox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "azionato_combobox",
+            "label": "Azionato?",
+            "size": 1.66,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.azionato_combobox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "lavorazione_legale_combobox",
+            "label": "Lavorazione Legale?",
+            "size": 1.66,
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.lavorazione_legale_combobox"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "situazione_ante_presidi",
+            "label": "Scadenze e Tassi",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.situazione_ante_presidi"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "readOnly": false,
+            "newLine": true
+        }
+    ]
 }

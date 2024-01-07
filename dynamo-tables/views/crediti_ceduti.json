@@ -1,1677 +1,1722 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "crediti_ceduti",
-  "origin": "entrasp.crediti_ceduti",
-  "businessObjectName": "crediti_ceduti",
-  "table_multiselection_actions": [
-    {
-      "viewType": "menu",
-      "key": "menuanag",
-      "label": "Actions",
-      "icon": "more_vert",
-      "menuOptions": [
+    "$schema": "../views.schema.json",
+    "entryKey": "crediti_ceduti",
+    "origin": "entrasp.crediti_ceduti",
+    "businessObjectName": "crediti_ceduti",
+    "table_multiselection_actions": [
         {
-          "key": "modifica_crediti",
-          "icon": "edit",
-          "label": "Modifica crediti",
-          "reloadOnSuccess": true,
-          "customDialogEntryName": "dialog_crediti_ceduti_dt_pagamento",
-          "customDialogTitle": "Modifica crediti selezionati"
-        },
-        {
-          "key": "inserisci_ricessioni",
-          "icon": "sync",
-          "label": "Erogazioni",
-          "reloadOnSuccess": true,
-          "customDialogEntryName": "dialog_ricessioni",
-          "customDialogTitle": "Inserisci ricessioni crediti selezionati"
-        },
-        {
-          "key": "inserisci_pagamenti_totali",
-          "icon": "attach_money",
-          "label": "Incassi Totali",
-          "reloadOnSuccess": true,
-          "customDialogEntryName": "dialog_pag_debi_ced",
-          "customDialogTitle": "Inserisci incassi integrale dei crediti selezionati"
-        },
-        {
-          "key": "inserisci_pagamenti_diversi",
-          "icon": "currency_exchange",
-          "label": "Incassi Diversi",
-          "reloadOnSuccess": true,
-          "customDialogEntryName": "dialog_inserisci_movimenti_crediti",
-          "customDialogTitle": "Inserisci incassi diversi dei crediti selezionati"
-        },
-        {
-          "key": "cancella_crediti",
-          "icon": "delete_aggiornamento",
-          "label": "Cancella",
-          "query": "delete from entrasp.crediti_ceduti where codice_azienda||'~'||id_cessione in ($selected_rows_data$)",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Cancellare le fatture selezionate?"
-        },
-        {
-          "key": "flag_lavorazione_legale",
-          "icon": "date",
-          "label": "Segnare Lavorazione Legale",
-          "query": "update entrasp.crediti_ceduti set lavorazione_legale = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Inserire il flag lavorazione_legale alla selezione?"
-        },
-        {
-          "key": "flag_esecutivo",
-          "icon": "date",
-          "label": "Segnare Esecutivo",
-          "query": "update entrasp.crediti_ceduti set esecutivo = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Inserire il flag esecutivo alla selezione?"
-        },
-        {
-          "key": "flag_azionati",
-          "icon": "date",
-          "label": "Segnare come azionati",
-          "query": "update entrasp.crediti_ceduti set azionato = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Inserire il flag azionati alla selezione?"
-        },
-        {
-          "key": "flag_opposti",
-          "icon": "date",
-          "label": "Segnare come opposti",
-          "query": "update entrasp.crediti_ceduti set opposto = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Inserire il flag opposti alla selezione?"
-        },
-        {
-          "key": "flag_fasc_archiviato",
-          "icon": "date",
-          "label": "Segnare archiviazione fascicolo",
-          "query": "update entrasp.crediti_ceduti set fasc_archiviato = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Inserire il flag fascicolo archiviato alla selezione?"
-        },
-        {
-          "key": "flag_interessi_non_dovuti",
-          "icon": "date",
-          "label": "Esclusione Interessi",
-          "query": "update entrasp.crediti_ceduti set interessi_non_dovuti = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Escludere il calcolo degli interessi alla selezione?"
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "modifica_crediti",
+                    "icon": "edit",
+                    "label": "Modifica crediti",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_crediti_ceduti_dt_pagamento",
+                    "customDialogTitle": "Modifica crediti selezionati"
+                },
+                {
+                    "key": "inserisci_ricessioni",
+                    "icon": "sync",
+                    "label": "Erogazioni",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_ricessioni",
+                    "customDialogTitle": "Inserisci ricessioni crediti selezionati"
+                },
+                {
+                    "key": "inserisci_pagamenti_totali",
+                    "icon": "attach_money",
+                    "label": "Incassi Totali",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_pag_debi_ced",
+                    "customDialogTitle": "Inserisci incassi integrale dei crediti selezionati"
+                },
+                {
+                    "key": "inserisci_pagamenti_diversi",
+                    "icon": "currency_exchange",
+                    "label": "Incassi Diversi",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_inserisci_movimenti_crediti",
+                    "customDialogTitle": "Inserisci incassi diversi dei crediti selezionati"
+                },
+                {
+                    "key": "cancella_crediti",
+                    "icon": "delete_aggiornamento",
+                    "label": "Cancella",
+                    "query": "delete from entrasp.crediti_ceduti where codice_azienda||'~'||id_cessione in ($selected_rows_data$)",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Cancellare le fatture selezionate?"
+                },
+                {
+                    "key": "flag_lavorazione_legale",
+                    "icon": "date",
+                    "label": "Segnare Lavorazione Legale",
+                    "query": "update entrasp.crediti_ceduti set lavorazione_legale = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag lavorazione_legale alla selezione?"
+                },
+                {
+                    "key": "flag_esecutivo",
+                    "icon": "date",
+                    "label": "Segnare Esecutivo",
+                    "query": "update entrasp.crediti_ceduti set esecutivo = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag esecutivo alla selezione?"
+                },
+                {
+                    "key": "flag_azionati",
+                    "icon": "date",
+                    "label": "Segnare come azionati",
+                    "query": "update entrasp.crediti_ceduti set azionato = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag azionati alla selezione?"
+                },
+                {
+                    "key": "flag_opposti",
+                    "icon": "date",
+                    "label": "Segnare come opposti",
+                    "query": "update entrasp.crediti_ceduti set opposto = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag opposti alla selezione?"
+                },
+                {
+                    "key": "flag_fasc_archiviato",
+                    "icon": "date",
+                    "label": "Segnare archiviazione fascicolo",
+                    "query": "update entrasp.crediti_ceduti set fasc_archiviato = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag fascicolo archiviato alla selezione?"
+                },
+                {
+                    "key": "flag_interessi_non_dovuti",
+                    "icon": "date",
+                    "label": "Esclusione Interessi",
+                    "query": "update entrasp.crediti_ceduti set interessi_non_dovuti = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Escludere il calcolo degli interessi alla selezione?"
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "predefinedQueries": [
-    {
-      "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, (select pc.data_pagamento from entrasp.pagamenti_crediti pc where pc.codice_azienda=cc.codice_azienda and pc.id_cessione=cc.id_cessione and id_argomento_tipo_pag=51488) as data_pagamento, id_ricessione,(case when id_ricessione is not null then '1' else '0' end) as cessionato, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
-      "operation": "selectTable",
-      "type": "main"
-    }
-  ],
-  "outputEvents": [
-    {
-      "eventName": "onSaveCessione",
-      "eventTrigger": "onSave"
-    }
-  ],
-  "inputEvents": [
-    {
-      "eventName": "onSaveCessione",
-      "actionType": "reload"
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_cessione",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Cessione",
-      "newLine": false,
-      "size": 1.5,
-      "queryCond": "id_cessione=$id_cessione$"
-    },
-    {
-      "fieldName": "id_cedente_s",
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Cedente",
-      "newLine": false,
-      "queryCond": "id_cedente=$id_cedente_s$"
-    },
-    {
-      "fieldName": "id_debitore_ceduto",
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Debitore Ceduto",
-      "newLine": false,
-      "queryCond": "id_debitore_ceduto=$id_debitore_ceduto$"
-    },
-    {
-      "fieldName": "id_acquirente",
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Acquirente",
-      "newLine": true,
-      "queryCond": "id_acquirente=$id_acquirente$"
-    },
-    {
-      "fieldName": "data_acquisto_min",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Acquisto dopo il",
-      "newLine": false,
-      "queryCond": "data_acquisto>='€data_acquisto_min€'"
-    },
-    {
-      "fieldName": "data_fattura_min",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Fattura dopo il",
-      "newLine": false,
-      "queryCond": "data_fattura>='€data_fattura_min€'"
-    },
-    {
-      "fieldName": "data_pagamento_min",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Pagamento dopo il",
-      "newLine": false,
-      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento>='€data_pagamento_min€')"
-    },
-    {
-      "fieldName": "data_scadenza_min",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Scadenza dopo il",
-      "newLine": true,
-      "queryCond": "data_scadenza>='€data_scadenza_min€'"
-    },
-    {
-      "fieldName": "data_acquisto_max",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Acquisto entro il",
-      "newLine": false,
-      "queryCond": "data_acquisto<='€data_acquisto_max€'"
-    },
-    {
-      "fieldName": "data_fattura_max",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Fattura entro il",
-      "newLine": false,
-      "queryCond": "data_fattura<='€data_fattura_max€'"
-    },
-    {
-      "fieldName": "data_pagamento_max",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Pagamento entro il",
-      "newLine": false,
-      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento<='€data_pagamento_max€')"
-    },
-    {
-      "fieldName": "data_scadenza_max",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Scadenza entro il",
-      "newLine": true,
-      "queryCond": "data_scadenza<=€data_scadenza_max€"
-    },
-    {
-      "fieldName": "id_mandato_s",
-      "format": {
-        "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "number"
-      },
-      "label": "N mandato",
-      "newLine": false,
-      "queryCond": "codice_azienda||'-'||id_cessione in (select pc.codice_azienda||'-'||pc.id_cessione from entrasp.pagamenti_crediti pc where pc.codice_azienda=$codice_azienda$ and pc.id_mandato=$id_mandato_s$)"
-    },
-    {
-      "fieldName": "giorni_scad_max",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "Giorni scaduto inferiore a",
-      "newLine": false,
-      "queryCond": "entrasp.calcola_scaduto (data_fattura, data_pagamento)<='€giorni_scad_max€'"
-    },
-    {
-      "fieldName": "giorni_scad_min",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "Giorni scaduto superiore a",
-      "newLine": false,
-      "queryCond": "entrasp.calcola_scaduto (data_fattura, data_pagamento)>='€giorni_scad_min€'"
-    },
-    {
-      "fieldName": "tranche_search_field",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "Tranche",
-      "newLine": true,
-      "queryCond": "tranche =$tranche_search_field$"
-    },
-    {
-      "fieldName": "fascicolo",
-      "format": {
-        "comboQuery": "SELECT distinct fascicolo AS id, fascicolo AS name FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Fascicolo",
-      "newLine": false,
-      "queryCond": "fascicolo=$fascicolo$"
-    },
-    {
-      "fieldName": "n_fattura",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Fattura N.",
-      "newLine": false,
-      "queryCond": "upper(n_fattura) like '%'||upper('€n_fattura€')||'%'"
-    },
-    {
-      "fieldName": "id_contratto_s",
-      "format": {
-        "comboQuery": "SELECT id_contratto AS id, numero_contratto AS name FROM entrasp.contratti WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Contratto N.",
-      "newLine": false,
-      "queryCond": "id_contratto=$id_contratto_s$"
-    },
-    {
-      "fieldName": "id_tipo_doc_s",
-      "format": {
-        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342,50664,50677)",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo documento",
-      "newLine": true,
-      "queryCond": "id_tipo_documento=$id_tipo_doc_s$"
-    },
-    {
-      "fieldName": "data_pagamento_il",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data pagamento il",
-      "newLine": false,
-      "tooltip": "",
-      "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento='€data_pagamento_il€')"
-    },
-    {
-      "fieldName": "id_ricessione_s",
-      "format": {
-        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Ricessione",
-      "newLine": true,
-      "queryCond": "id_ricessione=$id_ricessione_s$"
-    },
-    {
-      "fieldName": "flag_lav_legale",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Lavorazione Legale",
-      "newLine": false,
-      "queryCond": "lavorazione_legale = '1'"
-    },
-    {
-      "fieldName": "flag_no_lav_legale",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": " Non Lavorazione Legale",
-      "newLine": false,
-      "queryCond": "lavorazione_legale = '0'"
-    },
-    {
-      "fieldName": "flag_azionati",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Azionati",
-      "newLine": false,
-      "queryCond": "azionato = '1'"
-    },
-    {
-      "fieldName": "flag_non_azionati",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Non Azionati",
-      "newLine": false,
-      "queryCond": "azionato = '0'"
-    },
-    {
-      "fieldName": "flag_opposti",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Opposti",
-      "newLine": false,
-      "queryCond": "opposto = '1'"
-    },
-    {
-      "fieldName": "flag_cessionati",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Cessionati",
-      "newLine": false,
-      "queryCond": "id_ricessione is not null"
-    },
-    {
-      "fieldName": "flag_cessionati_pagati",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Cessionati e incassati",
-      "newLine": false,
-      "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc where cc.codice_azienda|| '-'||cc.id_cessione in (select pc.codice_azienda|| '-'||pc.id_cessione from entrasp.pagamenti_crediti pc where pc.id_argomento_tipo_pag in (51488,51489)) and cc.id_ricessione is not null and cc.codice_azienda=$codice_azienda$)"
-    },
-    {
-      "fieldName": "flag_esecutivo",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Esecutivi",
-      "newLine": false,
-      "queryCond": "esecutivo = '1'"
-    },
-    {
-      "fieldName": "flag_fasc_archiviato_s",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Fascicoli Archiviati",
-      "newLine": false,
-      "queryCond": "flag_fasc_archiviato_s = '1'"
-    },
-    {
-      "fieldName": "non_pagati",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Crediti non incassati",
-      "newLine": true,
-      "queryCond": "codice_azienda||'-'||id_cessione not in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in(51488))"
-    },
-    {
-      "fieldName": "data_pagamento_not_null",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Crediti incassati",
-      "newLine": false,
-      "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda='€global_codice_azienda€' and pag.id_argomento_tipo_pag in(51488))",
-      "size": 0
-    },
-    {
-      "fieldName": "fascicolo_null",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Fascicolo non presente",
-      "newLine": false,
-      "queryCond": "fascicolo is null",
-      "size": 0
-    },
-    {
-      "fieldName": "debitore_ceduto_null",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Debitore non presente",
-      "newLine": false,
-      "queryCond": "id_debitore_ceduto is null",
-      "size": 0
-    },
-    {
-      "fieldName": "dt_pag_prec_dt_fatt",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Data Pagamento Precedente a Data Fattura",
-      "newLine": false,
-      "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)",
-      "size": 0
-    },
-    {
-      "fieldName": "dt_scad_prec_dt_fatt",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Data Scadenza precedente a Data Fattura",
-      "newLine": false,
-      "queryCond": "data_fattura>data_scadenza",
-      "size": 0
-    },
-    {
-      "fieldName": "fattura_duplicata",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Fattura duplicata",
-      "newLine": false,
-      "queryCond": "extract(year from data_fattura)||n_fattura||id_cedente in (select extract(year from data_fattura)||n_fattura||id_cedente from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
-      "size": 0
-    },
-    {
-      "fieldName": "da_lavorare",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Da lavorare",
-      "newLine": false,
-      "queryCond": "(azionato='0' and flag_pool !='1' and  data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
-      "tooltip": "Non azionati, con pagamento avvenuto, non in pool e interessi maggiori di 0",
-      "size": 2
-    },
-    {
-      "fieldName": "pool",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "In Pool",
-      "newLine": false,
-      "queryCond": "(flag_pool='1')",
-      "size": 2
-    },
-    {
-      "fieldName": "flag_non_cessionati",
-      "format": {
-        "viewType": "checkbox"
-      },
-      "label": "Non Cessionati",
-      "newLine": false,
-      "queryCond": "id_ricessione is null"
-    }
-  ],
-  "form_keys": [
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "label"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "anagraf",
-      "label": "Anagrafiche",
-      "style": {
-        "background_color": "#03a9f4",
-        "font_color": "white",
-        "font_size": "1.3em",
-        "font_style": "italic",
-        "font_weight": "400"
-      },
-      "newLine": true,
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_cessione",
-      "label": "ID cessione",
-      "readOnly": true,
-      "newLine": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "value": 5342,
-        "options": [],
-        "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)",
-        "validations": [
-          {
-            "validator": "Validators.required",
-            "message": "Tipo documento richiesto",
-            "name": "required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_documento",
-      "label": "Tipo Documento",
-      "outputEvent": {
-        "eventName": "combo_tipo_documento",
-        "eventTrigger": "select"
-      },
-      "readOnly": false,
-      "newLine": false,
-      "size": 1.55
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "lotto",
-      "label": "Lotto",
-      "readOnly": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select id_contratto as id, numero_contratto as name from entrasp.contratti where codice_azienda=$codice_azienda$"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_contratto",
-      "label": "Contratto",
-      "readOnly": false,
-      "newLine": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "tranche",
-      "label": "Tranche",
-      "readOnly": false,
-      "size": 1
-    },
-    {
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_tipo_documento_bis",
-      "label": "id_tipo_documento_bis",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "tipo_documento_load",
-        "eventTrigger": "load"
-      },
-      "queryFunct": "SELECT id_tipo_documento as id_tipo_documento_bis from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ AND id_cessione=$id_cessione$",
-      "readOnly": true,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_fattura",
-      "label": "Data Documento",
-      "newLine": false,
-      "size": 1.50,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "data_scadenza",
-      "label": "Data Scadenza",
-      "readOnly": false,
-      "size": 1.50
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "menu",
-        "menuOptions": [
-          {
-            "icon": "sync",
-            "label": "Sposta NC nei pagamenti",
-            "outputEventName": "move_nc"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "more_vert",
-      "key": "move_nc",
-      "label": " ",
-      "newLine": true,
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.6,
-      "inputEvents": [
+    ],
+    "predefinedQueries": [
         {
-          "eventName": "move_nc",
-          "actionType": "show_message",
-          "condition": "none",
-          "values": [],
-          "message": {
-            "messageTitle": "Spostamento nota di credito",
-            "messageText": "Spostare la nota di credito nei pagamenti?",
-            "actionOnYes": {
-              "actionType": "query",
-              "queryFunct": "select entrasp.sposta_nc_nei_pagamenti($codice_azienda$, $id_cessione$)"
-            },
-            "actionOnNo": {
-              "actionType": "query",
-              "queryFunct": "select true"
-            }
-          },
-          "successMessage": "Operazione eseguita con successo",
-          "outputEventWhenComplete": "onSaveCessione"
+            "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, (select pc.data_pagamento from entrasp.pagamenti_crediti pc where pc.codice_azienda=cc.codice_azienda and pc.id_cessione=cc.id_cessione and id_argomento_tipo_pag=51488) as data_pagamento, id_ricessione,(case when id_ricessione is not null then '1' else '0' end) as cessionato, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, cc.fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
+            "operation": "selectTable",
+            "type": "main"
         }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "n_fattura",
-      "label": "N° Documento",
-      "size": 1.25,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo in ('CLI', 'CED')"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "id_cedente",
-      "label": "Cedente",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='DEC'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "key": "id_debitore_ceduto",
-      "label": "Debitore Ceduto",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "importo",
-      "label": "Importo",
-      "readOnly": false,
-      "size": 1.25
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "capitale_residuo_fin",
-      "label": "Importo Residuo Finanziario",
-      "size": 1.67,
-      "queryFunct": "select entrasp.capitale_residuo(id_cessione, codice_azienda, current_date, 'fin')",
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "capitale_residuo",
-      "label": "Importo Residuo Legale",
-      "size": 1.67,
-      "queryFunct": "select entrasp.capitale_residuo(id_cessione, codice_azienda, current_date, 'leg')",
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "cig",
-      "label": "CIG",
-      "readOnly": false,
-      "size": 1.66
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "key": "id_ricessione",
-      "label": "Ricessione",
-      "readOnly": false,
-      "size": 1.66
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=50664 and £id_tipo_documento£=5342"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "size": 2.5,
-      "key": "id_nc_associata",
-      "label": "Nota Credito Associata",
-      "readOnly": false,
-      "attributeFuncts": [
+    ],
+    "outputEvents": [
         {
-          "attributeType": "isHidden",
-          "queryString": "select case when £id_tipo_documento£=50664 then true else false end as label"
+            "eventName": "onSaveCessione",
+            "eventTrigger": "onSave"
         }
-      ]
-
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=5342 and £id_tipo_documento£=50664"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "size": 2.5,
-      "key": "id_fattura_associata",
-      "label": "Fattura Associata",
-      "readOnly": false,
-      "attributeFuncts": [
+    ],
+    "inputEvents": [
         {
-          "attributeType": "isHidden",
-          "queryString": "select case when £id_tipo_documento£=5342 then true else false end as label"
+            "eventName": "onSaveCessione",
+            "actionType": "reload"
         }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "user_ins",
-      "label": "Utente inserimento",
-      "size": 1.66,
-      "readOnly": true,
-      "newLine": false,
-      "insertUpdateFunct": "SELECT coalesce($user_ins$,'€global_username€')"
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "user_upd",
-      "label": "Utente ultimo update",
-      "size": 1.67,
-      "readOnly": true,
-      "newLine": false,
-      "insertUpdateFunct": "SELECT '€global_username€'"
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "boolean",
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_pool",
-      "label": "Acquisto Pool",
-      "size": 2.4,
-      "readOnly": false,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "size": 8.5,
-      "readOnly": false,
-      "newLine": true
-    },
-    {
-      "format": {
-        "viewType": "subform",
-        "subform_keys": [
-          {
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_cessione",
             "format": {
-              "dataType": "text",
-              "viewType": "label"
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Cessione",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "id_cessione=$id_cessione$"
+        },
+        {
+            "fieldName": "id_cedente_s",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cedente",
+            "newLine": false,
+            "queryCond": "id_cedente=$id_cedente_s$"
+        },
+        {
+            "fieldName": "id_debitore_ceduto",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Debitore Ceduto",
+            "newLine": false,
+            "queryCond": "id_debitore_ceduto=$id_debitore_ceduto$"
+        },
+        {
+            "fieldName": "id_acquirente",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Acquirente",
+            "newLine": true,
+            "queryCond": "id_acquirente=$id_acquirente$"
+        },
+        {
+            "fieldName": "data_acquisto_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Acquisto dopo il",
+            "newLine": false,
+            "queryCond": "data_acquisto>='€data_acquisto_min€'"
+        },
+        {
+            "fieldName": "data_fattura_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Fattura dopo il",
+            "newLine": false,
+            "queryCond": "data_fattura>='€data_fattura_min€'"
+        },
+        {
+            "fieldName": "data_pagamento_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Pagamento dopo il",
+            "newLine": false,
+            "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento>='€data_pagamento_min€')"
+        },
+        {
+            "fieldName": "data_scadenza_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Scadenza dopo il",
+            "newLine": true,
+            "queryCond": "data_scadenza>='€data_scadenza_min€'"
+        },
+        {
+            "fieldName": "data_acquisto_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Acquisto entro il",
+            "newLine": false,
+            "queryCond": "data_acquisto<='€data_acquisto_max€'"
+        },
+        {
+            "fieldName": "data_fattura_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Fattura entro il",
+            "newLine": false,
+            "queryCond": "data_fattura<='€data_fattura_max€'"
+        },
+        {
+            "fieldName": "data_pagamento_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Pagamento entro il",
+            "newLine": false,
+            "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pag on cc.codice_azienda=pag.codice_azienda and cc.id_cessione=pag.id_cessione where cc.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento<='€data_pagamento_max€')"
+        },
+        {
+            "fieldName": "data_scadenza_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Scadenza entro il",
+            "newLine": true,
+            "queryCond": "data_scadenza<=€data_scadenza_max€"
+        },
+        {
+            "fieldName": "id_mandato_s",
+            "format": {
+                "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "number"
+            },
+            "label": "N mandato",
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_cessione in (select pc.codice_azienda||'-'||pc.id_cessione from entrasp.pagamenti_crediti pc where pc.codice_azienda=$codice_azienda$ and pc.id_mandato=$id_mandato_s$)"
+        },
+        {
+            "fieldName": "giorni_scad_max",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Giorni scaduto inferiore a",
+            "newLine": false,
+            "queryCond": "entrasp.calcola_scaduto (data_fattura, data_pagamento)<='€giorni_scad_max€'"
+        },
+        {
+            "fieldName": "giorni_scad_min",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Giorni scaduto superiore a",
+            "newLine": false,
+            "queryCond": "entrasp.calcola_scaduto (data_fattura, data_pagamento)>='€giorni_scad_min€'"
+        },
+        {
+            "fieldName": "tranche_search_field",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Tranche",
+            "newLine": true,
+            "queryCond": "tranche =$tranche_search_field$"
+        },
+        {
+            "fieldName": "fascicolo",
+            "format": {
+                "comboQuery": "SELECT distinct fascicolo AS id, fascicolo AS name FROM entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Fascicolo",
+            "newLine": false,
+            "queryCond": "fascicolo=$fascicolo$"
+        },
+        {
+            "fieldName": "n_fattura",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Fattura N.",
+            "newLine": false,
+            "queryCond": "upper(n_fattura) like '%'||upper('€n_fattura€')||'%'"
+        },
+        {
+            "fieldName": "id_contratto_s",
+            "format": {
+                "comboQuery": "SELECT id_contratto AS id, numero_contratto AS name FROM entrasp.contratti WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Contratto N.",
+            "newLine": false,
+            "queryCond": "id_contratto=$id_contratto_s$"
+        },
+        {
+            "fieldName": "id_tipo_doc_s",
+            "format": {
+                "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342,50664,50677)",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo documento",
+            "newLine": true,
+            "queryCond": "id_tipo_documento=$id_tipo_doc_s$"
+        },
+        {
+            "fieldName": "data_pagamento_il",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data pagamento il",
+            "newLine": false,
+            "tooltip": "",
+            "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento='€data_pagamento_il€')"
+        },
+        {
+            "fieldName": "id_ricessione_s",
+            "format": {
+                "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Ricessione",
+            "newLine": true,
+            "queryCond": "id_ricessione=$id_ricessione_s$"
+        },
+        {
+            "fieldName": "flag_lav_legale",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Lavorazione Legale",
+            "newLine": false,
+            "queryCond": "lavorazione_legale = '1'"
+        },
+        {
+            "fieldName": "flag_no_lav_legale",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": " Non Lavorazione Legale",
+            "newLine": false,
+            "queryCond": "lavorazione_legale = '0'"
+        },
+        {
+            "fieldName": "flag_azionati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Azionati",
+            "newLine": false,
+            "queryCond": "azionato = '1'"
+        },
+        {
+            "fieldName": "flag_non_azionati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Non Azionati",
+            "newLine": false,
+            "queryCond": "azionato = '0'"
+        },
+        {
+            "fieldName": "flag_opposti",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Opposti",
+            "newLine": false,
+            "queryCond": "opposto = '1'"
+        },
+        {
+            "fieldName": "flag_cessionati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Cessionati",
+            "newLine": false,
+            "queryCond": "id_ricessione is not null"
+        },
+        {
+            "fieldName": "flag_cessionati_pagati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Cessionati e incassati",
+            "newLine": false,
+            "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc where cc.codice_azienda|| '-'||cc.id_cessione in (select pc.codice_azienda|| '-'||pc.id_cessione from entrasp.pagamenti_crediti pc where pc.id_argomento_tipo_pag in (51488,51489)) and cc.id_ricessione is not null and cc.codice_azienda=$codice_azienda$)"
+        },
+        {
+            "fieldName": "flag_esecutivo",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Esecutivi",
+            "newLine": false,
+            "queryCond": "esecutivo = '1'"
+        },
+        {
+            "fieldName": "flag_fasc_archiviato_s",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Fascicoli Archiviati",
+            "newLine": false,
+            "queryCond": "flag_fasc_archiviato_s = '1'"
+        },
+        {
+            "fieldName": "non_pagati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Crediti non incassati",
+            "newLine": true,
+            "queryCond": "codice_azienda||'-'||id_cessione not in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in(51488))"
+        },
+        {
+            "fieldName": "data_pagamento_not_null",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Crediti incassati",
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda='€global_codice_azienda€' and pag.id_argomento_tipo_pag in(51488))",
+            "size": 0
+        },
+        {
+            "fieldName": "fascicolo_null",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Fascicolo non presente",
+            "newLine": false,
+            "queryCond": "fascicolo is null",
+            "size": 0
+        },
+        {
+            "fieldName": "debitore_ceduto_null",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Debitore non presente",
+            "newLine": false,
+            "queryCond": "id_debitore_ceduto is null",
+            "size": 0
+        },
+        {
+            "fieldName": "dt_pag_prec_dt_fatt",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Data Pagamento Precedente a Data Fattura",
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)",
+            "size": 0
+        },
+        {
+            "fieldName": "dt_scad_prec_dt_fatt",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Data Scadenza precedente a Data Fattura",
+            "newLine": false,
+            "queryCond": "data_fattura>data_scadenza",
+            "size": 0
+        },
+        {
+            "fieldName": "fattura_duplicata",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Fattura duplicata",
+            "newLine": false,
+            "queryCond": "extract(year from data_fattura)||n_fattura||id_cedente in (select extract(year from data_fattura)||n_fattura||id_cedente from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
+            "size": 0
+        },
+        {
+            "fieldName": "da_lavorare",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Da lavorare",
+            "newLine": false,
+            "queryCond": "(azionato='0' and flag_pool !='1' and  data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
+            "tooltip": "Non azionati, con pagamento avvenuto, non in pool e interessi maggiori di 0",
+            "size": 2
+        },
+        {
+            "fieldName": "pool",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "In Pool",
+            "newLine": false,
+            "queryCond": "(flag_pool='1')",
+            "size": 2
+        },
+        {
+            "fieldName": "flag_non_cessionati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Non Cessionati",
+            "newLine": false,
+            "queryCond": "id_ricessione is null"
+        }
+    ],
+    "form_keys": [
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "situazione_ante_presidi",
-            "label": "Scadenze e Tassi",
+            "key": "anagraf",
+            "label": "Anagrafiche",
             "style": {
-              "background_color": "#03a9f4",
-              "font_color": "white",
-              "font_size": "1.3em",
-              "font_style": "italic",
-              "font_weight": "400"
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
             },
             "newLine": true,
             "readOnly": true,
-            "sameOrigin": false
-          },
-          {
+            "sameOrigin": false,
+            "translate": "RESOURCES.anagraf"
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "number",
-              "viewType": "input"
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
             },
             "isHidden": false,
-            "isPrimary": false,
-            "key": "check_scad",
-            "label": "Check Scadenza",
-            "sameOrigin": false,
-            "queryFunct": "data_scadenza - data_fattura",
-            "size": 1.5,
+            "isPrimary": true,
+            "key": "id_cessione",
+            "label": "ID cessione",
             "readOnly": true,
-            "newLine": false
-          },
-          {
+            "newLine": false,
+            "size": 1,
+            "translate": "RESOURCES.id_cessione"
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "dataType": "date",
-              "viewType": "input"
+                "viewType": "combobox",
+                "value": 5342,
+                "options": [],
+                "comboQuery": "select id_argomento as id, id_argomento|| '-' ||descrizione as name from entrasp.argomenti where id_argomento in (5342, 50664,50677)",
+                "validations": [
+                    {
+                        "validator": "Validators.required",
+                        "message": "Tipo documento richiesto",
+                        "name": "required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "scadenza_convenz",
-            "label": "Scadenza Convenzionale",
-            "size": 1.5,
-            "sameOrigin": false,
-            "queryFunct": "data_fattura + interval '60 days'",
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
+            "key": "id_tipo_documento",
+            "label": "Tipo Documento",
+            "outputEvent": {
+                "eventName": "combo_tipo_documento",
+                "eventTrigger": "select"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "giorni_scad",
-            "label": "Giorni di Scaduto",
-            "size": 1.5,
-            "sameOrigin": false,
-            "queryFunct": "entrasp.calcola_scaduto(data_fattura, data_pagamento)",
             "readOnly": false,
             "newLine": false,
+            "size": 1.55,
+            "translate": "RESOURCES.id_tipo_documento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "lotto",
+            "label": "Lotto",
+            "readOnly": false,
+            "size": 1,
+            "translate": "RESOURCES.lotto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_contratto as id, numero_contratto as name from entrasp.contratti where codice_azienda=$codice_azienda$"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_contratto",
+            "label": "Contratto",
+            "readOnly": false,
+            "newLine": false,
+            "size": 1,
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "tranche",
+            "label": "Tranche",
+            "readOnly": false,
+            "size": 1,
+            "translate": "RESOURCES.tranche"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_documento_bis",
+            "label": "id_tipo_documento_bis",
+            "newLine": false,
             "outputEvent": {
-              "eventName": "colore_scaduto",
-              "eventTrigger": "load"
+                "eventName": "tipo_documento_load",
+                "eventTrigger": "load"
+            },
+            "queryFunct": "SELECT id_tipo_documento as id_tipo_documento_bis from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ AND id_cessione=$id_cessione$",
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.id_tipo_documento_bis"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fattura",
+            "label": "Data Documento",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": false,
+            "translate": "RESOURCES.data_fattura"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "data_scadenza",
+            "label": "Data Scadenza",
+            "readOnly": false,
+            "size": 1.5,
+            "translate": "RESOURCES.data_scadenza"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "sync",
+                        "label": "Sposta NC nei pagamenti",
+                        "outputEventName": "move_nc"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "move_nc",
+            "label": " ",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.6,
+            "inputEvents": [
+                {
+                    "eventName": "move_nc",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "Spostamento nota di credito",
+                        "messageText": "Spostare la nota di credito nei pagamenti?",
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.sposta_nc_nei_pagamenti($codice_azienda$, $id_cessione$)"
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        }
+                    },
+                    "successMessage": "Operazione eseguita con successo",
+                    "outputEventWhenComplete": "onSaveCessione"
+                }
+            ],
+            "translate": "RESOURCES.move_nc"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "n_fattura",
+            "label": "N° Documento",
+            "size": 1.25,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.n_fattura"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo in ('CLI', 'CED')"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "id_cedente",
+            "label": "Cedente",
+            "readOnly": false,
+            "translate": "RESOURCES.id_cedente"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='DEC'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_debitore_ceduto",
+            "label": "Debitore Ceduto",
+            "readOnly": false,
+            "translate": "RESOURCES.id_debitore_ceduto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "importo",
+            "label": "Importo",
+            "readOnly": false,
+            "size": 1.25,
+            "translate": "RESOURCES.importo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "capitale_residuo_fin",
+            "label": "Importo Residuo Finanziario",
+            "size": 1.67,
+            "queryFunct": "select entrasp.capitale_residuo(id_cessione, codice_azienda, current_date, 'fin')",
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.capitale_residuo_fin"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "capitale_residuo",
+            "label": "Importo Residuo Legale",
+            "size": 1.67,
+            "queryFunct": "select entrasp.capitale_residuo(id_cessione, codice_azienda, current_date, 'leg')",
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.capitale_residuo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "cig",
+            "label": "CIG",
+            "readOnly": false,
+            "size": 1.66,
+            "translate": "RESOURCES.cig"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_ricessione as ID, id_ricessione|| ' - ' ||data_cessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cessionario)||' - '|| entrasp.argomenti_descr_breve(id_tipo_ricessione) as name from entrasp.ricessioni where codice_azienda='€global_codice_azienda€'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_ricessione",
+            "label": "Ricessione",
+            "readOnly": false,
+            "size": 1.66,
+            "translate": "RESOURCES.id_ricessione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=50664 and £id_tipo_documento£=5342"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "key": "id_nc_associata",
+            "label": "Nota Credito Associata",
+            "readOnly": false,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when £id_tipo_documento£=50664 then true else false end as label"
+                }
+            ],
+            "translate": "RESOURCES.id_nc_associata"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_cessione AS id, n_fattura ||' - '|| data_fattura ||' - '|| importo as name from entrasp.crediti_ceduti WHERE codice_azienda=$codice_azienda$ and id_cedente=£id_cedente£ and id_tipo_documento=5342 and £id_tipo_documento£=50664"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "key": "id_fattura_associata",
+            "label": "Fattura Associata",
+            "readOnly": false,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when £id_tipo_documento£=5342 then true else false end as label"
+                }
+            ],
+            "translate": "RESOURCES.id_fattura_associata"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "user_ins",
+            "label": "Utente inserimento",
+            "size": 1.66,
+            "readOnly": true,
+            "newLine": false,
+            "insertUpdateFunct": "SELECT coalesce($user_ins$,'€global_username€')",
+            "translate": "RESOURCES.user_ins"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "user_upd",
+            "label": "Utente ultimo update",
+            "size": 1.67,
+            "readOnly": true,
+            "newLine": false,
+            "insertUpdateFunct": "SELECT '€global_username€'",
+            "translate": "RESOURCES.user_upd"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "boolean",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_pool",
+            "label": "Acquisto Pool",
+            "size": 2.4,
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.flag_pool"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "size": 8.5,
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "label"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "situazione_ante_presidi",
+                        "label": "Scadenze e Tassi",
+                        "style": {
+                            "background_color": "#03a9f4",
+                            "font_color": "white",
+                            "font_size": "1.3em",
+                            "font_style": "italic",
+                            "font_weight": "400"
+                        },
+                        "newLine": true,
+                        "readOnly": true,
+                        "sameOrigin": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "check_scad",
+                        "label": "Check Scadenza",
+                        "sameOrigin": false,
+                        "queryFunct": "data_scadenza - data_fattura",
+                        "size": 1.5,
+                        "readOnly": true,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "scadenza_convenz",
+                        "label": "Scadenza Convenzionale",
+                        "size": 1.5,
+                        "sameOrigin": false,
+                        "queryFunct": "data_fattura + interval '60 days'",
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "giorni_scad",
+                        "label": "Giorni di Scaduto",
+                        "size": 1.5,
+                        "sameOrigin": false,
+                        "queryFunct": "entrasp.calcola_scaduto(data_fattura, data_pagamento)",
+                        "readOnly": false,
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "colore_scaduto",
+                            "eventTrigger": "load"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "colore_scaduto",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "query_style",
+                                "styleAttribute": "background_color",
+                                "queryFunct": "select case when entrasp.calcola_scaduto(data_fattura,data_pagamento)>90 then'firebrick' else 'green' end as giorni_scad_background_color from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_cessione=$id_cessione$"
+                            }
+                        ]
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "recupero_interessi",
+                        "label": "Recupero Interessi",
+                        "size": 1.5,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "fasc_archiviato",
+                        "label": "Fascicolo Archiviato",
+                        "size": 1.5,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "old_",
+                        "label": "Old",
+                        "sameOrigin": false,
+                        "queryFunct": "select 1",
+                        "size": 1.5,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "scaduto_grave",
+                        "label": "Scaduto Grave",
+                        "sameOrigin": false,
+                        "queryFunct": "select 1",
+                        "size": 1.5,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "interessi_legali",
+                        "label": "Interessi di Legge",
+                        "sameOrigin": false,
+                        "size": 1.5,
+                        "readOnly": true,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "interessi_legge_non_inc",
+                        "label": "Interesse di Legge non Incassati",
+                        "sameOrigin": false,
+                        "queryFunct": "select 1",
+                        "size": 1.5,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "interessi_non_dovuti",
+                        "label": "Interessi non dovuti",
+                        "size": 1.5,
+                        "readOnly": false,
+                        "newLine": true
+                    },
+                    {
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "label"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "situazione_ante_presidi",
+                        "label": "Legale Azionato",
+                        "style": {
+                            "background_color": "#03a9f4",
+                            "font_color": "white",
+                            "font_size": "1.3em",
+                            "font_style": "italic",
+                            "font_weight": "400"
+                        },
+                        "newLine": true,
+                        "readOnly": true,
+                        "sameOrigin": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_avvocato",
+                        "label": "ID Avvocato",
+                        "size": 5,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father = 49571",
+                            "viewType": "combobox",
+                            "options": []
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "autorita_giudiziaria",
+                        "label": "Autorità Giudiziaria",
+                        "size": 2.5,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "fascicolo",
+                        "label": "Fascicolo",
+                        "size": 2.5,
+                        "readOnly": false,
+                        "newLine": true
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "lavorazione_legale",
+                        "label": "Lavorazione Legale",
+                        "size": 2,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "opposto",
+                        "label": "Opposto",
+                        "size": 2,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "azionato",
+                        "label": "Azionato",
+                        "size": 2,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "riacquisto",
+                        "label": "Riacquisto",
+                        "size": 2,
+                        "readOnly": false,
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "esecutivo",
+                        "label": "Esecutivo",
+                        "size": 2,
+                        "readOnly": false,
+                        "newLine": true
+                    }
+                ]
             },
             "inputEvents": [
-              {
-                "eventName": "colore_scaduto",
-                "condition": "none",
-                "values": [],
-                "actionType": "query_style",
-                "styleAttribute": "background_color",
-                "queryFunct": "select case when entrasp.calcola_scaduto(data_fattura,data_pagamento)>90 then'firebrick' else 'green' end as giorni_scad_background_color from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_cessione=$id_cessione$"
-              }
-            ]
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "recupero_interessi",
-            "label": "Recupero Interessi",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "fasc_archiviato",
-            "label": "Fascicolo Archiviato",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
+                {
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "eventName": "combo_tipo_documento",
+                    "values": [
+                        "5342"
+                    ]
+                },
+                {
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "eventName": "tipo_documento_load",
+                    "values": [
+                        "5342"
+                    ]
+                },
+                {
+                    "actionType": "hide",
+                    "eventName": "combo_tipo_documento",
+                    "condition": "equalTo",
+                    "values": [
+                        "50664"
+                    ]
+                },
+                {
+                    "actionType": "hide",
+                    "eventName": "tipo_documento_load",
+                    "condition": "equalTo",
+                    "values": [
+                        "50664"
+                    ]
+                }
+            ],
             "isHidden": true,
             "isPrimary": false,
-            "key": "old_",
-            "label": "Old",
-            "sameOrigin": false,
-            "queryFunct": "select 1",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "scaduto_grave",
-            "label": "Scaduto Grave",
-            "sameOrigin": false,
-            "queryFunct": "select 1",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "interessi_legali",
-            "label": "Interessi di Legge",
-            "sameOrigin": false,
-            "size": 1.5,
-            "readOnly": true,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "number",
-              "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "interessi_legge_non_inc",
-            "label": "Interesse di Legge non Incassati",
-            "sameOrigin": false,
-            "queryFunct": "select 1",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
-            "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "interessi_non_dovuti",
-            "label": "Interessi non dovuti",
-            "size": 1.5,
-            "readOnly": false,
-            "newLine": true
-          },
-          {
-            "format": {
-              "dataType": "text",
-              "viewType": "label"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "situazione_ante_presidi",
-            "label": "Legale Azionato",
-            "style": {
-              "background_color": "#03a9f4",
-              "font_color": "white",
-              "font_size": "1.3em",
-              "font_style": "italic",
-              "font_weight": "400"
-            },
+            "key": "section_fatture_attive",
+            "label": "Fatture attive",
             "newLine": true,
-            "readOnly": true,
-            "sameOrigin": false
-          },
-          {
-            "autoGenerate": false,
+            "readOnly": false,
+            "sameOrigin": true,
+            "translate": "RESOURCES.section_fatture_attive"
+        }
+    ],
+    "table_keys": [
+        {
             "format": {
-              "viewType": "combobox",
-              "options": [],
-              "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_ricessione",
+            "width": "4%",
+            "label": "ID",
+            "translate": "RESOURCES.id_ricessione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_cessione",
+            "width": "4%",
+            "label": "ID",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center"
+                }
+            ],
+            "translate": "RESOURCES.id_cessione"
+        },
+        {
+            "format": {
+                "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_avvocato",
-            "label": "ID Avvocato",
-            "size": 5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
+            "key": "id_contratto",
+            "width": "5%",
+            "queryFunct": "entrasp.contratti_descr(id_contratto, codice_azienda)",
+            "label": "N. Contr.",
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
             "format": {
-              "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father = 49571",
-              "viewType": "combobox",
-              "options": []
+                "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "autorita_giudiziaria",
-            "label": "Autorità Giudiziaria",
-            "size": 2.5,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
+            "key": "tranche",
+            "width": "4%",
+            "label": "Tranche",
+            "translate": "RESOURCES.tranche"
+        },
+        {
             "format": {
-              "dataType": "text",
-              "viewType": "input"
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "fascicolo",
-            "label": "Fascicolo",
-            "size": 2.5,
-            "readOnly": false,
-            "newLine": true
-          },
-          {
-            "autoGenerate": false,
+            "key": "ced_descr",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente)",
+            "width": "15%",
+            "label": "Cedente",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500"
+                }
+            ],
+            "translate": "RESOURCES.ced_descr"
+        },
+        {
             "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "lavorazione_legale",
-            "label": "Lavorazione Legale",
-            "size": 2,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
+            "key": "deb_descr",
+            "width": "15%",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto)",
+            "label": "Debitore Ceduto",
+            "translate": "RESOURCES.deb_descr"
+        },
+        {
             "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "opposto",
-            "label": "Opposto",
-            "size": 2,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
+            "key": "n_fattura",
+            "width": "4%",
+            "label": "N.Fattura",
+            "translate": "RESOURCES.n_fattura"
+        },
+        {
             "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
+                "dataType": "date"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "data_scadenza",
+            "width": "7%",
+            "label": "Data Scad.",
+            "translate": "RESOURCES.data_scadenza"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fattura",
+            "width": "6%",
+            "label": "Data Fatt.",
+            "translate": "RESOURCES.data_fattura"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "importo",
+            "showTotal": true,
+            "width": "7%",
+            "label": "Importo",
+            "translate": "RESOURCES.importo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interessi_legge",
+            "label": "Interesse di Legge",
+            "sameOrigin": false,
+            "width": "5%",
+            "translate": "RESOURCES.interessi_legge"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_pagamento",
+            "width": "6%",
+            "label": "Data Pagam.",
+            "translate": "RESOURCES.data_pagamento"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_incasso_parz",
+            "width": "6%",
+            "label": "Data Pag. Parz.",
+            "translate": "RESOURCES.data_incasso_parz"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "azionato",
-            "label": "Azionato",
-            "size": 2,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
+            "isCheckbox": true,
+            "width": "4%",
+            "label": "Azion.",
+            "translate": "RESOURCES.azionato"
+        },
+        {
             "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
+                "dataType": "boolean"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "riacquisto",
-            "label": "Riacquisto",
-            "size": 2,
-            "readOnly": false,
-            "newLine": false
-          },
-          {
-            "autoGenerate": false,
+            "key": "cessionato",
+            "queryFunct": "case when id_ricessione is not null then '1' else '0' end",
+            "sameOrigin": false,
+            "isCheckbox": true,
+            "width": "4%",
+            "label": "Cessionato",
+            "translate": "RESOURCES.cessionato"
+        },
+        {
             "format": {
-              "dataType": "boolean",
-              "viewType": "checkbox"
+                "dataType": "boolean"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "esecutivo",
-            "label": "Esecutivo",
-            "size": 2,
-            "readOnly": false,
-            "newLine": true
-          }
+            "key": "opposto",
+            "isCheckbox": true,
+            "width": "4%",
+            "label": "Opp.",
+            "translate": "RESOURCES.opposto"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note_valorizzate",
+            "queryFunct": "entrasp.campo_valorizzato(cc.note)",
+            "sameOrigin": false,
+            "isCheckbox": true,
+            "width": "4%",
+            "label": "Note",
+            "translate": "RESOURCES.note_valorizzate"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fascicolo",
+            "width": "8%",
+            "label": "Fascicolo",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "green",
+                    "text_align": "center",
+                    "font_color": "white"
+                }
+            ],
+            "translate": "RESOURCES.fascicolo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "giorni_scaduto",
+            "sameOrigin": false,
+            "queryFunct": "entrasp.calcola_scaduto (data_fattura, data_pagamento)",
+            "label": "Giorni Scaduto",
+            "translate": "RESOURCES.giorni_scaduto"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "isCheckbox": true,
+            "key": "lavorazione_legale",
+            "width": "8%",
+            "sameOrigin": false,
+            "label": "Lavorazione legale",
+            "translate": "RESOURCES.lavorazione_legale"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "n_mandato",
+            "label": "N° Mandato",
+            "translate": "RESOURCES.n_mandato"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "pagamenti_sub_crediti",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_cessione",
+                    "son": "id_cessione"
+                }
+            ],
+            "label": "Movimenti"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_cedente desc, n_fattura desc limit 400"
+    },
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ],
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Modifiche Crediti",
+                "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.n_mandato,cre.data_mandato, cre.id_argomento_inatteso, cre.data_inatteso,cre.note_inatteso, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi,cre.data_incasso_parz,cre.incasso_parz, cre.note from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.codice_azienda=$codice_azienda$"
+            },
+            {
+                "label": "Crediti pagati, scaduti, non azionati",
+                "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.data_mandato, cre.id_argomento_inatteso, cre.data_inatteso,cre.note_inatteso, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi,cre.data_incasso_parz,cre.incasso_parz, cre.note, entrasp.interessi_scaduto_pagato(cre.id_cessione,cre.codice_azienda) from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.codice_azienda=$codice_azienda$ and cre.data_pagamento is not null and cre.data_pagamento>(cre.data_fattura + interval '60 days') and cre.azionato='0' limit 3500"
+            },
+            {
+                "label": "Crediti da confrontare",
+                "queryString": "select id_cessione, id_contratto, entrasp.anagrafiche_cognnome($codice_azienda$, id_debitore_ceduto)as debitore_ceduto, entrasp.anagrafiche_cognnome($codice_azienda$, id_cedente)as cedente, n_fattura, data_fattura, importo from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ AND data_pagamento IS NULL AND data_fattura IS NOT NULL"
+            },
+            {
+                "label": "Crediti da confrontare 2",
+                "queryString": "select id_cessione, id_contratto, entrasp.anagrafiche_cognnome($codice_azienda$, id_debitore_ceduto)as debitore_ceduto, entrasp.anagrafiche_cognnome($codice_azienda$, id_cedente)as cedente, n_fattura, data_fattura, importo from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ AND data_pagamento IS NULL AND data_fattura IS NOT NULL"
+            },
+            {
+                "label": "Crediti non pagati per import",
+                "queryString": "select id_cessione,entrasp.contratti_descr(id_contratto, codice_azienda) as id_n_contratto, tranche, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as debitore_ceduto, n_fattura, data_fattura, importo, null as data_pagamento, null as n_mandato, azionato, fascicolo, entrasp.ricessione_descr(id_ricessione, codice_azienda) as ricessione, 51488 as id_causale_pagamento, id_debitore_ceduto as id_controparte, importo as incasso, note, null as id_conto_corrente from entrasp.crediti_ceduti where codice_azienda= $codice_azienda$ and codice_azienda||'-'||id_cessione not in(select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.id_argomento_tipo_pag in(51488))"
+            }
         ]
-      },
-      "inputEvents": [
-        {
-          "actionType": "show",
-          "condition": "equalTo",
-          "eventName": "combo_tipo_documento",
-          "values": [
-            "5342"
-          ]
-        },
-        {
-          "actionType": "show",
-          "condition": "equalTo",
-          "eventName": "tipo_documento_load",
-          "values": [
-            "5342"
-          ]
-        },
-        {
-          "actionType": "hide",
-          "eventName": "combo_tipo_documento",
-          "condition": "equalTo",
-          "values": [
-            "50664"
-          ]
-        },
-        {
-          "actionType": "hide",
-          "eventName": "tipo_documento_load",
-          "condition": "equalTo",
-          "values": [
-            "50664"
-          ]
-        }
-      ],
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "section_fatture_attive",
-      "label": "Fatture attive",
-      "newLine": true,
-      "readOnly": false,
-      "sameOrigin": true
+    },
+    "importQueries": {
+        "tableQueries": [
+            {
+                "label": "Importa crediti",
+                "queryString": "select entrasp.import_crediti_ceduti($codice_azienda$, $nome_file$, '€global_username€')"
+            },
+            {
+                "label": "Modifica crediti",
+                "queryString": "select entrasp.import_crediti_ceduti_modifiche($codice_azienda$, $nome_file$, '€global_username€')"
+            },
+            {
+                "label": "Importa crediti pool",
+                "queryString": "select entrasp.import_crediti_ceduti_pool($codice_azienda$, $nome_file$, '€global_username€')"
+            }
+        ]
     }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_ricessione",
-      "width": "4%",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_cessione",
-      "width": "4%",
-      "label": "ID",
-      "style": [
-        {
-          "value": "*",
-          "background_color": "lightblue",
-          "text_align": "center"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_contratto",
-      "width": "5%",
-      "queryFunct": "entrasp.contratti_descr(id_contratto, codice_azienda)",
-      "label": "N. Contr."
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tranche",
-      "width": "4%",
-      "label": "Tranche"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ced_descr",
-      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente)",
-      "width": "15%",
-      "label": "Cedente",
-      "style": [
-        {
-          "value": "*",
-          "font_weight": "500"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "deb_descr",
-      "width": "15%",
-      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto)",
-      "label": "Debitore Ceduto"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "n_fattura",
-      "width": "4%",
-      "label": "N.Fattura"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_scadenza",
-      "width": "7%",
-      "label": "Data Scad."
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_fattura",
-      "width": "6%",
-      "label": "Data Fatt."
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "importo",
-      "showTotal": true,
-      "width": "7%",
-      "label": "Importo"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "interessi_legge",
-      "label": "Interesse di Legge",
-      "sameOrigin": false,
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_pagamento",
-      "width": "6%",
-      "label": "Data Pagam."
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_incasso_parz",
-      "width": "6%",
-      "label": "Data Pag. Parz."
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "azionato",
-      "isCheckbox": true,
-      "width": "4%",
-      "label": "Azion."
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cessionato",
-      "queryFunct": "case when id_ricessione is not null then '1' else '0' end",
-      "sameOrigin": false,
-      "isCheckbox": true,
-      "width": "4%",
-      "label": "Cessionato"
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "opposto",
-      "isCheckbox": true,
-      "width": "4%",
-      "label": "Opp."
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note_valorizzate",
-      "queryFunct": "entrasp.campo_valorizzato(cc.note)",
-      "sameOrigin": false,
-      "isCheckbox": true,
-      "width": "4%",
-      "label": "Note"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "fascicolo",
-      "width": "8%",
-      "label": "Fascicolo",
-      "style": [
-        {
-          "value": "*",
-          "background_color": "green",
-          "text_align": "center",
-          "font_color": "white"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "giorni_scaduto",
-      "sameOrigin": false,
-      "queryFunct": "entrasp.calcola_scaduto (data_fattura, data_pagamento)",
-      "label": "Giorni Scaduto"
-    },
-    {
-      "format": {
-        "dataType": "boolean"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "isCheckbox": true,
-      "key": "lavorazione_legale",
-      "width": "8%",
-      "sameOrigin": false,
-      "label": "Lavorazione legale"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "n_mandato",
-      "label": "N° Mandato"
-    }
-  ],
-  "subTables": [    {
-      "entryKey": "pagamenti_sub_crediti",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_cessione",
-          "son": "id_cessione"
-        }
-      ],
-      "label": "Movimenti"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by id_cedente desc, n_fattura desc limit 400"
-  },
-  "hideActions": [
-    {
-      "formActionType": "attachments",
-      "viewType": "form"
-    }
-  ],
-  "exportQueries": {
-    "tableQueries": [
-      {
-        "label": "Modifiche Crediti",
-        "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.n_mandato,cre.data_mandato, cre.id_argomento_inatteso, cre.data_inatteso,cre.note_inatteso, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi,cre.data_incasso_parz,cre.incasso_parz, cre.note from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.codice_azienda=$codice_azienda$"
-      },
-      {
-        "label": "Crediti pagati, scaduti, non azionati",
-        "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.data_mandato, cre.id_argomento_inatteso, cre.data_inatteso,cre.note_inatteso, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi,cre.data_incasso_parz,cre.incasso_parz, cre.note, entrasp.interessi_scaduto_pagato(cre.id_cessione,cre.codice_azienda) from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.codice_azienda=$codice_azienda$ and cre.data_pagamento is not null and cre.data_pagamento>(cre.data_fattura + interval '60 days') and cre.azionato='0' limit 3500"
-      },
-      {
-        "label": "Crediti da confrontare",
-        "queryString": "select id_cessione, id_contratto, entrasp.anagrafiche_cognnome($codice_azienda$, id_debitore_ceduto)as debitore_ceduto, entrasp.anagrafiche_cognnome($codice_azienda$, id_cedente)as cedente, n_fattura, data_fattura, importo from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ AND data_pagamento IS NULL AND data_fattura IS NOT NULL"
-      },
-      {
-        "label": "Crediti da confrontare 2",
-        "queryString": "select id_cessione, id_contratto, entrasp.anagrafiche_cognnome($codice_azienda$, id_debitore_ceduto)as debitore_ceduto, entrasp.anagrafiche_cognnome($codice_azienda$, id_cedente)as cedente, n_fattura, data_fattura, importo from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ AND data_pagamento IS NULL AND data_fattura IS NOT NULL"
-      },
-      {
-        "label": "Crediti non pagati per import",
-        "queryString": "select id_cessione,entrasp.contratti_descr(id_contratto, codice_azienda) as id_n_contratto, tranche, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as debitore_ceduto, n_fattura, data_fattura, importo, null as data_pagamento, null as n_mandato, azionato, fascicolo, entrasp.ricessione_descr(id_ricessione, codice_azienda) as ricessione, 51488 as id_causale_pagamento, id_debitore_ceduto as id_controparte, importo as incasso, note, null as id_conto_corrente from entrasp.crediti_ceduti where codice_azienda= $codice_azienda$ and codice_azienda||'-'||id_cessione not in(select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.id_argomento_tipo_pag in(51488))"
-      }
-    ]
-  },
-  "importQueries": {
-    "tableQueries": [
-      {
-        "label": "Importa crediti",
-        "queryString": "select entrasp.import_crediti_ceduti($codice_azienda$, $nome_file$, '€global_username€')"
-      },
-      {
-        "label": "Modifica crediti",
-        "queryString": "select entrasp.import_crediti_ceduti_modifiche($codice_azienda$, $nome_file$, '€global_username€')"
-      },
-      {
-        "label": "Importa crediti pool",
-        "queryString": "select entrasp.import_crediti_ceduti_pool($codice_azienda$, $nome_file$, '€global_username€')"
-      }
-    ]
-  }
 }

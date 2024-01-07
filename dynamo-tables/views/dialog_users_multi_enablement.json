@@ -1,152 +1,160 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "dialog_users_multi_enablement",
-  "predefinedQueries": [
-    {
-      "operation": "selectForm",
-      "type": "main",
-      "queryString": "SELECT array_agg(ai.id_anagrafica::varchar) as id_anagrafiche,'€global_codice_part€' as codice_part,array_agg(ai.id_centro_gest_default::varchar) as id_centri_gest,array_agg(dynamo_user::varchar) AS usernames FROM entrasp.anagrafiche_id ai INNER JOIN entrasp.anagrafiche_vr av USING (codice_part, id_anagrafica) WHERE codice_part = '€global_codice_part€' AND av.prog_vr = entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) AND ai.dynamo_user IN (SELECT split_part(arr, '~', 2)::varchar FROM unnest(ARRAY[$selected_rows_data$]) AS arr);"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "usernames",
-      "label": "Usernames array",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafiche",
-      "label": "ID anagrafiche array",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "Codice Partizione",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_centri_gest",
-      "label": "ID centri gest array",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT name as id, description as name FROM entrasp.profiles  WHERE aziende_list && ARRAY[€global_user_companies€]::character varying[] OR aziende_list IS NULL ORDER BY name;",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "profile",
-      "label": "Profilo da assegnare",
-      "readOnly": false,
-      "newLine": true,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice_azienda as name, codice_azienda as id FROM entrasp.aziende WHERE codice_azienda in (€global_user_companies€)",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "azienda_to_enable",
-      "label": "Azienda da aggiungere",
-      "readOnly": false,
-      "newLine": true,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT DISTINCT us.username as id, us.username as name FROM entrasp.users us INNER JOIN entrasp.anagrafiche_id an ON us.username=an.dynamo_user INNER JOIN entrasp.aziende az ON an.codice_part=az.codice_part WHERE az.codice_azienda IN (€global_user_companies€)",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "associa_user",
-      "label": "Utente dal quale copiare le autorizzazioni",
-      "readOnly": false,
-      "newLine": true,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "multi_enablement_company_to_users",
-      "label": "Abilita",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "multi_enablement_company_to_users",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_users_multi_enablement",
+    "predefinedQueries": [
         {
-          "eventName": "multi_enablement_company_to_users",
-          "condition": "none",
-          "values": [],
-          "actionType": "show_message",
-          "message": {
-            "messageText": "Si intende procedere all'abilitazione?",
-            "actionOnYes": {
-              "actionType": "user_api",
-              "userAPIParams": {
-                "actionType": "multi_enablement_company_to_users"
-              }
-            },
-            "actionOnNo": {
-              "actionType": "query",
-              "queryFunct": "select 1"
-            }
-          }
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "SELECT array_agg(ai.id_anagrafica::varchar) as id_anagrafiche,'€global_codice_part€' as codice_part,array_agg(ai.id_centro_gest_default::varchar) as id_centri_gest,array_agg(dynamo_user::varchar) AS usernames FROM entrasp.anagrafiche_id ai INNER JOIN entrasp.anagrafiche_vr av USING (codice_part, id_anagrafica) WHERE codice_part = '€global_codice_part€' AND av.prog_vr = entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) AND ai.dynamo_user IN (SELECT split_part(arr, '~', 2)::varchar FROM unnest(ARRAY[$selected_rows_data$]) AS arr);"
         }
-      ],
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    }
-  ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "usernames",
+            "label": "Usernames array",
+            "readOnly": false,
+            "translate": "RESOURCES.usernames"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafiche",
+            "label": "ID anagrafiche array",
+            "readOnly": false,
+            "translate": "RESOURCES.id_anagrafiche"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "Codice Partizione",
+            "readOnly": false,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_centri_gest",
+            "label": "ID centri gest array",
+            "readOnly": false,
+            "translate": "RESOURCES.id_centri_gest"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT name as id, description as name FROM entrasp.profiles  WHERE aziende_list && ARRAY[€global_user_companies€]::character varying[] OR aziende_list IS NULL ORDER BY name;",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "profile",
+            "label": "Profilo da assegnare",
+            "readOnly": false,
+            "newLine": true,
+            "size": 10,
+            "translate": "RESOURCES.profile"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_azienda as name, codice_azienda as id FROM entrasp.aziende WHERE codice_azienda in (€global_user_companies€)",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "azienda_to_enable",
+            "label": "Azienda da aggiungere",
+            "readOnly": false,
+            "newLine": true,
+            "size": 10,
+            "translate": "RESOURCES.azienda_to_enable"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT DISTINCT us.username as id, us.username as name FROM entrasp.users us INNER JOIN entrasp.anagrafiche_id an ON us.username=an.dynamo_user INNER JOIN entrasp.aziende az ON an.codice_part=az.codice_part WHERE az.codice_azienda IN (€global_user_companies€)",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "associa_user",
+            "label": "Utente dal quale copiare le autorizzazioni",
+            "readOnly": false,
+            "newLine": true,
+            "size": 10,
+            "translate": "RESOURCES.associa_user"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "multi_enablement_company_to_users",
+            "label": "Abilita",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "multi_enablement_company_to_users",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "multi_enablement_company_to_users",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "message": {
+                        "messageText": "Si intende procedere all'abilitazione?",
+                        "actionOnYes": {
+                            "actionType": "user_api",
+                            "userAPIParams": {
+                                "actionType": "multi_enablement_company_to_users"
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.multi_enablement_company_to_users"
+        }
+    ]
 }

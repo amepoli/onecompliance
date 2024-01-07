@@ -1,99 +1,106 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "contratti_sub_of_argomenti",
-	"inheritsFrom": "contratti",
-	"predefinedQueries": [
-		{
-			"type": "main",
-			"operation": "selectTable",
-			"queryString": "SELECT id_argomento_contratto, codice_azienda, id_contratto, numero_contratto, id_tipo_contratto, codice_part, id_strumento_finanziario, entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as id_tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as descr_cliente FROM entrasp.contratti WHERE id_argomento_contratto=$id_argomento_contratto$;"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-		  },
-		  {
-			"operation": "insert",
-			"type": "postProcessing",
-			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-		  }
-	],
-	"table_keys": [
-		{
-		  "format": {
-			"dataType": "number"
-		  },
-		  "isHidden": false,
-		  "isPrimary": true,
-		  "key": "id_contratto",
-		  "label": "ID"
-		},
-		{
-			"format": {
-			  "dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": true,
-			"key": "codice_azienda",
-			"label": "codice_azienda",
-       "translate": "RESOURCES.company_code"
-		  },
-		  {
-			"format": {
-			  "dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "codice_part",
-			"label": "codice_part"
-		  },
-		{
-		  "format": {
-			"dataType": "text"
-		  },
-		  "isHidden": false,
-		  "isPrimary": false,
-		  "key": "numero_contratto",
-		  "label": "N. Contratto"
-		},
-		{
-			"format": {
-			  "dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descr_cliente",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente)",
-			"label": "ID Cliente"
-		  },
-		  {
-			"format": {
-			  "dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_tipo_contratto",
-			"queryFunct": "entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto)",
-			"label": "Tipo Contratto"
-		  },
-		  {
-			"format": {
-			  "dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_strumento_finanziario",
-			"label": "Tipo Contratto"
-		  } ,
-		  {
-			"format": {
-			  "dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_argomento_contratto",
-			"label": "id_argomento_contratto"
-		  } 
-		]
+    "$schema": "../views.schema.json",
+    "entryKey": "contratti_sub_of_argomenti",
+    "inheritsFrom": "contratti",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "SELECT id_argomento_contratto, codice_azienda, id_contratto, numero_contratto, id_tipo_contratto, codice_part, id_strumento_finanziario, entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as id_tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as descr_cliente FROM entrasp.contratti WHERE id_argomento_contratto=$id_argomento_contratto$;"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_contratto",
+            "label": "ID",
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "numero_contratto",
+            "label": "N. Contratto",
+            "translate": "RESOURCES.numero_contratto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_cliente",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente)",
+            "label": "ID Cliente",
+            "translate": "RESOURCES.descr_cliente"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_contratto",
+            "queryFunct": "entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto)",
+            "label": "Tipo Contratto",
+            "translate": "RESOURCES.id_tipo_contratto"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_strumento_finanziario",
+            "label": "Tipo Contratto",
+            "translate": "RESOURCES.id_strumento_finanziario"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_contratto",
+            "label": "id_argomento_contratto",
+            "translate": "RESOURCES.id_argomento_contratto"
+        }
+    ]
 }

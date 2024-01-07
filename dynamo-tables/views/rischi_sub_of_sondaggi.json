@@ -1,26 +1,26 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "rischi_sub_of_sondaggi",
-  "inheritsFrom": "rischi",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select distinct rs.codice_part, rs.id_centro_gest, rs.codice_azienda, rs.codice_rischio, rs.codice, snd.id_sondaggio, rs.titolo, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_pre) as rischio_inerente, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_pre,0), coalesce(rs.intensita_singola_pre,0)) as rischio_inerente_pi, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_post) as rischio_residuo, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_post,0), coalesce(rs.intensita_singola_post,0)) as rischio_residuo_pi, entrasp.srr_rr(rs.codice_azienda, coalesce(rs.probabilita_post,0), coalesce(rs.intensita_singola_post,0)) as risk_response, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_post_rilevata) as rischio_residuo_rett, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_post_rilevata,0), coalesce(rs.intensita_singola_post_rilevata,0)) as rischio_residuo_rett_pi, entrasp.srr_rr(rs.codice_azienda, coalesce(rs.probabilita_post_rilevata,0), coalesce(rs.intensita_singola_post_rilevata,0)) as risk_response_rett, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'P',rs.probabilita_post) as probabilita from entrasp.sondaggi snd inner join entrasp.domande_presidi dp using(codice_azienda, id_modello_test, id_modello_test_vr) inner join entrasp.rischi_presidi ps using(codice_azienda, id_presidio) inner join entrasp.rischi rs using(codice_azienda, codice_rischio) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
-    }
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "upload_csv",
-      "viewType": "table"
-    }
-  ]
+    "$schema": "../views.schema.json",
+    "entryKey": "rischi_sub_of_sondaggi",
+    "inheritsFrom": "rischi",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select distinct rs.codice_part, rs.id_centro_gest, rs.codice_azienda, rs.codice_rischio, rs.codice, snd.id_sondaggio, rs.titolo, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_pre) as rischio_inerente, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_pre,0), coalesce(rs.intensita_singola_pre,0)) as rischio_inerente_pi, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_post) as rischio_residuo, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_post,0), coalesce(rs.intensita_singola_post,0)) as rischio_residuo_pi, entrasp.srr_rr(rs.codice_azienda, coalesce(rs.probabilita_post,0), coalesce(rs.intensita_singola_post,0)) as risk_response, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_post_rilevata) as rischio_residuo_rett, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_post_rilevata,0), coalesce(rs.intensita_singola_post_rilevata,0)) as rischio_residuo_rett_pi, entrasp.srr_rr(rs.codice_azienda, coalesce(rs.probabilita_post_rilevata,0), coalesce(rs.intensita_singola_post_rilevata,0)) as risk_response_rett, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'P',rs.probabilita_post) as probabilita from entrasp.sondaggi snd inner join entrasp.domande_presidi dp using(codice_azienda, id_modello_test, id_modello_test_vr) inner join entrasp.rischi_presidi ps using(codice_azienda, id_presidio) inner join entrasp.rischi rs using(codice_azienda, codice_rischio) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "upload_csv",
+            "viewType": "table"
+        }
+    ]
 }

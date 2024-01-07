@@ -1,78 +1,76 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "regolamenti",
-	"inheritsFrom": "template_argomenti",
-	"define": {
-		"id_argomento_father": "3511",
-		"array_argomenti_father_da_aggiungere": "array[3576, 3511]",
-		"label_id": "ID Regolamento",
-		"campo_id_argomento": "id_regolamento",
-		"label_unifica": "Unifica Regolamento",
-		"is_hidden_unifica_all": "false",
-		"id_argomento_bigger_than": "and true",
-		"id_argomento_father_s2": "3368",
-		"label_argomento_s2": "Livello di controllo"
-	},
-	"hideActions": [
-		{
-			"formActionType": "attachments",
-			"viewType": "form"
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "attachments_sub_of_tipi_allegati",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_tipo_allegato"
-				}
-			],
-			"label": "Documenti Associati",
+    "$schema": "../views.schema.json",
+    "entryKey": "regolamenti",
+    "inheritsFrom": "template_argomenti",
+    "define": {
+        "id_argomento_father": "3511",
+        "array_argomenti_father_da_aggiungere": "array[3576, 3511]",
+        "label_id": "ID Regolamento",
+        "campo_id_argomento": "id_regolamento",
+        "label_unifica": "Unifica Regolamento",
+        "is_hidden_unifica_all": "false",
+        "id_argomento_bigger_than": "and true",
+        "id_argomento_father_s2": "3368",
+        "label_argomento_s2": "Livello di controllo"
+    },
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "attachments_sub_of_tipi_allegati",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_tipo_allegato"
+                }
+            ],
+            "label": "Documenti Associati",
             "translate": "RESOURCES.associated_documents"
-		},
-		{
-			"entryKey": "argomenti_sub_of_argomenti_father_sterile",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_son"
-				}
-			],
-			"label": "Argomenti padre"
-		}
-	],
-	"table_multiselection_actions": [
-		{
-			"viewType": "menu",
-			"key": "menutest",
-			"label": "Options",
-			"icon": "more_vert",
-			"menuOptions": [
-				{
-					"key": "merge_argomenti",
-					"icon": "merge_type",
-					"label": "Unifica argomenti",
-					"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
-				},
-				{
-					"key": "delete",
-					"icon": "delete",
-					"label": "Delete",
-					"query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
-					"confirmAction": true,
-					"reloadOnSuccess": true,
-					"confirmActionMessage": "Eliminare la cartella e i relativi file?"
-				},
-				{
-					"key": "create_folder",
-					"icon": "create_new_folder",
-					"label": "Crea cartelle",
-					"query": "SELECT entrasp.cdms_risorsa_da_tipo_allegato('€global_codice_azienda€', id_argomento) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
-				}
-			]
-		}
-		
-	]
-
+        },
+        {
+            "entryKey": "argomenti_sub_of_argomenti_father_sterile",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "Argomenti padre"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Options",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "merge_argomenti",
+                    "icon": "merge_type",
+                    "label": "Unifica argomenti",
+                    "query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+                },
+                {
+                    "key": "delete",
+                    "icon": "delete",
+                    "label": "Delete",
+                    "query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Eliminare la cartella e i relativi file?"
+                },
+                {
+                    "key": "create_folder",
+                    "icon": "create_new_folder",
+                    "label": "Crea cartelle",
+                    "query": "SELECT entrasp.cdms_risorsa_da_tipo_allegato('€global_codice_azienda€', id_argomento) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+                }
+            ]
+        }
+    ]
 }

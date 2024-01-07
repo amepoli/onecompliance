@@ -1,66 +1,66 @@
 {
-  "$schema": "../views.schema.json",
-  "inheritsFrom": "centri_gestionali",
-  "entryKey": "centri_gestionali_sub_of_anagrafiche_vr",
-  "origin": "entrasp.centri_gestionali",
-  "predefinedQueries": [
-    {
-      "operation": "insert",
-      "queryString": "SELECT MAX(id_gruppo_lavoro)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ('€global_codice_part€',£next_id_gruppo£, $descrizione$, 0);",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "SELECT MAX(id_centro_gest)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "isInsert",
-      "queryString": "select $id_centro_gest$ is null as label;",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ('€global_codice_part€', £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£);",
-      "type": "main"
-    },
-    {
-      "operation": "delete",
-      "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
-      "type": "main"
-    },
-    {
-      "operation": "selectTable",
-      "queryString": "select cg.* from entrasp.centri_gestionali cg where cg.codice_part = $codice_part$ and cg.id_gruppo_lavoro in(select glm.id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=$id_anagrafica$ and glm.codice_part=$codice_part$)",
-      "type": "main"
-    },
-    {
-      "type": "main",
-      "operation": "share",
-      "queryString": "select entrasp.centro_gest_share('$codice_part$', $id_centro_gest$, '$chosen_azienda$');"
-    }
-  ],
-  "hideActions": [
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    },
-    {
-      "viewType": "table",
-      "tableActionType": "quick-add"
-    },
-    {
-      "viewType": "table",
-      "tableActionType": "add"
-    }
-  ]
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "centri_gestionali",
+    "entryKey": "centri_gestionali_sub_of_anagrafiche_vr",
+    "origin": "entrasp.centri_gestionali",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "queryString": "SELECT MAX(id_gruppo_lavoro)+1 AS next_id_gruppo FROM entrasp.gruppi_lavoro WHERE codice_part='€global_codice_part€';",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "insert",
+            "queryString": "INSERT INTO entrasp.gruppi_lavoro(codice_part, id_gruppo_lavoro, descrizione, flag_ufficiale) values ('€global_codice_part€',£next_id_gruppo£, $descrizione$, 0);",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT MAX(id_centro_gest)+1 as next_id FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_centro_gest$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "INSERT INTO entrasp.centri_gestionali (codice_part, id_centro_gest, codice, descrizione, id_centro_gest_parent, id_responsabile, id_gruppo_lavoro) VALUES ('€global_codice_part€', £next_id£, $codice$, $descrizione$, $id_centro_gest_parent$, $id_responsabile$, £next_id_gruppo£);",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "select entrasp.centro_gestionale_delete('€global_codice_part€', $id_centro_gest$);",
+            "type": "main"
+        },
+        {
+            "operation": "selectTable",
+            "queryString": "select cg.* from entrasp.centri_gestionali cg where cg.codice_part = $codice_part$ and cg.id_gruppo_lavoro in(select glm.id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=$id_anagrafica$ and glm.codice_part=$codice_part$)",
+            "type": "main"
+        },
+        {
+            "type": "main",
+            "operation": "share",
+            "queryString": "select entrasp.centro_gest_share('$codice_part$', $id_centro_gest$, '$chosen_azienda$');"
+        }
+    ],
+    "hideActions": [
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "add"
+        }
+    ]
 }

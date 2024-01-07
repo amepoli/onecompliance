@@ -1,348 +1,360 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "istanze_aperte_azienda",
-	"businessObjectName": "aziende",
-	"origin": "entrasp.aziende",
-	"predefinedQueries": [
-		{
-			"operation": "selectForm",
-			"queryString": "select codice_azienda, $codice_azienda_erogante$ as codice_azienda_erogante, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date) as time_consumed, entrasp.count_sondaggi_open_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date) as sondaggi_aperti, entrasp.count_progetti_open_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date) as progetti_aperti, coalesce(entrasp.compiti_count_open_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date),0) as compiti_aperti from entrasp.aziende where codice_azienda=$codice_azienda$ and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date) != 0",
-			"type": "main"
-		},
-		{
-			"operation": "selectTable",
-			"queryString": "select codice_azienda, codice_azienda_erogante, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, current_date::date) as time_consumed, entrasp.count_sondaggi_open_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) as sondaggi_aperti, entrasp.count_progetti_open_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) as progetti_aperti, entrasp.compiti_count_open_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) as compiti_aperti from entrasp.aziende, (select distinct codice_azienda as codice_azienda_erogante from entrasp.employers where dynamo_user='€global_username€') as employers where codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, current_date::date) != 0",
-			"type": "main"
-		}
-	],
-	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "dynamo_user",
-			"label": "Aggiorna Dynamo User",
-			"newLine": true,
-			"outputEvent": {
-				"eventName": "dynamo_user_update",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "dynamo_user_update",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')",
-					"successMessage": "Update successfull!"
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.5
-		},
-		{
-			"format": {
-				"dataType": "text",
-				"viewType": "label"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "Cliente",
-			"label": "Cliente",
-			"translate": "RESOURCES.customer",
-			"style": {
-				"background_color": "#03a9f4",
-				"font_color": "white",
-				"font_size": "1.5em",
-				"font_style": "normal",
-				"font_weight": "600"
-			},
-			"newLine": false,
-			"readOnly": true,
-			"sameOrigin": false,
-			"size": 6
-		},
-		{
-			"format": {
-				"dataType": "text",
-				"viewType": "label"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "Fornitore",
-			"label": "Fornitore",
-			"style": {
-				"background_color": "#03a9f4",
-				"font_color": "white",
-				"font_size": "1.5em",
-				"font_style": "normal",
-				"font_weight": "600"
-			},
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false,
-			"size": 4
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Cliente",
-			"translate": "RESOURCES.customer",
-			"key": "codice_azienda",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Capogruppo",
-			"key": "codice_part",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Numero Compiti Aperti",
-			"key": "compiti_aperti",
-			"queryFunct": "entrasp.compiti_count_open_azienda(codice_azienda)",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Fornitore",
-			"key": "codice_azienda_erogante",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "Tempo Impiegato",
-			"key": "time_consumed",
-			"queryFunct": "entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date)",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "compiti_sub_istanze_aperte_azienda",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "codice_azienda_erogante",
-					"son": "codice_azienda_erogante"
-				}
-			],
-			"label": "Attività/compiti"
-		},
-		{
-			"entryKey": "user_sub_of_istanze_aperte_azienda",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "codice_azienda_erogante",
-					"son": "codice_azienda_erogante"
-				}
-			],
-			"label": "Utenti impegnati"
-		}
-	],
-	"search_keys": [
-		{
-			"fieldName": "cliente_s",
-			"format": {
-				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"label": "Cliente",
-			"translate": "RESOURCES.customer",
-			"newLine": false,
-			"queryCond": "(codice_azienda='€cliente_s€' and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) is not null)"
-		},
-		{
-			"fieldName": "fornitore_s",
-			"format": {
-				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.employers where dynamo_user='€global_username€' order by codice_azienda;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"label": "Fornitore",
-			"newLine": false,
-			"queryCond": "(codice_azienda_erogante='€fornitore_s€' and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) is not null)"
-		},
-		{
-			"fieldName": "data_esec_min",
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"label": "Data Esecuzione dopo il",
-			"translate": "RESOURCES.execution_date_after",
-			"newLine": false,
-			"queryCond": "snd.data_esecuzione>='€data_esec_min€'"
-		},
-		{
-			"fieldName": "data_esec_max",
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"label": "Data Esecuzione entro il",
-			"translate": "RESOURCES.execution_date_by",
-			"newLine": true,
-			"queryCond": "snd.data_esecuzione<='€data_esec_max€'"
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"width": "18%",
-			"isPrimary": true,
-			"key": "codice_azienda",
-			"label": "Cliente",
-			"translate": "RESOURCES.customer"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"width": "18%",
-			"isPrimary": true,
-			"key": "codice_azienda_erogante",
-			"label": "Fornitore"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"width": "15%",
-			"key": "codice_part",
-			"label": "Partizione"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "compiti_aperti",
-			"width": "15%",
-			"label": "N.compiti aperti"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "sondaggi_aperti",
-			"width": "15%",
-			"label": "N. sondaggi aperti"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "progetti_aperti",
-			"width": "15%",
-			"label": "N.progetti aperti"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "time_consumed",
-			"width": "19%",
-			"label": "Tempo impiegato (giorni equivalenti)"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "order by codice_azienda"
-	},
-	"exportQueries": {
-		"tableQueries": [
-			{
-				"queryString": "select em.dynamo_user as Utente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, (select generate_series(0, 12) as i) serie where em.codice_azienda in(€global_user_companies€);",
-				"label": "Per azienda erogante ultimi 12 mesi"
-			},
-			{
-				"queryString": "select em.dynamo_user as Utente, az.codice_azienda as Azienda_cliente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, entrasp.aziende az, (select generate_series(0, 5) as i) serie where em.codice_azienda in(€global_user_companies€) and az.codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer))!=0;",
-				"label": "*Ultimi 6* Per azienda erogante e ricevente ultimi 12 mesi"
-			},
-			{
-				"queryString": "select em.dynamo_user as Utente, az.codice_azienda as Azienda_cliente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, entrasp.aziende az, (select generate_series(7, 12) as i) serie where em.codice_azienda in(€global_user_companies€) and az.codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer))!=0;",
-				"label": "*Primi 6* Per azienda erogante e ricevente ultimi 12 mesi"
-			}
-		]
-	},
-	"hideActions": [
-		{
-			"tableActionType": "add",
-			"viewType": "table"
-		},
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"formActionType": "add",
-			"viewType": "form"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "attachments"
-		}
-	]
+    "$schema": "../views.schema.json",
+    "entryKey": "istanze_aperte_azienda",
+    "businessObjectName": "aziende",
+    "origin": "entrasp.aziende",
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "queryString": "select codice_azienda, $codice_azienda_erogante$ as codice_azienda_erogante, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date) as time_consumed, entrasp.count_sondaggi_open_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date) as sondaggi_aperti, entrasp.count_progetti_open_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date) as progetti_aperti, coalesce(entrasp.compiti_count_open_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date),0) as compiti_aperti from entrasp.aziende where codice_azienda=$codice_azienda$ and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, $codice_azienda_erogante$, '2021-01-01'::date, '2022-12-31'::date) != 0",
+            "type": "main"
+        },
+        {
+            "operation": "selectTable",
+            "queryString": "select codice_azienda, codice_azienda_erogante, codice_part,entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, current_date::date) as time_consumed, entrasp.count_sondaggi_open_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) as sondaggi_aperti, entrasp.count_progetti_open_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) as progetti_aperti, entrasp.compiti_count_open_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) as compiti_aperti from entrasp.aziende, (select distinct codice_azienda as codice_azienda_erogante from entrasp.employers where dynamo_user='€global_username€') as employers where codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, current_date::date) != 0",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "dynamo_user",
+            "label": "Aggiorna Dynamo User",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "dynamo_user_update",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "dynamo_user_update",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.update_dynamo_user((€global_id_anagrafiche€)::text, (€global_user_companies€)::text, '€global_username€')",
+                    "successMessage": "Update successfull!"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5,
+            "translate": "RESOURCES.dynamo_user"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "Cliente",
+            "label": "Cliente",
+            "translate": "RESOURCES.customer",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.5em",
+                "font_style": "normal",
+                "font_weight": "600"
+            },
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "size": 6
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "Fornitore",
+            "label": "Fornitore",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.5em",
+                "font_style": "normal",
+                "font_weight": "600"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "size": 4,
+            "translate": "RESOURCES.Fornitore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Cliente",
+            "translate": "RESOURCES.customer",
+            "key": "codice_azienda",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Capogruppo",
+            "key": "codice_part",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Numero Compiti Aperti",
+            "key": "compiti_aperti",
+            "queryFunct": "entrasp.compiti_count_open_azienda(codice_azienda)",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.compiti_aperti"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Fornitore",
+            "key": "codice_azienda_erogante",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "translate": "RESOURCES.codice_azienda_erogante"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Tempo Impiegato",
+            "key": "time_consumed",
+            "queryFunct": "entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date)",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.time_consumed"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "compiti_sub_istanze_aperte_azienda",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "codice_azienda_erogante",
+                    "son": "codice_azienda_erogante"
+                }
+            ],
+            "label": "Attività/compiti"
+        },
+        {
+            "entryKey": "user_sub_of_istanze_aperte_azienda",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "codice_azienda_erogante",
+                    "son": "codice_azienda_erogante"
+                }
+            ],
+            "label": "Utenti impegnati"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "cliente_s",
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Cliente",
+            "translate": "RESOURCES.customer",
+            "newLine": false,
+            "queryCond": "(codice_azienda='€cliente_s€' and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) is not null)"
+        },
+        {
+            "fieldName": "fornitore_s",
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.employers where dynamo_user='€global_username€' order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Fornitore",
+            "newLine": false,
+            "queryCond": "(codice_azienda_erogante='€fornitore_s€' and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) is not null)"
+        },
+        {
+            "fieldName": "data_esec_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Esecuzione dopo il",
+            "translate": "RESOURCES.execution_date_after",
+            "newLine": false,
+            "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+        },
+        {
+            "fieldName": "data_esec_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Esecuzione entro il",
+            "translate": "RESOURCES.execution_date_by",
+            "newLine": true,
+            "queryCond": "snd.data_esecuzione<='€data_esec_max€'"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "18%",
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Cliente",
+            "translate": "RESOURCES.customer"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "18%",
+            "isPrimary": true,
+            "key": "codice_azienda_erogante",
+            "label": "Fornitore",
+            "translate": "RESOURCES.codice_azienda_erogante"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "15%",
+            "key": "codice_part",
+            "label": "Partizione",
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "compiti_aperti",
+            "width": "15%",
+            "label": "N.compiti aperti",
+            "translate": "RESOURCES.compiti_aperti"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sondaggi_aperti",
+            "width": "15%",
+            "label": "N. sondaggi aperti",
+            "translate": "RESOURCES.sondaggi_aperti"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "progetti_aperti",
+            "width": "15%",
+            "label": "N.progetti aperti",
+            "translate": "RESOURCES.progetti_aperti"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "time_consumed",
+            "width": "19%",
+            "label": "Tempo impiegato (giorni equivalenti)",
+            "translate": "RESOURCES.time_consumed"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by codice_azienda"
+    },
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "queryString": "select em.dynamo_user as Utente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, (select generate_series(0, 12) as i) serie where em.codice_azienda in(€global_user_companies€);",
+                "label": "Per azienda erogante ultimi 12 mesi"
+            },
+            {
+                "queryString": "select em.dynamo_user as Utente, az.codice_azienda as Azienda_cliente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, entrasp.aziende az, (select generate_series(0, 5) as i) serie where em.codice_azienda in(€global_user_companies€) and az.codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer))!=0;",
+                "label": "*Ultimi 6* Per azienda erogante e ricevente ultimi 12 mesi"
+            },
+            {
+                "queryString": "select em.dynamo_user as Utente, az.codice_azienda as Azienda_cliente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, entrasp.aziende az, (select generate_series(7, 12) as i) serie where em.codice_azienda in(€global_user_companies€) and az.codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer))!=0;",
+                "label": "*Primi 6* Per azienda erogante e ricevente ultimi 12 mesi"
+            }
+        ]
+    },
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ]
 }

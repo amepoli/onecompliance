@@ -1,84 +1,83 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "preanalysis_contracts",
-	"inheritsFrom": "contracts_investment",
-	"businessObjectName": "contratti",
-	"origin": "entrasp.contratti",
-	"dashboardTables": [
-		"dashboard_contracts_investment"
-	],
-	"define": {
+    "$schema": "../views.schema.json",
+    "entryKey": "preanalysis_contracts",
+    "inheritsFrom": "contracts_investment",
+    "businessObjectName": "contratti",
+    "origin": "entrasp.contratti",
+    "dashboardTables": [
+        "dashboard_contracts_investment"
+    ],
+    "define": {
         "is_hidden_conflicts": "false",
-		"is_hidden_mifid": "true",
-		"is_hidden_invisible_field": "false",
-		"label_id_controparte": "Id Cli/For",
-		"label_controparte": "Cliente/Fornitore"
-		
+        "is_hidden_mifid": "true",
+        "is_hidden_invisible_field": "false",
+        "label_id_controparte": "Id Cli/For",
+        "label_controparte": "Cliente/Fornitore"
     },
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato, entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto) as rischio_conflitto from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€'"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
-		},
-		{
-			"operation": "insert",
-			"type": "postProcessing",
-			"queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-		}
-	],
-	"subTables": [
-		{
-			"label": "Progetti associati",
-			"entryKey": "progetti_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Potenziali conflitti",
-			"entryKey": "connected_contracts",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto_principale"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Attività/Segnalazioni associate",
-			"entryKey": "compiti_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		}
-	]
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato, entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto) as rischio_conflitto from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€'"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
+        }
+    ],
+    "subTables": [
+        {
+            "label": "Progetti associati",
+            "entryKey": "progetti_sub_of_contratti",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "label": "Potenziali conflitti",
+            "entryKey": "connected_contracts",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto_principale"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "label": "Attività/Segnalazioni associate",
+            "entryKey": "compiti_sub_of_contratti",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        }
+    ]
 }

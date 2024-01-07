@@ -1,25 +1,25 @@
 {
-  "$schema": "../views.schema.json",
-  "origin": "entrasp.argomenti",
-  "businessObjectName": "controlli",
-  "entryKey": "regolamenti_sub_of_presidi",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select entrasp.argomenti_codice_descr_breve(aa.id_argomento_father) as controllo, vaf.stringa, vaf.id_risorsa from entrasp.argomenti_argomenti aa inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (5328,48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and aa.id_argomento_son=$id_argomento_son$ and vaf.codice_azienda='€global_codice_azienda€'",
-      "type": "main"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "controllo",
-      "label": "Regolamento",
-      "isInputButton": true,
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.argomenti",
+    "businessObjectName": "controlli",
+    "entryKey": "regolamenti_sub_of_presidi",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select entrasp.argomenti_codice_descr_breve(aa.id_argomento_father) as controllo, vaf.stringa, vaf.id_risorsa from entrasp.argomenti_argomenti aa inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (5328,48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and aa.id_argomento_son=$id_argomento_son$ and vaf.codice_azienda='€global_codice_azienda€'",
+            "type": "main"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo",
+            "label": "Regolamento",
+            "isInputButton": true,
             "buttonAction": {
                 "target": "policy",
                 "viewType": "form",
@@ -34,81 +34,85 @@
                         "destination": "id_risorsa"
                     }
                 ]
-            }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "stringa",
-      "label": "",
-      "isButton": true,
-      "style": [
+            },
+            "translate": "RESOURCES.controllo"
+        },
         {
-          "button_icon": "cloud_download",
-          "value": "*"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "stringa",
+            "label": "",
+            "isButton": true,
+            "style": [
+                {
+                    "button_icon": "cloud_download",
+                    "value": "*"
+                }
+            ],
+            "buttonAction": {
+                "target": "attachments",
+                "viewType": "form",
+                "action": "downloadAttachment",
+                "keymap": []
+            },
+            "translate": "RESOURCES.stringa"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_son",
+            "label": "id_argomento_son",
+            "translate": "RESOURCES.id_argomento_son"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risorsa",
+            "label": "id_risorsa",
+            "translate": "RESOURCES.id_risorsa"
         }
-      ],
-      "buttonAction": {
-        "target": "attachments",
-        "viewType": "form",
-        "action": "downloadAttachment",
-        "keymap": []
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento_son",
-      "label": "id_argomento_son"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_risorsa",
-      "label": "id_risorsa"
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ],
+    "restrictions": {
+        "preventNavigationToForm": true
     }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "quick-add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "startEvent",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "attachments",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "stopEvent",
-      "viewType": "form"
-    },
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    }
-  ],
-  "restrictions": {
-    "preventNavigationToForm": true
-  }
 }

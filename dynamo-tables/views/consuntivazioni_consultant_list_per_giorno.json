@@ -1,56 +1,56 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "consuntivazioni_consultant_list_per_giorno",
-  "inheritsFrom": "consuntivazioni_consultant_list",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select csn.date_time_begin::timestamp with time zone, csn.id_argomento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',csn.stato) as descr_stato,  csn.thread ,csn.date_time_end::timestamp with time zone, csn.id_cons, csn.codice_compito, substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200) as titolo_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, csn.codice_compito, csn.codice_azienda), true as time_report_play from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' and date_time_begin::timestamp with time zone = $date_time_begin$::timestamp with time zone ;",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part, id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part, id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "insert",
-      "type": "preCheck",
-      "queryString": "select 1 where '£date_time_begin£'>now()",
-      "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
-    },
-    {
-      "operation": "insert",
-      "type": "preCheck",
-      "queryString": "select 1 where '£date_time_begin£'>'£date_time_end£'",
-      "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
-    },
-    {
-      "operation": "update",
-      "type": "preCheck",
-      "queryString": "select 1 where '£date_time_begin£'>now()",
-      "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
-    },
-    {
-      "operation": "update",
-      "type": "preCheck",
-      "queryString": "select 1 where '£date_time_begin£'>'£date_time_end£'",
-      "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "select km_percorsi as kmpercorsi from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cons=$id_cons$",
-      "type": "postProcessing"
-    }
-  ]
+    "$schema": "../views.schema.json",
+    "entryKey": "consuntivazioni_consultant_list_per_giorno",
+    "inheritsFrom": "consuntivazioni_consultant_list",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select csn.date_time_begin::timestamp with time zone, csn.id_argomento, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',csn.stato) as descr_stato,  csn.thread ,csn.date_time_end::timestamp with time zone, csn.id_cons, csn.codice_compito, substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200) as titolo_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted, (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, csn.codice_compito, csn.codice_azienda), true as time_report_play from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' and date_time_begin::timestamp with time zone = $date_time_begin$::timestamp with time zone ;",
+            "type": "main"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "insert",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part, id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "update",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part, id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select 1 where '£date_time_begin£'>now()",
+            "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select 1 where '£date_time_begin£'>'£date_time_end£'",
+            "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select 1 where '£date_time_begin£'>now()",
+            "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select 1 where '£date_time_begin£'>'£date_time_end£'",
+            "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "select km_percorsi as kmpercorsi from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cons=$id_cons$",
+            "type": "postProcessing"
+        }
+    ]
 }

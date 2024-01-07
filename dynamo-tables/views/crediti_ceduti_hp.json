@@ -1,121 +1,121 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "crediti_ceduti_hp",
-  "inheritsFrom": "crediti_ceduti",
-  "toolbar_elements": [],
-  "tiles": [
-    {
-      "title": "Crediti scaduti da oltre un anno",
-      "content": {
-        "contentType": "value",
-        "query": "SELECT count (id_cessione) FROM ENTRASP.CREDITI_CEDUTI WHERE  DATA_SCADENZA < CURRENT_DATE - interval '1 year' AND DATA_PAGAMENTO IS NULL and fascicolo is null and lavorazione_legale='0' and codice_azienda='€global_codice_azienda€'",
-        "queryCond": "",
-        "fieldName": "crediti_scaduti",
-        "value_color": "#e47911",
-        "title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "data_scadenza_max": "CURRENT_DATE - interval '1 year'",
-          "non_pagati": "1",
-          "fascicolo_null": "1",
-          "flag_no_lav_legale":"1"
+    "$schema": "../views.schema.json",
+    "entryKey": "crediti_ceduti_hp",
+    "inheritsFrom": "crediti_ceduti",
+    "toolbar_elements": [],
+    "tiles": [
+        {
+            "title": "Crediti scaduti da oltre un anno",
+            "content": {
+                "contentType": "value",
+                "query": "SELECT count (id_cessione) FROM ENTRASP.CREDITI_CEDUTI WHERE  DATA_SCADENZA < CURRENT_DATE - interval '1 year' AND DATA_PAGAMENTO IS NULL and fascicolo is null and lavorazione_legale='0' and codice_azienda='€global_codice_azienda€'",
+                "queryCond": "",
+                "fieldName": "crediti_scaduti",
+                "value_color": "#e47911",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "data_scadenza_max": "CURRENT_DATE - interval '1 year'",
+                    "non_pagati": "1",
+                    "fascicolo_null": "1",
+                    "flag_no_lav_legale": "1"
+                }
+            }
+        },
+        {
+            "title": "Crediti Azionati senza Fascicolo",
+            "content": {
+                "contentType": "value",
+                "query": "select count (id_cessione) from entrasp.crediti_ceduti where azionato = '1' and fascicolo is null and codice_azienda='€global_codice_azienda€'",
+                "queryCond": "",
+                "fieldName": "crediti_az_senza_fascicolo",
+                "value_color": "#e47911",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "flag_azionati": "1",
+                    "fascicolo_null": "null"
+                }
+            }
+        },
+        {
+            "title": "Crediti senza Debitore Ceduto",
+            "content": {
+                "contentType": "value",
+                "query": "select count (id_cessione) from entrasp.crediti_ceduti where id_debitore_ceduto is null  and codice_azienda='€global_codice_azienda€'",
+                "queryCond": "",
+                "fieldName": "crediti_senza_debitore",
+                "value_color": "#e47911",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "debitore_ceduto_null": "null"
+                }
+            },
+            "new_line": true
+        },
+        {
+            "title": "con Data Pagamento Precedente a Data Fattura",
+            "content": {
+                "contentType": "value",
+                "query": "select count (id_cessione) from entrasp.crediti_ceduti where data_pagamento<data_fattura and codice_azienda='€global_codice_azienda€'",
+                "queryCond": "",
+                "fieldName": "dt_pag_prec_dt_fatt",
+                "value_color": "#e47911",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "dt_pag_prec_dt_fatt": "true"
+                }
+            }
+        },
+        {
+            "title": "con Data Scadenza precedente a Data Fattura",
+            "content": {
+                "contentType": "value",
+                "query": "select count (id_cessione) from entrasp.crediti_ceduti where data_fattura>data_scadenza and codice_azienda='€global_codice_azienda€'",
+                "queryCond": "",
+                "fieldName": "dt_scad_prec_dt_fatt",
+                "value_color": "#e47911",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "dt_scad_prec_dt_fatt": "true"
+                }
+            }
+        },
+        {
+            "title": "con Fattura duplicata",
+            "content": {
+                "contentType": "value",
+                "query": "select count(*) from (select extract(year from data_fattura),id_cedente,n_fattura,count(*) as ricorrenze from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1) as s",
+                "queryCond": "",
+                "fieldName": "fattura_duplicata",
+                "value_color": "#e47911",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "fattura_duplicata": "true"
+                }
+            }
+        },
+        {
+            "title": "Scaduto superiore a 90 senza fascicolo",
+            "content": {
+                "contentType": "value",
+                "query": "select count (id_cessione) from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' and lavorazione_legale='0' and fascicolo is null and (current_date - (data_fattura + 60))::numeric>89 and data_pagamento is null",
+                "queryCond": "",
+                "fieldName": "scad_sz_fasc",
+                "value_color": "#e47911",
+                "title_color": "black",
+                "background_color": "white",
+                "navigationAdditionalKeys": {
+                    "fascicolo_null": "1",
+                    "non_pagati": "1",
+                    "flag_no_lav_legale": "1",
+                    "giorni_scad_min": "90"
+                }
+            }
         }
-      }
-    },
-    {
-      "title": "Crediti Azionati senza Fascicolo",
-      "content": {
-        "contentType": "value",
-        "query": "select count (id_cessione) from entrasp.crediti_ceduti where azionato = '1' and fascicolo is null and codice_azienda='€global_codice_azienda€'",
-        "queryCond": "",
-        "fieldName": "crediti_az_senza_fascicolo",
-        "value_color": "#e47911",
-        "title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "flag_azionati": "1",
-          "fascicolo_null": "null"
-        }
-      }
-    },
-    {
-      "title": "Crediti senza Debitore Ceduto",
-      "content": {
-        "contentType": "value",
-        "query": "select count (id_cessione) from entrasp.crediti_ceduti where id_debitore_ceduto is null  and codice_azienda='€global_codice_azienda€'",
-        "queryCond": "",
-        "fieldName": "crediti_senza_debitore",
-        "value_color": "#e47911",
-        "title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "debitore_ceduto_null": "null"
-        }
-      },
-      "new_line": true
-    },
-    {
-      "title": "con Data Pagamento Precedente a Data Fattura",
-      "content": {
-        "contentType": "value",
-        "query": "select count (id_cessione) from entrasp.crediti_ceduti where data_pagamento<data_fattura and codice_azienda='€global_codice_azienda€'",
-        "queryCond": "",
-        "fieldName": "dt_pag_prec_dt_fatt",
-        "value_color": "#e47911",
-        "title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "dt_pag_prec_dt_fatt": "true"
-        }
-      }
-    },
-    {
-      "title": "con Data Scadenza precedente a Data Fattura",
-      "content": {
-        "contentType": "value",
-        "query": "select count (id_cessione) from entrasp.crediti_ceduti where data_fattura>data_scadenza and codice_azienda='€global_codice_azienda€'",
-        "queryCond": "",
-        "fieldName": "dt_scad_prec_dt_fatt",
-        "value_color": "#e47911",
-        "title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "dt_scad_prec_dt_fatt": "true"
-        }
-      }
-    },
-    {
-      "title": "con Fattura duplicata",
-      "content": {
-        "contentType": "value",
-        "query": "select count(*) from (select extract(year from data_fattura),id_cedente,n_fattura,count(*) as ricorrenze from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1) as s",
-        "queryCond": "",
-        "fieldName": "fattura_duplicata",
-        "value_color": "#e47911",
-        "title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "fattura_duplicata": "true"
-        }
-      }
-    },
-    {
-      "title": "Scaduto superiore a 90 senza fascicolo",
-      "content": {
-        "contentType": "value",
-        "query": "select count (id_cessione) from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' and lavorazione_legale='0' and fascicolo is null and (current_date - (data_fattura + 60))::numeric>89 and data_pagamento is null",
-        "queryCond": "",
-        "fieldName": "scad_sz_fasc",
-        "value_color": "#e47911",
-        "title_color": "black",
-        "background_color": "white",
-        "navigationAdditionalKeys": {
-          "fascicolo_null": "1",
-          "non_pagati": "1",
-          "flag_no_lav_legale":"1",
-          "giorni_scad_min": "90"
-        }
-      }
-    }
-  ]
+    ]
 }

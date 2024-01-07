@@ -1,121 +1,126 @@
 {
-  "$schema": "../views.schema.json",
-  "inheritsFrom": "compiti_consultant",
-  "entryKey": "user_sub_of_azienda",
-  "predefinedQueries": [
-    {
-      "type": "main",
-      "operation": "selectForm",
-      "queryString": "select distinct $codice_azienda$ as codice_azienda, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, dynamo_user, entrasp.consuntivazioni_time_consumed_azienda($codice_azienda$, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed, $codice_azienda$ as codice_azienda FROM entrasp.anagrafiche_id an inner join entrasp.anagrafiche_vr avr on an.id_anagrafica=avr.id_anagrafica where an.dynamo_user=$dynamo_user$ and an.codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$)"
-    },
-    {
-      "type": "main",
-      "operation": "selectTable",
-      "queryString": "select distinct codice_azienda, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as nmrs, an.dynamo_user, entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed FROM entrasp.anagrafiche_id an inner join entrasp.aziende az on an.codice_part=az.codice_part and az.codice_azienda=$codice_azienda$ and an.dynamo_user is not null;"
-    }
-  ],
-  "form_keys": [
-  {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Azienda",
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "newLine": false,
-      "readOnly": true,
-      "size": 2
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "dynamo_user",
-      "label": "Collaboratore",
-      "readOnly": true,
-      "newLine": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "time_consumed",
-      "label": "Tempo investito (giorn.)",
-      "sameOrigin": false,
-      "newLine": false,
-      "readOnly": true,
-      "size": 1.5
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "compiti_consultant",
+    "entryKey": "user_sub_of_azienda",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectForm",
+            "queryString": "select distinct $codice_azienda$ as codice_azienda, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, dynamo_user, entrasp.consuntivazioni_time_consumed_azienda($codice_azienda$, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed, $codice_azienda$ as codice_azienda FROM entrasp.anagrafiche_id an inner join entrasp.anagrafiche_vr avr on an.id_anagrafica=avr.id_anagrafica where an.dynamo_user=$dynamo_user$ and an.codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$)"
+        },
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select distinct codice_azienda, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as nmrs, an.dynamo_user, entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date, dynamouser=>an.dynamo_user) as time_consumed FROM entrasp.anagrafiche_id an inner join entrasp.aziende az on an.codice_part=az.codice_part and az.codice_azienda=$codice_azienda$ and an.dynamo_user is not null;"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Azienda",
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "newLine": false,
+            "readOnly": true,
+            "size": 2,
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "dynamo_user",
+            "label": "Collaboratore",
+            "readOnly": true,
+            "newLine": false,
+            "size": 2,
+            "translate": "RESOURCES.dynamo_user"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "time_consumed",
+            "label": "Tempo investito (giorn.)",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.5,
+            "translate": "RESOURCES.time_consumed"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
             "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "dynamo_user",
+            "label": "Utente",
+            "width": "25%",
+            "translate": "RESOURCES.dynamo_user"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nmrs",
+            "width": "30%",
+            "label": "Nome e Cognome",
+            "translate": "RESOURCES.nome_cognome"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "time_consumed",
+            "width": "25%",
+            "label": "Tempo impiegato",
+            "translate": "RESOURCES.time_consumed"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by dynamo_user"
     },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "dynamo_user",
-      "label": "Utente",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "nmrs",
-      "width": "30%",
-      "label": "Nome e Cognome",
-      "translate": "RESOURCES.nome_cognome"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "time_consumed",
-      "width": "25%",
-      "label": "Tempo impiegato"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by dynamo_user"
-  },
-  "hideActions": [
-		{
-			"tableActionType": "add",
-			"viewType": "table"
-		},
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"formActionType": "add",
-			"viewType": "form"
-		}
-	]
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        }
+    ]
 }

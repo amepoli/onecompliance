@@ -1,937 +1,967 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "consuntivazioni_sub_of_whistleblowing",
-  "inheritsFrom": "consuntivazioni_sub",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_ins",
-      "label": "Data inserimento",
-      "insertUpdateFunct": "coalesce(nullif(('£data_ins£'),'null')::date, CURRENT_DATE)",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "ute_ins",
-      "label": "ute_ins",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "ute_upd",
-      "label": "ute_upd",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_compito",
-      "label": "codice_compito",
-      "translate": "RESOURCES.task_code",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "label": "id_progetto",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_cons",
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "newLine": true,
-      "readOnly": false,
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "consuntivazioni_sub_of_whistleblowing",
+    "inheritsFrom": "consuntivazioni_sub",
+    "form_keys": [
         {
-          "eventName": "consuntivazioni_sub_save",
-          "actionType": "hide",
-          "queryFunct": "select 0",
-          "condition": "equalTo",
-          "values": [
-            "0"
-          ],
-          "outputEventWhenComplete": "consuntivazioni_reload"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "data_ins",
+            "label": "Data inserimento",
+            "insertUpdateFunct": "coalesce(nullif(('£data_ins£'),'null')::date, CURRENT_DATE)",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.data_ins"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "ute_ins",
+            "label": "ute_ins",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.ute_ins"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "ute_upd",
+            "label": "ute_upd",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.ute_upd"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_compito",
+            "label": "codice_compito",
+            "translate": "RESOURCES.task_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "label": "id_progetto",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_progetto"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_cons",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "newLine": true,
+            "readOnly": false,
+            "inputEvents": [
+                {
+                    "eventName": "consuntivazioni_sub_save",
+                    "actionType": "hide",
+                    "queryFunct": "select 0",
+                    "condition": "equalTo",
+                    "values": [
+                        "0"
+                    ],
+                    "outputEventWhenComplete": "consuntivazioni_reload"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "queryFunct": "entrasp.giudizio_scadenza(data_pianificato::date, stato)",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "size": 1.5,
+            "readOnly": true,
+            "newLine": false,
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_change_compiti",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$",
+                    "outputEventWhenComplete": "codice_colore_change_compiti2"
+                },
+                {
+                    "eventName": "codice_colore_change_compiti2",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": false,
+            "newLine": false,
+            "size": 1.5,
+            "key": "close",
+            "queryFunct": "SELECT CASE WHEN consuntivazioni.stato !='C' THEN FALSE ELSE TRUE END",
+            "label": "Scadenza eseguita",
+            "outputEvent": {
+                "eventName": "chiudi_riapri_evento_form",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "chiudi_riapri_evento_form",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.chiudi_riapri_consuntivazione($codice_azienda$, £id_cons£, £close£)"
+                }
+            ],
+            "translate": "RESOURCES.close"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "value": "£CURRENT_DATE£",
+                "validations": [
+                    {
+                        "message": "Inserire una data di esecuzione!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_intervento",
+            "label": "Data Intervento",
+            "translate": "RESOURCES.data_intervento",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id an inner join entrasp.ruoli_anagrafiche ra on an.id_anagrafica=ra.id_anagrafica and an.codice_part=ra.codice_part WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='RSRSA';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 1.2,
+            "key": "id_risorsa",
+            "label": "Esecutore",
+            "translate": "RESOURCES.esecutore",
+            "readOnly": false,
+            "newLine": false,
+            "insertUpdateFunct": "coalesce(£id_risorsa£, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, '€global_codice_part€')::numeric )"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "newLine": false,
+            "size": 1.6,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "chiudi_compito",
+            "label": "Chiudi Segnalazione",
+            "newLine": false,
+            "size": 1.2,
+            "outputEvent": {
+                "eventName": "chiudi_segnalazione",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "chiudi_segnalazione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.compiti set stato='C', data_chiusura=CURRENT_DATE where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$; update entrasp.consuntivazioni set stato='C' where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$;",
+                    "outputEventWhenComplete": "update_button"
+                },
+                {
+                    "eventName": "update_button",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+                    "outputEventWhenComplete": "compiti_consultant_reload"
+                },
+                {
+                    "eventName": "update_button",
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "update_button",
+                    "actionType": "query_style",
+                    "condition": "none",
+                    "values": [],
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "consuntivazioni_sub_reload",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "consuntivazioni_sub_reload",
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "consuntivazioni_sub_reload",
+                    "styleAttribute": "background_color",
+                    "actionType": "query_style",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.chiudi_compito"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "riapri_compito",
+            "label": "Riapri Segnalazione",
+            "newLine": true,
+            "size": 1.2,
+            "outputEvent": {
+                "eventName": "riapri_segnalazione",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "riapri_segnalazione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.compiti set stato='A', data_chiusura=null where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+                    "outputEventWhenComplete": "reopen_button"
+                },
+                {
+                    "eventName": "reopen_button",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
+                    "outputEventWhenComplete": "compiti_consultant_reload"
+                },
+                {
+                    "eventName": "reopen_button",
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "reopen_button",
+                    "styleAttribute": "background_color",
+                    "actionType": "query_style",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "consuntivazioni_sub_reload",
+                    "actionType": "readOnly",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "consuntivazioni_sub_reload",
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "consuntivazioni_sub_reload",
+                    "styleAttribute": "background_color",
+                    "actionType": "query_style",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.riapri_compito"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "thread",
+            "label": "Thread",
+            "newLine": false,
+            "readOnly": false,
+            "size": 4,
+            "translate": "RESOURCES.thread"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "datetime",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "date_time_begin",
+            "label": "Inizio",
+            "readOnly": false,
+            "size": 1.5,
+            "outputEvent": {
+                "eventName": "date_time_begin_edit",
+                "eventTrigger": "change"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "date_time_begin_edit",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
+                    "outputEventWhenComplete": "reload_durata",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "eventName": "date_time_end_edit",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
+                    "outputEventWhenComplete": "reload_durata",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "newLine": false,
+            "translate": "RESOURCES.date_time_begin"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "datetime",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "date_time_end",
+            "size": 1.5,
+            "label": "Fine",
+            "readOnly": false,
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "date_time_end_edit",
+                "eventTrigger": "change"
+            },
+            "translate": "RESOURCES.date_time_end"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento || ' - ' || arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son  WHERE id_argomento_father=3492 ",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Tipo Aggiornamento",
+            "newLine": true,
+            "readOnly": false,
+            "size": 3,
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea",
+                "validations": [
+                    {
+                        "message": "Campo richiesto",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "newLine": false,
+            "readOnly": false,
+            "size": 8
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "sender",
+            "label": "Mittente",
+            "newLine": false,
+            "readOnly": true,
+            "size": 2.5,
+            "translate": "RESOURCES.sender"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "receivers",
+            "label": "Destinatari",
+            "newLine": true,
+            "size": 5.5,
+            "readOnly": true,
+            "translate": "RESOURCES.receivers"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "value": "A"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "esito",
+            "label": "Esito",
+            "translate": "RESOURCES.result",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_fase",
+            "label": "id_fase",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_fase"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
+            "translate": "RESOURCES.id_check_template",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_asset",
+            "label": "id_asset",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_asset"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_attivita",
+            "label": "codice_attivita",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.codice_attivita"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_registrazione",
+            "label": "id_registrazione",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_registrazione"
         }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato",
-      "queryFunct": "entrasp.giudizio_scadenza(data_pianificato::date, stato)",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "size": 1.5,
-      "readOnly": true,
-      "newLine": false,
-      "inputEvents": [
+    ],
+    "table_keys": [
         {
-          "eventName": "codice_colore_change_compiti",
-          "condition": "none",
-          "values": [],
-          "actionType": "query_style",
-          "styleAttribute": "background_color",
-          "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$",
-          "outputEventWhenComplete": "codice_colore_change_compiti2"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_compito",
+            "label": "codice_compito",
+            "translate": "RESOURCES.task_code"
         },
         {
-          "eventName": "codice_colore_change_compiti2",
-          "condition": "none",
-          "values": [],
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ordinamento",
+            "translate": "RESOURCES.ordinamento"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_cons",
+            "label": "Codice",
+            "translate": "RESOURCES.code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "select true",
+            "width": "5%",
+            "key": "cancella_consuntivazione",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*",
+                    "font_color": "black",
+                    "background_color": "red"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "consuntivazioni_sub",
+                "viewType": "table",
+                "action": "query",
+                "query": "delete from entrasp.consuntivazioni where codice_azienda='£codice_azienda£' and id_cons=£id_cons£",
+                "keymap": [
+                    {
+                        "source": "id_cons",
+                        "destination": "id_cons"
+                    },
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Elimina",
+                    "text": "Si vuole cancellare l'aggiornamento?"
+                },
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.cancella_consuntivazione"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_intervento",
+            "label": "Data Intervento",
+            "translate": "RESOURCES.data_intervento",
+            "width": "7%"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "value": "€global_id_anagrafiche€"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "esecutore",
+            "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa)",
+            "label": "Esecutore",
+            "translate": "RESOURCES.esecutore",
+            "width": "12%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "queryFunct": "entrasp.giudizio_scadenza(data_pianificato::date, stato)",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "width": "6%",
+            "style": [
+                {
+                    "value": "Chiuso",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Provvisorio",
+                    "font_color": "#BA68C8",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Pianificato",
+                    "font_color": "#FF8100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Attesa Riscontro",
+                    "font_color": "#FF0000",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "In Svolgimento",
+                    "font_color": " #A1A100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Annullato",
+                    "font_color": "grey",
+                    "font_weight": "500"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sender",
+            "label": "From",
+            "width": "12%",
+            "translate": "RESOURCES.sender"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "thread",
+            "label": "Thread",
+            "width": "20%",
+            "translate": "RESOURCES.thread"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_pianificato",
+            "label": "Data Scadenza",
+            "width": "10%",
+            "translate": "RESOURCES.data_pianificato"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note_restricted",
+            "queryFunct": "substring(note from 1 for 100)",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "width": "20%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_attivita",
+            "label": "codice_attivita",
+            "translate": "RESOURCES.codice_attivita"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "label": "id_progetto",
+            "translate": "RESOURCES.id_progetto"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_asset",
+            "label": "id_asset",
+            "translate": "RESOURCES.id_asset"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
+            "translate": "RESOURCES.id_check_template"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_registrazione",
+            "label": "id_registrazione",
+            "translate": "RESOURCES.id_registrazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_fase",
+            "label": "id_fase",
+            "translate": "RESOURCES.id_fase"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_survey"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_riunione",
+            "label": "id_riunione",
+            "translate": "RESOURCES.id_riunione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_odg",
+            "label": "id_odg",
+            "translate": "RESOURCES.id_odg"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Id_argomento",
+            "translate": "RESOURCES.id_tag"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_documento",
+            "label": "id_argomento_tipo_documento",
+            "translate": "RESOURCES.id_argomento_tipo_documento"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_cliente",
+            "label": "id_cliente",
+            "translate": "RESOURCES.id_cliente"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_contratto",
+            "label": "id_contratto",
+            "translate": "RESOURCES.id_contract"
         }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "readOnly": false,
-      "newLine": false,
-      "size": 1.5,
-      "key": "close",
-      "queryFunct": "SELECT CASE WHEN consuntivazioni.stato !='C' THEN FALSE ELSE TRUE END",
-      "label": "Scadenza eseguita",
-      "outputEvent": {
-        "eventName": "chiudi_riapri_evento_form",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "eventName": "chiudi_riapri_evento_form",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.chiudi_riapri_consuntivazione($codice_azienda$, £id_cons£, £close£)"
-        }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input",
-        "value": "£CURRENT_DATE£",
-        "validations": [
-          {
-            "message": "Inserire una data di esecuzione!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_intervento",
-      "label": "Data Intervento",
-      "translate": "RESOURCES.data_intervento",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT distinct an.id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id an inner join entrasp.ruoli_anagrafiche ra on an.id_anagrafica=ra.id_anagrafica and an.codice_part=ra.codice_part WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='RSRSA';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "size": 1.2,
-      "key": "id_risorsa",
-      "label": "Esecutore",
-      "translate": "RESOURCES.esecutore",
-      "readOnly": false,
-      "newLine": false,
-      "insertUpdateFunct": "coalesce(£id_risorsa£, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, '€global_codice_part€')::numeric )"
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "translate": "RESOURCES.office",
-      "newLine": false,
-      "size": 1.6,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "chiudi_compito",
-      "label": "Chiudi Segnalazione",
-      "newLine": false,
-      "size": 1.2,
-      "outputEvent": {
-        "eventName": "chiudi_segnalazione",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "inputEvents": [
-        {
-          "eventName": "chiudi_segnalazione",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "update entrasp.compiti set stato='C', data_chiusura=CURRENT_DATE where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$; update entrasp.consuntivazioni set stato='C' where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$;",
-          "outputEventWhenComplete": "update_button"
-        },
-        {
-          "eventName": "update_button",
-          "actionType": "readOnly",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
-          "outputEventWhenComplete": "compiti_consultant_reload"
-        },
-        {
-          "eventName": "update_button",
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "update_button",
-          "actionType": "query_style",
-          "condition": "none",
-          "values": [],
-          "styleAttribute": "background_color",
-          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "actionType": "readOnly",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then 'grey' else 'white' end as chiudi_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "styleAttribute": "background_color",
-          "actionType": "query_style",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as chiudi_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "riapri_compito",
-      "label": "Riapri Segnalazione",
-      "newLine": true,
-      "size": 1.2,
-      "outputEvent": {
-        "eventName": "riapri_segnalazione",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "inputEvents": [
-        {
-          "eventName": "riapri_segnalazione",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "update entrasp.compiti set stato='A', data_chiusura=null where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
-          "outputEventWhenComplete": "reopen_button"
-        },
-        {
-          "eventName": "reopen_button",
-          "actionType": "readOnly",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
-          "outputEventWhenComplete": "compiti_consultant_reload"
-        },
-        {
-          "eventName": "reopen_button",
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "reopen_button",
-          "styleAttribute": "background_color",
-          "actionType": "query_style",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "actionType": "readOnly",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then false else true end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "actionType": "query_style",
-          "styleAttribute": "font_color",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then 'white' else 'grey' end as riapri_compito_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        },
-        {
-          "eventName": "consuntivazioni_sub_reload",
-          "styleAttribute": "background_color",
-          "actionType": "query_style",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select case when stato='C' then  '#25599C' else '#698EC2' end as riapri_compito_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
-        }
-      ],
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "thread",
-      "label": "Thread",
-      "newLine": false,
-      "readOnly": false,
-      "size": 4
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "datetime",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "date_time_begin",
-      "label": "Inizio",
-      "readOnly": false,
-      "size": 1.5,
-      "outputEvent": {
-        "eventName": "date_time_begin_edit",
-        "eventTrigger": "change"
-      },
-      "inputEvents": [
-        {
-          "eventName": "date_time_begin_edit",
-          "actionType": "query",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
-          "outputEventWhenComplete": "reload_durata",
-          "condition": "none",
-          "values": []
-        },
-        {
-          "eventName": "date_time_end_edit",
-          "actionType": "query",
-          "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, nullif(replace('£date_time_begin£', 'null',''), '')::timestamp with time zone, nullif(replace('£date_time_end£', 'null',''), '')::timestamp with time zone);",
-          "outputEventWhenComplete": "reload_durata",
-          "condition": "none",
-          "values": []
-        }
-      ],
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "datetime",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "date_time_end",
-      "size": 1.5,
-      "label": "Fine",
-      "readOnly": false,
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "date_time_end_edit",
-        "eventTrigger": "change"
-      }
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento || ' - ' || arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son  WHERE id_argomento_father=3492 ",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento",
-      "label": "Tipo Aggiornamento",
-      "newLine": true,
-      "readOnly": false,
-      "size": 3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea",
-        "validations": [
-          {
-            "message": "Campo richiesto",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "newLine": false,
-      "readOnly": false,
-      "size": 8
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "newLine": true,
-      "readOnly": true,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "sender",
-      "label": "Mittente",
-      "newLine": false,
-      "readOnly": true,
-      "size": 2.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "receivers",
-      "label": "Destinatari",
-      "newLine": true,
-      "size": 5.5,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "value": "A"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "esito",
-      "label": "Esito",
-      "translate": "RESOURCES.result",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_fase",
-      "label": "id_fase",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_modello_test",
-      "label": "id_modello_test",
-      "translate": "RESOURCES.id_check_template",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_asset",
-      "label": "id_asset",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "label": "id_sondaggio",
-      "translate": "RESOURCES.id_survey",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_attivita",
-      "label": "codice_attivita",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_registrazione",
-      "label": "id_registrazione",
-      "newLine": false,
-      "readOnly": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_compito",
-      "label": "codice_compito",
-      "translate": "RESOURCES.task_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "Ordinamento",
-      "translate": "RESOURCES.ordinamento"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_cons",
-      "label": "Codice",
-      "translate": "RESOURCES.code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
-      "translate": "RESOURCES.company_code",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "queryFunct": "select true",
-      "width": "5%",
-      "key": "cancella_consuntivazione",
-      "label": "",
-      "style": [
-        {
-          "button_icon": "delete",
-          "value": "*",
-          "font_color": "black",
-          "background_color": "red"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "consuntivazioni_sub",
-        "viewType": "table",
-        "action": "query",
-        "query": "delete from entrasp.consuntivazioni where codice_azienda='£codice_azienda£' and id_cons=£id_cons£",
-        "keymap": [
-          {
-            "source": "id_cons",
-            "destination": "id_cons"
-          },
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          }
-        ],
-        "confirmAction": true,
-        "confirmMessage": {
-          "title": "Elimina",
-          "text": "Si vuole cancellare l'aggiornamento?"
-        },
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_intervento",
-      "label": "Data Intervento",
-      "translate": "RESOURCES.data_intervento",
-      "width": "7%"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": "€global_id_anagrafiche€"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "esecutore",
-      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa)",
-      "label": "Esecutore",
-      "translate": "RESOURCES.esecutore",
-      "width": "12%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_stato",
-      "queryFunct": "entrasp.giudizio_scadenza(data_pianificato::date, stato)",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "width": "6%",
-      "style": [
-        {
-          "value": "Chiuso",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Provvisorio",
-          "font_color": "#BA68C8",
-          "font_weight": "500"
-        },
-        {
-          "value": "Pianificato",
-          "font_color": "#FF8100",
-          "font_weight": "500"
-        },
-        {
-          "value": "Attesa Riscontro",
-          "font_color": "#FF0000",
-          "font_weight": "500"
-        },
-        {
-          "value": "In Svolgimento",
-          "font_color": " #A1A100",
-          "font_weight": "500"
-        },
-        {
-          "value": "Annullato",
-          "font_color": "grey",
-          "font_weight": "500"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "sender",
-      "label": "From",
-      "width": "12%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "thread",
-      "label": "Thread",
-      "width": "20%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_pianificato",
-      "label": "Data Scadenza",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note_restricted",
-      "queryFunct": "substring(note from 1 for 100)",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "width": "20%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_attivita",
-      "label": "codice_attivita"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "label": "id_progetto"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_asset",
-      "label": "id_asset"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_modello_test",
-      "label": "id_modello_test",
-      "translate": "RESOURCES.id_check_template"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_registrazione",
-      "label": "id_registrazione"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_fase",
-      "label": "id_fase"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "label": "id_sondaggio",
-      "translate": "RESOURCES.id_survey"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_riunione",
-      "label": "id_riunione"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_odg",
-      "label": "id_odg"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento",
-      "label": "Id_argomento",
-      "translate": "RESOURCES.id_tag"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento_tipo_documento",
-      "label": "id_argomento_tipo_documento"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_cliente",
-      "label": "id_cliente"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_contratto",
-      "label": "id_contratto",
-      "translate": "RESOURCES.id_contract"
-    }
-  ]
+    ]
 }

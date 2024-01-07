@@ -1,330 +1,337 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "processi_sub_of_rischi",
-  "predefinedQueries": [
-    {
-      "operation": "selectForm",
-      "queryString": "SELECT fr.* from entrasp.fonti_rischio fr where fr.codice_azienda=$codice_azienda$ and fr.codice_rischio=$codice_rischio$ and id_argomento_tipo_fonte_rischio=3993 and fr.id_fonte_rischio=$id_fonte_rischio$;",
-      "type": "main"
-    }
-  ],
-  "origin": "entrasp.fonti_rischio",
-  "businessObjectName": "fonti_rischio",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cancella_proc",
-      "label": "delete",
-      "buttonIcon": "delete",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "cancella_processi_rischi",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "processi_sub_of_rischi",
+    "predefinedQueries": [
         {
-          "eventName": "cancella_processi_rischi",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "successMessage": "Done",
-          "queryFunct": "delete from entrasp.fonti_rischio where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_fonte_rischio=£id_fonte_rischio£",
-          "outputEventWhenComplete": "update_rischi_processi"
+            "operation": "selectForm",
+            "queryString": "SELECT fr.* from entrasp.fonti_rischio fr where fr.codice_azienda=$codice_azienda$ and fr.codice_rischio=$codice_rischio$ and id_argomento_tipo_fonte_rischio=3993 and fr.id_fonte_rischio=$id_fonte_rischio$;",
+            "type": "main"
         }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "comboQuery": "select id_procedura as id, codice||'-'||descrizione_breve as name from entrasp.procedure_aziendali where codice_azienda=$codice_azienda$",
-        "options": [],
-        "validations": [
-          {
-            "message": "Breve descrizione necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_procedura",
-      "label": "Procedura",
-      "translate": "RESOURCES.id_process",
-      "newLine": false,
-      "readOnly": false,
-      "size": 5
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione/Note",
-      "translate": "RESOURCES.description",
-      "newLine": false,
-      "readOnly": false,
-      "size": 3.8
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "processo_associato",
-     "label": "Dettaglio",
-      "translate": "RESOURCES.details",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "to_processo",
-        "eventTrigger": "press"
-      },
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "readOnly": true,
-      "isHidden": true,
-      "isPrimary": true,
-      "newLine": false,
-      "key": "id_fonte_rischio",
-      "label": "ID Fonte Rischio"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "readOnly": true,
-      "key": "codice_rischio",
-      "label": "Codice Rischio",
-      "translate": "resource.risk_code_pk"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "readOnly": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
+    ],
+    "origin": "entrasp.fonti_rischio",
+    "businessObjectName": "fonti_rischio",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_proc",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "cancella_processi_rischi",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "cancella_processi_rischi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Done",
+                    "queryFunct": "delete from entrasp.fonti_rischio where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_fonte_rischio=£id_fonte_rischio£",
+                    "outputEventWhenComplete": "update_rischi_processi"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.cancella_proc"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "select id_procedura as id, codice||'-'||descrizione_breve as name from entrasp.procedure_aziendali where codice_azienda=$codice_azienda$",
+                "options": [],
+                "validations": [
+                    {
+                        "message": "Breve descrizione necessaria",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_procedura",
+            "label": "Procedura",
+            "translate": "RESOURCES.id_process",
+            "newLine": false,
+            "readOnly": false,
+            "size": 5
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione/Note",
+            "translate": "RESOURCES.description",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.8
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "processo_associato",
+            "label": "Dettaglio",
+            "translate": "RESOURCES.details",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "to_processo",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "readOnly": true,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false,
+            "key": "id_fonte_rischio",
+            "label": "ID Fonte Rischio",
+            "translate": "RESOURCES.id_fonte_rischio"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "readOnly": true,
+            "key": "codice_rischio",
+            "label": "Codice Rischio",
+            "translate": "resource.risk_code_pk"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "readOnly": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
             "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number",
-        "viewType": "input",
-        "value": "3993"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento_tipo_fonte_rischio",
-       "label": "Tipo",
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input",
+                "value": "3993"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_fonte_rischio",
+            "label": "Tipo",
             "translate": "RESOURCES.type",
-      "readOnly": true
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_rischio",
-      "label": "codice_rischio"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "4%",
-      "queryFunct": "select true",
-      "key": "delete_processi_rischi",
-      "label": "",
-      "isButton": true,
-      "buttonAction": {
-        "target": "processi_sub_of_rischi",
-        "viewType": "form",
-        "query": "delete from entrasp.fonti_rischio where codice_azienda='£codice_azienda£' AND codice_rischio='£codice_rischio£' AND id_procedura=£id_procedura£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_procedura",
-            "destination": "id_procedura"
-          },
-          {
-            "source": "codice_rischio",
-            "destination": "codice_rischio"
-          }
-        ],
-        "onSuccessAction": "reload"
-      },
-      "style": [
-        {
-          "button_icon": "delete",
-          "value": "*"
+            "readOnly": true
         }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_procedura",
-      "label": "Id Processo",
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_rischio",
+            "label": "codice_rischio",
+            "translate": "RESOURCES.codice_rischio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_processi_rischi",
+            "label": "",
+            "isButton": true,
+            "buttonAction": {
+                "target": "processi_sub_of_rischi",
+                "viewType": "form",
+                "query": "delete from entrasp.fonti_rischio where codice_azienda='£codice_azienda£' AND codice_rischio='£codice_rischio£' AND id_procedura=£id_procedura£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    },
+                    {
+                        "source": "codice_rischio",
+                        "destination": "codice_rischio"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "translate": "RESOURCES.delete_processi_rischi"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_procedura",
+            "label": "Id Processo",
             "translate": "RESOURCES.id_process"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice",
-      "queryFunct": "entrasp.procedure_aziendali_codice(id_procedura, codice_azienda)",
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_procedura",
-      "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura, codice_azienda)",
-       "label": "Processo",
-      "translate": "RESOURCES.descr_procedura",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "procedure_aziendali_mog",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_procedura",
-            "destination": "id_procedura"
-          }
-        ]
-      },
-      "width": "90%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_fonte_rischio",
-      "label": "id_fonte_rischio"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "7.5%",
-      "key": "visible_button_processo",
-       "label": "Processo",
-      "translate": "RESOURCES.descr_procedura",
-      "queryFunct": "select true",
-      "isButton": true,
-      "buttonAction": {
-        "target": "procedure_aziendali",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_procedura",
-            "destination": "id_procedura"
-          }
-        ]
-      },
-      "style": [
+        },
         {
-          "button_icon": "",
-          "value": "*"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "queryFunct": "entrasp.procedure_aziendali_codice(id_procedura, codice_azienda)",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_procedura",
+            "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura, codice_azienda)",
+            "label": "Processo",
+            "translate": "RESOURCES.descr_procedura",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "procedure_aziendali_mog",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ]
+            },
+            "width": "90%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_fonte_rischio",
+            "label": "id_fonte_rischio",
+            "translate": "RESOURCES.id_fonte_rischio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "7.5%",
+            "key": "visible_button_processo",
+            "label": "Processo",
+            "translate": "RESOURCES.descr_procedura",
+            "queryFunct": "select true",
+            "isButton": true,
+            "buttonAction": {
+                "target": "procedure_aziendali",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ]
+            },
+            "style": [
+                {
+                    "button_icon": "",
+                    "value": "*"
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "inputEvents": [
-    {
-      "eventName": "update_rischi_processi",
-      "actionType": "reload"
-    },
-    {
-      "actionTarget": {
-        "name": "procedure_aziendali",
-        "type": "form",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_procedura",
-            "destination": "id_procedura"
-          }
-        ]
-      },
-      "actionType": "navigate",
-      "eventName": "to_processo"
-    }
-  ]
+    ],
+    "inputEvents": [
+        {
+            "eventName": "update_rischi_processi",
+            "actionType": "reload"
+        },
+        {
+            "actionTarget": {
+                "name": "procedure_aziendali",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_processo"
+        }
+    ]
 }

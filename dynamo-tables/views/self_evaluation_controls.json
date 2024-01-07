@@ -1,51 +1,51 @@
 {
-	"$schema": "../views.schema.json",
-	"origin": "entrasp.argomenti",
-	"entryKey": "self_evaluation_controls",
-	"inheritsFrom": "template_argomenti",
-	"define": {
-		"id_argomento_father": "5448",	
-		"array_argomenti_father_da_aggiungere": "array[5449,5450]",
-		"label_id": "ID Controllo AML",
-		"campo_id_argomento": "id_argomento",
-		"id_argomento_strato": "6157",
-		"label_unifica": "Unifica Controllo AML",
-		"is_hidden_unifica_all": "true",
-		"id_argomento_father_s2": "3368",
-		"label_argomento_s2": "Livello di controllo"	
-	},
-	"predefinedQueries": [
-		{
-			"type": "main",
-			"operation": "selectTable",
-			"queryString": "select arg.*, (select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as num_argomenti_padre from entrasp.argomenti arg where arg.id_argomento in (select id_argomento_descendants from entrasp.descendants_of_argomento($P{id_argomento_strato}, 1)) and arg.id_argomento in (select id_argomento_descendants from entrasp.descendants_of_argomento($P{id_argomento_father})) and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
-		},
-		{
-			"operation": "insert",
-			"queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{array_argomenti_father_da_aggiungere}) as id_argomento;",
-			"type": "main"
-		},
-		{
-			"operation": "delete",
-			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
-			"type": "preProcessing"
-		},
-		{
-			"operation": "isInsert",
-			"queryString": "select $id_argomento$ is null as label;",
-			"type": "main"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
-			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
-			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-		}
-	]
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.argomenti",
+    "entryKey": "self_evaluation_controls",
+    "inheritsFrom": "template_argomenti",
+    "define": {
+        "id_argomento_father": "5448",
+        "array_argomenti_father_da_aggiungere": "array[5449,5450]",
+        "label_id": "ID Controllo AML",
+        "campo_id_argomento": "id_argomento",
+        "id_argomento_strato": "6157",
+        "label_unifica": "Unifica Controllo AML",
+        "is_hidden_unifica_all": "true",
+        "id_argomento_father_s2": "3368",
+        "label_argomento_s2": "Livello di controllo"
+    },
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select arg.*, (select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as num_argomenti_padre from entrasp.argomenti arg where arg.id_argomento in (select id_argomento_descendants from entrasp.descendants_of_argomento($P{id_argomento_strato}, 1)) and arg.id_argomento in (select id_argomento_descendants from entrasp.descendants_of_argomento($P{id_argomento_father})) and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.argomenti_classification_insert($descrizione$, $descrizione$, $codice$, $P{array_argomenti_father_da_aggiungere}) as id_argomento;",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_argomento$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
+            "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+        }
+    ]
 }

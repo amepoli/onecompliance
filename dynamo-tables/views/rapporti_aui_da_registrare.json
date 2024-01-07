@@ -1,1193 +1,1242 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "rapporti_aui_da_registrare",
-	"origin": "entrasp.anagrafiche_vr",
-	"businessObjectName": "anagrafiche_vr",
-	"label": "Rapporti da registrare",
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select distinct rra.id_registrazione_rapp, cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente as id_anagrafica, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda left join entrasp.registrazioni_rapporti_aui rra on cnt.codice_azienda=rra.codice_azienda and cnt.id_contratto=rra.id_contratto where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408,2)) AND cnt.stato != 'C'"
-		},
-		{
-			"operation": "selectForm",
-			"type": "main",
-			"queryString": "select an.id_anagrafica, ct.codice_azienda, ct.codice_part, ct.id_contratto,arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario,ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, to_char(ct.data_stipulazione,'DD/MM/YYYY') as data_apertura, to_char(ct.data_cessazione,'DD/MM/YYYY') as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta,an.codice as ndg_rapporto,'01' as tipo_soggetto, to_char(ct.data_stipulazione,'DD/MM/YYYY') as data_inizio_validita, to_char(ct.data_cessazione,'DD/MM/YYYY') as data_fine_validita, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo,  avr.annotazioni_interne,avr.indirizzo, avr.codice_comune, avr.codice_nazione, ate.id_ateco, sae.cod_sae from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$;"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select 1 as one",
-			"messageNotNull": "Foo Foos Foo"
-		}
-	],
-	"define": {
-		"is_hidden_conflicts": "true",
-		"is_hidden_mifid": "true",
-		"is_hidden_invisible_field": "true",
-		"label_id_controparte": "ID Cliente",
-		"label_controparte": "Cliente"
-	},
-	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "codice_azienda",
-			"translate": "RESOURCES.company_code",
-			"key": "codice_azienda",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": true,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "ID",
-			"key": "id_contratto",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 2
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "id_anagrafica",
-			"translate": "RESOURCES.id_personal_data",
-			"key": "id_anagrafica",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": true,
-			"newLine": false
-		},
-		{
-			"format": {
-				"dataType": "text",
-				"viewType": "label"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "dati_generali",
-			"label": "Dati Generali",
-			"style": {
-				"background_color": "#2B679D",
-				"font_color": "white",
-				"font_size": "1.3em",
-				"font_style": "italic",
-				"font_weight": "400"
-			},
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "ID Registrazione",
-			"key": "id_registrazione_rapp",
-			"readOnly": true,
-			"isHidden": true,
-			"isPrimary": true,
-			"newLine": false,
-			"size": 2
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "codice_part",
-			"label": "codice_part",
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "tipo_intermediario",
-			"label": "Tipo Intermediario",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_intermediario",
-			"label": "Codice Intermediario",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "identificativo_rapporto",
-			"label": "Identificativo Rapporto",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": true
-		},
-		{
-			"format": {
-				"dataType": "text",
-				"viewType": "label"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "dati_rapporto",
-			"label": "Dati Rapporto",
-			"style": {
-				"background_color": "#2B679D",
-				"font_color": "white",
-				"font_size": "1.3em",
-				"font_style": "italic",
-				"font_weight": "400"
-			},
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_filiale",
-			"label": "Codice Filiale",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_apertura",
-			"label": "Data Apertura Rapporto",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "tipo_rapporto",
-			"label": "Tipo di Rapporto",
-			"size": 1.65,
-			"newLine": false,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_valuta",
-			"label": "Codice Valuta",
-			"size": 1.65,
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "cab_filiale",
-			"label": "CAB Filiale",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_chiusura",
-			"label": "Data Chiusura Rapporto",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "ndg_rapporto",
-			"label": "NDG",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"format": {
-				"dataType": "text",
-				"viewType": "label"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "dati_soggetto",
-			"label": "Dati Soggetto",
-			"style": {
-				"background_color": "#2B679D",
-				"font_color": "white",
-				"font_size": "1.3em",
-				"font_style": "italic",
-				"font_weight": "400"
-			},
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "cognome_nome_rag_sociale_soggetto",
-			"label": "Denominazione",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT cod_banca_italia AS id, concat(coalesce(cod_banca_italia::varchar,codice_nazione), ' - ' ,descrizione) AS name FROM entrasp.nazioni where cod_banca_italia is not null order by descrizione asc",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_nazione",
-			"label": "Stato di Residenza",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateNazione",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateNazione",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set codice_nazione='£codice_nazione£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Stato di Residenza Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_inizio_validita",
-			"label": "Data Inizio Validità",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "tipo_soggetto",
-			"label": "Tipo Soggetto",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "indirizzo",
-			"label": "Indirizzo di Residenza",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateIndirizzoResidenza",
-				"eventTrigger": "blur"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateIndirizzoResidenza",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set indirizzo='£indirizzo£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Indirizzo di Residenza Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_fine_validita",
-			"label": "Data Fine Validità",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": true,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice",
-			"label": "NDG",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia",
-				"validations": [
-					{
-						"message": "Campo Obbligatorio",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_comune",
-			"label": "Comune di Residenza",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateComuneResidenza",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateComuneResidenza",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set codice_comune='£codice_comune£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Comune di Residenza Aggiornato"
-				}
-			]
-		},
-		{
-			"format": {
-				"dataType": "number",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT cod_sae AS id, concat (cod_sae, '-' ,descrizione) AS name FROM entrasp.sae"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "cod_sae",
-			"label": "SAE Soggetto",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateSae",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateSae",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set cod_sae='£cod_sae£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Codice SAE Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_fiscale",
-			"label": "Codice Fiscale Soggetto",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "nascita_data",
-			"label": "Data di Nascita",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateDataNascita",
-				"eventTrigger": "change"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateDataNascita",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_id set nascita_data='£nascita_data£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
-					"successMessage": "Data di Nascita Aggiornata"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT id_ateco AS id, descrizione AS name FROM entrasp.ateco"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_ateco",
-			"label": "Ateco Soggetto",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateAteco",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateAteco",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set id_ateco='£id_ateco£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Codice Ateco Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "combobox",
-				"options": [],
-				"dataType": "text",
-				"comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "sesso",
-			"label": "Sesso",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateSesso",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateSesso",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_id set sesso='£sesso£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
-					"successMessage": "Sesso Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "nascita_luogo",
-			"label": "Comune di Nascita",
-			"size": 3.3,
-			"newLine": false,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateComuneNascita",
-				"eventTrigger": "select"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateComuneNascita",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_id set nascita_luogo='£nascita_luogo£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
-					"successMessage": "Comune di Nascita Aggiornato"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": " annotazioni_interne",
-			"label": "A Disposizione",
-			"size": 3.3,
-			"newLine": true,
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "updateAnnotazioniInterne",
-				"eventTrigger": "blur"
-			},
-			"inputEvents": [
-				{
-					"condition": "none",
-					"values": [],
-					"eventName": "updateAnnotazioniInterne",
-					"actionType": "query",
-					"queryFunct": "update entrasp.anagrafiche_vr set annotazioni_interne=£annotazioni_interne£ where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
-					"successMessage": "Note Aggiornate"
-				}
-			]
-		},
-		{
-			"format": {
-				"viewType": "invisible"
-			},
-			"size": 3.5,
-			"isHidden": false,
-			"isPrimary": false,
-			"label": "invisible_7",
-			"key": "invisible_7",
-			"sameOrigin": false,
-			"readOnly": true,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "registra_operazione",
-			"buttonIcon": "ios_share",
-			"label": " Registra rapporto in AUI",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "register",
-				"eventTrigger": "press"
-			},
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 3,
-			"style": {
-				"background_color": "forestGreen"
-			},
-			"inputEvents": [
-				{
-					"eventName": "register",
-					"actionType": "show_message",
-					"condition": "none",
-					"values": [],
-					"message": {
-						"messageTitle": "Registra in AUI",
-						"messageText": "Sei sicuro di voler registrare DEFINITIVAMENTE il rapporto e le anagrafiche connesse?",
-						"actionOnYes": {
-							"actionType": "query",
-							"queryFunct": "select entrasp.aui_registra_rapporto($codice_azienda$, $id_contratto$)"
-						},
-						"actionOnNo": {
-							"actionType": "query",
-							"queryFunct": "select true"
-						}
-					},
-					"successMessage": "Operazione eseguita con successo"
-				}
-			]
-		},
-		{
-			"format": {
-				"viewType": "invisible"
-			},
-			"size": 3.5,
-			"isHidden": false,
-			"isPrimary": false,
-			"label": "invisible_8",
-			"key": "invisible_8",
-			"sameOrigin": false,
-			"readOnly": true,
-			"newLine": true
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"sameOrigin": false,
-			"key": "id_contratto_principale",
-			"label": "id_contratto_principale"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"width": "3%",
-			"key": "id_contratto",
-			"label": "#"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": true,
-			"key": "codice_azienda",
-			"label": "codice_azienda",
-			"translate": "RESOURCES.company_code"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"width": "11%",
-			"isPrimary": false,
-			"key": "numero_contratto",
-			"label": "N.Contratto",
-			"style": [
-				{
-					"value": "*",
-					"background_color": "lightblue",
-					"text_align": "center",
-					"font_weight": "590"
-				}
-			]
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_anagrafica",
-			"label": "$P{label_controparte}",
-			"width": "0%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "cliente",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
-			"label": "$P{label_controparte}",
-			"width": "24%",
-			"style": [
-				{
-					"value": "*",
-					"font_size": "medium",
-					"font_weight": "590"
-				}
-			]
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "13%",
-			"key": "id_argomento_contratto",
-			"queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_contratto)",
-			"label": "Tipo Contratto"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_strumento_finanziario",
-			"label": "id_strumento_finanziario"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "fondo_gestito",
-			"width": "15%",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario)",
-			"label": "Strum.fin.sottoscritto/acquistato"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_stipulazione",
-			"width": "8%",
-			"label": "Data Stipula"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_cessazione",
-			"width": "8%",
-			"label": "Data Cessazione"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descr_stato",
-			"label": "Stato",
-			"translate": "RESOURCES.status",
-			"style": [
-				{
-					"value": "Cessato",
-					"font_color": "PaleGreen",
-					"font_weight": "500",
-					"background_color": "Green",
-					"text_align": "center"
-				},
-				{
-					"value": "In Scadenza",
-					"font_color": "MistyRose",
-					"font_weight": "500",
-					"background_color": "MediumPurple",
-					"text_align": "center"
-				},
-				{
-					"value": "Attivo",
-					"font_color": "white",
-					"font_weight": "500",
-					"background_color": "royalblue",
-					"text_align": "center"
-				}
-			],
-			"sameOrigin": false
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"label": "Giudizio Appropriatezza",
-			"width": "8%",
-			"key": "giudizio",
-			"queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
-			"isHidden": "$Q{is_hidden_mifid}",
-			"style": [
-				{
-					"value": "Appropriato",
-					"font_color": "PaleGreen",
-					"font_weight": "500",
-					"background_color": "Green",
-					"text_align": "center"
-				},
-				{
-					"value": "Adeguato",
-					"font_color": "PaleGreen",
-					"font_weight": "500",
-					"background_color": "Green",
-					"text_align": "center"
-				},
-				{
-					"value": "Non Appropriato",
-					"font_color": "DarkRed",
-					"font_weight": "500",
-					"background_color": "orange",
-					"text_align": "center"
-				},
-				{
-					"value": "Non Adeguato",
-					"font_color": "DarkRed",
-					"font_weight": "500",
-					"background_color": "orange",
-					"text_align": "center"
-				},
-				{
-					"value": "Non Giudicabile",
-					"font_color": "grey",
-					"font_weight": "500",
-					"background_color": "gainsboro",
-					"text_align": "center"
-				}
-			],
-			"isPrimary": false
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"label": "",
-			"width": "8%",
-			"key": "hidden_field",
-			"sameOrigin": false,
-			"isHidden": "$Q{is_hidden_invisible_field}",
-			"isPrimary": false
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"queryFunct": "entrasp.anagrafica_key(id_cliente, codice_azienda, '|')",
-			"key": "object_key",
-			"label": "object_key"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "8%",
-			"key": "id_registrazione_rapp",
-			"label": "N. Registrazione Aui",
-			"style": [
-				{
-					"value": "*",
-					"text_align": "center"
-				}
-			],
-			"isInputButton": true,
-			"buttonAction": {
-				"target": "registrazioni_rapp",
-				"viewType": "form",
-				"action": "navigate",
-				"keymap": [
-					{
-						"source": "codice_azienda",
-						"destination": "codice_azienda"
-					},
-					{
-						"source": "id_registrazione_rapp",
-						"destination": "id_registrazione_rapp"
-					}
-				]
-			}
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": "$Q{is_hidden_conflicts}",
-			"isPrimary": false,
-			"key": "rischio_conflitto",
-			"label": "Rischio conflitto",
-			"style": [
-				{
-					"value": "*",
-					"font_color": "PaleGreen",
-					"font_weight": "500",
-					"background_color": "Green",
-					"text_align": "center"
-				},
-				{
-					"value": "Potenziale conflitto",
-					"font_color": "white",
-					"font_weight": "500",
-					"background_color": "DarkRed",
-					"text_align": "center"
-				}
-			]
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "connessioni_anagrafiche_sub_rapp_aui_da_registrare",
-			"isHidden": false,
-			"keys": [
-				{
-					"parent": "id_anagrafica",
-					"son": "id_anagrafica"
-				},
-				{
-					"parent": "codice_part",
-					"son": "codice_part"
-				}
-			],
-			"label": "Anagrafiche connesse"
-		}
-	],
-	"search_keys": [
-		{
-			"fieldName": "not_registered_toggle",
-			"format": {
-				"value": "1",
-				"viewType": "toggle"
-			},
-			"label": "Nascondi Rapporti Registrati",
-			"newLine": false,
-			"queryCond": "rra.id_registrazione_rapp IS NULL"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "order by cnt.id_contratto desc"
-	},
-	"hideActions": [
-		{
-			"tableActionType": "add",
-			"viewType": "table"
-		},
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "startEvent"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "stopEvent"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "import_export"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "share"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "attachments"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "multi-attachments"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "documentation"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "delete"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "save"
-		}
-	]
+    "$schema": "../views.schema.json",
+    "entryKey": "rapporti_aui_da_registrare",
+    "origin": "entrasp.anagrafiche_vr",
+    "businessObjectName": "anagrafiche_vr",
+    "label": "Rapporti da registrare",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select distinct rra.id_registrazione_rapp, cnt.id_contratto, cnt.data_stipulazione, cnt.data_cessazione, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente as id_anagrafica, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda left join entrasp.registrazioni_rapporti_aui rra on cnt.codice_azienda=rra.codice_azienda and cnt.id_contratto=rra.id_contratto where az.codice_part='€global_codice_part€' and cnt.id_argomento_contratto in(select id_argomento_descendants from entrasp.descendants_of_argomento(5408,2)) AND cnt.stato != 'C'"
+        },
+        {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select an.id_anagrafica, ct.codice_azienda, ct.codice_part, ct.id_contratto,arg.codice_esterno as tipo_intermediario, az.codice_esterno as codice_intermediario,ct.numero_contratto as identificativo_rapporto, az.codice_filiale, az.cab_filiale,arg2.codice_esterno as tipo_rapporto, to_char(ct.data_stipulazione,'DD/MM/YYYY') as data_apertura, to_char(ct.data_cessazione,'DD/MM/YYYY') as data_chiusura,entrasp.valuta_codice_descr(ct.id_valuta) as codice_valuta,an.codice as ndg_rapporto,'01' as tipo_soggetto, to_char(ct.data_stipulazione,'DD/MM/YYYY') as data_inizio_validita, to_char(ct.data_cessazione,'DD/MM/YYYY') as data_fine_validita, an.codice, entrasp.anagrafiche_cognnome(az.codice_part, an.id_anagrafica)as cognome_nome_rag_sociale_soggetto, an.sesso,avr.codice_fiscale, an.nascita_data,an.nascita_luogo,  avr.annotazioni_interne,avr.indirizzo, avr.codice_comune, avr.codice_nazione, ate.id_ateco, sae.cod_sae from entrasp.contratti ct inner join entrasp.anagrafiche_id an on ct.codice_part=an.codice_part and ct.id_cliente=an.id_anagrafica inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.aziende az on ct.codice_azienda=az.codice_azienda inner join entrasp.argomenti arg on az.id_argomento=arg.id_argomento inner join entrasp.argomenti arg2 on ct.id_argomento_contratto=arg2.id_argomento left join entrasp.ateco ate on avr.id_ateco=ate.id_ateco left join entrasp.sae sae on avr.cod_sae=sae.cod_sae left join entrasp.nazioni naz on avr.codice_nazione=naz.codice_nazione where ct.codice_azienda=$codice_azienda$ and ct.id_contratto=$id_contratto$;"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select 1 as one",
+            "messageNotNull": "Foo Foos Foo"
+        }
+    ],
+    "define": {
+        "is_hidden_conflicts": "true",
+        "is_hidden_mifid": "true",
+        "is_hidden_invisible_field": "true",
+        "label_id_controparte": "ID Cliente",
+        "label_controparte": "Cliente"
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "ID",
+            "key": "id_contratto",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2,
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "id_anagrafica",
+            "translate": "RESOURCES.id_personal_data",
+            "key": "id_anagrafica",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dati_generali",
+            "label": "Dati Generali",
+            "style": {
+                "background_color": "#2B679D",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.dati_generali"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "ID Registrazione",
+            "key": "id_registrazione_rapp",
+            "readOnly": true,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 2,
+            "translate": "RESOURCES.id_registrazione_rapp"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_intermediario",
+            "label": "Tipo Intermediario",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.tipo_intermediario"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_intermediario",
+            "label": "Codice Intermediario",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.codice_intermediario"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "identificativo_rapporto",
+            "label": "Identificativo Rapporto",
+            "size": 3.3,
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.identificativo_rapporto"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dati_rapporto",
+            "label": "Dati Rapporto",
+            "style": {
+                "background_color": "#2B679D",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.dati_rapporto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_filiale",
+            "label": "Codice Filiale",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.codice_filiale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_apertura",
+            "label": "Data Apertura Rapporto",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.data_apertura"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_rapporto",
+            "label": "Tipo di Rapporto",
+            "size": 1.65,
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.tipo_rapporto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_valuta",
+            "label": "Codice Valuta",
+            "size": 1.65,
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.codice_valuta"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cab_filiale",
+            "label": "CAB Filiale",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.cab_filiale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_chiusura",
+            "label": "Data Chiusura Rapporto",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.data_chiusura"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ndg_rapporto",
+            "label": "NDG",
+            "size": 3.3,
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.ndg_rapporto"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dati_soggetto",
+            "label": "Dati Soggetto",
+            "style": {
+                "background_color": "#2B679D",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.dati_soggetto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cognome_nome_rag_sociale_soggetto",
+            "label": "Denominazione",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.cognome_nome_rag_sociale_soggetto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT cod_banca_italia AS id, concat(coalesce(cod_banca_italia::varchar,codice_nazione), ' - ' ,descrizione) AS name FROM entrasp.nazioni where cod_banca_italia is not null order by descrizione asc",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_nazione",
+            "label": "Stato di Residenza",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateNazione",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateNazione",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_vr set codice_nazione='£codice_nazione£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+                    "successMessage": "Stato di Residenza Aggiornato"
+                }
+            ],
+            "translate": "RESOURCES.codice_nazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_inizio_validita",
+            "label": "Data Inizio Validità",
+            "size": 3.3,
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.data_inizio_validita"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_soggetto",
+            "label": "Tipo Soggetto",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.tipo_soggetto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "indirizzo",
+            "label": "Indirizzo di Residenza",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateIndirizzoResidenza",
+                "eventTrigger": "blur"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateIndirizzoResidenza",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_vr set indirizzo='£indirizzo£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+                    "successMessage": "Indirizzo di Residenza Aggiornato"
+                }
+            ],
+            "translate": "RESOURCES.indirizzo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "label": "Data Fine Validità",
+            "size": 3.3,
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.data_fine_validita"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "NDG",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.codice"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_comune",
+            "label": "Comune di Residenza",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateComuneResidenza",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateComuneResidenza",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_vr set codice_comune='£codice_comune£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+                    "successMessage": "Comune di Residenza Aggiornato"
+                }
+            ],
+            "translate": "RESOURCES.codice_comune"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT cod_sae AS id, concat (cod_sae, '-' ,descrizione) AS name FROM entrasp.sae"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cod_sae",
+            "label": "SAE Soggetto",
+            "size": 3.3,
+            "newLine": true,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateSae",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateSae",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_vr set cod_sae='£cod_sae£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+                    "successMessage": "Codice SAE Aggiornato"
+                }
+            ],
+            "translate": "RESOURCES.cod_sae"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_fiscale",
+            "label": "Codice Fiscale Soggetto",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.codice_fiscale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nascita_data",
+            "label": "Data di Nascita",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateDataNascita",
+                "eventTrigger": "change"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateDataNascita",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_id set nascita_data='£nascita_data£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
+                    "successMessage": "Data di Nascita Aggiornata"
+                }
+            ],
+            "translate": "RESOURCES.nascita_data"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_ateco AS id, descrizione AS name FROM entrasp.ateco"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_ateco",
+            "label": "Ateco Soggetto",
+            "size": 3.3,
+            "newLine": true,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateAteco",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateAteco",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_vr set id_ateco='£id_ateco£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+                    "successMessage": "Codice Ateco Aggiornato"
+                }
+            ],
+            "translate": "RESOURCES.id_ateco"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text",
+                "comboQuery": "select codice as id, codice as name FROM entrasp.transcodifiche WHERE tipo_dato='SESSO'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sesso",
+            "label": "Sesso",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateSesso",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateSesso",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_id set sesso='£sesso£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
+                    "successMessage": "Sesso Aggiornato"
+                }
+            ],
+            "translate": "RESOURCES.sesso"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_comune AS id, comuni.descrizione||' ('||sigla_provincia||')' AS name FROM entrasp.comuni INNER JOIN entrasp.province ON comuni.codice_provincia=province.codice_provincia"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nascita_luogo",
+            "label": "Comune di Nascita",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateComuneNascita",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateComuneNascita",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_id set nascita_luogo='£nascita_luogo£' where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ RETURNING 1",
+                    "successMessage": "Comune di Nascita Aggiornato"
+                }
+            ],
+            "translate": "RESOURCES.nascita_luogo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": " annotazioni_interne",
+            "label": "A Disposizione",
+            "size": 3.3,
+            "newLine": true,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "updateAnnotazioniInterne",
+                "eventTrigger": "blur"
+            },
+            "inputEvents": [
+                {
+                    "condition": "none",
+                    "values": [],
+                    "eventName": "updateAnnotazioniInterne",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.anagrafiche_vr set annotazioni_interne=£annotazioni_interne£ where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ AND prog_vr=entrasp.anagrafiche_vr_max(codice_part, id_anagrafica) RETURNING 1",
+                    "successMessage": "Note Aggiornate"
+                }
+            ],
+            "translate": "RESOURCES. annotazioni_interne"
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 3.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_7",
+            "key": "invisible_7",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false,
+            "translate": "RESOURCES.invisible_7"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "registra_operazione",
+            "buttonIcon": "ios_share",
+            "label": " Registra rapporto in AUI",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "register",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 3,
+            "style": {
+                "background_color": "forestGreen"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "register",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "Registra in AUI",
+                        "messageText": "Sei sicuro di voler registrare DEFINITIVAMENTE il rapporto e le anagrafiche connesse?",
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.aui_registra_rapporto($codice_azienda$, $id_contratto$)"
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        }
+                    },
+                    "successMessage": "Operazione eseguita con successo"
+                }
+            ],
+            "translate": "RESOURCES.registra_operazione"
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 3.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_8",
+            "key": "invisible_8",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": true,
+            "translate": "RESOURCES.invisible_8"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_contratto_principale",
+            "label": "id_contratto_principale",
+            "translate": "RESOURCES.id_contratto_principale"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "3%",
+            "key": "id_contratto",
+            "label": "#",
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "11%",
+            "isPrimary": false,
+            "key": "numero_contratto",
+            "label": "N.Contratto",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "590"
+                }
+            ],
+            "translate": "RESOURCES.numero_contratto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "$P{label_controparte}",
+            "width": "0%",
+            "translate": "RESOURCES.id_anagrafica"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cliente",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
+            "label": "$P{label_controparte}",
+            "width": "24%",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "590"
+                }
+            ],
+            "translate": "RESOURCES.cliente"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "13%",
+            "key": "id_argomento_contratto",
+            "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_contratto)",
+            "label": "Tipo Contratto",
+            "translate": "RESOURCES.id_argomento_contratto"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_strumento_finanziario",
+            "label": "id_strumento_finanziario",
+            "translate": "RESOURCES.id_strumento_finanziario"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fondo_gestito",
+            "width": "15%",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario)",
+            "label": "Strum.fin.sottoscritto/acquistato",
+            "translate": "RESOURCES.fondo_gestito"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_stipulazione",
+            "width": "8%",
+            "label": "Data Stipula",
+            "translate": "RESOURCES.data_stipulazione"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_cessazione",
+            "width": "8%",
+            "label": "Data Cessazione",
+            "translate": "RESOURCES.data_cessazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "style": [
+                {
+                    "value": "Cessato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In Scadenza",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Attivo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                }
+            ],
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Giudizio Appropriatezza",
+            "width": "8%",
+            "key": "giudizio",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
+            "isHidden": "$Q{is_hidden_mifid}",
+            "style": [
+                {
+                    "value": "Appropriato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Adeguato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non Appropriato",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non Adeguato",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non Giudicabile",
+                    "font_color": "grey",
+                    "font_weight": "500",
+                    "background_color": "gainsboro",
+                    "text_align": "center"
+                }
+            ],
+            "isPrimary": false,
+            "translate": "RESOURCES.giudizio"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "",
+            "width": "8%",
+            "key": "hidden_field",
+            "sameOrigin": false,
+            "isHidden": "$Q{is_hidden_invisible_field}",
+            "isPrimary": false,
+            "translate": "RESOURCES.hidden_field"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "queryFunct": "entrasp.anagrafica_key(id_cliente, codice_azienda, '|')",
+            "key": "object_key",
+            "label": "object_key",
+            "translate": "RESOURCES.object_key"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "8%",
+            "key": "id_registrazione_rapp",
+            "label": "N. Registrazione Aui",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                }
+            ],
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "registrazioni_rapp",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_registrazione_rapp",
+                        "destination": "id_registrazione_rapp"
+                    }
+                ]
+            },
+            "translate": "RESOURCES.id_registrazione_rapp"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": "$Q{is_hidden_conflicts}",
+            "isPrimary": false,
+            "key": "rischio_conflitto",
+            "label": "Rischio conflitto",
+            "style": [
+                {
+                    "value": "*",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Potenziale conflitto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "DarkRed",
+                    "text_align": "center"
+                }
+            ],
+            "translate": "RESOURCES.rischio_conflitto"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "connessioni_anagrafiche_sub_rapp_aui_da_registrare",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_anagrafica"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Anagrafiche connesse"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "not_registered_toggle",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Nascondi Rapporti Registrati",
+            "newLine": false,
+            "queryCond": "rra.id_registrazione_rapp IS NULL"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by cnt.id_contratto desc"
+    },
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "share"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "multi-attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "documentation"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "delete"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "save"
+        }
+    ]
 }

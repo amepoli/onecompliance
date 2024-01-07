@@ -1,600 +1,617 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "indicators",
-	"businessObjectName": "indicatori",
-	"origin": "entrasp.indicatori",	
-	"predefinedQueries": [
-		{
-			"type": "main",
-			"operation": "selectTable",
-			"queryString": "select * from entrasp.indicatori where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
-		},
-		{
-			"type": "main",
-			"operation": "selectForm",
-			"queryString": "select *, 'P' as codice_tipo_indicatore from entrasp.indicatori where id_indicatore=$id_indicatore$"
-		},
-		{
-			"type": "postProcessing",
-			"operation": "selectForm",
-			"queryString": "select id_domanda as id_domanda_temp, id_risposta_prev as id_risposta_prev_temp from entrasp.indicatori where id_indicatore=$id_indicatore$"
-		}
-	],
-	
-	"table_multiselection_actions": [
-		{
-		  "viewType": "menu",
-		  "key": "menuanag",
-		  "label": "Actions",
-		  "icon": "more_vert",
-		  "menuOptions": [
-			{
-			  "key": "inserisci_in_report",
-			  "icon": "sync",
-			  "label": "Assegna Report",
-			  "reloadOnSuccess": true,
-			  "customDialogEntryName": "dialog_indicatori",
-			  "customDialogTitle": "Inserisci Indicatori nel Report"
-			}
-			
-		  ]
-		}
-	  ],
-	"form_keys": [
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "id_indicatore",
-			"key": "id_indicatore",
-			"inputEvents": [
-				{
-					"eventName": "indicator_duplicate",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"successMessage": "Done!",
-					"queryFunct": "select entrasp.duplica_indicatore($id_indicatore$) as id_indicatore"
-				}
-			],
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_indicatore AS id, titolo AS name FROM entrasp.indicatori where codice_azienda='€global_codice_azienda€' or codice_azienda is null and id_indicatore!=£id_indicatore£;",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Indicatore padre",
-			"key": "id_indicatore_parent",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 4.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"label": "codice_azienda",
-       "translate": "RESOURCES.company_code",
-			"key": "codice_azienda",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice_part AS id, codice_part AS name FROM entrasp.partizioni;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"label": "Partizione",
-			"key": "codice_part",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "menu",
-				"menuOptions": [
-					{
-						"icon": "class",
-						"label": "Crea e associa argomento",
-            "translate": "RESOURCES.create_and_associate_tag",
-            "translate": "RESOURCES.create_and_associate_tag",
-						"outputEventName": "create_associate_argomento"
-					},
-					{
-						"icon": "content_copy",
-						"label": "Duplica indicatore",
-						"outputEventName": "indicator_duplicate"
-					}
-				]
-			},
-			"inputEvents": [
-				{
-					"eventName": "create_associate_argomento",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"outputEventWhenComplete": "indicators_reload",
-					"queryFunct": "select entrasp.argomenti_create_and_update_indicatori($id_indicatore$, $titolo$, $descrizione$ , 'ind'||$id_indicatore$, 48491)"
-				}
-			],
-			"isHidden": false,
-			"isPrimary": false,
-			"buttonIcon": "more_vert",
-			"key": "indicators_actions",
-			"label": "void",
-     			"translate": "RESOURCES.void",
-			"newLine": true,
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 0.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text",
-				"validations": [
-					{
-						"message": "Inserire un titolo!",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Nome",
-			"key": "titolo",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_menu AS id, id_menu||'-'||menu AS name  FROM entrasp.menu",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"key": "id_menu",
-			"tooltip": "Menù da programma/percorso per ottenere il dettaglio dell'interrogazione",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 7
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Parametri interrogazione",
-			"key": "parametri_menu",
-			"tooltip": "Parametri da applicare all'interrogazione",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true,
-			"size": 3
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "textarea",
-				"dataType": "text",
-				"validations": [
-					{
-						"message": "Inserire una descrizione",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Indicatore",
-			"key": "descrizione",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_argomento_domanda",
-			"label": "ID Argomento domanda",
-			"readOnly": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=725 order by descrizione",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_argomento_risposta_prev",
-			"label": "ID Argomento Risposta Prevista",
-			"readOnly": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "ricalcola_indicatore",
-			"label": "Calcola indicatore",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "calcola_indicatore",
-				"eventTrigger": "press"
-			},
-			"readOnly": false,
-			"size": 1.4,
-			"sameOrigin": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"label": "Data esecuzione da",
-			"key": "data_esec_da",
-			"readOnly": false,
-			"outputEvent": {
-				"eventName": "change_data_da",
-				"eventTrigger": "change"
-			},
-			"queryFunct": "select CURRENT_DATE",
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"label": "Data esecuzione a",
-			"key": "data_esec_a",
-			"outputEvent": {
-				"eventName": "change_data_a",
-				"eventTrigger": "change"
-			},
-			"readOnly": false,
-			"queryFunct": "select CURRENT_DATE",
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_INDICATORE';",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"queryFunct": "select 'P'",
-			"key": "codice_tipo_indicatore",
-			"label": "Tipo Indicatore",
-			"sameOrigin": false,
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.4
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Valore indicatore",
-			"key": "valore_indicatore",
-			"inputEvents": [
-				{
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select valore_indicatore from entrasp.calcola_indicatore_arg(array[$id_argomento$::numeric], coalesce(nullif('€data_esec_da€', 'null')::date,'2000-01-01')::date, coalesce(nullif('€data_esec_a€','null')::date,'2100-01-01')::date, '€global_codice_azienda€'::varchar, '€codice_tipo_indicatore€'::varchar)",
-					"eventName": "calcola_indicatore"
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=48491 order by descrizione",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_argomento",
-			"label": "Argomento",
-            "translate":"RESOURCES.tag",
-			"readOnly": false,
-			"newLine": false
-		}
-	],
-	"search_keys": [
-		{
-			"fieldName": "flag_principali",
-			"format": {
-				"value": "0",
-				"viewType": "checkbox"
-			},
-			 "label": "Solo Principali",
+    "$schema": "../views.schema.json",
+    "entryKey": "indicators",
+    "businessObjectName": "indicatori",
+    "origin": "entrasp.indicatori",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select * from entrasp.indicatori where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
+        },
+        {
+            "type": "main",
+            "operation": "selectForm",
+            "queryString": "select *, 'P' as codice_tipo_indicatore from entrasp.indicatori where id_indicatore=$id_indicatore$"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "selectForm",
+            "queryString": "select id_domanda as id_domanda_temp, id_risposta_prev as id_risposta_prev_temp from entrasp.indicatori where id_indicatore=$id_indicatore$"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "inserisci_in_report",
+                    "icon": "sync",
+                    "label": "Assegna Report",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_indicatori",
+                    "customDialogTitle": "Inserisci Indicatori nel Report"
+                }
+            ]
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_indicatore",
+            "key": "id_indicatore",
+            "inputEvents": [
+                {
+                    "eventName": "indicator_duplicate",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Done!",
+                    "queryFunct": "select entrasp.duplica_indicatore($id_indicatore$) as id_indicatore"
+                }
+            ],
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 1.5,
+            "translate": "RESOURCES.id_indicatore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_indicatore AS id, titolo AS name FROM entrasp.indicatori where codice_azienda='€global_codice_azienda€' or codice_azienda is null and id_indicatore!=£id_indicatore£;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Indicatore padre",
+            "key": "id_indicatore_parent",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 4.5,
+            "translate": "RESOURCES.id_indicatore_parent"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_part AS id, codice_part AS name FROM entrasp.partizioni;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Partizione",
+            "key": "codice_part",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 1.5,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "class",
+                        "label": "Crea e associa argomento",
+                        "translate": "RESOURCES.create_and_associate_tag",
+                        "outputEventName": "create_associate_argomento"
+                    },
+                    {
+                        "icon": "content_copy",
+                        "label": "Duplica indicatore",
+                        "outputEventName": "indicator_duplicate"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "indicators_reload",
+                    "queryFunct": "select entrasp.argomenti_create_and_update_indicatori($id_indicatore$, $titolo$, $descrizione$ , 'ind'||$id_indicatore$, 48491)"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "indicators_actions",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Inserire un titolo!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Nome",
+            "key": "titolo",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.titolo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_menu AS id, id_menu||'-'||menu AS name  FROM entrasp.menu",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "key": "id_menu",
+            "tooltip": "Menù da programma/percorso per ottenere il dettaglio dell'interrogazione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 7,
+            "translate": "RESOURCES.id_menu"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Parametri interrogazione",
+            "key": "parametri_menu",
+            "tooltip": "Parametri da applicare all'interrogazione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 3,
+            "translate": "RESOURCES.parametri_menu"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "textarea",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Inserire una descrizione",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Indicatore",
+            "key": "descrizione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.descrizione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=574 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_domanda",
+            "label": "ID Argomento domanda",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_argomento_domanda"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=725 order by descrizione",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_risposta_prev",
+            "label": "ID Argomento Risposta Prevista",
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.id_argomento_risposta_prev"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ricalcola_indicatore",
+            "label": "Calcola indicatore",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "calcola_indicatore",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "size": 1.4,
+            "sameOrigin": false,
+            "translate": "RESOURCES.ricalcola_indicatore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "label": "Data esecuzione da",
+            "key": "data_esec_da",
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "change_data_da",
+                "eventTrigger": "change"
+            },
+            "queryFunct": "select CURRENT_DATE",
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.data_esec_da"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "label": "Data esecuzione a",
+            "key": "data_esec_a",
+            "outputEvent": {
+                "eventName": "change_data_a",
+                "eventTrigger": "change"
+            },
+            "readOnly": false,
+            "queryFunct": "select CURRENT_DATE",
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.data_esec_a"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_INDICATORE';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "select 'P'",
+            "key": "codice_tipo_indicatore",
+            "label": "Tipo Indicatore",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.4,
+            "translate": "RESOURCES.codice_tipo_indicatore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Valore indicatore",
+            "key": "valore_indicatore",
+            "inputEvents": [
+                {
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select valore_indicatore from entrasp.calcola_indicatore_arg(array[$id_argomento$::numeric], coalesce(nullif('€data_esec_da€', 'null')::date,'2000-01-01')::date, coalesce(nullif('€data_esec_a€','null')::date,'2100-01-01')::date, '€global_codice_azienda€'::varchar, '€codice_tipo_indicatore€'::varchar)",
+                    "eventName": "calcola_indicatore"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.valore_indicatore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=48491 order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Argomento",
+            "translate": "RESOURCES.tag",
+            "readOnly": false,
+            "newLine": false
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
             "translate": "RESOURCES.main_only",
-			"newLine": false,
-			"queryCond": "id_indicatore_parent IS null"
-		},
-		{
-			"fieldName": "id_risposta_null",
-			"format": {
-				"value": "0",
-				"viewType": "checkbox"
-			},
-			"label": "Id Risposta Prev= null",
-			"newLine": false,
-			"queryCond": "id_risposta_prev IS null"
-		},
-		{
-			"fieldName": "id_domanda_null",
-			"format": {
-				"value": "0",
-				"viewType": "checkbox"
-			},
-			"label": "Id Domanda= null",
-			"newLine": true,
-			"queryCond": "id_domanda IS null"
-		},
-		{
-			"fieldName": "testo_ricerca",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "Nome/ Descrizione",
-			"newLine": true,
-			"queryCond": "(UPPER(titolo) like '%'||UPPER('€testo_ricerca€')||'%' or UPPER(descrizione) like '%'||UPPER('€testo_ricerca€')||'%')"
-		},
-		{
-			"fieldName": "id_indicatore_s",
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"label": "ID Indicatore",
-			"newLine": false,
-			"queryCond": "id_indicatore=$id_indicatore_s$"
-		},
-		{
-			"fieldName": "id_argomento_s",
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"label": "ID Argomento",
-			"newLine": false,
-			"queryCond": "id_argomento=$id_argomento_s$"
-		},
-		{
-			"fieldName": "id_report_s",
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"label": "ID Report",
-			"newLine": false,
-			"queryCond": "id_indicatore in(select id_indicatore from entrasp.indicatori_report where id_report=$id_report_s$ and id_indicatore is not null)"
-		},
-		{
-			"fieldName": "no_report",
-			"format": {
-				"value": "0",
-				"viewType": "toggle"
-			},
-			"label": "Non associati a report",
-			"newLine": false,
-			"size": 1.5,
-			"queryCond": "id_indicatore not in(select id_indicatore from entrasp.indicatori_report where id_indicatore is not null)"
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "indicators_sub_of_indicators",
-			"keys": [
-				{
-					"parent": "id_indicatore",
-					"son": "id_indicatore_parent"
-				}
-			],
-			"label": "Sotto indicatori"
-		},
-		{
-			"entryKey": "reports_sub_of_indicators",
-			"keys": [
-				{
-					"parent": "id_indicatore",
-					"son": "id_indicatore"
-				}
-			],
-			"label": "Report associati"
-		},
-		{
-			"entryKey": "indicators_valori_indicatori",
-			"keys": [
-				{
-					"parent": "id_indicatore",
-					"son": "id_indicatore"
-				}
-			],
-			"label": "Archivio Indicatori"
-		},
-		{
-			"entryKey": "presidi_sub_of_indicatori",
-			"keys": [
-				{
-					"parent": "id_indicatore",
-					"son": "id_indicatore"
-				}
-			],
-			"label": "Presidi associati"
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"width": "10%",
-			"isPrimary": true,
-			"key": "id_indicatore",
-			"label": "ID Indicatore"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"width": "10%",
-			"isPrimary": false,
-			"key": "id_indicatore_parent",
-			"label": "ID Indicatore parent"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"width": "10%",
-			"isPrimary": false,
-			"key": "codice_azienda",
-			"label": "Azienda"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"width": "10%",
-			"key": "codice_part",
-			"label": "Partizione"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"width": "40%",
-			"isPrimary": false,
-			"key": "titolo",
-			"label": "Indicatore"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_argomento",
-			"label": "ID argomento"
-		}
-	],
-	"exportQueries": {
-		"formQueries": [
-			{
-				"label": "Valore indicatore",
-				"queryString": "select cia.valore_indicatore, cia.stringa_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], '€data_esec_da€'::date, '€data_esec_a€'::date, $codice_azienda$::varchar, ir.codice_tipo_indicatore) cia on cia.idindicatore=ind.id_indicatore;"
-			}
-		],
-		"tableQueries": [
-			{
-				"label": "Valore indicatore",
-				"queryString": "select cia.valore_indicatore, cia.stringa_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], '€data_esec_da€'::date, '€data_esec_a€'::date, $codice_azienda$::varchar, ir.codice_tipo_indicatore) cia on cia.idindicatore=ind.id_indicatore;"
-			}
-		]
-	},
-	"hideActions": [
-		{
-			"formActionType": "attachments",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "share",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "startEvent",
-			"viewType": "form"
-		},
-		{
-			"formActionType": "stopEvent",
-			"viewType": "form"
-		},
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		}
-	],
-	"inputEvents": [
-		{
-			"actionType": "reload",
-			"eventName": "indicators_reload"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "order by id_indicatore desc"
-	}
+            "newLine": false,
+            "queryCond": "id_indicatore_parent IS null"
+        },
+        {
+            "fieldName": "id_risposta_null",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Id Risposta Prev= null",
+            "newLine": false,
+            "queryCond": "id_risposta_prev IS null"
+        },
+        {
+            "fieldName": "id_domanda_null",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Id Domanda= null",
+            "newLine": true,
+            "queryCond": "id_domanda IS null"
+        },
+        {
+            "fieldName": "testo_ricerca",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Nome/ Descrizione",
+            "newLine": true,
+            "queryCond": "(UPPER(titolo) like '%'||UPPER('€testo_ricerca€')||'%' or UPPER(descrizione) like '%'||UPPER('€testo_ricerca€')||'%')"
+        },
+        {
+            "fieldName": "id_indicatore_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Indicatore",
+            "newLine": false,
+            "queryCond": "id_indicatore=$id_indicatore_s$"
+        },
+        {
+            "fieldName": "id_argomento_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Argomento",
+            "newLine": false,
+            "queryCond": "id_argomento=$id_argomento_s$"
+        },
+        {
+            "fieldName": "id_report_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Report",
+            "newLine": false,
+            "queryCond": "id_indicatore in(select id_indicatore from entrasp.indicatori_report where id_report=$id_report_s$ and id_indicatore is not null)"
+        },
+        {
+            "fieldName": "no_report",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Non associati a report",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "id_indicatore not in(select id_indicatore from entrasp.indicatori_report where id_indicatore is not null)"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "indicators_sub_of_indicators",
+            "keys": [
+                {
+                    "parent": "id_indicatore",
+                    "son": "id_indicatore_parent"
+                }
+            ],
+            "label": "Sotto indicatori"
+        },
+        {
+            "entryKey": "reports_sub_of_indicators",
+            "keys": [
+                {
+                    "parent": "id_indicatore",
+                    "son": "id_indicatore"
+                }
+            ],
+            "label": "Report associati"
+        },
+        {
+            "entryKey": "indicators_valori_indicatori",
+            "keys": [
+                {
+                    "parent": "id_indicatore",
+                    "son": "id_indicatore"
+                }
+            ],
+            "label": "Archivio Indicatori"
+        },
+        {
+            "entryKey": "presidi_sub_of_indicatori",
+            "keys": [
+                {
+                    "parent": "id_indicatore",
+                    "son": "id_indicatore"
+                }
+            ],
+            "label": "Presidi associati"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": true,
+            "key": "id_indicatore",
+            "label": "ID Indicatore",
+            "translate": "RESOURCES.id_indicatore"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "id_indicatore_parent",
+            "label": "ID Indicatore parent",
+            "translate": "RESOURCES.id_indicatore_parent"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Azienda",
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "codice_part",
+            "label": "Partizione",
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "40%",
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Indicatore",
+            "translate": "RESOURCES.titolo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "ID argomento",
+            "translate": "RESOURCES.id_argomento"
+        }
+    ],
+    "exportQueries": {
+        "formQueries": [
+            {
+                "label": "Valore indicatore",
+                "queryString": "select cia.valore_indicatore, cia.stringa_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], '€data_esec_da€'::date, '€data_esec_a€'::date, $codice_azienda$::varchar, ir.codice_tipo_indicatore) cia on cia.idindicatore=ind.id_indicatore;"
+            }
+        ],
+        "tableQueries": [
+            {
+                "label": "Valore indicatore",
+                "queryString": "select cia.valore_indicatore, cia.stringa_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], '€data_esec_da€'::date, '€data_esec_a€'::date, $codice_azienda$::varchar, ir.codice_tipo_indicatore) cia on cia.idindicatore=ind.id_indicatore;"
+            }
+        ]
+    },
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "indicators_reload"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_indicatore desc"
+    }
 }

@@ -1,350 +1,363 @@
 {
-	"$schema": "../views.schema.json",
-	"origin": "entrasp.argomenti_eventi",
-	"entryKey": "scadenze",
-	"businessObjectName": "argomenti_eventi",
-	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "codice_azienda",
-       "translate": "RESOURCES.company_code",
-			"key": "codice_azienda",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": true,
-			"format": {
-				"comboQuery": "SELECT DISTINCT arg.id_argomento AS id, arg.descrizione_breve AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father IN (SELECT entrasp.descendants_of_argomento(45417,2)) AND id_argomento_son != 45417 --AND (SELECT count(*) FROM entrasp.argomenti_argomenti WHERE id_argomento_father=aa.id_argomento_son) = 0;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "number"
-			},
-			"label": "#",
-			"key": "id_argomento",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Descrizione",
-      "translate": "RESOURCES.description",
-			"key": "descrizione",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true,
-			"sameOrigin": false,
-			"queryFunct": "SELECT descrizione FROM entrasp.argomenti WHERE id_argomento=£id_argomento£"
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_multiplier",
-			"label": "Numero intervalli",
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.argomenti_eventi",
+    "entryKey": "scadenze",
+    "businessObjectName": "argomenti_eventi",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "comboQuery": "SELECT DISTINCT arg.id_argomento AS id, arg.descrizione_breve AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father IN (SELECT entrasp.descendants_of_argomento(45417,2)) AND id_argomento_son != 45417 --AND (SELECT count(*) FROM entrasp.argomenti_argomenti WHERE id_argomento_father=aa.id_argomento_son) = 0;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "number"
+            },
+            "label": "#",
+            "key": "id_argomento",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "key": "descrizione",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "sameOrigin": false,
+            "queryFunct": "SELECT descrizione FROM entrasp.argomenti WHERE id_argomento=£id_argomento£"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_multiplier",
+            "label": "Numero intervalli",
             "translate": "interval_multiplier",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.75,
-			"inputEvents": [
-				{
-				  "actionType": "hide",
-				  "eventName": "show_dt_evento",
-				  "condition": "equalTo",
-				  "values": [
-					"1"
-				  ]
-				}
-			  ]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_value",
-			"label": "Unità misura intervalli (days, weeks, months)",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.75,
-			"inputEvents": [
-				{
-				  "actionType": "hide",
-				  "eventName": "show_dt_evento",
-				  "condition": "equalTo",
-				  "values": [
-					"1"
-				  ]
-				}
-			  ]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "checkbox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "flag_scadenza_fissa",
-			"label": "Scadenza Fissa (es. Natale)",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.75,
-			"outputEvent": {
-				"eventName": "show_dt_evento",
-				"eventTrigger": "change"
-			}
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_evento",
-			"label": "Data evento (L' anno è indifferente)",
-			"newLine": false,
-			"readOnly": false,
-			"size": 2.35,
-			"inputEvents": [
-				{
-				  "actionType": "show",
-				  "eventName": "show_dt_evento",
-				  "condition": "equalTo",
-				  "values": [
-					"1"
-				  ]
-				}
-			  ]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Codice colore",
-			"key": "codice_colore",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 2.40
-		}
-	],
-	"search_keys": [
-		{
-			"fieldName": "flag_principali",
-			"format": {
-				"value": "0",
-				"viewType": "checkbox"
-			},
-			 "label": "Solo Principali",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.75,
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "show_dt_evento",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_value",
+            "label": "Unità misura intervalli (days, weeks, months)",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.75,
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "show_dt_evento",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "translate": "RESOURCES.interval_value"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_scadenza_fissa",
+            "label": "Scadenza Fissa (es. Natale)",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.75,
+            "outputEvent": {
+                "eventName": "show_dt_evento",
+                "eventTrigger": "change"
+            },
+            "translate": "RESOURCES.flag_scadenza_fissa"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_evento",
+            "label": "Data evento (L' anno è indifferente)",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.35,
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "show_dt_evento",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "translate": "RESOURCES.data_evento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Codice colore",
+            "key": "codice_colore",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.4,
+            "translate": "RESOURCES.codice_colore"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
             "translate": "RESOURCES.main_only",
-			"newLine": false,
-			"queryCond": "id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
-		},
-		{
-			"format": {
-				"comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"fieldName": "codice_ruolo_s",
-			"label": "Ruolo",
-			"newLine": false,
-			"queryCond": "id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
-		},
-		{
-			"label": "codice_azienda_s",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"fieldName": "codice_azienda",
-			"newLine": true,
-			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
-		},
-		{
-			"fieldName": "id_argomento_list",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "$P{label_id}",
-			"newLine": false,
-			"queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"key": "id_argomento",
-			"label": "ID",
-			"width": "10%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "codice_azienda",
-			"label": "",
-			"width": ""
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione",
-			"label": "Evento",
-			"queryFunct": "SELECT descrizione FROM entrasp.argomenti WHERE id_argomento=argomenti_eventi.id_argomento",
-			"width": "25%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_multiplier",
-			"label": "Numero intervalli",
+            "newLine": false,
+            "queryCond": "id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
+        },
+        {
+            "format": {
+                "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "fieldName": "codice_ruolo_s",
+            "label": "Ruolo",
+            "newLine": false,
+            "queryCond": "id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
+        },
+        {
+            "label": "codice_azienda_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "fieldName": "codice_azienda",
+            "newLine": true,
+            "queryCond": "arg.codice_azienda=$codice_azienda_s$"
+        },
+        {
+            "fieldName": "id_argomento_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "$P{label_id}",
+            "newLine": false,
+            "queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento",
+            "label": "ID",
+            "width": "10%",
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "",
+            "width": "",
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Evento",
+            "queryFunct": "SELECT descrizione FROM entrasp.argomenti WHERE id_argomento=argomenti_eventi.id_argomento",
+            "width": "25%",
+            "translate": "RESOURCES.descrizione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_multiplier",
+            "label": "Numero intervalli",
             "translate": "interval_multiplier",
-			"width": "10%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_value",
-			"label": "Unità misura intervalli",
-			"width": "10%"
-		},
-		{
-			"format": {
-				"dataType": "boolean"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"isCheckbox": true,
-			"key": "flag_evento_parent",
-			"label": "Evento origine",
-			"width": "10%",
-			"queryFunct": "SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=argomenti_eventi.id_argomento"
-		},
-		{
-			"format": {
-				"dataType": "boolean"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"isCheckbox": true,
-			"key": "flag_scadenza_fissa",
-			"label": "Scadenza Fissa",
-			"width": "10%"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_evento",
-			"label": "Data evento",
-			"width": "10%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice_colore",
-			"label": "Codice Colore",
-			"width": "10%"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "order by id_argomento desc"
-	},
-	"hideActions": [
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"formActionType": "attachments",
-			"viewType": "form"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "multi-attachments"
-		}
-	],
-	"table_multiselection_actions": [
-		{
-			"viewType": "menu",
-			"key": "menutest",
-			"label": "Options",
-			"icon": "more_vert",
-			"menuOptions": [
-				{
-					"key": "create_event",
-					"icon": "create_event",
-					"label": "Crea evento associato",
-					"query": "SELECT entrasp.crea_evento ('€global_codice_azienda€', arg.id_argomento) FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
-				},
-				{
-					"key": "delete",
-					"icon": "delete",
-					"label": "Delete",
-					"query": "select true",
-					"confirmAction": true,
-					"reloadOnSuccess": true,
-					"confirmActionMessage": "Eliminare le scadenze ?"
-				},
-				{
-					"key": "merge_argomenti",
-					"icon": "merge_type",
-					"label": "Unifica scadenze",
-					"query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
-				}
-			]
-		}
-	]
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_value",
+            "label": "Unità misura intervalli",
+            "width": "10%",
+            "translate": "RESOURCES.interval_value"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "isCheckbox": true,
+            "key": "flag_evento_parent",
+            "label": "Evento origine",
+            "width": "10%",
+            "queryFunct": "SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=argomenti_eventi.id_argomento",
+            "translate": "RESOURCES.flag_evento_parent"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "isCheckbox": true,
+            "key": "flag_scadenza_fissa",
+            "label": "Scadenza Fissa",
+            "width": "10%",
+            "translate": "RESOURCES.flag_scadenza_fissa"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_evento",
+            "label": "Data evento",
+            "width": "10%",
+            "translate": "RESOURCES.data_evento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_colore",
+            "label": "Codice Colore",
+            "width": "10%",
+            "translate": "RESOURCES.codice_colore"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_argomento desc"
+    },
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "multi-attachments"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Options",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "create_event",
+                    "icon": "create_event",
+                    "label": "Crea evento associato",
+                    "query": "SELECT entrasp.crea_evento ('€global_codice_azienda€', arg.id_argomento) FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
+                },
+                {
+                    "key": "delete",
+                    "icon": "delete",
+                    "label": "Delete",
+                    "query": "select true",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Eliminare le scadenze ?"
+                },
+                {
+                    "key": "merge_argomenti",
+                    "icon": "merge_type",
+                    "label": "Unifica scadenze",
+                    "query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
+                }
+            ]
+        }
+    ]
 }

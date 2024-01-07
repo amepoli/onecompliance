@@ -1,26 +1,26 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "ferie",
-	"inheritsFrom": "mie_ferie",
-	"define": {
+    "$schema": "../views.schema.json",
+    "entryKey": "ferie",
+    "inheritsFrom": "mie_ferie",
+    "define": {
         "is_hidden_codice_azienda": "true",
-		"is_hidden_dynamo_user": "false"
+        "is_hidden_dynamo_user": "false"
     },
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select * from entrasp.festivita where dynamo_user='€global_username€' or dynamo_user is null and data< current_date + interval '3 months'"
-		},
-		{
-			"operation": "insert",
-			"type": "postProcessing",
-			"queryString": "update entrasp.festivita set dynamo_user='€global_username€' where id_festivita=$id_festivita$ and dynamo_user is null"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "update entrasp.festivita set dynamo_user='€global_username€' where id_festivita=$id_festivita$ and dynamo_user is null"
-		}
-	]
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select * from entrasp.festivita where dynamo_user='€global_username€' or dynamo_user is null and data< current_date + interval '3 months'"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.festivita set dynamo_user='€global_username€' where id_festivita=$id_festivita$ and dynamo_user is null"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.festivita set dynamo_user='€global_username€' where id_festivita=$id_festivita$ and dynamo_user is null"
+        }
+    ]
 }

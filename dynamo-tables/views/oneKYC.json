@@ -1,211 +1,219 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "oneKYC",
-  "outputEvents": [
-    {
-      "eventName": "onSaveScan",
-      "eventTrigger": "onSave"
-    },
-    {
-      "eventName": "onLoadScan",
-      "eventTrigger": "onReload"
-    }
-  ],
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select codice_azienda,id_scan,id_anagrafica,id_somministrazione,dynamo_user,date_of_scan,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_anagrafica) as descr_anagrafica,entrasp.onekyc_describe_aml_scan_data(scan_data) as descr_scan_data, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type from imports.aml_scans where codice_azienda='€global_codice_azienda€'"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_azienda",
-      "label": ""
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_scan",
-      "label": "#",
-      "width": "13%"
-    },
-    {
-      "format": {
-        "dataType": "number",
-        "value": ""
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica",
-      "label": "# Anagrafica"
-    },
-    {
-      "format": {
-        "dataType": "number",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_somministrazione",
-      "label": "# Verifica",
-      "width": "8%",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "oneKYC",
+    "outputEvents": [
         {
-          "value": "*",
-          "background_color": "lightblue",
-          "text_align": "center"
+            "eventName": "onSaveScan",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadScan",
+            "eventTrigger": "onReload"
         }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_anagrafica",
-      "label": "Oggetto di verifica",
-      "translate": "RESOURCES.check_subject",
-      "width": "20%"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_scan_data",
-      "label": "Risultato",
-      "width": "46%"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "dynamo_user",
-      "label": "User",
-      "width": "12%"
-    },
-    {
-      "format": {
-        "dataType": "date",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "date_of_scan",
-      "label": "Data",
-      "width": "7%"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "value": ""
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "scan_type",
-       "label": "Tipo",
+    ],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select codice_azienda,id_scan,id_anagrafica,id_somministrazione,dynamo_user,date_of_scan,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_anagrafica) as descr_anagrafica,entrasp.onekyc_describe_aml_scan_data(scan_data) as descr_scan_data, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type from imports.aml_scans where codice_azienda='€global_codice_azienda€'"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text",
+                "value": ""
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "",
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "value": ""
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_scan",
+            "label": "#",
+            "width": "13%",
+            "translate": "RESOURCES.id_scan"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "value": ""
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "# Anagrafica",
+            "translate": "RESOURCES.id_anagrafica"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "value": ""
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "# Verifica",
+            "width": "8%",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center"
+                }
+            ],
+            "translate": "RESOURCES.id_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "value": ""
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_anagrafica",
+            "label": "Oggetto di verifica",
+            "translate": "RESOURCES.check_subject",
+            "width": "20%"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "value": ""
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_scan_data",
+            "label": "Risultato",
+            "width": "46%",
+            "translate": "RESOURCES.descr_scan_data"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "value": ""
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dynamo_user",
+            "label": "User",
+            "width": "12%",
+            "translate": "RESOURCES.dynamo_user"
+        },
+        {
+            "format": {
+                "dataType": "date",
+                "value": ""
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "date_of_scan",
+            "label": "Data",
+            "width": "7%",
+            "translate": "RESOURCES.date_of_scan"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "value": ""
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "scan_type",
+            "label": "Tipo",
             "translate": "RESOURCES.type",
-      "width": "7%",
-      "style": [
-        {
-          "value": "*",
-          "text_align": "center"
-        },
-        {
-          "value": "Light Scan",
-          "font_color": "blue",
-          "font_weight": "400",
-          "background_color": "#00CCFF",
-          "text_align": "center"
-        },
-        {
-          "value": "Deep Scan",
-          "font_color": "white",
-          "font_weight": "400",
-          "background_color": "blue",
-          "text_align": "center"
+            "width": "7%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Light Scan",
+                    "font_color": "blue",
+                    "font_weight": "400",
+                    "background_color": "#00CCFF",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Deep Scan",
+                    "font_color": "white",
+                    "font_weight": "400",
+                    "background_color": "blue",
+                    "text_align": "center"
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "restrictions": {
-    "preventNavigationToForm": true
-  },
-  "querySuffixes": {
-    "tableViewSuffix": "order by date_of_scan desc, id_somministrazione desc limit 400"
-  },
-  "hideActions": [
-    {
-      "tableActionType": "add",
-      "viewType": "table"
+    ],
+    "restrictions": {
+        "preventNavigationToForm": true
     },
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    }
-  ],
-  "exportQueries": {
-    "tableQueries": [
-      {
-        "label": "Admin: estrazioni per tipo e mese",
-        "key": "count_one_kyc_admin",
-        "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) order by codice_azienda, extract(year from date_of_scan), extract(month from date_of_scan)"
-      },
-      {
-        "label": "Estrazioni per tipo e mese",
-        "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) where codice_azienda=$codice_azienda$ order by codice_azienda,  extract(year from date_of_scan), extract(month from date_of_scan)"
-      }
+    "querySuffixes": {
+        "tableViewSuffix": "order by date_of_scan desc, id_somministrazione desc limit 400"
+    },
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ],
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Admin: estrazioni per tipo e mese",
+                "key": "count_one_kyc_admin",
+                "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) order by codice_azienda, extract(year from date_of_scan), extract(month from date_of_scan)"
+            },
+            {
+                "label": "Estrazioni per tipo e mese",
+                "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) where codice_azienda=$codice_azienda$ order by codice_azienda,  extract(year from date_of_scan), extract(month from date_of_scan)"
+            }
+        ]
+    },
+    "search_keys": [
+        {
+            "fieldName": "data_esec_prevista_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Esecuzione dopo il",
+            "newLine": false,
+            "queryCond": "date_of_scan>='€data_esec_prevista_min€'"
+        },
+        {
+            "fieldName": "data_esec_prevista_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Esecuzione prima del",
+            "newLine": false,
+            "queryCond": "date_of_scan<='€data_esec_prevista_max€'"
+        },
+        {
+            "fieldName": "tipo_scansione",
+            "format": {
+                "comboQuery": " SELECT DISTINCT tipo_scan AS id, tipo_scan AS name FROM imports.aml_scans WHERE codice_azienda='€global_codice_azienda€';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Tipo scansione",
+            "newLine": false,
+            "queryCond": "(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' else 'Deep scan' end)=$tipo_scansione$"
+        }
     ]
-  },
-  "search_keys": [
-    {
-      "fieldName": "data_esec_prevista_min",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Esecuzione dopo il",
-      "newLine": false,
-      "queryCond": "date_of_scan>='€data_esec_prevista_min€'"
-    },
-    {
-      "fieldName": "data_esec_prevista_max",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Esecuzione prima del",
-      "newLine": false,
-      "queryCond": "date_of_scan<='€data_esec_prevista_max€'"
-    },
-    {
-      "fieldName": "tipo_scansione",
-      "format": {
-        "comboQuery": " SELECT DISTINCT tipo_scan AS id, tipo_scan AS name FROM imports.aml_scans WHERE codice_azienda='€global_codice_azienda€';",        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Tipo scansione",
-      "newLine": false,
-      "queryCond": "(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' else 'Deep scan' end)=$tipo_scansione$"
-    }
-  ]
 }

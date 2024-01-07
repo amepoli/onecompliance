@@ -1,106 +1,108 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "dialog_domande",
-  "predefinedQueries": [
-    {
-      "operation": "update",
-      "type": "main",
-      "queryString": "select entrasp.domanda_sub_tables_inserts(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_argomento_father$, $flag_cancella_tag$::boolean) from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)"
-    },
-    {
-      "operation": "update",
-      "type": "preProcessing",
-      "queryString": "update entrasp.domande dmd1 set punteggio=coalesce($punteggio$,dmd2.punteggio), flag_non_applicabile_domanda=coalesce($flag_non_applicabile_domanda$,dmd2.flag_non_applicabile_domanda), id_template_rp = coalesce($template_risposte$, dmd2.id_template_rp) from entrasp.domande dmd2, (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS iddomanda,split_part(arr,'~',3) AS idmodellotest,split_part(arr,'~',4) AS idmodellotestvr FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s where dmd1.codice_azienda = dmd2.codice_azienda and dmd1.id_domanda = dmd2.id_domanda and dmd1.id_modello_test = dmd2.id_modello_test and dmd1.id_modello_test_vr = dmd2.id_modello_test_vr and dmd1.codice_azienda='€global_codice_azienda€' and dmd1.id_domanda=s.iddomanda::numeric and dmd1.id_modello_test=s.idmodellotest::numeric and dmd1.id_modello_test_vr=s.idmodellotestvr::numeric;"
-    },
-    {
-      "operation": "isInsert",
-      "type": "main",
-      "queryString": "SELECT true is null as label"
-    },
-    {
-			"operation": "insert",
-			"queryString": "select entrasp.domanda_sub_tables_inserts(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_argomento_father$, $flag_cancella_tag$::boolean) from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)",
-			"type": "main"
-		}
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(133, 349, 3425, 5328,5497,6154,6155,6156, 6157,6158,6721,6871,43448, 6837, 48418,4016,43670,49500,49507,49511, 48662,49061) order by id_argomento||'-'||descrizione_breve",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_argomento_father",
-      "label": "TAG domande selezionate",
-      "readOnly": false,
-      "newLine": false,
-      "size": 6.66
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "key": "flag_cancella_tag",
-      "label": "Cancella tag",
-      "newLine": true,
-      "readOnly": false,
-      "sameOrigin": false,
-      "isHidden": false,
-      "isPrimary": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "punteggio",
-    "label": "Punteggio",
-      "translate": "RESOURCES.score",
-      "readOnly": false,
-      "newLine": false,
-      "size": 3.33
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_template_rp AS id, descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda='€global_codice_azienda€';",
-        "viewType": "combobox",
-        "options": []
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "template_risposte",
-      "label": "Template Risposte",
-      "translate": "RESOURCES.template_risposte",
-      "readOnly": false,
-      "newLine": false,
-      "size": 3.33
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_non_applicabile_domanda",
-     "label": "Non applicabile?",
-      "translate": "RESOURCES.flag_non_applicabile",
-      "readOnly": false,
-      "newLine": false,
-      "size": 3.33
-    }
-  ]
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_domande",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "select entrasp.domanda_sub_tables_inserts(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_argomento_father$, $flag_cancella_tag$::boolean) from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)"
+        },
+        {
+            "operation": "update",
+            "type": "preProcessing",
+            "queryString": "update entrasp.domande dmd1 set punteggio=coalesce($punteggio$,dmd2.punteggio), flag_non_applicabile_domanda=coalesce($flag_non_applicabile_domanda$,dmd2.flag_non_applicabile_domanda), id_template_rp = coalesce($template_risposte$, dmd2.id_template_rp) from entrasp.domande dmd2, (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS iddomanda,split_part(arr,'~',3) AS idmodellotest,split_part(arr,'~',4) AS idmodellotestvr FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s where dmd1.codice_azienda = dmd2.codice_azienda and dmd1.id_domanda = dmd2.id_domanda and dmd1.id_modello_test = dmd2.id_modello_test and dmd1.id_modello_test_vr = dmd2.id_modello_test_vr and dmd1.codice_azienda='€global_codice_azienda€' and dmd1.id_domanda=s.iddomanda::numeric and dmd1.id_modello_test=s.idmodellotest::numeric and dmd1.id_modello_test_vr=s.idmodellotestvr::numeric;"
+        },
+        {
+            "operation": "isInsert",
+            "type": "main",
+            "queryString": "SELECT true is null as label"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.domanda_sub_tables_inserts(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_argomento_father$, $flag_cancella_tag$::boolean) from entrasp.domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(133, 349, 3425, 5328,5497,6154,6155,6156, 6157,6158,6721,6871,43448, 6837, 48418,4016,43670,49500,49507,49511, 48662,49061) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father",
+            "label": "TAG domande selezionate",
+            "readOnly": false,
+            "newLine": false,
+            "size": 6.66,
+            "translate": "RESOURCES.id_argomento_father"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "key": "flag_cancella_tag",
+            "label": "Cancella tag",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "translate": "RESOURCES.flag_cancella_tag"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "punteggio",
+            "label": "Punteggio",
+            "translate": "RESOURCES.score",
+            "readOnly": false,
+            "newLine": false,
+            "size": 3.33
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_template_rp AS id, descrizione AS name from entrasp.template_risposte_previste WHERE codice_azienda='€global_codice_azienda€';",
+                "viewType": "combobox",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "template_risposte",
+            "label": "Template Risposte",
+            "translate": "RESOURCES.template_risposte",
+            "readOnly": false,
+            "newLine": false,
+            "size": 3.33
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_non_applicabile_domanda",
+            "label": "Non applicabile?",
+            "translate": "RESOURCES.flag_non_applicabile",
+            "readOnly": false,
+            "newLine": false,
+            "size": 3.33
+        }
+    ]
 }

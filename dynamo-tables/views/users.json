@@ -1,311 +1,322 @@
 {
-  "$schema": "../views.schema.json",
-  "origin": "entrasp.users",
-  "entryKey": "users",
-  "businessObjectName": "users",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "SELECT DISTINCT us.userid, us.username, us.first_name||' '||us.last_name as full_name, us.email, us.date_joined FROM entrasp.users us INNER JOIN entrasp.anagrafiche_id an ON us.username=an.dynamo_user INNER JOIN entrasp.aziende az ON an.codice_part=az.codice_part WHERE az.codice_azienda IN (€global_user_companies€) and us.flag_admin = '0'",
-      "type": "main"
-    }
-  ],
-  "table_multiselection_actions": [
-    {
-      "viewType": "menu",
-      "key": "menuanag",
-      "label": "Actions",
-      "icon": "more_vert",
-      "menuOptions": [
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.users",
+    "entryKey": "users",
+    "businessObjectName": "users",
+    "predefinedQueries": [
         {
-          "key": "abilita_azienda",
-          "icon": "add",
-          "label": "Abilita ad altre aziende",
-          "reloadOnSuccess": true,
-          "customDialogEntryName": "dialog_users_multi_enablement",
-          "customDialogTitle": "Abilita azienda",
-          "customDialogGenericSave": false
+            "operation": "selectTable",
+            "queryString": "SELECT DISTINCT us.userid, us.username, us.first_name||' '||us.last_name as full_name, us.email, us.date_joined FROM entrasp.users us INNER JOIN entrasp.anagrafiche_id an ON us.username=an.dynamo_user INNER JOIN entrasp.aziende az ON an.codice_part=az.codice_part WHERE az.codice_azienda IN (€global_user_companies€) and us.flag_admin = '0'",
+            "type": "main"
         }
-      ]
-    }
-  ],
-  "form_keys": [
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "readOnly": true,
-      "newLine": false,
-      "isPrimary": true,
-      "key": "username",
-      "label": "Username",
-      "size": 3.13
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "readOnly": true,
-      "newLine": false,
-      "isPrimary": true,
-      "key": "userid",
-      "label": "User ID"
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "readOnly": true,
-      "newLine": false,
-      "isPrimary": false,
-      "key": "full_name",
-      "label": "Nome",
-      "queryFunct": "SELECT first_name||' '||last_name as full_name",
-      "size": 3.13
-    },
-    {
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "readOnly": true,
-      "newLine": false,
-      "key": "email",
-      "label": "email",
-      "size": 3.13
-    },
-    {
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "readOnly": true,
-      "sameOrigin": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "date_joined",
-      "label": "Creazione"
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "menu",
-        "menuOptions": [
-          {
-            "icon": "add",
-            "label": "Abilita ad altre aziende",
-            "outputEventName": "enable_companies"
-          },
-          {
-            "icon": "close",
-            "label": "Dissocia utente da aziende",
-            "outputEventName": "dissociates_company"
-          },
-          {
-            "icon": "delete",
-            "label": "Cancellazione utente",
-            "outputEventName": "delete_user"
-          },
-          {
-            "icon": "forward",
-            "label": "Aggiorna invito utente",
-            "outputEventName": "invite_user_again"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "more_vert",
-      "key": "users_actions",
-      "readOnly": false,
-      "newLine": false,
-      "label": " ",
-      "sameOrigin": false,
-      "size": 0.6,
-      "inputEvents": [
+    ],
+    "table_multiselection_actions": [
         {
-          "eventName": "enable_companies",
-          "actionType": "dialog",
-          "customDialogEntryName": "dialog_employers_user",
-          "customDialogTitle": "Abilita azienda",
-          "condition": "none",
-          "values": [],
-          "customDialogGenericSave": false
-        },
-        {
-          "eventName": "dissociates_company",
-          "actionType": "dialog",
-          "customDialogEntryName": "dialog_users_dissociates_companies",
-          "customDialogTitle": "Dissocia utente dall'azienda",
-          "condition": "none",
-          "values": [],
-          "customDialogGenericSave": false
-        },
-        {
-          "eventName": "delete_user",
-          "condition": "none",
-          "values": [],
-          "actionType": "show_message",
-          "message": {
-            "messageText": "Si intende procedere alla cancellazione dell'utente?",
-            "actionOnYes": {
-              "actionType": "user_api",
-              "userAPIParams": {
-                "actionType": "delete_user",
-                "userParams": {
-                  "username": "username"
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "abilita_azienda",
+                    "icon": "add",
+                    "label": "Abilita ad altre aziende",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_users_multi_enablement",
+                    "customDialogTitle": "Abilita azienda",
+                    "customDialogGenericSave": false
                 }
-              }
+            ]
+        }
+    ],
+    "form_keys": [
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
             },
-            "actionOnNo": {
-              "actionType": "query",
-              "queryFunct": "select 1"
-            }
-          }
+            "isHidden": false,
+            "readOnly": true,
+            "newLine": false,
+            "isPrimary": true,
+            "key": "username",
+            "label": "Username",
+            "size": 3.13,
+            "translate": "RESOURCES.username"
         },
         {
-          "eventName": "invite_user_again",
-          "actionType": "user_api",
-          "condition": "none",
-          "values": [],
-          "userAPIParams": {
-            "actionType": "invite_user_again",
-            "userParams": {
-              "email": "email"
-            }
-          }
-        }
-      ]
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "userid",
-      "label": "User ID"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "username",
-      "label": "Username",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "full_name",
-      "label": "Nome",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email",
-      "label": "email",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "date_joined",
-      "label": "Creazione",
-      "width": "25%"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by username"
-  },
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "save",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "delete",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "share",
-      "viewType": "form"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "documentation"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "multi-attachments"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "startEvent"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "stopEvent"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "import_export"
-    },
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    },
-    {
-      "viewType": "table",
-      "tableActionType": "import_export"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "anagrafiche_sub_of_users",
-      "isHidden": false,
-      "keys": [
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "readOnly": true,
+            "newLine": false,
+            "isPrimary": true,
+            "key": "userid",
+            "label": "User ID",
+            "translate": "RESOURCES.userid"
+        },
         {
-          "parent": "username",
-          "son": "dynamo_user"
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "readOnly": true,
+            "newLine": false,
+            "isPrimary": false,
+            "key": "full_name",
+            "label": "Nome",
+            "queryFunct": "SELECT first_name||' '||last_name as full_name",
+            "size": 3.13,
+            "translate": "RESOURCES.full_name"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": true,
+            "newLine": false,
+            "key": "email",
+            "label": "email",
+            "size": 3.13,
+            "translate": "RESOURCES.email"
+        },
+        {
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "date_joined",
+            "label": "Creazione",
+            "translate": "RESOURCES.date_joined"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "add",
+                        "label": "Abilita ad altre aziende",
+                        "outputEventName": "enable_companies"
+                    },
+                    {
+                        "icon": "close",
+                        "label": "Dissocia utente da aziende",
+                        "outputEventName": "dissociates_company"
+                    },
+                    {
+                        "icon": "delete",
+                        "label": "Cancellazione utente",
+                        "outputEventName": "delete_user"
+                    },
+                    {
+                        "icon": "forward",
+                        "label": "Aggiorna invito utente",
+                        "outputEventName": "invite_user_again"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "users_actions",
+            "readOnly": false,
+            "newLine": false,
+            "label": " ",
+            "sameOrigin": false,
+            "size": 0.6,
+            "inputEvents": [
+                {
+                    "eventName": "enable_companies",
+                    "actionType": "dialog",
+                    "customDialogEntryName": "dialog_employers_user",
+                    "customDialogTitle": "Abilita azienda",
+                    "condition": "none",
+                    "values": [],
+                    "customDialogGenericSave": false
+                },
+                {
+                    "eventName": "dissociates_company",
+                    "actionType": "dialog",
+                    "customDialogEntryName": "dialog_users_dissociates_companies",
+                    "customDialogTitle": "Dissocia utente dall'azienda",
+                    "condition": "none",
+                    "values": [],
+                    "customDialogGenericSave": false
+                },
+                {
+                    "eventName": "delete_user",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "message": {
+                        "messageText": "Si intende procedere alla cancellazione dell'utente?",
+                        "actionOnYes": {
+                            "actionType": "user_api",
+                            "userAPIParams": {
+                                "actionType": "delete_user",
+                                "userParams": {
+                                    "username": "username"
+                                }
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
+                },
+                {
+                    "eventName": "invite_user_again",
+                    "actionType": "user_api",
+                    "condition": "none",
+                    "values": [],
+                    "userAPIParams": {
+                        "actionType": "invite_user_again",
+                        "userParams": {
+                            "email": "email"
+                        }
+                    }
+                }
+            ],
+            "translate": "RESOURCES.users_actions"
         }
-      ],
-      "label": "Anagrafiche associate"
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "userid",
+            "label": "User ID",
+            "translate": "RESOURCES.userid"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "username",
+            "label": "Username",
+            "width": "25%",
+            "translate": "RESOURCES.username"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "full_name",
+            "label": "Nome",
+            "width": "25%",
+            "translate": "RESOURCES.full_name"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email",
+            "label": "email",
+            "width": "25%",
+            "translate": "RESOURCES.email"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "date_joined",
+            "label": "Creazione",
+            "width": "25%",
+            "translate": "RESOURCES.date_joined"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by username"
+    },
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "save",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "delete",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "documentation"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "multi-attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "import_export"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "anagrafiche_sub_of_users",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "username",
+                    "son": "dynamo_user"
+                }
+            ],
+            "label": "Anagrafiche associate"
+        }
+    ]
 }

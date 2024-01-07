@@ -1,47 +1,47 @@
 {
-	"$schema": "../views.schema.json",
-	"origin": "entrasp.argomenti",
-	"entryKey": "ISO_27001_controls_questions",
-	"inheritsFrom": "template_argomenti",
-	"table_multiselection_actions": [
-		{
-		  "viewType": "menu",
-		  "key": "menutest",
-		  "label": "Azioni",
-		  "icon": "more_vert",
-		  "menuOptions": [
-			{
-			  "key": "segna_auto_su_domande_associate",
-			  "icon": "autorenew",
-			  "label": "Segna il controllo come automatico",
-			  "query": "insert into entrasp.argomenti_argomenti(id_argomento_son, id_argomento_father) select unnest(string_to_array(btrim(($selected_rows_data$)::text, '()'), ','))::numeric, 5387 on conflict do nothing;"
-			},
-			{
-				"key": "Unifica argomenti",
-				"icon": "merge_type",
-				"label": "Unifica argomenti",
-				"query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
-			}
-		  ]
-		}
-	  ],
-	"define": {
-		"id_argomento_father": "4038",	
-		"array_argomenti_father_da_aggiungere": "array[4038]",
-		"label_id": "ID Controllo ISO 27001",
-		"campo_id_argomento": "id_argomento",
-		"label_unifica": "Unifica Controllo ISO 27001",
-		"is_hidden_unifica_all": "true",
-		"id_argomento_bigger_than": "and arg.id_argomento >= 4283",
-		"id_argomento_father_s2": "3368",
-		"label_argomento_s2": "Livello di controllo"		
-	},
-	"exportQueries": {
-		"tableQueries": [
-			{
-				"label": "Classificazione domande",
-				"queryString": "select arg.id_argomento,arg.descrizione ,(select array_agg(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as argomenti_associati from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4038 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and arg.id_argomento >= 4283;"
-			}
-		]
-	}
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.argomenti",
+    "entryKey": "ISO_27001_controls_questions",
+    "inheritsFrom": "template_argomenti",
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Azioni",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "segna_auto_su_domande_associate",
+                    "icon": "autorenew",
+                    "label": "Segna il controllo come automatico",
+                    "query": "insert into entrasp.argomenti_argomenti(id_argomento_son, id_argomento_father) select unnest(string_to_array(btrim(($selected_rows_data$)::text, '()'), ','))::numeric, 5387 on conflict do nothing;"
+                },
+                {
+                    "key": "Unifica argomenti",
+                    "icon": "merge_type",
+                    "label": "Unifica argomenti",
+                    "query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+                }
+            ]
+        }
+    ],
+    "define": {
+        "id_argomento_father": "4038",
+        "array_argomenti_father_da_aggiungere": "array[4038]",
+        "label_id": "ID Controllo ISO 27001",
+        "campo_id_argomento": "id_argomento",
+        "label_unifica": "Unifica Controllo ISO 27001",
+        "is_hidden_unifica_all": "true",
+        "id_argomento_bigger_than": "and arg.id_argomento >= 4283",
+        "id_argomento_father_s2": "3368",
+        "label_argomento_s2": "Livello di controllo"
+    },
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Classificazione domande",
+                "queryString": "select arg.id_argomento,arg.descrizione ,(select array_agg(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento) as argomenti_associati from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4038 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and arg.id_argomento >= 4283;"
+            }
+        ]
+    }
 }

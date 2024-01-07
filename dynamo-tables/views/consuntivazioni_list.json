@@ -1,237 +1,245 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "consuntivazioni_list",
-  "inheritsFrom": "consuntivazioni_consultant_list",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select csn.date_time_begin, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', csn.stato) as descr_stato, csn.thread,csn.date_time_end, csn.id_cons, csn.codice_compito, substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200) as titolo_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda=$codice_azienda$;",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "type": "preCheck",
-      "queryString": "select £date_time_begin£>now()",
-      "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
-    },
-    {
-      "operation": "update",
-      "type": "preCheck",
-      "queryString": "select £date_time_begin£>£date_time_end£",
-      "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
-      "translate": "RESOURCES.company_code",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_cons",
-      "width": "5%",
-      "label": "Codice",
-      "translate": "RESOURCES.code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo_compito",
-      "width": "40%",
-      "label": "Titolo attività"
-    },
-    {
-      "format": {
-        "dataType": "datetime"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "date_time_begin",
-      "label": "Inizio",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "datetime"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "date_time_end",
-      "label": "Fine",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "durata",
-      "label": "Durata Intervento (minuti)",
-      "translate": "RESOURCES.durata_intervento_min",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "durata_ft",
-      "label": "Durata Fatturabile (minuti)",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "esecutore",
-      "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa)",
-      "label": "Esecutore",
-      "translate": "RESOURCES.esecutore",
-      "width": "11%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_stato",
-      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', csn.stato)",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "width": "14%",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "consuntivazioni_list",
+    "inheritsFrom": "consuntivazioni_consultant_list",
+    "predefinedQueries": [
         {
-          "value": "Chiuso",
-          "font_color": "green",
-          "font_weight": "500"
+            "operation": "selectTable",
+            "queryString": "select csn.date_time_begin, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', csn.stato) as descr_stato, csn.thread,csn.date_time_end, csn.id_cons, csn.codice_compito, substring(entrasp.descrizione_consuntivazione(csn.codice_azienda, csn.id_cons), 1, 200) as titolo_compito, csn.codice_azienda, csn.data_intervento, csn.durata, csn.durata_ft, csn.codice_attivita, csn.id_progetto, csn.id_modello_test, csn.id_fase, csn.id_sondaggio, entrasp.anagrafiche_id_codcognnome(csn.codice_part, csn.id_risorsa) as esecutore, substring(csn.note from 1 for 100) as note_restricted from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda=$codice_azienda$;",
+            "type": "main"
         },
         {
-          "value": "Provvisorio",
-          "font_color": "#BA68C8",
-          "font_weight": "500"
+            "operation": "selectForm",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
         },
         {
-          "value": "Pianificato",
-          "font_color": "#FF8100",
-          "font_weight": "500"
+            "operation": "insert",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
         },
         {
-          "value": "Attesa Riscontro",
-          "font_color": "#FF0000",
-          "font_weight": "500"
+            "operation": "update",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
         },
         {
-          "value": "In Svolgimento",
-          "font_color": " #A1A100",
-          "font_weight": "500"
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select £date_time_begin£>now()",
+            "messageNotNull": "La data inizio non può essere nel futuro. Correggere e poi salvare."
         },
         {
-          "value": "Annullato",
-          "font_color": "grey",
-          "font_weight": "500"
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select £date_time_begin£>£date_time_end£",
+            "messageNotNull": "La data fine non può essere precedente alla data inizio. Correggere e poi salvare."
         }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "thread",
-      "label": "Thread",
-      "width": "30%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_attivita",
-      "label": "codice_attivita"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "label": "id_progetto"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_modello_test",
-      "label": "id_modello_test",
-      "translate": "RESOURCES.id_check_template"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_fase",
-      "label": "id_fase"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "label": "id_sondaggio",
-      "translate": "RESOURCES.id_survey"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_compito",
-      "label": "codice_compito",
-      "translate": "RESOURCES.task_code"
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_cons",
+            "width": "5%",
+            "label": "Codice",
+            "translate": "RESOURCES.code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo_compito",
+            "width": "40%",
+            "label": "Titolo attività",
+            "translate": "RESOURCES.titolo_compito"
+        },
+        {
+            "format": {
+                "dataType": "datetime"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "date_time_begin",
+            "label": "Inizio",
+            "width": "10%",
+            "translate": "RESOURCES.date_time_begin"
+        },
+        {
+            "format": {
+                "dataType": "datetime"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "date_time_end",
+            "label": "Fine",
+            "width": "10%",
+            "translate": "RESOURCES.date_time_end"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "durata",
+            "label": "Durata Intervento (minuti)",
+            "translate": "RESOURCES.durata_intervento_min",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "durata_ft",
+            "label": "Durata Fatturabile (minuti)",
+            "width": "5%",
+            "translate": "RESOURCES.durata_ft"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "esecutore",
+            "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa)",
+            "label": "Esecutore",
+            "translate": "RESOURCES.esecutore",
+            "width": "11%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', csn.stato)",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "width": "14%",
+            "style": [
+                {
+                    "value": "Chiuso",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Provvisorio",
+                    "font_color": "#BA68C8",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Pianificato",
+                    "font_color": "#FF8100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Attesa Riscontro",
+                    "font_color": "#FF0000",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "In Svolgimento",
+                    "font_color": " #A1A100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Annullato",
+                    "font_color": "grey",
+                    "font_weight": "500"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "thread",
+            "label": "Thread",
+            "width": "30%",
+            "translate": "RESOURCES.thread"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_attivita",
+            "label": "codice_attivita",
+            "translate": "RESOURCES.codice_attivita"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "label": "id_progetto",
+            "translate": "RESOURCES.id_progetto"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
+            "translate": "RESOURCES.id_check_template"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_fase",
+            "label": "id_fase",
+            "translate": "RESOURCES.id_fase"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_survey"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_compito",
+            "label": "codice_compito",
+            "translate": "RESOURCES.task_code"
+        }
+    ]
 }

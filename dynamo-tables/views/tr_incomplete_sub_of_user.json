@@ -1,30 +1,30 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "tr_incomplete_sub_of_user",
-  "inheritsFrom": "tr_hp_manager",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users mr on gdr.giorno=mr.data_rend and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='$dynamo_user$' and (gdr.min_richiesti-coalesce(min_rendicontati,0))>0",
-      "type": "main"
-    },
-    {
-      "operation": "selectForm",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "insert",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-      "type": "postProcessing"
+    "$schema": "../views.schema.json",
+    "entryKey": "tr_incomplete_sub_of_user",
+    "inheritsFrom": "tr_hp_manager",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users mr on gdr.giorno=mr.data_rend and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user='$dynamo_user$' and (gdr.min_richiesti-coalesce(min_rendicontati,0))>0",
+            "type": "main"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "insert",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "update",
+            "queryString": "update entrasp.consuntivazioni cn set codice_part=az.codice_part from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
+            "type": "postProcessing"
+        }
+    ],
+    "restrictions": {
+        "preventNavigationToForm": true
     }
-  ],
-  "restrictions": {
-    "preventNavigationToForm": true
-  }
 }

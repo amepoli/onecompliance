@@ -1,72 +1,72 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "compiti_consultant_managed_year",
-  "origin": "entrasp.compiti",
-  "businessObjectName": "compiti",
-  "inheritsFrom": "compiti_consultant_micro_task",
-  "define": {
-    "is_hidden_compiti": "true",
-    "is_hidden_compiti_consultant": "false",
-    "is_hidden_dates": "true",
-    "is_hidden_compiti_consultant_year": "false"
-  },
-  "predefinedQueries": [
-    {
-      "type": "main",
-      "operation": "selectTable",
-      "queryString": "select (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, csn.codice_compito, csn.codice_azienda), true as time_report_play, substring(cmp.titolo from 1 for 100) as titolo,  csn.codice_azienda, csn.codice_compito, extract(year from csn.date_time_begin) as csn_year, count(id_cons) as n_consuntivazioni from entrasp.consuntivazioni csn inner join entrasp.compiti cmp on csn.codice_compito=cmp.codice_compito and csn.codice_azienda=cmp.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join entrasp.employers em on an.dynamo_user=em.dynamo_user where em.codice_azienda=$codice_azienda$ and cmp.codice_azienda in(€global_user_companies€)"
+    "$schema": "../views.schema.json",
+    "entryKey": "compiti_consultant_managed_year",
+    "origin": "entrasp.compiti",
+    "businessObjectName": "compiti",
+    "inheritsFrom": "compiti_consultant_micro_task",
+    "define": {
+        "is_hidden_compiti": "true",
+        "is_hidden_compiti_consultant": "false",
+        "is_hidden_dates": "true",
+        "is_hidden_compiti_consultant_year": "false"
     },
-    {
-      "operation": "selectForm",
-      "type": "preProcessing",
-      "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "select entrasp.assegna_compito_user_centro_gest_default_insert((€global_id_anagrafiche€)::text, $titolo$, $codice_azienda$);"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
-    },
-    {
-      "operation": "startEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
-    },
-    {
-      "operation": "stopEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select (€global_id_anagrafiche€)::text as user_companies, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, csn.codice_compito, csn.codice_azienda), true as time_report_play, substring(cmp.titolo from 1 for 100) as titolo,  csn.codice_azienda, csn.codice_compito, extract(year from csn.date_time_begin) as csn_year, count(id_cons) as n_consuntivazioni from entrasp.consuntivazioni csn inner join entrasp.compiti cmp on csn.codice_compito=cmp.codice_compito and csn.codice_azienda=cmp.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join entrasp.employers em on an.dynamo_user=em.dynamo_user where em.codice_azienda=$codice_azienda$ and cmp.codice_azienda in(€global_user_companies€)"
+        },
+        {
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "select entrasp.assegna_compito_user_centro_gest_default_insert((€global_id_anagrafiche€)::text, $titolo$, $codice_azienda$);"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.assegna_compito_user_centro_gest_default((€global_id_anagrafiche€)::text, $codice_compito$, $codice_azienda$);"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "codice_azienda_s",
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Azienda",
+            "newLine": false,
+            "queryCond": "csn.codice_azienda='€codice_azienda_s€'"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "group by csn.codice_compito, cmp.titolo, csn.codice_azienda, extract(year from csn.date_time_begin) order by csn.codice_azienda, csn_year"
     }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "codice_azienda_s",
-      "format": {
-        "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Azienda",
-      "newLine": false,
-      "queryCond": "csn.codice_azienda='€codice_azienda_s€'"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "group by csn.codice_compito, cmp.titolo, csn.codice_azienda, extract(year from csn.date_time_begin) order by csn.codice_azienda, csn_year"
-  }
 }

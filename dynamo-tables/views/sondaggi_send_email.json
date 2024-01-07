@@ -1,326 +1,348 @@
 {
-  "$schema": "../views.schema.json",
-  "origin": "entrasp.sondaggi",
-  "entryKey": "sondaggi_send_email",
-  "businessObjectName": "sondaggi",
-  "predefinedQueries": [
-    {
-      "type": "preProcessing",
-      "operation": "selectForm",
-      "queryString": "select entrasp.calcola_email_subject_sondaggio($codice_azienda$, $id_sondaggio$)"
-    }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "delete",
-      "viewType": "form"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",	  "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_sondaggio",
-      "label": "ID",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_rilevazione_da",
-      "label": "Eseguito dal",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_rilevazione_a",
-      "label": "al",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_riferimento_da",
-      "label": "Riferimento dal",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "data_riferimento_a",
-      "label": "al",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "selezione_campione",
-      "label": "Selezione Campione",
-      "newLine": true,
-      "textareaHeight": "L",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "documentazione_analizzata",
-      "label": "Documentazione Analizzata",
-      "newLine": true,
-      "textareaHeight": "L",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "metodologia_presentazione_risultati",
-      "label": "Metodologia di presentazione dei risultati",
-      "newLine": true,
-      "textareaHeight": "L",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "azione_richiesta",
-      "label": "Azione richiesta alla funzione auditata",
-      "newLine": true,
-      "textareaHeight": "L",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "link",
-      "label": "Link dove caricare la documentazione",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "validations": [
-          {
-              "message": "Inserire almeno un destinatario!",
-              "name": "required",
-              "validator": "Validators.required"
-          }
-      ]
-
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_to",
-      "label": "Destinatari",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea",
-        "validations": [
-          {
-              "message": "Testo del messaggio obbligatorio!",
-              "name": "required",
-              "validator": "Validators.required"
-          }
-      ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_text",
-      "label": "Testo Email",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_subject",
-      "label": "Oggetto email",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_cc",
-      "label": "email_cc",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_sender",
-      "label": "email_sender",
-      "newLine": false,
-      "queryFunct": "entrasp.determine_email_sender('€global_codice_part€', '€global_username€')",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "invia_mail",
-      "buttonIcon": "email",
-      "label": "Invia_mail",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "send_email",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.sondaggi",
+    "entryKey": "sondaggi_send_email",
+    "businessObjectName": "sondaggi",
+    "predefinedQueries": [
         {
-          "eventName": "send_email",
-          "condition": "none",
-          "values": [],
-          "actionType": "show_message",
-          "message": {
-            "messageText": "Si intende procedere all'invio dell'email?",
-            "actionOnYes": {
-              "actionType": "create_user_and_email",
-              "emailActionParameters": {
-                "subjectKeys": ["email_subject"],
-                "senderKey": "email_sender",
-                "recipientKeys": ["email_to"],
-                "ccKeys": ["email_cc"],
-                "bodyKeys": [
-                  {
-                    "key": "email_text",
-                    "label": ""
-                  },
-                  {
-                    "key": "data_riferimento_da",
-                    "label": "Data riferimento da: "
-                  },
-                  {
-                    "key": "data_riferimento_a",
-                    "label": "Data riferimento a: "
-                  },
-                  {
-                    "key": "documentazione_analizzata",
-                    "label": "Documentazione richiesta: "
-                  }
-                ],
-                "outputEventWhenComplete": "trackEmailSond"
-              }
-            },
-            "actionOnNo": {
-              "actionType": "query",
-              "queryFunct": "select 1"
-            }
-          }
+            "type": "preProcessing",
+            "operation": "selectForm",
+            "queryString": "select entrasp.calcola_email_subject_sondaggio($codice_azienda$, $id_sondaggio$)"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
         },
         {
-          "eventName": "trackEmailSond",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "select entrasp.track_email_send_sond_ult_elem($codice_azienda$, $id_sondaggio$, $email_to$, emailtext=> $email_text$, emailsender=>$email_sender$, globaluser=>'€global_username€', emailcc=>$email_cc$)"
+            "formActionType": "delete",
+            "viewType": "form"
         }
-      ],
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    }
-  ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "ID",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.id_sondaggio"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "data_rilevazione_da",
+            "label": "Eseguito dal",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.data_rilevazione_da"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "data_rilevazione_a",
+            "label": "al",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.data_rilevazione_a"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "data_riferimento_da",
+            "label": "Riferimento dal",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.data_riferimento_da"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "data_riferimento_a",
+            "label": "al",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.data_riferimento_a"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "selezione_campione",
+            "label": "Selezione Campione",
+            "newLine": true,
+            "textareaHeight": "L",
+            "readOnly": false,
+            "translate": "RESOURCES.selezione_campione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "documentazione_analizzata",
+            "label": "Documentazione Analizzata",
+            "newLine": true,
+            "textareaHeight": "L",
+            "readOnly": false,
+            "translate": "RESOURCES.documentazione_analizzata"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "metodologia_presentazione_risultati",
+            "label": "Metodologia di presentazione dei risultati",
+            "newLine": true,
+            "textareaHeight": "L",
+            "readOnly": false,
+            "translate": "RESOURCES.metodologia_presentazione_risultati"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "azione_richiesta",
+            "label": "Azione richiesta alla funzione auditata",
+            "newLine": true,
+            "textareaHeight": "L",
+            "readOnly": false,
+            "translate": "RESOURCES.azione_richiesta"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "link",
+            "label": "Link dove caricare la documentazione",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.link"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire almeno un destinatario!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_to",
+            "label": "Destinatari",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.email_to"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea",
+                "validations": [
+                    {
+                        "message": "Testo del messaggio obbligatorio!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_text",
+            "label": "Testo Email",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.email_text"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_subject",
+            "label": "Oggetto email",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.email_subject"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_cc",
+            "label": "email_cc",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.email_cc"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_sender",
+            "label": "email_sender",
+            "newLine": false,
+            "queryFunct": "entrasp.determine_email_sender('€global_codice_part€', '€global_username€')",
+            "readOnly": false,
+            "translate": "RESOURCES.email_sender"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "invia_mail",
+            "buttonIcon": "email",
+            "label": "Invia_mail",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "send_email",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "send_email",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "message": {
+                        "messageText": "Si intende procedere all'invio dell'email?",
+                        "actionOnYes": {
+                            "actionType": "create_user_and_email",
+                            "emailActionParameters": {
+                                "subjectKeys": [
+                                    "email_subject"
+                                ],
+                                "senderKey": "email_sender",
+                                "recipientKeys": [
+                                    "email_to"
+                                ],
+                                "ccKeys": [
+                                    "email_cc"
+                                ],
+                                "bodyKeys": [
+                                    {
+                                        "key": "email_text",
+                                        "label": ""
+                                    },
+                                    {
+                                        "key": "data_riferimento_da",
+                                        "label": "Data riferimento da: "
+                                    },
+                                    {
+                                        "key": "data_riferimento_a",
+                                        "label": "Data riferimento a: "
+                                    },
+                                    {
+                                        "key": "documentazione_analizzata",
+                                        "label": "Documentazione richiesta: "
+                                    }
+                                ],
+                                "outputEventWhenComplete": "trackEmailSond"
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
+                },
+                {
+                    "eventName": "trackEmailSond",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.track_email_send_sond_ult_elem($codice_azienda$, $id_sondaggio$, $email_to$, emailtext=> $email_text$, emailsender=>$email_sender$, globaluser=>'€global_username€', emailcc=>$email_cc$)"
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.invia_mail"
+        }
+    ]
 }

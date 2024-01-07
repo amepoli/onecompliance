@@ -1,768 +1,790 @@
 {
-	"$schema": "../views.schema.json",
-	"origin": "entrasp.argomenti",
-	"entryKey": "tipi_eventi",
-	"businessObjectName": "argomenti",
-	"define": {
-		"id_argomento_father": "45417",
-		"label_id": "ID evento",
-		"label_unifica": "Unifica eventi",
-		"is_hidden_unifica_all": "false",
-		"id_argomento_bigger_than": "and true",
-		"id_argomento_father_s2": "3368",
-		"label_argomento_s2": "Livello di controllo"
-	},
-	"predefinedQueries": [
-		{
-			"type": "main",
-			"operation": "selectTable",
-			"queryString": "select arg.*, ae.note, (select codice_articolo_normativo from entrasp.articoli_normativi where id_articolo_normativo=ae.id_articolo_normativo) as descr_articolo_normativo, ae.interval_value, ae.interval_multiplier, (SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento) as flag_evento_parent, ae.flag_scadenza_fissa, ae.data_evento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.argomenti_eventi ae on arg.id_argomento=ae.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
-		},
-		{
-			"operation": "selectForm",
-			"queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, true as fake, a.descrizione_breve, ae.id_argomento_modello_test, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.data_riferimento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante, ae.id_argomento_tipo_allegato FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
-			"type": "main"
-		},
-		{
-			"operation": "insert",
-			"queryString": "select entrasp.argomenti_eventi_insert($descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$, $data_riferimento$, $id_argomento_modello_test$) as id_argomento;",
-			"type": "main"
-		},
-		{
-			"operation": "update",
-			"queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$, $data_riferimento$, $id_argomento_modello_test$) as id_argomento;",
-			"type": "main"
-		},
-		{
-			"operation": "delete",
-			"queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
-			"type": "preProcessing"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE descrizione_breve='£descrizione_breve£'",
-			"messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione breve diversa"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti where descrizione_breve='£descrizione_breve£' and id_argomento!=$id_argomento$",
-			"messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione breve diversa"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE descrizione='£descrizione_breve£'",
-			"messageNotNull": "La descrizione è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti where descrizione='£descrizione_breve£' and id_argomento!=$id_argomento$",
-			"messageNotNull": "La descrizione è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione"
-		},
-		{
-			"operation": "isInsert",
-			"queryString": "select $id_argomento$ is null as label;",
-			"type": "main"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
-			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
-			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-		},
-		{
-			"operation": "insert",
-			"type": "postProcessing",
-			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
-		}
-	],
-	"table_multiselection_actions": [
-		{
-			"viewType": "menu",
-			"key": "menutest",
-			"label": "Options",
-			"icon": "more_vert",
-			"menuOptions": [
-				{
-					"key": "create_event",
-					"icon": "create_event",
-					"label": "Crea evento associato",
-					"query": "SELECT entrasp.crea_evento ('€global_codice_azienda€', arg.id_argomento) FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
-				},
-				{
-					"key": "delete",
-					"icon": "delete",
-					"label": "Delete",
-					"query": "select true",
-					"confirmAction": true,
-					"reloadOnSuccess": true,
-					"confirmActionMessage": "Eliminare le scadenze ?"
-				},
-				{
-					"key": "merge_argomenti",
-					"icon": "merge_type",
-					"label": "Unifica scadenze",
-					"query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
-				}
-			]
-		}
-	],
-	"form_keys": [
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "#",
-			"key": "id_argomento",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false,
-			"size": 1
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text",
-				"validations": [
-					{
-						"message": "Codice necessario",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Codice",
-      "translate": "RESOURCES.code",
-			"key": "codice",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 1
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Descrizione",
-      "translate": "RESOURCES.description",
-			"key": "descrizione_breve",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 4
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "menu",
-				"menuOptions": [
-					{
-						"icon": "content_copy",
-						"label": "Duplica",
-						"outputEventName": "duplica_progetto"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"buttonIcon": "more_vert",
-			"key": "contratti_actions",
-			"label": "void",
-     			"translate": "RESOURCES.void",
-			"newLine": true,
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 0.6,
-			"inputEvents": [
-				{
-					"eventName": "duplica_progetto",
-					"condition": "none",
-					"values": [],
-					"actionType": "query",
-					"queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
-					"outputEventWhenComplete": "navigate_to_new_scadenza"
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_articolo_normativo",
-			"label": "Riferimento normativo",
-			"newLine": false,
-			"readOnly": false,
-			"size": 2.6
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "number"
-			},
-			"label": "Evento scatenante",
-			"key": "id_argomento_evento_scatenante",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"queryFunct": "select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417)) AND id_argomento_father != 45417",
-			"size": 2.6
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 3576;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "number"
-			},
-			"label": "Tipo Documento Da Allegare",
-			"key": "id_argomento_tipo_allegato",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"queryFunct": "select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417)) AND id_argomento_father != 45417",
-			"size": 2.6
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Azienda",
-			"key": "codice_azienda",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true,
-			"size": 2.2
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "checkbox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "flag_scadenza_fissa",
-			"label": "Scadenza Fissa",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.25,
-			"outputEvent": {
-				"eventName": "show_dt_evento",
-				"eventTrigger": "change"
-			}
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "checkbox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "flag_rigenera_dopo_esecuzione",
-			"label": "Rigenerare alla sua esecuzione?",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.25
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Codice colore",
-			"key": "codice_colore",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_value",
-			"label": "Unità di misura intervalli",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.5,
-			"inputEvents": [
-				{
-					"actionType": "hide",
-					"eventName": "show_dt_evento",
-					"condition": "equalTo",
-					"values": [
-						"1"
-					]
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_multiplier",
-			"label": "Numero intervalli",
-            "translate": "interval_multiplier",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1,
-			"inputEvents": [
-				{
-					"actionType": "hide",
-					"eventName": "show_dt_evento",
-					"condition": "equalTo",
-					"values": [
-						"1"
-					]
-				}
-			]
-		},
-		{
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.argomenti",
+    "entryKey": "tipi_eventi",
+    "businessObjectName": "argomenti",
+    "define": {
+        "id_argomento_father": "45417",
+        "label_id": "ID evento",
+        "label_unifica": "Unifica eventi",
+        "is_hidden_unifica_all": "false",
+        "id_argomento_bigger_than": "and true",
+        "id_argomento_father_s2": "3368",
+        "label_argomento_s2": "Livello di controllo"
+    },
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select arg.*, ae.note, (select codice_articolo_normativo from entrasp.articoli_normativi where id_articolo_normativo=ae.id_articolo_normativo) as descr_articolo_normativo, ae.interval_value, ae.interval_multiplier, (SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento) as flag_evento_parent, ae.flag_scadenza_fissa, ae.data_evento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.argomenti_eventi ae on arg.id_argomento=ae.id_argomento where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "SELECT a.codice_azienda, a.id_argomento, a.codice, true as fake, a.descrizione_breve, ae.id_argomento_modello_test, a.descrizione, true as id_argomento_nuovo,true as argomento_unifica_k,true as argomento_unifica_all_k, ae.id_articolo_normativo, ae.interval_multiplier, ae.note, ae.interval_value, ae.flag_scadenza_fissa,ae.data_evento,ae.data_riferimento, ae.codice_colore,ae.flag_rigenera_dopo_esecuzione, (select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417))AND id_argomento_father != 45417) as id_argomento_evento_scatenante, ae.id_argomento_tipo_allegato FROM entrasp.argomenti a INNER JOIN entrasp.argomenti_eventi ae ON a.id_argomento=ae.id_argomento WHERE a.id_argomento=$id_argomento$",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.argomenti_eventi_insert($descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$, $data_riferimento$, $id_argomento_modello_test$) as id_argomento;",
+            "type": "main"
+        },
+        {
+            "operation": "update",
+            "queryString": "select entrasp.argomenti_eventi_update($id_argomento$, $descrizione_breve$, $descrizione_breve$, $codice$, $P{id_argomento_father},$codice_azienda$,$interval_multiplier$,$interval_value$,$flag_scadenza_fissa$,$data_evento$,$codice_colore$,$flag_rigenera_dopo_esecuzione$, $note$, $id_articolo_normativo$, $id_argomento_evento_scatenante$, $id_argomento_tipo_allegato$, $data_riferimento$, $id_argomento_modello_test$) as id_argomento;",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=$P{id_argomento_father} and id_argomento_son=$id_argomento$;",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE descrizione_breve='£descrizione_breve£'",
+            "messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione breve diversa"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti where descrizione_breve='£descrizione_breve£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "La descrizione breve è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione breve diversa"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE descrizione='£descrizione_breve£'",
+            "messageNotNull": "La descrizione è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti where descrizione='£descrizione_breve£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "La descrizione è già stata utilizzata per un altro argomento: prego verificare o attribuire una descrizione"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_argomento$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
+            "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.argomenti arg set descrizione_breve=replace(descrizione_breve, '/', ','), nickname=replace(nickname, '/', ',') from entrasp.argomenti_argomenti aa  where arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3576 and (position('/' in descrizione_breve)!=0 or position('/' in nickname)!=0)"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Options",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "create_event",
+                    "icon": "create_event",
+                    "label": "Crea evento associato",
+                    "query": "SELECT entrasp.crea_evento ('€global_codice_azienda€', arg.id_argomento) FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
+                },
+                {
+                    "key": "delete",
+                    "icon": "delete",
+                    "label": "Delete",
+                    "query": "select true",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Eliminare le scadenze ?"
+                },
+                {
+                    "key": "merge_argomenti",
+                    "icon": "merge_type",
+                    "label": "Unifica scadenze",
+                    "query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
+                }
+            ]
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "#",
+            "key": "id_argomento",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 1,
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
             "autoGenerate": false,
             "format": {
-              "viewType": "combobox",
-              "comboQuery": "select distinct arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.modelli_test mt on arg.id_argomento=mt.id_argomento where mt.codice_azienda='€global_codice_azienda€'",
-              "options": []
+                "viewType": "input",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Codice necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "key": "codice",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "key": "descrizione_breve",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "content_copy",
+                        "label": "Duplica",
+                        "outputEventName": "duplica_progetto"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "contratti_actions",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.6,
+            "inputEvents": [
+                {
+                    "eventName": "duplica_progetto",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
+                    "outputEventWhenComplete": "navigate_to_new_scadenza"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT an.id_articolo_normativo AS id, an.codice_articolo_normativo||'-'||an.rubrica||'-'||tn.descrizione AS name  FROM entrasp.articoli_normativi an INNER JOIN entrasp.testi_normativi tn ON an.id_testo_normativo=tn.id_testo_normativo;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_articolo_normativo",
+            "label": "Riferimento normativo",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.6,
+            "translate": "RESOURCES.id_articolo_normativo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "number"
+            },
+            "label": "Evento scatenante",
+            "key": "id_argomento_evento_scatenante",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "queryFunct": "select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417)) AND id_argomento_father != 45417",
+            "size": 2.6,
+            "translate": "RESOURCES.id_argomento_evento_scatenante"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 3576;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "number"
+            },
+            "label": "Tipo Documento Da Allegare",
+            "key": "id_argomento_tipo_allegato",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "queryFunct": "select id_argomento_father from entrasp.argomenti_argomenti where id_argomento_son=$id_argomento$ and id_argomento_father IN (select entrasp.descendants_of_argomento(45417)) AND id_argomento_father != 45417",
+            "size": 2.6,
+            "translate": "RESOURCES.id_argomento_tipo_allegato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 2.2,
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_scadenza_fissa",
+            "label": "Scadenza Fissa",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.25,
+            "outputEvent": {
+                "eventName": "show_dt_evento",
+                "eventTrigger": "change"
+            },
+            "translate": "RESOURCES.flag_scadenza_fissa"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_rigenera_dopo_esecuzione",
+            "label": "Rigenerare alla sua esecuzione?",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.25,
+            "translate": "RESOURCES.flag_rigenera_dopo_esecuzione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Codice colore",
+            "key": "codice_colore",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.codice_colore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_value",
+            "label": "Unità di misura intervalli",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "show_dt_evento",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "translate": "RESOURCES.interval_value"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_multiplier",
+            "label": "Numero intervalli",
+            "translate": "interval_multiplier",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1,
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "show_dt_evento",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "select distinct arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.modelli_test mt on arg.id_argomento=mt.id_argomento where mt.codice_azienda='€global_codice_azienda€'",
+                "options": []
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_modello_test",
             "label": "Argomento del Mod.Verifica",
             "newLine": false,
-			"size": 2,
-            "readOnly": false
-          },
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_evento",
-			"label": "Data evento (L' anno è indifferente)",
-			"newLine": false,
-			"readOnly": false,
-			"size": 2,
-			"inputEvents": [
-				{
-					"actionType": "show",
-					"eventName": "show_dt_evento",
-					"condition": "equalTo",
-					"values": [
-						"1"
-					]
-				}
-			]
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_riferimento",
-			"label": "Data riferimento (L' anno è indifferente)",
-			"newLine": false,
-			"readOnly": false,
-			"size": 2
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "invisible"
-			},
-			"label": "void",
-     			"translate": "RESOURCES.void",
-			"key": "fake",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true,
-			"size": 0
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			  "label": "Note",
-             "translate": "RESOURCES.notes",
-			"key": "note",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false,
-			"size": 3.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "combobox",
-				"options": [],
-				"comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_argomento_nuovo",
-			"label": "Scadenza con cui unire",
-			"sameOrigin": false,
-			"newLine": false,
-			"readOnly": false,
-			"size": 2.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "argomento_unifica_k",
-			"buttonIcon": "merge_type",
-			"label": "Unifica eventi",
-			"newLine": false,
-			"outputEvent": {
-				"eventName": "argomento_unifica",
-				"eventTrigger": "press"
-			},
-			"inputEvents": [
-				{
-					"eventName": "argomento_unifica",
-					"actionType": "query",
-					"condition": "none",
-					"values": [],
-					"queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
-					"successMessage": "Done!"
-				}
-			],
-			"readOnly": false,
-			"sameOrigin": false,
-			"size": 1.5
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "eventi_sub_of_eventi",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_father"
-				}
-			],
-			"label": "Sotto-eventi"
-		},
-		{
-			"entryKey": "eventi_scatenanti",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento_son"
-				}
-			],
-			 "label": "TAG",
-      "translate": "RESOURCES.tag",
-      "translate": "RESOURCES.tag"
-		}
-	],
-	"search_keys": [
-		{
-			"fieldName": "flag_principali",
-			"format": {
-				"value": "0",
-				"viewType": "checkbox"
-			},
-			 "label": "Solo Principali",
+            "size": 2,
+            "readOnly": false,
+            "translate": "RESOURCES.id_argomento_modello_test"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_evento",
+            "label": "Data evento (L' anno è indifferente)",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "show_dt_evento",
+                    "condition": "equalTo",
+                    "values": [
+                        "1"
+                    ]
+                }
+            ],
+            "translate": "RESOURCES.data_evento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_riferimento",
+            "label": "Data riferimento (L' anno è indifferente)",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.data_riferimento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "invisible"
+            },
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "key": "fake",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 0
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "key": "note",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 3.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_father} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_nuovo",
+            "label": "Scadenza con cui unire",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.5,
+            "translate": "RESOURCES.id_argomento_nuovo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "argomento_unifica_k",
+            "buttonIcon": "merge_type",
+            "label": "Unifica eventi",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "argomento_unifica",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "argomento_unifica",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
+                    "successMessage": "Done!"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5,
+            "translate": "RESOURCES.argomento_unifica_k"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "eventi_sub_of_eventi",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_father"
+                }
+            ],
+            "label": "Sotto-eventi"
+        },
+        {
+            "entryKey": "eventi_scatenanti",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG",
+            "translate": "RESOURCES.tag"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
             "translate": "RESOURCES.main_only",
-			"newLine": false,
-			"queryCond": "arg.id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
-		},
-		{
-			"format": {
-				"comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"fieldName": "codice_ruolo_s",
-			"label": "Ruolo",
-			"newLine": false,
-			"queryCond": "arg.id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
-		},
-		{
-			"label": "codice_azienda_s",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"fieldName": "codice_azienda",
-			"newLine": true,
-			"queryCond": "arg.codice_azienda=$codice_azienda_s$"
-		},
-		{
-			"fieldName": "id_argomento_list",
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"label": "$P{label_id}",
-			"newLine": false,
-			"queryCond": "arg.id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
-		},
-		{
-			"fieldName": "argomento_s",
-			"format": {
-				"comboQuery": "SELECT distinct arg.id_argomento AS id, arg.descrizione||'-'||arg.id_argomento AS name from entrasp.argomenti_argomenti aa inner join entrasp.argomenti_eventi ae on aa.id_argomento_son=ae.id_argomento inner join entrasp.argomenti arg on aa.id_argomento_father=arg.id_argomento where id_argomento_father!=$P{id_argomento_father} order by arg.descrizione||'-'||arg.id_argomento",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Argomento padre",
-			"newLine": false,
-			"queryCond": "arg.id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$argomento_s$)"
-		},
-		{
-			"fieldName": "tipo_int_s",
-			"format": {
-				"comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Tipo intermediario",
-			"newLine": true,
-			"queryCond": "arg.id_argomento in (select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$tipo_int_s$)"
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice",
-			"label": "Codice",
-      "translate": "RESOURCES.code",
-			"width": "6%"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"key": "id_argomento",
-			"label": "#",
-			"width": "6%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione_breve",
-			"label": "Descrizione",
-      "translate": "RESOURCES.description",
-			"width": "25%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "codice_azienda",
-			"label": "Azienda"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_multiplier",
-			"label": "Numero intervalli",
+            "newLine": false,
+            "queryCond": "arg.id_argomento not in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_relazione=45069)"
+        },
+        {
+            "format": {
+                "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "fieldName": "codice_ruolo_s",
+            "label": "Ruolo",
+            "newLine": false,
+            "queryCond": "arg.id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
+        },
+        {
+            "label": "codice_azienda_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "fieldName": "codice_azienda",
+            "newLine": true,
+            "queryCond": "arg.codice_azienda=$codice_azienda_s$"
+        },
+        {
+            "fieldName": "id_argomento_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "$P{label_id}",
+            "newLine": false,
+            "queryCond": "arg.id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+        },
+        {
+            "fieldName": "argomento_s",
+            "format": {
+                "comboQuery": "SELECT distinct arg.id_argomento AS id, arg.descrizione||'-'||arg.id_argomento AS name from entrasp.argomenti_argomenti aa inner join entrasp.argomenti_eventi ae on aa.id_argomento_son=ae.id_argomento inner join entrasp.argomenti arg on aa.id_argomento_father=arg.id_argomento where id_argomento_father!=$P{id_argomento_father} order by arg.descrizione||'-'||arg.id_argomento",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Argomento padre",
+            "newLine": false,
+            "queryCond": "arg.id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$argomento_s$)"
+        },
+        {
+            "fieldName": "tipo_int_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=133 order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo intermediario",
+            "newLine": true,
+            "queryCond": "arg.id_argomento in (select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$tipo_int_s$)"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento",
+            "label": "#",
+            "width": "6%",
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Azienda",
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_multiplier",
+            "label": "Numero intervalli",
             "translate": "interval_multiplier",
-			"width": "8%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "interval_value",
-			"label": "Unità misura intervalli",
-			"width": "7%"
-		},
-		{
-			"format": {
-				"dataType": "boolean"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"isCheckbox": true,
-			"key": "flag_evento_parent",
-			"label": "Evento origine",
-			"width": "6%",
-			"queryFunct": "SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento"
-		},
-		{
-			"format": {
-				"dataType": "boolean"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"isCheckbox": true,
-			"key": "flag_rigenera_dopo_esecuzione",
-			"label": "Rigenera dopo esecuzione",
-			"width": "6%"
-		},
-		{
-			"format": {
-				"dataType": "boolean"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"isCheckbox": true,
-			"key": "flag_scadenza_fissa",
-			"label": "Scadenza Fissa",
-			"width": "6%"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_evento",
-			"label": "Data evento",
-			"width": "7%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "codice_colore",
-			"label": "Codice Colore"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descr_articolo_normativo",
-			"label": "Riferimento Normativo",
-			"width": "19%"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
-	},
-	"hideActions": [
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"formActionType": "attachments",
-			"viewType": "form"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "multi-attachments"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "share"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "import_export"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "documentation"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "startEvent"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "stopEvent"
-		}
-	],
-	"inputEvents": [
-		{
-			"actionTarget": {
-				"name": "tipi_eventi",
-				"type": "form",
-				"keymap": [
-					{
-						"source": "id_argomento",
-						"destination": "id_argomento"
-					}
-				]
-			},
-			"actionType": "navigate",
-			"eventName": "navigate_to_new_tipo_evento"
-		}
-	]
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_value",
+            "label": "Unità misura intervalli",
+            "width": "7%",
+            "translate": "RESOURCES.interval_value"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "isCheckbox": true,
+            "key": "flag_evento_parent",
+            "label": "Evento origine",
+            "width": "6%",
+            "queryFunct": "SELECT CASE WHEN count(*) = 0 THEN FALSE ELSE TRUE END FROM entrasp.argomenti_argomenti WHERE id_argomento_father=ae.id_argomento",
+            "translate": "RESOURCES.flag_evento_parent"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "isCheckbox": true,
+            "key": "flag_rigenera_dopo_esecuzione",
+            "label": "Rigenera dopo esecuzione",
+            "width": "6%",
+            "translate": "RESOURCES.flag_rigenera_dopo_esecuzione"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "isCheckbox": true,
+            "key": "flag_scadenza_fissa",
+            "label": "Scadenza Fissa",
+            "width": "6%",
+            "translate": "RESOURCES.flag_scadenza_fissa"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_evento",
+            "label": "Data evento",
+            "width": "7%",
+            "translate": "RESOURCES.data_evento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_colore",
+            "label": "Codice Colore",
+            "translate": "RESOURCES.codice_colore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_articolo_normativo",
+            "label": "Riferimento Normativo",
+            "width": "19%",
+            "translate": "RESOURCES.descr_articolo_normativo"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
+    },
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "multi-attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "share"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "documentation"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "tipi_eventi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "id_argomento",
+                        "destination": "id_argomento"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "navigate_to_new_tipo_evento"
+        }
+    ]
 }

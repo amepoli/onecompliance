@@ -1,151 +1,159 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "documenti_sub_of_tipi_odg",
-  "origin": "entrasp.argomenti_argomenti",
-  "businessObjectName": "argomenti_argomenti",
-  "define": {
-    "id_argomento_relazione": "4037",
-    "label_titolo_argomento": "Tipo documento",
-    "label_codice_argomento": "Codice documento",
-    "id_argomento_oggetto_collegato": "3576"
-  },
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select *, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$ and id_argomento_relazione=$P{id_argomento_relazione}"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_argomento_father",
-      "label": "id_argomento_father",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.5
+    "$schema": "../views.schema.json",
+    "entryKey": "documenti_sub_of_tipi_odg",
+    "origin": "entrasp.argomenti_argomenti",
+    "businessObjectName": "argomenti_argomenti",
+    "define": {
+        "id_argomento_relazione": "4037",
+        "label_titolo_argomento": "Tipo documento",
+        "label_codice_argomento": "Codice documento",
+        "id_argomento_oggetto_collegato": "3576"
     },
-    {
-      "format": {
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "select id_argomento as ID , id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_oggetto_collegato} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') order by descrizione;"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_argomento_son",
-      "label": "$P{label_titolo_argomento}",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "value": "$P{id_argomento_relazione}"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento_relazione",
-      "label": "id_argomento_relazione",
-      "newLine": true,
-      "readOnly": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_argomento_father",
-      "label": "Id_argomento_father"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_argomento_son",
-      "label": "Id Argomento_son"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice",
-      "label": "$P{label_codice_argomento}",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "width": "40%",
-      "isPrimary": false,
-      "key": "titolo",
-      "label": "$P{label_titolo_argomento}"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "button_argomento",
-      "isButton": true,
-      "buttonAction": {
-        "target": "classification_mdt",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "id_argomento_son",
-            "destination": "id_argomento"
-          }
-        ]
-      },
-      "style": [
+    "predefinedQueries": [
         {
-          "button_icon": "",
-          "value": "*"
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select *, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$ and id_argomento_relazione=$P{id_argomento_relazione}"
         }
-      ]
-    }
-  ],
-  "inputEvents": [
-    {
-      "actionTarget": {
-        "name": "argomenti",
-        "type": "form",
-        "keymap": [
-          {
-            "source": "id_argomento_son",
-            "destination": "id_argomento"
-          }
-        ]
-      },
-      "actionType": "navigate",
-      "eventName": "argomenti_dettaglio"
-    }
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    }
-  ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_father",
+            "label": "id_argomento_father",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "translate": "RESOURCES.id_argomento_father"
+        },
+        {
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_argomento as ID , id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_oggetto_collegato} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') order by descrizione;"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_son",
+            "label": "$P{label_titolo_argomento}",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_argomento_son"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "value": "$P{id_argomento_relazione}"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_relazione",
+            "label": "id_argomento_relazione",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.id_argomento_relazione"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_father",
+            "label": "Id_argomento_father",
+            "translate": "RESOURCES.id_argomento_father"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_son",
+            "label": "Id Argomento_son",
+            "translate": "RESOURCES.id_argomento_son"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "$P{label_codice_argomento}",
+            "width": "10%",
+            "translate": "RESOURCES.codice"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "40%",
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "$P{label_titolo_argomento}",
+            "translate": "RESOURCES.titolo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "button_argomento",
+            "isButton": true,
+            "buttonAction": {
+                "target": "classification_mdt",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "id_argomento_son",
+                        "destination": "id_argomento"
+                    }
+                ]
+            },
+            "style": [
+                {
+                    "button_icon": "",
+                    "value": "*"
+                }
+            ],
+            "translate": "RESOURCES.button_argomento"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "argomenti",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "id_argomento_son",
+                        "destination": "id_argomento"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "argomenti_dettaglio"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
 }

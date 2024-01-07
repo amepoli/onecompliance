@@ -1,71 +1,71 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "classification_customer_type",
-  "inheritsFrom": "argomenti",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=133",
-      "type": "main"
-    },
-    {
-      "operation": "insert",
-      "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 133) as id_argomento;",
-      "type": "main"
-    },
-    {
-      "operation": "isInsert",
-      "queryString": "select $id_argomento$ is null as label;",
-      "type": "main"
-    },
-    {
-      "operation": "delete",
-      "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=133 and id_argomento_son=$id_argomento$;",
-      "type": "preProcessing"
-    },
-    {
-      "operation": "insert",
-      "type": "preCheck",
-      "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
-      "messageNotNull": "Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-    },
-    {
-      "operation": "update",
-      "type": "preCheck",
-      "queryString": "select id_argomento from entrasp.argomenti where codice='£codice£' and id_argomento!=$id_argomento$",
-      "messageNotNull": "Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "argomenti_sub_of_argomenti_son",
-      "keys": [
+    "$schema": "../views.schema.json",
+    "entryKey": "classification_customer_type",
+    "inheritsFrom": "argomenti",
+    "predefinedQueries": [
         {
-          "parent": "id_argomento",
-          "son": "id_argomento_father"
-        }
-      ],
-      "label": "Argomenti figli"
-    },
-    {
-      "entryKey": "argomenti_sub_of_argomenti_father",
-      "keys": [
+            "operation": "selectTable",
+            "queryString": "select arg.* from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento =aa.id_argomento_son  where id_argomento_father=133",
+            "type": "main"
+        },
         {
-          "parent": "id_argomento",
-          "son": "id_argomento_son"
-        }
-      ],
-      "label": "Argomenti padre"
-    },
-    {
-      "entryKey": "modelli_test_vr_sub_of_argomenti",
-      "keys": [
+            "operation": "insert",
+            "queryString": "select entrasp.argomenti_classification_insert($descrizione_breve$, $descrizione$, $codice$, 133) as id_argomento;",
+            "type": "main"
+        },
         {
-          "parent": "id_argomento",
-          "son": "id_argomento"
+            "operation": "isInsert",
+            "queryString": "select $id_argomento$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "delete from entrasp.argomenti_argomenti where id_argomento_father=133 and id_argomento_son=$id_argomento$;",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti WHERE codice='£codice£'",
+            "messageNotNull": "Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_argomento from entrasp.argomenti where codice='£codice£' and id_argomento!=$id_argomento$",
+            "messageNotNull": "Il codice inserito è già stato utilizzato per un altro argomento: prego utilizzarne un codice diverso"
         }
-      ],
-      "label": "Modelli test associati"
-    }
-  ]
+    ],
+    "subTables": [
+        {
+            "entryKey": "argomenti_sub_of_argomenti_son",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_father"
+                }
+            ],
+            "label": "Argomenti figli"
+        },
+        {
+            "entryKey": "argomenti_sub_of_argomenti_father",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "Argomenti padre"
+        },
+        {
+            "entryKey": "modelli_test_vr_sub_of_argomenti",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento"
+                }
+            ],
+            "label": "Modelli test associati"
+        }
+    ]
 }

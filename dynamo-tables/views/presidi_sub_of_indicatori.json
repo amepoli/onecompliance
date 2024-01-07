@@ -1,158 +1,166 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "presidi_sub_of_indicatori",
-  "origin": "entrasp.indicatori_presidi",
-  "businessObjectName": "indicatori_presidi",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select ip.*, true as delete_indicatori_presidi, substring(entrasp.presidi_descr(ip.id_presidio, ip.codice_azienda), 1, 130) as presidi_descr from entrasp.indicatori_presidi ip inner join entrasp.presidi prs on ip.id_presidio=prs.id_presidio and ip.codice_azienda=prs.codice_azienda where ip.codice_azienda=$codice_azienda$"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_indicatore",
-      "label": "id_indicatore",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code",
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "comboQuery": "select id_presidio as id, codice||'-'||substring (descrizione_breve, 1,100) as name from entrasp.presidi where codice_azienda='€global_codice_azienda€'",
-        "options": []
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_presidio",
-      "label": "Presidio",
-      "readOnly": false,
-      "newLine": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "4%",
-      "queryFunct": "select true",
-      "key": "delete_indicatori_presidi",
-      "label": "",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "presidi_sub_of_indicatori",
+    "origin": "entrasp.indicatori_presidi",
+    "businessObjectName": "indicatori_presidi",
+    "predefinedQueries": [
         {
-          "button_icon": "delete",
-          "value": "*"
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select ip.*, true as delete_indicatori_presidi, substring(entrasp.presidi_descr(ip.id_presidio, ip.codice_azienda), 1, 130) as presidi_descr from entrasp.indicatori_presidi ip inner join entrasp.presidi prs on ip.id_presidio=prs.id_presidio and ip.codice_azienda=prs.codice_azienda where ip.codice_azienda=$codice_azienda$"
         }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "presidi_sub_of_indicatori",
-        "viewType": "table",
-        "query": "delete from entrasp.indicatori_presidi where codice_azienda='£codice_azienda£' AND id_indicatore=£id_indicatore£ AND id_presidio=£id_presidio£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_presidio",
-            "destination": "id_presidio"
-          },
-          {
-            "source": "id_indicatore",
-            "destination": "id_indicatore"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_presidio",
-      "label": "id_presidio",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_indicatore",
-      "label": "id_indicatore"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "presidi_descr",
-      "label": "Presidio",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "presidi",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_presidio",
-            "destination": "id_presidio"
-          }
-        ]
-      },
-      "width": "70%",
-      "sameOrigin": false,
-      "queryFunct": "substring(entrasp.presidi_descr(id_presidio, codice_azienda), 1, 130)"
-    }
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    }
-  ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_indicatore",
+            "label": "id_indicatore",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.id_indicatore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "select id_presidio as id, codice||'-'||substring (descrizione_breve, 1,100) as name from entrasp.presidi where codice_azienda='€global_codice_azienda€'",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "label": "Presidio",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_presidio"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_indicatori_presidi",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "presidi_sub_of_indicatori",
+                "viewType": "table",
+                "query": "delete from entrasp.indicatori_presidi where codice_azienda='£codice_azienda£' AND id_indicatore=£id_indicatore£ AND id_presidio=£id_presidio£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    },
+                    {
+                        "source": "id_indicatore",
+                        "destination": "id_indicatore"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_indicatori_presidi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "label": "id_presidio",
+            "width": "8%",
+            "translate": "RESOURCES.id_presidio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_indicatore",
+            "label": "id_indicatore",
+            "translate": "RESOURCES.id_indicatore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "presidi_descr",
+            "label": "Presidio",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "presidi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    }
+                ]
+            },
+            "width": "70%",
+            "sameOrigin": false,
+            "queryFunct": "substring(entrasp.presidi_descr(id_presidio, codice_azienda), 1, 130)",
+            "translate": "RESOURCES.presidi_descr"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
 }

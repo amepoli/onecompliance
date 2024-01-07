@@ -1,133 +1,133 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "contracts",
-	"inheritsFrom": "contracts_investment",
-	"businessObjectName": "contratti",
-	"origin": "entrasp.contratti",
-	"dashboardTables": [
-		"dashboard_contracts_investment"
-	],
-	"define": {
-		"is_hidden_conflicts": "true",
-		"is_hidden_invisible_field": "false",
-		"label_id_controparte": "Cliente/Fornitore",
-		"label_controparte": "Cliente/Fornitore",
-		"is_hidden_mifid": "true",
-		"size_with_or_without_mifid": "3.14",
-		"codice_ruolo": "CLI",
-		"is_hidden_note": "false"
-	},
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_azienda=$codice_azienda$"
-		},
-		{
-			"operation": "update",
-			"type": "postProcessing",
-			"queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
-		}
-	],
-	"subTables": [
-		{
-			"label": "Progetti associati",
-			"entryKey": "progetti_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Potenziali conflitti",
-			"entryKey": "connected_contracts",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto_principale"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Moduli/Articoli",
-			"entryKey": "articoli_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Attività/Segnalazioni associate",
-			"entryKey": "compiti_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"entryKey": "consuntivazioni_sub",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			],
-			"label": "Aggiornamenti e mail",
+    "$schema": "../views.schema.json",
+    "entryKey": "contracts",
+    "inheritsFrom": "contracts_investment",
+    "businessObjectName": "contratti",
+    "origin": "entrasp.contratti",
+    "dashboardTables": [
+        "dashboard_contracts_investment"
+    ],
+    "define": {
+        "is_hidden_conflicts": "true",
+        "is_hidden_invisible_field": "false",
+        "label_id_controparte": "Cliente/Fornitore",
+        "label_controparte": "Cliente/Fornitore",
+        "is_hidden_mifid": "true",
+        "size_with_or_without_mifid": "3.14",
+        "codice_ruolo": "CLI",
+        "is_hidden_note": "false"
+    },
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_azienda=$codice_azienda$"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+        }
+    ],
+    "subTables": [
+        {
+            "label": "Progetti associati",
+            "entryKey": "progetti_sub_of_contratti",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "label": "Potenziali conflitti",
+            "entryKey": "connected_contracts",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto_principale"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "label": "Moduli/Articoli",
+            "entryKey": "articoli_contratti",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "label": "Attività/Segnalazioni associate",
+            "entryKey": "compiti_sub_of_contratti",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "entryKey": "consuntivazioni_sub",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ],
+            "label": "Aggiornamenti e mail",
             "translate": "RESOURCES.update_e_mail"
-		},
-		{
-			"label": "Operazioni associate",
-			"entryKey": "operazioni_sub_of_contracts",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		},
-		{
-			"label": "Tranche",
-			"entryKey": "tranche_sub_of_contratti",
-			"keys": [
-				{
-					"parent": "id_contratto",
-					"son": "id_contratto"
-				},
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				}
-			]
-		}
-	]
+        },
+        {
+            "label": "Operazioni associate",
+            "entryKey": "operazioni_sub_of_contracts",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "label": "Tranche",
+            "entryKey": "tranche_sub_of_contratti",
+            "keys": [
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        }
+    ]
 }

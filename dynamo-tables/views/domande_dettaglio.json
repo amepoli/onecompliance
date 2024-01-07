@@ -1,97 +1,97 @@
 {
-  "$schema": "../views.schema.json",
-  "inheritsFrom": "domande",
-  "entryKey": "domande_dettaglio",
-  "label": "Domanda",
-  "define": {
-    "is_hidden_mt": "false"
-  },
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select codice_azienda, ordinamento, punteggio, id_modello_test, id_modello_test_vr, id_domanda, descrizione, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as risposte_prev, note from entrasp.domande dm where dm.codice_azienda=$codice_azienda$",
-      "type": "main"
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "domande",
+    "entryKey": "domande_dettaglio",
+    "label": "Domanda",
+    "define": {
+        "is_hidden_mt": "false"
     },
-    {
-      "operation": "insert",
-      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, £id_domanda£, $ordinamento$, $id_sezione$, $id_template_rp$)",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$, $id_template_rp$)",
-      "type": "postProcessing"
-    },
-    {
-      "operation": "update",
-      "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
-      "type": "postProcessing"
-    },
-    {
-      "type": "main",
-      "operation": "delete",
-      "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select codice_azienda, ordinamento, punteggio, id_modello_test, id_modello_test_vr, id_domanda, descrizione, entrasp.risposte_previste_mostra1(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) as risposte_prev, note from entrasp.domande dm where dm.codice_azienda=$codice_azienda$",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, £id_domanda£, $ordinamento$, $id_sezione$, $id_template_rp$)",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "update",
+            "queryString": "SELECT entrasp.domande_order_and_settle($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$, $ordinamento$, $id_sezione$, $id_template_rp$)",
+            "type": "postProcessing"
+        },
+        {
+            "operation": "update",
+            "queryString": "update entrasp.risposte rp set punteggio = dm.punteggio from entrasp.domande dm where rp.codice_azienda= dm.codice_azienda and rp.id_domanda = dm.id_domanda and rp.id_modello_test = dm.id_modello_test and rp.id_modello_test_vr = dm.id_modello_test_vr and rp.punteggio!=dm.punteggio and rp.codice_azienda = $codice_azienda$ and rp.id_modello_test =$id_modello_test$ and rp.id_domanda =$id_domanda$ and rp.id_modello_test_vr = $id_modello_test_vr$;",
+            "type": "postProcessing"
+        },
+        {
+            "type": "main",
+            "operation": "delete",
+            "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_modello_test_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista id modelli verifica",
+            "translate": "RESOURCES.id_check_template_list",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "dm.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
+        },
+        {
+            "fieldName": "id_tipo_modello_test_s",
+            "format": {
+                "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo modello verifica",
+            "translate": "RESOURCES.check_template_type",
+            "newLine": false,
+            "size": 3.5,
+            "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test_s$"
+        },
+        {
+            "fieldName": "domanda_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Domanda",
+            "translate": "RESOURCES.domandalabel",
+            "newLine": false,
+            "queryCond": "(upper(dm.descrizione) like '%'||upper('€domanda_search€')||'%' or upper(dm.note) like '%'||upper('€domanda_search€')||'%')"
+        },
+        {
+            "fieldName": "no_liv_controllo",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza liv.controllo",
+            "newLine": false,
+            "queryCond": "dm.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6871 and ason.id_argomento_son is not null)"
+        },
+        {
+            "fieldName": "no_tipo_controllo",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza tipo.controllo",
+            "newLine": false,
+            "queryCond": "dm.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=43448 and ason.id_argomento_son is not null)"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_modello_test desc, ordinamento asc limit 200"
     }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_modello_test_list",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Lista id modelli verifica",
-      "translate": "RESOURCES.id_check_template_list",
-      "newLine": false,
-      "size": 2.5,
-      "queryCond": "dm.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
-    },
-    {
-      "fieldName": "id_tipo_modello_test_s",
-      "format": {
-        "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo modello verifica",
-      "translate": "RESOURCES.check_template_type",
-      "newLine": false,
-      "size": 3.5,
-      "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test_s$"
-    },
-    {
-      "fieldName": "domanda_search",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Domanda",
-      "translate": "RESOURCES.domandalabel",
-      "newLine": false,
-      "queryCond": "(upper(dm.descrizione) like '%'||upper('€domanda_search€')||'%' or upper(dm.note) like '%'||upper('€domanda_search€')||'%')"
-    },
-    {
-      "fieldName": "no_liv_controllo",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Senza liv.controllo",
-      "newLine": false,
-      "queryCond": "dm.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6871 and ason.id_argomento_son is not null)"
-    },
-    {
-      "fieldName": "no_tipo_controllo",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Senza tipo.controllo",
-      "newLine": false,
-      "queryCond": "dm.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=43448 and ason.id_argomento_son is not null)"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by id_modello_test desc, ordinamento asc limit 200"
-  }
 }

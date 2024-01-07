@@ -1,275 +1,281 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "rischi_sub_of_argomenti",
-  "inheritsFrom": "rischi",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,titolo,id_centro_gest, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE id_argomento=$id_argomento$;"
-    },
-    {
-      "operation": "selectForm",
-      "type": "main",
-      "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,titolo,id_centro_gest, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "update entrasp.rischi set codice_part='£global_codice_part£' WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
-    },
-    {
-      "operation": "delete",
-      "type": "main",
-      "queryString": "SELECT entrasp.rischi_delete($codice_azienda$, $codice_rischio$);"
-    },
-    {
-      "operation": "update",
-      "type": "postProcessing",
-      "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
-    },
-    {
-      "operation": "insert",
-      "type": "postProcessing",
-      "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
+    "$schema": "../views.schema.json",
+    "entryKey": "rischi_sub_of_argomenti",
+    "inheritsFrom": "rischi",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,titolo,id_centro_gest, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE id_argomento=$id_argomento$;"
+        },
+        {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,titolo,id_centro_gest, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "update entrasp.rischi set codice_part='£global_codice_part£' WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
+        },
+        {
+            "operation": "delete",
+            "type": "main",
+            "queryString": "SELECT entrasp.rischi_delete($codice_azienda$, $codice_rischio$);"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "select entrasp.rischi_net_value_update($codice_azienda$, $codice_rischio$);"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
             "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-     "label": "id_centro_gest",
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "id_centro_gest",
             "translate": "RESOURCES.id_office"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_rischio",
-      "label": "Codice Rischio (PK)",
-      "translate": "RESOURCES.risk_code_pk"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice",
-      "width": "5%",
-      "label": "Codice",
-      "translate": "RESOURCES.code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "width": "50%",
-       "label": "Titolo",
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_rischio",
+            "label": "Codice Rischio (PK)",
+            "translate": "RESOURCES.risk_code_pk"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "width": "5%",
+            "label": "Codice",
+            "translate": "RESOURCES.code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "width": "50%",
+            "label": "Titolo",
             "translate": "RESOURCES.title"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "centro_gest",
-      "width": "10%",
-      "label": "Centro Gestionale Responsabile (liv.1)",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "centro_gest_liv2",
-      "width": "10%",
-      "label": "Centro Gestionale Monitoraggio/Segnalante (liv.2)",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_liv2)"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento",
-      "width": "10%",
-        "label": "Id_argomento",
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "width": "10%",
+            "label": "Centro Gestionale Responsabile (liv.1)",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+            "translate": "RESOURCES.centro_gest"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest_liv2",
+            "width": "10%",
+            "label": "Centro Gestionale Monitoraggio/Segnalante (liv.2)",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_liv2)",
+            "translate": "RESOURCES.centro_gest_liv2"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "width": "10%",
+            "label": "Id_argomento",
             "translate": "RESOURCES.id_tag"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "8%",
-      "key": "rischio_inerente",
-      "label": "Rischio Inerente",
-      "translate": "RESOURCES.rischio_inerente",
-      "style": [
-        {
-          "value": "Immateriale",
-          "font_color": "green",
-          "font_weight": "500"
         },
         {
-          "value": "Basso",
-          "font_color": "green",
-          "font_weight": "500"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "8%",
+            "key": "rischio_inerente",
+            "label": "Rischio Inerente",
+            "translate": "RESOURCES.rischio_inerente",
+            "style": [
+                {
+                    "value": "Immateriale",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Rilevante",
+                    "font_color": "orange",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ],
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_pre)"
         },
         {
-          "value": "Rilevante",
-          "font_color": "orange",
-          "font_weight": "500"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rischio_residuo",
+            "width": "8%",
+            "label": "Rischio Residuo",
+            "translate": "RESOURCES.rischio_residuo",
+            "style": [
+                {
+                    "value": "Immateriale",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Rilevante",
+                    "font_color": "orange",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ],
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)"
         },
         {
-          "value": "Alto",
-          "font_color": "red",
-          "font_weight": "500"
-        }
-      ],
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_pre)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "rischio_residuo",
-      "width": "8%",
-      "label": "Rischio Residuo",
-      "translate": "RESOURCES.rischio_residuo",
-      "style": [
-        {
-          "value": "Immateriale",
-          "font_color": "green",
-          "font_weight": "500"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rischio_residuo_rett",
+            "width": "8%",
+            "label": "Rischio Residuo Rettificato",
+            "style": [
+                {
+                    "value": "Immateriale",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Rilevante",
+                    "font_color": "orange",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ],
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)",
+            "translate": "RESOURCES.rischio_residuo_rett"
         },
         {
-          "value": "Basso",
-          "font_color": "green",
-          "font_weight": "500"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "probabilita",
+            "label": "Probabilita",
+            "translate": "RESOURCES.probabilita",
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P',probabilita_post)"
         },
         {
-          "value": "Rilevante",
-          "font_color": "orange",
-          "font_weight": "500"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "impatto",
+            "label": "Impatto",
+            "translate": "RESOURCES.impatto",
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I',intensita_singola_post)"
         },
         {
-          "value": "Alto",
-          "font_color": "red",
-          "font_weight": "500"
-        }
-      ],
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "rischio_residuo_rett",
-      "width": "8%",
-      "label": "Rischio Residuo Rettificato",
-      "style": [
-        {
-          "value": "Immateriale",
-          "font_color": "green",
-          "font_weight": "500"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_rischio",
+            "label": "id_tipo_rischio",
+            "queryFunct": "select null",
+            "translate": "RESOURCES.id_tipo_rischio"
         },
         {
-          "value": "Basso",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "Rilevante",
-          "font_color": "orange",
-          "font_weight": "500"
-        },
-        {
-          "value": "Alto",
-          "font_color": "red",
-          "font_weight": "500"
-        }
-      ],
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "probabilita",
-      "label": "Probabilita",
-      "translate": "RESOURCES.probabilita",
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P',probabilita_post)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "impatto",
-      "label": "Impatto",
-      "translate": "RESOURCES.impatto",
-      "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I',intensita_singola_post)"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_tipo_rischio",
-      "label": "id_tipo_rischio",
-      "queryFunct": "select null"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento",
-        "label": "Id_argomento",
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Id_argomento",
             "translate": "RESOURCES.id_tag"
-    }
-  ]
+        }
+    ]
 }

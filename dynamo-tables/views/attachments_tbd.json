@@ -1,953 +1,988 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "attachments_tbd",
-  "inheritsFrom": "attachments",
-  "businessObjectName": "uploadFile",
-  "label": "Documenti richiesti",
-  "define": {
-    "isHiddenDownload": "true",
-    "jsonFileDelFlussoInformativo": "attachments_sub_of_attachments_tbd",
-    "labelTabFileDelFlussoInfo": "File da associare"
-  },
-  "predefinedQueries": [
-    {
-      "type": "main",
-      "operation": "selectTable",
-      "queryString": "SELECT true as cartella_vai, rev.codice_azienda,b.codice_part, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.descrizione, rev.data_scadenza, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(a.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo(a.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_argomento_stato != 4035"
+    "$schema": "../views.schema.json",
+    "entryKey": "attachments_tbd",
+    "inheritsFrom": "attachments",
+    "businessObjectName": "uploadFile",
+    "label": "Documenti richiesti",
+    "define": {
+        "isHiddenDownload": "true",
+        "jsonFileDelFlussoInformativo": "attachments_sub_of_attachments_tbd",
+        "labelTabFileDelFlussoInfo": "File da associare"
     },
-    {
-      "type": "preProcessing",
-      "operation": "selectForm",
-      "queryString": "select entrasp.files_pre_loading($codice_azienda$, $id_risorsa$, $prog_revisione$)"
-    },
-    {
-      "type": "main",
-      "operation": "selectForm",
-      "queryString": "SELECT rev.codice_azienda, rev.cod_rev, rev.note, rev.id_argomento_stato as rev_id_argomento_stato, rev.data_rif_a, rev.data_scadenza, rev.descrizione, (select descrizione from entrasp.argomenti arg where arg.id_argomento=id_argomento_tipo_allegato)as name, b.codice_part, rev.id_risorsa, rev.prog_revisione, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo(a.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_risorsa=$id_risorsa$ AND rev.prog_revisione=$prog_revisione$"
-    },
-    {
-      "type": "main",
-      "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name=$client_file_name$, cod_rev=$cod_rev$, data_rif=$data_rif$, data_rif_a=$data_rif_a$, data_scadenza=$data_scadenza$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$descrizione$, id_argomento_stato=$rev_id_argomento_stato$, commento_revisione=$commento_revisione$::text, note=$note$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
-    },
-    {
-      "type": "postProcessing",
-      "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name= 'n/a', content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' and codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
-    },
-    {
-      "type": "postProcessing",
-      "operation": "update",
-      "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name='d'||replace((data_rif::date)::varchar, '-','')||'_'||right(client_file_name, length(client_file_name)-9) where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
-    },
-    {
-      "type": "main",
-      "operation": "delete",
-      "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
-    }
-  ],
-  "table_multiselection_actions": [
-    {
-      "viewType": "menu",
-      "key": "menutest",
-      "label": "Actions",
-      "icon": "more_vert",
-      "menuOptions": [
+    "predefinedQueries": [
         {
-          "key": "delete",
-          "icon": "delete",
-          "label": "Delete",
-          "query": "select entrasp.cancella_risorse_revisioni(array[$selected_rows_data$])",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Eliminare documenti selezionati?"
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "SELECT true as cartella_vai, rev.codice_azienda,b.codice_part, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.descrizione, rev.data_scadenza, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(a.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo(a.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_argomento_stato != 4035"
         },
         {
-          "key": "unifica",
-          "icon": "merge_type",
-          "label": "Unifica documenti",
-          "query": "select entrasp.unifica_risorse_revisioni_array(array[$selected_rows_data$])",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Unificare i documenti selezionati?"
+            "type": "preProcessing",
+            "operation": "selectForm",
+            "queryString": "select entrasp.files_pre_loading($codice_azienda$, $id_risorsa$, $prog_revisione$)"
         },
         {
-          "key": "separa",
-          "icon": "call_split",
-          "label": "Crea flusso informativo",
-          "query": "select entrasp.separa_risorse_revisioni_array(array[$selected_rows_data$])",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Assegnare le risorse selzionate a separati flussi informativi?"
+            "type": "main",
+            "operation": "selectForm",
+            "queryString": "SELECT rev.codice_azienda, rev.cod_rev, rev.note, rev.id_argomento_stato as rev_id_argomento_stato, rev.data_rif_a, rev.data_scadenza, rev.descrizione, (select descrizione from entrasp.argomenti arg where arg.id_argomento=id_argomento_tipo_allegato)as name, b.codice_part, rev.id_risorsa, rev.prog_revisione, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,(a.file_id::text||'^')::text||a.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo(a.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_risorsa=$id_risorsa$ AND rev.prog_revisione=$prog_revisione$"
+        },
+        {
+            "type": "main",
+            "operation": "update",
+            "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name=$client_file_name$, cod_rev=$cod_rev$, data_rif=$data_rif$, data_rif_a=$data_rif_a$, data_scadenza=$data_scadenza$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$descrizione$, id_argomento_stato=$rev_id_argomento_stato$, commento_revisione=$commento_revisione$::text, note=$note$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "update",
+            "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name= 'n/a', content_type= 'n/a' where id_argomento_stato!=4035 and client_file_name='tbd' and content_type='tbd' and codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "update",
+            "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name='d'||replace((data_rif::date)::varchar, '-','')||'_'||right(client_file_name, length(client_file_name)-9) where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+        },
+        {
+            "type": "main",
+            "operation": "delete",
+            "queryString": "delete from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
         }
-      ]
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_risorsa",
-      "label": "Cartella",
-      "newLine": false,
-      "size": 0.7,
-      "readOnly": true,
-      "outputEvent": {
-        "eventName": "to_risorsa",
-        "eventTrigger": "press"
-      }
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "prog_revisione",
-      "label": "Rev.",
-      "newLine": false,
-      "size": 0.7,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento_tipo_allegato",
-      "label": "id_argomento_tipo_allegato",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "name",
-      "label": "Documento",
-      "queryFunct": "select descrizione as name from entrasp.argomenti arg where arg.id_argomento=id_argomento_tipo_allegato",
-      "newLine": false,
-      "size": 4,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "anagrafica",
-      "label": "relativo a",
-      "size": 2.5,
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "client_file_name",
-      "label": "Nome",
-      "newLine": false,
-      "size": 0,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "centro_gest",
-      "label": "Centro Gestionale",
-      "translate": "RESOURCES.office",
-      "newLine": false,
-      "queryFunct": "entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest)",
-      "size": 1.5,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "rev_id_argomento_stato",
-      "size": 1.5,
-      "label": "Stato Documento",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "menu",
-        "menuOptions": [
-          {
-            "icon": "link",
-            "label": "Associa ad altro flusso",
-            "outputEventName": "auto_change_information_flow"
-          }
-        ]
-      },
-      "inputEvents": [
+    ],
+    "table_multiselection_actions": [
         {
-          "eventName": "auto_change_information_flow",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "successMessage": "Done!",
-          "queryFunct": "select entrasp.cdms_risorse_revisioni_attribuisci_risorsa($codice_azienda$, $id_risorsa$, $prog_revisione$)"
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "delete",
+                    "icon": "delete",
+                    "label": "Delete",
+                    "query": "select entrasp.cancella_risorse_revisioni(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Eliminare documenti selezionati?"
+                },
+                {
+                    "key": "unifica",
+                    "icon": "merge_type",
+                    "label": "Unifica documenti",
+                    "query": "select entrasp.unifica_risorse_revisioni_array(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Unificare i documenti selezionati?"
+                },
+                {
+                    "key": "separa",
+                    "icon": "call_split",
+                    "label": "Crea flusso informativo",
+                    "query": "select entrasp.separa_risorse_revisioni_array(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Assegnare le risorse selzionate a separati flussi informativi?"
+                }
+            ]
         }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "more_vert",
-      "key": "doc_actions",
-      "newLine": true,
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.4
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_rif",
-      "label": "Riferimento",
-      "newLine": false,
-      "size": 1.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_rif_a",
-      "label": "Data Rif. a",
-      "newLine": false,
-      "size": 1.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_scadenza",
-      "label": "Scadenza",
-      "newLine": false,
-      "size": 1.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "revisore",
-      "label": "Utente",
-      "size": 0,
-      "newLine": false,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "options": [],
-        "viewType": "combobox",
-        "comboQuery": "select id_riunione as id, id_riunione||'-'||oggetto as name from entrasp.riunioni where codice_azienda = $codice_azienda$"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_riunione",
-      "label": "Riunione",
-      "newLine": false,
-      "size": 2.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "options": [],
-        "viewType": "combobox",
-        "comboQuery": "select id_odg as id, id_odg||'-'||titolo as name from entrasp.odg_riunioni where codice_azienda = $codice_azienda$ and id_riunione=£id_riunione£"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_odg",
-      "label": "Ordine del giorno",
-      "newLine": false,
-      "size": 2.6,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "invisible"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "fake",
-      "label": "void",
-      "newLine": false,
-      "size": 0.4,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "commento_revisione",
-      "label": "Motivi revisione documento",
-      "newLine": false,
-      "readOnly": false,
-      "size": 0
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "stringa",
-      "label": "Download",
-      "isDownloadButton": true,
-      "newLine": true,
-      "size": 0,
-      "readOnly": false,
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      }
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "size": 9.6,
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "size": 8,
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cod_rev",
-      "label": "Codice Revisione",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.6
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "width": "4%",
-      "key": "id_risorsa",
-      "label": "Cartella"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "width": "4%",
-      "key": "prog_revisione",
-      "label": "Rev."
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_allegato",
-      "width": "22%",
-      "label": "Documento",
-      "style": [
+    ],
+    "form_keys": [
         {
-          "value": "*",
-          "font_size": "medium"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "anagrafica",
-      "width": "20%",
-      "label": "Relativo a",
-      "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "width": "25%",
-      "label": "Descrizione Aggiuntiva"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "width": "0%",
-      "key": "revisore",
-      "label": "Utente"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "descr_stato_approv",
-      "width": "4%",
-      "label": "Stato appr.",
-      "style": [
-        {
-          "value": "Non definito",
-          "font_color": "grey",
-          "font_weight": "500"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
         },
         {
-          "value": "Bozza",
-          "font_color": "#FF8100",
-          "font_weight": "500"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_risorsa",
+            "label": "Cartella",
+            "newLine": false,
+            "size": 0.7,
+            "readOnly": true,
+            "outputEvent": {
+                "eventName": "to_risorsa",
+                "eventTrigger": "press"
+            },
+            "translate": "RESOURCES.id_risorsa"
         },
         {
-          "value": "Attesa approvazione",
-          "font_color": "#FF8100",
-          "font_weight": "500"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "prog_revisione",
+            "label": "Rev.",
+            "newLine": false,
+            "size": 0.7,
+            "readOnly": true,
+            "translate": "RESOURCES.prog_revisione"
         },
         {
-          "value": "Approvato",
-          "font_color": "green",
-          "font_weight": "500"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_allegato",
+            "label": "id_argomento_tipo_allegato",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_argomento_tipo_allegato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "name",
+            "label": "Documento",
+            "queryFunct": "select descrizione as name from entrasp.argomenti arg where arg.id_argomento=id_argomento_tipo_allegato",
+            "newLine": false,
+            "size": 4,
+            "readOnly": true,
+            "translate": "RESOURCES.name"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "anagrafica",
+            "label": "relativo a",
+            "size": 2.5,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.anagrafica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "client_file_name",
+            "label": "Nome",
+            "newLine": false,
+            "size": 0,
+            "readOnly": false,
+            "translate": "RESOURCES.client_file_name"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "newLine": false,
+            "queryFunct": "entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest)",
+            "size": 1.5,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rev_id_argomento_stato",
+            "size": 1.5,
+            "label": "Stato Documento",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.rev_id_argomento_stato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "link",
+                        "label": "Associa ad altro flusso",
+                        "outputEventName": "auto_change_information_flow"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "auto_change_information_flow",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Done!",
+                    "queryFunct": "select entrasp.cdms_risorse_revisioni_attribuisci_risorsa($codice_azienda$, $id_risorsa$, $prog_revisione$)"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "doc_actions",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.4,
+            "translate": "RESOURCES.doc_actions"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif",
+            "label": "Riferimento",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": false,
+            "translate": "RESOURCES.data_rif"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif_a",
+            "label": "Data Rif. a",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": false,
+            "translate": "RESOURCES.data_rif_a"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_scadenza",
+            "label": "Scadenza",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": false,
+            "translate": "RESOURCES.data_scadenza"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "revisore",
+            "label": "Utente",
+            "size": 0,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.revisore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "options": [],
+                "viewType": "combobox",
+                "comboQuery": "select id_riunione as id, id_riunione||'-'||oggetto as name from entrasp.riunioni where codice_azienda = $codice_azienda$"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_riunione",
+            "label": "Riunione",
+            "newLine": false,
+            "size": 2.5,
+            "readOnly": false,
+            "translate": "RESOURCES.id_riunione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "options": [],
+                "viewType": "combobox",
+                "comboQuery": "select id_odg as id, id_odg||'-'||titolo as name from entrasp.odg_riunioni where codice_azienda = $codice_azienda$ and id_riunione=£id_riunione£"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_odg",
+            "label": "Ordine del giorno",
+            "newLine": false,
+            "size": 2.6,
+            "readOnly": false,
+            "translate": "RESOURCES.id_odg"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "invisible"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fake",
+            "label": "void",
+            "newLine": false,
+            "size": 0.4,
+            "readOnly": false,
+            "translate": "RESOURCES.fake"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "commento_revisione",
+            "label": "Motivi revisione documento",
+            "newLine": false,
+            "readOnly": false,
+            "size": 0,
+            "translate": "RESOURCES.commento_revisione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "stringa",
+            "label": "Download",
+            "isDownloadButton": true,
+            "newLine": true,
+            "size": 0,
+            "readOnly": false,
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "translate": "RESOURCES.stringa"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "size": 9.6,
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "size": 8,
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cod_rev",
+            "label": "Codice Revisione",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.6,
+            "translate": "RESOURCES.cod_rev"
         }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_rif",
-      "width": "7%",
-      "label": "Riferimento da"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_rif_a",
-      "width": "6%",
-      "label": "Riferimento a"
-    },
-    {
-      "format": {
-        "dataType": "date"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_scadenza",
-      "width": "6%",
-      "label": "Scadenza"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_stato",
-      "width": "6%",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "style": [
+    ],
+    "table_keys": [
         {
-          "value": "Non Richiesto",
-          "font_color": "grey",
-          "font_weight": "500",
-          "background_color": "gainsboro",
-          "text_align": "center"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
         },
         {
-          "value": "Da definire",
-          "font_color": "MistyRose",
-          "font_weight": "500",
-          "background_color": "MediumPurple",
-          "text_align": "center"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code"
         },
         {
-          "value": "Da Allegare",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "width": "4%",
+            "key": "id_risorsa",
+            "label": "Cartella",
+            "translate": "RESOURCES.id_risorsa"
         },
         {
-          "value": "Allegato",
-          "font_color": "PaleGreen",
-          "font_weight": "500",
-          "background_color": "Green",
-          "text_align": "center"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "queryFunct": "select true",
-      "key": "cartella_vai",
-      "tooltip": "Vai a cartella",
-      "style": [
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "width": "4%",
+            "key": "prog_revisione",
+            "label": "Rev.",
+            "translate": "RESOURCES.prog_revisione"
+        },
         {
-          "button_icon": "folder_open",
-          "value": "*"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "information_flows",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_risorsa",
-            "destination": "id_risorsa"
-          }
-        ],
-        "onSuccessAction": "navigate"
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "titolo_odg",
-      "width": "9%",
-      "queryFunct": "left(entrasp.odg_titolo(codice_azienda, id_odg, id_riunione),100)",
-      "label": "Ordine del giorno e riunione"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": "$Q{isHiddenDownload}",
-      "isPrimary": false,
-      "width": "4%",
-      "key": "stringa",
-      "label": "void",
-      "isButton": true,
-      "style": [
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_allegato",
+            "width": "22%",
+            "label": "Documento",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.tipo_allegato"
+        },
         {
-          "button_icon": "cloud_download",
-          "value": "*"
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "anagrafica",
+            "width": "20%",
+            "label": "Relativo a",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)",
+            "translate": "RESOURCES.anagrafica"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "width": "25%",
+            "label": "Descrizione Aggiuntiva",
+            "translate": "RESOURCES.descrizione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "0%",
+            "key": "revisore",
+            "label": "Utente",
+            "translate": "RESOURCES.revisore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "descr_stato_approv",
+            "width": "4%",
+            "label": "Stato appr.",
+            "style": [
+                {
+                    "value": "Non definito",
+                    "font_color": "grey",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Bozza",
+                    "font_color": "#FF8100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Attesa approvazione",
+                    "font_color": "#FF8100",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Approvato",
+                    "font_color": "green",
+                    "font_weight": "500"
+                }
+            ],
+            "translate": "RESOURCES.descr_stato_approv"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif",
+            "width": "7%",
+            "label": "Riferimento da",
+            "translate": "RESOURCES.data_rif"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_rif_a",
+            "width": "6%",
+            "label": "Riferimento a",
+            "translate": "RESOURCES.data_rif_a"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_scadenza",
+            "width": "6%",
+            "label": "Scadenza",
+            "translate": "RESOURCES.data_scadenza"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "width": "6%",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "style": [
+                {
+                    "value": "Non Richiesto",
+                    "font_color": "grey",
+                    "font_weight": "500",
+                    "background_color": "gainsboro",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Da definire",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Da Allegare",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Allegato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "queryFunct": "select true",
+            "key": "cartella_vai",
+            "tooltip": "Vai a cartella",
+            "style": [
+                {
+                    "button_icon": "folder_open",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "information_flows",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_risorsa",
+                        "destination": "id_risorsa"
+                    }
+                ],
+                "onSuccessAction": "navigate"
+            },
+            "translate": "RESOURCES.cartella_vai"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "titolo_odg",
+            "width": "9%",
+            "queryFunct": "left(entrasp.odg_titolo(codice_azienda, id_odg, id_riunione),100)",
+            "label": "Ordine del giorno e riunione",
+            "translate": "RESOURCES.titolo_odg"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": "$Q{isHiddenDownload}",
+            "isPrimary": false,
+            "width": "4%",
+            "key": "stringa",
+            "label": "void",
+            "isButton": true,
+            "style": [
+                {
+                    "button_icon": "cloud_download",
+                    "value": "*"
+                }
+            ],
+            "buttonAction": {
+                "target": "attachments",
+                "viewType": "form",
+                "action": "downloadAttachment",
+                "keymap": []
+            },
+            "translate": "RESOURCES.stringa"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "width": "0%",
+            "label": "Sondaggio",
+            "translate": "RESOURCES.survey"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "width": "0%",
+            "label": "Verifica",
+            "translate": "RESOURCES.id_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_progetto",
+            "width": "0%",
+            "label": "Progetto",
+            "translate": "RESOURCES.project"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica",
+            "translate": "RESOURCES.id_personal_data"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_odg",
+            "label": "id_odg",
+            "translate": "RESOURCES.id_odg"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_riunione",
+            "label": "id_riunione",
+            "translate": "RESOURCES.id_riunione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+            "width": "8%",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_allegato",
+            "width": "0%",
+            "label": "id_argomento_tipo_allegato",
+            "translate": "RESOURCES.id_argomento_tipo_allegato"
         }
-      ],
-      "buttonAction": {
-        "target": "attachments",
-        "viewType": "form",
-        "action": "downloadAttachment",
-        "keymap": []
-      }
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_sondaggio",
-      "width": "0%",
-     "label": "Sondaggio",
-      "translate": "RESOURCES.survey"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_somministrazione",
-      "width": "0%",
-      "label": "Verifica"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_progetto",
-      "width": "0%",
-      "label": "Progetto",
-      "translate": "RESOURCES.project"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_anagrafica",
-      "label": "id_anagrafica",
-      "translate": "RESOURCES.id_personal_data"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_odg",
-      "label": "id_odg"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_riunione",
-      "label": "id_riunione"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "centro_gest",
-      "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-      "width": "8%",
-      "label": "Centro Gestionale",
-      "translate": "RESOURCES.office"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_argomento_tipo_allegato",
-      "width": "0%",
-      "label": "id_argomento_tipo_allegato"
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_risorsa_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Documento",
-      "newLine": false,
-      "queryCond": "rev.id_risorsa=$id_risorsa_s$"
-    },
-    {
-      "fieldName": "id_sondaggio_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Sondaggio",
-      "translate": "RESOURCES.id_survey",
-      "newLine": false,
-      "queryCond": "snd.id_sondaggio=$id_sondaggio_s$"
-    },
-    {
-      "fieldName": "id_somministrazione_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "Id Verifica",
-      "translate": "RESOURCES.id_check",
-      "newLine": false,
-      "queryCond": "snd.id_somministrazione=$id_somministrazione_s$"
-    },
-    {
-      "fieldName": "id_argomento_tipo_allegato_s",
-      "format": {
-        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo Documento",
-      "newLine": true,
-      "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
-    },
-    {
-      "fieldName": "id_anagrafica_s",
-      "format": {
-        "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Cliente",
-			"translate": "RESOURCES.customer",
-      "newLine": false,
-      "queryCond": "id_anagrafica=$id_anagrafica_s$"
-    },
-    {
-      "fieldName": "id_anagrafica_s",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Anagrafica",
-      "newLine": false,
-      "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
-    },
-    {
-      "fieldName": "revisore_s",
-      "format": {
-        "comboQuery": "select distinct revisore as id, revisore as name from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "label": "Utente",
-      "newLine": false,
-      "queryCond": "revisore=$revisore_s$"
-    },
-    {
-      "format": {
-        "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "fieldName": "id_argomento_stato_s",
-      "size": 2,
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "newLine": true,
-      "queryCond": "rev.id_argomento_stato=$id_argomento_stato_s$"
-    },
-    {
-      "fieldName": "file_con_allegati_da_associare",
-      "format": {
-        "viewType": "checkbox",
-        "value": "0"
-      },
-      "label": "Con allegati da associare",
-      "newLine": false,
-      "queryCond": "rev.id_risorsa in(select id_risorsa from entrasp.cdms_risorse_revisioni group by codice_azienda, id_risorsa, id_argomento_stato having count(prog_revisione)>0 and codice_azienda=$codice_azienda$ and id_argomento_stato=4035)"
-    },
-    {
-      "fieldName": "data_da_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data da",
-      "newLine": false,
-      "queryCond": "data_creazione>=$data_da_s$"
-    },
-    {
-      "fieldName": "data_a_s",
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "label": "Data a",
-      "newLine": false,
-      "queryCond": "data_creazione<=$data_a_s$"
-    },
-    {
-      "fieldName": "parola_search_s",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Parola chiave",
-      "translate": "RESOURCES.key_word",
-      "newLine": false,
-      "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
-    },
-    {
-      "fieldName": "non_allegato_toggle",
-      "format": {
-        "value": "1",
-        "viewType": "toggle"
-      },
-      "label": "Da allegare",
-      "newLine": false,
-      "queryCond": "rev.id_argomento_stato in(4034)"
-    }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "share",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "import_export",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "stopEvent",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "startEvent",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "documentation",
-      "viewType": "form"
-    },
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    }
-  ]
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_risorsa_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Documento",
+            "newLine": false,
+            "queryCond": "rev.id_risorsa=$id_risorsa_s$"
+        },
+        {
+            "fieldName": "id_sondaggio_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "newLine": false,
+            "queryCond": "snd.id_sondaggio=$id_sondaggio_s$"
+        },
+        {
+            "fieldName": "id_somministrazione_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Verifica",
+            "translate": "RESOURCES.id_check",
+            "newLine": false,
+            "queryCond": "snd.id_somministrazione=$id_somministrazione_s$"
+        },
+        {
+            "fieldName": "id_argomento_tipo_allegato_s",
+            "format": {
+                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3576 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo Documento",
+            "newLine": true,
+            "queryCond": "id_argomento_tipo_allegato=$id_argomento_tipo_allegato_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cliente",
+            "translate": "RESOURCES.customer",
+            "newLine": false,
+            "queryCond": "id_anagrafica=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Anagrafica",
+            "newLine": false,
+            "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
+        },
+        {
+            "fieldName": "revisore_s",
+            "format": {
+                "comboQuery": "select distinct revisore as id, revisore as name from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Utente",
+            "newLine": false,
+            "queryCond": "revisore=$revisore_s$"
+        },
+        {
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "fieldName": "id_argomento_stato_s",
+            "size": 2,
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "newLine": true,
+            "queryCond": "rev.id_argomento_stato=$id_argomento_stato_s$"
+        },
+        {
+            "fieldName": "file_con_allegati_da_associare",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Con allegati da associare",
+            "newLine": false,
+            "queryCond": "rev.id_risorsa in(select id_risorsa from entrasp.cdms_risorse_revisioni group by codice_azienda, id_risorsa, id_argomento_stato having count(prog_revisione)>0 and codice_azienda=$codice_azienda$ and id_argomento_stato=4035)"
+        },
+        {
+            "fieldName": "data_da_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data da",
+            "newLine": false,
+            "queryCond": "data_creazione>=$data_da_s$"
+        },
+        {
+            "fieldName": "data_a_s",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data a",
+            "newLine": false,
+            "queryCond": "data_creazione<=$data_a_s$"
+        },
+        {
+            "fieldName": "parola_search_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parola chiave",
+            "translate": "RESOURCES.key_word",
+            "newLine": false,
+            "queryCond": "(upper(client_file_name) like '%'||upper('€parola_search_s€')||'%')"
+        },
+        {
+            "fieldName": "non_allegato_toggle",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Da allegare",
+            "newLine": false,
+            "queryCond": "rev.id_argomento_stato in(4034)"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "import_export",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "documentation",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ]
 }

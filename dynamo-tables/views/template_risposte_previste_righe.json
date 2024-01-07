@@ -1,220 +1,225 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "template_risposte_previste_righe",
-  "origin": "entrasp.template_risposte_previste_righe",
-  "orderBy": {
-    "key": "ordinamento",
-    "order": "ascending"
-  },
-  "inputEvents": [
-    {
-      "eventName": "update_template_risposte_previste_righe",
-      "actionType": "reload"
+    "$schema": "../views.schema.json",
+    "entryKey": "template_risposte_previste_righe",
+    "origin": "entrasp.template_risposte_previste_righe",
+    "orderBy": {
+        "key": "ordinamento",
+        "order": "ascending"
     },
-    {
-      "eventName": "savedForm",
-      "actionType": "reload"
-    }
-  ],
-  "predefinedQueries": [
-    {
-      "operation": "insert",
-      "queryString": "SELECT entrasp.template_risposte_previste_righe_insert($codice_azienda$, $id_template_rp$, $ordinamento$, $risposta$, $peso$, $note$, '€flag_default€', '€flag_risposta_aperta€', '€flag_non_applicabile€');",
-      "type": "main"
-    },
-    {
-      "operation": "isInsert",
-      "queryString": "select $id_riga$ is null as label;",
-      "type": "main"
-    },
-    {
-      "operation": "update",
-      "queryString": "SELECT entrasp.template_risposte_previste_righe_update($codice_azienda$, $id_riga$, $id_template_rp$, $ordinamento$, $risposta$, $peso$, $note$, '€flag_default€', '€flag_risposta_aperta€', '€flag_non_applicabile€');",
-      "type": "main"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "cancella_risposte",
-      "label": "delete",
-      "buttonIcon": "delete",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "cancella_risposte",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
+    "inputEvents": [
         {
-          "eventName": "cancella_risposte",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "delete from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$ and id_riga=$id_riga$",
-          "outputEventWhenComplete": "update_template_risposte_previste_righe"
+            "eventName": "update_template_risposte_previste_righe",
+            "actionType": "reload"
+        },
+        {
+            "eventName": "savedForm",
+            "actionType": "reload"
         }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_riga",
-      "label": "Riga",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "Ordinamento",
-      "translate": "RESOURCES.ordinamento",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "peso",
-      "label": "Peso",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Breve descrizione necessaria",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "risposta",
-     "label": "Risposta",
-      "translate": "RESOURCES.risposta",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_template_rp",
-      "label": "id_template_rp",
-      "readOnly": false,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text",
-        "value": "*"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "note",
-      "label": "Note",
-      "translate": "RESOURCES.notes",
-      "readOnly": false,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "checkbox",
-        "value": "0"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_default",
-      "label": "Default?",
-      "size": 3,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "checkbox",
-        "value": "0"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_risposta_aperta",
-      "label": "Risposta aperta?",
-      "translate": "RESOURCES.risposta_aperta",
-      "size": 3,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "checkbox",
-        "value": "0"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_non_applicabile",
-     "label": "Non applicabile?",
-      "translate": "RESOURCES.flag_non_applicabile",
-      "size": 4,
-      "readOnly": false,
-      "newLine": false
-    }
-  ],
-  "outputEvents": [
-    {
-      "eventName": "savedForm",
-      "eventTrigger": "onSave"
-    }
-  ]
+    ],
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "queryString": "SELECT entrasp.template_risposte_previste_righe_insert($codice_azienda$, $id_template_rp$, $ordinamento$, $risposta$, $peso$, $note$, '€flag_default€', '€flag_risposta_aperta€', '€flag_non_applicabile€');",
+            "type": "main"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_riga$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "update",
+            "queryString": "SELECT entrasp.template_risposte_previste_righe_update($codice_azienda$, $id_riga$, $id_template_rp$, $ordinamento$, $risposta$, $peso$, $note$, '€flag_default€', '€flag_risposta_aperta€', '€flag_non_applicabile€');",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_risposte",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "cancella_risposte",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "cancella_risposte",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "delete from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$ and id_riga=$id_riga$",
+                    "outputEventWhenComplete": "update_template_risposte_previste_righe"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5,
+            "translate": "RESOURCES.cancella_risposte"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_riga",
+            "label": "Riga",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_riga"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ordinamento",
+            "translate": "RESOURCES.ordinamento",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "peso",
+            "label": "Peso",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.peso"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Breve descrizione necessaria",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risposta",
+            "label": "Risposta",
+            "translate": "RESOURCES.risposta",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_template_rp",
+            "label": "id_template_rp",
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.id_template_rp"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "value": "*"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_default",
+            "label": "Default?",
+            "size": 3,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.flag_default"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_risposta_aperta",
+            "label": "Risposta aperta?",
+            "translate": "RESOURCES.risposta_aperta",
+            "size": 3,
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_non_applicabile",
+            "label": "Non applicabile?",
+            "translate": "RESOURCES.flag_non_applicabile",
+            "size": 4,
+            "readOnly": false,
+            "newLine": false
+        }
+    ],
+    "outputEvents": [
+        {
+            "eventName": "savedForm",
+            "eventTrigger": "onSave"
+        }
+    ]
 }

@@ -1,153 +1,161 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "indicatori_sub_of_presidi",
-  "origin": "entrasp.indicatori_presidi",
-  "businessObjectName": "indicatori_presidi",
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "type": "main",
-      "queryString": "select ip.*, true as delete_indicatori_presidi, substring(entrasp.indicatori_titolo(ip.id_indicatore), 1, 130) as indicatore_descr from entrasp.indicatori_presidi ip inner join entrasp.indicatori ind on ip.id_indicatore=ind.id_indicatore"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_presidio",
-      "label": "id_presidio",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code",
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "comboQuery": "select id_indicatore as id, id_indicatore||'-'||substring (titolo, 1,100) as name from entrasp.indicatori",
-        "options": []
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_indicatore",
-      "label": "Indicatore",
-      "readOnly": false,
-      "newLine": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "4%",
-      "queryFunct": "select true",
-      "key": "delete_indicatori_presidi",
-      "label": "",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "indicatori_sub_of_presidi",
+    "origin": "entrasp.indicatori_presidi",
+    "businessObjectName": "indicatori_presidi",
+    "predefinedQueries": [
         {
-          "button_icon": "delete",
-          "value": "*"
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select ip.*, true as delete_indicatori_presidi, substring(entrasp.indicatori_titolo(ip.id_indicatore), 1, 130) as indicatore_descr from entrasp.indicatori_presidi ip inner join entrasp.indicatori ind on ip.id_indicatore=ind.id_indicatore"
         }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "indicatori_sub_of_presidi",
-        "viewType": "table",
-        "query": "delete from entrasp.indicatori_presidi where codice_azienda='£codice_azienda£' AND id_indicatore=£id_indicatore£ AND id_presidio=£id_presidio£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_presidio",
-            "destination": "id_presidio"
-          },
-          {
-            "source": "id_indicatore",
-            "destination": "id_indicatore"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_presidio",
-      "label": "id_presidio",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_indicatore",
-      "label": "id_indicatore"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "indicatore_descr",
-      "label": "Indicatore",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "indicatori",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "id_indicatore",
-            "destination": "id_indicatore"
-          }
-        ]
-      },
-      "width": "70%",
-      "sameOrigin": false
-    }
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    }
-  ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "label": "id_presidio",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.id_presidio"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "select id_indicatore as id, id_indicatore||'-'||substring (titolo, 1,100) as name from entrasp.indicatori",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_indicatore",
+            "label": "Indicatore",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_indicatore"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_indicatori_presidi",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "indicatori_sub_of_presidi",
+                "viewType": "table",
+                "query": "delete from entrasp.indicatori_presidi where codice_azienda='£codice_azienda£' AND id_indicatore=£id_indicatore£ AND id_presidio=£id_presidio£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    },
+                    {
+                        "source": "id_indicatore",
+                        "destination": "id_indicatore"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_indicatori_presidi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "label": "id_presidio",
+            "width": "8%",
+            "translate": "RESOURCES.id_presidio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_indicatore",
+            "label": "id_indicatore",
+            "translate": "RESOURCES.id_indicatore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "indicatore_descr",
+            "label": "Indicatore",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "indicatori",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "id_indicatore",
+                        "destination": "id_indicatore"
+                    }
+                ]
+            },
+            "width": "70%",
+            "sameOrigin": false,
+            "translate": "RESOURCES.indicatore_descr"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
 }

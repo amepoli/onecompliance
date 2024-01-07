@@ -1,376 +1,393 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "personal_operations",
-	"businessObjectName": "operazioni_personali",
-	"origin": "entrasp.operazioni_personali",
-	"outputEvents": [
-		{
-			"eventName": "onSaveContratto",
-			"eventTrigger": "onSave"
-		},
-		{
-			"eventName": "onLoadContratto",
-			"eventTrigger": "onReload"
-		}
-	],
-	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "codice_azienda",
-			"translate": "RESOURCES.company_code",
-			"key": "codice_azienda",
-			"readOnly": false,
-			"isHidden": true,
-			"isPrimary": true,
-			"newLine": false
-		},
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number"
-			},
-			"label": "ID Operazione",
-			"key": "id_operazione",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": true,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id an WHERE codice_part='€global_codice_part€';",
-				"options": [],
-				"viewType": "combobox",
-				"validations": [
-					{
-						"message": "Necessario specificare il soggetto!",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Soggetto rilevante",
-			"key": "id_soggetto_rilevante",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', ragione_sociale) as name from entrasp.anagrafiche_vr an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and codice_ruolo= 'FONDO';",
-				"options": [],
-				"viewType": "combobox",
-				"validations": [
-					{
-						"message": "Necessario specificare lo strumento!",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Strumento finanziario",
-			"key": "id_strumento_finanziario",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input",
-				"validations": [
-					{
-						"message": "Data operazione necessaria!",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_op",
-			"label": "Data Operazione",
-			"newLine": false,
-			"size": 2,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "date",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_valuta",
-			"label": "Data Valuta",
-			"newLine": true,
-			"size": 2,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Note",
-			"translate": "RESOURCES.notes",
-			"key": "note",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione_breve as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento(45426, 2)) order by arg.descrizione;",
-				"options": [],
-				"viewType": "combobox",
-				"validations": [
-					{
-						"message": "Necessario specificare il tipo operazione!",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "id_argomento_tipo_operazione",
-			"label": "Acquisto/Vendita",
-			"newLine": false,
-			"size": 3.5,
-			"readOnly": false
-		},
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number",
-				"validations": [
-					{
-						"message": "Necessario specificare la quantità!",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Quantità",
-			"key": "quantita",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number",
-				"validations": [
-					{
-						"message": "Necessario specificare il prezzo!",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Prezzo",
-			"key": "prezzo",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": true,
-			"format": {
-				"viewType": "input",
-				"dataType": "number",
-				"validations": [
-					{
-						"message": "Necessario specificare il controvalore!",
-						"name": "required",
-						"validator": "Validators.required"
-					}
-				]
-			},
-			"label": "Controvalore",
-			"key": "controvalore",
-			"readOnly": true,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "input",
-				"dataType": "text"
-			},
-			"label": "Analisi Insider",
-			"key": "analisi_rischio_insider",
-			"readOnly": false,
-			"isHidden": false,
-			"isPrimary": false,
-			"newLine": true
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"width": "5%",
-			"key": "id_operazione",
-			"label": "#"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": true,
-			"key": "codice_azienda",
-			"label": "codice_azienda",
-			"translate": "RESOURCES.company_code"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_strumento_finanziario",
-			"label": "id_strumento_finanziario"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "strumento_finanziario",
-			"width": "20%",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part, id_strumento_finanziario)",
-			"label": "Emittente/Strumento.finanziario"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_op",
-			"width": "8%",
-			"label": "Data Operazione"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_valuta",
-			"width": "8%",
-			"label": "Data Valuta"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "note",
-			"label": "Note",
-			"translate": "RESOURCES.notes",
-			"width": "30%"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "controvalore",
-			"label": "Controvalore",
-			"width": "8%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"label": "Soggetto rilevante",
-			"key": "soggetto_rilevante",
-			"isHidden": false,
-			"isPrimary": false,
-			"queryFunct": "SELECT concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id an WHERE codice_part='€global_codice_part€' and an.id_anagrafica=operazioni_personali.id_soggetto_rilevante"
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "operations_in_black_out_periods",
-			"keys": [
-				{
-					"parent": "codice_azienda",
-					"son": "codice_azienda"
-				},
-				{
-					"parent": "id_operazione",
-					"son": "id_operazione"
-				}
-			],
-			"label": "Periodi di black-out"
-		}
-	],
-	"search_keys": [
-		{
-			"fieldName": "id_strumento_fin_s",
-			"format": {
-				"comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
-				"options": [],
-				"viewType": "combobox"
-			},
-			"label": "Fondo/strumento finanziario",
-			"newLine": false,
-			"queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
-		}
-	],
-	"hideActions": [
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "attachments"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "add"
-		}
-	],
-	"querySuffixes": {
-		"tableViewSuffix": "order by data_op desc limit 100"
-	},
-	"inputEvents": [
-		{
-			"actionType": "reload",
-			"eventName": "survey_reload"
-		}
-	]
+    "$schema": "../views.schema.json",
+    "entryKey": "personal_operations",
+    "businessObjectName": "operazioni_personali",
+    "origin": "entrasp.operazioni_personali",
+    "outputEvents": [
+        {
+            "eventName": "onSaveContratto",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadContratto",
+            "eventTrigger": "onReload"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "ID Operazione",
+            "key": "id_operazione",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "translate": "RESOURCES.id_operazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id an WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Necessario specificare il soggetto!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Soggetto rilevante",
+            "key": "id_soggetto_rilevante",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_soggetto_rilevante"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', ragione_sociale) as name from entrasp.anagrafiche_vr an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and codice_ruolo= 'FONDO';",
+                "options": [],
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Necessario specificare lo strumento!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Strumento finanziario",
+            "key": "id_strumento_finanziario",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_strumento_finanziario"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Data operazione necessaria!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_op",
+            "label": "Data Operazione",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false,
+            "translate": "RESOURCES.data_op"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_valuta",
+            "label": "Data Valuta",
+            "newLine": true,
+            "size": 2,
+            "readOnly": false,
+            "translate": "RESOURCES.data_valuta"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "key": "note",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione_breve as name from entrasp.argomenti arg where arg.id_argomento in(select entrasp.descendants_of_argomento(45426, 2)) order by arg.descrizione;",
+                "options": [],
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Necessario specificare il tipo operazione!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_operazione",
+            "label": "Acquisto/Vendita",
+            "newLine": false,
+            "size": 3.5,
+            "readOnly": false,
+            "translate": "RESOURCES.id_argomento_tipo_operazione"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "validations": [
+                    {
+                        "message": "Necessario specificare la quantità!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Quantità",
+            "key": "quantita",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.quantita"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "validations": [
+                    {
+                        "message": "Necessario specificare il prezzo!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Prezzo",
+            "key": "prezzo",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.prezzo"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "validations": [
+                    {
+                        "message": "Necessario specificare il controvalore!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Controvalore",
+            "key": "controvalore",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.controvalore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Analisi Insider",
+            "key": "analisi_rischio_insider",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.analisi_rischio_insider"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "id_operazione",
+            "label": "#",
+            "translate": "RESOURCES.id_operazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_strumento_finanziario",
+            "label": "id_strumento_finanziario",
+            "translate": "RESOURCES.id_strumento_finanziario"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "strumento_finanziario",
+            "width": "20%",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part, id_strumento_finanziario)",
+            "label": "Emittente/Strumento.finanziario",
+            "translate": "RESOURCES.strumento_finanziario"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_op",
+            "width": "8%",
+            "label": "Data Operazione",
+            "translate": "RESOURCES.data_op"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_valuta",
+            "width": "8%",
+            "label": "Data Valuta",
+            "translate": "RESOURCES.data_valuta"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "width": "30%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controvalore",
+            "label": "Controvalore",
+            "width": "8%",
+            "translate": "RESOURCES.controvalore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Soggetto rilevante",
+            "key": "soggetto_rilevante",
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "SELECT concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id an WHERE codice_part='€global_codice_part€' and an.id_anagrafica=operazioni_personali.id_soggetto_rilevante",
+            "translate": "RESOURCES.soggetto_rilevante"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "operations_in_black_out_periods",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_operazione",
+                    "son": "id_operazione"
+                }
+            ],
+            "label": "Periodi di black-out"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_strumento_fin_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Fondo/strumento finanziario",
+            "newLine": false,
+            "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "add"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by data_op desc limit 100"
+    },
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "survey_reload"
+        }
+    ]
 }

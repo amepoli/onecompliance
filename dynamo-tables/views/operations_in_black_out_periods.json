@@ -1,129 +1,138 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "operations_in_black_out_periods",
-	"inheritsFrom": "registro_insider",
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select ri.*, entrasp.anagrafiche_vr_dati_identificativi_nom1(op.codice_part, op.id_strumento_finanziario) as strumento_finanziario, op.data_op, case when op.data_op between ri.data_da and ri.data_a then 'Rischio Insider' else 'Basso rischio' end as segn_rischio from entrasp.registro_insider ri inner join entrasp.operazioni_personali op on ri.codice_azienda=op.codice_azienda and ri.id_strumento_finanziario=op.id_strumento_finanziario where ri.codice_azienda=$codice_azienda$ and op.id_operazione=$id_operazione$"
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"width": "5%",
-			"key": "id_registrazione",
-			"label": "#"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": true,
-			"isPrimary": true,
-			"key": "codice_azienda",
-			"label": "codice_azienda",
-			"translate": "RESOURCES.company_code"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "id_strumento_finanziario",
-			"label": "id_strumento_finanziario"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "strumento_finanziario",
-			"width": "20%",
-			"queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part, id_strumento_finanziario)",
-			"label": "Emittente/Strumento.finanziario"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_op",
-			"width": "6%",
-			"label": "Dt oper."
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_da",
-			"width": "6%",
-			"label": "Data Da (B.O. period)"
-		},
-		{
-			"format": {
-				"dataType": "date"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "data_a",
-			"width": "6%",
-			"label": "Data A (B.O. period)"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": true,
-			"sameOrigin": false,
-			"key": "id_operazione",
-			"label": "id_operazione"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "note",
-			"label": "Note (motivi black out period)",
-			"width": "20%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "segn_rischio",
-			"label": "Rischio insider",
-			"width": "20%",
-			"style": [
-				{
-					"value": "Rischio Insider",
-					"font_color": "DarkRed",
-					"font_weight": "500",
-					"background_color": "orange",
-					"text_align": "center"
-				},
-				{
-					"value": "*",
-					"font_color": "PaleGreen",
-					"font_weight": "500",
-					"background_color": "Green",
-					"text_align": "center"
-				}
-			]
-		}
-	]
+    "$schema": "../views.schema.json",
+    "entryKey": "operations_in_black_out_periods",
+    "inheritsFrom": "registro_insider",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select ri.*, entrasp.anagrafiche_vr_dati_identificativi_nom1(op.codice_part, op.id_strumento_finanziario) as strumento_finanziario, op.data_op, case when op.data_op between ri.data_da and ri.data_a then 'Rischio Insider' else 'Basso rischio' end as segn_rischio from entrasp.registro_insider ri inner join entrasp.operazioni_personali op on ri.codice_azienda=op.codice_azienda and ri.id_strumento_finanziario=op.id_strumento_finanziario where ri.codice_azienda=$codice_azienda$ and op.id_operazione=$id_operazione$"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "id_registrazione",
+            "label": "#",
+            "translate": "RESOURCES.id_registrazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_strumento_finanziario",
+            "label": "id_strumento_finanziario",
+            "translate": "RESOURCES.id_strumento_finanziario"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "strumento_finanziario",
+            "width": "20%",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part, id_strumento_finanziario)",
+            "label": "Emittente/Strumento.finanziario",
+            "translate": "RESOURCES.strumento_finanziario"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_op",
+            "width": "6%",
+            "label": "Dt oper.",
+            "translate": "RESOURCES.data_op"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_da",
+            "width": "6%",
+            "label": "Data Da (B.O. period)",
+            "translate": "RESOURCES.data_da"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_a",
+            "width": "6%",
+            "label": "Data A (B.O. period)",
+            "translate": "RESOURCES.data_a"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "sameOrigin": false,
+            "key": "id_operazione",
+            "label": "id_operazione",
+            "translate": "RESOURCES.id_operazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note (motivi black out period)",
+            "width": "20%",
+            "translate": "RESOURCES.note"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "segn_rischio",
+            "label": "Rischio insider",
+            "width": "20%",
+            "style": [
+                {
+                    "value": "Rischio Insider",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "*",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                }
+            ],
+            "translate": "RESOURCES.segn_rischio"
+        }
+    ]
 }

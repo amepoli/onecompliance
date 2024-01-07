@@ -1,139 +1,144 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "modelli_test_extended_sub_of_argomenti",
-  "origin": "entrasp.modelli_test_argomenti",
-  "predefinedQueries": [
-    {
-      "queryString": "select *, entrasp.modello_test_titolo(codice_azienda, id_modello_test) as titolo, entrasp.modello_test_id_max(codice_azienda, id_modello_test) as id_modello_test_vr, true as modello_test_button from entrasp.modelli_test_argomenti where id_argomento=$id_argomento$ or array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento$))",
-      "operation": "selectTable",
-      "type": "main"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_argomento",
-        "label": "Id_argomento",
-            "translate": "RESOURCES.id_tag",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_modello_test AS id, entrasp.titolo AS name  FROM entrasp.modelli_test where codice_azienda=$codice_azienda$",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Argomento mancante",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_modello_test",
-      "label": "Modello test",
-      "readOnly": false,
-      "newLine": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",	  "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_argomento",
-        "label": "Id_argomento",
-            "translate": "RESOURCES.id_tag"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "width": "5%",
-      "key": "id_modello_test",
-      "label": "Id Modello Test"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "width": "5%",
-      "key": "id_modello_test_vr",
-      "label": "Id Modello Test"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "width": "20%",
-      "isPrimary": false,
-      "key": "titolo",
-      "label": "Modello test"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "10%",
-      "key": "modello_test_button",
-      "label": "Modello Verifica",
-      "translate": "RESOURCES.check_template",
-      "isButton": true,
-      "buttonAction": {
-        "target": "modello_test_vr",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_modello_test",
-            "destination": "id_modello_test"
-          },
-          {
-            "source": "id_modello_test_vr",
-            "destination": "id_modello_test_vr"
-          }
-        ]
-      },
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "modelli_test_extended_sub_of_argomenti",
+    "origin": "entrasp.modelli_test_argomenti",
+    "predefinedQueries": [
         {
-          "button_icon": "",
-          "value": "*"
+            "queryString": "select *, entrasp.modello_test_titolo(codice_azienda, id_modello_test) as titolo, entrasp.modello_test_id_max(codice_azienda, id_modello_test) as id_modello_test_vr, true as modello_test_button from entrasp.modelli_test_argomenti where id_argomento=$id_argomento$ or array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento$))",
+            "operation": "selectTable",
+            "type": "main"
         }
-      ]
-    }
-  ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento",
+            "label": "Id_argomento",
+            "translate": "RESOURCES.id_tag",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_modello_test AS id, entrasp.titolo AS name  FROM entrasp.modelli_test where codice_azienda=$codice_azienda$",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Argomento mancante",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "Modello test",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_modello_test"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento",
+            "label": "Id_argomento",
+            "translate": "RESOURCES.id_tag"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "id_modello_test",
+            "label": "Id Modello Test",
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "id_modello_test_vr",
+            "label": "Id Modello Test",
+            "translate": "RESOURCES.id_modello_test_vr"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "20%",
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Modello test",
+            "translate": "RESOURCES.titolo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "modello_test_button",
+            "label": "Modello Verifica",
+            "translate": "RESOURCES.check_template",
+            "isButton": true,
+            "buttonAction": {
+                "target": "modello_test_vr",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    }
+                ]
+            },
+            "style": [
+                {
+                    "button_icon": "",
+                    "value": "*"
+                }
+            ]
+        }
+    ]
 }

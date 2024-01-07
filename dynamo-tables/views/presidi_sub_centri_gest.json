@@ -1,437 +1,442 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "presidi_sub_centri_gest",
-  "origin": "entrasp.presidi",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
+    "$schema": "../views.schema.json",
+    "entryKey": "presidi_sub_centri_gest",
+    "origin": "entrasp.presidi",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
             "translate": "RESOURCES.company_code",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-     "label": "Codice Partizione",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "Codice Partizione",
             "translate": "RESOURCES.partition_code",
-      "newLine": true,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_presidio",
-      "label": "ID",
-      "newLine": false,
-      "size": 1.5,
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_presidio AS id, id_presidio||' - '||codice||' - '||descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_presidio_parent",
-      "label": "Presidio parent",
-      "newLine": false,
-      "readOnly": false,
-      "size": 6.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "navigate_to_presidio_parent_k",
-      "label": "Presidio parent",
-      "newLine": true,
-      "outputEvent": {
-        "eventName": "navigate_to_presidio_parent",
-        "eventTrigger": "press"
-      },
-      "attributeFuncts": [
+            "newLine": true,
+            "readOnly": true
+        },
         {
-          "attributeType": "readOnly",
-          "queryString": "select case when id_presidio_parent is null then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
-        }
-      ],
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Necessario codice",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice",
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "newLine": false,
-      "readOnly": false,
-      "size": 2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_tipo_processo AS id, descrizione AS name  FROM entrasp.tipi_processi WHERE codice_azienda=$codice_azienda$ and tabella_rif='presidi';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_presidio",
-      "label": "Tipo Presidio",
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "label": "ID",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": true,
+            "translate": "RESOURCES.id_presidio"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_presidio AS id, id_presidio||' - '||codice||' - '||descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_presidio_parent",
+            "label": "Presidio parent",
+            "newLine": false,
+            "readOnly": false,
+            "size": 6.5,
+            "translate": "RESOURCES.id_presidio_parent"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "navigate_to_presidio_parent_k",
+            "label": "Presidio parent",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "navigate_to_presidio_parent",
+                "eventTrigger": "press"
+            },
+            "attributeFuncts": [
+                {
+                    "attributeType": "readOnly",
+                    "queryString": "select case when id_presidio_parent is null then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2,
+            "translate": "RESOURCES.navigate_to_presidio_parent_k"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Necessario codice",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_tipo_processo AS id, descrizione AS name  FROM entrasp.tipi_processi WHERE codice_azienda=$codice_azienda$ and tabella_rif='presidi';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_presidio",
+            "label": "Tipo Presidio",
             "translate": "RESOURCES.id_tipo_presidio",
-      "newLine": true,
-      "size": 8,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Necessario inserie un titolo",
-            "name": "required",
-            "validator": "Validators.required"
-          },
-          {
-            "message": "Lunghezza massima 240 caratteri",
-            "name": "maxlength",
-            "validator": "Validators.maxLength(200)",
-            "value": 240
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione_breve",
-       "label": "Titolo",
+            "newLine": true,
+            "size": 8,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Necessario inserie un titolo",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    },
+                    {
+                        "message": "Lunghezza massima 240 caratteri",
+                        "name": "maxlength",
+                        "validator": "Validators.maxLength(200)",
+                        "value": 240
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Titolo",
             "translate": "RESOURCES.title",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "textareaHeight": "L",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-       "label": "Centro Gestionale",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "textareaHeight": "L",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text",
-        "value": "A"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato_attuazione",
-     "label": "Stato Attuazione",
-            "translate": "RESOURCES.status",
-      "newLine": true,
-      "readOnly": false,
-      "outputEvent": {
-        "eventName": "procedura_change_stato",
-        "eventTrigger": "select"
-      },
-      "inputEvents": [
-        {
-          "eventName": "procedura_change_stato",
-          "condition": "none",
-          "values": [],
-          "actionType": "query_style",
-          "styleAttribute": "background_color",
-          "queryFunct": "select background_color as stato_attuazione_background_color from entrasp.transcodifiche where tipo_dato='STATO_ATTUAZIONE' and codice=$stato_attuazione$"
-        }
-      ]
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "note",
-        "label": "Note",
-             "translate": "RESOURCES.notes",
-      "textareaHeight": "M",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_procedura AS id, id_procedura||'-'||codice||'-'||descrizione_breve AS name FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_procedura",
-      "label": "Procedura associata",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "create_proc_aziendale",
-      "label": "Crea procedura aziendale associata",
-      "newLine": true,
-      "outputEvent": {
-        "eventName": "procedura_aziendale_create",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
-        {
-          "queryFunct": "select entrasp.procedura_aziendale_create_from_presidio($codice_azienda$, $id_presidio$)",
-          "eventName": "procedura_aziendale_create",
-          "actionType": "query",
-          "condition": "none",
-          "values": []
-        }
-      ],
-      "attributeFuncts": [
-        {
-          "attributeType": "isHidden",
-          "queryString": "select case when id_procedura is null then 0 else 1 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
-        }
-      ],
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "navigate_to_procedura_aziendale_k",
-      "label": "Procedura aziendale associata",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "navigate_to_procedura_aziendale",
-        "eventTrigger": "press"
-      },
-      "attributeFuncts": [
-        {
-          "attributeType": "isHidden",
-          "queryString": "select case when id_procedura is null then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
-        }
-      ],
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "rischi_associati_sub_of_presidi",
-      "keys": [
-        {
-          "parent": "id_presidio",
-          "son": "id_presidio"
+            "newLine": false,
+            "readOnly": false
         },
         {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice::character AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ATTUAZIONE';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "value": "A"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato_attuazione",
+            "label": "Stato Attuazione",
+            "translate": "RESOURCES.status",
+            "newLine": true,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "procedura_change_stato",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "procedura_change_stato",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_attuazione_background_color from entrasp.transcodifiche where tipo_dato='STATO_ATTUAZIONE' and codice=$stato_attuazione$"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "textareaHeight": "M",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_procedura AS id, id_procedura||'-'||codice||'-'||descrizione_breve AS name FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_procedura",
+            "label": "Procedura associata",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_procedura"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "create_proc_aziendale",
+            "label": "Crea procedura aziendale associata",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "procedura_aziendale_create",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "queryFunct": "select entrasp.procedura_aziendale_create_from_presidio($codice_azienda$, $id_presidio$)",
+                    "eventName": "procedura_aziendale_create",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when id_procedura is null then 0 else 1 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.create_proc_aziendale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "navigate_to_procedura_aziendale_k",
+            "label": "Procedura aziendale associata",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "navigate_to_procedura_aziendale",
+                "eventTrigger": "press"
+            },
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when id_procedura is null then 1 else 0 end as label from entrasp.presidi where codice_azienda=$codice_azienda$ and id_presidio=$id_presidio$;"
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.navigate_to_procedura_aziendale_k"
         }
-      ],
-      "type": "tableForm",
-      "label": "Rischi associati",
+    ],
+    "subTables": [
+        {
+            "entryKey": "rischi_associati_sub_of_presidi",
+            "keys": [
+                {
+                    "parent": "id_presidio",
+                    "son": "id_presidio"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ],
+            "type": "tableForm",
+            "label": "Rischi associati",
             "translate": "RESOURCES.rischi_sub_of_procedure"
-    },
-    {
-      "entryKey": "presidi",
-      "keys": [
-        {
-          "parent": "id_presidio",
-          "son": "id_presidio_parent"
         },
         {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        }
-      ],
-      "label": "Sotto presidi",
+            "entryKey": "presidi",
+            "keys": [
+                {
+                    "parent": "id_presidio",
+                    "son": "id_presidio_parent"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ],
+            "label": "Sotto presidi",
             "translate": "RESOURCES.sotto_presidi"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_presidio",
-     "label": "ID Presidio" ,
-            "translate": "RESOURCES.id_presidio",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType":"number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-       "label": "Centro Gestionale",
-            "translate": "RESOURCES.office"
-
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-     "label": "Codice Partizione",
-            "translate": "RESOURCES.partition_code"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato_attuazione",
-      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione)",
-     "label": "Stato Attuazione",
-            "translate": "RESOURCES.status",
-      "style": [
-        {
-          "value": "Attivo",
-          "font_color": "green",
-          "font_weight": "500"
-        },
-        {
-          "value": "In implementazione",
-          "font_color": "#D97F02",
-          "font_weight": "500"
-        },
-        {
-          "value": "Auspicabile",
-          "font_color": "red",
-          "font_weight": "500"
         }
-      ],
-      "width": "10%"
-    }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "add",
-      "viewType": "form"
-    },
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "label": "ID Presidio",
+            "translate": "RESOURCES.id_presidio",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "Codice Partizione",
+            "translate": "RESOURCES.partition_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato_attuazione",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione)",
+            "label": "Stato Attuazione",
+            "translate": "RESOURCES.status",
+            "style": [
+                {
+                    "value": "Attivo",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "In implementazione",
+                    "font_color": "#D97F02",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Auspicabile",
+                    "font_color": "red",
+                    "font_weight": "500"
+                }
+            ],
+            "width": "10%"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
 }

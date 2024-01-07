@@ -1,164 +1,169 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "cpl_trattamenti_dati_sub_procedure_aziendali",
-  "origin": "entrasp.cpl_trattamenti_dati_procedure_aziendali",
-  "businessObjectName": "cpl_trattamenti_dati_procedure_aziendali",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_trattamento_dati",
-      "label": "ID",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_procedura AS id, descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_procedura",
-      "label": "Procedura aziendale",
-      "readOnly": false,
-      "newLine": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_trattamento_dati",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_procedura",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "4%",
-      "queryFunct": "select true",
-      "key": "delete_trattamenti_dati_processi",
-      "label": "",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "cpl_trattamenti_dati_sub_procedure_aziendali",
+    "origin": "entrasp.cpl_trattamenti_dati_procedure_aziendali",
+    "businessObjectName": "cpl_trattamenti_dati_procedure_aziendali",
+    "form_keys": [
         {
-          "button_icon": "delete",
-          "value": "*"
-        }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "cpl_trattamenti_dati_sub_procedure_aziendali",
-        "viewType": "form",
-        "query": "delete from entrasp.cpl_trattamenti_dati_procedure_aziendali where codice_azienda='£codice_azienda£' AND id_trattamento_dati=£id_trattamento_dati£ and id_procedura=£id_procedura£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_procedura",
-            "destination": "id_procedura"
-          },
-          {
-            "source": "id_trattamento_dati",
-            "destination": "id_trattamento_dati"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "procedura_descr",
-      "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura, codice_azienda)",
-      "label": "Processo",
-      "translate": "RESOURCES.descr_procedura"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "7.5%",
-      "key": "visible_button_proc",
-      "label": "Processo",
-      "translate": "RESOURCES.descr_procedura",
-      "queryFunct": "select true",
-      "isButton": true,
-      "buttonAction": {
-        "target": "procedure_aziendali",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_procedura",
-            "destination": "id_procedura"
-          }
-        ]
-      },
-      "style": [
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": false,
+            "newLine": false
+        },
         {
-          "button_icon": "",
-          "value": "*"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "ID",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_trattamento_dati"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_procedura AS id, descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_procedura",
+            "label": "Procedura aziendale",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_procedura"
         }
-      ]
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "ID",
+            "translate": "RESOURCES.id_trattamento_dati"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_procedura",
+            "label": "ID",
+            "translate": "RESOURCES.id_procedura"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_trattamenti_dati_processi",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "cpl_trattamenti_dati_sub_procedure_aziendali",
+                "viewType": "form",
+                "query": "delete from entrasp.cpl_trattamenti_dati_procedure_aziendali where codice_azienda='£codice_azienda£' AND id_trattamento_dati=£id_trattamento_dati£ and id_procedura=£id_procedura£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    },
+                    {
+                        "source": "id_trattamento_dati",
+                        "destination": "id_trattamento_dati"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_trattamenti_dati_processi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "procedura_descr",
+            "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura, codice_azienda)",
+            "label": "Processo",
+            "translate": "RESOURCES.descr_procedura"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "7.5%",
+            "key": "visible_button_proc",
+            "label": "Processo",
+            "translate": "RESOURCES.descr_procedura",
+            "queryFunct": "select true",
+            "isButton": true,
+            "buttonAction": {
+                "target": "procedure_aziendali",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ]
+            },
+            "style": [
+                {
+                    "button_icon": "",
+                    "value": "*"
+                }
+            ]
+        }
+    ]
 }

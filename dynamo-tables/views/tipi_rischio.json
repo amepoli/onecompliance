@@ -1,168 +1,173 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "tipi_rischio",
-  "origin": "entrasp.tipi_rischio",
-  "businessObjectName": "tipiRischio",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_tipo_rischio",
-      "label": "Id Tipo Rischio",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_tipo_rischio AS id, descrizione AS name  FROM entrasp.tipi_rischio WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_rischio_parent",
-      "label": "Rischio Padre",
-      "newLine": true,
-      "readOnly": false
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_tipo_rischio",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "Id Tipo Rischio",
-      "newLine": true,
-      "queryCond": "id_tipo_rischio=$id_tipo_rischio$"
-    },
-    {
-      "fieldName": "flag_rischi_principali",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Solo Principali",
-      "translate": "RESOURCES.main_only",
-      "newLine": false,
-      "queryCond": "id_tipo_rischio_parent IS null"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "rischi_sub_of_tipi_rischio",
-      "keys": [
+    "$schema": "../views.schema.json",
+    "entryKey": "tipi_rischio",
+    "origin": "entrasp.tipi_rischio",
+    "businessObjectName": "tipiRischio",
+    "form_keys": [
         {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": false
         },
         {
-          "parent": "id_tipo_rischio",
-          "son": "id_tipo_rischio"
-        }
-      ],
-      "label": "Rischi associati",
-      "translate": "RESOURCES.rischi_sub_of_procedure"
-    },
-    {
-      "entryKey": "tipi_rischio_sub_of_tipi_rischio",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_tipo_rischio",
+            "label": "Id Tipo Rischio",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.id_tipo_rischio"
         },
         {
-          "parent": "id_tipo_rischio",
-          "son": "id_tipo_rischio_parent"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_tipo_rischio AS id, descrizione AS name  FROM entrasp.tipi_rischio WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_rischio_parent",
+            "label": "Rischio Padre",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.id_tipo_rischio_parent"
         }
-      ],
-      "label": "Sotto-tipi"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_tipo_rischio",
-      "label": "Id Tipo Rischio"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_rischio_parent",
-      "label": "Rischio Padre",
-      "queryFunct": "entrasp.tipi_rischio_descrizione(id_tipo_rischio_parent, codice_azienda)"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "queryFunct": "select null",
-      "key": "id_tipo_rischio_parent",
-      "label": "id_tipo_rischio_parent"
-    }
-  ]
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_tipo_rischio",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Tipo Rischio",
+            "newLine": true,
+            "queryCond": "id_tipo_rischio=$id_tipo_rischio$"
+        },
+        {
+            "fieldName": "flag_rischi_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
+            "translate": "RESOURCES.main_only",
+            "newLine": false,
+            "queryCond": "id_tipo_rischio_parent IS null"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "rischi_sub_of_tipi_rischio",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_tipo_rischio",
+                    "son": "id_tipo_rischio"
+                }
+            ],
+            "label": "Rischi associati",
+            "translate": "RESOURCES.rischi_sub_of_procedure"
+        },
+        {
+            "entryKey": "tipi_rischio_sub_of_tipi_rischio",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_tipo_rischio",
+                    "son": "id_tipo_rischio_parent"
+                }
+            ],
+            "label": "Sotto-tipi"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_tipo_rischio",
+            "label": "Id Tipo Rischio",
+            "translate": "RESOURCES.id_tipo_rischio"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_rischio_parent",
+            "label": "Rischio Padre",
+            "queryFunct": "entrasp.tipi_rischio_descrizione(id_tipo_rischio_parent, codice_azienda)",
+            "translate": "RESOURCES.tipo_rischio_parent"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "queryFunct": "select null",
+            "key": "id_tipo_rischio_parent",
+            "label": "id_tipo_rischio_parent",
+            "translate": "RESOURCES.id_tipo_rischio_parent"
+        }
+    ]
 }

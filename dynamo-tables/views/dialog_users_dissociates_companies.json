@@ -1,94 +1,97 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "dialog_users_dissociates_companies",
-  "origin": "entrasp.anagrafiche_id",
-  "predefinedQueries": [
-    {
-      "queryString": "SELECT $username$ as username",
-      "operation": "selectForm",
-      "type": "main"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "username",
-      "label": "Username",
-      "readOnly": false,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice_azienda as name, codice_azienda as id FROM entrasp.aziende WHERE codice_part in (SELECT DISTINCT codice_part FROM entrasp.anagrafiche_id WHERE dynamo_user = $username$) ORDER BY codice_azienda",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Inserire un'azienda!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "company_to_dissociate",
-      "label": "Azienda da dissociare",
-      "readOnly": false,
-      "newLine": true,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "dissociates_company",
-      "buttonIcon": "close",
-      "label": "Dissocia azienda",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "dissociates_company",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_users_dissociates_companies",
+    "origin": "entrasp.anagrafiche_id",
+    "predefinedQueries": [
         {
-          "eventName": "dissociates_company",
-          "condition": "none",
-          "values": [],
-          "actionType": "show_message",
-          "message": {
-            "messageText": "Si intende procedere alla dissociazione?",
-            "actionOnYes": {
-              "actionType": "user_api",
-              "userAPIParams": {
-                "actionType": "dissociates_company"
-              }
-            },
-            "actionOnNo": {
-              "actionType": "query",
-              "queryFunct": "select 1"
-            }
-          }
+            "queryString": "SELECT $username$ as username",
+            "operation": "selectForm",
+            "type": "main"
         }
-      ],
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    }
-  ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "username",
+            "label": "Username",
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.username"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_azienda as name, codice_azienda as id FROM entrasp.aziende WHERE codice_part in (SELECT DISTINCT codice_part FROM entrasp.anagrafiche_id WHERE dynamo_user = $username$) ORDER BY codice_azienda",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Inserire un'azienda!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "company_to_dissociate",
+            "label": "Azienda da dissociare",
+            "readOnly": false,
+            "newLine": true,
+            "size": 10,
+            "translate": "RESOURCES.company_to_dissociate"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dissociates_company",
+            "buttonIcon": "close",
+            "label": "Dissocia azienda",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "dissociates_company",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "dissociates_company",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "message": {
+                        "messageText": "Si intende procedere alla dissociazione?",
+                        "actionOnYes": {
+                            "actionType": "user_api",
+                            "userAPIParams": {
+                                "actionType": "dissociates_company"
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.dissociates_company"
+        }
+    ]
 }

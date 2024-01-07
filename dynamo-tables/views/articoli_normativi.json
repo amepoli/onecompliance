@@ -1,334 +1,351 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "articoli_normativi",
-  "origin": "entrasp.articoli_normativi",
-  "businessObjectName": "articoli_normativi",
-  "form_keys": [
-    {
-      "autoGenerate": true,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_articolo_normativo",
-      "label": "id_articolo_normativo",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_testo_normativo AS id, id_testo_normativo||'-'||descrizione AS name  FROM entrasp.testi_normativi;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_testo_normativo",
-      "label": "Testo Normativo",
-      "newLine": true,
-      "readOnly": false,
-      "size": 8.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "Ordinamento",
-      "translate": "RESOURCES.ordinamento",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_articolo_normativo",
-      "label": "Codice Articolo",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Codice mancante",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "rubrica",
-      "label": "Rubrica",
-      "newLine": true,
-      "size": 7.5,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "textarea"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Testo Articolo",
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_articolo_normativo AS id, entrasp.articoli_normativi_cod_rub(id_articolo_normativo) AS name  FROM entrasp.articoli_normativi;",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_articolo_normativo_parent",
-      "label": "Articolo Parent",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "combobox",
-        "dataType": "number",
-        "options": [],
-        "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=48334 order by arg.descrizione"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento_consenso",
-      "label": "Tipo consenso",
-      "readOnly": false,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "sanz_amm_min_quote",
-      "label": "Sanzione Amministrativa Minima (quote)",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "sanz_amm_max_quote",
-      "label": "Sanzione Amministrativa Massima (quote)",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "sanz_int_min",
-      "label": "Sanzione Interdittiva Minima",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "sanz_int_max",
-      "label": "Sanzione Interdittiva Massima",
-      "newLine": true,
-      "readOnly": false
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_testo_normativo",
-      "format": {
-        "comboQuery": "SELECT id_testo_normativo AS id, id_testo_normativo||'-'||descrizione AS name  FROM entrasp.testi_normativi;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Testo normativo",
-      "newLine": true,
-      "queryCond": "id_testo_normativo=$id_testo_normativo$"
-    },
-    {
-      "fieldName": "codice_articolo_normativo",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Codice articolo",
-      "newLine": true,
-      "queryCond": "codice_articolo_normativo=$codice_articolo_normativo$"
-    },
-    {
-      "fieldName": "flag_principali",
-      "format": {
-        "value": "1",
-        "viewType": "checkbox"
-      },
-      "label": "Solo Principali",
-      "translate": "RESOURCES.main_only",
-      "newLine": false,
-      "queryCond": "id_articolo_normativo_parent IS null"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "articoli_normativi_sub_of_articoli_normativi",
-      "keys": [
+    "$schema": "../views.schema.json",
+    "entryKey": "articoli_normativi",
+    "origin": "entrasp.articoli_normativi",
+    "businessObjectName": "articoli_normativi",
+    "form_keys": [
         {
-          "parent": "id_articolo_normativo",
-          "son": "id_articolo_normativo"
-        }
-      ],
-      "label": "Articoli Normativi di Riferimento"
-    },
-    {
-      "entryKey": "rischi_associati_sub_articoli_normativi",
-      "keys": [
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_articolo_normativo",
+            "label": "id_articolo_normativo",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "translate": "RESOURCES.id_articolo_normativo"
+        },
         {
-          "parent": "id_articolo_normativo",
-          "son": "id_articolo_normativo"
-        }
-      ],
-      "label": "Rischi associati",
-      "translate": "RESOURCES.rischi_sub_of_procedure"
-    },
-    {
-      "entryKey": "articoli_normativi",
-      "keys": [
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_testo_normativo AS id, id_testo_normativo||'-'||descrizione AS name  FROM entrasp.testi_normativi;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_testo_normativo",
+            "label": "Testo Normativo",
+            "newLine": true,
+            "readOnly": false,
+            "size": 8.5,
+            "translate": "RESOURCES.id_testo_normativo"
+        },
         {
-          "parent": "id_articolo_normativo",
-          "son": "id_articolo_normativo_parent"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ordinamento",
+            "translate": "RESOURCES.ordinamento",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_articolo_normativo",
+            "label": "Codice Articolo",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "translate": "RESOURCES.codice_articolo_normativo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Codice mancante",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rubrica",
+            "label": "Rubrica",
+            "newLine": true,
+            "size": 7.5,
+            "readOnly": false,
+            "translate": "RESOURCES.rubrica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Testo Articolo",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.descrizione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_articolo_normativo AS id, entrasp.articoli_normativi_cod_rub(id_articolo_normativo) AS name  FROM entrasp.articoli_normativi;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_articolo_normativo_parent",
+            "label": "Articolo Parent",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_articolo_normativo_parent"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "number",
+                "options": [],
+                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=48334 order by arg.descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_consenso",
+            "label": "Tipo consenso",
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.id_argomento_consenso"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sanz_amm_min_quote",
+            "label": "Sanzione Amministrativa Minima (quote)",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.sanz_amm_min_quote"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sanz_amm_max_quote",
+            "label": "Sanzione Amministrativa Massima (quote)",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.sanz_amm_max_quote"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sanz_int_min",
+            "label": "Sanzione Interdittiva Minima",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.sanz_int_min"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sanz_int_max",
+            "label": "Sanzione Interdittiva Massima",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.sanz_int_max"
         }
-      ],
-      "label": "Sotto Articoli"
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_testo_normativo",
+            "format": {
+                "comboQuery": "SELECT id_testo_normativo AS id, id_testo_normativo||'-'||descrizione AS name  FROM entrasp.testi_normativi;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Testo normativo",
+            "newLine": true,
+            "queryCond": "id_testo_normativo=$id_testo_normativo$"
+        },
+        {
+            "fieldName": "codice_articolo_normativo",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice articolo",
+            "newLine": true,
+            "queryCond": "codice_articolo_normativo=$codice_articolo_normativo$"
+        },
+        {
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "1",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
+            "translate": "RESOURCES.main_only",
+            "newLine": false,
+            "queryCond": "id_articolo_normativo_parent IS null"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "articoli_normativi_sub_of_articoli_normativi",
+            "keys": [
+                {
+                    "parent": "id_articolo_normativo",
+                    "son": "id_articolo_normativo"
+                }
+            ],
+            "label": "Articoli Normativi di Riferimento"
+        },
+        {
+            "entryKey": "rischi_associati_sub_articoli_normativi",
+            "keys": [
+                {
+                    "parent": "id_articolo_normativo",
+                    "son": "id_articolo_normativo"
+                }
+            ],
+            "label": "Rischi associati",
+            "translate": "RESOURCES.rischi_sub_of_procedure"
+        },
+        {
+            "entryKey": "articoli_normativi",
+            "keys": [
+                {
+                    "parent": "id_articolo_normativo",
+                    "son": "id_articolo_normativo_parent"
+                }
+            ],
+            "label": "Sotto Articoli"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_testo_normativo",
+            "label": "ID",
+            "translate": "RESOURCES.id_testo_normativo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_testo_normativo",
+            "label": "Testo normativo",
+            "width": "42%",
+            "queryFunct": "entrasp.testi_normativi_descr(id_testo_normativo)",
+            "translate": "RESOURCES.descr_testo_normativo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ordinamento",
+            "translate": "RESOURCES.ordinamento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_articolo_normativo",
+            "label": "Codice articolo",
+            "width": "8%",
+            "translate": "RESOURCES.codice_articolo_normativo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "42%",
+            "key": "rubrica",
+            "label": "Rubrica",
+            "translate": "RESOURCES.rubrica"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "key": "id_articolo_normativo",
+            "label": "ID",
+            "translate": "RESOURCES.id_articolo_normativo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "id_articolo_normativo_parent",
+            "label": "ID",
+            "translate": "RESOURCES.id_articolo_normativo_parent"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_testo_normativo, codice_articolo_normativo, ordinamento"
     }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_testo_normativo",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_testo_normativo",
-      "label": "Testo normativo",
-      "width": "42%",
-      "queryFunct": "entrasp.testi_normativi_descr(id_testo_normativo)"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "Ordinamento",
-      "translate": "RESOURCES.ordinamento"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_articolo_normativo",
-      "label": "Codice articolo",
-      "width": "8%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "42%",
-      "key": "rubrica",
-      "label": "Rubrica"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "width": "5%",
-      "key": "id_articolo_normativo",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "id_articolo_normativo_parent",
-      "label": "ID"
-    }
-  ],
-  "hideActions": [
-    {
-      "tableActionType": "quick-add",
-      "viewType": "table"
-    },
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by id_testo_normativo, codice_articolo_normativo, ordinamento"
-  }
 }

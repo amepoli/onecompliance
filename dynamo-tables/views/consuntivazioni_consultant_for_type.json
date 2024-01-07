@@ -1,174 +1,177 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "consuntivazioni_consultant_for_type",
-	"origin": "entrasp.argomenti",
-	"businessObjectName": "argomenti",
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve ,count(cns.id_cons) as num_cons from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.consuntivazioni cns on arg.id_argomento=cns.id_argomento where id_argomento_father=3492 and cns.id_risorsa in (select id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€global_username€') group by arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve"
-		}
-	],
-	"outputEvents": [
-		{
-			"eventName": "onSaveConsuntivazione",
-			"eventTrigger": "onSave"
-		},
-		{
-			"eventName": "onLoadConsuntivazione",
-			"eventTrigger": "onReload"
-		}
-	],
-	"form_keys": [
-		{
-			"autoGenerate": true,
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"key": "id_argomento",
-			"label": "ID Argomento",
-			"newLine": false,
-			"readOnly": true,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice",
-			"label": "Codice",
-      "translate": "RESOURCES.code",
-			"newLine": false,
-			"readOnly": true,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione_breve",
-			"label": "Descrizione Breve",
+    "$schema": "../views.schema.json",
+    "entryKey": "consuntivazioni_consultant_for_type",
+    "origin": "entrasp.argomenti",
+    "businessObjectName": "argomenti",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve ,count(cns.id_cons) as num_cons from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.consuntivazioni cns on arg.id_argomento=cns.id_argomento where id_argomento_father=3492 and cns.id_risorsa in (select id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€global_username€') group by arg.codice, arg.id_argomento, arg.descrizione, arg.descrizione_breve"
+        }
+    ],
+    "outputEvents": [
+        {
+            "eventName": "onSaveConsuntivazione",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadConsuntivazione",
+            "eventTrigger": "onReload"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento",
+            "label": "ID Argomento",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.5,
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Descrizione Breve",
             "translate": "RESOURCES.short_description",
-			"newLine": false,
-			"readOnly": true,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione",
-			"label": "Descrizione",
-      "translate": "RESOURCES.description",
-			"newLine": false,
-			"readOnly": true,
-			"size": 8
-		}
-	],
-	"subTables": [
-		{
-			"entryKey": "consuntivazioni_sub_of_argomenti",
-			"keys": [
-				{
-					"parent": "id_argomento",
-					"son": "id_argomento"
-				}
-			],
-			"label": "Aggiornamenti e Time Report",
-      "translate": "RESOURCES.update_and_time_report"
-		}
-	],
-	"table_keys": [
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"key": "id_argomento",
-			"label": "ID",
-			"width": "10%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "codice",
-			"label": "Codice",
-      "translate": "RESOURCES.code",
-			"width": "10%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione",
-			"label": "Descrizione",
-      "translate": "RESOURCES.description",
-			"width": "30%"
-		},
-		{
-			"format": {
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "descrizione_breve",
-			"label": "Descrizione Breve",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": false,
+            "readOnly": true,
+            "size": 8
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "consuntivazioni_sub_of_argomenti",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento"
+                }
+            ],
+            "label": "Aggiornamenti e Time Report",
+            "translate": "RESOURCES.update_and_time_report"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento",
+            "label": "ID",
+            "width": "10%",
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "width": "30%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Descrizione Breve",
             "translate": "RESOURCES.short_description",
-			"width": "30%"
-		},
-		{
-			"format": {
-				"dataType": "number"
-			},
-			"isHidden": false,
-			"isPrimary": false,
-			"key": "num_cons",
-			"label": "Numero consuntivazioni",
-			"width": "10%"
-		}
-	],
-	"hideActions": [
-		{
-			"formActionType": "add",
-			"viewType": "form"
-		},
-		{
-			"tableActionType": "add",
-			"viewType": "table"
-		},
-		{
-			"formActionType": "quick-add",
-			"viewType": "form"
-		},
-		{
-			"tableActionType": "quick-add",
-			"viewType": "table"
-		},
-		{
-			"viewType": "form",
-			"formActionType": "attachments"
-		}
-	]
+            "width": "30%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "num_cons",
+            "label": "Numero consuntivazioni",
+            "width": "10%",
+            "translate": "RESOURCES.num_cons"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ]
 }

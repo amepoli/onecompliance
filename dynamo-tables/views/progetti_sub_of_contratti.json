@@ -1,66 +1,66 @@
 {
-	"$schema": "../views.schema.json",
-	"origin": "entrasp.progetti",
-	"entryKey": "progetti_sub_of_contratti",
-	"inheritsFrom": "progetti",
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select (€global_id_anagrafiche€)::text as user_companies,codice_azienda,id_contratto, data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=prg.codice_azienda and cmp.id_progetto=prg.id_progetto limit 1), prg.codice_azienda) from entrasp.progetti prg where codice_azienda='€global_codice_azienda€' and id_contratto=$id_contratto$;"
-		},
-		{
-			"operation": "selectForm",
-			"type": "preProcessing",
-			"queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) from entrasp.sondaggi_somministrati ss inner join entrasp.progetti_fasi pf on ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio where ss.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$;"
-		},
-		{
-			"operation": "selectForm",
-			"type": "preProcessing",
-			"queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$"
-		},
-		{
-			"operation": "selectForm",
-			"type": "postProcessing",
-			"queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
-		},
-		{
-			"operation": "delete",
-			"type": "main",
-			"queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
-		},
-		{
-			"operation": "delete",
-			"type": "preCheck",
-			"messageNotNull": "Attenzione ci sono compiti associati alle fasi del progetto o al progetto in oggetto",
-			"queryString": "select codice_compito from entrasp.compiti where (id_fase in(select id_fase from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$) or id_progetto=$id_progetto$) and codice_azienda=$codice_azienda$;"
-		},
-		{
-			"operation": "insert",
-			"type": "preCheck",
-			"queryString": "select codice_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£'",
-			"messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro progetto: prego utilizzarne un codice diverso"
-		},
-		{
-			"operation": "update",
-			"type": "preCheck",
-			"queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
-			"messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro progetto: prego utilizzarne un codice diverso"
-		},
-		{
-			"type": "main",
-			"operation": "share",
-			"queryString": "select null;"
-		},
-		{
-			"type": "main",
-			"operation": "stopEvent",
-			"queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
-		},
-		{
-			"type": "main",
-			"operation": "startEvent",
-			"queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
-		}
-	]
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.progetti",
+    "entryKey": "progetti_sub_of_contratti",
+    "inheritsFrom": "progetti",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select (€global_id_anagrafiche€)::text as user_companies,codice_azienda,id_contratto, data_inserimento,stato,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI',stato) as descr_stato,id_tipo_progetto,codice_attivita,codice_progetto,id_progetto,codice_part,titolo,entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente) AS descr_cliente,entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as centro_gest,id_cliente,entrasp.progetto_sal(codice_azienda, id_progetto) as avanzamento,true as time_report_play, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text, (select codice_compito from entrasp.compiti cmp where cmp.codice_azienda=prg.codice_azienda and cmp.id_progetto=prg.id_progetto limit 1), prg.codice_azienda) from entrasp.progetti prg where codice_azienda='€global_codice_azienda€' and id_contratto=$id_contratto$;"
+        },
+        {
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) from entrasp.sondaggi_somministrati ss inner join entrasp.progetti_fasi pf on ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio where ss.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$;"
+        },
+        {
+            "operation": "selectForm",
+            "type": "preProcessing",
+            "queryString": "update entrasp.progetti set stato=entrasp.stato_progetto_calcolato($id_progetto$, $codice_azienda$) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "select entrasp.automatic_progetti_fasi_order($codice_azienda$, $id_progetto$)"
+        },
+        {
+            "operation": "delete",
+            "type": "main",
+            "queryString": "select entrasp.progetto_delete($codice_azienda$, $id_progetto$);"
+        },
+        {
+            "operation": "delete",
+            "type": "preCheck",
+            "messageNotNull": "Attenzione ci sono compiti associati alle fasi del progetto o al progetto in oggetto",
+            "queryString": "select codice_compito from entrasp.compiti where (id_fase in(select id_fase from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$) or id_progetto=$id_progetto$) and codice_azienda=$codice_azienda$;"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select codice_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£'",
+            "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro progetto: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
+            "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro progetto: prego utilizzarne un codice diverso"
+        },
+        {
+            "type": "main",
+            "operation": "share",
+            "queryString": "select null;"
+        },
+        {
+            "type": "main",
+            "operation": "stopEvent",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        },
+        {
+            "type": "main",
+            "operation": "startEvent",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'progetti', $id_progetto$, '$codice_azienda$'::varchar)"
+        }
+    ]
 }

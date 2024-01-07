@@ -1,33 +1,33 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "tr_hp_manager",
-  "inheritsFrom": "giornate_incomplete_collaboratori",
-  "businessObjectName": "consuntivazioni",
-  "toolbar_elements": [
-    {
-      "fieldName": "dynamo_s",
-      "viewType": "combobox",
-      "position": "left",
-      "label": "Miei",
-      "options": [],
-      "comboQuery": "select dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
-      "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
-    }
-  ],
-  "tiles": [
-    {
-      "title": "Giorni incompleti",
-      "content": {
-        "contentType": "value",
-        "value": "Scooby Doo",
-        "query": "select count(tab.*) as conta_giorni_incompleti from (select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users mr on gdr.giorno=mr.data_rend and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user in(select em.dynamo_user from entrasp.employers em inner join entrasp.employers em2 on em.codice_azienda=em2.codice_azienda where em2.dynamo_user='€global_username€') group by gdr.codice_ruolo,gdr.ruolo, gdr.centro_gest, gdr.giorno, gdr.dynamo_user, gdr.nome,gdr.min_richiesti, mr.min_rendicontati having greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0)>0) tab",
-        "queryCond": "",
-        "fieldName": "conta_giorni_incompleti",
-        "value_color": "red",
-        "title_color": "red",
-        "background_color": "white"
-      },
-      "new_line": false
-    }
-  ]
+    "$schema": "../views.schema.json",
+    "entryKey": "tr_hp_manager",
+    "inheritsFrom": "giornate_incomplete_collaboratori",
+    "businessObjectName": "consuntivazioni",
+    "toolbar_elements": [
+        {
+            "fieldName": "dynamo_s",
+            "viewType": "combobox",
+            "position": "left",
+            "label": "Miei",
+            "options": [],
+            "comboQuery": "select dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
+            "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
+        }
+    ],
+    "tiles": [
+        {
+            "title": "Giorni incompleti",
+            "content": {
+                "contentType": "value",
+                "value": "Scooby Doo",
+                "query": "select count(tab.*) as conta_giorni_incompleti from (select true as dettaglio, true as insert_missing_mins, true as segna_ferie, true as segna_permesso, entrasp.dynamo_employer(gdr.dynamo_user) as employer, gdr.giorno, gdr.dynamo_user, gdr.min_richiesti as minuti_richiesti,min_rendicontati as minuti_rendicontati, greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0) as minuti_mancanti from entrasp.giornate_e_users_da_rendicontare gdr left join entrasp.minuti_rendicontati_users mr on gdr.giorno=mr.data_rend and gdr.dynamo_user=mr.dynamo_user where gdr.dynamo_user in(select em.dynamo_user from entrasp.employers em inner join entrasp.employers em2 on em.codice_azienda=em2.codice_azienda where em2.dynamo_user='€global_username€') group by gdr.codice_ruolo,gdr.ruolo, gdr.centro_gest, gdr.giorno, gdr.dynamo_user, gdr.nome,gdr.min_richiesti, mr.min_rendicontati having greatest(gdr.min_richiesti-coalesce(min_rendicontati,0),0)>0) tab",
+                "queryCond": "",
+                "fieldName": "conta_giorni_incompleti",
+                "value_color": "red",
+                "title_color": "red",
+                "background_color": "white"
+            },
+            "new_line": false
+        }
+    ]
 }

@@ -1,198 +1,206 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "dialog_anagrafiche_vr_invite_user",
-  "origin": "entrasp.anagrafiche_id",
-  "predefinedQueries": [
-    {
-      "operation": "selectForm",
-      "type": "main",
-      "queryString": "SELECT av.codice_fiscale AS codice_fiscale,'€global_codice_azienda€' as codice_azienda, '' as associa_user, email_sender as email_to, true as invia_mail, ai.id_anagrafica, ai.nome, ai.cognome, ai.codice_part from entrasp.anagrafiche_id ai inner join entrasp.anagrafiche_vr av using (codice_part,id_anagrafica) where codice_part=$codice_part$ and av.prog_vr=entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) and id_anagrafica=$id_anagrafica$;"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_anagrafica",
-      "label": "id_anagrafica",
-      "translate": "RESOURCES.id_personal_data",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_part",
-      "label": "codice part",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_fiscale",
-      "label": "codice_fiscale",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "nome",
-      "label": "nome",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "cognome",
-      "label": "cognome",
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Inserire una mail!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "email_to",
-      "label": "Email",
-      "readOnly": false,
-      "newLine": true,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT name as id, description as name FROM entrasp.profiles WHERE aziende_list && ARRAY[€global_user_companies€]::character varying[] OR aziende_list IS NULL ORDER BY name;",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Inserire un profilo!",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "profile",
-      "label": "Profilo da assegnare",
-      "readOnly": false,
-      "newLine": true,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT  dynamo_user as name, dynamo_user as id FROM entrasp.employers WHERE codice_azienda='€global_codice_azienda€'",
-        "viewType": "combobox",
-        "options": [],
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "associa_user",
-      "label": "Utente dal quale copiare le autorizzazioni",
-      "readOnly": false,
-      "newLine": true,
-      "size": 10
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "button"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "invia_mail",
-      "buttonIcon": "user",
-      "label": "Invita utente",
-      "newLine": false,
-      "outputEvent": {
-        "eventName": "create_user_and_email",
-        "eventTrigger": "press"
-      },
-      "inputEvents": [
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_anagrafiche_vr_invite_user",
+    "origin": "entrasp.anagrafiche_id",
+    "predefinedQueries": [
         {
-          "eventName": "create_user_and_email",
-          "condition": "none",
-          "values": [],
-          "actionType": "show_message",
-          "message": {
-            "messageText": "Si intende procedere all'invito dell'utente?",
-            "actionOnYes": {
-              "actionType": "user_api",
-              "userAPIParams": {
-                "actionType": "invite_user"
-              }
-            },
-            "actionOnNo": {
-              "actionType": "query",
-              "queryFunct": "select 1"
-            }
-          }
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "SELECT av.codice_fiscale AS codice_fiscale,'€global_codice_azienda€' as codice_azienda, '' as associa_user, email_sender as email_to, true as invia_mail, ai.id_anagrafica, ai.nome, ai.cognome, ai.codice_part from entrasp.anagrafiche_id ai inner join entrasp.anagrafiche_vr av using (codice_part,id_anagrafica) where codice_part=$codice_part$ and av.prog_vr=entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) and id_anagrafica=$id_anagrafica$;"
         }
-      ],
-      "style": {
-        "background_color": "#25599C",
-        "font_color": "white"
-      },
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1
-    }
-  ]
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica",
+            "translate": "RESOURCES.id_personal_data",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice part",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_fiscale",
+            "label": "codice_fiscale",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.codice_fiscale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "nome",
+            "label": "nome",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.nome"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "cognome",
+            "label": "cognome",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.cognome"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire una mail!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_to",
+            "label": "Email",
+            "readOnly": false,
+            "newLine": true,
+            "size": 10,
+            "translate": "RESOURCES.email_to"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT name as id, description as name FROM entrasp.profiles WHERE aziende_list && ARRAY[€global_user_companies€]::character varying[] OR aziende_list IS NULL ORDER BY name;",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Inserire un profilo!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "profile",
+            "label": "Profilo da assegnare",
+            "readOnly": false,
+            "newLine": true,
+            "size": 10,
+            "translate": "RESOURCES.profile"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT  dynamo_user as name, dynamo_user as id FROM entrasp.employers WHERE codice_azienda='€global_codice_azienda€'",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "associa_user",
+            "label": "Utente dal quale copiare le autorizzazioni",
+            "readOnly": false,
+            "newLine": true,
+            "size": 10,
+            "translate": "RESOURCES.associa_user"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "invia_mail",
+            "buttonIcon": "user",
+            "label": "Invita utente",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "create_user_and_email",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "create_user_and_email",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "message": {
+                        "messageText": "Si intende procedere all'invito dell'utente?",
+                        "actionOnYes": {
+                            "actionType": "user_api",
+                            "userAPIParams": {
+                                "actionType": "invite_user"
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.invia_mail"
+        }
+    ]
 }

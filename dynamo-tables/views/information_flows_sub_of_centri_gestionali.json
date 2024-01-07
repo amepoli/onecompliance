@@ -1,69 +1,69 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "information_flows_sub_of_centri_gestionali",
-  "inheritsFrom": "information_flows",
-  "define": {
-    "toggle_miei_uffici": "0",
-    "is_hidden_codice_azienda": "true",
-    "is_hidden_id_anagrafica": "true",
-    "id_argomento_father": "3576",
-    "label_revisioni": "File del flusso informativo",
-    "id_anagrafica_if_clientela": "true"
-  },
-  "table_multiselection_actions": [
-    {
-      "viewType": "menu",
-      "key": "menutest",
-      "label": "Actions",
-      "icon": "more_vert",
-      "menuOptions": [
+    "$schema": "../views.schema.json",
+    "entryKey": "information_flows_sub_of_centri_gestionali",
+    "inheritsFrom": "information_flows",
+    "define": {
+        "toggle_miei_uffici": "0",
+        "is_hidden_codice_azienda": "true",
+        "is_hidden_id_anagrafica": "true",
+        "id_argomento_father": "3576",
+        "label_revisioni": "File del flusso informativo",
+        "id_anagrafica_if_clientela": "true"
+    },
+    "table_multiselection_actions": [
         {
-          "key": "delete",
-          "icon": "delete",
-          "label": "Delete",
-          "query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Eliminare la cartella e i relativi file?"
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "delete",
+                    "icon": "delete",
+                    "label": "Delete",
+                    "query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Eliminare la cartella e i relativi file?"
+                },
+                {
+                    "key": "unifica",
+                    "icon": "merge_type",
+                    "label": "Unifica cartelle",
+                    "query": "select entrasp.unifica_risorse_selezionate(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Unificare le cartelle e i relativi file selezionati?"
+                }
+            ]
+        }
+    ],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when crs.id_argomento_stato not in(4035, 5327) then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, entrasp.argomenti_descr_breve(id_argomento_tipo_allegato)||'-'||entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica) as descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE rs.codice_part=$codice_part$ and id_centro_gest=$id_centro_gest$",
+            "type": "main"
         },
         {
-          "key": "unifica",
-          "icon": "merge_type",
-          "label": "Unifica cartelle",
-          "query": "select entrasp.unifica_risorse_selezionate(array[$selected_rows_data$])",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Unificare le cartelle e i relativi file selezionati?"
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'risorse', $id_risorsa$, '$codice_azienda$'::varchar) as play_time_report"
+        },
+        {
+            "type": "preCheck",
+            "operation": "delete",
+            "queryString": "select prog_revisione from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$;",
+            "messageNotNull": "Esiste almeno un file associato al flusso informativo in oggetto! Cancellare prima i singoli file della cartella"
+        },
+        {
+            "type": "main",
+            "operation": "delete",
+            "queryString": "delete from entrasp.cdms_risorse where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$"
         }
-      ]
-    }
-  ],
-  "predefinedQueries": [
-    {
-      "operation": "selectTable",
-      "queryString": "select entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when crs.id_argomento_stato not in(4035, 5327) then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,entrasp.argomenti_descr_stato(id_argomento_stato) as descr_stato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, entrasp.argomenti_descr_breve(id_argomento_tipo_allegato)||'-'||entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part, id_anagrafica) as descrizione_breve, crs.descrizione, entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE rs.codice_part=$codice_part$ and id_centro_gest=$id_centro_gest$",
-      "type": "main"
-    },
-    {
-      "operation": "stopEvent",
-      "type": "main",
-      "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
-    },
-    {
-      "operation": "startEvent",
-      "type": "main",
-      "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'risorse', $id_risorsa$, '$codice_azienda$'::varchar) as play_time_report"
-    },
-    {
-      "type": "preCheck",
-      "operation": "delete",
-      "queryString": "select prog_revisione from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$;",
-      "messageNotNull": "Esiste almeno un file associato al flusso informativo in oggetto! Cancellare prima i singoli file della cartella"
-    },
-    {
-      "type": "main",
-      "operation": "delete",
-      "queryString": "delete from entrasp.cdms_risorse where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$"
-    }
-  ]
+    ]
 }

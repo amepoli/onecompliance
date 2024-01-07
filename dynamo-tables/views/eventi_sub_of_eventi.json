@@ -1,100 +1,103 @@
 {
-	"$schema": "../views.schema.json",
-	"entryKey": "eventi_sub_of_eventi",
-	"inheritsFrom": "argomenti_sub_of_argomenti_son",
-	"predefinedQueries": [
-		{
-			"operation": "selectTable",
-			"type": "main",
-			"queryString": "select *, true as delete_argomenti_son, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$"
-		}
-	],
-	"form_keys": [
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "number",
-				"viewType": "input"
-			},
-			"isHidden": true,
-			"isPrimary": true,
-			"key": "id_argomento_father",
-			"label": "id_argomento_father",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417 and id_argomento != $id_argomento_father$;",
-				"options": [],
-				"viewType": "combobox",
-				"dataType": "text"
-			},
-			"isHidden": false,
-			"isPrimary": true,
-			"key": "id_argomento_son",
-			"label": "Sotto-evento",
-			"readOnly": false,
-			"newLine": false
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "codice",
-			"queryFunct": "select codice from entrasp.argomenti where id_argomento=$id_argomento_son$",
-			"label": "Codice",
-      "translate": "RESOURCES.code",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"dataType": "text",
-				"viewType": "input"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "descrizione_breve",
-			"label": "Descrizione Breve",
+    "$schema": "../views.schema.json",
+    "entryKey": "eventi_sub_of_eventi",
+    "inheritsFrom": "argomenti_sub_of_argomenti_son",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select *, true as delete_argomenti_son, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father$"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_father",
+            "label": "id_argomento_father",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "translate": "RESOURCES.id_argomento_father"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son WHERE id_argomento_father = 45417 and id_argomento != $id_argomento_father$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_son",
+            "label": "Sotto-evento",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_argomento_son"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice",
+            "queryFunct": "select codice from entrasp.argomenti where id_argomento=$id_argomento_son$",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Descrizione Breve",
             "translate": "RESOURCES.short_description",
-			"queryFunct": "select descrizione_breve from entrasp.argomenti where id_argomento=$id_argomento_son$",
-			"newLine": false,
-			"readOnly": false,
-			"size": 1.5
-		},
-		{
-			"autoGenerate": false,
-			"format": {
-				"viewType": "button"
-			},
-			"isHidden": true,
-			"isPrimary": false,
-			"key": "dettaglio",
-			"label": "Dettaglio",
-			"newLine": true,
-			"outputEvent": {
-				"eventName": "argomenti_dettaglio",
-				"eventTrigger": "press"
-			},
-			"style": {
-				"background_color": "#25599C",
-				"font_color": "white"
-			},
-			"readOnly": false,
-			"size": 2.5,
-			"sameOrigin": false
-		}
-	],
-	"restrictions": {
-		"preventNavigationToForm": true
-	}
+            "queryFunct": "select descrizione_breve from entrasp.argomenti where id_argomento=$id_argomento_son$",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "dettaglio",
+            "label": "Dettaglio",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "argomenti_dettaglio",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "size": 2.5,
+            "sameOrigin": false,
+            "translate": "RESOURCES.dettaglio"
+        }
+    ],
+    "restrictions": {
+        "preventNavigationToForm": true
+    }
 }

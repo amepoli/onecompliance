@@ -1,638 +1,660 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "asset",
-  "origin": "entrasp.asset",
-  "businessObjectName": "asset",
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "codice_part",
-      "label": "codice_part",
-      "translate": "RESOURCES.partition_code",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",
-      "readOnly": true
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_asset",
-      "label": "ID Asset",
-      "readOnly": true,
-      "newLine": false,
-      "size": 0.9
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "codice_asset",
-      "label": "Codice",
-      "translate": "RESOURCES.code",
-      "readOnly": false,
-      "size": 1.2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "numero_matricola",
-      "label": "Numero Matricola",
-      "readOnly": false,
-      "size": 1.3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_asset AS id, id_asset||' - '||descrizione AS name FROM entrasp.asset WHERE codice_azienda=$codice_azienda$ and id_asset!=£id_asset£;",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_asset_parent",
-      "label": "Asset Parent",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2.2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father in (3391,3392,3393,3394,3395,3396,3397) order by descrizione"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_asset",
-      "label": "Tipo Asset",
-      "readOnly": false,
-      "newLine": false,
-      "size": 2.2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "options": [],
-        "value": "A",
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ASSET'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "readOnly": false,
-      "size": 2.2
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "titolo",
-      "label": "Titolo",
-      "translate": "RESOURCES.title",
-      "size": 6.6,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "criteri_accettazione",
-      "label": "Criteri di accettazione",
-      "size": 1.65,
-      "readOnly": false,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_centro_gest AS id, descrizione AS name FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox",
-        "validations": [
-          {
-            "message": "Centro gestionale mancante",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_centro_gest",
-      "label": "Centro Gestionale",
-      "translate": "RESOURCES.office",
-      "newLine": true,
-      "readOnly": false,
-      "size": 1.65
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "size": 6.6,
-      "readOnly": false,
-      "newLine": true
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_inizio_validita",
-      "label": "Data Inizio Validità",
-      "newLine": false,
-      "size": 3.3,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "date",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "data_fine_validita",
-      "label": "Data Fine Validità",
-      "newLine": false,
-      "size": 3.3,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=45109 order by descrizione"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_tipo_controllo_periodico",
-      "label": "Tipo controllo",
-      "readOnly": false,
-      "newLine": true,
-      "size": 3.3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_proprietario",
-      "size": 3.3,
-      "label": "Proprietario",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_fornitore",
-      "size": 3.3,
-      "label": "Fornitore",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": true,
-      "key": "locazione_asset",
-      "label": "Ubicazione Asset",
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "id_contratto",
-      "label": "Contratto",
-      "readOnly": false,
-      "size": 3.3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "newLine": false,
-      "key": "contatti_assistenza",
-      "label": "Contatti Assistenza",
-      "readOnly": false,
-      "size": 3.3
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "interval_value",
-      "label": "Unità misura intervalli (days, weeks, months)",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.7
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "interval_multiplier",
-      "label": "Numero intervalli",
-      "translate": "interval_multiplier",
-      "newLine": true,
-      "readOnly": false,
-      "size": 1.7
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_responsabile_gestore",
-      "size": 3.3,
-      "label": "Responsabile Gestore",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_responsabile_interno",
-      "size": 3.3,
-      "label": "Responsabile Interno",
-      "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "combobox",
-        "options": [],
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CREDENZIALI'"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_tipo_credenziali",
-      "label": "Credenziali di accesso",
-      "size": 3.3,
-      "newLine": true,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "text"
-      },
-      "label": "object_key",
-      "key": "object_key",
-      "queryFunct": "codice_azienda||'|'||id_asset",
-      "readOnly": false,
-      "isHidden": true,
-      "isPrimary": false,
-      "newLine": false
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_asset",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "codice_asset",
-      "label": "Codice",
-      "translate": "RESOURCES.code"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_asset_parent",
-      "label": "ID"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "width": "60%",
-      "style": [
+    "$schema": "../views.schema.json",
+    "entryKey": "asset",
+    "origin": "entrasp.asset",
+    "businessObjectName": "asset",
+    "form_keys": [
         {
-          "value": "*",
-          "font_size": "medium",
-          "font_weight": "590"
-        }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "id_tipo_asset",
-      "label": "ID_tipo_Asset"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_asset_descr",
-      "queryFunct": "entrasp.argomenti_descr(id_tipo_asset)",
-      "label": "Tipo Asset"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "stato",
-      "label": "Stato",
-      "translate": "RESOURCES.status"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "stato_asset_descr",
-      "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ASSET', stato)",
-      "label": "Stato",
-      "translate": "RESOURCES.status",
-      "width": "10%",
-      "style": [
-        {
-          "value": "Attivo",
-          "font_color": "white",
-          "font_weight": "500",
-          "background_color": "royalblue",
-          "text_align": "center"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code",
+            "readOnly": true
         },
         {
-          "value": "Dismesso",
-          "font_color": "DarkRed",
-          "font_weight": "500",
-          "background_color": "orange",
-          "text_align": "center"
-        }
-      ]
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "cpl_trattamenti_dati_sub_of_asset",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true
         },
         {
-          "parent": "id_asset",
-          "son": "id_asset"
-        }
-      ],
-      "label": "Trattamento Dati"
-    },
-    {
-      "entryKey": "anagrafiche_sub_of_asset",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_asset",
+            "label": "ID Asset",
+            "readOnly": true,
+            "newLine": false,
+            "size": 0.9,
+            "translate": "RESOURCES.id_asset"
         },
         {
-          "parent": "id_asset",
-          "son": "id_asset"
-        }
-      ],
-      "label": "Utenti Abilitati"
-    },
-    {
-      "entryKey": "asset_sub_asset",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "codice_asset",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "readOnly": false,
+            "size": 1.2
         },
         {
-          "parent": "id_asset",
-          "son": "id_asset_parent"
-        }
-      ],
-      "label": "Sotto Asset"
-    },
-    {
-      "entryKey": "sondaggi_somministrati_sub_of_asset",
-      "isHidden": false,
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "numero_matricola",
+            "label": "Numero Matricola",
+            "readOnly": false,
+            "size": 1.3,
+            "translate": "RESOURCES.numero_matricola"
         },
         {
-          "parent": "object_key",
-          "son": "object_key"
-        }
-      ],
-      "label": "Valutazioni asset"
-    },
-    {
-      "entryKey": "consuntivazioni_sub_of_asset",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_asset AS id, id_asset||' - '||descrizione AS name FROM entrasp.asset WHERE codice_azienda=$codice_azienda$ and id_asset!=£id_asset£;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_asset_parent",
+            "label": "Asset Parent",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2.2,
+            "translate": "RESOURCES.id_asset_parent"
         },
         {
-          "parent": "id_asset",
-          "son": "id_asset"
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father in (3391,3392,3393,3394,3395,3396,3397) order by descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_asset",
+            "label": "Tipo Asset",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2.2,
+            "translate": "RESOURCES.id_tipo_asset"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "value": "A",
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_ASSET'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "readOnly": false,
+            "size": 2.2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo",
+            "translate": "RESOURCES.title",
+            "size": 6.6,
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "criteri_accettazione",
+            "label": "Criteri di accettazione",
+            "size": 1.65,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.criteri_accettazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, descrizione AS name FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Centro gestionale mancante",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "newLine": true,
+            "readOnly": false,
+            "size": 1.65
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "size": 6.6,
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_inizio_validita",
+            "label": "Data Inizio Validità",
+            "newLine": false,
+            "size": 3.3,
+            "readOnly": false,
+            "translate": "RESOURCES.data_inizio_validita"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "label": "Data Fine Validità",
+            "newLine": false,
+            "size": 3.3,
+            "readOnly": false,
+            "translate": "RESOURCES.data_fine_validita"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=45109 order by descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo_controllo_periodico",
+            "label": "Tipo controllo",
+            "readOnly": false,
+            "newLine": true,
+            "size": 3.3,
+            "translate": "RESOURCES.id_tipo_controllo_periodico"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_proprietario",
+            "size": 3.3,
+            "label": "Proprietario",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_proprietario"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_fornitore",
+            "size": 3.3,
+            "label": "Fornitore",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_fornitore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "locazione_asset",
+            "label": "Ubicazione Asset",
+            "readOnly": false,
+            "translate": "RESOURCES.locazione_asset"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "id_contratto",
+            "label": "Contratto",
+            "readOnly": false,
+            "size": 3.3,
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "contatti_assistenza",
+            "label": "Contatti Assistenza",
+            "readOnly": false,
+            "size": 3.3,
+            "translate": "RESOURCES.contatti_assistenza"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_value",
+            "label": "Unità misura intervalli (days, weeks, months)",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.7,
+            "translate": "RESOURCES.interval_value"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interval_multiplier",
+            "label": "Numero intervalli",
+            "translate": "interval_multiplier",
+            "newLine": true,
+            "readOnly": false,
+            "size": 1.7
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_responsabile_gestore",
+            "size": 3.3,
+            "label": "Responsabile Gestore",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_responsabile_gestore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_responsabile_interno",
+            "size": 3.3,
+            "label": "Responsabile Interno",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.id_responsabile_interno"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CREDENZIALI'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_tipo_credenziali",
+            "label": "Credenziali di accesso",
+            "size": 3.3,
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.codice_tipo_credenziali"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "object_key",
+            "key": "object_key",
+            "queryFunct": "codice_azienda||'|'||id_asset",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.object_key"
         }
-      ],
-      "label": "Aggiornamenti",
-      "translate": "RESOURCES.updates"
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "id_asset",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID Asset",
-      "newLine": false,
-      "queryCond": "id_asset=$id_asset$"
-    },
-    {
-      "fieldName": "id_tipo_asset",
-      "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_ASSET';",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "label": "Tipo Asset",
-      "newLine": false,
-      "queryCond": "mt.id_tipo_asset=$id_id_tipo_asset$"
-    },
-    {
-      "fieldName": "parola_search",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Parola chiave",
-      "translate": "RESOURCES.key_word",
-      "newLine": true,
-      "queryCond": "upper(descrizione) like '%'||upper('€parola_search€')||'%'"
-    },
-    {
-      "fieldName": "flag_principali",
-      "format": {
-        "value": "0",
-        "viewType": "checkbox"
-      },
-      "label": "Solo Principali",
-      "translate": "RESOURCES.main_only",
-      "newLine": false,
-      "queryCond": "id_asset_parent IS null"
-    }
-  ],
-  "hideActions": [
-    {
-      "viewType": "form",
-      "formActionType": "attachments"
-    }
-  ]
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_asset",
+            "label": "ID",
+            "translate": "RESOURCES.id_asset"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_asset",
+            "label": "Codice",
+            "translate": "RESOURCES.code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_asset_parent",
+            "label": "ID",
+            "translate": "RESOURCES.id_asset_parent"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "width": "60%",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "590"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_asset",
+            "label": "ID_tipo_Asset",
+            "translate": "RESOURCES.id_tipo_asset"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_asset_descr",
+            "queryFunct": "entrasp.argomenti_descr(id_tipo_asset)",
+            "label": "Tipo Asset",
+            "translate": "RESOURCES.tipo_asset_descr"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "translate": "RESOURCES.status"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato_asset_descr",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ASSET', stato)",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "width": "10%",
+            "style": [
+                {
+                    "value": "Attivo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Dismesso",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                }
+            ]
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "cpl_trattamenti_dati_sub_of_asset",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_asset",
+                    "son": "id_asset"
+                }
+            ],
+            "label": "Trattamento Dati"
+        },
+        {
+            "entryKey": "anagrafiche_sub_of_asset",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_asset",
+                    "son": "id_asset"
+                }
+            ],
+            "label": "Utenti Abilitati"
+        },
+        {
+            "entryKey": "asset_sub_asset",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_asset",
+                    "son": "id_asset_parent"
+                }
+            ],
+            "label": "Sotto Asset"
+        },
+        {
+            "entryKey": "sondaggi_somministrati_sub_of_asset",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "object_key",
+                    "son": "object_key"
+                }
+            ],
+            "label": "Valutazioni asset"
+        },
+        {
+            "entryKey": "consuntivazioni_sub_of_asset",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_asset",
+                    "son": "id_asset"
+                }
+            ],
+            "label": "Aggiornamenti",
+            "translate": "RESOURCES.updates"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_asset",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Asset",
+            "newLine": false,
+            "queryCond": "id_asset=$id_asset$"
+        },
+        {
+            "fieldName": "id_tipo_asset",
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_ASSET';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo Asset",
+            "newLine": false,
+            "queryCond": "mt.id_tipo_asset=$id_id_tipo_asset$"
+        },
+        {
+            "fieldName": "parola_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parola chiave",
+            "translate": "RESOURCES.key_word",
+            "newLine": true,
+            "queryCond": "upper(descrizione) like '%'||upper('€parola_search€')||'%'"
+        },
+        {
+            "fieldName": "flag_principali",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
+            "translate": "RESOURCES.main_only",
+            "newLine": false,
+            "queryCond": "id_asset_parent IS null"
+        }
+    ],
+    "hideActions": [
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        }
+    ]
 }

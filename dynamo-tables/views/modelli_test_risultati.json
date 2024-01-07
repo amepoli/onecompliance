@@ -1,378 +1,386 @@
 {
-  "$schema": "../views.schema.json",
-  "entryKey": "modelli_test_risultati",
-  "origin": "entrasp.modelli_test_risultati",
-  "businessObjectName": "modelliTestRisultati",
-  "label": "Criteri d'analisi",
-  "table_multiselection_actions": [
-    {
-      "viewType": "menu",
-      "key": "menumt",
-      "label": "Actions",
-      "icon": "more_vert",
-      "menuOptions": [
+    "$schema": "../views.schema.json",
+    "entryKey": "modelli_test_risultati",
+    "origin": "entrasp.modelli_test_risultati",
+    "businessObjectName": "modelliTestRisultati",
+    "label": "Criteri d'analisi",
+    "table_multiselection_actions": [
         {
-          "key": "unifica",
-          "icon": "merge_type",
-          "label": "Unifica criteri",
-          "query": "select entrasp.unifica_criteri_analisi(array[$selected_rows_data$])",
-          "confirmAction": true,
-          "reloadOnSuccess": true,
-          "confirmActionMessage": "Unificare i criteri selezionati?"
+            "viewType": "menu",
+            "key": "menumt",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "unifica",
+                    "icon": "merge_type",
+                    "label": "Unifica criteri",
+                    "query": "select entrasp.unifica_criteri_analisi(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Unificare i criteri selezionati?"
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "predefinedQueries": [
-    {
-      "type": "main",
-      "operation": "share",
-      "queryString": "select entrasp.grc_accoda_criteri('$codice_azienda$'::varchar, '$chosen_azienda$'::varchar,$id_risultato$::numeric);"
-    },
-    {
-      "type": "main",
-      "operation": "share",
-      "queryString": "select entrasp.grc_accoda_criteri('$codice_azienda$'::varchar, '$chosen_azienda$'::varchar,$id_risultato$::numeric);"
-    }
-  ],
-  "form_keys": [
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",	  "newLine": false,
-      "readOnly": false
-    },
-    {
-      "autoGenerate": true,
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_risultato",
-      "inputEvents": [
+    ],
+    "predefinedQueries": [
         {
-          "eventName": "criterio_duplica",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "successMessage": "Duplicato!",
-          "queryFunct": "select entrasp.grc_accoda_criteri($codice_azienda$::varchar, $codice_azienda$::varchar,$id_risultato$::numeric) as id_risultato;"
-        }
-      ],
-      "label": "#",
-      "newLine": false,
-      "readOnly": true,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "newLine": false,
-      "readOnly": false,
-      "size": 3.0
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
-        "dataType": "number",
-        "options": [],
-        "viewType": "combobox",
-        "value": "1"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo_calcolo",
-      "label": "Tipo calcolo risultato sintetico",
-      "newLine": false,
-      "readOnly": false,
-      "size": 3.33
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_valore_significativo",
-      "label": "Usa valore significativo?",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "boolean",
-        "viewType": "checkbox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "flag_pct_risultato_inverso",
-      "label": "Inverti soglie",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.0
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "menu",
-        "menuOptions": [
-          {
-            "icon": "class",
-            "label": "Crea e associa argomento",
-            "translate": "RESOURCES.create_and_associate_tag",
-            "translate": "RESOURCES.create_and_associate_tag",
-            "outputEventName": "create_associate_argomento"
-          },
-          {
-            "icon": "content_copy",
-            "label": "Duplica criterio",
-            "outputEventName": "criterio_duplica"
-          }
-        ]
-      },
-      "inputEvents": [
+            "type": "main",
+            "operation": "share",
+            "queryString": "select entrasp.grc_accoda_criteri('$codice_azienda$'::varchar, '$chosen_azienda$'::varchar,$id_risultato$::numeric);"
+        },
         {
-          "eventName": "create_associate_argomento",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "outputEventWhenComplete": "reload_modelli_test_risultati",
-          "queryFunct": "select entrasp.argomenti_create_and_update_risultati($codice_azienda$, $id_risultato$, $descrizione$, $descrizione$ , $id_risultato$::varchar, 49800)"
+            "type": "main",
+            "operation": "share",
+            "queryString": "select entrasp.grc_accoda_criteri('$codice_azienda$'::varchar, '$chosen_azienda$'::varchar,$id_risultato$::numeric);"
         }
-      ],
-      "isHidden": false,
-      "isPrimary": false,
-      "buttonIcon": "more_vert",
-      "key": "mtr_actions",
-      "label": "void",
-     	"translate": "RESOURCES.void",
-      "newLine": true,
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 0.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "id_argomento",
-      "label": "Argomento",
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_risultato",
+            "inputEvents": [
+                {
+                    "eventName": "criterio_duplica",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Duplicato!",
+                    "queryFunct": "select entrasp.grc_accoda_criteri($codice_azienda$::varchar, $codice_azienda$::varchar,$id_risultato$::numeric) as id_risultato;"
+                }
+            ],
+            "label": "#",
+            "newLine": false,
+            "readOnly": true,
+            "size": 0.5,
+            "translate": "RESOURCES.id_risultato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.0
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT cast(codice as numeric) as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_CALCOLO_RISULTATO_SINTETICO'",
+                "dataType": "number",
+                "options": [],
+                "viewType": "combobox",
+                "value": "1"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_calcolo",
+            "label": "Tipo calcolo risultato sintetico",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.33,
+            "translate": "RESOURCES.tipo_calcolo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_valore_significativo",
+            "label": "Usa valore significativo?",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1,
+            "translate": "RESOURCES.flag_valore_significativo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "boolean",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_pct_risultato_inverso",
+            "label": "Inverti soglie",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.0,
+            "translate": "RESOURCES.flag_pct_risultato_inverso"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "class",
+                        "label": "Crea e associa argomento",
+                        "translate": "RESOURCES.create_and_associate_tag",
+                        "outputEventName": "create_associate_argomento"
+                    },
+                    {
+                        "icon": "content_copy",
+                        "label": "Duplica criterio",
+                        "outputEventName": "criterio_duplica"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "reload_modelli_test_risultati",
+                    "queryFunct": "select entrasp.argomenti_create_and_update_risultati($codice_azienda$, $id_risultato$, $descrizione$, $descrizione$ , $id_risultato$::varchar, 49800)"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "mtr_actions",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti where flag_classificazione =false order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Argomento",
             "translate": "RESOURCES.tag",
-            "translate":"RESOURCES.tag",
-      "readOnly": false,
-      "size": 3.33,
-      "newLine": false
-    }
-  ],
-  "search_keys": [
-    {
-      "fieldName": "codice_azienda",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "codice_azienda",
-      "translate": "RESOURCES.company_code",	  "newLine": false,
-      "queryCond": "codice_azienda=$codice_azienda$"
-    },
-    {
-      "fieldName": "id_risultato",
-      "format": {
-        "dataType": "number",
-        "viewType": "input"
-      },
-      "label": "ID",
-      "newLine": true,
-      "queryCond": "id_risultato=$id_risultato$"
-    },
-    {
-      "fieldName": "descrizione",
-      "format": {
-        "dataType": "text",
-        "viewType": "input"
-      },
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "newLine": false,
-      "queryCond": "descrizione=$descrizione$"
-    },
-    {
-      "fieldName": "id_tipo_risultato",
-      "format": {
-        "comboQuery": "SELECT id_tipo_risultato AS id, descrizione AS name  FROM entrasp.tipi_modelli_test_risultati WHERE codice_azienda=$codice_azienda$;",
-        "options": [],
-        "viewType": "combobox"
-      },
-       "label": "Criterio di analisi",
+            "readOnly": false,
+            "size": 3.33,
+            "newLine": false
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "codice_azienda",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": false,
+            "queryCond": "codice_azienda=$codice_azienda$"
+        },
+        {
+            "fieldName": "id_risultato",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID",
+            "newLine": true,
+            "queryCond": "id_risultato=$id_risultato$"
+        },
+        {
+            "fieldName": "descrizione",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "newLine": false,
+            "queryCond": "descrizione=$descrizione$"
+        },
+        {
+            "fieldName": "id_tipo_risultato",
+            "format": {
+                "comboQuery": "SELECT id_tipo_risultato AS id, descrizione AS name  FROM entrasp.tipi_modelli_test_risultati WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Criterio di analisi",
             "translate": "RESOURCES.analysis_criterion",
-      "newLine": false,
-      "queryCond": "id_tipo_risultato=$id_tipo_risultato$"
-    }
-  ],
-  "subTables": [
-    {
-      "entryKey": "modelli_test_risultati_righe_sub",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
-        },
-        {
-          "parent": "id_risultato",
-          "son": "id_risultato"
-        },
-        {
-          "parent": "id_tipo_risultato",
-          "son": "id_tipo_risultato"
+            "newLine": false,
+            "queryCond": "id_tipo_risultato=$id_tipo_risultato$"
         }
-      ],
-      "label": "Soglie",
-      "type": "table"
-    },
-    {
-      "entryKey": "modelli_test_vr_sub_of_modelli_test_risultati",
-      "keys": [
+    ],
+    "subTables": [
         {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "entryKey": "modelli_test_risultati_righe_sub",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_risultato",
+                    "son": "id_risultato"
+                },
+                {
+                    "parent": "id_tipo_risultato",
+                    "son": "id_tipo_risultato"
+                }
+            ],
+            "label": "Soglie",
+            "type": "table"
         },
         {
-          "parent": "id_risultato",
-          "son": "id_risultato"
-        }
-      ],
-      "label": "Modelli di verifica associati",
-      "type": "table"
-    },
-    {
-      "entryKey": "sondaggi",
-      "keys": [
-        {
-          "parent": "codice_azienda",
-          "son": "codice_azienda"
+            "entryKey": "modelli_test_vr_sub_of_modelli_test_risultati",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_risultato",
+                    "son": "id_risultato"
+                }
+            ],
+            "label": "Modelli di verifica associati",
+            "type": "table"
         },
         {
-          "parent": "id_risultato",
-          "son": "id_risultato"
-        }
-      ],
-       "label": "Sondaggi Associati",
+            "entryKey": "sondaggi",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_risultato",
+                    "son": "id_risultato"
+                }
+            ],
+            "label": "Sondaggi Associati",
             "translate": "RESOURCES.associate_survey",
-      "type": "table"
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_azienda",
-      "label": "codice_azienda",
-   "translate": "RESOURCES.company_code"  },{
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_risultato",
-      "label": "#",
-      "width": "7%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione",
-      "label": "Criterio",
-      "style": [
-        {
-          "value": "*",
-          "font_weight": "500"
+            "type": "table"
         }
-      ]
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": false,
-      "key": "stato",
-      "label": "Stato",
-      "translate": "RESOURCES.status"
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_risultato",
+            "label": "#",
+            "width": "7%",
+            "translate": "RESOURCES.id_risultato"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Criterio",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "500"
+                }
+            ],
+            "translate": "RESOURCES.descrizione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "translate": "RESOURCES.status"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "reload_modelli_test_risultati"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "multi-attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "import_export",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "documentation",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "import_export",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_risultato desc"
     }
-  ],
-  "inputEvents": [
-    {
-      "actionType": "reload",
-      "eventName": "reload_modelli_test_risultati"
-    }
-  ],
-  "hideActions": [
-    {
-      "formActionType": "attachments",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "multi-attachments",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "startEvent",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "stopEvent",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "import_export",
-      "viewType": "form"
-    },
-    {
-      "formActionType": "documentation",
-      "viewType": "form"
-    },
-    {
-      "tableActionType": "import_export",
-      "viewType": "table"
-    },
-    {
-      "tableActionType": "add",
-      "viewType": "table"
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by id_risultato desc"
-  }
 }
