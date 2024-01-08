@@ -1465,7 +1465,7 @@ export const locale = {
             user_upd: '',
             user_update: '',
             userid: 'User ID',
-            username: '',
+            username: 'Username',
             usernames: 'Usernames array',
             users_actions: ' ',
             ute_ins: 'ute_ins',
