@@ -662,7 +662,7 @@ export const locale = {
             id_administration: 'ID Somministrazione',
             id_anagrafica: 'IdAnagrafica',
             id_anagrafica_assegnataria: 'Assegnato a',
-            id_centro_costi:'ID Centro Costi',
+            id_centro_costo:'ID Centro Costi',
             id_anagrafica_beneficiario: 'Anagrafica Beneficiario',
             id_anagrafica_conn: 'Anagrafica connessa',
             id_anagrafica_ctp: 'Anagrafica Controparte',
