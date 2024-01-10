@@ -3,51 +3,6 @@
     "businessObjectName": "compiti_centri_costo",
     "origin": "entrasp.compiti_centri_costo",
     "entryKey": "compiti_sub_of_centri_costo",
-    "table_keys": [
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.codice_azienda"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "id_centro_costo",
-            "width": "7%",
-            "label": "ID Centro Costo",
-            "translate": "RESOURCES.id_centro_costo"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "codice_compito",
-            "width": "48%",
-            "label": "Codice Compito",
-            "translate": "RESOURCES.codice_compito"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "width": "15%",
-            "key": "codice_azienda_compiti",
-            "label": "Cliente",
-            "translate": "RESOURCES.Cliente"
-        }
-    ],
     "form_keys": [
         {
             "format": {
@@ -66,7 +21,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "key": "id_centro_costo",
             "readOnly": true,
@@ -76,31 +31,92 @@
         {
             "format": {
                 "viewType": "combobox",
-                "comboQuery": "SELECT ragione_sociale AS id, codice_azienda AS name FROM entrasp.aziende;",
-                "options": []
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende order by codice_azienda;",
+                "options": [],
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": true,
-            "readOnly": true,
+            "readOnly": false,
+            "newLine": false,
+            "size": 2,
             "key": "codice_azienda_compiti",
             "label": "Cliente",
             "translate": "RESOURCES.Cliente"
         },
         {
             "format": {
-                "dataType": "text",
-                "viewType": "input"
+                "viewType": "combobox",
+                "comboQuery": "SELECT codice_compito AS id, codice_compito||'-'||titolo AS name FROM entrasp.compiti where codice_azienda='£codice_azienda_compiti£' order by titolo;",
+                "options": [],
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": true,
             "key": "codice_compito",
-            "readOnly": true,
+            "size": 8,
+            "readOnly": false,
+            "label": "Compito",
+            "translate": "RESOURCES.compito"
+        }   
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_centro_costo",
+            "width": "7%",
+            "label": "ID Centro Costo",
+            "translate": "RESOURCES.id_centro_costo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "15%",
+            "key": "codice_azienda_compiti",
+            "label": "Cliente",
+            "translate": "RESOURCES.Cliente"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "descrizione",
+            "width": "48%",
+            "label": "Compito",
+            "queryFunct": "entrasp.compito_titolo(codice_azienda_compiti, codice_compito)",
+            "translate": "RESOURCES.codice_compito"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_compito",
+            "width": "48%",
             "label": "Codice Compito",
             "translate": "RESOURCES.codice_compito"
         }
-        
     ],
-
     "hideActions": [
         {
             "tableActionType": "add",
@@ -110,5 +126,6 @@
             "formActionType": "add",
             "viewType": "form"
         }
-    ]
+    ],
+    "querySuffixes": {"tableViewSuffix": "order by codice_azienda_compiti"}
 }
