@@ -129,6 +129,7 @@ export const locale = {
     hide_valutazione_rischi_k: 'Hide details',
     id_administration: 'ID Administration',
     id_anagrafica_societa: 'Company/Group Customer',
+    id_centro_costo:'ID Cost Center',
     id_argomento: 'ID Tag',
     id_argomento_frequenza: 'Frequency',
     id_argomento_interval_value: 'Interval Measurement Unit',
