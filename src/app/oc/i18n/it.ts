@@ -625,7 +625,7 @@ export const locale = {
             flag_testo_chiaro: "Testo Chiaro",
             flag_trattamento_conto_terzi: "Trattamento conto Terzi",
             flag_valore_significativo: "Usa valore significativo?",
-            flag_workflow: "Gestione versioni",
+            flag_workflow: "Workflow",
             flags_sezioni_activate: "flags_sezioni_activate",
             flags_sezioni_multi: "flags_sezioni_multi",
             foglio: "Foglio",
