@@ -3,6 +3,13 @@
     "entryKey": "tranche_sub_of_contratti",
     "origin": "entrasp.tranche",
     "businessObjectName": "tranche",
+    "define": {
+        "is_hidden_cessione": "false",
+        "is_hidden_interessi": "true",
+        "is_hidden_mandato": "true",
+        "is_hidden_tranche": "false",
+        "is_sameOrigin": "true"
+    },
     "form_keys": [
         {
             "autoGenerate": false,
@@ -24,7 +31,7 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": "$Q{is_hidden_cessione}",         
             "isPrimary": true,
             "key": "id_contratto",
             "label": "ID Contratto",
@@ -47,6 +54,39 @@
             "translate": "RESOURCES.tranche"
         }
     ],
+    "subTables": [
+    {
+        "label": "Cessioni",
+        "entryKey": "crediti_ceduti",
+        "keys": [
+            {
+                "parent": "id_contratto",
+                "son": "id_contratto"
+            },
+            {
+                "parent": "tranche",
+                "son": "tranche"
+            },
+            {
+                "parent": "codice_azienda",
+                "son": "codice_azienda"
+            }
+        ]
+    }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_contratto_s",
+            "format": {
+                "comboQuery": "SELECT id_contratto AS id, entrasp.contratti_descr_completa(id_contratto, codice_azienda) AS name FROM entrasp.contratti WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Contratto N.",
+            "newLine": false,
+            "queryCond": "id_contratto=$id_contratto_s$"
+        }
+    ],
     "table_keys": [
         {
             "format": {
@@ -63,26 +103,40 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": "$Q{is_hidden_cessione}",
             "isPrimary": true,
             "key": "id_contratto",
             "label": "ID Contratto",
+            "width": "5%",
             "translate": "RESOURCES.id_contratto"
         },
         {
             "format": {
                 "dataType": "number"
             },
+            "isHidden": "$Q{is_hidden_cessione}",
+            "isPrimary": false,
+            "key": "descr_contratto",
+            "queryFunct": "entrasp.contratti_descr_completa(id_contratto, codice_azienda)",
+            "label": "ID Contratto",
+            "width": "20%",
+            "translate": "RESOURCES.id_contratto"
+        },
+
+        {
+            "format": {
+                "dataType": "number"
+            },
             "isHidden": false,
             "isPrimary": true,
-            "width": "20%",
+            "width": "5%",
             "key": "tranche",
             "label": "Tranche",
             "translate": "RESOURCES.tranche"
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by tranche"
+        "tableViewSuffix": "order by id_contratto, tranche limit 200"
     },
     "hideActions": [
         {
@@ -98,4 +152,4 @@
             "formActionType": "attachments"
         }
     ]
-}
+    }
