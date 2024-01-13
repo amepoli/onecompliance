@@ -31,11 +31,28 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "isHidden": "$Q{is_hidden_cessione}",         
+            "isHidden": false,         
             "isPrimary": true,
             "key": "id_contratto",
             "label": "ID Contratto",
             "readOnly": false,
+            "size": 1.5,
+            "newLine": false,
+            "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,         
+            "isPrimary": true,
+            "key": "descr_contratto",
+            "label": "Contratto",
+            "queryFunct": "entrasp.contratti_descr_completa(id_contratto, codice_azienda)",
+            "readOnly": true,
+            "size": 7,
             "newLine": false,
             "translate": "RESOURCES.id_contratto"
         },
@@ -47,6 +64,7 @@
             },
             "isHidden": false,
             "isPrimary": true,
+            "size": 1.5,
             "key": "tranche",
             "label": "Tranche",
             "readOnly": false,
@@ -57,7 +75,7 @@
     "subTables": [
     {
         "label": "Cessioni",
-        "entryKey": "crediti_ceduti",
+        "entryKey": "crediti_ceduti_sub_of_tranche",
         "keys": [
             {
                 "parent": "id_contratto",
@@ -136,7 +154,7 @@
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by id_contratto, tranche limit 200"
+        "tableViewSuffix": "order by id_contratto desc, tranche limit 200"
     },
     "hideActions": [
         {
