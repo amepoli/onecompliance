@@ -68,13 +68,20 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     if(_this.isMultiSelect || _this.showTagsView)
     { 
       _this.field.value = _this.field.value != null ? (Array.isArray(_this.field.value) ? _this.field.value :_this.field.value.includes("[") ? JSON.parse( _this.field.value) : [_this.field.value]) : null;
-      // if(_this.field.options && _this.field.value && _this.field.options.length != _this.field.value.length)
-      // {
-      //   _this.field.value = ["3449"];
-      // }
+      if(_this.field.options && _this.field.options[0] != null && _this.field.value && _this.field.options.length != _this.field.value.length)
+      {
+        let newValue = [];
+        _this.field.value.forEach(element => {
+          if(_this.field.options.some(option=> option.id == element ))
+          {
+            newValue.push(element)
+          }
+        });
+        _this.field.value = newValue;
+      }
     }
 
-    _this.setOptions((_this.field.options[0] != null ? _this.field.options : null) , false);
+    _this.setOptions((_this.field.options[0] != null ? _this.field.options : []) , false);
     _this.setValue(_this.field.value);
 
     if(_this.showTagsView)
