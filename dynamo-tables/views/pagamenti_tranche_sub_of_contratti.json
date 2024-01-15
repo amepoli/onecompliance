@@ -14,9 +14,9 @@
         "is_hidden_cessione": "false",
         "is_hidden_interessi": "true",
         "is_hidden_mandato": "true",
-        "is_hidden_tranche": "false",
+        "is_hidden_tranche": "true",
         "is_sameOrigin": "true"
-    },   
+    },
     "form_keys": [
         {
             "autoGenerate": false,
@@ -56,7 +56,7 @@
             "key": "id_pagamento",
             "label": "ID Pagamento",
             "readOnly": true,
-            "size": 2.5,
+            "size": 0.5,
             "translate": "RESOURCES.id_pagamento"
         },
         {
@@ -77,7 +77,7 @@
             "key": "data_pagamento",
             "label": "Data Pagamento",
             "newLine": false,
-            "size": 2.5,
+            "size": 1.5,
             "readOnly": false,
             "translate": "RESOURCES.data_pagamento"
         },
@@ -96,7 +96,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": true,
+            "newLine": false,
             "key": "importo",
             "label": "Importo",
             "readOnly": false,
@@ -116,29 +116,6 @@
                 }
             ],
             "translate": "RESOURCES.importo"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where arg.id_argomento=51973",
-                "options": [],
-                "validations": [
-                    {
-                        "message": "Causale necessaria",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "id_argomento_tipo_pag",
-            "label": "Causale",
-            "size": 2.5,
-            "readOnly": false,
-            "translate": "RESOURCES.id_argomento_tipo_pag"
         },
         {
             "autoGenerate": false,
@@ -175,39 +152,9 @@
             "key": "id_mandato",
             "label": "N. Mandato",
             "readOnly": false,
-            "size": 2.5,
-            "newLine": false,
+            "size": 1.5,
+            "newLine": true,
             "translate": "RESOURCES.id_mandato"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "interessi",
-            "label": "Interessi Legali",
-            "readOnly": true,
-            "size": 1.5,
-            "newLine": false,
-            "translate": "RESOURCES.interessi"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_scadenza",
-            "label": "Scadenza Credito",
-            "size": 1.5,
-            "readOnly": true,
-            "newLine": false,
-            "translate": "RESOURCES.data_scadenza"
         },
         {
             "autoGenerate": false,
@@ -245,10 +192,25 @@
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "size": 6,
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.note"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": "$Q{is_hidden_tranche}",
+            "isHidden": true,
             "isPrimary": false,
             "newLine": false,
             "key": "tranche",
@@ -264,57 +226,23 @@
                 "viewType": "input"
             },
             "isPrimary": false,
-            "newLine": false,
+            "newLine": true,
             "key": "id_contratto",
             "sameOrigin": "$Q{is_sameOrigin}",
             "label": "ID Contratto",
             "readOnly": true,
             "size": 1.5,
-            "isHidden": "$Q{is_hidden_tranche}"
+            "isHidden": true
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
         },
         {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "percentuale",
-            "label": "Percentuale",
-            "readOnly": true,
-            "size": 1.5,
-            "translate": "RESOURCES.percentuale"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true,
-            "key": "commissione",
-            "label": "Commissione",
-            "readOnly": true,
-            "size": 1.5,
-            "translate": "RESOURCES.commissione"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "note",
-            "label": "Note",
-            "readOnly": false,
-            "newLine": true,
-            "translate": "RESOURCES.note"
+            "tableActionType": "add",
+            "viewType": "table"
         }
     ]
 }
