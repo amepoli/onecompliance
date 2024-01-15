@@ -224,10 +224,8 @@ export const locale = {
             codpro: "Cod.Prov",
             cognome: "cognome",
             cognome_nome_esecutore: "Denominazione",
-            cognome_nome_rag_sociale_ben:
-                "Cognome Nome / Ragione Sociale Beneficiario",
-            cognome_nome_rag_sociale_soggetto:
-                "Nome e Cognome / Ragione Sociale",
+            cognome_nome_rag_sociale_ben: "Cognome Nome / Ragione Sociale Beneficiario",
+            cognome_nome_rag_sociale_soggetto: "Nome e Cognome / Ragione Sociale",
             cointestazioni: "Cointestazioni",
             Collaboratore: "Collaboratore",
             colore: "Colore",
@@ -262,8 +260,7 @@ export const locale = {
             controvalore: "Controvalore",
             convocazione: "Testo della Convocazione",
             copia_da_somministrazione_show_k: "Copia verifica",
-            copia_da_somministrazione_sub_form:
-                "copia_da_somministrazione_sub_form",
+            copia_da_somministrazione_sub_form: "copia_da_somministrazione_sub_form",
             copia_valutazione: "Copia Valutazioni",
             copy: "Copia",
             copy_from_other_check: "Copia da altra Verifica",
@@ -640,8 +637,7 @@ export const locale = {
             frequenza: "Frequenza",
             full_name: "Nome",
             gg_scadenza_da_avvio_progetto: "Gg.scad.da avvio prog.",
-            giorni_anticipo_pres_doc:
-                "Giorni di Anticipo per la Documentazione",
+            giorni_anticipo_pres_doc: "Giorni di Anticipo per la Documentazione",
             giorni_compito: "Giorni Impiegati",
             giorni_da_avvio: "Giorni da avvio segnalazione",
             giorni_da_fase_prec: "Giorni da fase precedente",
@@ -742,8 +738,7 @@ export const locale = {
             id_centro_gest: "#",
             id_centro_gest_default: "Centro gestionale di riferimento",
             id_centro_gest_lvl1: "Centro Gestionale Resp. (liv 1)",
-            id_centro_gest_lvl2:
-                "Centro Gestionale Monitoraggio/Segnalante (liv 2)",
+            id_centro_gest_lvl2: "Centro Gestionale Monitoraggio/Segnalante (liv 2)",
             id_centro_gest_monitor: "Centro Gestionale Monitoraggio/Segnalante",
             id_centro_gest_parent: "Centro Gestionale Superiore",
             id_centro_gest_verificato: "Centro gestionale da verificare",
@@ -917,16 +912,14 @@ export const locale = {
             indirizzo: "Indirizzo",
             indirizzo_residenza: "Indirizzo di Residenza",
             input_ai: "Input Ris.Emersi",
-            input_per_verifica:
-                "Input per verifica con intelligenza artificiale",
+            input_per_verifica: "Input per verifica con intelligenza artificiale",
             inserisci_aggiornamento_k: "Inserisci aggiornamento",
             insert_course_participants: "Inserisci partecipanti al corso",
             insert_missing_mins: "Aggiungi minuti mancanti",
             integrate_survey_checks: "Integra verifiche del sondaggio",
             intensita_pre_descrizione: "Impatto Ante Presidi - Descrizione",
             intensita_singola_post: "Impatto Post Presidi",
-            intensita_singola_post_rett_descrizione:
-                "Impatto rettificato - Description",
+            intensita_singola_post_rett_descrizione: "Impatto rettificato - Description",
             intensita_singola_post_rilevata: "Impatto rettificato",
             intensita_singola_pre: "Impatto Ante Presidi",
             intensita_singola_pre_rilevata: "intensita_singola_pre_rilevata",
