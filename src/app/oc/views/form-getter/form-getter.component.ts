@@ -1187,8 +1187,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                         if(combobox.field.value != null)
                                         {
                                             combobox.field.value.forEach(comboValue => {
-
-                                                comboValues.push(comboValue.id)
+                                                if(typeof comboValue === 'object') {
+                                                   if(comboValue.id !== undefined) {
+                                                       comboValues.push(comboValue.id);
+                                                   } 
+                                                }
+                                                else {
+                                                    var possibleValues = result.filter(x => x.id === comboValue);
+                                                    if(possibleValues && possibleValues.length > 0) {
+                                                        comboValues.push(possibleValues[0].id);
+                                                    }
+                                                }
                                             });
                                         }
 
@@ -2296,7 +2305,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 let dataType = typeof (value);
                                 if (dataType == 'string' || dataType == 'number') {
                                     let data: string = '' + value;
-                                    if (data && data.toLowerCase().includes(_this.filter)) {
+                                    if (data && data.toLowerCase().includes('' + _this.filter)) {
                                         add = true;
                                         done = true;
                                     }

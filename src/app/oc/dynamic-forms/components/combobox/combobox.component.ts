@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef, OnChang
 import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { FieldConfig, Item } from 'app/oc/interfaces';
 import { ConsoleLoggerService, PubSubService, ValidationsService } from 'app/oc/services';
-import { debug } from 'console';
 import { ReplaySubject, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 @Component({
@@ -68,14 +67,26 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if(_this.isMultiSelect || _this.showTagsView)
     { 
-      _this.field.value = _this.field.value != null ? (Array.isArray(_this.field.value) ? _this.field.value : [_this.field.value]) : null;
+      _this.field.value = _this.field.value != null ? (Array.isArray(_this.field.value) ? _this.field.value :_this.field.value.includes("[") ? JSON.parse( _this.field.value) : [_this.field.value]) : null;
+      if(_this.field.options && _this.field.options[0] != null && _this.field.value && _this.field.options.length != _this.field.value.length)
+      {
+        let newValue = [];
+        _this.field.value.forEach(element => {
+          if(_this.field.options.some(option=> option.id == element ))
+          {
+            newValue.push(element)
+          }
+        });
+        _this.field.value = newValue;
+      }
     }
-    _this.setOptions(_this.field.options, false);
+
+    _this.setOptions((_this.field.options[0] != null ? _this.field.options : []) , false);
     _this.setValue(_this.field.value);
 
     if(_this.showTagsView)
     {
-      _this.isMultiSelect=true;
+      _this.isMultiSelect = true;
       if(_this.field.value)
       {
         this.tags = _this.field.value.map(fieldValue=>{
@@ -263,21 +274,25 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       _this.field.value.push(event.value);
       _this.tags.push(event.value)
 
-      _this.group.get(_this.field.name).setValue(this.field.value);
+      _this.group.get(_this.field.name).setValue(_this.tags);
       _this.cdr.detectChanges();
-      this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
       _this.filterOptionsBasedOnSelectedTags(_this.field.options)
     }
+    if (_this.field.eventName != null && _this.field.eventTrigger === 'select') {
+      // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+      _this.sendEvent();
+    }
+    _this.lazyLoad();
   }
 
   private filterOptionsBasedOnSelectedTags(options : any)
   {
     const _this = this;
-    let newOptions =  [...options];
+    let newOptions =  options.filter(x => !Array.isArray(x));
     _this.field.value.forEach(field=>{
-    if(newOptions.some(option=> option.id == field.id))
+    if(newOptions.some(option=> option.id == field))
     {
-      let index= newOptions.findIndex(option=> option.id == field.id);
+      let index= newOptions.findIndex(option=> option.id == field);
       if (index > -1) 
       { 
         newOptions.splice(index, 1); 
@@ -306,7 +321,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
         _this.field.value.splice(index, 1); 
       }
     }
-    this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
+    _this.lazyLoad();
     _this.filterOptionsBasedOnSelectedTags(_this.field.options);  
     _this.value = null;
 
@@ -323,10 +338,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onOpen(): void {
-    if (this.field.lazyLoading && !this.isLazyLoaded) {
-      this.isLazyLoading = true;
-      this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
-    }
+    this.lazyLoad();
   }
 
   onClose(): void {
@@ -342,6 +354,13 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   resetSelection() {
     // this.group.get(this.field.name).reset();
+  }
+
+  lazyLoad() {
+    if (this.field.lazyLoading && !this.isLazyLoaded) {
+      this.isLazyLoading = true;
+      this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
+    }
   }
 
   private filterItems() {
@@ -386,15 +405,17 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getFormattedId(id: any): any {
     //return this.field.inputType === 'text' ? `'${id}'` : id;
-    return id;
+    if(this.isMultiSelect || this.showTagsView) {
+      return id && id.length> 0? id.map(x => x.id): [];
+    }
+    else {
+      return id? id.id: null;
+    }
   }
 
   private sendEvent() {
   
-    let value = this.group.get(this.field.name).value != null ? this.getFormattedId(this.group.get(this.field.name).value.id) : null;
-    if (!value) {
-      value = this.field.value && this.field.value.id ? this.field.value.id : null;
-    }
+    let value = this.group.get(this.field.name).value != null ? this.getFormattedId(this.group.get(this.field.name).value) : null;
     this._console.log('value', value);
     this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
 
