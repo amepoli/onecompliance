@@ -3,20 +3,6 @@
     "entryKey": "pagamenti_fascicoli_sub_of_fascicoli",
     "origin": "entrasp.pagamenti_fascicoli",
     "inheritsFrom": "pagamenti",
-    "predefinedQueries": [
-        {
-            "queryString": "select tranche, id_contratto, id_mandato,id_controparte, codice_azienda, id_pagamento, entrasp.argomenti_descr_breve(id_argomento_tipo_pag) as id_argomento_tipo_pag, data_pagamento, importo, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte) as descr_controparte from entrasp.pagamenti_tranche where codice_azienda=$codice_azienda$ and id_argomento_tipo_pag in (51488,51487) and id_contratto=$id_contratto$;",
-            "operation": "selectTable",
-            "type": "main"
-        }
-    ],
-    "define": {
-        "is_hidden_cessione": "false",
-        "is_hidden_interessi": "true",
-        "is_hidden_mandato": "true",
-        "is_hidden_tranche": "true",
-        "is_sameOrigin": "true"
-    },
     "form_keys": [
         {
             "autoGenerate": false,
@@ -132,23 +118,7 @@
             "readOnly": false,
             "newLine": false,
             "translate": "RESOURCES.id_controparte"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
-                "viewType": "combobox",
-                "options": []
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_mandato",
-            "label": "N. Mandato",
-            "readOnly": false,
-            "size": 1.5,
-            "newLine": true,
-            "translate": "RESOURCES.id_mandato"
-        },
+        },      
         {
             "autoGenerate": false,
             "format": {
@@ -196,36 +166,6 @@
             "readOnly": false,
             "newLine": true,
             "translate": "RESOURCES.note"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "tranche",
-            "sameOrigin": "$Q{is_sameOrigin}",
-            "label": "Tranche",
-            "readOnly": true,
-            "size": 1.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isPrimary": false,
-            "newLine": true,
-            "key": "id_contratto",
-            "sameOrigin": "$Q{is_sameOrigin}",
-            "label": "ID Contratto",
-            "readOnly": true,
-            "size": 1.5,
-            "isHidden": true
         }
     ],
     "hideActions": [
