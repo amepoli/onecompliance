@@ -1,0 +1,241 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "pagamenti_fascicoli_sub_of_fascicoli",
+    "origin": "entrasp.pagamenti_fascicoli",
+    "inheritsFrom": "pagamenti",
+    "predefinedQueries": [
+        {
+            "queryString": "select tranche, id_contratto, id_mandato,id_controparte, codice_azienda, id_pagamento, entrasp.argomenti_descr_breve(id_argomento_tipo_pag) as id_argomento_tipo_pag, data_pagamento, importo, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_controparte) as descr_controparte from entrasp.pagamenti_tranche where codice_azienda=$codice_azienda$ and id_argomento_tipo_pag in (51488,51487) and id_contratto=$id_contratto$;",
+            "operation": "selectTable",
+            "type": "main"
+        }
+    ],
+    "define": {
+        "is_hidden_cessione": "false",
+        "is_hidden_interessi": "true",
+        "is_hidden_mandato": "true",
+        "is_hidden_tranche": "true",
+        "is_sameOrigin": "true"
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "readOnly": true,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "key": "id_pagamento",
+            "label": "ID Pagamento",
+            "readOnly": true,
+            "size": 0.5,
+            "translate": "RESOURCES.id_pagamento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Data pagamento necessaria",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_pagamento",
+            "label": "Data Pagamento",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": false,
+            "translate": "RESOURCES.data_pagamento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Importo necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "importo",
+            "label": "Importo",
+            "readOnly": false,
+            "size": 1.5,
+            "outputEvent": {
+                "eventName": "colore_importo",
+                "eventTrigger": "load"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "colore_importo",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when importo<0 then'red' else 'green' end as importo_background_color from entrasp.pagamenti_crediti where codice_azienda=$codice_azienda$ and id_pagamento=$id_pagamento$"
+                }
+            ],
+            "translate": "RESOURCES.importo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_controparte",
+            "label": "Controparte",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_controparte"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_mandato AS id, n_mandato||'-'||entrasp.anagrafiche_cognnome(codice_part, id_mandante) as name  FROM entrasp.mandati WHERE codice_azienda=$codice_azienda$;",
+                "viewType": "combobox",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_mandato",
+            "label": "N. Mandato",
+            "readOnly": false,
+            "size": 1.5,
+            "newLine": true,
+            "translate": "RESOURCES.id_mandato"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as ID, arg.id_argomento ||'-'||arg.descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=49920"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_inatteso",
+            "label": "Inatteso",
+            "size": 2,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_argomento_inatteso"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "comboQuery": "select id_conto_corrente as ID, RIGHT(iban,12) as name from entrasp.conti_correnti where codice_azienda=$codice_azienda$",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2,
+            "key": "id_conto_corrente",
+            "label": "Conto Corrente",
+            "readOnly": false,
+            "translate": "RESOURCES.id_conto_corrente"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "size": 6,
+            "readOnly": false,
+            "newLine": true,
+            "translate": "RESOURCES.note"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "tranche",
+            "sameOrigin": "$Q{is_sameOrigin}",
+            "label": "Tranche",
+            "readOnly": true,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_contratto",
+            "sameOrigin": "$Q{is_sameOrigin}",
+            "label": "ID Contratto",
+            "readOnly": true,
+            "size": 1.5,
+            "isHidden": true
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}
