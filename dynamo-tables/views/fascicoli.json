@@ -1,0 +1,273 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "fascicoli",
+    "origin": "entrasp.fascicoli",
+    "label": "Fascicoli",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "key": "id_fascicolo",
+            "label": "# Fascicolo",
+            "readOnly": true,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Cod.Fascicolo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "cod_fascicolo",
+            "label": "Cod. Fascicolo",
+            "readOnly": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_incarico",
+            "label": "Data incarico",
+            "newLine": false,
+            "size": 1.5,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "capitale_totale",
+            "label": "Capitale totale",
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "interessi_totali",
+            "label": "Interessi totali",
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi((select an.codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€'",
+                "validations": [
+                    {
+                        "message": "Legale obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "id_legale",
+            "label": "Studio Legale incaricato",
+            "readOnly": false
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "7%",
+            "key": "id_fascicolo",
+            "label": "#"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "n_mandato",
+            "label": "N.Mandato"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fascicolo",
+            "label": "Data fascicolo",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "capitale_totale",
+            "label": "Capitale totale",
+            "tooltip": "Importo totale delle quote capitali legate al fascicolo affidato",
+            "width": "6%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "end"
+                }
+            ],
+            "translate": "RESOURCES.importo_tot"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "interessi totali",
+            "label": "Interessi totali",
+            "width": "6%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "end"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_legale",
+            "label": "id_legale"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "legale",
+            "label": "Legale",
+            "width": "25%"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_fascicolo_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Fascicolo",
+            "newLine": false,
+            "queryCond": "id_fascicolo=$id_fascicolo_s$"
+        },
+        {
+            "fieldName": "id_legale_s",
+            "format": {
+                "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Legale",
+            "newLine": false,
+            "queryCond": "id_legale=$id_legale_s$"
+        },
+        {
+            "fieldName": "cod_fascicolo_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "n. Mandato",
+            "newLine": false,
+            "queryCond": "cod. fascicolo like '%$cod_fascicolo_s$%ì"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by data_incarico desc"
+    },
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "crediti_sub_of_fascicoli",
+            "type": "table",
+            "label": "Crediti del fascicolo",
+            "keys": [
+                {
+                    "parent": "id_fascicolo",
+                    "son": "id_fascicolo"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        }
+    ]
+}
