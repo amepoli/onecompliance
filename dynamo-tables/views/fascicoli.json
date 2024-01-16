@@ -139,21 +139,11 @@
         },
         {
             "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "10%",
-            "key": "n_mandato",
-            "label": "N.Mandato"
-        },
-        {
-            "format": {
                 "dataType": "date"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "data_fascicolo",
+            "key": "data_incarico",
             "label": "Data fascicolo",
             "width": "8%"
         },
@@ -181,7 +171,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "interessi totali",
+            "key": "interessi_totali",
             "label": "Interessi totali",
             "width": "6%",
             "style": [
@@ -207,6 +197,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "legale",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_legale)",
             "label": "Legale",
             "width": "25%"
         }
@@ -239,7 +230,7 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "label": "n. Mandato",
+            "label": "Fascicolo",
             "newLine": false,
             "queryCond": "cod. fascicolo like '%$cod_fascicolo_s$%ì"
         }
@@ -258,6 +249,21 @@
             "entryKey": "crediti_sub_of_fascicoli",
             "type": "table",
             "label": "Crediti del fascicolo",
+            "keys": [
+                {
+                    "parent": "id_fascicolo",
+                    "son": "id_fascicolo"
+                },
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ]
+        },
+        {
+            "entryKey": "pagamenti_fascicoli_sub_of_fascicoli",
+            "type": "table",
+            "label": "Pagamenti fascicolo",
             "keys": [
                 {
                     "parent": "id_fascicolo",

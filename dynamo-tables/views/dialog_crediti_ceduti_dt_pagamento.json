@@ -5,7 +5,7 @@
         {
             "operation": "update",
             "type": "main",
-            "queryString": "update entrasp.crediti_ceduti cc1 set id_ricessione = coalesce($id_ricessione$, cc2.id_ricessione), opposto=coalesce($opposto_combobox$,cc2.opposto),azionato=coalesce($azionato_combobox$,cc2.azionato),lavorazione_legale=coalesce($lavorazione_legale_combobox$,cc2.lavorazione_legale), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_scadenza = coalesce($data_scadenza$::date, cc2.data_scadenza), data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), id_tipo_documento = coalesce ($id_tipo_documento$, cc2.id_tipo_documento), cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($fascicolo$, cc2.fascicolo) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
+            "queryString": "update entrasp.crediti_ceduti cc1 set flag_pool=coalesce($flag_pool_combobox$, cc2.flag_pool), id_ricessione = coalesce($id_ricessione$, cc2.id_ricessione), opposto=coalesce($opposto_combobox$,cc2.opposto),azionato=coalesce($azionato_combobox$,cc2.azionato),lavorazione_legale=coalesce($lavorazione_legale_combobox$,cc2.lavorazione_legale), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_scadenza = coalesce($data_scadenza$::date, cc2.data_scadenza), data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), id_tipo_documento = coalesce ($id_tipo_documento$, cc2.id_tipo_documento), cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($fascicolo$, cc2.fascicolo) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
         }
     ],
     "form_keys": [
@@ -171,7 +171,7 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='CLI'"
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€'"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -241,6 +241,22 @@
             "newLine": true,
             "size": 1.25,
             "translate": "RESOURCES.cig_checkbox"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id, name FROM (VALUES ( '1', 'Sì'),( '0', 'No')) AS TEMP ( id, name )",
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_pool_combobox",
+            "label": "Acquisto in Pool?",
+            "size": 1.66,
+            "readOnly": false,
+            "newLine": false
         },
         {
             "autoGenerate": false,
