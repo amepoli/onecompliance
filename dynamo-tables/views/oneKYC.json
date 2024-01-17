@@ -191,6 +191,7 @@
             },
             "label": "Esecuzione dopo il",
             "newLine": false,
+            "size": 1.25,
             "queryCond": "date_of_scan>='€data_esec_prevista_min€'"
         },
         {
@@ -201,6 +202,7 @@
             },
             "label": "Esecuzione prima del",
             "newLine": false,
+            "size": 1.25,
             "queryCond": "date_of_scan<='€data_esec_prevista_max€'"
         },
         {
@@ -213,7 +215,40 @@
             },
             "label": "Tipo scansione",
             "newLine": false,
+            "size": 2,
             "queryCond": "(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' else 'Deep scan' end)=$tipo_scansione$"
+        },
+        {
+            "fieldName": "dynamo_user_s",
+            "format": {
+                "comboQuery": "SELECT DISTINCT dynamo_user AS id, dynamo_user AS name FROM imports.aml_scans WHERE codice_azienda='€global_codice_azienda€' order by dynamo_user;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "User",
+            "newLine": false,
+            "size": 2,
+            "queryCond": "dynamo_user=$dynamo_user_s$"
+        },
+        {
+            "fieldName": "mt_s",
+            "format": {
+                "comboQuery": "select distinct mt.id_modello_test as id, mt.id_modello_test||'-'||mt.titolo as name from imports.aml_scans inner join entrasp.sondaggi_somministrati ss using (codice_azienda, id_somministrazione)  inner join entrasp.sondaggi snd using (codice_azienda, id_sondaggio) inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_Test=mt.id_modello_test where mt.codice_Azienda='€global_codice_azienda€'",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Modello test",
+            "size": 3.5,
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_somministrazione in(select ss.codice_azienda||'-'||ss.id_somministrazione from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd using(codice_azienda, id_sondaggio) where snd.id_modello_test=$mt_s$ and snd.codice_azienda='€global_codice_azienda€')"
         }
+
+
+
+
+        
+
     ]
 }
