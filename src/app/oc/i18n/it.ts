@@ -1308,6 +1308,7 @@ export const locale = {
             rr_rett: "Risk Resp. Rett.",
             rubrica: "Rubrica",
             ruolo: "Ruoli",
+            ruoli_privacy: "Ruoli privacy",
             ruolo_a: "Ruolo/Tipo Contratto A",
             ruolo_b: "Ruolo/Tipo Contratto B",
             ruolo_invertito: "Inv.ruolo",
