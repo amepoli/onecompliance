@@ -9,16 +9,6 @@
             "queryString": "select codice_attivita, codice_azienda, attivita_vr, note_vr, data_inizio_validita from entrasp.attivita where codice_azienda=$codice_azienda$ and codice_attivita::varchar=$codice_attivita$::varchar;"
         },
         {
-            "operation": "insert",
-            "queryString": "update entrasp.attivita att set codice_part='€global_codice_part€' where att.codice_azienda=$codice_azienda$ and att.codice_part is null",
-            "type": "postProcessing"
-        },
-        {
-            "operation": "update",
-            "queryString": "update entrasp.attivita att set codice_part='€global_codice_part€' where att.codice_azienda=$codice_azienda$ and att.codice_part is null",
-            "type": "postProcessing"
-        },
-        {
             "operation": "delete",
             "queryString": "delete from entrasp.attivita att where entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita)=$codice_attivita$ and att.codice_azienda=$codice_azienda$",
             "type": "main"

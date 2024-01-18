@@ -7,16 +7,6 @@
             "type": "main",
             "operation": "selectTable",
             "queryString": "SELECT id_argomento_contratto, codice_azienda, id_contratto, numero_contratto, id_tipo_contratto, codice_part, id_strumento_finanziario, entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as id_tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as descr_cliente FROM entrasp.contratti WHERE id_argomento_contratto=$id_argomento_contratto$;"
-        },
-        {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
-        },
-        {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "UPDATE entrasp.contratti cnt set codice_part=az.codice_part from entrasp.aziende az where cnt.codice_azienda=az.codice_azienda"
         }
     ],
     "table_keys": [
