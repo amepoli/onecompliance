@@ -13,6 +13,7 @@ export interface FormViewKey { // as per API specification
     newLine: boolean;
     isMultiSelect?: boolean;
     showTagsView?: boolean;
+    onChangeResetKey?: string;
     textareaHeight?: 'S' | 'M' | 'L' | 'XL';
     showTextAreaRichFormatter?: boolean;
     buttonIcon?: string;
