@@ -48,6 +48,7 @@ export const URLs = {
     "rischi":"https://wiki.auditft.it//index.php?title=Rischi",
     "risposte":"https://wiki.auditft.it//index.php?title=Domande_e_Risposte",
     "risposte_previste": "https://wiki.auditft.it//index.php?title=Risposte_Previste",
+    "scadenziario": "https://onecomplianceguide.notion.site/Agenda-Scadenziario-f6e98d54a2fa4c40a6cb85611329afee?pvs=4",
     "riunioni": "https://wiki.auditft.it//index.php?title=Riunioni",
     "sondaggi":"https://wiki.auditft.it//index.php?title=Sondaggi",
     "sondaggi_consultant":"https://wiki.auditft.it//index.php?title=Sondaggi_Consulenti",
