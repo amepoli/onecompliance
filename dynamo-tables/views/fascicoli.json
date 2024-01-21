@@ -89,8 +89,8 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": true,
-            "key": "interessi_totali",
-            "label": "Interessi totali",
+            "key": "interessi_legali_totali",
+            "label": "Interessi legali totali",
             "readOnly": false,
             "size": 2
         },
@@ -180,7 +180,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "interessi_totali",
+            "key": "interessi_legali_totali",
             "label": "Interessi totali",
             "width": "6%",
             "style": [
@@ -242,6 +242,25 @@
             "label": "Fascicolo",
             "newLine": false,
             "queryCond": "cod_fascicolo like '%'||$cod_fascicolo_s$||'%'"
+        },
+        {
+            "fieldName": "interessi_leg_min",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Interessi maggiori di",
+            "newLine": false,
+            "queryCond": "interessi_legali_totali>=$interessi_leg_min$"
+        },
+        {
+            "fieldName": "flag_con_pagamenti",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Fascicoli con pagamenti",
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_fascicolo in(select codice_azienda||'-'||id_fascicolo from entrasp.pagamenti_fascicoli where codice_azienda=$codice_azienda$)"
         }
     ],
     "querySuffixes": {
