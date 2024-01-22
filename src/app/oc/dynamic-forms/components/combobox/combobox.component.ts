@@ -429,6 +429,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public reset() {
+    this.field.value = null;
     this.lazyLoad(true);
   }
 }

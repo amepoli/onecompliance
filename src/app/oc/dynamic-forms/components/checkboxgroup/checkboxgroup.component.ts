@@ -70,5 +70,19 @@ export class CheckboxGroupComponent implements OnInit {
       // wait a while before triggering the event
       setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
     }
+    if(_this.field.onChangeResetKey)
+    {
+      _this.sendResetByKeyEvent()
+    }
+  }
+
+
+  sendResetByKeyEvent() {
+    this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_reset_by_key', { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.onChangeResetKey });
+  }
+
+  public reset() {
+    this.field.value = [];
   }
 }
+

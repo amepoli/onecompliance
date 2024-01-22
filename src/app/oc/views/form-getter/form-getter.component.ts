@@ -491,6 +491,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.formSubscriptions.push(subscription);
                 }
             }
+            if(key.onChangeResetKey) {
+                const reset_by_key_subscription = _this.pubSubService.subscribe(_this.formParams.entryName + '_' + key.key + '_reset_by_key',
+                value => {
+                    _this.eventCallback({ actionType: 'reset_by_key' }, value, value.data);
+                });
+            _this.formSubscriptions.push(reset_by_key_subscription);
+                
+            }
             // subscribe to combos
             if (key.format.viewType === 'combobox') {
                 // subscribe combobox lazy loading events
@@ -499,14 +507,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.eventCallback({ actionType: 'combo_lazy_loading' }, value, value.data);
                     });
                 _this.formSubscriptions.push(lazy_subscription);
-                if(key.onChangeResetKey) {
-                    const reset_by_key_subscription = _this.pubSubService.subscribe(_this.formParams.entryName + '_' + key.key + '_reset_by_key',
-                    value => {
-                        _this.eventCallback({ actionType: 'reset_by_key' }, value, value.data);
-                    });
-                _this.formSubscriptions.push(reset_by_key_subscription);
-                    
-                }
             }
             if (key.format.viewType === 'subform' && key.format.subform_keys != null) {
                 _this.subscribeFieldInputEvents(key.format.subform_keys);
@@ -780,7 +780,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null,
                 isMultiSelect: field.isMultiSelect != null ? field.isMultiSelect : false,
                 showTagsView: field.showTagsView != null ? field.showTagsView : false,
-                onChangeResetKey: field.onChangeResetKey ?? null,
+                onChangeResetKey: field.onChangeResetKey ?? [],
             };
         }
         /*
@@ -1305,12 +1305,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // combobox.reset();
                 
                 // To try generically all dynamic fields
-                let dynamicField: any = <any>current_line.dynamicFields.find(df => df.field.name === value.data)?.componentRef?.instance ?? null;
-                if(dynamicField && dynamicField.reset) {
-                    dynamicField.reset();
-                }
-                else {
-                    _this._toastService.showErrorToast("Error", "Error resetting " + value.data);
+                if(value.data)
+                {
+                    value.data.forEach(v => {
+                        let dynamicField: any = <any>current_line.dynamicFields.find(df => df.field.name === v)?.componentRef?.instance ?? null;
+                        if(dynamicField && dynamicField.reset) {
+                            dynamicField.reset();
+                        }
+                        else {
+                            _this._toastService.showErrorToast("Error", "Error resetting " + v);
+                        }      
+                    });   
                 }
             }
         } else if ((event.actionType === 'update' || event.actionType === 'update_style') && conditionMet) {
