@@ -59,6 +59,7 @@ export const URLs = {
     "testi_normativi":"https://wiki.auditft.it//index.php?title=Testi_Normativi",
     "tipi_rischio":"https://wiki.auditft.it//index.php?title=Tipi_Rischi",
     "tipi_processi_presidi":"https://wiki.auditft.it//index.php?title=Tipi_processi/presidi",
+    "user_per_azienda":"https://onecomplianceguide.notion.site/Time-Report-f2447755ca994e0e896f842a54e816aa?pvs=4",
     "valutazione_contratti":"https://wiki.auditft.it//index.php?title=5._Valutazioni_Contratti",
     "valutazione_garanzie":"https://wiki.auditft.it//index.php?title=4._Valutazioni_Garanzie",
     "valutazioni_strum_fin":"https://wiki.auditft.it//index.php?title=Mifid_Strumenti_Finanziari"
