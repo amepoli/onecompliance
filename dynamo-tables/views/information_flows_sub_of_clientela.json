@@ -37,5 +37,48 @@
                 }
             ]
         }
+    ],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when (select count(prog_revisione) from entrasp.cdms_risorse_revisioni rev where rev.codice_azienda=crs.codice_azienda and rev.id_risorsa=crs.id_risorsa)=0 then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, crs.data_scadenza, crs.descrizione FROM entrasp.cdms_risorse crs WHERE crs.codice_azienda=$codice_azienda$ and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1)) and $P{id_anagrafica_if_clientela} and crs.descrizione_breve != 'tbd' and rev.codice_azienda in(€global_user_companies€)",
+            "type": "main"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "update entrasp.argomenti_argomenti set id_argomento_relazione=45069 where id_argomento_father=3511 and id_argomento_relazione is null",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'risorse', $id_risorsa$, '$codice_azienda$'::varchar) as play_time_report"
+        },
+        {
+            "type": "preCheck",
+            "operation": "delete",
+            "queryString": "select prog_revisione from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$;",
+            "messageNotNull": "Esiste almeno un file associato al flusso informativo in oggetto! Cancellare prima i singoli file della cartella"
+        },
+        {
+            "type": "main",
+            "operation": "delete",
+            "queryString": "delete from entrasp.cdms_risorse where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "insert",
+            "queryString": "update entrasp.cdms_risorse rs set id_anagrafica=az.id_anagrafica from entrasp.aziende az where rs.codice_azienda=az.codice_azienda and rs.id_anagrafica is null"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "update",
+            "queryString": "update entrasp.cdms_risorse rs set id_anagrafica=az.id_anagrafica from entrasp.aziende az where rs.codice_azienda=az.codice_azienda and rs.id_anagrafica is null"
+        }
     ]
 }
