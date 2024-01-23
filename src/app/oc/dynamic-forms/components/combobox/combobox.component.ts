@@ -258,6 +258,9 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       this.field.style = { background_color: 'transparent', font_color: 'black' };
     }
 
+    if(this.field.onChangeResetKey) {
+      this.sendResetByKeyEvent();
+    }
     if (this.field.eventName != null && this.field.eventTrigger === 'select') {
       // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       this.sendEvent();
@@ -356,8 +359,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.group.get(this.field.name).reset();
   }
 
-  lazyLoad() {
-    if (this.field.lazyLoading && !this.isLazyLoaded) {
+  lazyLoad(forced: boolean = false) {
+    if (forced || (this.field.lazyLoading && !this.isLazyLoaded)) {
       this.isLazyLoading = true;
       this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_combo_lazy_loading', { index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.name, type: 'combobox' });
     }
@@ -419,5 +422,14 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     this._console.log('value', value);
     this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: value, type: 'combobox' });
 
+  }
+
+  sendResetByKeyEvent() {
+    this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_reset_by_key', { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.onChangeResetKey, type: 'combobox' });
+  }
+
+  public reset() {
+    this.field.value = null;
+    this.lazyLoad(true);
   }
 }

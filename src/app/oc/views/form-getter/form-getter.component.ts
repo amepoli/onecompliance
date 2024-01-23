@@ -491,6 +491,14 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.formSubscriptions.push(subscription);
                 }
             }
+            if(key.onChangeResetKey) {
+                const reset_by_key_subscription = _this.pubSubService.subscribe(_this.formParams.entryName + '_' + key.key + '_reset_by_key',
+                value => {
+                    _this.eventCallback({ actionType: 'reset_by_key' }, value, value.data);
+                });
+            _this.formSubscriptions.push(reset_by_key_subscription);
+                
+            }
             // subscribe to combos
             if (key.format.viewType === 'combobox') {
                 // subscribe combobox lazy loading events
@@ -772,6 +780,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 subform: (field.format.viewType === 'subform') ? _this.getFieldValues(field.format.subform_keys, values, index) : null,
                 isMultiSelect: field.isMultiSelect != null ? field.isMultiSelect : false,
                 showTagsView: field.showTagsView != null ? field.showTagsView : false,
+                onChangeResetKey: field.onChangeResetKey ?? [],
             };
         }
         /*
@@ -1277,6 +1286,38 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             /* if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(event.outputEventWhenComplete, value);
             } */
+        } else if ((event.actionType === 'reset_by_key') && conditionMet) {
+            const target_index = (value.type !== 'page') ? value.index : null;  // null means the event comes from the full table
+            let index = (target_index == null) ? _this.formArray.length : 1;
+            const childrenArray = _this.formArray.toArray();
+            // iterate over all indexes when full table or instead affect the target index only
+            while (index > 0) {
+                index--;
+                const current_index = (target_index != null) ? target_index : index;
+                // some lines might be hidden, search for the right one
+                const current_line = childrenArray.find(c => c.fields[0].index === current_index);
+                if (current_line == null) {
+                    continue;
+                }
+
+                // To reset only combobox
+                // let combobox: ComboboxComponent = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === value.data).componentRef.instance;
+                // combobox.reset();
+                
+                // To try generically all dynamic fields
+                if(value.data)
+                {
+                    value.data.forEach(v => {
+                        let dynamicField: any = <any>current_line.dynamicFields.find(df => df.field.name === v)?.componentRef?.instance ?? null;
+                        if(dynamicField && dynamicField.reset) {
+                            dynamicField.reset();
+                        }
+                        else {
+                            _this._toastService.showErrorToast("Error", "Error resetting " + v);
+                        }      
+                    });   
+                }
+            }
         } else if ((event.actionType === 'update' || event.actionType === 'update_style') && conditionMet) {
             if (event.updateFunct != null && keyListener != null) {
                 const childrenArray = _this.formArray.toArray();

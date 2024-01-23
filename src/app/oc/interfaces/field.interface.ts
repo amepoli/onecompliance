@@ -81,6 +81,7 @@ export interface FieldConfig {
   options?: Item[];
   isMultiSelect?: boolean;
   showTagsView?: boolean;
+  onChangeResetKey?: string[];
   menuOptions?: MenuOption[],
   collections?: any;
   type: string;

@@ -163,6 +163,10 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     if(_this.field.showTextAreaRichFormatter) {
       _this.updateValue();
     }
+    if(_this.field.onChangeResetKey)
+    {
+      _this.sendResetByKeyEvent()
+    }
   }
 
   onFocus(): void {
@@ -286,5 +290,13 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
         this.style.font_weight = this.field.style.font_weight;
       }
     }
+  }
+
+  sendResetByKeyEvent() {
+    this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_reset_by_key', { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.onChangeResetKey });
+  }
+
+  public reset() {
+    this.field.value = null;
   }
 }

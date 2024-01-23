@@ -120,6 +120,10 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
       _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
     }
+    if(_this.field.onChangeResetKey)
+    {
+      _this.sendResetByKeyEvent()
+    }
   }
 
   onFocus(): void {
@@ -218,5 +222,13 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   setValue(value: any) {
     this.field.value = value;
     this.formatValue();
+  }
+
+  sendResetByKeyEvent() {
+    this.pubSubService.publishEvent(this.field.table + '_' + this.field.name + '_reset_by_key', { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.field.onChangeResetKey });
+  }
+
+  public reset() {
+    this.field.value = null;
   }
 }
