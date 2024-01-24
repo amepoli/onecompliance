@@ -532,8 +532,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.loadExplorerData(results);
                     }
 
-                    
-                    _this.dataSource = new MatTableDataSource(results);
+                    const visibleKeys = _this.viewKeys.filter(x => !x.isHidden).map(x => x.key);
+                    const visibleKeysResults = results.map(x => {
+                        const item = {};
+                        visibleKeys.forEach(visibleKey => item[visibleKey] = x[visibleKey])
+                        return item;
+                    });
+                    _this.dataSource = new MatTableDataSource(visibleKeysResults);
                     _this.dataSource.sort = _this.sort;
                     if (_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
@@ -992,7 +997,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     applyFilter(filterValue: string) {
         if (this.dataSource && this.dataSource.data && this.dataSource.data.length) {
             filterValue = filterValue.trim(); // Remove whitespace
-            filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+            // filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
             this.dataSource.filter = filterValue;
             if (this.dataSource.paginator) {
                 this.dataSource.paginator.firstPage();
