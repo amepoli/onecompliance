@@ -312,8 +312,19 @@
             },
             "label": "Stato",
             "translate": "RESOURCES.status",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "stato='€stato€'"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) asc;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cliente/Fornitore/Dipendente",
+            "newLine": true,
+            "queryCond": "codice_azienda||'-'||codice_compito in(select codice_azienda||'-'||codice_compito from entrasp.compiti_anagrafiche)"
         },
         {
             "fieldName": "note_search",
@@ -322,9 +333,10 @@
                 "viewType": "input"
             },
             "label": "Note",
-            "translate": "RESOURCES.notes",
+            "translate": "RESOURCES.note_titolo",
             "newLine": false,
-            "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+            "size": 3,
+            "queryCond": "(note ilike '%'||'€note_search€'||'%' or titolo ilike '%'||'€note_search€'||'%' or note_tecniche ilike '%'||'€note_search€'||'%')"
         },
         {
             "fieldName": "codice_compito",
@@ -332,21 +344,11 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Codice Compito",
-            "translate": "RESOURCES.data_breach_code",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
             "newLine": false,
+            "size": 1.5,
             "queryCond": "codice_compito=$codice_compito$"
-        },
-        {
-            "fieldName": "titolo",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Titolo",
-            "translate": "RESOURCES.title",
-            "newLine": true,
-            "queryCond": "titolo=$titolo$"
         },
         {
             "fieldName": "id_centro_gest",
@@ -358,6 +360,7 @@
             "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
             "newLine": false,
+            "size": 2,
             "queryCond": "id_centro_gest=$id_centro_gest$"
         },
         {
