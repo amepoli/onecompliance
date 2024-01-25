@@ -41,37 +41,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "cancella_membro",
-            "label": "delete",
-            "buttonIcon": "delete",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "membro_cancella",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "membro_cancella",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "delete from entrasp.compiti_anagrafiche where codice_azienda=$codice_azienda$ and codice_part=$codice_part$ and codice_compito=$codice_compito$ and id_anagrafica=$id_anagrafica$",
-                    "outputEventWhenComplete": "update_compiti_anagrafiche"
-                }
-            ],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 0.5,
-            "translate": "RESOURCES.cancella_membro"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_anagrafica AS id, concat(codice, ' - ', nome, ' ', cognome) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$;",
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part, id_anagrafica) as name from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ order by entrasp.anagrafiche_id_codcognnome(codice_part, id_anagrafica);",
                 "options": [],
                 "viewType": "combobox"
             },
@@ -80,9 +50,26 @@
             "key": "id_anagrafica",
             "label": "Risorsa",
             "readOnly": false,
-            "size": 9.5,
-            "newLine": true,
+            "size": 5,
+            "newLine": false,
             "translate": "RESOURCES.id_anagrafica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_ruolo AS id, descrizione as name from entrasp.ruoli",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_ruolo",
+            "label": "Ruolo",
+            "readOnly": false,
+            "size": 4.5,
+            "newLine": true,
+            "translate": "RESOURCES.descr_ruolo"
         },
         {
             "autoGenerate": false,
@@ -121,7 +108,7 @@
             "buttonAction": {
                 "target": "compiti_anagrafiche",
                 "viewType": "form",
-                "query": "delete from entrasp.compiti_anagrafiche where codice_part='£codice_part£' AND codice_compito=£codice_compito£ AND id_anagrafica=£id_anagrafica£ AND codice_azienda=£codice_azienda£",
+                "query": "delete from entrasp.compiti_anagrafiche where codice_part='£codice_part£' AND codice_compito='£codice_compito£' AND id_anagrafica=£id_anagrafica£ AND codice_azienda='£codice_azienda£'",
                 "action": "query",
                 "keymap": [
                     {
@@ -216,6 +203,12 @@
             "width": "40%",
             "label": "Denominazione",
             "translate": "RESOURCES.denominazione"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
         }
     ]
 }
