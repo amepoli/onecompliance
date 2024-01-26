@@ -538,7 +538,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         visibleKeys.forEach(visibleKey => item[visibleKey] = x[visibleKey])
                         return item;
                     });
-                    _this.dataSource = new MatTableDataSource(visibleKeysResults);
+                    _this.dataSource = new MatTableDataSource(results);
                     _this.dataSource.sort = _this.sort;
                     if (_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
