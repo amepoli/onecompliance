@@ -2,6 +2,7 @@ import { TableDataType } from "../types";
 
 export interface TableViewKey { // as per API specification
     isHidden: boolean;
+    excludeFromDataSource?: boolean;
     isPrimary: boolean;
     isLevel?: boolean;
     hasLevel?: boolean;
