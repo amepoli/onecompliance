@@ -328,7 +328,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     _this.filterOptionsBasedOnSelectedTags(_this.field.options);  
     _this.value = null;
 
-
+    if (_this.field.eventName != null && _this.field.eventTrigger === 'select') {
+      // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+      _this.sendEvent();
+    }
   }
 
   openedChange(opened): void {
