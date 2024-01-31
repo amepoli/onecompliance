@@ -3012,6 +3012,11 @@
                 "label": "Report",
                 "queryString": "select * from entrasp.report_data_sondaggi('€global_codice_azienda€',19, $id_sondaggio$);",
                 "isReport": true
+            },
+            {
+                "label": "Report Sondaggio ESG",
+                "queryString": "select vi.id_indicatore,ind.descrizione as descrizione_indicatore, vi.data_analisi, vi.valore, vi.id_sondaggio, vi.id_somministrazione, entrasp.anagrafiche_vr_dati_identificativi_nom1(vi.codice_part, vi.id_anagrafica) as anagrafica, ir.id_report,re.descrizione as descrizione_report from entrasp.valori_indicatori vi inner join entrasp.indicatori ind on vi.id_indicatore=ind.id_indicatore inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.report re on ir.id_report=re.id_report where vi.codice_azienda=$codice_azienda$ and vi.id_sondaggio =$id_sondaggio$ order by anagrafica, vi.id_somministrazione, vi.id_indicatore"
+                
             }
         ]
     },
