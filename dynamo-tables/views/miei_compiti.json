@@ -465,6 +465,17 @@
             "newLine": false,
             "queryCond": "entrasp.consuntivazioni_time_consumed(codice_azienda, codicecompito => codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0) >= $durata_min$",
             "size": 1.67
+        },
+        {
+            "fieldName": "non_associata_a_centri_costo",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "No Centri Costo",
+            "newLine": false,
+            "tooltip": "Individua tutti i compiti non associati ad alcun centro di costo",
+            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda_compiti=az.codice_azienda where az.codice_part='€global_codice_part€')",
+            "size": 1.67
         }
     ]
 }
