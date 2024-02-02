@@ -286,6 +286,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       _this.sendEvent();
     }
     _this.lazyLoad();
+    _this.value = null;
   }
 
   private filterOptionsBasedOnSelectedTags(options : any)
@@ -321,7 +322,9 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     {
       let index= _this.field.value.findIndex(value=> value.id== tag.id);
       if (index > -1) { 
-        _this.field.value.splice(index, 1); 
+        _this.field.value.splice(index, 1);
+        _this.group.get(_this.field.name).setValue(_this.tags);
+
       }
     }
     _this.lazyLoad();
