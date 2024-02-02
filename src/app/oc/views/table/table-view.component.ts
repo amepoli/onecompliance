@@ -532,13 +532,20 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.loadExplorerData(results);
                     }
 
-                    const visibleKeys = _this.viewKeys.filter(x => !x.excludeFromDataSource).map(x => x.key);
-                    const visibleKeysResults = results.map(x => {
-                        const item = {};
-                        visibleKeys.forEach(visibleKey => item[visibleKey] = x[visibleKey])
-                        return item;
+                const visibleKeys = _this.viewKeys.filter(x => !x.isHidden).map(x => x.key); 
+                _this.dataSource = new MatTableDataSource(results);
+
+                _this.dataSource.filterPredicate = function(data, filter: string): boolean {
+                    let value = false;
+                    visibleKeys.forEach(visibleKey => {
+                        if(data[visibleKey] && data[visibleKey].toString().toLowerCase().includes(filter.toLowerCase()))
+                        {
+                            value = true;
+                            return;  
+                        }
                     });
-                    _this.dataSource = new MatTableDataSource(visibleKeysResults);
+                    return value;
+                  };
                     _this.dataSource.sort = _this.sort;
                     if (_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
@@ -778,7 +785,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             let selectTableKey: TableViewKey = {
                 format: { dataType: 'checkbox' },
                 isHidden: false,
-                excludeFromDataSource: false,
                 isPrimary: false,
                 isSelectCheckbox: true,
                 key: 'selectCheckbox',
