@@ -1129,6 +1129,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         if (element['id'] != null) {
                             chiavi[key] = element['id'];
                         }
+                        // decode multi-combo / tags
+                        else if (Array.isArray(element) && element.length > 0 && element[0]['id']) {
+                            chiavi[key] = 'ARRAY[' +  element.map(x => x.id).join(',') + ']';
+                        }                       
                         // encode boolean
                         else if (element === true) {
                             chiavi[key] = '1';

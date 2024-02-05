@@ -286,6 +286,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       _this.sendEvent();
     }
     _this.lazyLoad();
+    _this.value = null;
   }
 
   private filterOptionsBasedOnSelectedTags(options : any)
@@ -321,14 +322,19 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     {
       let index= _this.field.value.findIndex(value=> value.id== tag.id);
       if (index > -1) { 
-        _this.field.value.splice(index, 1); 
+        _this.field.value.splice(index, 1);
+        _this.group.get(_this.field.name).setValue(_this.tags);
+
       }
     }
     _this.lazyLoad();
     _this.filterOptionsBasedOnSelectedTags(_this.field.options);  
     _this.value = null;
 
-
+    if (_this.field.eventName != null && _this.field.eventTrigger === 'select') {
+      // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
+      _this.sendEvent();
+    }
   }
 
   openedChange(opened): void {
