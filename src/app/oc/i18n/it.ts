@@ -784,7 +784,7 @@ export const locale = {
             id_indicatore: "ID Indicatore",
             id_indicatore_parent: "Indicatore padre",
             id_mandante: "Mandante",
-            id_mandato: "N. Mandato",
+            id_mandato: "ID Mandato",
             id_mandato_checkbox: "Azzera Mandato",
             id_menu: "Valore di default",
             id_modello_test: "ID",
