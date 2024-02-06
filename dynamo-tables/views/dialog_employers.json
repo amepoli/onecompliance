@@ -5,7 +5,7 @@
         {
             "operation": "update",
             "type": "main",
-            "queryString": "update entrasp.employers em1 set id_centro_gest=coalesce($id_centro_gest$, em1.id_centro_gest), codice_ruolo=coalesce($codice_ruolo$,em1.codice_ruolo), minuti_richiesti_giornalieri=coalesce ($minuti_richiesti_giornalieri$, em1.minuti_richiesti_giornalieri), data_avvio_collaborazione=coalesce ($data_avvio_collaborazione$, em1.data_avvio_collaborazione) from (select split_part(arr,'~',1)as dynamouser, split_part(arr,'~',2) as codiceazienda from unnest(ARRAY[$selected_rows_data$]) arr) s where  em1.codice_azienda=s.codiceazienda and em1.dynamo_user=s.dynamouser"
+            "queryString": "update entrasp.employers em1 set id_centro_gest=coalesce($id_centro_gest$, em1.id_centro_gest), codice_ruolo=coalesce($codice_ruolo$,em1.codice_ruolo), minuti_richiesti_giornalieri=coalesce ($minuti_richiesti_giornalieri$, em1.minuti_richiesti_giornalieri), data_avvio_collaborazione=coalesce ($data_avvio_collaborazione$, em1.data_avvio_collaborazione) from (select split_part(arr,'~',1)as dynamouser, split_part(arr,'~',2) as codiceazienda from unnest(ARRAY[$selected_rows_data$]) arr) s where  em1.codice_azienda=s.codiceazienda and em1.dynamo_user=s.dynamouser and em1.minuti_richiesti_giornalieri!=0"
         }
     ],
     "form_keys": [
