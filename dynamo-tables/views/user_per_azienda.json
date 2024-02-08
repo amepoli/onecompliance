@@ -7,7 +7,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select csn.codice_azienda, initcap(csn.codice_azienda) as codice_azienda_s, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month, an.dynamo_user, entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica) as denominazione, round(sum(csn.durata/480), 2) as time_consumed from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and az.codice_part=an.codice_part where an.dynamo_user is not null and csn.durata>0 and data_intervento between '2022-01-01' and '2100-12-31' and csn.codice_azienda=$codice_azienda$"
+            "queryString": "select csn.codice_azienda, initcap(csn.codice_azienda) as codice_azienda_s, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_year((now() - interval '365 days')::date), datafine =>entrasp.last_day_year((now() - interval '365 days')::date)) as time_consumed_previous_year, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda => csn.codice_azienda, dynamouser=> an.dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month, an.dynamo_user, entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica) as denominazione, round(sum(csn.durata/480), 2) as time_consumed from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and az.codice_part=an.codice_part where an.dynamo_user is not null and csn.durata>0 and data_intervento between '2022-01-01' and '2100-12-31' and csn.codice_azienda=$codice_azienda$"
         },
         {
             "type": "postProcessing",
@@ -25,6 +25,7 @@
             "readOnly": false,
             "newLine": false,
             "isPrimary": true,
+            "size": 2,
             "key": "codice_azienda",
             "label": "Codice Azienda Erogante",
             "translate": "RESOURCES.codice_azienda"
@@ -270,6 +271,18 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "time_consumed_previous_year",
+            "label": "Giorni Impiegati Anno Precedente",
+            "tooltip": "Giorni Impiegati Anno Precedente",
+            "width": "14%",
+            "showTotal": true
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "time_consumed",
             "label": "Totale Giorni Impiegati",
             "tooltip": "Totale Giorni Impiegati",
@@ -308,6 +321,14 @@
         {
             "viewType": "form",
             "formActionType": "attachments"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add" 
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "add" 
         }
     ]
 }
