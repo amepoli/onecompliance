@@ -1,0 +1,121 @@
+{
+    "$schema": "../views.schema.json",
+    "businessObjectName": "aziende",
+    "origin": "entrasp.aziende",
+    "entryKey": "aziende",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select codice_azienda, codice_part from entrasp.aziende where codice_azienda in(€global_user_companies€)"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "selectForm",
+            "queryString": "select entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_year(now()::date), datafine =>entrasp.last_day_year(now()::date)) as time_consumed_current_year,  entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_month(now()::date), datafine =>entrasp.last_day_month(now()::date)) as time_consumed_current_month, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_previous_month(now()::date), datafine =>entrasp.last_day_previous_month(now()::date)) as time_consumed_previous_month from entrasp.employers where codice_azienda=$codice_azienda$ and dynamo_user='€global_user_name€'"
+        }
+    ],
+    "form_keys": [
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "readOnly": false,
+            "newLine": false,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda Erogante",
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": true,
+            "newLine": false,
+            "sameOrigin": false,
+            "key": "time_consumed_current_year",
+            "label": "Totali Giorni Impiegati Anno in Corso",
+            "translate": "RESOURCES.time_consumed_current_year"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "isPrimary": false,
+            "key": "time_consumed_current_month",
+            "label": "Totali Giorni Impiegati Mese in Corso",
+            "translate": "RESOURCES.time_consumed_current_month"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "isPrimary": false,
+            "key": "time_consumed_previous_month",
+            "label": "Totali Giorni Impiegati Mese Precedente",
+            "translate": "RESOURCES.time_consumed_previous_month"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "user_per_azienda",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ],
+            "label": "Ore collaboratori"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "20%",
+            "key": "codice_azienda",
+            "label": "Azienda",
+            "translate": "RESOURCES.customer"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "20%",
+            "key": "codice_part",
+            "label": "Partizione"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by codice_azienda asc"
+    },
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ]
+}
