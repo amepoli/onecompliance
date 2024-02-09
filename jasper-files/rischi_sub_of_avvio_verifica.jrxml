@@ -33,17 +33,36 @@
 	</parameter>
 	<parameter name="id_sondaggio" class="java.math.BigDecimal"/>
 	<queryString>
-		<![CDATA[select distinct rs.codice_part, rs.id_centro_gest, rs.codice_azienda, rs.codice_rischio, rs.codice, snd.id_sondaggio, rs.titolo, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_pre) as rischio_inerente, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_pre,0), coalesce(rs.intensita_singola_pre,0)) as rischio_inerente_pi, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_post) as rischio_residuo, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_post,0), coalesce(rs.intensita_singola_post,0)) as rischio_residuo_pi, entrasp.srr_rr(rs.codice_azienda, coalesce(rs.probabilita_post,0), coalesce(rs.intensita_singola_post,0)) as risk_response, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_post_rilevata) as rischio_residuo_rett, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_post_rilevata,0), coalesce(rs.intensita_singola_post_rilevata,0)) as rischio_residuo_rett_pi, entrasp.srr_rr(rs.codice_azienda, coalesce(rs.probabilita_post_rilevata,0), coalesce(rs.intensita_singola_post_rilevata,0)) as risk_response_rett, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'P',rs.probabilita_post) as probabilita from entrasp.sondaggi snd inner join entrasp.domande_presidi dp using(codice_azienda, id_modello_test, id_modello_test_vr) inner join entrasp.rischi_presidi ps using(codice_azienda, id_presidio) inner join entrasp.rischi rs using(codice_azienda, codice_rischio) where codice_azienda=$P{codice_azienda} and id_sondaggio= $P{id_sondaggio}]]>
+		<![CDATA[select distinct rs.codice_part, coalesce(rs.intensita_totale_post_rilevata,0) as intensita_totale_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'T', coalesce(intensita_totale_post_rilevata,0)) as intensita_totale_post_rett_descrizione,coalesce(rs.intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,  entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata,0)) as intensita_rett_descrizione, coalesce(rs.probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) as probabilita_rett_descrizione, rs.codice_azienda, rs.codice as codice_rischio, rs.descrizione, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest), rs.probabilita_pre, rs.intensita_singola_pre, rs.intensita_totale_pre, rs.probabilita_post, rs.intensita_singola_post, rs.intensita_totale_post, entrasp.cpl_soglie_descrizione(rs.codice_azienda, 'T',rs.intensita_totale_pre) as soglia_intensita_totale_pre, entrasp.cpl_soglie_descrizione(rs.codice_azienda, 'P',rs.probabilita_pre) as soglia_probabilita_pre, entrasp.cpl_soglie_descrizione(rs.codice_azienda, 'I',rs.intensita_singola_pre)as soglia_intensita_singola_pre, entrasp.cpl_soglie_descrizione(rs.codice_azienda, 'T',rs.intensita_totale_post) as soglia_intensita_totale_post, entrasp.cpl_soglie_descrizione(rs.codice_azienda, 'P',rs.probabilita_post) as soglia_probabilita_post, entrasp.cpl_soglie_descrizione(rs.codice_azienda, 'I',rs.intensita_singola_post) as soglia_intensita_singola_post, rs.titolo from entrasp.sondaggi snd inner join entrasp.domande_presidi dp using(codice_azienda, id_modello_test, id_modello_test_vr) inner join entrasp.rischi_presidi ps using(codice_azienda, id_presidio) inner join entrasp.rischi rs using(codice_azienda, codice_rischio) where codice_azienda=$P{codice_azienda} and id_sondaggio= $P{id_sondaggio}]]>
 	</queryString>
 	<field name="codice_part" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_part"/>
 		<property name="com.jaspersoft.studio.field.label" value="codice_part"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
 	</field>
-	<field name="id_centro_gest" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_centro_gest"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_centro_gest"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	<field name="intensita_totale_post_rilevata" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="intensita_totale_post_rilevata"/>
+		<property name="com.jaspersoft.studio.field.label" value="intensita_totale_post_rilevata"/>
+	</field>
+	<field name="intensita_totale_post_rett_descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="intensita_totale_post_rett_descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="intensita_totale_post_rett_descrizione"/>
+	</field>
+	<field name="intensita_singola_post_rilevata" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="intensita_singola_post_rilevata"/>
+		<property name="com.jaspersoft.studio.field.label" value="intensita_singola_post_rilevata"/>
+	</field>
+	<field name="intensita_rett_descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="intensita_rett_descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="intensita_rett_descrizione"/>
+	</field>
+	<field name="probabilita_post_rilevata" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="probabilita_post_rilevata"/>
+		<property name="com.jaspersoft.studio.field.label" value="probabilita_post_rilevata"/>
+	</field>
+	<field name="probabilita_rett_descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="probabilita_rett_descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="probabilita_rett_descrizione"/>
 	</field>
 	<field name="codice_azienda" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
@@ -55,60 +74,73 @@
 		<property name="com.jaspersoft.studio.field.label" value="codice_rischio"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
 	</field>
-	<field name="codice" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="codice"/>
-		<property name="com.jaspersoft.studio.field.label" value="codice"/>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
 	</field>
-	<field name="id_sondaggio" class="java.math.BigDecimal">
-		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
-		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
-		<property name="com.jaspersoft.studio.field.tree.path" value="sondaggi"/>
+	<field name="centri_gestionali_descr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="centri_gestionali_descr"/>
+		<property name="com.jaspersoft.studio.field.label" value="centri_gestionali_descr"/>
+	</field>
+	<field name="probabilita_pre" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="probabilita_pre"/>
+		<property name="com.jaspersoft.studio.field.label" value="probabilita_pre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="intensita_singola_pre" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="intensita_singola_pre"/>
+		<property name="com.jaspersoft.studio.field.label" value="intensita_singola_pre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="intensita_totale_pre" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="intensita_totale_pre"/>
+		<property name="com.jaspersoft.studio.field.label" value="intensita_totale_pre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="probabilita_post" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="probabilita_post"/>
+		<property name="com.jaspersoft.studio.field.label" value="probabilita_post"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="intensita_singola_post" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="intensita_singola_post"/>
+		<property name="com.jaspersoft.studio.field.label" value="intensita_singola_post"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="intensita_totale_post" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="intensita_totale_post"/>
+		<property name="com.jaspersoft.studio.field.label" value="intensita_totale_post"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
+	</field>
+	<field name="soglia_intensita_totale_pre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="soglia_intensita_totale_pre"/>
+		<property name="com.jaspersoft.studio.field.label" value="soglia_intensita_totale_pre"/>
+	</field>
+	<field name="soglia_probabilita_pre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="soglia_probabilita_pre"/>
+		<property name="com.jaspersoft.studio.field.label" value="soglia_probabilita_pre"/>
+	</field>
+	<field name="soglia_intensita_singola_pre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="soglia_intensita_singola_pre"/>
+		<property name="com.jaspersoft.studio.field.label" value="soglia_intensita_singola_pre"/>
+	</field>
+	<field name="soglia_intensita_totale_post" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="soglia_intensita_totale_post"/>
+		<property name="com.jaspersoft.studio.field.label" value="soglia_intensita_totale_post"/>
+	</field>
+	<field name="soglia_probabilita_post" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="soglia_probabilita_post"/>
+		<property name="com.jaspersoft.studio.field.label" value="soglia_probabilita_post"/>
+	</field>
+	<field name="soglia_intensita_singola_post" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="soglia_intensita_singola_post"/>
+		<property name="com.jaspersoft.studio.field.label" value="soglia_intensita_singola_post"/>
 	</field>
 	<field name="titolo" class="java.lang.String">
 		<property name="com.jaspersoft.studio.field.name" value="titolo"/>
 		<property name="com.jaspersoft.studio.field.label" value="titolo"/>
 		<property name="com.jaspersoft.studio.field.tree.path" value="rischi"/>
-	</field>
-	<field name="centro_gest" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="centro_gest"/>
-		<property name="com.jaspersoft.studio.field.label" value="centro_gest"/>
-	</field>
-	<field name="rischio_inerente" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="rischio_inerente"/>
-		<property name="com.jaspersoft.studio.field.label" value="rischio_inerente"/>
-	</field>
-	<field name="rischio_inerente_pi" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="rischio_inerente_pi"/>
-		<property name="com.jaspersoft.studio.field.label" value="rischio_inerente_pi"/>
-	</field>
-	<field name="rischio_residuo" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="rischio_residuo"/>
-		<property name="com.jaspersoft.studio.field.label" value="rischio_residuo"/>
-	</field>
-	<field name="rischio_residuo_pi" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="rischio_residuo_pi"/>
-		<property name="com.jaspersoft.studio.field.label" value="rischio_residuo_pi"/>
-	</field>
-	<field name="risk_response" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="risk_response"/>
-		<property name="com.jaspersoft.studio.field.label" value="risk_response"/>
-	</field>
-	<field name="rischio_residuo_rett" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="rischio_residuo_rett"/>
-		<property name="com.jaspersoft.studio.field.label" value="rischio_residuo_rett"/>
-	</field>
-	<field name="rischio_residuo_rett_pi" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="rischio_residuo_rett_pi"/>
-		<property name="com.jaspersoft.studio.field.label" value="rischio_residuo_rett_pi"/>
-	</field>
-	<field name="risk_response_rett" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="risk_response_rett"/>
-		<property name="com.jaspersoft.studio.field.label" value="risk_response_rett"/>
-	</field>
-	<field name="probabilita" class="java.lang.String">
-		<property name="com.jaspersoft.studio.field.name" value="probabilita"/>
-		<property name="com.jaspersoft.studio.field.label" value="probabilita"/>
 	</field>
 	<sortField name="codice_rischio"/>
 	<background>
