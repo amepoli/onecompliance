@@ -1,0 +1,183 @@
+{
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.argomenti_report",
+    "entryKey": "argomenti_report",
+    "businessObjectName": "argomenti_report",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "ID",
+            "key": "id_argomento",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": true,
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_report AS id, id_report || '-' || descrizione AS name FROM entrasp.report",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_report",
+            "label": "report",
+            "newLine": false,
+            "readOnly": false,
+            "size": 7
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=52035 order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_tipo",
+            "label": "Tipo",
+            "newLine": true,
+            "readOnly": false,
+            "size": 7
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Aziende_autorizzate",
+            "key": "lista_aziende_autorizzate",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Aziende_escluse",
+            "key": "lista_aziende_escluse",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 5
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_articolo_normativo",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "argomenti_articoli_normativi",
+                "viewType": "form",
+                "query": "delete from entrasp.argomenti_report where id_argomento=£id_argomento£ and id_report=£id_report£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "id_argomento",
+                        "destination": "id_argomento"
+                    },
+                    {
+                        "source": "id_report",
+                        "destination": "id_report"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento",
+            "label": "ID",
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_report",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "report",
+            "queryFunct": "entrasp.report_description(id_report)",
+            "label": "Report",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo",
+            "queryFunct": "entrasp.argomenti_descr_breve(id_tipo)",
+            "label": "Tipo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Aziende_autorizzate",
+            "key": "lista_aziende_autorizzate",
+            "isHidden": false,
+            "width": "25%",
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Aziende_escluse",
+            "key": "lista_aziende_escluse",
+            "isHidden": false,
+            "width": "25%",
+            "isPrimary": false
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}

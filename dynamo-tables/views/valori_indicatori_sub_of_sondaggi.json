@@ -1,0 +1,15 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "valori_indicatori_sub_of_sondaggi",
+    "inheritsFrom": "valori_indicatori",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select va.*, entrasp.indicatori_description(id_indicatore) as indicatore from entrasp.valori_indicatori va inner join entrasp.sondaggi snd using (codice_azienda, id_sondaggio) inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and mt.id_argomento in (select id_argomento from entrasp.argomenti_report) "
+        }
+    ],
+    "define": {
+        "isHiddenval": "true"
+    }
+}

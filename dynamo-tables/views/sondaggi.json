@@ -4,9 +4,7 @@
     "businessObjectName": "sondaggi",
     "origin": "entrasp.sondaggi",
     "label": "Sondaggi",
-    "dashboardTables": [
-        "dashboard_sondaggi"
-    ],
+    "dashboardTables": ["dashboard_sondaggi"],
     "define": {
         "mask_condition": "true"
     },
@@ -199,9 +197,7 @@
                 {
                     "eventName": "sondaggio_change_stato",
                     "condition": "equalTo",
-                    "values": [
-                        "C"
-                    ],
+                    "values": ["C"],
                     "actionType": "query",
                     "queryFunct": "select entrasp.sondaggio_insert_following($codice_azienda$, $id_sondaggio$) as id_sondaggio_succ;",
                     "outputEventWhenComplete": "survey_reload"
@@ -250,9 +246,7 @@
                     "eventName": "sondaggio_change_stato",
                     "actionType": "query",
                     "condition": "notEqualTo",
-                    "values": [
-                        "C"
-                    ],
+                    "values": ["C"],
                     "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'snd', '£stato£');"
                 }
             ],
@@ -2125,6 +2119,34 @@
             ],
             "label": "Rischi associati",
             "translate": "RESOURCES.rischi_sub_of_procedure"
+        },
+        {
+            "entryKey": "valori_indicatori_sub_of_sondaggi",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Indicatori Associati"
+        },
+        {
+            "entryKey": "report_sub_of_sondaggi",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Report Associati"
         }
     ],
     "table_keys": [
@@ -3017,7 +3039,6 @@
             {
                 "label": "Report Sondaggio ESG",
                 "queryString": "select vi.id_indicatore,ind.descrizione as descrizione_indicatore, vi.data_analisi, vi.valore, vi.id_sondaggio, vi.id_somministrazione, entrasp.anagrafiche_vr_dati_identificativi_nom1(vi.codice_part, vi.id_anagrafica) as anagrafica, ir.id_report,re.descrizione as descrizione_report from entrasp.valori_indicatori vi inner join entrasp.indicatori ind on vi.id_indicatore=ind.id_indicatore inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.report re on ir.id_report=re.id_report where vi.codice_azienda=$codice_azienda$ and vi.id_sondaggio =$id_sondaggio$ order by anagrafica, vi.id_somministrazione, vi.id_indicatore"
-                
             }
         ]
     },
