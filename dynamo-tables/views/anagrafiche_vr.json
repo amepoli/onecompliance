@@ -2535,7 +2535,28 @@
             "newLine": false,
             "size": 1,
             "queryCond": "an.id_anagrafica in (select an.id_anagrafica from entrasp.anagrafiche_id an join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.privacy_ruolo(an.codice_part, an.id_anagrafica) pr on an.codice_part=pr.codicepart and an.id_anagrafica=pr.idanagrafica inner join entrasp.employers em on an.codice_part=em.codice_part and an.dynamo_user=em.dynamo_user where an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and (em.codice_ruolo not in ('INTSH', 'STF') or em.codice_ruolo is null) and em.data_fine_collaborazione is null and (em.codice_ruolo is null or em.id_centro_gest is null or em.data_avvio_collaborazione is null))"
+        },
+        {
+            "fieldName": "cliente_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Cliente",
+            "newLine": false,
+            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='CLI' and ra.codice_azienda='€global_codice_azienda€')"
+        },
+        {
+            "fieldName": "fornitore_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Fornitore",
+            "newLine": false,
+            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='FOR' and ra.codice_azienda='€global_codice_azienda€')"
         }
+       
     ],
     "outputEvents": [
         {
