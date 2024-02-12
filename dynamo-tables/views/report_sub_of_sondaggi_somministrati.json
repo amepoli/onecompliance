@@ -7,7 +7,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select ar.*,entrasp.report_description(id_report) as report, ss.id_somministrazione, snd.codice_azienda, snd.id_sondaggio from entrasp.argomenti_report ar inner join entrasp.modelli_test mt on ar.id_argomento=mt.id_argomento inner join entrasp.sondaggi snd on mt.codice_azienda=snd.codice_azienda and mt.id_modello_test=snd.id_modello_test inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$ and ar.id_tipo=52045"
+            "queryString": "select ar.*,entrasp.report_description(id_report) as report, ss.id_somministrazione, snd.codice_azienda, snd.id_sondaggio from entrasp.argomenti_report ar inner join entrasp.modelli_test mt on ar.id_argomento=mt.id_argomento inner join entrasp.sondaggi snd on mt.codice_azienda=snd.codice_azienda and mt.id_modello_test=snd.id_modello_test inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where (',' || lista_aziende_autorizzate || ',' LIKE '%,' || '€global_codice_azienda€' || ',%' OR ',' || lista_aziende_escluse || ',' NOT LIKE '%,' || '€global_codice_azienda€' || ',%' OR (lista_aziende_autorizzate IS NULL OR lista_aziende_autorizzate = '') AND (lista_aziende_escluse IS NULL OR lista_aziende_escluse = '')) and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$ and ar.id_tipo=52045"
         }
     ],
     "table_keys": [
