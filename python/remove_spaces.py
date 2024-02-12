@@ -19,3 +19,5 @@ with open('output.txt', 'w', encoding='utf-8') as file:
     file.write(processed_text)
 
 print("Elaborazione completata.")
+
+## python remove_spaces.py
