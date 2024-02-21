@@ -675,7 +675,7 @@ export const locale = {
             id_anagrafica_somministrazione: "id_anagrafica_somministrazione",
             id_anagrafiche: "ID anagrafiche array",
             id_answer: "Id Risposta",
-            id_argomento: "ID",
+            id_argomento: "ID Argomento",
             id_argomento_articolo: "Tipo attività",
             id_argomento_azione: "Azioni",
             id_argomento_categoria: "Categorie Dati Personali",
