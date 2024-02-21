@@ -2,6 +2,12 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig, MarkerReplacer } from 'app/oc/interfaces';
 import { isObject } from 'rxjs/internal-compatibility';
+interface TableStyleElement {
+    value: string;
+    valueKey?: string;
+    condition: string;
+    style: any;
+}
 
 @Injectable({
     providedIn: 'root'
@@ -189,6 +195,88 @@ export class HelperService {
             case 'border_radius':
                 return 'border-radius';
         }
+    }
+   
+      /**
+     * Get css style name from json compatible key
+     * @param value
+     * @param style
+     * @returns CSS Style name
+     */
+      public static getStyleByValue(value, columnStyles, row, styleKeysToIgnore) {
+        let completeStyle: any = null;
+        
+        if(Array.isArray(columnStyles)) {
+            const valuedStyles = (columnStyles as TableStyleElement[]).filter(x => x.value !== "*");
+            (valuedStyles as TableStyleElement[]).forEach(element => {
+                const elementValue = element.valueKey? row[element.valueKey]?.toString() ?? null: element.value?.toString() ?? null;
+                const searchValue = value?.toString() ?? null;
+                if(elementValue !== null && searchValue !== null) {
+                    switch(element.condition) {
+                        case "==":
+                            if(searchValue == elementValue)
+                            {               
+                                completeStyle = element.style;
+                            }
+                            break;
+                        case "!=":
+                            if(searchValue !== elementValue)
+                            {               
+                                completeStyle = element.style;
+                            }
+                            break;
+                        case ">=":
+                            if(parseInt(searchValue) >= parseInt(elementValue))
+                            {               
+                                completeStyle =  element.style;
+                            }
+                            break;
+                        case ">":
+                            if(parseInt(searchValue) > parseInt(elementValue))
+                            {               
+                                completeStyle =  element.style;
+                            }
+                            break;
+                        case "<=":
+                            if(parseInt(searchValue) <= parseInt(elementValue))
+                            {               
+                                completeStyle =  element.style;
+                            }
+                            break;
+                        case "<":
+                            if(parseInt(searchValue) < parseInt(elementValue))
+                            {               
+                                completeStyle =  element.style;
+                            }
+                            break;
+                        default: 
+                            break;
+                    }            
+                }
+            });
+
+            if(completeStyle === null) {
+                if((columnStyles as TableStyleElement[]).filter(x => x.value === "*").length > 0) {
+                    completeStyle = (columnStyles as TableStyleElement[]).filter(x => x.value === "*")[0].style;
+                }
+                else {
+                    completeStyle = {};
+                }
+            }
+        }
+        else {
+            completeStyle = {};
+        }
+
+        let result = {};
+        
+        Object.keys(completeStyle).forEach(key => {
+            if (!styleKeysToIgnore.includes(key)) {
+                result[HelperService.getStyleName(key)] = completeStyle[key];
+            }
+        });
+
+        return result;
     }
 
     /**
