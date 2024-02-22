@@ -1406,11 +1406,9 @@ export const locale = {
             testo_normativo: "Testo normativo",
             thread: "Thread",
             time_consumed: "Tempo investito (giorn.)",
-            time_consumed_current_month:
-                "Totali Giorni Impiegati Mese in Corso",
+            time_consumed_current_month: "Totali Giorni Impiegati Mese in Corso",
             time_consumed_current_year: "Totali Giorni Impiegati Anno in Corso",
-            time_consumed_previous_month:
-                "Totali Giorni Impiegati Mese Precedente",
+            time_consumed_previous_month: "Totali Giorni Impiegati Mese Precedente",
             time_consumed_sotto_compiti: "Tempo impiegato sotto compiti",
             time_report_play: "",
             time_report_stop_active: "",
