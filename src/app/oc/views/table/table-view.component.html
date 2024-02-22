@@ -228,7 +228,7 @@
                                             <button
                                                 *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
                                                 style="background-color: #25599c; color: white;" 
-                                                [ngStyle]="getElementStyle(entry.key, row[entry.key])" mat-icon-button
+                                                [ngStyle]="getElementStyle(entry.key, row[entry.key], row)" mat-icon-button
                                                 (click)="onButtonClick(entry.key, i, row)" [matTooltip]="entry.tooltip">
                                                 <mat-icon>{{getButtonIcon(entry.key, row[entry.key])}}</mat-icon>
                                             </button>
@@ -243,7 +243,7 @@
                                             
                                             <p *ngIf="row[entry.isInputButtonKey]" style="width: fit-content;max-width: 100%; text-align: left;"
                                                 [style.padding-left.px]="getLevel(row, entry.key)"
-                                                [ngStyle]="getElementStyle(entry.key, row[entry.key])"
+                                                [ngStyle]="getElementStyle(entry.key, row[entry.key], row)"
                                                 class="input-clickable" (click)="onButtonClick(entry.key, i, row)"
                                                 [matTooltip]="entry.tooltip">
                                                 {{row[entry.key] | onecompliance: format[entry.key]}}
@@ -251,7 +251,7 @@
                                             <p *ngIf="!(row[entry.isInputButtonKey] ?? entry.isInputButton) && !entry.isButton && !entry.isCheckbox"
                                                 style="width: 100%; text-align: left; border-radius: 10px;"
                                                 [style.padding-left.px]="getLevel(row, entry.key)"
-                                                [ngStyle]="getElementStyle(entry.key, row[entry.key])"
+                                                [ngStyle]="getElementStyle(entry.key, row[entry.key], row)"
                                                 [matTooltip]="entry.tooltip">
                                                 {{row[entry.key] | onecompliance: format[entry.key]}}
                                             </p>

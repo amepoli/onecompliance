@@ -9,6 +9,14 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
 import { DataSharingService } from 'app/oc/services/data_sharing.service';
 
+
+interface TableStyleElement {
+    value: string;
+    valueKey?: string;
+    condition: string;
+    style: any;
+}
+
 @Component({
     selector: 'table-view',
     templateUrl: './table-view.component.html',
@@ -59,7 +67,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     displayedColumns: string[];
 
-    styles = {};
+    styles: {[key: string]: TableStyleElement[] | object} = {};
     dataSource: MatTableDataSource<any> = null;
     hasData: boolean = false;
     selectedRow: MatRow = null;
@@ -688,18 +696,18 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         table_keys.forEach(key => {
             if (_this.styleQueries && _this.styleQueries[key.key]) {
                 if (!_this.styles[key.key]) {
-                    _this.styles[key.key] = {};
+                    _this.styles[key.key] = [];
                 }
                 Object.keys(_this.styleQueries[key.key]) .forEach(s => {
-                    _this.styles[key.key][s] = _this.styleQueries[key.key][s][0];
+                    (_this.styles[key.key] as TableStyleElement[]).push({value: s, condition: "==", style: _this.styleQueries[key.key][s][0]});
                 });
             }
             if (key.style && key.style.length) {
                 key.style.forEach(style => {
                     if (!_this.styles[key.key]) {
-                        _this.styles[key.key] = {};
+                        _this.styles[key.key] = [];
                     }
-                    _this.styles[key.key][style.value] = style;
+                    (_this.styles[key.key] as TableStyleElement[]).push({value: style.value, valueKey: style.valueKey, condition: style.condition ?? "==", style: style});
                 });
             }
         });
@@ -711,39 +719,43 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             const keys = Object.keys(this.styles[key]);
 
             keys.forEach(k => {
-                if (this.styles[key][k]['button_icon']) {
+                if((this.styles[key] as TableStyleElement[]).some(x => x.value === k && x.style['button_icon'])) {
                     buttonIconExists = true;
                 }
+                // if (this.styles[key][k]['button_icon']) {
+                //     buttonIconExists = true;
+                // }
             })
         }
         return buttonIconExists;
     }
 
-    getButtonIcon(key: string, value) {
-        return (this.styles[key][value] ?? this.styles[key]['*'] ?? this.styles[key])['button_icon'];
+    getButtonIcon(key: string, value: string) {
+        let style: any = {};
+        if(Array.isArray(this.styles[key])) {
+            const valuedStyle = [
+                ...(this.styles[key] as TableStyleElement[]).filter(x => x.value === value),
+                ...(this.styles[key] as TableStyleElement[]).filter(x => x.value === "*"),
+            ];
+            
+            if(valuedStyle.length > 0) {
+                style = valuedStyle[0];
+            } 
+        }
+        else {
+            style = this.styles[key];
+        }
+        return style['button_icon'];
     }
 
-    getElementStyle(column, value) {
+    getElementStyle(column, value, row) {
         let styles = {};
         const styleKeysToIgnore = ['value', 'button_icon'];
 
         const valueStr = value != null ? value + '' : null;
         if (column && valueStr && this.styles[column]) {
-            let values: string[] = Object.keys(this.styles[column]);
-            if (valueStr && values.includes(valueStr)) {
-                Object.keys(this.styles[column][valueStr]).forEach(key => {
-                    if (!styleKeysToIgnore.includes(key)) {
-                        styles[HelperService.getStyleName(key)] = this.styles[column][valueStr][key];
-                    }
-                });
-            }
-            else if (values.includes('*')) {
-                Object.keys(this.styles[column]['*']).forEach(key => {
-                    if (!styleKeysToIgnore.includes(key)) {
-                        styles[HelperService.getStyleName(key)] = this.styles[column]['*'][key];
-                    }
-                });
-            }
+            const columnStyles = this.styles[column];
+            styles = HelperService.getStyleByValue(valueStr, columnStyles, row, styleKeysToIgnore);
 
         }
         return styles;
