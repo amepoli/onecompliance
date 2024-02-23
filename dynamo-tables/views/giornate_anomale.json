@@ -2,6 +2,7 @@
     "$schema": "../views.schema.json",
     "entryKey": "giornate_anomale",
     "origin": "entrasp.giornate_e_users_da_rendicontare",
+    "inheritsFrom": "consuntivazioni_consultant_list",
     "predefinedQueries": [
         {
             "operation": "selectTable",
@@ -60,77 +61,6 @@
         "hide_date": "false",
         "hide_minuti_eccesso": "false"
     },
-    "form_keys": [
-        {
-            "format": {
-                "viewType": "input",
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "giorno",
-            "readOnly": true,
-            "newLine": false,
-            "label": "Data",
-            "translate": "RESOURCES.giorno"
-        },
-        {
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "newLine": false,
-            "key": "dynamo_user",
-            "readOnly": true,
-            "label": "Utente",
-            "translate": "RESOURCES.dynamo_user"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "validata",
-            "label": "Giornata validata",
-            "outputEvent": {
-                "eventName": "valida_giornata",
-                "eventTrigger": "change"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "valida_giornata",
-                    "actionType": "query",
-                    "condition": "equalTo",
-                    "values": [
-                        "1"
-                    ],
-                    "queryFunct": "update entrasp.consuntivazioni csn set validata='1', motivo_validazione_tr=$motivo_validazione_tr$ from entrasp.anagrafiche_id an where dynamo_user=$dynamo_user$ and csn.data_intervento=$giorno$ and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica returning 1"
-                }
-            ],
-            "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.validata"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "motivo_validazione_tr",
-            "label": "Note valid.giornata",
-            "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.motivo_validazione_tr"
-        }
-    ],
     "table_keys": [
         {
             "format": {
