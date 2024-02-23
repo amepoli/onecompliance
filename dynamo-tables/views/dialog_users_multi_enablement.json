@@ -64,7 +64,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT name as id, description as name FROM entrasp.profiles  WHERE aziende_list && ARRAY[€global_user_companies€]::character varying[] OR aziende_list IS NULL ORDER BY name;",
+                "comboQuery": "SELECT name as id, description as name FROM entrasp.profiles WHERE aziende_list && ARRAY[€global_user_companies€]::character varying[] OR aziende_list IS NULL ORDER BY name;",
                 "viewType": "combobox",
                 "options": [],
                 "dataType": "text"
@@ -98,7 +98,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT DISTINCT us.username as id, us.username as name FROM entrasp.users us INNER JOIN entrasp.anagrafiche_id an ON us.username=an.dynamo_user INNER JOIN entrasp.aziende az ON an.codice_part=az.codice_part WHERE az.codice_azienda IN (€global_user_companies€)",
+                "comboQuery": "SELECT DISTINCT us.username as id, us.username as name FROM ENTRASP.USERS US where us.username in(select entrasp.colleghi('€global_username€')) AND US.FLAG_ADMIN = '0'",
                 "viewType": "combobox",
                 "options": [],
                 "dataType": "text"
