@@ -13,5 +13,81 @@
             "operation": "selectForm",
             "queryString": "select distinct date_trunc('YEAR', current_date)::date as dt_inizio_rif, entrasp.last_day_year(current_date) as dt_fine_rif, an.dynamo_user, em.nome, em.cognome, round(sum(csn.durata)/480, 2) as durata, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '12 months')::date, datafine=>current_date::date) as dd_12_months, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '1 months')::date, datafine=>current_date::date) as dd_1_months, entrasp.consuntivazioni_time_consumed_azienda(dynamouser=>an.dynamo_user, datainizio=>(current_date - interval '3 months')::date, datafine=>current_date::date) as dd_3_months from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part inner join (select distinct es.dynamo_user, es.cognome, es.nome from entrasp.employers es) em on an.dynamo_user=em.dynamo_user where csn.codice_azienda in(€global_user_companies€) and an.dynamo_user=$dynamo_user$"
         }
+    ],
+    "subTables": [
+        {
+            "entryKey": "consuntivazioni_consultant_sub_of_user",
+            "keys": [
+                {
+                    "parent": "dynamo_user",
+                    "son": "dynamo_user"
+                }
+            ],
+            "label": "Time report",
+            "type": "table"
+        },
+        {
+            "entryKey": "tr_anomali_sub_of_user",
+            "keys": [
+                {
+                    "parent": "dynamo_user",
+                    "son": "dynamo_user"
+                }
+            ],
+            "label": "Giorni anomali",
+            "type": "table"
+        },
+        {
+            "entryKey": "tr_incomplete_sub_of_user",
+            "keys": [
+                {
+                    "parent": "dynamo_user",
+                    "son": "dynamo_user"
+                }
+            ],
+            "label": "Giorni incompleti",
+            "type": "table"
+        },
+        {
+            "entryKey": "consuntivazioni_consultant_anomale_user",
+            "keys": [
+                {
+                    "parent": "dynamo_user",
+                    "son": "dynamo_user"
+                }
+            ],
+            "label": "Consuntivazioni anomale",
+            "type": "table"
+        },
+        {
+            "entryKey": "consuntivazioni_sovrapposte_sub_of_user",
+            "keys": [
+                {
+                    "parent": "dynamo_user",
+                    "son": "dynamo_user"
+                }
+            ],
+            "label": "Consuntivazioni sovrapposte",
+            "type": "table"
+        },
+        {
+            "entryKey": "aziende_sub_of_user",
+            "keys": [
+                {
+                    "parent": "dynamo_user",
+                    "son": "dynamo_user"
+                },
+                {
+                    "parent": "dt_inizio_rif",
+                    "son": "dt_inizio_rif"
+                },
+                {
+                    "parent": "dt_fine_rif",
+                    "son": "dt_fine_rif"
+                }
+            ],
+            "label": "Ore per azienda",
+            "type": "table"
+        }
     ]
 }
