@@ -7,7 +7,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select codice_azienda, codice_part from entrasp.aziende where codice_azienda in(€global_user_companies€)"
+            "queryString": "select codice_azienda, codice_part from entrasp.aziende where codice_azienda in(€global_user_companies€) and codice_azienda in(select distinct csn.codice_azienda from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part and an.dynamo_user in(select entrasp.colleghi('€global_username€')))"
         },
         {
             "type": "postProcessing",
