@@ -580,7 +580,8 @@
             },
             "label": "A partire dal",
             "newLine": false,
-            "queryCond": "gdr.giorno::date>$date_from$"
+            "queryCond": "gdr.giorno::date>$date_from$",
+            "size": 2
         },
         {
             "format": {
@@ -594,6 +595,18 @@
             "label": "Utente",
             "newLine": false,
             "size": 2
+        },
+        {
+            "fieldName": "id_centro_gest_s",
+            "format": {
+                "comboQuery": "SELECT distinct id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.centri_gestionali_descr(codice_part,id_centro_gest);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "newLine": false,
+            "queryCond": "gdr.dynamo_user in(select dynamo_user from entrasp.anagrafiche_id where id_centro_gest=$id_centro_gest_s$)"
         },
         {
             "fieldName": "miei_aggiornamenti",
