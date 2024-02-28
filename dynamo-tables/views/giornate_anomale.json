@@ -33,7 +33,7 @@
                 {
                     "key": "aggiungi_malattia_per_utente",
                     "icon": "merge_type",
-                    "label": "Segna ferie",
+                    "label": "Segna Malattia",
                     "reloadOnSuccess": true,
                     "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user, tipo_=>'Malattia') from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user in($selected_rows_data$);"
                 },
@@ -580,7 +580,8 @@
             },
             "label": "A partire dal",
             "newLine": false,
-            "queryCond": "gdr.giorno::date>$date_from$"
+            "queryCond": "gdr.giorno::date>$date_from$",
+            "size": 2
         },
         {
             "format": {
@@ -594,6 +595,18 @@
             "label": "Utente",
             "newLine": false,
             "size": 2
+        },
+        {
+            "fieldName": "id_centro_gest_s",
+            "format": {
+                "comboQuery": "SELECT distinct id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.centri_gestionali_descr(codice_part,id_centro_gest);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "newLine": false,
+            "queryCond": "gdr.dynamo_user in(select dynamo_user from entrasp.anagrafiche_id where id_centro_gest=$id_centro_gest_s$)"
         },
         {
             "fieldName": "miei_aggiornamenti",
@@ -663,6 +676,6 @@
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by giorno desc, gdr.dynamo_user"
+        "tableViewSuffix": "order by giorno desc, gdr.dynamo_user limit 500"
     }
 }
