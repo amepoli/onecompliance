@@ -16,10 +16,12 @@ export interface TableViewKey { // as per API specification
     isInputButton?: boolean;
     isInputButtonKey?: string;
     buttonAction?: {
-        action: "navigate" | "delete" | "query" | 'downloadAttachment',
+        action: "navigate" | "delete" | "query" | 'downloadAttachment' | 'downloadReport',
         target: string,
         viewType: string,
         query?: string,
+        reportName?: string,
+        reportQueryType?: "form" | "table",
         onSuccessAction?: "reload" | "navigate" | "update_time_tracker" | "update_time_tracker_and_reload",
         confirmAction?: boolean,
         confirmMessage?: {
