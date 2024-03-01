@@ -241,14 +241,14 @@
                                                 {{entry.label}}
                                             </button>
                                             
-                                            <p *ngIf="row[entry.isInputButtonKey]" style="width: fit-content;max-width: 100%; text-align: left;"
+                                            <p *ngIf="entry.isInputButton || row[entry.isInputButtonKey]" style="width: fit-content;max-width: 100%; text-align: left;"
                                                 [style.padding-left.px]="getLevel(row, entry.key)"
-                                                [ngStyle]="getElementStyle(entry.key, row[entry.key], row)"
+                                                [ngStyle]="getElementStyle(entry.key, row[entry.key])"
                                                 class="input-clickable" (click)="onButtonClick(entry.key, i, row)"
                                                 [matTooltip]="entry.tooltip">
                                                 {{row[entry.key] | onecompliance: format[entry.key]}}
                                             </p>
-                                            <p *ngIf="!(row[entry.isInputButtonKey] ?? entry.isInputButton) && !entry.isButton && !entry.isCheckbox"
+                                            <p *ngIf="!entry.isInputButton && !row[entry.isInputButtonKey] && !entry.isButton && !entry.isCheckbox"
                                                 style="width: 100%; text-align: left; border-radius: 10px;"
                                                 [style.padding-left.px]="getLevel(row, entry.key)"
                                                 [ngStyle]="getElementStyle(entry.key, row[entry.key], row)"
