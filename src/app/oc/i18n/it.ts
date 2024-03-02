@@ -787,7 +787,7 @@ export const locale = {
             id_mandato: "ID Mandato",
             id_mandato_checkbox: "Azzera Mandato",
             id_menu: "Valore di default",
-            id_modello_test: "ID",
+            id_modello_test: "Id Mod.Test",
             id_modello_test_new: "ID Modello Test New",
             id_modello_test_son: "id_modello_test_son",
             id_modello_test_vr: "ID Versione",
