@@ -102,7 +102,7 @@
                     {
                         "icon": "question_answer",
                         "label": "Cancella azienda",
-                        "outputEventName": "azienda_delete"
+                        "outputEventName": "azienda_delete"                    
                     }
                 ]
             },
@@ -118,9 +118,20 @@
                 },
                 {
                     "eventName": "azienda_delete",
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.grc_cancella_azienda($codice_azienda$)",
+                    "actionType": "show_message",
                     "condition": "none",
+                    "message": {
+                        "messageTitle": "Conferma cancellazioni",
+                        "messageText": "Si vuole cancellare tutti i dati dell'azienda?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.grc_cancella_azienda($codice_azienda$)"
+                        }
+                    },
                     "values": []
                 }
             ],
