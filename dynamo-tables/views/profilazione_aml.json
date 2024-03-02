@@ -2013,52 +2013,8 @@
             "key": "stato",
             "width": "7%",
             "label": "Stato",
-            "translate": "RESOURCES.status",
-            "style": [
-                {
-                    "value": "Chiuso",
-                    "font_color": "PaleGreen",
-                    "font_weight": "500",
-                    "background_color": "Green",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Provvisorio",
-                    "font_color": "MistyRose",
-                    "font_weight": "500",
-                    "background_color": "MediumPurple",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Pianificato",
-                    "font_color": "DarkRed",
-                    "font_weight": "500",
-                    "background_color": "orange",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Attesa Riscontro",
-                    "font_color": "black",
-                    "font_weight": "500",
-                    "background_color": "yellow",
-                    "font_size": "medium",
-                    "text_align": "center"
-                },
-                {
-                    "value": "In Svolgimento",
-                    "font_color": "white",
-                    "font_weight": "500",
-                    "background_color": "royalblue",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Annullato",
-                    "font_color": "grey",
-                    "font_weight": "500",
-                    "background_color": "gainsboro",
-                    "text_align": "center"
-                }
-            ]
+            "styleQuery": "select transcodifica as stato, background_color, character_color as font_color, '500' as font_weight, 'center' as text_align from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI'",
+            "translate": "RESOURCES.status"
         },
         {
             "format": {
@@ -2775,7 +2731,6 @@
             "newLine": false,
             "queryCond": "(snd.stato not in('N', 'C') and data_prevista<current_date and (split_part(ss.object_key, '|', 2)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='€global_codice_azienda€' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='€global_codice_part€' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='€global_codice_azienda€' and cntx.id_cliente is not null))))"
         }
-        
     ],
     "exportQueries": {
         "tableQueries": [
