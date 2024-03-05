@@ -201,9 +201,41 @@ order by id_cons
 select max(id_cons) from entrasp.consuntivazioni where codice_azienda='QUANTYX'
 
 
+-- coerenza tra employers e anagrafiche							
+select distinct an.dynamo_user, em.dynamo_user, an.id_Centro_gest, em.id_centro_gest, an.codice_ruolo, em.codice_ruolo,  
+	from entrasp.anagrafiche_id an, entrasp.employers em
+	where an.dynamo_user=em.dynamo_user and (an.id_Centro_gest!=em.id_centro_gest or an.codice_ruolo!=em.codice_ruolo) 
+											 and em.codice_azienda in('QUANTYX', 'QUANTYXSRL')
+
+update entrasp.employers em
+set id_centro_gest=an.id_centro_gest, 
+codice_ruolo=an.codice_ruolo,
+codice_part=an.codice_part
+from entrasp.anagrafiche_id an
+	where an.dynamo_user=em.dynamo_user and (an.id_Centro_gest!=em.id_centro_gest or an.codice_ruolo!=em.codice_ruolo) 
+											 and em.codice_azienda in('QUANTYX', 'QUANTYXSRL')
+
+
+select codice_ruolo, codice_part
+from entrasp.employers
+where codice_azienda in('QUANTYX', 'QUANTYXSRL')
+and codice_part='FININT'
 
 
 
+-- coerenza tra employers e giornate_e_users_da_rendicontare							
+select distinct gur.dynamo_user, em.dynamo_user, gur.id_Centro_gest, em.id_centro_gest 
+	from entrasp.giornate_e_users_da_rendicontare gur, entrasp.employers em
+	where gur.dynamo_user=em.dynamo_user and gur.id_Centro_gest!=em.id_centro_gest and em.codice_azienda in('QUANTYX', 'QUANTYXSRL')
+
+update entrasp.giornate_e_users_da_rendicontare gur
+set id_centro_gest=em.id_centro_gest, 
+centro_gest=entrasp.centri_gestionali_descr_noid(em.codice_part, em.id_centro_gest),
+codice_ruolo=em.codice_ruolo,
+ruolo=entrasp.ruolo_descr(em.codice_ruolo)
+from entrasp.employers em
+where gur.dynamo_user=em.dynamo_user and (gur.id_Centro_gest!=em.id_centro_gest or gur.codice_ruolo!=em.codice_ruolo) 
+										  and em.codice_azienda in('QUANTYX', 'QUANTYXSRL')
 
 --- righe che seguono per sistemare gli uffici anomali
 									
@@ -225,16 +257,3 @@ select max(id_cons) from entrasp.consuntivazioni where codice_azienda='QUANTYX'
 									select dynamo_user, codice_azienda, id_centro_gest from entrasp.employers
 									where id_centro_gest=43 and codice_azienda in ('QUANTYX', 'QUANTYXSRL')
 									
-									
-
-
-	-- coerenza tra employers e giornate_e_users_da_rendicontare							
-	select distinct gur.dynamo_user, em.dynamo_user, gur.id_Centro_gest, em.id_centro_gest 
-	from entrasp.giornate_e_users_da_rendicontare gur, entrasp.employers em
-	where gur.dynamo_user=em.dynamo_user and gur.id_Centro_gest!=em.id_centro_gest and em.codice_azienda in('QUANTYX', 'QUANTYXSRL')
-
-update entrasp.giornate_e_users_da_rendicontare gur
-set id_centro_gest=em.id_centro_gest, centro_gest=entrasp.centri_gestionali_descr_noid(em.codice_part, em.id_centro_gest)
-from entrasp.employers em
-where gur.dynamo_user=em.dynamo_user and gur.id_Centro_gest!=em.id_centro_gest and em.codice_azienda in('QUANTYX', 'QUANTYXSRL')
-
