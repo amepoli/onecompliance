@@ -17,7 +17,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT DISTINCT pr.id_ruolo, pr.descr_ruolo, an.codice, an.codice_part, an.id_anagrafica, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva, '€global_codice_azienda€' as codice_azienda FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica inner join entrasp.privacy_ruolo(an.codice_part, an.id_anagrafica) pr on an.codice_part=pr.codicepart and an.id_anagrafica=pr.idanagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica);",
+            "queryString": "SELECT DISTINCT pr.id_ruolo, an.dynamo_user, pr.descr_ruolo, an.codice, an.codice_part, an.id_anagrafica, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva, '€global_codice_azienda€' as codice_azienda FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica inner join entrasp.privacy_ruolo(an.codice_part, an.id_anagrafica) pr on an.codice_part=pr.codicepart and an.id_anagrafica=pr.idanagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica);",
             "type": "main"
         },
         {
@@ -156,6 +156,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "dynamo_user",
+            "label": "dynamo_user",
             "readOnly": false,
             "sameOrigin": true,
             "queryFunct": "SELECT dynamo_user FROM entrasp.anagrafiche_id WHERE codice_part=anagrafiche_vr.codice_part and id_anagrafica=anagrafiche_vr.id_anagrafica",
@@ -2122,7 +2123,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "nmrs",
-            "width": "24%",
+            "width": "20%",
             "label": "Denominazione",
             "style": [
                 {
@@ -2212,12 +2213,11 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
             "key": "dynamo_user",
-            "width": "0",
-            "label": "dynamo_user",
-            "translate": "RESOURCES.dynamo_user"
+            "width": "8%",
+            "label": "dynamo_user"
         },
         {
             "format": {
