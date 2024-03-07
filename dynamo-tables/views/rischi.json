@@ -6,7 +6,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,id_argomento, titolo,id_centro_gest, entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0)) as intensita_totale_post_pi_descrizione, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
+            "queryString": "SELECT codice_part,codice_azienda,codice,codice_rischio,id_argomento, titolo,data_fine_validita, entrasp.srr_giudizio_pi(codice_azienda, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0)) as intensita_totale_post_pi_descrizione, id_centro_gest_liv2, coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,flag_modalita_valutazione_rischi_avanzata,vulnerabilita,descrizione,id_centro_gest,probabilita_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_pre,0)) AS probabilita_pre_descrizione,intensita_singola_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_pre,0)) AS intensita_pre_descrizione,intensita_totale_pre,entrasp.cpl_soglie_descrizione(codice_azienda,'T',coalesce(intensita_totale_pre,0)) AS intensita_totale_pre_descrizione,coalesce(probabilita_post,0) as probabilita_post,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post,0)) AS probabilita_post_descrizione, coalesce(intensita_singola_post,0) as intensita_singola_post,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post,0)) AS impatto_post_descrizione,coalesce(intensita_totale_post,0) as intensita_totale_post,coalesce(probabilita_post_rilevata,0) as probabilita_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'P', coalesce(probabilita_post_rilevata,0)) AS probabilita_rett_descrizione,coalesce(intensita_singola_post_rilevata,0) as intensita_singola_post_rilevata,entrasp.cpl_soglie_descrizione(codice_azienda,'I', coalesce(intensita_singola_post_rilevata)) AS intensita_singola_post_rett_descrizione,coalesce(intensita_totale_pre,0) as intensita_totale_pre FROM entrasp.rischi WHERE codice_azienda=$codice_azienda$ AND codice_rischio=$codice_rischio$;"
         },
         {
             "operation": "insert",
@@ -86,9 +86,10 @@
             "key": "codice_azienda",
             "label": "codice_azienda",
             "translate": "RESOURCES.company_code",
-            "newLine": true,
+            "newLine": false,
             "readOnly": true
         },
+       
         {
             "autoGenerate": false,
             "format": {
@@ -123,7 +124,7 @@
             "label": "Codice Rischio (PK)",
             "translate": "RESOURCES.risk_code_pk",
             "newLine": false,
-            "readOnly": true,
+            "readOnly": false,
             "size": 1.5,
             "inputEvents": [
                 {
@@ -145,6 +146,21 @@
                     "outputEventWhenComplete": "navigate_to_rischio_new"
                 }
             ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "label": "data_fine_validita",
+            "translate": "RESOURCES.data_fine_attivita",
+            "newLine": true,
+            "readOnly": false,
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -174,6 +190,7 @@
             "readOnly": false,
             "size": 6.5
         },
+       
         {
             "autoGenerate": false,
             "format": {
@@ -1538,6 +1555,7 @@
             "label": "codice_part",
             "translate": "RESOURCES.partition_code"
         },
+
         {
             "format": {
                 "dataType": "number"
@@ -1596,11 +1614,24 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "data_fine_validita",
+            "width": "10%",
+            "label": "data_fine_attivita",
+            "translate": "RESOURCES.data_fine_validita"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "titolo",
             "width": "20%",
             "label": "Titolo",
             "translate": "RESOURCES.title"
         },
+       
+       
         {
             "format": {
                 "dataType": "text"
@@ -1613,6 +1644,7 @@
             "translate": "RESOURCES.id_centro_gest_lvl1",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
         },
+        
         {
             "format": {
                 "dataType": "text"
@@ -2644,5 +2676,8 @@
                 "queryString": "select codice_rischio, codice, titolo, descrizione from entrasp.rischi where codice_azienda=$codice_azienda$"
             }
         ]
+    },
+    "querySuffixes": {
+        "tableViewSuffix": "order by codice, data_fine_validita"
     }
 }
