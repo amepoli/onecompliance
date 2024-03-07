@@ -381,6 +381,10 @@
     "exportQueries": {
         "tableQueries": [
             {
+                "queryString": "select codice_azienda, id_cons, date_time_begin, date_time_end, durata from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part where an.dynamo_user='€global_username€'",
+                "label": "Il mio time report"
+            },
+            {
                 "queryString": "select csn.codice_azienda, an.dynamo_user, entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica) as nome_cognome, extract(year from data_intervento) as anno, extract(month from data_intervento) as mese, round(sum(csn.durata)/60, 2) as ore, round(sum(csn.durata/480), 2) as giorni from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and az.codice_part=an.codice_part where csn.durata>0 and data_intervento between '2022-01-01' and '2100-12-31' group by entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica), csn.codice_azienda, an.dynamo_user, extract(year from data_intervento), extract(month from data_intervento) order by csn.codice_azienda, extract(year from data_intervento), extract(month from data_intervento), an.dynamo_user",
                 "label": "Per user, mese e azienda"
             },
