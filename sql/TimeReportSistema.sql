@@ -109,27 +109,41 @@ dynamo_user,
 	where dynamo_user='d.tonicello95@gmail.com'
 	order by giorno desc
 	
-	
+-- per cambiare massivamente le consuntivazioni da un'azienda all'altra	
 	update entrasp.consuntivazioni csn
-set date_time_begin=date_time_begin- 1050*interval '1 minutes',
-date_time_end=date_time_end- 1050*interval '1 minutes'
-from entrasp.anagrafiche_id an 
+	set codice_azienda='QUANTYX', id_cons= id_cons+1380 /* differenza tra il max di id_cons di QUANTYX e il min di id_cons di QUANTYXSRL ... vedi le due query successive*/
+	from entrasp.anagrafiche_id an 
 	where csn.codice_azienda='QUANTYXSRL'
 	and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica
-	and an.dynamo_user='lrobboni'
+	and an.dynamo_user='fbenedetti@quantyxsim.com'
 	and csn.note='Attività generica di rendicontazione'
-	and an.id_anagrafica=256
-	and extract(hour from date_time_begin)=18
+	and an.id_anagrafica=352 and an.codice_part='QUANTYX'
 	
 	
-		select  date_time_begin, date_time_begin- 1050*interval '1 minutes',
-date_time_end, date_time_end- 1050*interval '1 minutes', extract(hour from date_time_begin)
+	/* le seguenti due query sono strumentali alla query precedente */
+		select max(id_cons)
+	from entrasp.consuntivazioni
+	where codice_azienda='QUANTYX' 8359
+
+	select min(id_cons)
+	from entrasp.consuntivazioni
+	where codice_azienda='QUANTYXSRL' and id_risorsa=352 min 6987    max 8392
+	
+	------------------------------------------------
+	
+	
+	
+		select  date_time_begin, date_time_begin, csn.codice_azienda
 from entrasp.anagrafiche_id an, entrasp.consuntivazioni csn 
 	where csn.codice_azienda='QUANTYXSRL'
 	and csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica
-	and an.dynamo_user='lrobboni'
-	and csn.note='Attività generica di rendicontazione'
-	and an.id_anagrafica=256 and extract(hour from date_time_begin)=18
+	and an.dynamo_user='fbenedetti@quantyxsim.com'
+--	and csn.note='Attività generica di rendicontazione'
+	and an.id_anagrafica=352 
+	
+	
+
+
 	
 	
 	
@@ -140,7 +154,7 @@ from entrasp.anagrafiche_id an, entrasp.consuntivazioni csn
 
 	select codice_azienda, id_cons, date_time_begin, date_time_end, durata from entrasp.consuntivazioni csn
 	inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part
-	where an.dynamo_user like '%pellizz%'  and id_cons=5429
+	where an.dynamo_user like '%benedetti%'  and id_cons=5429
 	
 	
 	select * from entrasp.ruoli
@@ -257,3 +271,53 @@ where gur.dynamo_user=em.dynamo_user and (gur.id_Centro_gest!=em.id_centro_gest 
 									select dynamo_user, codice_azienda, id_centro_gest from entrasp.employers
 									where id_centro_gest=43 and codice_azienda in ('QUANTYX', 'QUANTYXSRL')
 									
+
+SELECT DISTINCT DATE_TRUNC('YEAR',
+
+																		CURRENT_DATE)::date AS DT_INIZIO_RIF,
+	ENTRASP.LAST_DAY_YEAR(CURRENT_DATE) AS DT_FINE_RIF,
+	AN.DYNAMO_USER,
+	EM.NOME || ' ' || EM.COGNOME AS DENOMINAZIONE,
+	ROUND(SUM(CSN.DURATA) / 480,
+		2) AS DURATA,
+	ENTRASP.CONSUNTIVAZIONI_TIME_CONSUMED_AZIENDA(DYNAMOUSER => AN.DYNAMO_USER,
+
+										DATAINIZIO => (CURRENT_DATE - interval '12 months')::date, DATAFINE => CURRENT_DATE::date) AS DD_12_MONTHS,
+	ENTRASP.CONSUNTIVAZIONI_TIME_CONSUMED_AZIENDA(DYNAMOUSER => AN.DYNAMO_USER,
+
+										DATAINIZIO => (CURRENT_DATE - interval '1 months')::date, DATAFINE => CURRENT_DATE::date) AS DD_1_MONTHS,
+	ENTRASP.CONSUNTIVAZIONI_TIME_CONSUMED_AZIENDA(DYNAMOUSER => AN.DYNAMO_USER,
+
+										DATAINIZIO => ENTRASP.FIRST_DAY_PREVIOUS_MONTH(CURRENT_DATE)::date, DATAFINE => ENTRASP.LAST_DAY_PREVIOUS_MONTH(CURRENT_DATE)) AS PREV_MONTH,
+	ENTRASP.CONSUNTIVAZIONI_TIME_CONSUMED_AZIENDA(DYNAMOUSER => AN.DYNAMO_USER,
+
+										DATAINIZIO => (CURRENT_DATE - interval '3 months')::date, DATAFINE => CURRENT_DATE::date) AS DD_3_MONTHS
+FROM ENTRASP.CONSUNTIVAZIONI CSN
+INNER JOIN ENTRASP.ANAGRAFICHE_ID AN ON CSN.ID_RISORSA = AN.ID_ANAGRAFICA
+AND CSN.CODICE_PART = AN.CODICE_PART
+INNER JOIN
+	(SELECT DISTINCT ES.DYNAMO_USER,
+			ES.COGNOME,
+			ES.NOME
+		FROM ENTRASP.EMPLOYERS ES) EM ON AN.DYNAMO_USER = EM.DYNAMO_USER
+WHERE CSN.CODICE_AZIENDA IN('QUANTYX')
+	AND AN.DYNAMO_USER = 'fbenedetti@quantyxsim.com'
+GROUP BY AN.DYNAMO_USER,
+	EM.NOME || ' ' || EM.COGNOME
+ORDER BY DYNAMO_USER;
+
+
+SELECT DISTINCT ES.DYNAMO_USER,
+			ES.COGNOME,
+			ES.NOME
+		FROM ENTRASP.EMPLOYERS ES
+		where dynamo_user like '%benedet%'
+
+
+select *
+from entrasp.giornate_e_users_da_rendicontare
+where dynamo_user like '%benedetti%'
+
+
+
+
