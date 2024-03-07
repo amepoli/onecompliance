@@ -1,0 +1,12 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "employers_sub_of_anagrafiche",
+    "inheritsFrom": "employers",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select *,dynamo_user, entrasp.ruolo_descr(codice_ruolo) as descrizione_ruolo, entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest) as descrizione_centro_gest from entrasp.employers where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$"
+        }
+    ]
+}
