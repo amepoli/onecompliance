@@ -7,6 +7,12 @@
             "operation": "selectTable",
             "type": "main",
             "queryString": "select *,'' as vuoto, dynamo_user, entrasp.ruolo_descr(codice_ruolo) as descrizione_ruolo, entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest) as descrizione_centro_gest from entrasp.employers where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select id_anagrafica from entrasp.employers where codice_part=$codice_part$ and flag_principale=$flag_principale$ and flag_principale=true and id_anagrafica= $id_anagrafica$ and codice_azienda!=$codice_azienda$",
+            "messageNotNull": "Attenzione esiste già un datore di lavoro principale!"
         }
     ],
     "form_keys": [
