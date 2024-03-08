@@ -6,7 +6,141 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select *,dynamo_user, entrasp.ruolo_descr(codice_ruolo) as descrizione_ruolo, entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest) as descrizione_centro_gest from entrasp.employers where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$"
+            "queryString": "select *,'' as vuoto, dynamo_user, entrasp.ruolo_descr(codice_ruolo) as descrizione_ruolo, entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest) as descrizione_centro_gest from entrasp.employers where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select codice_azienda as id, codice_azienda as name from entrasp.aziende where codice_part = '€global_codice_part€'",
+                "options": [],
+                "dataType": "text",
+                "viewType": "combobox"
+            },
+            "label": "Azienda di appartenenza",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "size": 1.6,
+            "newLine": false,
+            "translate": "RESOURCES.codice_azienda"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "dynamo_user",
+            "insertUpdateFunct": "select dynamo_user from entrasp.anagrafiche_id where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$",
+            "label": "User",
+            "readOnly": false,
+            "newLine": false,
+            "size": 1.6,
+            "translate": "RESOURCES.dynamo_user"
+        },
+        {
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_avvio_collaborazione",
+            "label": "Data avvio collaborazione",
+            "autoGenerate": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.6,
+            "translate": "RESOURCES.data_avvio_collaborazione"
+        },
+        {
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_collaborazione",
+            "label": "Data fine collaborazione",
+            "autoGenerate": false,
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.6,
+            "translate": "RESOURCES.data_fine_collaborazione"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input",
+                "value": "480"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "minuti_richiesti_giornalieri",
+            "label": "Minuti Giornalieri",
+            "autoGenerate": false,
+            "readOnly": false,
+            "newLine": false,
+            "size": 1.4,
+            "translate": "RESOURCES.minuti_richiesti_giornalieri"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "min_extra_anomali_tr",
+            "label": "Minuti extra anomali",
+            "autoGenerate": false,
+            "readOnly": false,
+            "newLine": false,
+            "size": 1.4,
+            "translate": "RESOURCES.min_extra_anomali_tr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "readOnly": true,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica"
+        },
+        {
+            "format": {
+                "dataType": "boolean",
+                "viewType": "checkbox",
+                "value": true
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_employer_principale",
+            "label": "Datore Principale",
+            "autoGenerate": false,
+            "readOnly": false,
+            "newLine": false
         }
     ],
     "table_keys": [
@@ -14,7 +148,7 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "width": "14%",
             "key": "dynamo_user",
@@ -36,7 +170,7 @@
             },
             "isHidden": false,
             "isPrimary": true,
-            "width": "10%",
+            "width": "20%",
             "key": "codice_azienda",
             "label": "Azienda di Appartenenza",
             "translate": "RESOURCES.codice_azienda"
@@ -52,90 +186,12 @@
         },
         {
             "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "width": "10%",
-            "isPrimary": false,
-            "key": "nome",
-            "label": "Nome",
-            "style": [
-                {
-                    "value": "*",
-                    "font_size": "medium",
-                    "font_weight": "599"
-                }
-            ],
-            "translate": "RESOURCES.nome"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "cognome",
-            "label": "Cognome",
-            "width": "10%",
-            "style": [
-                {
-                    "value": "*",
-                    "font_size": "medium",
-                    "font_weight": "599"
-                }
-            ],
-            "translate": "RESOURCES.cognome"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_ruolo",
-            "label": "ruolo",
-            "translate": "RESOURCES.codice_ruolo"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "width": "15%",
-            "isPrimary": false,
-            "key": "descrizione_ruolo",
-            "label": "Ruolo",
-            "translate": "RESOURCES.descrizione_ruolo"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_centro_gest",
-            "label": "id_centro_gest",
-            "translate": "RESOURCES.id_centro_gest"
-        },
-        {
-            "format": {
                 "dataType": "number"
             },
             "isHidden": true,
             "isPrimary": false,
             "key": "id_anagrafica",
             "label": "id_anagrafica"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "width": "15%",
-            "isPrimary": false,
-            "key": "descrizione_centro_gest",
-            "label": "Centro Gest/BU",
-            "translate": "RESOURCES.descrizione_centro_gest"
         },
         {
             "format": {
@@ -169,6 +225,51 @@
             "label": "Data avvio collaborazione",
             "width": "10%",
             "translate": "RESOURCES.data_avvio_collaborazione"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_collaborazione",
+            "label": "Data fine collaborazione",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_employer_principale",
+            "isCheckbox": true,
+            "width": "6%",
+            "label": "Datore Principale"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "vuoto",
+            "label": "",
+            "width": "20%"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
         }
     ]
 }
