@@ -44,7 +44,6 @@
             "operation": "share",
             "type": "main",
             "queryString": "select entrasp.share_rischio_e_collegati($codice_azienda$, '$chosen_azienda$', codice_rischio)"
-
         }
     ],
     "messages": [
@@ -2637,7 +2636,7 @@
         "tableQueries": [
             {
                 "label": "Procedure, rischi, presidi",
-                "queryString": "select prc.codice_azienda, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gest, prc.descrizione, prc.stato_attuazione, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda=fr.codice_azienda and prc.id_procedura=fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio=rs.codice_rischio and fr.codice_azienda=rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where prc.codice_azienda=$codice_azienda$"
+                "queryString": "select prc.codice_azienda, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, prc.descrizione, prc.stato_attuazione, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda=fr.codice_azienda and prc.id_procedura=fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio=rs.codice_rischio and fr.codice_azienda=rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where prc.codice_azienda=$codice_azienda$"
             },
             {
                 "label": "Rischi, presidi e procedure associate (più efficiente)",
