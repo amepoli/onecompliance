@@ -2,44 +2,6 @@
 
 -- DROP FUNCTION IF EXISTS entrasp.update_dynamo_user(text, text, character varying);
 
-CREATE OR REPLACE FUNCTION entrasp.update_dynamo_user(
-	global_id_anagrafiche text,
-	global_user_companies text,
-	global_user_name character varying)
-    RETURNS boolean
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
-declare user_companies varchar[]; i integer; idutente numeric; codicepart varchar;
-begin
-global_user_companies:=replace(global_user_companies, ')','');
-global_user_companies:=replace(global_user_companies, '(','');
-
---select 1;
-
-update entrasp.anagrafiche_id set dynamo_user=null where dynamo_user=trim(global_user_name);
-
-select string_to_array(global_user_companies, ',') into user_companies;
-raise notice 'uc: %', user_companies;
-for i in array_lower(user_companies, 1).. array_upper(user_companies, 1) loop
-		select codice_part from entrasp.aziende 
-		where codice_azienda=trim(user_companies[i]) 
-		into codicepart;
-		raise notice 'cp: %', codicepart;
-		idutente:= array_to_string(REGEXP_MATCHES(global_id_anagrafiche, codicepart||'-'||'([0-9]+)'),'')::numeric;
-		raise notice 'iu: %', idutente;
- 		raise notice 'gun: %', global_user_name;
-		update entrasp.anagrafiche_id set dynamo_user=trim(global_user_name) where codice_part=codicepart and id_anagrafica=idutente;
-end loop;
-return true;
-end
-$BODY$;
-
-ALTER FUNCTION entrasp.update_dynamo_user(text, text, character varying)
-    OWNER TO postgres;
-
-
 select entrasp.update_dynamo_user(('AKSIASGR-26','ALCEDOSGR-37','AMBIENTASGR-14','CLESSIDRASGR-27','CONSILIUMSGR-27','FSI-22','GRADIENTE-33','IGISGR-10','NEXTALIASGR-32','PMPARTNERSSGR-27','PROGRESSIO-27','QUANTYX-298','QUATTROR-20','WISESGR-33')::text, ('AKSIASGR','ALCEDOSGR','AMBIENTASGR','CLESSIDRASGR','CONSILIUMSGR','FSI','GRADIENTESGR','IGISGR','NEXTALIASGR','PMPARTNERSSGR','PROGRESSIO','QUANTYX','QUATTROR','WISESGR')::text, 'fbordignon@quantyxsim.com')
 
 select id_anagrafica, codice_part, dynamo_user 
