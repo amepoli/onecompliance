@@ -14,6 +14,9 @@ import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-
 </div>
 `,
   styles: [`
+    :host ::ng-deep .mat-form-field-wrapper {
+      padding-bottom: 2px !important;
+    }
     .subform-style {
       margin-right: 2%;
       margin-left: 2%;

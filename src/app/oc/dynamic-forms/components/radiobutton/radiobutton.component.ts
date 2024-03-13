@@ -20,8 +20,8 @@ import { ConsoleLoggerService, PubSubService } from "app/oc/services";
 `,
   styles: [],
   host: {
-    '[style.margin-right]': 'field.isVisible? "1%": "0"',
-    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
+    '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"'
   }
 })

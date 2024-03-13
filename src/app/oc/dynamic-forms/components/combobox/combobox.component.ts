@@ -9,11 +9,12 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './combobox.component.html',
   styleUrls: ['./combobox.component.scss'],
   host: {
-    '[style.padding-top.px]': 'field.isVisible? "20": "0"',
-    '[style.margin-right]': 'field.isVisible? "1%": "0"',
-    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    // '[style.padding-top.px]': 'field.isVisible? "20": "0"',
+    // '[style.padding-bottom.px]': 'field.isVisible? "20": "0"',
+    '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
+    '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"',
-    // '[style.height.px]': 'field.isVisible? "96": "0"',
+    // '[style.height.px]': 'field.isVisible? "76": "0"',
   }
 })
 export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
