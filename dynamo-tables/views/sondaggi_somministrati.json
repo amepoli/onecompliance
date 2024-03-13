@@ -216,189 +216,6 @@
             "translate": "RESOURCES.copia_da_somministrazione_sub_form"
         },
         {
-            "format": {
-                "viewType": "subform",
-                "subform_keys": [
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "combobox",
-                            "options": [],
-                            "comboQuery": "select snd.id_sondaggio as id, concat (id_sondaggio, ' - ', snd.titolo) as name from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda =$codice_azienda$"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "id_sondaggio_parent",
-                        "sameOrigin": false,
-                        "label": "Sondaggio Parent",
-                        "translate": "RESOURCES.id_relative_survey",
-                        "outputEvent": {
-                            "eventName": "sondaggio_parent_update",
-                            "eventTrigger": "select"
-                        },
-                        "inputEvents": [
-                            {
-                                "eventName": "sondaggio_parent_update",
-                                "actionType": "query",
-                                "condition": "none",
-                                "values": [],
-                                "queryFunct": "update entrasp.sondaggi set id_sondaggio_parent=$id_sondaggio_parent$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ returning id_sondaggio_parent"
-                            }
-                        ],
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "button"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "associa_sondaggio_hide_k",
-                        "buttonIcon": "close",
-                        "label": "Maschera principale",
-                        "translate": "RESOURCES.main_page",
-                        "newLine": false,
-                        "outputEvent": {
-                            "eventName": "associa_sondaggio_hide",
-                            "eventTrigger": "press"
-                        },
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 1
-                    }
-                ]
-            },
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "condition": "none",
-                    "eventName": "associa_sondaggio_show",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "associa_sondaggio_hide",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "copia_da_somministrazione_show",
-                    "values": []
-                }
-            ],
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "associa_sondaggio_sub_form",
-            "label": "associa_sondaggio_sub_form",
-            "newLine": true,
-            "readOnly": false,
-            "sameOrigin": false,
-            "saveWhenHidden": true,
-            "translate": "RESOURCES.associa_sondaggio_sub_form"
-        },
-        {
-            "format": {
-                "viewType": "subform",
-                "subform_keys": [
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "combobox",
-                            "options": [],
-                            "comboQuery": "select mt.id_modello_test as id, concat (mt.id_modello_test, ' - ', mt.titolo) as name from entrasp.modelli_test mt where mt.codice_azienda=$codice_azienda$"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "id_modello_test_new",
-                        "sameOrigin": false,
-                        "label": "Nuovo modello test",
-                        "translate": "RESOURCES.new_check_template",
-                        "outputEvent": {
-                            "eventName": "modello_test_new_update",
-                            "eventTrigger": "select"
-                        },
-                        "inputEvents": [
-                            {
-                                "eventName": "modello_test_new_update",
-                                "actionType": "query",
-                                "condition": "none",
-                                "values": [],
-                                "queryFunct": "delete from entrasp.risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ returning 1; update entrasp.sondaggi snd set id_modello_test=mvr.id_modello_test, id_modello_test_vr=mvr.id_modello_test_vr from entrasp.modelli_test_vr mvr where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and mvr.codice_azienda=$codice_azienda$ and mvr.id_modello_test=£id_modello_test_new£ and mvr.id_modello_test_vr=(select max(mvr2.id_modello_test_vr) from entrasp.modelli_test_vr mvr2 where mvr2.id_modello_test=£id_modello_test_new£ and mvr2.codice_azienda=mvr.codice_azienda) returning 1;",
-                                "successMessage": "Done!",
-                                "outputEventWhenComplete": "modello_verifica_change_hide_k"
-                            }
-                        ],
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 8
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "button"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "modello_verifica_change_hide_k",
-                        "buttonIcon": "close",
-                        "label": "Nascondi",
-                        "translate": "RESOURCES.hide",
-                        "newLine": false,
-                        "outputEvent": {
-                            "eventName": "modello_verifica_change_hide",
-                            "eventTrigger": "press"
-                        },
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 1
-                    }
-                ]
-            },
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "condition": "none",
-                    "eventName": "modello_verifica_change_show",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "modello_verifica_change_hide",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "associa_sondaggio_show",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "copia_da_somministrazione_show",
-                    "values": []
-                }
-            ],
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "modello_verifica_change_sub_form",
-            "label": "modello_verifica_change_sub_form",
-            "newLine": true,
-            "readOnly": false,
-            "style": {
-                "background_color": "#98FB98"
-            },
-            "sameOrigin": false,
-            "saveWhenHidden": true,
-            "translate": "RESOURCES.modello_verifica_change_sub_form"
-        },
-        {
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
@@ -455,7 +272,7 @@
             "isPrimary": true,
             "key": "id_somministrazione",
             "label": "#",
-            "newLine": false,
+            "newLine": true,
             "readOnly": true,
             "translate": "RESOURCES.id_somministrazione"
         },
@@ -468,8 +285,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "verifica_id_descr",
-            "label": "void",
-            "translate": "RESOURCES.void",
+            "label": " ",
             "newLine": false,
             "readOnly": true,
             "sameOrigin": false,
@@ -481,7 +297,7 @@
                 "font_style": "normal",
                 "font_weight": "600"
             },
-            "size": 7.00
+            "size": 7.5
         },
         {
             "autoGenerate": false,
@@ -497,7 +313,7 @@
             "label": "Stato",
             "translate": "RESOURCES.status",
             "newLine": false,
-            "size": 1.27,
+            "size": 1.5,
             "readOnly": true,
             "style": {
                 "background_color": "aliceblue"
