@@ -84,7 +84,7 @@
             "isHidden": false,
             "isPrimary": true,
             "newLine": false,
-            "size": 3.13,
+            "size": 1.5,
             "inputEvents": [
                 {
                     "eventName": "contratto_duplica",
@@ -113,7 +113,7 @@
             "isPrimary": false,
             "key": "data_stipulazione",
             "label": "Data Stipula",
-            "size": 3.13,
+            "size": 1.5,
             "readOnly": false,
             "newLine": false,
             "tooltip": "La data nella quale la controparte ha sottoscritto il contratto",
@@ -141,6 +141,24 @@
             "readOnly": false,
             "size": 3.13,
             "translate": "RESOURCES.id_argomento_contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "dataType": "text",
+                "comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
+            },
+            "label": "Giudizio Appropriatezza",
+            "key": "giudizio",
+            "readOnly": true,
+            "queryFunct": "entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)",
+            "isHidden": "$Q{is_hidden_mifid}",
+            "isPrimary": false,
+            "newLine": true,
+            "size": 2,
+            "translate": "RESOURCES.giudizio_appropriatezza"
         },
         {
             "autoGenerate": false,
@@ -496,6 +514,34 @@
         {
             "autoGenerate": false,
             "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Prezzo Unit.",
+            "key": "prezzo_unitario",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Quantità",
+            "key": "quantita",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 1.25,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "label",
                 "dataType": "text"
             },
@@ -512,7 +558,7 @@
             "newLine": false,
             "sameOrigin": false,
             "readOnly": false,
-            "size": 2
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -545,24 +591,6 @@
             "newLine": false,
             "readOnly": false,
             "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "dataType": "text",
-                "comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
-            },
-            "label": "Giudizio Appropriatezza",
-            "key": "giudizio",
-            "readOnly": true,
-            "queryFunct": "entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)",
-            "isHidden": "$Q{is_hidden_mifid}",
-            "isPrimary": false,
-            "newLine": true,
-            "size": 2,
-            "translate": "RESOURCES.giudizio_appropriatezza"
         },
         {
             "autoGenerate": false,
@@ -1080,8 +1108,8 @@
                             "viewType": "input",
                             "dataType": "number"
                         },
-                        "label": "imp_esen",
-                        "key": "Importo Esente",
+                        "label": "Importo Esente",
+                        "key": "imp_esen",
                         "readOnly": false,
                         "isHidden": false,
                         "isPrimary": false,
@@ -1094,8 +1122,8 @@
                             "viewType": "input",
                             "dataType": "number"
                         },
-                        "label": "imp_bene",
-                        "key": "Importo Bene",
+                        "label": "Importo Bene",
+                        "key": "imp_bene",
                         "readOnly": false,
                         "isHidden": false,
                         "isPrimary": false,
@@ -1408,55 +1436,6 @@
                 }
             ],
             "sameOrigin": false
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "label": "Giudizio Appropriatezza",
-            "width": "8%",
-            "key": "giudizio",
-            "queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto))",
-            "isHidden": "$Q{is_hidden_mifid}",
-            "style": [
-                {
-                    "value": "Appropriato",
-                    "font_color": "PaleGreen",
-                    "font_weight": "500",
-                    "background_color": "Green",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Adeguato",
-                    "font_color": "PaleGreen",
-                    "font_weight": "500",
-                    "background_color": "Green",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Non Appropriato",
-                    "font_color": "DarkRed",
-                    "font_weight": "500",
-                    "background_color": "orange",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Non Adeguato",
-                    "font_color": "DarkRed",
-                    "font_weight": "500",
-                    "background_color": "orange",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Non Giudicabile",
-                    "font_color": "grey",
-                    "font_weight": "500",
-                    "background_color": "gainsboro",
-                    "text_align": "center"
-                }
-            ],
-            "isPrimary": false,
-            "translate": "RESOURCES.giudizio"
         },
         {
             "format": {
