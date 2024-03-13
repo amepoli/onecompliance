@@ -10,10 +10,14 @@ import { FieldConfig } from 'app/oc/interfaces';
     </mat-label>
   </div>
   `,
-  styles: [],
+  styles: [`
+    :host ::ng-deep .mat-form-field-wrapper {
+      padding-bottom: 2px !important;
+    }
+  `],
   host: {
-    '[style.margin-right]': 'field.isVisible? "1%": "0"',
-    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
+    '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"'
   }
 })

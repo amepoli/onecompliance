@@ -836,7 +836,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 options: options,
                 validations: [],
                 isVisible: true,
-                width: (field.size != null) ? (field.size * 10) : null, // leave a 1% margin left and right   
+                width: (field.size != null) ? (field.size * 10) : null, // leave a 0.5% margin left and right   
             };
             fieldValues.push(fieldValue);
         });

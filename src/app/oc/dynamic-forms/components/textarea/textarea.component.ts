@@ -10,9 +10,10 @@ import { AngularEditorConfig } from "@kolkov/angular-editor";
   templateUrl: './textarea.component.html',
   styleUrls: ['./textarea.component.scss'],
   host: {
-    '[style.padding-top.px]': 'field.isVisible? "16": "0"',
-    '[style.margin-right]': 'field.isVisible? "1%": "0"',
-    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    // '[style.padding-top.px]': 'field.isVisible? "16": "0"',
+    // '[style.padding-bottom.px]': 'field.isVisible? "16": "0"',
+    '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
+    '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"'
   }
 })

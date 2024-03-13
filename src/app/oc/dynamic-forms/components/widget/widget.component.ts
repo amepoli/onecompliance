@@ -13,8 +13,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./widget.component.scss'],
   host: {
     '[style.padding-top]': 'field.isVisible? field.widgetType == "s3-explorer"? "10px": "24px": "0"',
-    '[style.margin-right]': 'field.isVisible? field.widgetType == "s3-explorer"? "1%": "8px": "0"',
-    '[style.margin-left]': 'field.isVisible? field.widgetType == "s3-explorer"? "1%": "8px": "0"',
+    '[style.margin-right]': 'field.isVisible? field.widgetType == "s3-explorer"? "0.5%": "8px": "0"',
+    '[style.margin-left]': 'field.isVisible? field.widgetType == "s3-explorer"? "0.5%": "8px": "0"',
     '[style.width]': 'field.isVisible? field.widgetType == "s3-explorer"? "98%": "32px": "0"',
     '[style.height]': 'field.isVisible? field.widgetType == "s3-explorer"? "500px": "32px": "0"',
     '[style.background-color]': 'field.isVisible? field.widgetType == "s3-explorer"? "aliceblue": "transparent": "transparent"',
@@ -31,7 +31,7 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   subscription: Subscription;
 
   // For future use
-  // @HostBinding('style.margin-right') marginRight = '1%';
+  // @HostBinding('style.margin-right') marginRight = '0.5%';
 
   constructor(private elRef: ElementRef,
               private timezoneService: TimezoneService,

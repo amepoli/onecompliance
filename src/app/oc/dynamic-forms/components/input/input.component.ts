@@ -16,11 +16,12 @@ import { locale as italian } from 'app/oc/i18n/it';
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
   host: {
-    '[style.padding-top.px]': 'field.isVisible? "10": "0"',
-    '[style.margin-right]': 'field.isVisible? "1%": "0"',
-    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    // '[style.padding-top.px]': 'field.isVisible? "4": "0"',
+    // '[style.padding-bottom.px]': 'field.isVisible? "4": "0"',
+    '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
+    '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"',
-    '[style.height.px]': 'field.isVisible? "96": "0"',
+    '[style.height.px]': 'field.isVisible? "76": "0"',
   }
 })
 export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -32,7 +33,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   subscription: Subscription;
 
   // For future use
-  // @HostBinding('style.margin-right') marginRight = '1%';
+  // @HostBinding('style.margin-right') marginRight = '0.5%';
 
   constructor(private timezoneService: TimezoneService,
               private pubSubService: PubSubService,

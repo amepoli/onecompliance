@@ -9,11 +9,16 @@ import { PubSubService } from 'app/oc/services';
 <span [formGroup]="group" >
   <mat-checkbox color="primary" *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" [ngModel]="field.value" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)" [matTooltip]="field.tooltip">{{field | octranslate}}</mat-checkbox>
 </span>`,
-  styles: [],
+  styles: [`
+    :host ::ng-deep .mat-form-field-wrapper {
+      padding-bottom: 2px !important;
+    }
+  `],
   host: {
-    '[style.padding-top.px]': 'field.isVisible? "20": "0"',
-    '[style.margin-right]': 'field.isVisible? "1%": "0"',
-    '[style.margin-left]': 'field.isVisible? "1%": "0"',
+    // '[style.padding-top.px]': 'field.isVisible? "20": "0"',
+    // '[style.padding-bottom.px]': 'field.isVisible? "20": "0"',
+    '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
+    '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"',
     '[style.height.px]': 'field.isVisible? "100%": "0"',
   }

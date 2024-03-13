@@ -81,7 +81,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     private addingNew = false;   // avoid to trigger a refresh (with related events) when adding a row  
 
-    private margins = 2; // % of margins, considering left and right
+    private margins = 1; // % of margins, considering left and right
 
     private pagination = {
         curPage: 1,
@@ -769,7 +769,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
                 isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
                 style: attributeStyle != null ? Object.assign(field.style, attributeStyle) : (field.style != null) ? field.style : null,
-                width: (field.size != null) ? (field.size * 10) : null, // leave a 1% margin left and right   
+                width: (field.size != null) ? (field.size * 10) : null, // leave a 0.5% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
                 menuOptions: (field.format != null && field.format.menuOptions != null) ? field.format.menuOptions : [],
                 lazyLoading: (element != null && element.lazyLoading) ? true : false,
