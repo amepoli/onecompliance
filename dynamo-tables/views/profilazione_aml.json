@@ -3,7 +3,9 @@
     "inheritsFrom": "sondaggi_somministrati",
     "entryKey": "profilazione_aml",
     "label": "Profili AML",
-    "dashboardTables": ["dashboard_sondaggi"],
+    "dashboardTables": [
+        "dashboard_sondaggi"
+    ],
     "predefinedQueries": [
         {
             "operation": "selectTable",
@@ -40,7 +42,9 @@
         "is_comprehension_test": "false",
         "read_only_versione": "true",
         "size_titolo": "6.66",
-        "is_hidden_KYC": "true"
+        "is_hidden_KYC": "true",
+        "is_hidden_obj_decr": "false",
+        "width_titolo": "12%"
     },
     "form_keys": [
         {
@@ -559,7 +563,9 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "query",
                     "condition": "notEqualTo",
-                    "values": ["C"],
+                    "values": [
+                        "C"
+                    ],
                     "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'ss', '£stato£');"
                 }
             ]
@@ -654,7 +660,9 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "hide",
                     "condition": "notEqualTo",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 },
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -818,7 +826,9 @@
                 {
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "condition": "equalTo",
-                    "values": ["C"],
+                    "values": [
+                        "C"
+                    ],
                     "actionType": "query",
                     "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$, '€global_username€') as id_somministrazione_succ;",
                     "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -1604,7 +1614,9 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flags_sezioni",
                     "condition": "equalTo",
-                    "values": ["0"]
+                    "values": [
+                        "0"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1638,7 +1650,9 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flags_sezioni",
                     "condition": "equalTo",
-                    "values": ["1"]
+                    "values": [
+                        "1"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1721,7 +1735,9 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flag_workflow",
                     "condition": "equalTo",
-                    "values": ["1"]
+                    "values": [
+                        "1"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1864,7 +1880,7 @@
             "key": "id_e_vr",
             "hasLevel": true,
             "label": "# Mod. Ver.",
-            "translate": "RESOURCES.id_check_template",
+            "translate": "RESOURCES.id_e_vr",
             "width": "4.5%",
             "isInputButton": true,
             "buttonAction": {
@@ -1942,18 +1958,18 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
             "key": "titolo_sondaggio",
             "label": "Titolo",
             "translate": "RESOURCES.title",
-            "width": "19%"
+            "width": "$P{width_titolo}"
         },
         {
             "format": {
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_obj_decr}",
             "isPrimary": false,
             "key": "object_description",
             "label": "Cliente/controparte",
