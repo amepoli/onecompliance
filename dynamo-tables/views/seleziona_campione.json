@@ -13,6 +13,10 @@
             "eventTrigger": "onReload"
         }
     ],
+    "define": {
+        "translate_verifica_su": "RESOURCES.verifica_su",
+        "is_hidden_incaricato": "false"
+    },
     "inputEvents": [
         {
             "actionTarget": {
@@ -130,46 +134,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "somministrazione_cancella_key",
-            "label": "delete",
-            "buttonIcon": "delete",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "somministrazione_cancella",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "somministrazione_cancella",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageText": "Sei sicuro di voler cancellare questa somministrazione? (Saranno cancellate parallelamente tutte le risposte fornite)",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=£id_somministrazione£"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.sondaggio_somministrato_delete($codice_azienda$, $id_somministrazione$);"
-                        }
-                    },
-                    "outputEventWhenComplete": "reloadSelezionaCampione"
-                }
-            ],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1,
-            "translate": "RESOURCES.somministrazione_cancella_key"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "comboQuery": "select objectkey as id, objectdescription as name from entrasp.survey_population($codice_azienda$, $id_sondaggio$, '|') order by objectdescription;",
                 "options": [],
                 "viewType": "combobox",
@@ -189,11 +153,11 @@
                 "eventName": "ObjectKeyChange",
                 "eventTrigger": "select"
             },
-            "label": "Verifica su/di",
-            "translate": "RESOURCES.verifica_su",
+            "label": "Verifica su",
+            "translate": "$P{translate_verifica_su}",
             "newLine": false,
             "readOnly": false,
-            "size": 4
+            "size": 3.5
         },
         {
             "autoGenerate": false,
@@ -202,13 +166,13 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_incaricato}",
             "isPrimary": false,
             "key": "id_anagrafica",
             "label": "Incaricato risposta",
             "translate": "RESOURCES.incaricato_risposta",
-            "newLine": true,
-            "size": 4,
+            "newLine": false,
+            "size": 3.5,
             "readOnly": false
         },
         {
@@ -232,7 +196,6 @@
             ],
             "newLine": false,
             "readOnly": false,
-            "size": 2,
             "translate": "RESOURCES.object_description"
         },
         {
@@ -273,7 +236,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1
+            "size": 2
         }
     ],
     "table_keys": [
@@ -392,8 +355,8 @@
             "width": "20%",
             "isPrimary": false,
             "key": "object_description",
-            "label": "Verifica su/di",
-            "translate": "RESOURCES.verifica_su",
+            "label": "Verifica su",
+            "translate": "$P{translate_verifica_su}",
             "isInputButton": true,
             "buttonAction": {
                 "target": "sondaggi_somministrati",

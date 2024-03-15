@@ -1115,6 +1115,7 @@ export const locale = {
             parente: "Centro Superiore",
             parent_code: "Codice Parent",
             particella: "Particella",
+            participant: "Partecipante",
             partita_iva: "Partita IVA",
             partition_code: "codice_part",
             pct_a: "Percentuale risultato a",
@@ -1129,8 +1130,7 @@ export const locale = {
             pct_mitigazione_probabilita_rettificata: "% Mit. Prob. Ret",
             pct_ottenuto_medio: "Percentuale media %",
             pct_risultato_ottenuto_calcolato: "Risultato sez. %",
-            pct_risultato_ottenuto_calcolato_ponderato:
-                "Punteggio % pesato sezione",
+            pct_risultato_ottenuto_calcolato_ponderato: "Punteggio % pesato sezione",
             pct_risultato_peggiore: "Ris.pegg. sez. %",
             pct_significativa_manuale: "Percentuale significativa manuale",
             pct_target: "Percentuale target",
@@ -1139,8 +1139,7 @@ export const locale = {
             percentuale_completamento_progetto: "% completamento",
             percentuale_copertura_cred: "percentuale_copertura_cred",
             percentuale_gar_dedicata: "percentuale_gar_dedicata",
-            percentuale_gar_dedicata_numeric:
-                "percentuale_gar_dedicata numeric",
+            percentuale_gar_dedicata_numeric: "percentuale_gar_dedicata numeric",
             perdita_attualizzazione: "Perdita da Attualizzazione",
             perdita_registrata: "Perdita Registrata",
             perito: "Perito",

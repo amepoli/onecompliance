@@ -1128,6 +1128,7 @@ export const locale = {
             parente: "Upper Center",
             parent_code: "Parent Code",
             particella: "Particle",
+            participant: "Participant",
             partita_iva: "VAT number",
             partition_code: "Partition Code",
             pct_a: "Result percentage a",
