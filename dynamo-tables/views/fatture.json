@@ -152,6 +152,26 @@
             "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in (51488,51487) and pag.data_pagamento='€data_pagamento_il€')"
         },
         {
+            "fieldName": "data_competenza_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Competenza dopo il",
+            "newLine": false,
+            "queryCond": "data_competenza>='€data_competenza_min€'"
+        },
+        {
+            "fieldName": "data_competenza_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Competenza entro il",
+            "newLine": true,
+            "queryCond": "data_competenza<='€data_competenza_max€'"
+        },
+        {
             "fieldName": "flag_lav_legale",
             "format": {
                 "viewType": "checkbox"
@@ -506,11 +526,17 @@
             "format": {
                 "dataType": "number"
             },
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "end"
+                }
+            ],
             "isHidden": false,
             "isPrimary": false,
             "key": "importo",
             "showTotal": true,
-            "width": "7%",
+            "width": "4%",
             "label": "Importo",
             "translate": "RESOURCES.importo"
         },
@@ -543,7 +569,7 @@
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by id_cedente desc, n_fattura desc limit 400"
+        "tableViewSuffix": "order by data_fattura, id_cedente desc, n_fattura desc limit 400"
     },
     "hideActions": [
         {
