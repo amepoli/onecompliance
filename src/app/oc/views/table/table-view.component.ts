@@ -716,7 +716,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     doesButtonIconExist(key: string) {
         let buttonIconExists = false;
         if (this.styles && this.styles[key]) {
-            const keys = Object.keys(this.styles[key]);
+            const keys = (this.styles[key] as TableStyleElement[]).map(x => x.value);
 
             keys.forEach(k => {
                 if((this.styles[key] as TableStyleElement[]).some(x => x.value === k && x.style['button_icon'])) {
@@ -739,7 +739,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             ];
             
             if(valuedStyle.length > 0) {
-                style = valuedStyle[0];
+                style = valuedStyle[0].style;
             } 
         }
         else {
