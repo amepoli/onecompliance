@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports5.5.1  -->
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Domande_risposte" pageWidth="507" pageHeight="800" columnWidth="507" leftMargin="0" rightMargin="0" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
 	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
 	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
@@ -43,7 +43,7 @@
 							sddr.descrizione_sez,
 							sddr.descrizione,
 							sddr.note,
-							round(sddr.peso * sddr.punteggio / 100, 2)::varchar || ' su ' || sddr.punteggio::varchar AS giudizio_domanda,
+							sddr.punteggio_risposta::varchar || ' su ' || sddr.punteggio::varchar AS giudizio_domanda,
 							rp.risposta AS rp_risposta,
 							sddr.risposta AS r_risposta,
 							entrasp.note_risposta(sddr.codice_azienda, sddr.id_sondaggio, sddr.id_somministrazione, sddr.id_modello_test, sddr.id_modello_test_vr, sddr.id_domanda) AS note_risposta,
@@ -82,7 +82,7 @@
 										sddr.descrizione_sez,
 										sddr.descrizione,
 										sddr.note,
-										round(sddr.peso * sddr.punteggio / 100, 2)::varchar || ' su ' || sddr.punteggio::varchar,
+										sddr.punteggio_risposta || ' su ' || sddr.punteggio::varchar,
 										rp.risposta,
 										sddr.risposta,
 										entrasp.note_risposta(sddr.codice_azienda, sddr.id_sondaggio, sddr.id_somministrazione, sddr.id_modello_test, sddr.id_modello_test_vr, sddr.id_domanda),
@@ -209,7 +209,7 @@
 						<pen lineWidth="2.0"/>
 					</graphicElement>
 				</line>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Opaque" x="0" y="4" width="507" height="2" isPrintInFirstWholeBand="true" printWhenGroupChanges="id_somministrazione" forecolor="#FFFFFF" backcolor="#0AADFF" uuid="bf1976d2-9060-4a8f-9af7-dba00075a72a">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -234,7 +234,7 @@
 		<groupExpression><![CDATA[$F{id_sezione}]]></groupExpression>
 		<groupHeader>
 			<band height="20">
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="61" y="4" width="29" height="16" isRemoveLineWhenBlank="true" printWhenGroupChanges="ID_DOMANDA" forecolor="#FFFFFF" backcolor="#1587A1" uuid="da82805e-b7b7-44fb-8590-30d1cb703689">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.y" value="px"/>
@@ -270,7 +270,7 @@
 					</textElement>
 					<text><![CDATA[Sezione:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="100" y="4" width="406" height="16" isRemoveLineWhenBlank="true" printWhenGroupChanges="ID_DOMANDA" forecolor="#FFFCFC" backcolor="#1587A1" uuid="6d8aaad9-d361-4097-bc4c-9f230c5e0c7c">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -297,7 +297,7 @@
 		<groupHeader>
 			<band height="42">
 				<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-				<textField isStretchWithOverflow="true">
+				<textField textAdjust="StretchHeight">
 					<reportElement isPrintRepeatedValues="false" mode="Opaque" x="32" y="2" width="381" height="17" isRemoveLineWhenBlank="true" printWhenGroupChanges="ID_DOMANDA" backcolor="#C0F0FC" uuid="938fd0cf-77df-4a53-955e-81938c30b373">
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -323,7 +323,7 @@
 					</textElement>
 					<textFieldExpression><![CDATA[$F{giudizio_domanda}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="10" y="22" width="399" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" uuid="003a6b13-cac9-41c6-8d46-35c0c80b2450">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -376,7 +376,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle"/>
 					<text><![CDATA[Note risposta:]]></text>
 				</staticText>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 					<reportElement positionType="Float" x="24" y="16" width="482" height="16" isRemoveLineWhenBlank="true" isPrintInFirstWholeBand="true" printWhenGroupChanges="id_sezione" uuid="e3b2293a-869f-4fe5-a191-e0008328104f">
 						<property name="com.jaspersoft.studio.unit.height" value="px"/>
 						<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -401,7 +401,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" x="53" y="2" width="416" height="8" uuid="d9aadd20-6068-42d7-988f-7b2f13cd737c">
 					<printWhenExpression><![CDATA[$F{r_risposta} == null]]></printWhenExpression>
 				</reportElement>
@@ -427,7 +427,7 @@
 				</textElement>
 				<text><![CDATA[ x]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+			<textField textAdjust="StretchHeight" isBlankWhenNull="true">
 				<reportElement positionType="Float" isPrintRepeatedValues="false" mode="Transparent" x="28" y="0" width="479" height="4" isRemoveLineWhenBlank="true" backcolor="#DE1E1B" uuid="d663dfa4-3064-4963-a943-d71ec6502b7a"/>
 				<textFieldExpression><![CDATA[$F{r_risposta}]]></textFieldExpression>
 			</textField>
