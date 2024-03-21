@@ -27,7 +27,6 @@ export class MFAComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnInit() {
         let _this = this;
         _this.subscriptions.push(_this._authService.authStateChange$.subscribe(authState => {
-            console.log(authState);
             if(authState && authState.user) {
                 _this.preferredMFA = authState.user.preferredMFA ?? "NOMFA";
             }

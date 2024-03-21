@@ -62,7 +62,7 @@ interface PutPostRequest {
 }
 
 class Auth {
-    constructor(private http: HttpClient, private awsService: AwsService) {
+    constructor(private http: HttpClient, private _console: ConsoleLoggerService, private awsService: AwsService) {
         this.authStateChange$ = new BehaviorSubject<OCAuthState>({
             state: null,
         });
@@ -182,7 +182,7 @@ class Auth {
             return response;
         } catch (e) {
             _this.errorInfo$.next(e);
-            console.log(e);
+            _this._console.log(e);
             return null;
         }
     }
@@ -218,7 +218,7 @@ class Auth {
             }
         } catch (error) {
             _this.errorInfo$.next(error);
-            console.log(error.message ?? error);
+            _this._console.log(error.message ?? error);
         }
 
         return result;
@@ -243,7 +243,7 @@ class Auth {
             return result;
         } catch (error) {
             _this.errorInfo$.next(error);
-            console.log(error.message ?? error);
+            _this._console.log(error.message ?? error);
         }
     }
 
@@ -353,7 +353,7 @@ class Auth {
                 });
             }
             _this.errorInfo$.next(error);
-            console.log(error.message ?? error);
+            _this._console.log(error.message ?? error);
         }
     }
 
@@ -362,7 +362,7 @@ class Auth {
         const _this = this;
         const session = _this.authStateChange$.value.session;
 
-        console.log(session);
+        _this._console.log(session);
         
         const client = createClientForDefaultRegion(
             CognitoIdentityProviderClient
@@ -384,7 +384,7 @@ class Auth {
 
         try {
             let result = await client.send(command);
-            console.log(result);
+            _this._console.log(result);
             if (result["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
                 _this.setAuthState({
                     state: "requireNewPassword",
@@ -396,7 +396,7 @@ class Auth {
             }
             return true;
         } catch (e: any) {
-            console.log(e.message ?? e);
+            _this._console.log(e.message ?? e);
             _this.errorInfo$.next(e);
             // return e;
         }
@@ -429,7 +429,7 @@ class Auth {
 
         try {
             let result = await client.send(command);
-            console.log(result);
+            _this._console.log(result);
             if (result["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
                 _this.setAuthState({
                     state: "requireNewPassword",
@@ -440,7 +440,7 @@ class Auth {
             }
             return true;
         } catch (e: any) {
-            console.log(e.message ?? e);
+            _this._console.log(e.message ?? e);
             _this.errorInfo$.next(e);
             // return e;
         }
@@ -494,7 +494,7 @@ class Auth {
         //   return response;
         // }
         // catch(e) {
-        //   console.log(JSON.stringify(e));
+        //   _this._console.log(JSON.stringify(e));
     }
 
     public setUserMFA(newMFA) {
@@ -539,17 +539,17 @@ class Auth {
                 //       params: myPutPostInit.queryStringParameters
                 //     }
                 //   ).toPromise();
-                //   console.log(result);
+                //   _this._console.log(result);
                 //   return result;
                 // }
                 // catch (error) {
                 //   _this.awsService.errorInfo$.next(error);
-                //   console.log(error.message ?? error);
+                //   _this._console.log(error.message ?? error);
                 // }
 
                 // try {
                 //   const refreshTokenResult = await _this.awsService.api().post(appData.apiName, appData.lambdas.users.apiName, myPutPostInit)
-                //   console.log(refreshTokenResult);
+                //   _this._console.log(refreshTokenResult);
                 //   if(refreshTokenResult) {
 
                 //   }
@@ -559,7 +559,7 @@ class Auth {
                 // }
                 // catch(err) {
                 //   _this.errorInfo$.next(err);
-                //   console.log('RefreshTokenError: ', err);
+                //   _this._console.log('RefreshTokenError: ', err);
                 // }
 
                 const params = {
@@ -575,7 +575,7 @@ class Auth {
                 });
                 try {
                     const data = await client.initiateAuth(params);
-                    console.log("RefreshTokenResponse: ", data);
+                    _this._console.log("RefreshTokenResponse: ", data);
                     if (data != null) {
                         var t = new Date();
                         t.setSeconds(t.getSeconds() + 3600);
@@ -614,7 +614,7 @@ class Auth {
                         }
                     }
                 } catch (error) {
-                    console.log(error)
+                    _this._console.log(error)
                 }
 
             }
@@ -644,6 +644,7 @@ class Api {
     constructor(
         private authStateChange$: BehaviorSubject<OCAuthState>,
         private http: HttpClient,
+        private _console: ConsoleLoggerService,
         private awsService: AwsService
     ) { }
 
@@ -652,7 +653,7 @@ class Api {
 
         // Check if refresh token and access token needs refresh
         await _this.awsService.auth().refreshToken();
-        //console.log(_this.authStateChange$.value.session)
+        //_this._console.log(_this.authStateChange$.value.session)
 
         // _this.awsService.auth().
         try {
@@ -672,11 +673,12 @@ class Api {
                     params: request.queryStringParameters,
                 })
                 .toPromise();
-            console.log(result);
+            _this._console.log(result);
             return result;
         } catch (error) {
             _this.awsService.errorInfo$.next(error);
-            console.log(error.message ?? error);
+            _this._console.log(error.message ?? error);
+            return null;
         }
     }
 
@@ -704,11 +706,11 @@ class Api {
                     params: request.queryStringParameters,
                 })
                 .toPromise();
-            console.log(result);
+            _this._console.log(result);
             return result;
         } catch (error) {
             _this.awsService.errorInfo$.next(error);
-            console.log(error.message ?? error);
+            _this._console.log(error.message ?? error);
         }
     }
 
@@ -735,11 +737,11 @@ class Api {
                     params: request.queryStringParameters,
                 })
                 .toPromise();
-            console.log(result);
+            _this._console.log(result);
             return result;
         } catch (error) {
             _this.awsService.errorInfo$.next(error);
-            console.log(error.message ?? error);
+            _this._console.log(error.message ?? error);
         }
     }
 
@@ -766,11 +768,11 @@ class Api {
                     params: request.queryStringParameters,
                 })
                 .toPromise();
-            console.log(result);
+            _this._console.log(result);
             return result;
         } catch (error) {
             _this.awsService.errorInfo$.next(error);
-            console.log(error.message ?? error);
+            _this._console.log(error.message ?? error);
         }
     }
 }
@@ -791,13 +793,13 @@ export class AwsService {
         return this.auth().errorInfo$;
     }
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private _console: ConsoleLoggerService) {
         this.api();
     }
 
     public auth() {
         if (!this._auth) {
-            this._auth = new Auth(this.http, this);
+            this._auth = new Auth(this.http, this._console, this);
             this._auth.init();
         }
         return this._auth;
@@ -806,7 +808,7 @@ export class AwsService {
     public api() {
         if (!this._api) {
             this.auth();
-            this._api = new Api(this.authStateChange$, this.http, this);
+            this._api = new Api(this.authStateChange$, this.http, this._console, this);
         }
         return this._api;
     }

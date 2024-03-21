@@ -107,7 +107,6 @@ export class BackendService {
       queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), event: JSON.stringify({ name: event, type: actionType, field: field, isMessage: isMessage }) }
     };
 
-    console.log(`Calling ${this.apiName} su ${JSON.stringify(putPostReq)}`);
     return from(this.awsService.api().post(this.apiName, this.tablesApiName, putPostReq));
   }
 
