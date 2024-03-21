@@ -41,8 +41,8 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   editorConfig: AngularEditorConfig = {
     editable: true,
     spellcheck: true,
-    height: '140px',
-    minHeight: '140px',
+    height: '70px',
+    minHeight: '70px',
     maxHeight: 'auto',
     width: '100%',
     minWidth: '100%',
@@ -111,13 +111,13 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
       // Calculate the height
       var height = Math.min(parseInt(computed.getPropertyValue('border-top-width'), 10)
         + parseInt(computed.getPropertyValue('padding-top'), 10)
-        + nativeElement.scrollHeight
+        + (nativeElement.scrollHeight - 40)
         + parseInt(computed.getPropertyValue('padding-bottom'), 10)
         + parseInt(computed.getPropertyValue('border-bottom-width'), 10), this.maxHeight);
   
       // Apply heights
       nativeElement.style.height = height + 'px';
-      this.textAreaComponentHeight = (height + 78) + "px";
+      this.textAreaComponentHeight = (height + 64) + "px";
     }
     else {
       this.textAreaComponentHeight = "211px";

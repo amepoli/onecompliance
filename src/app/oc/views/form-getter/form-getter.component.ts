@@ -182,7 +182,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
         const mainToolbarDialogsSubscription = _this._dialogService.onShowMainToolbarDialog.subscribe(
             outputEventName => {
-                console.log(outputEventName)
                 if (outputEventName) {
                     _this.showMainToolbarDialog(outputEventName);
                 }
