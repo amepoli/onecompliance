@@ -30,7 +30,7 @@ import { AuthService, BackendService, DialogService, PubSubService } from 'app/o
         }
     `],
     host: {
-        // '[style.padding-top.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "24": "14": "0"',
+        '[style.padding-top.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8": "13": "0"',
         // '[style.padding-bottom.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "24": "14": "0"',
         '[style.margin-right]': 'field.isVisible?(field.buttonIcon && !field.label) || field.isDownloadButton? "8px": "0.5%": "0"',
         '[style.margin-left]': 'field.isVisible? (field.buttonIcon && !field.label) || field.isDownloadButton? "8px": "0.5%": "0"',
