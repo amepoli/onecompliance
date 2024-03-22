@@ -12,9 +12,9 @@ import { Subscription } from 'rxjs';
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.scss'],
   host: {
-    '[style.padding-top]': 'field.isVisible? field.widgetType == "s3-explorer"? "10px": "24px": "0"',
+    '[style.padding-top]': 'field.isVisible? field.widgetType == "s3-explorer"? "10px": "8px": "0"',
     '[style.margin-right]': 'field.isVisible? field.widgetType == "s3-explorer"? "0.5%": "8px": "0"',
-    '[style.margin-left]': 'field.isVisible? field.widgetType == "s3-explorer"? "0.5%": "8px": "0"',
+    '[style.margin-left]': 'field.isVisible? field.widgetType == "s3-explorer"? "0.5%": "0px": "0"',
     '[style.width]': 'field.isVisible? field.widgetType == "s3-explorer"? "98%": "32px": "0"',
     '[style.height]': 'field.isVisible? field.widgetType == "s3-explorer"? "500px": "32px": "0"',
     '[style.background-color]': 'field.isVisible? field.widgetType == "s3-explorer"? "aliceblue": "transparent": "transparent"',
