@@ -851,6 +851,16 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.regulatApiName, getReq));
   }
 
+  /*Da sistemare
+  createFattureInCloudInvoice(companyId: string, date: string, entity: any, itemsList: any[], paymentsList: any[]) {
+    this.awsService.auth();
+    const getReq: GetRequest = {
+      queryStringParameters: { companyId: companyId, date: date, entity: JSON.stringify(entity) }
+    }
+    return from(this.awsService.api().get(this.apiName, this.fattureApiName, getReq));
+  }
+  */
+
   loadHomePage(entryName: string, company: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
