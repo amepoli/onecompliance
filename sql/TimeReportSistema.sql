@@ -8,6 +8,9 @@ select id_anagrafica, codice_part, dynamo_user
 from entrasp.anagrafiche_id
 where codice_part='QUANTYX' and id_anagrafica=298;
 
+select id_anagrafica, codice_part, dynamo_user, data_avvio_collaborazione 
+from entrasp.anagrafiche_id
+where dynamo_user like '%guadagnini%';
 
 
 select entrasp.aggiorna_giornate_e_users_da_rendicontare('niannetta')
@@ -20,7 +23,7 @@ ALTER TABLE IF EXISTS entrasp.modelli_test_risultati_righe
 select entrasp.aggiorna_giornate_e_users_da_rendicontare('fbordignon@quantyxsim.com')
 
 select * from entrasp.giornate_e_users_da_rendicontare
-where dynamo_user='fbordignon@quantyxsim.com'
+where dynamo_user='mguadagnini'
 order by giorno desc
 
 select id_anagrafica, codice_part, dynamo_user 
@@ -40,15 +43,14 @@ dynamo_user,
 	and codice_azienda in ('QUANTYX','QUANTYXSRL')
 	
 	
-		SELECT  entrasp.aggiorna_giornate_e_users_da_rendicontare(tab.dynamo_user)		
-	FROM 
-	(select distinct dynamo_user from 
-	 entrasp.giornate_e_users_da_rendicontare
-	WHERE (codice_ruolo IS NULL or ruolo is null)
-	and codice_azienda in ('QUANTYX','QUANTYXSRL')) tab
+	SELECT  entrasp.aggiorna_giornate_e_users_da_rendicontare(dynamo_user)		
+	FROM entrasp.users	
 	
+	SELECT  *		
+	FROM entrasp.users	
+	where username like '%guadagnini%'
 	
-	
+
 	select id_anagrafica, codice_part, dynamo_user
 	from entrasp.anagrafiche_id
 	where codice_part='QUANTYX' and dynamo_user='niannetta'
@@ -59,17 +61,6 @@ dynamo_user,
 	from entrasp.anagrafiche_id an
 	where an.dynamo_user=gur.dynamo_user and an.codice_part='QUANTYX'
 	and (gur.codice_ruolo is null or gur.id_Centro_gest is null)
-	
-	
-	update entrasp.giornate_e_users_da_rendicontare gur
-	set ruolo=rl.descrizione
-	from entrasp.ruoli rl
-	where gur.codice_ruolo=rl.codice_ruolo and gur.ruolo is null
-	
-	
-	delete from entrasp.giornate_e_users_da_rendicontare gur
-	where dynamo_user='d.tonicello95@gmail.com'
-	order by giorno desc
 	
 -- per cambiare massivamente le consuntivazioni da un'azienda all'altra	
 	update entrasp.consuntivazioni csn
@@ -131,11 +122,11 @@ update entrasp.giornate_e_users_da_rendicontare
 set id_centro_gest=36, centro_gest='SRL- RM Private Equity'
 where id_centro_gest=43 and codice_azienda in('QUANTYX', 'QUANTYXSRL')
 
-select id_centro_gest, codice_ruolo, codice_part, id_anagrafica, dynamo_user
-from entrasp.anagrafiche_id where dynamo_user='AFossati' and codice_part='QUANTYX'
+select id_centro_gest, codice_ruolo, codice_part, id_anagrafica, dynamo_user, data_avvio_collaborazione
+from entrasp.anagrafiche_id where dynamo_user='mguadagnini' and codice_part='AUDITFT'
 
 select * from entrasp.employers
-where dynamo_user='AFossati'
+where dynamo_user='mguadagnini'
 
 select id_indicatore, sql_select,  sql_indicatore from entrasp.indicatori
 where id_indicatore in(146, 334)
@@ -269,11 +260,13 @@ GROUP BY AN.DYNAMO_USER,
 ORDER BY DYNAMO_USER;
 
 
-SELECT DISTINCT ES.DYNAMO_USER,
-			ES.COGNOME,
-			ES.NOME
+SELECT DYNAMO_USER,
+			COGNOME,
+			NOME,
+			codice_azienda,
+			minuti_richiesti_giornalieri
 		FROM ENTRASP.EMPLOYERS ES
-		where dynamo_user like '%benedet%'
+		where dynamo_user like '%guadagnini%'
 
 
 select *
@@ -281,5 +274,54 @@ from entrasp.giornate_e_users_da_rendicontare
 where dynamo_user like '%benedetti%'
 
 
+-- query di creazione di 
+select * 
+from entrasp.individua_giornate_e_users_da_rendicontare
+where username like '%guadagnini%'
+
+SELECT date_trunc('day'::text, gg.gg)::date AS giorno,
+    du.username,
+    du.minuti_richiesti_giornalieri,
+    du.min_extra_anomali_tr,
+    entrasp.ruolo_descr(du.codice_ruolo::character varying) AS ruolo,
+    entrasp.centri_gestionali_descr(du.codice_part::text, du.id_centro_gest) AS centro_gest,
+    du.codice_ruolo,
+    du.codice_part,
+    du.codice_azienda,
+    du.id_centro_gest
+   FROM generate_series(CURRENT_DATE - 400::double precision * '1 day'::interval, CURRENT_DATE::timestamp without time zone, '1 day'::interval) gg(gg),
+   entrasp.users du
+  WHERE 
+  du.username like '%guadagnini%' and
+
+NOT ((du.username::text || '-'::text) || date_trunc('day'::text, gg.gg)::date IN ( 
+	  SELECT (GIORNATE_E_USERS_DA_RENDICONTARE.DYNAMO_USER::text || '-'::text) || GIORNATE_E_USERS_DA_RENDICONTARE.GIORNO
+	  FROM ENTRASP.GIORNATE_E_USERS_DA_RENDICONTARE))
 
 
+AND DATE_TRUNC('day'::text,
+
+					GG.GG)::date >= DU.DATA_AVVIO_COLLABORAZIONE
+
+order by date_trunc('day'::text, gg.gg)::date desc
+
+
+AND DATE_TRUNC('day'::text,
+
+					GG.GG)::date <= COALESCE(DU.DATA_FINE_COLLABORAZIONE,
+
+																						CURRENT_DATE)
+AND NOT (DATE_TRUNC('day'::text,
+
+										GG.GG)::date IN
+										(SELECT FESTIVITA.DATA
+											FROM ENTRASP.FESTIVITA
+											WHERE FESTIVITA.CODICE_AZIENDA IS NULL
+												AND FESTIVITA.DYNAMO_USER IS NULL))
+AND NOT ((DU.USERNAME::text || '-'::text) || DATE_TRUNC('day'::text,
+
+																																														GG.GG)::date IN
+	(SELECT (FESTIVITA.DYNAMO_USER::text || '-'::text) || FESTIVITA.DATA
+		FROM ENTRASP.FESTIVITA
+		WHERE FESTIVITA.DURATA = 0::numeric
+			AND ((FESTIVITA.DYNAMO_USER::text || '-'::text) || FESTIVITA.DATA) IS NOT NULL));
