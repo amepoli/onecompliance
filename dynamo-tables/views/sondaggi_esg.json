@@ -3,9 +3,7 @@
     "inheritsFrom": "sondaggi_somministrati",
     "entryKey": "sondaggi_esg",
     "label": "Sondaggi ESG",
-    "dashboardTables": [
-        "dashboard_sondaggi"
-    ],
+    "dashboardTables": ["dashboard_sondaggi"],
     "predefinedQueries": [
         {
             "operation": "selectTable",
@@ -561,9 +559,7 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "query",
                     "condition": "notEqualTo",
-                    "values": [
-                        "C"
-                    ],
+                    "values": ["C"],
                     "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'ss', '£stato£');"
                 }
             ]
@@ -658,9 +654,7 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "hide",
                     "condition": "notEqualTo",
-                    "values": [
-                        "C"
-                    ]
+                    "values": ["C"]
                 },
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -824,9 +818,7 @@
                 {
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "condition": "equalTo",
-                    "values": [
-                        "C"
-                    ],
+                    "values": ["C"],
                     "actionType": "query",
                     "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$, '€global_username€') as id_somministrazione_succ;",
                     "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -1612,9 +1604,7 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flags_sezioni",
                     "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
+                    "values": ["0"]
                 }
             ],
             "isHidden": true,
@@ -1648,9 +1638,7 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flags_sezioni",
                     "condition": "equalTo",
-                    "values": [
-                        "1"
-                    ]
+                    "values": ["1"]
                 }
             ],
             "isHidden": true,
@@ -1733,9 +1721,7 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flag_workflow",
                     "condition": "equalTo",
-                    "values": [
-                        "1"
-                    ]
+                    "values": ["1"]
                 }
             ],
             "isHidden": true,
@@ -1803,6 +1789,24 @@
                 }
             ],
             "label": "Calcolo punteggi"
+        },
+        {
+            "entryKey": "report_sub_of_sondaggi_somministrati",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Report Associati"
         }
     ],
     "table_keys": [
@@ -2998,7 +3002,6 @@
             "newLine": false,
             "queryCond": "(snd.stato not in('N', 'C') and data_prevista<current_date and (split_part(ss.object_key, '|', 2)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='€global_codice_azienda€' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='€global_codice_part€' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='€global_codice_azienda€' and cntx.id_cliente is not null))))"
         }
-        
     ],
     "exportQueries": {
         "tableQueries": [
