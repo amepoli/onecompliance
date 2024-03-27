@@ -3,9 +3,7 @@
     "inheritsFrom": "sondaggi_somministrati",
     "entryKey": "profilazione_aml",
     "label": "Profili AML",
-    "dashboardTables": [
-        "dashboard_sondaggi"
-    ],
+    "dashboardTables": ["dashboard_sondaggi"],
     "predefinedQueries": [
         {
             "operation": "selectTable",
@@ -563,9 +561,7 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "query",
                     "condition": "notEqualTo",
-                    "values": [
-                        "C"
-                    ],
+                    "values": ["C"],
                     "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'ss', '£stato£');"
                 }
             ]
@@ -660,9 +656,7 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "hide",
                     "condition": "notEqualTo",
-                    "values": [
-                        "C"
-                    ]
+                    "values": ["C"]
                 },
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -826,9 +820,7 @@
                 {
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "condition": "equalTo",
-                    "values": [
-                        "C"
-                    ],
+                    "values": ["C"],
                     "actionType": "query",
                     "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$, '€global_username€') as id_somministrazione_succ;",
                     "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -1614,9 +1606,7 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flags_sezioni",
                     "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
+                    "values": ["0"]
                 }
             ],
             "isHidden": true,
@@ -1650,9 +1640,7 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flags_sezioni",
                     "condition": "equalTo",
-                    "values": [
-                        "1"
-                    ]
+                    "values": ["1"]
                 }
             ],
             "isHidden": true,
@@ -1735,9 +1723,7 @@
                     "actionType": "show",
                     "eventName": "somministrazioni_flag_workflow",
                     "condition": "equalTo",
-                    "values": [
-                        "1"
-                    ]
+                    "values": ["1"]
                 }
             ],
             "isHidden": true,
@@ -2635,9 +2621,19 @@
                 "value": "0",
                 "viewType": "toggle"
             },
-            "label": "Solo profilazioni rischio aml",
+            "label": "Profilazioni Rischio AML",
             "newLine": false,
             "queryCond": "(mt.id_tipo_modello_test=50 and mt.id_argomento not in(45421))"
+        },
+        {
+            "fieldName": "adeguata_ver_rafforzata",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Adeguata Ver. Rafforzata",
+            "newLine": false,
+            "queryCond": "ss.id_sondaggio in (SELECT ss.id_sondaggio FROM entrasp.sondaggi_somministrati ss  INNER JOIN entrasp.sondaggi snd ON ss.codice_azienda = snd.codice_azienda AND ss.id_sondaggio = snd.id_sondaggio INNER JOIN entrasp.modelli_test mt ON snd.codice_azienda = mt.codice_azienda AND snd.id_modello_test = mt.id_modello_test WHERE mt.id_argomento = 49362 AND ss.codice_azienda = '€global_codice_azienda€')"
         },
         {
             "fieldName": "contratto_attivi_t",
