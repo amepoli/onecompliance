@@ -1124,14 +1124,23 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         if (element == null) {
                             continue; // skip null entries
                         }
+                        if (Array.isArray(element) && element.length > 0) {
+                            if(element.length === 1 && element[0] === null) {
+                                continue; // skip null entries
+                                // chiavi[key] = 'ARRAY[NULL]';
+                            }
+                            else if(typeof element[0] === 'object' && Object.keys(element[0]).length > 0 && element[0]['id']) {
+                                chiavi[key] = 'ARRAY[' +  element.map(x => x.id).join(',') + ']';
+                            }
+                            else {
+                                chiavi[key] = 'ARRAY[' +  element.map(x => x).join(',') + ']';
+                            }
+                        }
                         // decode combos
-                        if (element['id'] != null) {
+                        else if (element['id'] != null) {
                             chiavi[key] = element['id'];
                         }
                         // decode multi-combo / tags
-                        else if (Array.isArray(element) && element.length > 0 && element[0]['id']) {
-                            chiavi[key] = 'ARRAY[' +  element.map(x => x.id).join(',') + ']';
-                        }                       
                         // encode boolean
                         else if (element === true) {
                             chiavi[key] = '1';

@@ -111,13 +111,13 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
       // Calculate the height
       var height = Math.min(parseInt(computed.getPropertyValue('border-top-width'), 10)
         + parseInt(computed.getPropertyValue('padding-top'), 10)
-        + (nativeElement.scrollHeight - 40)
+        + (nativeElement.scrollHeight - 16)
         + parseInt(computed.getPropertyValue('padding-bottom'), 10)
         + parseInt(computed.getPropertyValue('border-bottom-width'), 10), this.maxHeight);
   
       // Apply heights
       nativeElement.style.height = height + 'px';
-      this.textAreaComponentHeight = (height + 64) + "px";
+      this.textAreaComponentHeight = (height + 56) + "px";
     }
     else {
       this.textAreaComponentHeight = "211px";
