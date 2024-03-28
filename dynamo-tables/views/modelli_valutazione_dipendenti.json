@@ -24,5 +24,224 @@
                 "text": "Condividere il modello di test nell'azienda selezionata?"
             }
         }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "width": "5%",
+            "label": "#",
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "width": "6%",
+            "label": "Versione",
+            "translate": "RESOURCES.version"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.code",
+            "width": "10%",
+            "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "599"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Titolo",
+            "translate": "RESOURCES.title",
+            "width": "38%",
+            "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "599"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "width": "13%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_modello_test",
+            "label": "",
+            "translate": "RESOURCES.id_tipo_modello_test"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_tipo",
+            "width": "12%",
+            "label": "Tipo",
+            "translate": "RESOURCES.type"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_survey"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
+            "translate": "RESOURCES.id_administration"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "12%",
+            "queryFunct": "select true",
+            "key": "create_somministrazione",
+            "label": "$P{label_crea_sondaggio}",
+            "isButton": true,
+            "style": [
+                {
+                    "button_icon": "add",
+                    "value": "*"
+                }
+            ],
+            "buttonAction": {
+                "target": "lessons",
+                "viewType": "form",
+                "keyToCheck": "id_tipo_modello_test",
+                "navigationConditions": [
+                    {
+                        "ifValue": "52",
+                        "newTarget": "lessons"
+                    },
+                    {
+                        "ifValue": "5",
+                        "newTarget": "lessons"
+                    }
+                ],
+                "action": "query",
+                "query": "select codaz as codice_azienda, idsnd as new_id_sondaggio, idss as new_id_somministrazione from entrasp.crea_singola_verifica('£codice_azienda£', £id_modello_test£)",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Nuova $P{tipo_sondaggio}",
+                    "text": "Si vuole creare una nuova $P{tipo_sondaggio}?"
+                },
+                "onSuccessAction": "navigate",
+                "onSuccessActionKeymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "new_id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "translate": "RESOURCES.create_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fake",
+            "label": "",
+            "width": "1%",
+            "translate": "RESOURCES.fake"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "id_risultato",
+            "translate": "RESOURCES.id_risultato"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "ID argomento",
+            "translate": "RESOURCES.id_argomento"
+        }
     ]
+    
 }
