@@ -1540,6 +1540,7 @@ export const locale = {
             without_judgment: "Without Judgement",
             without_process: "Without Process",
             worst_check: "Worst Check",
+            send_fattura: "Send Invoice",
         },
         VIEWS: {
             sondaggi: "Sondaggi",

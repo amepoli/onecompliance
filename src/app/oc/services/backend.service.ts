@@ -30,6 +30,7 @@ export class BackendService {
   private regulatVPCApiName = appData.lambdas.regulat_VPC.apiName;
   private calendarApiName = appData.lambdas.calendar.apiName;
   private insert_user_to_dynamoApiName = appData.lambdas.insert_user_to_dynamo.apiName;
+  private fattureincloudApiName = appData.lambdas.fatture_in_cloud.apiName;
 
   // private myGetInit = { // OPTIONAL
   //   headers: {
@@ -850,15 +851,16 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.regulatApiName, getReq));
   }
 
-  /*Da sistemare
-  createFattureInCloudInvoice(companyId: string, date: string, entity: any, itemsList: any[], paymentsList: any[]) {
+
+  createFattureInCloudInvoice(company: string, entity: any) {
     this.awsService.auth();
-    const getReq: GetRequest = {
-      queryStringParameters: { companyId: companyId, date: date, entity: JSON.stringify(entity) }
+    const postReq: PostRequest = {
+      queryStringParameters: { company },
+      body: { entity }
     }
-    return from(this.awsService.api().get(this.apiName, this.fattureApiName, getReq));
+    return from(this.awsService.api().post(this.apiName, this.fattureincloudApiName , postReq));
   }
-  */
+
 
   loadHomePage(entryName: string, company: string): Observable<any> {
     this.awsService.auth();

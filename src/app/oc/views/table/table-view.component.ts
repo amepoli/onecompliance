@@ -1155,6 +1155,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         else if (selectedViewKey.buttonAction.action == 'downloadReport') {
             this.downloadReport(selectedViewKey, keys, row);
         }
+        else if (selectedViewKey.buttonAction.action == 'fatture') {
+            this.createFattura(selectedViewKey, keys, row);
+        }
         
     }
 
@@ -1293,6 +1296,80 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let isForm = selectedViewKey.buttonAction.reportQueryType === 'form';
 
         _this._importExportService.downloadExcel(this.targetEntryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, null, isForm, row, reportName);   
+        /*const filename = data[1];
+        if (file_id && filename) {
+            _this._dialogService.showLoadingDialog('Downloading report', 'Please wait...');
+            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
+                url => {
+                    if (url != null) {
+                        _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
+                            fileData => {
+                                saveAs(fileData, filename);
+                                _this._dialogService.closeDialog();
+                                _this._toastService.showSuccessToast('Attachment report successfully!');
+                            },
+                            error => {
+                                _this._dialogService.closeDialog();
+                                _this._toastService.showErrorToast('An error occured!');
+                            }));
+                    }
+                },
+                error => {
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showErrorToast('An error occured!');
+                });
+            _this.subscriptions.push(subscription);
+
+        }
+        else {
+            _this._toastService.showErrorToast('File does not exist!');
+        }
+        */
+    }
+    
+    createFattura(selectedViewKey: TableViewKey, keys: any, row: MatRow) {
+        let _this = this;
+        console.log(row);
+        console.log(selectedViewKey);
+        // Value must be file_id^filename 
+        let reportName = selectedViewKey.buttonAction.reportName;
+        let isForm = selectedViewKey.buttonAction.reportQueryType === 'form';
+        _this._dialogService.showLoadingDialog('Uploading draft', 'Please wait...');
+        _this.backendService.createFattureInCloudInvoice(_this._authService.getCurrentCompany(), row).subscribe(
+            (response:any) => {
+                if (response && response.data) {
+                let keys = {};
+                if (selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0) {
+                    selectedViewKey.buttonAction.keymap.forEach(map => {
+                        keys[map.destination] = response.data[map.source];
+                    })
+                }
+                _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
+                    response => {
+                        if (response.result == 'OK') {
+                            if (selectedViewKey.buttonAction.onSuccessAction != null) {
+                                _this.performOnSuccessAction(selectedViewKey, keys, response.response);
+                            }
+                        }
+                    },
+                    error => {
+                        console.error(error);
+                    }
+                )
+
+                _this._dialogService.closeDialog();
+                _this._toastService.showSuccessToast('Uploaded successfully!');
+            }
+            else {
+                _this._dialogService.closeDialog();
+                _this._toastService.showErrorToast('An error occured!');
+            }
+        },
+            error => {
+                _this._dialogService.closeDialog();
+                _this._toastService.showErrorToast('An error occured!');
+            });
+        //_this._importExportService.downloadExcel(this.targetEntryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, null, isForm, row, reportName);   
         /*const filename = data[1];
         if (file_id && filename) {
             _this._dialogService.showLoadingDialog('Downloading report', 'Please wait...');

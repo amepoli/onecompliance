@@ -16,7 +16,7 @@ export interface TableViewKey { // as per API specification
     isInputButton?: boolean;
     isInputButtonKey?: string;
     buttonAction?: {
-        action: "navigate" | "delete" | "query" | 'downloadAttachment' | 'downloadReport',
+        action: "navigate" | "delete" | "query" | 'downloadAttachment' | 'downloadReport' | 'fatture',
         target: string,
         viewType: string,
         query?: string,

@@ -1522,6 +1522,7 @@ export const locale = {
             without_judgment: "Senza Giudizio",
             without_process: "Senza Processi",
             worst_check: "Verifica Peggiore",
+            send_fattura: "Invia Fattura",
         },
         VIEWS: {
             sondaggi: "Sondaggi",
