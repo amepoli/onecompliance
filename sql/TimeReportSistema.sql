@@ -10,7 +10,7 @@ where codice_part='QUANTYX' and id_anagrafica=298;
 
 select id_anagrafica, codice_part, dynamo_user, data_avvio_collaborazione 
 from entrasp.anagrafiche_id
-where dynamo_user like '%guadagnini%';
+where dynamo_user ilike '%carnio%';
 
 
 select entrasp.aggiorna_giornate_e_users_da_rendicontare('niannetta')
@@ -126,7 +126,7 @@ select id_centro_gest, codice_ruolo, codice_part, id_anagrafica, dynamo_user, da
 from entrasp.anagrafiche_id where dynamo_user='mguadagnini' and codice_part='AUDITFT'
 
 select * from entrasp.employers
-where dynamo_user='mguadagnini'
+where dynamo_user='Bruscajack'
 
 select id_indicatore, sql_select,  sql_indicatore from entrasp.indicatori
 where id_indicatore in(146, 334)
@@ -143,7 +143,9 @@ where em.dynamo_user=an.dynamo_user
 select pid, query_start, now() - pg_stat_activity.query_start as RunningTime, state, query
 from pg_stat_activity
 where state!='idle'
-order by query_start as
+
+
+
 									
 									
 																
