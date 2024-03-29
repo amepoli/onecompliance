@@ -7,7 +7,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select distinct codice_azienda, true as delete_presidi_mdt,true as visible_button_presidio, id_modello_test, id_modello_test_vr, id_presidio, entrasp.presidi_descr(id_presidio, codice_azienda) as descr_presidio from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
+            "queryString": "select distinct codice_azienda, entrasp.cod_rischi_of_presidio(codice_azienda, id_presidio) as rischi_associati, true as delete_presidi_mdt,true as visible_button_presidio, id_modello_test, id_modello_test_vr, id_presidio, entrasp.presidi_descr(id_presidio, codice_azienda) as descr_presidio from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
         },
         {
             "operation": "insert",
@@ -241,6 +241,17 @@
                 }
             ],
             "translate": "RESOURCES.visible_button_presidio"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rischi_associati",
+            "width": "50%",
+            "queryFunct": "entrasp.cod_rischi_of_presidio(codice_azienda, id_presidio)",
+            "label": "Rischi associati" 
         }
     ],
     "inputEvents": [
