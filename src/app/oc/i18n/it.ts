@@ -1103,6 +1103,7 @@ export const locale = {
             office: "Centro Gestionale",
             oggetto: "Oggetto",
             ok: "ok",
+            origine_segnalazione: "Origine Segnalazione",
             open: "Aperti",
             opposto: "Opp.",
             opposto_combobox: "Opposto?",

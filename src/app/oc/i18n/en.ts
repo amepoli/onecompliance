@@ -1117,6 +1117,7 @@ export const locale = {
             oggetto: "object",
             ok: "ok",
             open: "Open",
+            origine_segnalazione:"Suspicious transactions Source",
             opposto: "Opp.",
             opposto_combobox: "Opposite to?",
             ordinamento: "Sorting",
