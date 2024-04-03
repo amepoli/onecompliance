@@ -13,7 +13,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select *,(select a.descrizione from entrasp.asset a where a.id_asset = c.id_asset and codice_azienda=$codice_azienda$ and a.id_asset is not null) as descr_asset,c.codice_azienda||'|'||c.id_contratto as object_key, (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_tipo_modello_test=54 limit 1), true as create_somministrazione, entrasp.argomenti_descr(c.id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as id_cliente,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti c where codice_ruolo='FOR' and c.codice_azienda=$codice_azienda$"
+            "queryString": "select *,(select a.descrizione from entrasp.asset a where a.id_asset = c.id_asset and codice_azienda=$codice_azienda$ and a.id_asset is not null) as descr_asset,c.codice_azienda||'|'||c.id_contratto as object_key, (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_tipo_modello_test=54 limit 1), true as create_somministrazione, entrasp.argomenti_descr(c.id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as id_cliente,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti c left join entrasp.ruoli_anagrafiche ra on c.codice_part=ra.codice_part and c.id_cliente=ra.id_anagrafica where ra.codice_ruolo='FOR' and c.codice_azienda=$codice_azienda$"
         }
     ],
     "outputEvents": [
@@ -139,6 +139,7 @@
             "isPrimary": false,
             "width": "12%",
             "key": "create_somministrazione",
+            "queryFunct": "true",
             "label": "Valuta fornitura",
             "isButton": true,
             "buttonAction": {
@@ -255,7 +256,7 @@
         {
             "fieldName": "id_strumento_fin_s",
             "format": {
-                "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and codice_ruolo = 'FONDO';",
+                "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and ra.codice_ruolo = 'FONDO';",
                 "options": [],
                 "viewType": "combobox"
             },
