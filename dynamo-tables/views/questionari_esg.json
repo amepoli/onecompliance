@@ -1,0 +1,3037 @@
+{
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "sondaggi_somministrati",
+    "entryKey": "questionari_esg",
+    "label": "Questionari ESG",
+    "dashboardTables": ["dashboard_sondaggi"],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select snd.id_modello_test||'-'||snd.id_modello_test_vr as id_e_vr, snd.id_sondaggio_succ, case when snd.data_prevista<now() and ss.stato not in('C','N') then 'Si' else 'No' end as scaduto, cnt.numero_contratto, ss.codice_azienda, ss.id_somministrazione, ss.somministrazione_completata, ss.object_description, ss.object_key, ss.stato, ss.id_sondaggio, snd.data_comp, ss.data_esecuzione, snd.data_prevista, entrasp.field_value_from_key(ss.object_key, ss.object_name, 'id_anagrafica','|')::numeric as id_anagrafica, entrasp.giudizio_da_pct(ss.codice_azienda, mtvr.id_risultato, ss.pct_da_manuale) as giudizio_manuale, ss.giudizio, entrasp.sondaggio_titolo(ss.codice_azienda,ss.id_sondaggio) as titolo_sondaggio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, snd.id_modello_test, snd.id_modello_test_vr, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mtvr.id_risultato) as data_scadenza from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and cnt.id_contratto=coalesce(ss.id_contratto,snd.id_contratto) where ss.codice_azienda=$codice_azienda$ and ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 60 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '100 days' or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 60 and snd.data_prevista is null and ss.data_esecuzione is null))"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "SELECT mvr.flag_workflow, mvr.flag_sezioni, '€global_username€' as username, mdt.titolo as titolo_modello_test, snd.id_sondaggio_parent, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "postProcessing",
+            "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+        },
+        {
+            "operation": "delete",
+            "type": "main",
+            "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
+        },
+        {
+            "operation": "selectTable",
+            "queryString": "update entrasp.sondaggi_somministrati ss set codice_part=az.codice_part, data_esecuzione=coalesce(ss.data_esecuzione, snd.data_esecuzione) from entrasp.sondaggi snd, entrasp.aziende az where ss.codice_part=az.codice_part and ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=$codice_azienda$ and (ss.codice_part is null or ss.data_esecuzione is null) and ss.stato='C';",
+            "type": "preProcessing"
+        }
+    ],
+    "define": {
+        "is_comprehension_test": "false",
+        "read_only_versione": "true",
+        "size_titolo": "6.66",
+        "is_hidden_KYC": "true"
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "user_update",
+            "label": "",
+            "readOnly": false,
+            "sameOrigin": true,
+            "insertUpdateFunct": "SELECT '€global_username€'",
+            "translate": "RESOURCES.user_update"
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "select ss2.id_somministrazione as id, ss2.id_somministrazione||'-'||snd2.data_esecuzione as name from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join  entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join  entrasp.sondaggi snd2 on snd2.codice_azienda=mt.codice_azienda and snd2.id_modello_test=mt.id_modello_test inner join  entrasp.sondaggi_somministrati ss2 on  ss2.codice_azienda=snd2.codice_azienda and ss2.id_sondaggio=snd2.id_sondaggio where ss2.object_key=ss.object_key and ss.id_somministrazione=$id_somministrazione$ and ss.codice_azienda=$codice_azienda$ and ss2.id_somministrazione!=$id_somministrazione$;",
+                            "options": [],
+                            "viewType": "combobox"
+                        },
+                        "isHidden": "$Q{is_comprehension_test}",
+                        "isPrimary": false,
+                        "sameOrigin": false,
+                        "key": "id_somm_to_copy_from",
+                        "label": "Verifica da cui copiare",
+                        "translate": "RESOURCES.check_to_copy_from",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": "$Q{is_comprehension_test}",
+                        "isPrimary": false,
+                        "key": "copy_from_somministrazione",
+                        "buttonIcon": "content_copy",
+                        "label": "Copia",
+                        "translate": "RESOURCES.copy",
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "change_id_somm_to_copy_from",
+                            "eventTrigger": "press"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "change_id_somm_to_copy_from",
+                                "actionType": "show_message",
+                                "condition": "none",
+                                "values": [],
+                                "message": {
+                                    "messageText": "Sei sicuro di voler copiare o sovrascrivere le risposte copiandole dalla precedente somministrazione? (Saranno cancellate tutte le risposte attualmente date)",
+                                    "actionOnNo": {
+                                        "actionType": "query",
+                                        "queryFunct": "select 1"
+                                    },
+                                    "actionOnYes": {
+                                        "actionType": "query",
+                                        "queryFunct": "select entrasp.accoda_risposte_somministrazione($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, £id_sondaggio£, $id_somministrazione$, $id_somm_to_copy_from$);"
+                                    }
+                                },
+                                "outputEventWhenComplete": "aggiorna_id_sondaggio"
+                            }
+                        ],
+                        "style": {
+                            "background_color": "#25599C",
+                            "font_color": "white"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 1
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": "$Q{is_comprehension_test}",
+                        "isPrimary": false,
+                        "key": "copia_da_somministrazione_hide_k",
+                        "buttonIcon": "close",
+                        "label": "Maschera principale",
+                        "translate": "RESOURCES.main_page",
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "copia_da_somministrazione_hide",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 1
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "copia_da_somministrazione_show",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "copia_da_somministrazione_hide",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "associa_sondaggio_show",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "associa_progetto_show",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "copia_da_somministrazione_sub_form",
+            "label": "copia_da_somministrazione_sub_form",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.copia_da_somministrazione_sub_form"
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "comboQuery": "select snd.id_sondaggio as id, concat (id_sondaggio, ' - ', snd.titolo) as name from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda =$codice_azienda$"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_sondaggio_parent",
+                        "sameOrigin": false,
+                        "label": "Sondaggio Parent",
+                        "translate": "RESOURCES.id_relative_survey",
+                        "outputEvent": {
+                            "eventName": "sondaggio_parent_update",
+                            "eventTrigger": "select"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "sondaggio_parent_update",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "update entrasp.sondaggi set id_sondaggio_parent=$id_sondaggio_parent$ where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ returning id_sondaggio_parent"
+                            }
+                        ],
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 3
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "associa_sondaggio_hide_k",
+                        "buttonIcon": "close",
+                        "label": "Maschera principale",
+                        "translate": "RESOURCES.main_page",
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "associa_sondaggio_hide",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 1
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "associa_sondaggio_show",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "associa_sondaggio_hide",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "copia_da_somministrazione_show",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "associa_progetto_show",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "associa_sondaggio_sub_form",
+            "label": "associa_sondaggio_sub_form",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.associa_sondaggio_sub_form"
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "comboQuery": "select prg.id_progetto as id, concat (prg.id_progetto, ' - ', prg.titolo) as name from entrasp.progetti prg where prg.codice_azienda=$codice_azienda$ and prg.id_centro_gest = (select id_centro_gest from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1)"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_progetto",
+                        "queryFunct": "select id_progetto from entrasp.progetti_fasi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1",
+                        "label": "Progetto associato",
+                        "translate": "RESOURCES.id_associated_project",
+                        "outputEvent": {
+                            "eventName": "id_progetto_update",
+                            "eventTrigger": "select"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "id_progetto_update",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto$, $id_sondaggio$,  entrasp.evaluate_given_field_null('id_fase_parent', '$id_fase_parent$'))",
+                                "successMessage": "Done!"
+                            }
+                        ],
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 3
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "comboQuery": "select id_fase as id, titolo as name from entrasp.progetti_fasi where codice_azienda=$codice_azienda$ and id_progetto=£id_progetto£"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_fase_parent",
+                        "queryFunct": "select id_fase_sup from entrasp.progetti_fasi where id_sondaggio=$id_sondaggio$ and codice_azienda=$codice_azienda$ limit 1",
+                        "sameOrigin": false,
+                        "label": "Fase livello superiore",
+                        "translate": "RESOURCES.upper_level_phase",
+                        "outputEvent": {
+                            "eventName": "id_fase_parent_update",
+                            "eventTrigger": "select"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "id_fase_parent_update",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto$, $id_sondaggio$,  entrasp.evaluate_given_field_null('id_fase_parent', '$id_fase_parent$'))",
+                                "successMessage": "Done!"
+                            },
+                            {
+                                "eventName": "id_progetto_update",
+                                "actionType": "show",
+                                "condition": "none",
+                                "values": []
+                            }
+                        ],
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 3
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "text"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "codice_part",
+                        "label": "codice_part",
+                        "translate": "RESOURCES.partition_code",
+                        "readOnly": false,
+                        "sameOrigin": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "text"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "username",
+                        "label": "",
+                        "readOnly": false,
+                        "sameOrigin": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "progetto_from_sondaggi_somministrati",
+                        "buttonIcon": "stacked_line_chart",
+                        "label": "Progetto associato",
+                        "translate": "RESOURCES.id_associated_project",
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "to_progetto_from_sondaggi_somministrati",
+                            "eventTrigger": "press"
+                        },
+                        "style": {
+                            "background_color": "#25599C",
+                            "font_color": "white"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 1
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "associa_progetto_hide_k",
+                        "buttonIcon": "close",
+                        "label": "Maschera principale",
+                        "translate": "RESOURCES.main_page",
+                        "newLine": false,
+                        "outputEvent": {
+                            "eventName": "associa_progetto_hide",
+                            "eventTrigger": "press"
+                        },
+                        "readOnly": false,
+                        "sameOrigin": false,
+                        "size": 1
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "associa_progetto_show",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "associa_progetto_hide",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "associa_sondaggio_show",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "copia_da_somministrazione_show",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "associa_progetto_sub_form",
+            "label": "associa_progetto_sub_form",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.associa_progetto_sub_form"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_somministrazione",
+            "label": "#",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.id_somministrazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "verifica_id_descr",
+            "label": "void",
+            "translate": "RESOURCES.void",
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "queryFunct": "SELECT 'Profilazione '||(id_somministrazione)::text",
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.5em",
+                "font_style": "normal",
+                "font_weight": "600"
+            },
+            "size": 7.73
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "newLine": false,
+            "size": 1.67,
+            "readOnly": false,
+            "style": {
+                "background_color": "aliceblue"
+            },
+            "outputEvent": {
+                "eventName": "update_bckgrndcol_stato_snd_som",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "update_bckgrndcol_stato_snd_som",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "onLoadSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "update_bckgrndcol_stato_snd_som",
+                    "actionType": "query",
+                    "condition": "notEqualTo",
+                    "values": ["C"],
+                    "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'ss', '£stato£');"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "link",
+                        "label": "Associa progetto",
+                        "translate": "RESOURCES.associate_project",
+                        "outputEventName": "associa_progetto_show"
+                    },
+                    {
+                        "icon": "link",
+                        "label": "Associa sondaggio",
+                        "translate": "RESOURCES.associate_survey",
+                        "outputEventName": "associa_sondaggio_show"
+                    },
+                    {
+                        "icon": "add",
+                        "label": "Dati preliminari verifica",
+                        "translate": "RESOURCES.preliminary_data",
+                        "outputEventName": "sondaggi_ulteriori_elementi"
+                    },
+                    {
+                        "icon": "launch",
+                        "label": "Riepilogo risultati",
+                        "translate": "RESOURCES.result_summary",
+                        "outputEventName": "check_existence_riepilogo_risultati"
+                    },
+                    {
+                        "icon": "report_problem",
+                        "label": "Segnalazione",
+                        "translate": "RESOURCES.report",
+                        "outputEventName": "compito_create"
+                    },
+                    {
+                        "icon": "lock",
+                        "label": "Chiudi Verifica",
+                        "translate": "RESOURCES.close_check",
+                        "outputEventName": "close_associated_sondaggio_button"
+                    },
+                    {
+                        "icon": "lock_open",
+                        "label": "Riapri Verifica",
+                        "translate": "RESOURCES.reopen_verification",
+                        "outputEventName": "sondaggi_reopen"
+                    },
+                    {
+                        "icon": "content_copy",
+                        "label": "Copia da altra verifica",
+                        "translate": "RESOURCES.copy_from_other_check",
+                        "outputEventName": "copia_da_somministrazione_show"
+                    },
+                    {
+                        "icon": "sync",
+                        "label": "Ricalcola punteggi",
+                        "translate": "RESOURCES.recalculate_scores",
+                        "outputEventName": "ricalcola_punteggi"
+                    },
+                    {
+                        "icon": "speaker_notes_off",
+                        "label": "Rispondi non applicabile",
+                        "translate": "RESOURCES.answer_not_applicable_to_all",
+                        "outputEventName": "risp_non_applicabile"
+                    },
+                    {
+                        "icon": "person_search",
+                        "label": "OneKYC - Deep",
+                        "outputEventName": "get_aml_scan_prof"
+                    },
+                    {
+                        "icon": "person_search",
+                        "label": "OneKYC - Light",
+                        "outputEventName": "get_light_aml_scan_prof"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "sondaggi_reopen",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.riapri_somministrazione($codice_azienda$, $id_sondaggio$, $id_somministrazione$);",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "sondaggi_somministrati_reload"
+                },
+                {
+                    "eventName": "update_bckgrndcol_stato_snd_som",
+                    "actionType": "hide",
+                    "condition": "notEqualTo",
+                    "values": ["C"]
+                },
+                {
+                    "eventName": "sondaggi_button_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "outputEventWhenComplete": "aggiorna_id_sondaggio",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questo sondaggio? (si verrà automaticamente trasferiti nel nuovo sondaggio)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select idnew as id_sondaggio from entrasp.grc_accoda_singolo_sondaggio_stessa_azienda($codice_azienda$, $id_sondaggio$);"
+                        }
+                    }
+                },
+                {
+                    "eventName": "ricalcola_punteggi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Punteggi ricalcolati correttamente",
+                    "values": [],
+                    "queryFunct": "SELECT entrasp.ricalcola_punteggi_sondaggi_aperti($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+                    "outputEventWhenComplete": "sondaggi_somministrati_reload"
+                },
+                {
+                    "eventName": "risp_non_applicabile",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "successMessage": "Inserite risposte non applicabili",
+                    "values": [],
+                    "message": {
+                        "messageText": "Rispondere 'Non Applicicabile' a tutte le domande che lo prevedono?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "SELECT entrasp.verifica_non_applicabile($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$)"
+                        }
+                    },
+                    "outputEventWhenComplete": "sondaggi_somministrati_reload"
+                },
+                {
+                    "eventName": "get_aml_scan_prof",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "regulat_api",
+                            "regulatAPIParams": {
+                                "actionType": "get_aml_scan",
+                                "entityParams": {
+                                    "codice_azienda": "codice_azienda",
+                                    "id_anagrafica": "id_anagrafica",
+                                    "id_somministrazione": "id_somministrazione",
+                                    "dynamo_user": "username",
+                                    "is_light_scan": false
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "eventName": "get_light_aml_scan_prof",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "regulat_api",
+                            "regulatAPIParams": {
+                                "actionType": "get_aml_scan",
+                                "entityParams": {
+                                    "codice_azienda": "codice_azienda",
+                                    "id_anagrafica": "id_anagrafica",
+                                    "id_somministrazione": "id_somministrazione",
+                                    "dynamo_user": "username",
+                                    "is_light_scan": true
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "sondaggi_actions",
+            "label": " ",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.6,
+            "translate": "RESOURCES.sondaggi_actions"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "titolo",
+            "label": "Titolo Verifica",
+            "outputEvent": {
+                "eventName": "titolo_sondaggio_update",
+                "eventTrigger": "change"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "titolo_sondaggio_update",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi snd set titolo='£titolo£' from entrasp.sondaggi_somministrati ss, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+                }
+            ],
+            "newLine": false,
+            "size": "$P{size_titolo}",
+            "readOnly": false,
+            "translate": "RESOURCES.titolo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "inputEvents": [
+                {
+                    "eventName": "close_associated_sondaggio_button",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$, '€global_username€') as id_somministrazione_succ;",
+                    "outputEventWhenComplete": "sondaggi_somministrati_reload"
+                },
+                {
+                    "eventName": "update_bckgrndcol_stato_snd_som",
+                    "condition": "equalTo",
+                    "values": ["C"],
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$, '€global_username€') as id_somministrazione_succ;",
+                    "outputEventWhenComplete": "sondaggi_somministrati_reload"
+                }
+            ],
+            "label": "# Sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.11,
+            "outputEvent": {
+                "eventName": "to_sondaggi_from_sondaggi_somministrati",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "none",
+                "font_color": "blue",
+                "text_decoration": "underline"
+            }
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": "$Q{is_comprehension_test}",
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "Modello di Profilazione",
+            "sameOrigin": false,
+            "outputEvent": {
+                "eventName": "to_modello_test_from_sondaggi_somministrati",
+                "eventTrigger": "press"
+            },
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.11,
+            "style": {
+                "font_style": "italic",
+                "font_color": "blue",
+                "text_decoration": "underline"
+            },
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select mvr.id_modello_test_vr as id, mvr.id_modello_test_vr as name from entrasp.modelli_test_vr mvr inner join entrasp.sondaggi snd on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=£id_sondaggio£ order by mvr.id_modello_test_vr;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "outputEvent": {
+                "eventName": "somministrazione_version_change",
+                "eventTrigger": "select"
+            },
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
+            "translate": "RESOURCES.version",
+            "sameOrigin": false,
+            "inputEvents": [
+                {
+                    "eventName": "somministrazione_version_change",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "outputEventWhenComplete": "sondaggi_somministrati_reload",
+                    "message": {
+                        "messageText": "Sei sicuro di voler aggiornare la versione della soministrazione e di tutte le somministrazioni del sondaggio?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.sondaggio_versione_update($codice_azienda$, $id_sondaggio$, $id_modello_test_vr$);"
+                        }
+                    }
+                }
+            ],
+            "newLine": true,
+            "readOnly": false,
+            "size": 1.11
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select distinct objectkey as id, objectdescription as name from entrasp.survey_population($codice_azienda$, £id_sondaggio£, '|') order by objectdescription;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "object_key",
+            "outputEvent": {
+                "eventName": "ObjectKeyChange",
+                "eventTrigger": "select"
+            },
+            "label": "Oggetto di verifica",
+            "translate": "RESOURCES.check_subject",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.33
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_anagrafica_assegnataria",
+            "label": "Incaricato Compilazione",
+            "translate": "RESOURCES.assigned_to",
+            "newLine": false,
+            "readOnly": false,
+            "queryFunct": "SELECT id_anagrafica_assegnataria FROM entrasp.sondaggi WHERE id_sondaggio=$id_sondaggio$ AND codice_azienda=$codice_azienda$",
+            "size": 3.33,
+            "sameOrigin": false,
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi snd set id_anagrafica_assegnataria=£id_anagrafica_assegnataria£ where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ RETURNING 1;"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire una data esecuzione!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_esecuzione",
+            "label": "Data esecuzione",
+            "translate": "RESOURCES.execution_date",
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi snd set data_esecuzione=ss.data_esecuzione from entrasp.sondaggi_somministrati ss where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+                },
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "update entrasp.sondaggi snd set data_prevista=$data_prevista$ from entrasp.sondaggi_somministrati ss, entrasp.modelli_test mt where snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio and snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+                }
+            ],
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.67
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "activate_detail_k",
+            "label": "",
+            "buttonIcon": "expand_more",
+            "newLine": false,
+            "size": 0.4,
+            "outputEvent": {
+                "eventName": "activate_detail",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "show",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#9FACBD",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.activate_detail_k"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "hide_detail_k",
+            "label": "",
+            "buttonIcon": "expand_less",
+            "newLine": false,
+            "size": 0.4,
+            "outputEvent": {
+                "eventName": "hide_detail",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.hide_detail_k"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "maggiori_dettagli",
+            "label": "Dettagli",
+            "translate": "RESOURCES.details",
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.3em",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "size": 1.27
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "data_prevista",
+                        "label": "Prevista esecuzione",
+                        "translate": "RESOURCES.expected_date",
+                        "outputEvent": {
+                            "eventName": "update_data_prevista",
+                            "eventTrigger": "change"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "update_data_prevista",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "update entrasp.sondaggi set data_prevista='£data_prevista£'::date where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ returning 1"
+                            }
+                        ],
+                        "newLine": false,
+                        "sameOrigin": false,
+                        "readOnly": false,
+                        "size": 3.33
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input",
+                            "validations": [
+                                {
+                                    "message": "Inserire una data esecuzione!",
+                                    "name": "required",
+                                    "validator": "Validators.required"
+                                }
+                            ]
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "data_comp",
+                        "sameOrigin": false,
+                        "label": "Competenza",
+                        "translate": "RESOURCES.competence",
+                        "inputEvents": [
+                            {
+                                "eventName": "onSaveSomministrazione",
+                                "actionType": "query",
+                                "queryFunct": "select 1",
+                                "condition": "none",
+                                "values": [],
+                                "outputEventWhenComplete": "data_competenza_update"
+                            },
+                            {
+                                "eventName": "data_competenza_update",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "update entrasp.sondaggi snd set data_comp=$data_comp$ from entrasp.modelli_test mt where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test and mt.flag_applicazione_singola='1' and snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$"
+                            }
+                        ],
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 3.33
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "select id_contratto as id, (numero_contratto||' - '||descrizione) as name from entrasp.contratti where codice_azienda=$codice_azienda$;",
+                            "options": [],
+                            "viewType": "combobox",
+                            "dataType": "text"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "id_contratto",
+                        "label": "N° Contratto",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 3.33
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "activate_detail",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "hide_detail",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "sezione_detail",
+            "label": "Maggiori Dettagli",
+            "translate": "RESOURCES.more_details",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": true,
+            "saveWhenHidden": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "object_description",
+            "inputEvents": [
+                {
+                    "eventName": "ObjectKeyChange",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select objectdescription as object_description from entrasp.survey_population($codice_azienda$, £id_sondaggio£, '|') where objectkey='£object_key£';"
+                }
+            ],
+            "label": "Descrizione campione",
+            "translate": "RESOURCES.sample_description",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "esitolabel",
+            "label": "Esito",
+            "translate": "RESOURCES.result",
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "599"
+            },
+            "size": 1.17
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": "$Q{is_comprehension_test}",
+            "isPrimary": false,
+            "key": "somministrazione_completata",
+            "label": "Completamento verifica",
+            "translate": "RESOURCES.check_completion",
+            "inputEvents": [
+                {
+                    "eventName": "onLoadSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT case when somministrazione_completata='Sondaggio completo' then '#FF6347'::varchar else '#ADFF2F'::varchar end as somministrazione_completata_background_color  FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;;"
+                },
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT case when somministrazione_completata='Sondaggio completo' then '#FF6347'::varchar else '#ADFF2F'::varchar end as somministrazione_completata_background_color  FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+                },
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "SELECT somministrazione_completata FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+                }
+            ],
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.87
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": "$Q{is_comprehension_test}",
+            "isPrimary": false,
+            "key": "punteggio_description",
+            "label": "Punti ottenuti",
+            "translate": "RESOURCES.scores_obtained",
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select punteggio_description FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+                },
+                {
+                    "eventName": "onLoadSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select punteggio_description FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+                }
+            ],
+            "size": 1.87
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": "$Q{is_comprehension_test}",
+            "isPrimary": false,
+            "key": "ris_percentuale",
+            "label": "Risultato %",
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select ris_percentuale FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+                },
+                {
+                    "eventName": "onLoadSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select ris_percentuale FROM entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+                }
+            ],
+            "size": 1.87,
+            "translate": "RESOURCES.ris_percentuale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio",
+            "label": "Giudizio Verifica",
+            "translate": "RESOURCES.judgment",
+            "newLine": false,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "onLoadSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
+                },
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "SELECT entrasp.modelli_test_risultati_righe_codice_colore($codice_azienda$, $id_risultato$, (select ris_percentuale from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$ and id_sondaggio=$id_sondaggio$)) as giudizio_background_color;"
+                },
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select giudizio from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione$;"
+                }
+            ],
+            "size": 1.67
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select ftmtr.pct_da as id, ftmtr.descrizione as name from entrasp.modelli_test_risultati_righe mtr join entrasp.tipi_modelli_test_risultati_righe_descr_from_risultati_righe($codice_azienda$, mtr.pct_da, mtr.id_risultato) ftmtr  on ftmtr.codice_azienda=mtr.codice_azienda and ftmtr.id_risultato=mtr.id_risultato where mtr.codice_azienda=$codice_azienda$ and mtr.id_risultato=entrasp.id_risultato_from_sondaggio($codice_azienda$, £id_sondaggio£);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": "$Q{is_comprehension_test}",
+            "isPrimary": false,
+            "key": "pct_da_manuale",
+            "label": "Giudizio Manuale",
+            "translate": "RESOURCES.manual_judgment",
+            "newLine": true,
+            "readOnly": false,
+            "size": 1.67,
+            "inputEvents": [
+                {
+                    "eventName": "onSaveSomministrazione",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.aggiorna_sondaggi_pre_loading($codice_azienda$, $id_sondaggio$);"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "new_riepilogo_risultati",
+            "label": "new_riepilogo_risultati",
+            "newLine": false,
+            "inputEvents": [
+                {
+                    "eventName": "check_existence_riepilogo_risultati",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select check_existence_cpl_risultati as  new_riepilogo_risultati from entrasp.check_existence_cpl_risultati($codice_azienda$, $id_sondaggio$)",
+                    "outputEventWhenComplete": "to_riepilogo_risultati"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "translate": "RESOURCES.new_riepilogo_risultati"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio_succ",
+            "label": "id_sondaggio_succ",
+            "translate": "RESOURCES.id_next_survey",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio_prec",
+            "label": "ID Sondaggio Prec.",
+            "translate": "RESOURCES.id_previous_survey",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "inputEvents": [
+                {
+                    "eventName": "compito_create",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.compiti_rif_bo_insert('sondaggiSomministrati', $titolo$, $codice_azienda$, $id_sondaggio$, $id_somministrazione$) as codice_compito_created",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "to_compito_created"
+                }
+            ],
+            "key": "codice_compito_created",
+            "label": "codice_compito_created",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.codice_compito_created"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "sameOrigin": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "flag_sezioni",
+            "outputEvent": {
+                "eventName": "somministrazioni_flags_sezioni",
+                "eventTrigger": "change"
+            },
+            "label": "Gestione domande a sezioni",
+            "readOnly": true,
+            "translate": "RESOURCES.flag_sezioni"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "sameOrigin": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "flag_workflow",
+            "outputEvent": {
+                "eventName": "somministrazioni_flag_workflow",
+                "eventTrigger": "change"
+            },
+            "label": "Gestione versioni",
+            "readOnly": true,
+            "translate": "RESOURCES.flag_workflow"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox"
+            },
+            "sameOrigin": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "flag_no_domande",
+            "outputEvent": {
+                "eventName": "flag_no_domande_change",
+                "eventTrigger": "change"
+            },
+            "label": "flag_no_domande",
+            "readOnly": true,
+            "translate": "RESOURCES.flag_no_domande"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox"
+            },
+            "sameOrigin": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "flag_applicazione_singola",
+            "label": "Applicazione singola",
+            "readOnly": true,
+            "translate": "RESOURCES.flag_applicazione_singola"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risultato",
+            "label": "id_risultato",
+            "queryFunct": "entrasp.id_risultato_from_sondaggio(codice_azienda, id_sondaggio)",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.id_risultato"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_anagrafica",
+            "label": "IdAnagrafica",
+            "newLine": false,
+            "readOnly": true,
+            "queryFunct": "select case when object_name = 'anagraficheId' then split_part(object_key, '|', 2) else null end",
+            "translate": "RESOURCES.id_anagrafica"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "domande_risposte",
+            "label": "Domande e Risposte",
+            "translate": "RESOURCES.questions_and_answers",
+            "type": "tableForm",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "somministrazioni_flags_sezioni",
+                    "condition": "equalTo",
+                    "values": ["0"]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "id_modello_test_vr",
+                    "son": "id_modello_test_vr"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                }
+            ]
+        },
+        {
+            "entryKey": "domande_sezioni_sub_of_somministrazioni",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "somministrazioni_flags_sezioni",
+                    "condition": "equalTo",
+                    "values": ["1"]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                }
+            ],
+            "label": "Domande e Risposte - Sezioni",
+            "type": "table"
+        },
+        {
+            "entryKey": "sondaggi_somministrati_attachments",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                }
+            ],
+            "label": "Documenti Associati",
+            "translate": "RESOURCES.associated_documents",
+            "type": "table"
+        },
+        {
+            "entryKey": "sondaggi_somministrati_sub_of_sondaggi_somministrati",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_modello_test",
+                    "son": "id_modello_test"
+                },
+                {
+                    "parent": "object_key",
+                    "son": "object_key"
+                }
+            ],
+            "label": "Profilazioni sul cliente",
+            "type": "table"
+        },
+        {
+            "entryKey": "penalizzazioni_somministrazione",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                }
+            ],
+            "label": "Penalizzazioni",
+            "translate": "RESOURCES.penalties"
+        },
+        {
+            "entryKey": "sondaggi_somministrati_vr",
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "somministrazioni_flag_workflow",
+                    "condition": "equalTo",
+                    "values": ["1"]
+                }
+            ],
+            "isHidden": true,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                }
+            ],
+            "label": "Versioni",
+            "translate": "RESOURCES.version"
+        },
+        {
+            "entryKey": "sondaggi_son",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio_parent"
+                }
+            ],
+            "label": "Ver.Rafforzate"
+        },
+        {
+            "entryKey": "contracts_sub_of_profilazione_aml",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_cliente"
+                }
+            ],
+            "label": "Contratti Associati",
+            "type": "table"
+        },
+        {
+            "entryKey": "calcolo_punteggi",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Calcolo punteggi"
+        },
+        {
+            "entryKey": "report_sub_of_sondaggi_somministrati",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                }
+            ],
+            "label": "Report Associati"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_somministrazione",
+            "label": "# Ver.",
+            "translate": "RESOURCES.id_check",
+            "width": "4.5%",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "#2B679D",
+                    "font_color": "white",
+                    "text_align": "center",
+                    "font_weight": "599"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_sondaggio",
+            "label": "# Sond.",
+            "translate": "RESOURCES.id_survey",
+            "width": "4.5%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                }
+            ],
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "sondaggi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_e_vr",
+            "hasLevel": true,
+            "label": "# Mod. Ver.",
+            "translate": "RESOURCES.id_check_template",
+            "width": "4.5%",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "modelli_test_vr",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "numero_contratto",
+            "label": "# Contratto",
+            "width": "5%",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center"
+                }
+            ],
+            "translate": "RESOURCES.numero_contratto"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_prevista",
+            "label": "Data Prevista",
+            "translate": "RESOURCES.expected_date",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_esecuzione",
+            "label": "Data esecuzione",
+            "translate": "RESOURCES.execution_date",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_scadenza",
+            "label": "Data Scadenza",
+            "width": "6%",
+            "translate": "RESOURCES.data_scadenza"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "titolo_sondaggio",
+            "label": "Titolo",
+            "translate": "RESOURCES.title",
+            "width": "19%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "object_description",
+            "label": "Cliente/controparte",
+            "width": "35%",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "590"
+                }
+            ],
+            "translate": "RESOURCES.object_description"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "label": "object_key",
+            "key": "object_key",
+            "width": "9%",
+            "translate": "RESOURCES.object_key"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio",
+            "label": "Giudizio",
+            "translate": "RESOURCES.judgment",
+            "width": "7%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Rischio basso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Favorevole",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Adeguato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In prevalenza favorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Irrilevante",
+                    "font_color": "DarkBlue",
+                    "font_weight": "500",
+                    "background_color": "GhostWhite",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non significativo",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Trascurabile",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Poco significativo",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Nessun Riscontro",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Prevalentemente adeguato",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Rischio medio",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-Basso",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Falsi Positivi",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-basso",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "yellow",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Abbastanza significativo",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente favorevole",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-Alto",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-alto",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente adeguato",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Parzialmente sfavorevole",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Molto significativo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Rilevati Riscontri",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In prevalenza sfavorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non adeguato",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Sfavorevole",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "black",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Rischio alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Obbligo di Astensione",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "width": "7%",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "style": [
+                {
+                    "value": "Chiuso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Provvisorio",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Pianificato",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Attesa Riscontro",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "yellow",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In Svolgimento",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Annullato",
+                    "font_color": "grey",
+                    "font_weight": "500",
+                    "background_color": "gainsboro",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "somministrazione_completata",
+            "label": "Risposte",
+            "translate": "RESOURCES.complete",
+            "width": "6%",
+            "style": [
+                {
+                    "value": "*",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Completo",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Incompleto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio_manuale",
+            "label": "Giudizio Manuale",
+            "translate": "RESOURCES.manual_judgment",
+            "width": "7%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Irrilevante",
+                    "font_color": "DarkBlue",
+                    "font_weight": "500",
+                    "background_color": "GhostWhite",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Obbligo di Astensione",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica",
+            "translate": "RESOURCES.id_personal_data"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_centro_gest",
+            "label": "id_centro_gest",
+            "translate": "RESOURCES.id_office"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_anagrafica_somministrazione",
+            "label": "id_anagrafica_somministrazione",
+            "translate": "RESOURCES.id_anagrafica_somministrazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_compito",
+            "label": "codice_compito",
+            "translate": "RESOURCES.task_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
+            "translate": "RESOURCES.id_check_template"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "id_modello_test_vr",
+            "translate": "RESOURCES.version"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "scaduto",
+            "label": "Scaduto Sì/No",
+            "translate": "RESOURCES.expired",
+            "width": "5%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "No",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Si",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "firebrick",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_sondaggio_succ",
+            "label": "# Sond.succ",
+            "width": "4%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                }
+            ],
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "sondaggi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio_succ",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "translate": "RESOURCES.id_sondaggio_succ"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio_parent",
+            "label": "Sondaggio Parent",
+            "translate": "RESOURCES.id_relative_survey",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione_precedente",
+            "queryFunct": "entrasp.id_somministrazione_precedente(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)",
+            "label": "Precedente",
+            "width": "5%",
+            "translate": "RESOURCES.id_somministrazione_precedente"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "incaricato_risposta",
+            "queryFunct": "entrasp.anagrafiche_id_codcognnome('€global_codice_part€', id_anagrafica)",
+            "label": "Incaricato a rispondere",
+            "translate": "RESOURCES.incaricato_risposta"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_sondaggio_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Sondaggio",
+            "translate": "RESOURCES.id_survey",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "ss.id_sondaggio=$id_sondaggio_s$"
+        },
+        {
+            "fieldName": "id_sondaggio_succ_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Sond.Succ",
+            "translate": "RESOURCES.id_next_survey",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "snd.id_sondaggio_succ=$id_sondaggio_succ_s$"
+        },
+        {
+            "fieldName": "id_somministrazione_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Id Verifica",
+            "translate": "RESOURCES.id_check",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "ss.id_somministrazione=$id_somministrazione_s$"
+        },
+        {
+            "fieldName": "id_modello_test_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista id modelli verifica",
+            "translate": "RESOURCES.id_check_template_list",
+            "newLine": true,
+            "size": 2.5,
+            "queryCond": "snd.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
+        },
+        {
+            "fieldName": "id_tipo_modello_test",
+            "format": {
+                "comboQuery": "SELECT id_tipo_modello_test AS id,descrizione  AS name  FROM entrasp.tipi_modello_test;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Tipo modello verifica",
+            "translate": "RESOURCES.check_template_type",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
+        },
+        {
+            "fieldName": "id_modello_test_vr_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Versione",
+            "translate": "RESOURCES.version",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "snd.id_modello_test_vr=$id_modello_test_vr_s$"
+        },
+        {
+            "fieldName": "data_esec_prevista_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Esecuzione Prevista dopo il",
+            "translate": "RESOURCES.execution_scheduled_after",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "snd.data_prevista>='€data_esec_prevista_min€'"
+        },
+        {
+            "fieldName": "data_esec_prevista_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Esecuzione Prevista entro il",
+            "translate": "RESOURCES.execution_scheduled_by",
+            "newLine": true,
+            "size": 2.5,
+            "queryCond": "snd.data_prevista<='€data_esec_prevista_max€'"
+        },
+        {
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "fieldName": "stato_s",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "ss.stato='€stato_s€'"
+        },
+        {
+            "fieldName": "data_esec_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Esecuzione dopo il",
+            "translate": "RESOURCES.execution_date_after",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "snd.data_esecuzione>='€data_esec_min€'"
+        },
+        {
+            "fieldName": "data_esec_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Esecuzione entro il",
+            "translate": "RESOURCES.execution_date_by",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "((snd.data_esecuzione<='€data_esec_max€' and snd.data_esecuzione is not null) or (ss.data_esecuzione<='€data_esec_max€' and ss.data_esecuzione is not null))"
+        },
+        {
+            "fieldName": "data_comp",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Competenza",
+            "translate": "RESOURCES.reference_date",
+            "newLine": true,
+            "size": 2.5,
+            "queryCond": "snd.data_comp='€data_comp€'"
+        },
+        {
+            "fieldName": "object_description",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Oggetto verifica (cliente,for., dip., proc...)",
+            "translate": "RESOURCES.check_subject",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "(UPPER (ss.object_description) like '%'||UPPER('€object_description€')||'%')"
+        },
+        {
+            "fieldName": "id_anagrafica_ver_s",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, id_anagrafica||'-'||entrasp.anagrafiche_id_codcognnome(codice_part, id_anagrafica) as name from entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_cognnome(codice_part, id_anagrafica);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Anagrafica verificata",
+            "translate": "RESOURCES.checked_personal_data",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "(ss.object_key='€global_codice_part€'||'|'||$id_anagrafica_ver_s$ and ss.object_name='anagraficheId')"
+        },
+        {
+            "format": {
+                "comboQuery": "SELECT distinct giudizio AS id, giudizio AS name  FROM entrasp.sondaggi_somministrati WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "fieldName": "giudizio_s",
+            "label": "Giudizio",
+            "translate": "RESOURCES.judgment",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) ='€giudizio_s€'"
+        },
+        {
+            "format": {
+                "comboQuery": "select distinct descrizione as id, descrizione as name from entrasp.tipi_modelli_test_risultati_righe where codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "fieldName": "giudizio_manuale_s",
+            "label": "Giudizio Manuale",
+            "translate": "RESOURCES.manual_judgment",
+            "newLine": true,
+            "size": 2.5,
+            "queryCond": "(select descrizione from entrasp.tipi_modelli_test_risultati_righe_descr_from_pct(ss.codice_azienda, ss.pct_da_manuale, ss.id_risultato))='€giudizio_manuale_s€'"
+        },
+        {
+            "fieldName": "scaduto_s",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Scaduto",
+            "translate": "RESOURCES.expired",
+            "newLine": false,
+            "queryCond": "(snd.data_prevista<=now() and ss.stato not in ('C','N'))"
+        },
+        {
+            "fieldName": "flag_sondaggio_riprogrammato",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Riprogrammata",
+            "translate": "RESOURCES.rescheduled",
+            "newLine": false,
+            "queryCond": "snd.id_sondaggio in(select snd2.id_sondaggio_succ from entrasp.sondaggi snd2 where snd2.codice_azienda=$codice_azienda$ and id_sondaggio_succ is not null)"
+        },
+        {
+            "fieldName": "no_giudizio",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Senza giudizio",
+            "translate": "RESOURCES.without_judgment",
+            "newLine": false,
+            "queryCond": "ss.giudizio is null"
+        },
+        {
+            "fieldName": "flag_giudizio_manuale",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Con giudizio manuale",
+            "translate": "RESOURCES.with_manual_judgment",
+            "newLine": false,
+            "queryCond": "ss.pct_da_manuale is not null"
+        },
+        {
+            "fieldName": "flag_progetto_null",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Senza Progetto",
+            "translate": "RESOURCES.no_project_associated",
+            "newLine": false,
+            "queryCond": "snd.id_sondaggio not in (select id_sondaggio from entrasp.progetti_fasi where codice_azienda=snd.codice_azienda and id_sondaggio is not null)"
+        },
+        {
+            "fieldName": "flag_contratti_null",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Senza Contratto",
+            "translate": "RESOURCES.no_contract_associated",
+            "newLine": true,
+            "queryCond": "snd.id_sondaggio in (select id_sondaggio from entrasp.sondaggi where codice_azienda=snd.codice_azienda and id_modello_test=snd.id_modello_test and id_contratto is null)"
+        },
+        {
+            "fieldName": "flag_profilazione_scaduta",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Profilazioni Collocatore Scadute",
+            "translate": "RESOURCES.expired_placer_profiling",
+            "newLine": false,
+            "queryCond": "entrasp.prof_scaduta(ss.codice_azienda, ss.id_somministrazione) and ss.stato != 'C' and ss.data_inserimento IS NOT NULL"
+        },
+        {
+            "fieldName": "flag_ultimo_modello_test",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Ultimo Mod Ver-per Data",
+            "translate": "RESOURCES.last_template_version_by_date",
+            "newLine": false,
+            "queryCond": "entrasp.is_max_modello_test(ss.codice_azienda, ss.id_sondaggio)"
+        },
+        {
+            "fieldName": "flag_ultimo_modello_test_rett",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Ultimo Mod Ver -per ID",
+            "translate": "RESOURCES.last_template_version_by_id",
+            "newLine": false,
+            "queryCond": "entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio)"
+        },
+        {
+            "fieldName": "flag_ultimo_per_cliente",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Ultimo Cli. per Data",
+            "translate": "RESOURCES.last_customer_by_data",
+            "newLine": false,
+            "queryCond": "entrasp.is_max_object_key(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+        },
+        {
+            "fieldName": "flag_ultimo_per_cliente_rett",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Ult. Cli. per ID",
+            "translate": "RESOURCES.last_customer_by_id",
+            "newLine": false,
+            "queryCond": "entrasp.is_max_object_key_rett(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)"
+        },
+        {
+            "fieldName": "flag_contratti_cessati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Cessati",
+            "translate": "RESOURCES.ceased",
+            "newLine": true,
+            "queryCond": "split_part(ss.object_key, '|', 2)::numeric IN(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato = 'C' and c2.id_cliente is not null GROUP BY c2.id_cliente)"
+        },
+        {
+            "fieldName": "flag_contratti_non_cessati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Escluso Cessati",
+            "translate": "RESOURCES.excluded_ceased",
+            "newLine": false,
+            "queryCond": "(split_part(ss.object_key, '|', 2)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='€global_codice_azienda€' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='€global_codice_part€' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='€global_codice_azienda€' and cntx.id_cliente is not null)))"
+        },
+        {
+            "fieldName": "flag_somministrazioni_mie",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Mie/Mio Ufficio",
+            "translate": "RESOURCES.mine_my_office",
+            "newLine": false,
+            "queryCond": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+        },
+        {
+            "fieldName": "solo_profilazioni_aml_t",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Solo profilazioni rischio aml",
+            "newLine": false,
+            "queryCond": "(mt.id_tipo_modello_test=50 and mt.id_argomento not in(45421))"
+        },
+        {
+            "fieldName": "contratto_attivi_t",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Con contratti attivi",
+            "newLine": false,
+            "queryCond": "(nullif(split_part(ss.object_key, '|', 2), '') is not null and split_part(ss.object_key, '|', 2)::numeric in(select cnt.id_cliente from entrasp.contratti cnt where codice_azienda=$codice_azienda$ and stato!='C' and cnt.id_cliente is not null))"
+        },
+        {
+            "fieldName": "flag_scostamenti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Alert Scostamenti ADV",
+            "newLine": false,
+            "queryCond": "ss.id_somministrazione IN (SELECT id_somministrazione FROM entrasp.risposte WHERE codice_azienda=ss.codice_azienda AND id_domanda=4200 AND ((id_risposta_prev = 3 AND entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) IN ('Basso','Medio-Basso','Medio-Alto') )OR (id_risposta_prev IN (1,2) AND entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda)='Alto')) AND ID_SOMMINISTRAZIONE = SS.ID_SOMMINISTRAZIONE)"
+        },
+        {
+            "fieldName": "incompleto_s",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Incompleto",
+            "translate": "RESOURCES.incomplete",
+            "newLine": false,
+            "queryCond": "ss.somministrazione_completata!='Completo'"
+        },
+        {
+            "fieldName": "completo_s",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Completo",
+            "translate": "RESOURCES.complete",
+            "newLine": false,
+            "queryCond": "ss.somministrazione_completata='Completo'"
+        },
+        {
+            "fieldName": "non_chiuso_s",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Non chiuso",
+            "translate": "RESOURCES.not_close",
+            "newLine": false,
+            "queryCond": "ss.stato!='C'"
+        },
+        {
+            "fieldName": "no_controlli_succ",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "No controlli successivi",
+            "translate": "RESOURCES.no_next_controls",
+            "newLine": true,
+            "queryCond": "snd.id_sondaggio_succ is null"
+        },
+        {
+            "fieldName": "data_esec_data_prev",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Esec >30 Prev",
+            "translate": "RESOURCES.executed_after_trenta_scheduled",
+            "newLine": false,
+            "queryCond": "snd.data_esecuzione >= (snd.data_prevista + interval '1 month')"
+        },
+        {
+            "fieldName": "solo_profilazioni_aml_s",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Solo profilazioni aml",
+            "newLine": false,
+            "queryCond": "(mt.id_tipo_modello_test=50 and mt.id_argomento not in(45421))"
+        },
+        {
+            "fieldName": "flag_scad_non_cessati",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Scadute e non cessati",
+            "newLine": false,
+            "queryCond": "(snd.stato not in('N', 'C') and data_prevista<current_date and (split_part(ss.object_key, '|', 2)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda='€global_codice_azienda€' UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part='€global_codice_part€' and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda='€global_codice_azienda€' and cntx.id_cliente is not null))))"
+        }
+    ],
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Estrazione profilazioni AML",
+                "queryString": "SELECT ss.id_somministrazione, snd.id_sondaggio, ss.data_esecuzione, snd.id_modello_test, snd.id_modello_test_vr, ss.object_description, ss.stato, ss.somministrazione_completata, snd.descrizione, snd.data_prevista,nullif(split_part(ss.object_key,'|',2),'')::numeric as id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=(case when ss.object_name='anagraficheId' then nullif(split_part(ss.object_key,'|',2),'')::numeric else null::numeric end)::numeric and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio) as ultimo_cliente_son_per_cliente_per_data_rett, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mtvr.id_risultato)::date as data_scadenza FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mv on snd.codice_azienda=mv.codice_azienda and snd.id_modello_test=mv.id_modello_test where ss.codice_azienda=$codice_azienda$ and mv.id_tipo_modello_test=50"
+            },
+            {
+                "label": "Anomalie profilazioni AML",
+                "queryString": "(select cnt.numero_contratto, ss.id_somministrazione, ss.id_sondaggio, ss.object_description, ss.data_esecuzione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, 'Clienti con contratti attivi senza somministrazione successiva' as tipo_anomalia, 'Escluso cessati, Stato = Chiuso, No controlli successivi, Ultimo cliente ID da profili aml clienti' as parametri from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and cnt.id_contratto=coalesce(ss.id_contratto,snd.id_contratto) where ss.codice_azienda=$codice_azienda$ and ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '1100 days' or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null)) AND ss.stato='C' AND entrasp.is_max_object_key_rett(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) AND (split_part(ss.object_key, '|', 2)::numeric IN(SELECT id_cliente FROM entrasp.contratti WHERE stato!='C' and id_cliente is not null and codice_azienda=$codice_azienda$ UNION SELECT anx.id_anagrafica FROM entrasp.anagrafiche_id anx inner join entrasp.ruoli_anagrafiche ra on anx.id_anagrafica=ra.id_anagrafica and anx.codice_part=ra.codice_part where ra.codice_ruolo='CLI' and anx.codice_part=$codice_azienda$ and anx.id_anagrafica not in(select cntx.id_cliente from entrasp.contratti cntx where cntx.codice_azienda=$codice_azienda$ and cntx.id_cliente is not null))) AND snd.id_sondaggio_succ is null order by ss.id_somministrazione) union (select cnt.numero_contratto, ss.id_somministrazione, ss.id_sondaggio, ss.object_description, ss.data_esecuzione, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, 'Profilazioni complete ma non chiuse' as tipo_anomalia, 'completo, non chiuso da profili aml clienti' as parametri from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda = mt.codice_azienda and snd.id_modello_test = mt.id_modello_test left join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and cnt.id_contratto=coalesce(ss.id_contratto,snd.id_contratto) where ss.codice_azienda=$codice_azienda$ and ((ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and (snd.data_prevista<=CURRENT_DATE+ INTERVAL '100 days' or ss.data_esecuzione is not null)) or (ss.codice_azienda=$codice_azienda$ and mt.id_tipo_modello_test = 50 and snd.data_prevista is null and ss.data_esecuzione is null)) AND ss.somministrazione_completata='Completo' AND ss.stato!='C' order by ss.id_somministrazione) order by tipo_anomalia, id_sondaggio",
+                "key": "extr_profili_aml"
+            },
+            {
+                "label": "Profili AML per cliente (tutti)",
+                "queryString": "SELECT codice_anagrafica,denominazione,tipo_soggetto,nazione,cod_ateco,profilo,data_calc_rischio as data_profilo,p_classe_rischio_ver as punteggio_ottenuto,pep FROM entrasp.estrazione_profili_aml WHERE codice_azienda=$codice_azienda$"
+            },
+            {
+                "label": "Profilo cliente e connessioni",
+                "queryString": "SELECT DISTINCT epa.codice_anagrafica,epa.denominazione,epa.profilo,epa.id_sondaggio,epa.data_calc_rischio,snd1.data_prevista as prossima_profilazione,avr.id_anagrafica,COALESCE(STRING_AGG(distinct acc.id_anagrafica_conn::varchar||' - '||acc.codice_ruolo::varchar||' - '||coalesce(nullif(an2.nome||' '||an2.cognome,' '), avr2.ragione_sociale, '')||' - N. Doc '||coalesce(avr2.numero_documento::varchar,'vuoto')||' - Scad. '||coalesce(avr2.data_scadenza_documento::varchar,'vuota'), ', '), 'N. Doc '||coalesce(avr.numero_documento::varchar,'vuoto')||' - Scad. '||coalesce(avr.data_scadenza_documento::varchar,'vuota') ) as esecutore_doc,(SELECT string_agg(distinct id_contratto::varchar, ', ') FROM entrasp.contratti WHERE id_cliente=avr.id_anagrafica AND codice_azienda=epa.codice_azienda AND stato != 'C') as lista_contratti FROM entrasp.estrazione_profili_aml epa INNER JOIN entrasp.aziende az USING (codice_azienda) INNER JOIN entrasp.anagrafiche_vr avr ON avr.codice_part=az.codice_part AND avr.codice=epa.codice_anagrafica LEFT JOIN entrasp.connessioni_anagrafiche acc ON acc.id_anagrafica=avr.id_anagrafica AND acc.codice_part=avr.codice_part AND acc.dt_fine IS NULL AND acc.codice_ruolo = 'ESEC' LEFT JOIN entrasp.anagrafiche_id an2 ON an2.codice_part=aCC.codice_part AND an2.id_anagrafica=acc.id_anagrafica_conn LEFT JOIN entrasp.anagrafiche_vr avr2 ON avr2.codice_part=an2.codice_part AND avr2.id_anagrafica=acc.id_anagrafica_conn AND avr2.prog_vr=entrasp.anagrafiche_vr_max(an2.codice_part, an2.id_anagrafica) LEFT JOIN entrasp.sondaggi snd ON epa.codice_azienda=snd.codice_azienda AND epa.id_sondaggio=snd.id_sondaggio LEFT JOIN entrasp.sondaggi snd1 ON snd.codice_azienda=snd1.codice_azienda AND snd.id_sondaggio_succ=snd1.id_sondaggio WHERE epa.codice_azienda=$codice_azienda$ GROUP BY epa.codice_azienda,epa.codice_anagrafica,epa.denominazione,epa.profilo,epa.id_sondaggio,epa.data_calc_rischio,avr.id_anagrafica,snd1.data_prevista,avr.numero_documento,avr.data_scadenza_documento;",
+                "key": "extr_conn_cli"
+            }
+        ],
+        "formQueries": [
+            {
+                "label": "Risposte punteggio diverso da 0",
+                "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$ and ri.peso!= 0"
+            }
+        ]
+    },
+    "querySuffixes": {
+        "tableViewSuffix": "order by ss.id_somministrazione desc limit 100"
+    }
+}
