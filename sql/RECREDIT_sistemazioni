@@ -1,0 +1,220 @@
+-- FUNCTION: entrasp.pag_crediti_aggiorna(character varying, numeric)
+
+-- DROP FUNCTION IF EXISTS entrasp.pag_crediti_aggiorna(character varying, numeric);
+
+CREATE OR REPLACE FUNCTION entrasp.crediti_ceduti_aggiorna(
+	codiceazienda character varying,
+	idcessione numeric)
+    RETURNS void
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+declare  dtscad date; tasso_int numeric; n_gg integer; importo_nom numeric; idargtipopag numeric; nointeressi character(1);
+dtpag date; 
+
+begin
+
+-- raise notice 'AVVIO!';
+-- raise notice 'idpagamento:%', idpagamento;
+-- raise notice 'codiceazienda:%', codiceazienda;
+
+-- il seguente parametro è legato al trigger pag_crediti_after_upd_ins
+
+  select (data_fattura + interval '60 days')::date, importo
+			from entrasp.crediti_ceduti
+			where codice_azienda=codiceazienda
+				and id_cessione=idcessione 
+			into dtscad, importo_nom;
+
+--raise notice 'dtscad: %', dtscad;
+				
+  SELECT cnt.moraperc, crc.interessi_non_dovuti
+		   FROM entrasp.crediti_ceduti crc
+		   inner join entrasp.contratti cnt
+		   on crc.codice_azienda=cnt.codice_azienda and crc.id_contratto=cnt.id_contratto
+		   WHERE crc.codice_azienda=codiceazienda
+			AND crc.id_cessione=idcessione limit 1
+  into tasso_int, nointeressi;
+
+ if nointeressi='1' then
+ 	tasso_int=0;
+ end if;
+	
+--	raise notice 'dtscad, %', dtscad;
+--  raise notice 'dtpag, %', dtpag;
+--  raise notice 'idcessione, %', idcessione;
+--  raise notice 'codiceazienda, %', codiceazienda;
+-- riassunto causali
+--  51486 --> acquisto iniziale, 51487 --> acconto debitore ceduto, 51488 --> saldo debitore ceduto, 51489 --> pagamento del cedente, 50664 --> Nota di credito
+
+	update entrasp.pagamenti_crediti pc
+	set 
+	capitale_residuo_leg=-coalesce((
+						 select sum(pc3.importo)
+						 from entrasp.pagamenti_crediti pc3
+						 where pc3.codice_azienda=codiceazienda and pc3.id_cessione=idcessione and pc3.data_pagamento<pc.data_pagamento
+						and id_argomento_tipo_pag in(51486, 51487, 51488, 51489, 50664)
+						),0),
+	capitale_residuo=-coalesce((				
+						 select sum(pc4.importo)
+						 from entrasp.pagamenti_crediti pc4
+						 where pc4.codice_azienda=codiceazienda and pc4.id_cessione=idcessione and pc4.data_pagamento<pc.data_pagamento
+						), 0),
+	tasso=tasso_int, 
+	data_scadenza=coalesce ((select max(greatest(dtscad,pc2.data_pagamento))   
+					from entrasp.pagamenti_crediti pc2
+				    where pc2.codice_azienda=codiceazienda and pc2.id_cessione=idcessione and pc2.data_pagamento<pc.data_pagamento and pc2.id_argomento_tipo_pag not in (51486,51490,51491,51973)),dtscad),
+	
+	
+	data_da_fin=(select max(greatest(dtscad,pc5.data_pagamento))   
+					from entrasp.pagamenti_crediti pc5
+				    where pc5.codice_azienda=codiceazienda and pc5.id_cessione=idcessione and pc5.data_pagamento<pc.data_pagamento)
+
+	where pc.id_cessione=idcessione and pc.codice_azienda=codiceazienda;
+
+	update entrasp.pagamenti_crediti
+	set 
+	giorni=coalesce(
+		round(greatest((data_pagamento::date - data_scadenza::date),0), 0), 
+		0),
+	interessi=coalesce(
+		capitale_residuo_leg*tasso/100*round(greatest((data_pagamento::date - data_scadenza::date),0), 0)/365,
+		0),
+	interessi_fin=coalesce(
+		capitale_residuo*tasso/100*round(greatest((data_pagamento::date - data_scadenza::date),0), 0)/365,
+		0)
+	where id_cessione=idcessione and codice_azienda=codiceazienda;
+
+	update entrasp.crediti_ceduti
+	set interessi_legali=tot.interessi, 
+	capitale_residuo_leg=tot.cap_residuo_leg,
+	capitale_residuo=tot.cap_residuo
+		from (select sum(interessi) as  interessi,
+			  		 min(coalesce(capitale_residuo,0)) as cap_residuo,
+			  		 min(coalesce(capitale_residuo_leg,0)) as cap_residuo_leg
+					from entrasp.pagamenti_crediti 
+					where id_cessione=idcessione and codice_azienda=codiceazienda) tot
+		where id_cessione=idcessione and codice_azienda=codiceazienda;
+
+-- riassunto causali
+--  51486 --> acquisto iniziale, 51487 --> acconto debitore ceduto, 51488 --> saldo debitore ceduto, 51489 --> pagamento del cedente, 50664 --> Nota di credito
+
+
+	UPDATE entrasp.crediti_ceduti AS cc
+	SET data_pagamento = NULL
+	WHERE data_pagamento IS NOT NULL
+	AND NOT EXISTS (
+	    SELECT 1
+	    FROM entrasp.pagamenti_crediti AS pc
+	    WHERE pc.id_cessione = cc.id_cessione
+	    AND pc.codice_azienda = cc.codice_azienda
+	    AND pc.id_argomento_tipo_pag IN (51489, 51488, 50664)
+	)
+	and id_cessione=idcessione and codice_azienda=codiceazienda;
+
+
+end
+$BODY$;
+
+ALTER FUNCTION entrasp.crediti_ceduti_aggiorna(character varying, numeric)
+    OWNER TO postgres;
+
+/*
+
+SELECT id_cessione, codice_azienda, data_pagamento
+FROM entrasp.crediti_ceduti cc
+WHERE data_pagamento IS NOT NULL
+AND NOT EXISTS (
+    SELECT 1
+    FROM entrasp.pagamenti_crediti pc
+    WHERE pc.id_cessione = cc.id_cessione
+    AND pc.codice_azienda = cc.codice_azienda
+    AND pc.id_argomento_tipo_pag IN (51489, 51488, 50664) 
+)
+and codice_azienda='RE-CREDIT'
+	and id_cessione=56571
+
+
+
+SELECT entrasp.crediti_ceduti_aggiorna(codice_azienda, id_cessione)
+FROM entrasp.crediti_ceduti cc
+WHERE data_pagamento IS NOT NULL
+AND NOT EXISTS (
+    SELECT 1
+    FROM entrasp.pagamenti_crediti pc
+    WHERE pc.id_cessione = cc.id_cessione
+    AND pc.codice_azienda = cc.codice_azienda
+    AND pc.id_argomento_tipo_pag IN (51489, 51488, 50664) and codice_azienda='RE-CREDIT'
+)
+and codice_azienda='RE-CREDIT'
+	and id_cessione=51844;
+
+
+SELECT id_cessione, codice_azienda, data_pagamento
+FROM entrasp.crediti_ceduti cc
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM entrasp.pagamenti_crediti pc
+    WHERE pc.id_cessione = cc.id_cessione
+    AND pc.codice_azienda = cc.codice_azienda
+)
+and codice_azienda='RE-CREDIT'
+	and id_cessione=
+*/
+
+
+select distinct case when importo<0 then 'negativo' else 'positivo' end as segno_importo, 
+	id_argomento_tipo_pag, 
+	entrasp.argomenti_descr_breve(id_argomento_tipo_pag),
+	count(id_pagamento)
+from entrasp.pagamenti_crediti
+where codice_azienda='RE-CREDIT'
+and importo!=0
+group by case when importo<0 then 'negativo' else 'positivo' end, 
+	id_argomento_tipo_pag
+order by id_argomento_tipo_pag
+
+
+select * from entrasp.pagamenti_crediti
+where importo<0 and id_argomento_tipo_pag=51488;
+
+update entrasp.pagamenti_crediti
+set importo=-importo
+where importo<0 and id_argomento_tipo_pag=50664;
+
+update entrasp.pagamenti_crediti
+set importo=-importo
+where importo>0 and id_argomento_tipo_pag=51486;
+
+update entrasp.pagamenti_crediti
+set importo=-importo
+where importo<0 and id_argomento_tipo_pag=51488;
+
+
+select max(id_pagamento)
+from entrasp.pagamenti_crediti
+where codice_azienda='RE-CREDIT'
+
+INSERT INTO entrasp.pagamenti_crediti(
+	id_cessione, codice_azienda, id_pagamento, data_pagamento, importo, id_argomento_tipo_pag, id_controparte, tasso)
+SELECT 
+    id_cessione, 
+    codice_azienda, 
+    110849+ ROW_NUMBER() OVER (ORDER BY id_cessione) AS rownum, 
+    coalesce(data_acquisto, data_fattura, '1900-01-01'), 
+    -ABS(importo), 
+    51486, 
+    id_cedente, 
+    case when interessi_non_dovuti='1' then 0 else 0.08 end 
+from entrasp.crediti_ceduti cc
+WHERE 
+    NOT EXISTS (
+        SELECT 1
+        FROM entrasp.pagamenti_crediti pc
+        WHERE pc.id_cessione = cc.id_cessione
+        AND pc.codice_azienda = cc.codice_azienda
+    )
+    AND codice_azienda = 'RE-CREDIT';
+
+
