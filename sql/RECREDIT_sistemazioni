@@ -151,6 +151,7 @@ and codice_azienda='RE-CREDIT'
 	and id_cessione=51844;
 
 
+-- query per trovare crediti senza pagamenti
 SELECT id_cessione, codice_azienda, data_pagamento
 FROM entrasp.crediti_ceduti cc
 WHERE NOT EXISTS (
@@ -160,10 +161,9 @@ WHERE NOT EXISTS (
     AND pc.codice_azienda = cc.codice_azienda
 )
 and codice_azienda='RE-CREDIT'
-	and id_cessione=
 */
 
-
+-- query per trovare incoerenze nei segni delle fatture
 select distinct case when importo<0 then 'negativo' else 'positivo' end as segno_importo, 
 	id_argomento_tipo_pag, 
 	entrasp.argomenti_descr_breve(id_argomento_tipo_pag),
@@ -175,7 +175,7 @@ group by case when importo<0 then 'negativo' else 'positivo' end,
 	id_argomento_tipo_pag
 order by id_argomento_tipo_pag
 
-
+-- serie di quattro query per correggere segni anomali nei pagamenti (movimenti crediti)
 select * from entrasp.pagamenti_crediti
 where importo<0 and id_argomento_tipo_pag=51488;
 
@@ -187,15 +187,13 @@ update entrasp.pagamenti_crediti
 set importo=-importo
 where importo>0 and id_argomento_tipo_pag=51486;
 
-update entrasp.pagamenti_crediti
-set importo=-importo
-where importo<0 and id_argomento_tipo_pag=51488;
 
 
 select max(id_pagamento)
 from entrasp.pagamenti_crediti
 where codice_azienda='RE-CREDIT'
 
+-- query per inserire pagamenti per fatture senza movimenti. Si potrebbe anche pensare di inserirla nella query di import delle fatture	
 INSERT INTO entrasp.pagamenti_crediti(
 	id_cessione, codice_azienda, id_pagamento, data_pagamento, importo, id_argomento_tipo_pag, id_controparte, tasso)
 SELECT 
@@ -217,4 +215,7 @@ WHERE
     )
     AND codice_azienda = 'RE-CREDIT';
 
-
+-- importi crediti non coerenti
+select id_Cessione, codice_azienda, importo, capitale_residuo, capitale_residuo_leg
+from entrasp.crediti_ceduti
+where (abs(capitale_residuo)> abs(importo)) or (abs(capitale_residuo_leg)> abs(importo))
