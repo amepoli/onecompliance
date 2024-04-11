@@ -73,6 +73,24 @@
             "translate": "RESOURCES.id_pagamento"
         },
         {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "id_cessione",
+            "label": "ID Cessione",
+            "outputEvent": {
+                "eventName": "to_cessione",
+                "eventTrigger": "press"
+            },
+            "readOnly": true,
+            "size": 1
+        },
+        {
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
@@ -652,15 +670,26 @@
     ],
     "search_keys": [
         {
-            "fieldName": "id_cessione",
+            "fieldName": "id_pagamento_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Pagamento",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "id_pagamento=$id_pagamento_s$"
+        },
+        {
+            "fieldName": "id_cessione_s",
             "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
             "label": "ID Cessione",
             "newLine": false,
-            "size": 3.3,
-            "queryCond": "id_cessione=$id_cessione$"
+            "size": 1.5,
+            "queryCond": "id_cessione=$id_cessione_s$"
         },
         {
             "fieldName": "id_controparte_s",
@@ -810,5 +839,25 @@
                 "queryString": "select entrasp.import_crediti_da_cedere($codice_azienda$, $nome_file$, '€global_username€')"
             }
         ]
-    }
+    },
+    "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "crediti_ceduti",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_cessione",
+                        "destination": "id_cessione"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_crediti_ceduti"
+        }
+    ]
 }
