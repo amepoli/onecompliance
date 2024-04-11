@@ -327,3 +327,30 @@ AND NOT ((DU.USERNAME::text || '-'::text) || DATE_TRUNC('day'::text,
 		FROM ENTRASP.FESTIVITA
 		WHERE FESTIVITA.DURATA = 0::numeric
 			AND ((FESTIVITA.DYNAMO_USER::text || '-'::text) || FESTIVITA.DATA) IS NOT NULL));
+
+
+-- query per inserire in automatico i compiti legati ad un'azienda o progetto
+
+perform entrasp.compito_insert_from_pf(pf.codice_azienda, current_date, current_date, pf.titolo, null,
+		coalesce(snd.id_centro_gest, pr.id_centro_gest),	pf.id_fase,	'A')
+	from entrasp.progetti_fasi pf
+	left join entrasp.compiti cmp
+	on pf.id_fase=cmp.id_fase and pf.codice_azienda=cmp.codice_azienda
+	left join entrasp.sondaggi snd
+	on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda
+	inner join entrasp.progetti pr
+	on pf.id_progetto=pr.id_progetto and pf.codice_azienda=pr.codice_azienda
+	inner join entrasp.centri_gestionali cg
+	on pr.id_centro_gest=cg.id_centro_gest and pr.codice_part=cg.codice_part
+	inner join entrasp.argomenti_argomenti aa
+	on cg.id_argomento=aa.id_argomento_son
+	where pr.stato!='C' and (id_argomento_father=3861 or coalesce(snd.id_centro_gest, pr.id_centro_gest)=0 or coalesce(snd.id_centro_gest, pr.id_centro_gest) is null) and cmp.codice_compito is null
+	and pf.codice_azienda=NEW.codice_azienda and pf.id_fase=NEW.id_fase;
+
+--select entrasp.duplica_argomento(45641)
+
+-- query per trovare tutti i compiti di un'azienda
+select * from entrasp.compiti
+where codice_azienda='BGROUP';
+
+
