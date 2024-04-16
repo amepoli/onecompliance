@@ -692,6 +692,28 @@
             "queryCond": "id_cessione=$id_cessione_s$"
         },
         {
+            "fieldName": "id_controparte_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista controparti",
+            "size": 2,
+            "newLine": false,
+            "queryCond": "id_controparte::varchar=any(string_to_array(replace($id_controparte_list$, ' ', ''), ','))"
+        },  
+        {
+            "fieldName": "id_cedenti_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista cedenti",
+            "size": 2,
+            "newLine": false,
+            "queryCond": "id_cessione in(select id_cessione from entrasp.crediti_ceduti where id_cedente::varchar=any(string_to_array(replace($id_cedenti_list$, ' ', ''), ',')))"
+        },  
+        {
             "fieldName": "id_controparte_s",
             "format": {
                 "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",

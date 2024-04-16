@@ -30,12 +30,17 @@ in (select distinct cc2.codice_azienda||cc2.id_cedente
 from entrasp.crediti_ceduti cc2
 where cc2.codice_azienda='RE-CREDIT'
 group by cc2.id_cedente, cc2.codice_azienda
-	having count(cc2.id_cessione) between 1001 and 1400);
+	having count(cc2.id_cessione) between 1401 and 1800);
 SET session_replication_role = DEFAULT;
 
 select entrasp.crediti_ceduti_aggiorna(tab.codice_azienda, tab.id_cessione)
 from
 
+select id_cessione, count (id_pagamento)
+from entrasp.pagamenti_crediti
+	where data_pagamento>'2023-01-01'
+	group by id_cessione,
+	order by count (id_pagamento) desc
 	
 select distinct cc.codice_azienda, cc.id_cessione, capitale_residuo, importo, capitale_residuo_leg, data_pagamento
 from entrasp.crediti_ceduti cc
@@ -45,3 +50,32 @@ from entrasp.crediti_ceduti cc2
 where cc2.codice_azienda='RE-CREDIT'
 group by cc2.id_cedente, cc2.codice_azienda
 	having count(cc2.id_cessione) <10)
+
+SET session_replication_role = replica;	
+select entrasp.pag_crediti_aggiorna(codice_axienda, id_cessione, max (id_pagamento)
+from entrasp.pagamenti_crediti
+	where data_pagamento>'2023-01-01'
+	group by id_cessione
+	order by count (id_pagamento) desc
+SET session_replication_role = DEFAULT;
+codiceazienda, idpagamento)
+
+select id_cessione, count (id_pagamento)
+from entrasp.pagamenti_crediti
+	where data_pagamento>'2023-01-01'
+	group by id_cessione
+	order by count (id_pagamento) desc
+
+SET session_replication_role = replica;	
+select entrasp.pag_crediti_aggiorna( codice_azienda, max (id_pagamento))
+from entrasp.pagamenti_crediti
+	where data_pagamento>'2024-04-10'
+	group by codice_azienda, id_cessione
+	order by count (id_pagamento) desc
+SET session_replication_role = DEFAULT;
+
+select codice_azienda, id_cessione, max (id_pagamento)
+from entrasp.pagamenti_crediti
+	where data_pagamento>'2024-04-10'
+	group by codice_azienda, id_cessione
+	order by count (id_pagamento) desc

@@ -140,6 +140,17 @@
             "queryCond": "id_cessione=$id_cessione$"
         },
         {
+            "fieldName": "id_cedente_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista cedenti",
+            "size": 2,
+            "newLine": false,
+            "queryCond": "id_cedente::varchar=any(string_to_array(replace($id_cedente_list$, ' ', ''), ','))"
+        },  
+        {
             "fieldName": "id_cedente_s",
             "format": {
                 "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
