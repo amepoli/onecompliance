@@ -20,6 +20,7 @@ export class BackendService {
   private reportsApiName = appData.lambdas.reports.apiName;
   private importApiName = appData.lambdas.import.apiName;
   private usersApiName = appData.lambdas.users.apiName;
+  private authApiName = appData.lambdas.auth.apiName;
   private menuApiName = appData.lambdas.menu.apiName;
   private langApiName = appData.lambdas.translation.apiName;
   private emailApiName = appData.lambdas.email_trigger.apiName;
@@ -321,6 +322,95 @@ export class BackendService {
       },
     };
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
+  }
+
+  signIn(username: string, password: string): Observable<any> {
+    const putPostReq: PostRequest = {
+      headers: {},
+      queryStringParameters: { signin: 1 },
+      body: {
+        username,
+        password
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
+  }
+
+  confirmSignIn(username: string, session: any, challenge: string, challengeName: string): Observable<any> {
+    const putPostReq: PostRequest = {
+      headers: {},
+      queryStringParameters: { confirm_signin: 1 },
+      body: {
+        username,
+        session,
+        challenge,
+        challengeName
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
+  }
+
+  signUp(username: string, password: string, email: string): Observable<any> {
+    const putPostReq: PostRequest = {
+      headers: {},
+      queryStringParameters: { signup: 1 },
+      body: {
+        username,
+        password,
+        email
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
+  }
+
+  confirmSignUp(username: string, code: string): Observable<any> {
+    const putPostReq: PostRequest = {
+      headers: {},
+      queryStringParameters: { confirm_signup: 1 },
+      body: {
+        username,
+        code
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
+  }
+
+  changePassword(username: string, session: any, newPassword: string, challengeName: string ): Observable<any> {
+    const putPostReq: PostRequest = {
+      headers: {},
+      queryStringParameters: { change_password: 1 },
+      body: {
+       username,
+       session,
+       newPassword, 
+       challengeName
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
+  }
+
+  forgotPassword(username: string): Observable<any> {
+    const putPostReq: PostRequest = {
+      headers: {},
+      queryStringParameters: { forgot_password: 1 },
+      body: {
+        username,
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
+  }
+
+  confirmForgotPassword(username: string, code: string, newPassword: string): Observable<any> {
+    const putPostReq: PostRequest = {
+      headers: {},
+      queryStringParameters: { confirm_forgot_password: 1 },
+      body: {
+        username,
+        newPassword,
+        code
+      },
+    };
+    return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
   }
 
   refreshToken(secretHash, refreshToken) {

@@ -21,6 +21,7 @@ import { AwsService } from "./aws.service";
 import { Auth } from "aws-amplify";
 import { logging } from "protractor";
 import { getDate } from "date-fns";
+import { ChallengeNameType } from "@aws-sdk/client-cognito-identity-provider";
 
 const appData = (environment.appData as any).default;
 @Injectable({
@@ -98,7 +99,6 @@ export class AuthService {
   get authStateChange$(): BehaviorSubject<OCAuthState> | null {
     return this.awsService.authStateChange$;
   }
-  // public errorInfo$ = new EventEmitter<any>();
 
   get errorInfo$(): BehaviorSubject<any> | null {
     return this.awsService.errorInfo$;
@@ -132,87 +132,94 @@ export class AuthService {
     return this.email;
   }
 
-  public forgotPassword(username: string): void {
-
-    try {
-      const data = this.awsService
-        .auth()
-        .forgotPassword(username);
-      this._console.log(data);
-    }
-    catch (err) {
-
-      this._setError(err);
+  public async forgotPassword(username: string) {
+    let _this = this;
+    let result = await _this.backendService.forgotPassword(username).toPromise();
+    if (result && result.result === "OK") {
+    } else {
+      _this.errorInfo$.next(result?.reason);
+      _this._setError(result?.reason);
     }
   }
 
-  public async forgotPasswordSubmit(
-    username: string,
-    code: string,
-    new_password: string
-  ) {
-    try {
-      const data = this.awsService
-        .auth()
-        .ConfirmForgotPassword(username, code, new_password);
-      this._console.log(data);
-    }
-    catch (err) {
-      this._setError(err);
+  public async forgotPasswordSubmit(username: string, code: string, new_password: string) {
+    let _this = this;
+    let result = await _this.backendService.confirmForgotPassword(username, code, new_password).toPromise();
+    if (result && result.result === "OK") { 
+      let authState: OCAuthState = {
+        session: null,
+        state: null,
+        user: null,
+      };
+      _this.authStateChange$.next(authState);
+
+    } else {
+      _this.errorInfo$.next(result?.reason);
+      _this._setError(result?.reason);
     }
   }
 
   /** change password */
   public async changePassword(newPassword: string) {
-    return this.awsService.auth().changePassword(newPassword);
+    const _this = this;   
+    const session = _this.authStateChange$.value.session;
+
+    let result = await _this.backendService.changePassword(session.ChallengeParameters.USER_ID_FOR_SRP, session.Session, newPassword, ChallengeNameType.NEW_PASSWORD_REQUIRED).toPromise();
+    if (result && result.result === "OK") {
+      if (result.data["ChallengeName"] ===  ChallengeNameType.NEW_PASSWORD_REQUIRED) {
+        _this.awsService.setAuthState({
+            state: "requireNewPassword",
+            user: result,
+        });
+      } else {
+        _this.awsService.auth().loadSignInResponse(result.data);
+        return true;
+      }
+    } else {  
+      _this.errorInfo$.next(result?.reason);
+      _this._setError(result?.reason);
+    }
   }
 
   /** signin */
-  public signIn(): void {
-    this.awsService
-      .auth()
-      .signIn(this.username, this.password)
-      .then((user) => {
-
-        if (
-          user["ChallengeName"] === "SMS_MFA" ||
-          user["ChallengeName"] === "SOFTWARE_TOKEN_MFA"
-        ) {
-          this.confirmUser = user;
-          this.awsService.setAuthState({
-            state: "confirmSignIn",
-            user: user,
-          });
-        } else if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
-          // this.awsService.setAuthState({
-          //   state: "requireNewPassword",
-          //   user: user,
-          // });
-          // this.awsService
-          //   .api()
-          //   .get("gorico", "test", {
-          //     queryStringParameters: {},
-          //     headers: null,
-          //   });
-        } else {
-          this.awsService.auth().loadSignInResponse(user);
-          /* this.awsService.setAuthState({
-            state: "signedIn",
-            user: user,
-            session: user.AuthenticationResult
-          }); */
-          this.isSignedIn = true;
-          // now get user and related menu info from backend
-          if (user) {
-            this.isSignedIn = true;
-            this.retrieveUserInfo();
-          }
-
+  public async signIn(){
+    const _this = this;
+    let result = await _this.backendService.signIn(_this.username, _this.password).toPromise();
+    if (result && result.result === "OK") {
+      let user = result.user; 
+      let challengeName = user.ChallengeName;
+      if (challengeName === ChallengeNameType.SOFTWARE_TOKEN_MFA || challengeName === ChallengeNameType.SMS_MFA) {
+        _this.confirmUser = user;
+        _this.awsService.auth().mfa = challengeName;
+        _this.awsService.setAuthState({
+          state: "confirmSignIn",
+          user: user,
+        });
+      } else if (challengeName ===  ChallengeNameType.NEW_PASSWORD_REQUIRED) {
+        _this.awsService.setAuthState({
+          state: "requireNewPassword",      
+          session: user,
+        });
+      } else {
+        _this.awsService.auth().loadSignInResponse(user);
+        // now get user and related menu info from backend
+        if (user) {
+          _this.isSignedIn = true; 
+          _this.retrieveUserInfo();
         }
-      })
-      .catch((err) => {
-        this._setError(err);
-      });
+      }
+    } else {  
+      if (result?.reason === 'PasswordResetRequiredException') {
+        _this.awsService.setAuthState({
+      
+          state: "forgotPassword",
+          session: null,
+          user: null
+        }); 
+      }
+      _this.errorInfo$.next(result?.reason);
+      _this._setError(result?.reason);
+    }
   }
 
   public signOut(): void {
@@ -239,26 +246,48 @@ export class AuthService {
     this.signOutGoogle();
   }
 
-  public signUp(isInvitedUser: boolean = false) {
-    return this.awsService
-      .auth()
-      .signUp(this.username, this.password, this.email, isInvitedUser);
+  public async signUp(isInvitedUser: boolean = false) {
+    let _this = this;
+    let result = await _this.backendService.signUp(_this.username, _this.password, _this.email).toPromise();
+    if (result && result.result === "OK") { 
+      if (!isInvitedUser) {
+        _this.awsService.setAuthState({
+            state: "sign-up",
+            user: result.data,
+        });
+      }
+      return result.data;
+    } else {
+      _this.errorInfo$.next(result?.reason);
+      _this._setError(result?.reason);
+    }
   }
 
-  public confirmSignUp(code: string): void {
-    this.awsService
-      .auth()
-      .confirmSignUp(this.username, code)
-      .then((data) => {
-        this.awsService.setAuthState({
-          state: "confirm-sign-up",
-          user: { username: this.username },
-        });
-        this._console.log(data);
-      })
-      .catch((err) => {
-        this._setError(err);
+  public async confirmSignUp(code: string) {
+    let _this = this;
+    let result = await _this.backendService.confirmSignUp(_this.username, code).toPromise();
+    if (result && result.result === "OK") { 
+      _this.awsService.setAuthState({
+        state: "confirm-sign-up",
+        user: { username: _this.username },
       });
+    } else {
+      _this.errorInfo$.next(result?.reason);
+      _this._setError(result?.reason);
+    }
+    // this.awsService
+    //   .auth()
+    //   .confirmSignUp(this.username, code)
+    //   .then((data) => {
+    //     this.awsService.setAuthState({
+    //       state: "confirm-sign-up",
+    //       user: { username: this.username },
+    //     });
+    //     this._console.log(data);
+    //   })
+    //   .catch((err) => {
+    //     this._setError(err);
+    //   });
   }
 
   public updateUserInfo(company: string): void {
@@ -679,41 +708,26 @@ this.amplifyService.auth().currentCredentials()
 
   public async confirmSignIn(challenge: string) {
     let _this = this;
-
-    const result = await _this.awsService
-      .auth()
-      .confirmSignIn(_this.confirmUser, challenge, "SOFTWARE_TOKEN_MFA");
-    if (result) {
-      _this.isSignedIn = true;
-      // now get user and related menu info from backend
-      _this.retrieveUserInfo();
+    let result = await _this.backendService.confirmSignIn(_this.confirmUser.ChallengeParameters.USER_ID_FOR_SRP, _this.confirmUser.Session, challenge, ChallengeNameType.SOFTWARE_TOKEN_MFA).toPromise();
+    if (result && result.result === "OK") {
+      let user = result.user; 
+      let challengeName = user.ChallengeName;
+      if (challengeName === ChallengeNameType.NEW_PASSWORD_REQUIRED) {
+        _this.awsService.setAuthState({
+          state: "requireNewPassword",
+          user: user,
+        });
+      } else {
+        _this.awsService.auth().loadSignInResponse(user);
+        if (user) {
+        _this.isSignedIn = true;
+        _this.retrieveUserInfo();
+        }
+      }
+    } else {
+      _this.errorInfo$.next(result?.reason);
+      _this._setError(result?.reason);
     }
-    else {
-      // _this.errorInfo$.emit(err);
-
-    }
-
-    // .then((user) => {
-    //   _this.isSignedIn = false;
-    //   if (user["ChallengeName"] === "NEW_PASSWORD_REQUIRED") {
-    //     _this.amplifyService.setAuthState({
-    //       state: "requireNewPassword",
-    //       user: user,
-    //     });
-    //   } else {
-    //     _this.amplifyService.setAuthState({
-    //       state: "signedIn",
-    //       user: user,
-    //     });
-    //     _this.isSignedIn = true;
-    //     // now get user and related menu info from backend
-    //     _this.retrieveUserInfo();
-    //   }
-    // })
-    // .catch((err) => {
-    //   _this.errorInfo$.emit(err);
-    //   _this._setError(err);
-    // });
   }
 
   async loadGoogleAuth(purpose: string) {
