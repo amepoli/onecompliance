@@ -161,7 +161,7 @@
     ],
     "predefinedQueries": [
         {
-            "queryString": "select *, entrasp.count_allegati_mandati(codice_azienda, id_mandato) as n_allegati, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante) as mandante, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente from entrasp.mandati where codice_azienda=$codice_azienda$",
+            "queryString": "select *, entrasp.count_allegati_mandati(codice_azienda, id_mandato) as n_allegati, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_mandante) as mandante, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente from entrasp.mandati mn where codice_azienda=$codice_azienda$",
             "type": "main",
             "operation": "selectTable"
         }
@@ -301,6 +301,16 @@
     ],
     "search_keys": [
         {
+            "fieldName": "id_mandato_s",
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "# Mandato",
+            "newLine": false,
+            "queryCond": "id_mandato=$id_mandato_s$"
+        },
+        {
             "fieldName": "id_cedente_s",
             "format": {
                 "comboQuery": "SELECT distinct id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name FROM entrasp.anagrafiche_vr WHERE codice_part='€global_codice_part€';",
@@ -331,6 +341,17 @@
             "label": "Mandante",
             "newLine": false,
             "queryCond": "id_mandante=$id_mandante_s$"
+        },
+        {
+            "fieldName": "no_payment",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Senza pagamenti",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "not exists(select 1 from entrasp.pagamenti_crediti pc where mn.codice_azienda=pc.codice_azienda and mn.id_mandato=pc.id_mandato)"
         }
     ],
     "querySuffixes": {

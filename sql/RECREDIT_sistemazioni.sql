@@ -181,7 +181,7 @@ from entrasp.pagamenti_crediti
 
 
 -- query per trovare i crediti con capitale a 0
-select t1.*
+select entrasp.pag_crediti_aggiorna(pc.codice_azienda, pc.id_pagamento) 
 from	
 (SELECT
 	ID_CESSIONE,
@@ -207,9 +207,46 @@ FROM
 WHERE
     CODICE_AZIENDA = 'RE-CREDIT'
    and capitale_Residuo_leg=0) t2
-
 	on t1.codice_azienda=t2.codice_azienda and t1.id_cessione=t2.id_cessione
-where t2.id_cessione is null
+inner join entrasp.pagamenti_Crediti pc on t1.codice_azienda=pc.codice_azienda and t1.id_cessione=pc.id_Cessione
+	where t2.id_cessione is null limit 10
 
+----
+	select pc.id_Cessione, pc.codice_azienda, pc.id_pagamento 
+from	
+(SELECT
+	ID_CESSIONE,
+	codice_azienda
+FROM
+	ENTRASP.CREDITI_CEDUTI cc
+WHERE
+	CODICE_AZIENDA = 'RE-CREDIT'
+	AND cc.CODICE_AZIENDA || '-' || cc.ID_CESSIONE NOT IN (
+		SELECT
+			PAG.CODICE_AZIENDA || '-' || PAG.ID_CESSIONE
+		FROM
+			ENTRASP.PAGAMENTI_CREDITI PAG
+		WHERE
+			PAG.ID_ARGOMENTO_TIPO_PAG IN (51488, 51489, 50664)
+	)) t1
+	left join
+(SELECT
+    ID_CESSIONE,
+   codice_azienda
+FROM
+    ENTRASP.CREDITI_CEDUTI cc
+WHERE
+    CODICE_AZIENDA = 'RE-CREDIT'
+   and capitale_Residuo_leg=0) t2
+	on t1.codice_azienda=t2.codice_azienda and t1.id_cessione=t2.id_cessione
+inner join entrasp.pagamenti_Crediti pc on t1.codice_azienda=pc.codice_azienda and t1.id_cessione=pc.id_Cessione
+	where t2.id_cessione is null 
+	
 
 select entrasp.pag_crediti_aggiorna('RE-CREDIT', 965)
+
+
+select * from entrasp.mandati mn
+where not exists(select 1 from entrasp.pagamenti_crediti pc
+	where mn.codice_azienda=pc.codice_azienda and mn.id_mandato=pc.id_mandato)	
+	and codice_azienda='RE-CREDIT'
