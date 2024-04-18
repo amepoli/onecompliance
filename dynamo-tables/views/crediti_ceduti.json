@@ -149,7 +149,7 @@
             "size": 2,
             "newLine": false,
             "queryCond": "id_cedente::varchar=any(string_to_array(replace($id_cedente_list$, ' ', ''), ','))"
-        },  
+        },
         {
             "fieldName": "id_cedente_s",
             "format": {
@@ -489,8 +489,7 @@
             },
             "label": "Fascicolo non presente",
             "newLine": false,
-            "queryCond": "fascicolo is null",
-            "size": 0
+            "queryCond": "fascicolo is null"
         },
         {
             "fieldName": "debitore_ceduto_null",
@@ -499,8 +498,7 @@
             },
             "label": "Debitore non presente",
             "newLine": false,
-            "queryCond": "id_debitore_ceduto is null",
-            "size": 0
+            "queryCond": "id_debitore_ceduto is null"
         },
         {
             "fieldName": "dt_pag_prec_dt_fatt",
@@ -509,8 +507,7 @@
             },
             "label": "Data Pagamento Precedente a Data Fattura",
             "newLine": false,
-            "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)",
-            "size": 0
+            "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)"
         },
         {
             "fieldName": "dt_scad_prec_dt_fatt",
@@ -519,8 +516,7 @@
             },
             "label": "Data Scadenza precedente a Data Fattura",
             "newLine": false,
-            "queryCond": "data_fattura>data_scadenza",
-            "size": 0
+            "queryCond": "data_fattura>data_scadenza"
         },
         {
             "fieldName": "fattura_duplicata",
@@ -529,8 +525,7 @@
             },
             "label": "Fattura duplicata",
             "newLine": false,
-            "queryCond": "extract(year from data_fattura)||n_fattura||id_cedente in (select extract(year from data_fattura)||n_fattura||id_cedente from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
-            "size": 0
+            "queryCond": "extract(year from data_fattura)||n_fattura||id_cedente in (select extract(year from data_fattura)||n_fattura||id_cedente from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)"
         },
         {
             "fieldName": "da_lavorare",
@@ -540,8 +535,7 @@
             "label": "Da lavorare",
             "newLine": false,
             "queryCond": "(azionato='0' and flag_pool !='1' and  data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
-            "tooltip": "Non azionati, con pagamento avvenuto, non in pool e interessi maggiori di 0",
-            "size": 2
+            "tooltip": "Non azionati, con pagamento avvenuto, non in pool e interessi maggiori di 0"
         },
         {
             "fieldName": "pool",
@@ -550,8 +544,7 @@
             },
             "label": "In Pool",
             "newLine": false,
-            "queryCond": "(flag_pool='1')",
-            "size": 2
+            "queryCond": "(flag_pool='1')"
         },
         {
             "fieldName": "flag_non_cessionati",
@@ -571,6 +564,16 @@
             "tooltip": "Individua le posizioni per le quali ci sia un capitale residuo (legale) negativo",
             "newLine": false,
             "queryCond": "capitale_residuo_leg<0"
+        },
+        {
+            "fieldName": "senza_acquisto_iniziale",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Senza pagamenti associati",
+            "tooltip": "Individua le posizioni per le quali ci sia un capitale residuo (legale) negativo",
+            "newLine": false,
+            "queryCond": "not exists(select 1 from entrasp.pagamenti_crediti pc where cc.codice_azienda=pc.codice_azienda and cc.id_cessione=pc.id_cessione)"
         }
     ],
     "form_keys": [
@@ -684,7 +687,14 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "select id_contratto as id, numero_contratto as name from entrasp.contratti where codice_azienda=$codice_azienda$"
+                "comboQuery": "select id_contratto as id, numero_contratto as name from entrasp.contratti where codice_azienda=$codice_azienda$",
+                "validations": [
+                    {
+                        "message": "Contratto obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
@@ -692,8 +702,7 @@
             "label": "Contratto",
             "readOnly": false,
             "newLine": false,
-            "size": 1,
-            "translate": "RESOURCES.id_contratto"
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -853,7 +862,14 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "number",
-                "viewType": "input"
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Contratto obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
@@ -972,7 +988,6 @@
                     "queryString": "select case when id_tipo_documento=5342 then true else false end as label from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_cessione=$id_cessione$"
                 }
             ],
-
             "translate": "RESOURCES.id_fattura_associata"
         },
         {
@@ -1369,25 +1384,33 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_documento",
-                    "values": ["5342"]
+                    "values": [
+                        "5342"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_documento_load",
-                    "values": ["5342"]
+                    "values": [
+                        "5342"
+                    ]
                 },
                 {
                     "actionType": "hide",
                     "eventName": "combo_tipo_documento",
                     "condition": "equalTo",
-                    "values": ["50664"]
+                    "values": [
+                        "50664"
+                    ]
                 },
                 {
                     "actionType": "hide",
                     "eventName": "tipo_documento_load",
                     "condition": "equalTo",
-                    "values": ["50664"]
+                    "values": [
+                        "50664"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1590,7 +1613,7 @@
             "key": "capitale_residuo_leg",
             "width": "6%",
             "label": "Capitale residuo"
-                },
+        },
         {
             "format": {
                 "dataType": "boolean"
