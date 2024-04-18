@@ -5,7 +5,6 @@ import { FuseConfigService } from '@fuse/services/config.service';
 import { fuseAnimations } from '@fuse/animations';
 import { AuthService, DialogService, ToastService } from '../services';
 import { Router } from '@angular/router';
-import { ChallengeNameType } from '@aws-sdk/client-cognito-identity-provider';
 
 @Component({
     selector   : 'change-password',
@@ -73,7 +72,7 @@ export class ChangePasswordComponent implements OnInit
     ngOnInit(): void
     {
         const session = this._authService.authStateChange$.value?.session ?? null;
-        if(session && session.ChallengeName === ChallengeNameType.NEW_PASSWORD_REQUIRED) {
+        if(session && session.ChallengeName === "NEW_PASSWORD_REQUIRED") {
             // user can change password
         }
         else {

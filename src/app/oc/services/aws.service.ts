@@ -1,52 +1,12 @@
-import { Injectable, EventEmitter } from "@angular/core";
-import { AmplifyService } from "aws-amplify-angular";
+import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Observable";
-import { AuthState } from "aws-amplify-angular/dist/src/providers/auth.state";
-import { BackendService } from "./backend.service";
-import { BehaviorSubject } from "rxjs";
-import { TranslateService } from "@ngx-translate/core";
-import { FuseNavigationService } from "@fuse/components/navigation/navigation.service";
-import { ToastService } from "app/oc/services/toast.service";
-
-import { FuseTranslationLoaderService } from "@fuse/services/translation-loader.service";
+import { BehaviorSubject, from } from "rxjs";
 import { ConsoleLoggerService } from "./console_logger.service";
-import { OCAuthState, UserInfo } from "../interfaces";
-
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
-declare var gapi: any;
-declare var auth2: any;
-
+import { OCAuthState, PostRequest } from "../interfaces";
 const appData = (environment.appData as any).default;
-
-import {
-    AdminGetUserCommand,
-    AdminSetUserMFAPreferenceCommand,
-    AuthFlowType,
-    ChallengeNameType,
-    CodeDeliveryFailureException,
-    CognitoIdentityProvider,
-    CognitoIdentityProviderClient,
-    ConfirmForgotPasswordCommand,
-    ConfirmSignUpCommand,
-    ForgotPasswordCommand,
-    InitiateAuthCommand,
-    RespondToAuthChallengeCommand,
-    SetUserMFAPreferenceCommand,
-    SignUpCommand,
-} from "@aws-sdk/client-cognito-identity-provider";
-
-import {
-    createClientForDefaultRegion,
-    DEFAULT_REGION,
-    generateSecretHash,
-    parseJwt,
-} from "../utils";
+import { parseJwt } from "../utils";
 import { environment } from "environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { I } from "@angular/cdk/keycodes";
-import { access } from "fs";
-import { fromWebToken } from "@aws-sdk/credential-providers";
-import { GetRoleCommand, IAMClient } from "@aws-sdk/client-iam";
 
 interface GetRequest {
     // OPTIONAL
@@ -120,73 +80,6 @@ class Auth {
         return null;
     }
 
-    public async setupTOTP(): Promise<string> {
-        const _this = this;
-
-        try {
-            let session = this.currentSessionInfo();
-            let secretcode = "";
-            if (session) {
-                const params = {
-                    AccessToken: session.AccessToken,
-                };
-                const client = new CognitoIdentityProvider({
-                    region: DEFAULT_REGION,
-                });
-
-                let result = await client.associateSoftwareToken(params);
-                if (result != null) {
-                    secretcode = result["SecretCode"];
-                }
-                return secretcode;
-            }
-        } catch (error) {
-            _this.errorInfo$.next(error);
-        }
-    }
-
-    public async VerifyTOTP(code: any): Promise<any> {
-        const _this = this;
-        
-        try {
-            let session = this.currentSessionInfo();
-            if (session) {
-                const params = {
-                    AccessToken: session.AccessToken,
-                    UserCode: code,
-                };
-                const client = new CognitoIdentityProvider({
-                    region: DEFAULT_REGION,
-                });
-
-                let result = await client.verifySoftwareToken(params);
-                return result;
-            }
-        } catch (error) {
-            _this.errorInfo$.next(error);
-        }
-    }
-
-    public async getRoleArn() {
-        const _this = this;
-        const client = new IAMClient({
-            region: DEFAULT_REGION,
-        });
-
-        const command = new GetRoleCommand({
-            RoleName: "AuditFT",
-        });
-
-        try {
-            const response = await client.send(command);
-            return response;
-        } catch (e) {
-            _this.errorInfo$.next(e);
-            _this._console.log(e);
-            return null;
-        }
-    }
-
     public loadSignInResponse(result) {
         const _this = this;
         const accessTokenData = parseJwt(
@@ -222,22 +115,6 @@ class Auth {
         localStorage.setItem("user", JSON.stringify(user));
     }
 
-    public async getUserInfo() {
-        // const _this = this;
-        // try {
-        //   const url = 'https://onecompliance.auth.eu-central-1.amazoncognito.com/oauth2/userInfo'; //environment.appData.awsSdk.GatewayURL + 'oauth2/userInfo'
-        //   const response = await _this.http.get(url,{
-        //     headers: {
-        //       "Authorization": `Bearer ${_this.authStateChange$.value.session.IdToken}`,
-        //       "Content-Type": "text/plain"
-        //     }
-        //   }).toPromise();
-        //   return response;
-        // }
-        // catch(e) {
-        //   _this._console.log(JSON.stringify(e));
-    }
-
     public setUserMFA(newMFA) {
         this.mfa = newMFA;
         let authStateChange = this.authStateChange$.value;
@@ -246,118 +123,64 @@ class Auth {
     }
 
     public async refreshToken(forced: boolean = false) {
-        const _this = this;
+        let _this = this;
         if (localStorage.getItem("session")) {
             const session = JSON.parse(localStorage.getItem("session"));
             let currentDateTime = Math.trunc(new Date().getTime() / 1000);
-            let expiry;
+            let expiry: number;
             if (session["exp"] != null) {
-                expiry = session["exp"];
+              expiry = session["exp"];
             }
-            if (currentDateTime > expiry || forced) {
-                const secretHash = generateSecretHash(session["username"]);
-                // const myPutPostInit = { // OPTIONAL
-                //   body: {
-                //     secretHash,
-                //     refreshToken: session['RefreshToken']
-                //   },
-                //   headers: {
-                //   }, // OPTIONAL
-                //   queryStringParameters: {refresh_token: 1}
-                // };
-
-                // try {
-                //   const url = environment.appData.awsSdk.GatewayURL + appData.lambdas.users.apiName; //'view?entry_name=progetti&company=TEST';
-                //   const result = await _this.http.post(
-                //     url,
-                //     myPutPostInit.body,
-                //     {
-                //       headers: myPutPostInit.headers || {
-                //         // "Authorization": `Bearer ${_this.authStateChange$.value.session.IdToken}`,
-                //         "Content-Type": "text/plain",
-                //         "UserId": _this.authStateChange$.value.session.sub
-                //       },
-                //       params: myPutPostInit.queryStringParameters
-                //     }
-                //   ).toPromise();
-                //   _this._console.log(result);
-                //   return result;
-                // }
-                // catch (error) {
-                //   _this.awsService.errorInfo$.next(error);
-                //   _this._console.log(error.message ?? error);
-                // }
-
-                // try {
-                //   const refreshTokenResult = await _this.awsService.api().post(appData.apiName, appData.lambdas.users.apiName, myPutPostInit)
-                //   _this._console.log(refreshTokenResult);
-                //   if(refreshTokenResult) {
-
-                //   }
-                //   else {
-                //     _this.errorInfo$.next('Token expired!');
-                //   }
-                // }
-                // catch(err) {
-                //   _this.errorInfo$.next(err);
-                //   _this._console.log('RefreshTokenError: ', err);
-                // }
-
-                const params = {
-                    AuthFlow: "REFRESH_TOKEN_AUTH",
-                    ClientId: session["client_id"],
-                    AuthParameters: {
-                        REFRESH_TOKEN: session["RefreshToken"],
-                        SECRET_HASH: secretHash,
+            if (currentDateTime > expiry || forced) {   
+              try {
+                let username = session["username"];
+                let refreshToken = session["RefreshToken"];
+                const putPostReq: PostRequest = {
+                    headers: {},
+                    queryStringParameters: { refresh_token: 1 },
+                    body: {
+                        username,
+                        refreshToken
                     },
-                };
-                const client = new CognitoIdentityProvider({
-                    region: DEFAULT_REGION,
-                });
-                try {
-                    const data = await client.initiateAuth(params);
-                    _this._console.log("RefreshTokenResponse: ", data);
-                    if (data != null) {
-                        var t = new Date();
-                        t.setSeconds(t.getSeconds() + 3600);
-                        let exp = Math.trunc(t.getTime() / 1000);
-                        session["exp"] = exp;
-                        session["AccessToken"] =
-                            data.AuthenticationResult.AccessToken;
-                        session["IdToken"] =
-                            data.AuthenticationResult.IdToken;
-
-                        if (!_this.authStateChange$) {
-                            if (session) {
-                                let authState: OCAuthState = {
-                                    session: JSON.parse(
-                                        localStorage.getItem("session")
-                                    ),
-                                    state: "signedIn",
-                                    user: {
-                                        preferredMFA: 'NOMFA',
-                                        ...(JSON.parse(
-                                        localStorage.getItem("user")
-                                        )),
-                                    }
-                                };
-                                _this.authStateChange$.next(authState);
-                            }
-                        } else {
-                            let authStateChange: any =
-                                _this.authStateChange$.value;
-                            authStateChange.session = session;
-                            localStorage.setItem(
-                                "session",
-                                JSON.stringify(authStateChange.session)
-                            );
-                            _this.authStateChange$.next(authStateChange);
-                        }
+                  };
+                let result = await from(this.awsService.api().post(appData.apiName, appData.lambdas.auth.apiName, putPostReq, true)).toPromise() as Observable<any>;
+                if (result && result["result"] === "OK") { 
+                  let data = result["data"];
+                  if (data != null) {
+                    var t = new Date();
+                    t.setSeconds(t.getSeconds() + 3600);
+                    let exp = Math.trunc(t.getTime() / 1000);
+                    session["exp"] = exp;
+                    session["AccessToken"] = data.AuthenticationResult.AccessToken;
+                    session["IdToken"] = data.AuthenticationResult.IdToken;
+                    if (!_this.authStateChange$) {
+                      if (session) {
+                        let authState: OCAuthState = {
+                          session: JSON.parse(localStorage.getItem("session")),       
+                          state: "signedIn",
+                          user: {
+                            preferredMFA: 'NOMFA',
+                            ...(JSON.parse(
+                              localStorage.getItem("user")
+                            )),
+                          }
+                        };
+                        _this.authStateChange$.next(authState);
+                      }
+                    } else {
+                      let authStateChange: any =
+                      _this.authStateChange$.value;
+                      authStateChange.session = session;
+                      localStorage.setItem("session", JSON.stringify(authStateChange.session));
+                      _this.authStateChange$.next(authStateChange);
                     }
-                } catch (error) {
-                    _this._console.log(error)
+                  }
+                } else {
+                  _this.errorInfo$.next(result["reason"]);
                 }
-
+              } catch (error) {
+                _this._console.log(error)
+              }
             }
         }
     }
@@ -423,11 +246,13 @@ class Api {
         }
     }
 
-    public async post(api: string, apiName: string, request: PutPostRequest) {
+    public async post(api: string, apiName: string, request: PutPostRequest, isRefreshTokenCall: boolean = false) {
 
         const _this = this;
         // Check if refresh token and access token needs refresh
-        await _this.awsService.auth().refreshToken();
+        if (!isRefreshTokenCall) {
+            await _this.awsService.auth().refreshToken();
+        }
 
         try {
             const url = environment.appData.awsSdk.GatewayURL + apiName; //'view?entry_name=progetti&company=TEST';

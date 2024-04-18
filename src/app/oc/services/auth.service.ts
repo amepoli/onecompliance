@@ -1,27 +1,31 @@
 import { Injectable, EventEmitter } from "@angular/core";
 import { AmplifyService } from "aws-amplify-angular";
-import { Observable } from "rxjs/Observable";
-import { AuthState } from "aws-amplify-angular/dist/src/providers/auth.state";
 import { BackendService } from "./backend.service";
 import { BehaviorSubject } from "rxjs";
 import { TranslateService } from "@ngx-translate/core";
 import { FuseNavigationService } from "@fuse/components/navigation/navigation.service";
 import { ToastService } from "app/oc/services/toast.service";
-
 import { FuseTranslationLoaderService } from "@fuse/services/translation-loader.service";
 import { ConsoleLoggerService } from "./console_logger.service";
 import { OCAuthState, UserInfo } from "../interfaces";
-
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
 declare var gapi: any;
 declare var auth2: any;
 
 import { environment } from "environments/environment";
 import { AwsService } from "./aws.service";
-import { Auth } from "aws-amplify";
-import { logging } from "protractor";
-import { getDate } from "date-fns";
-import { ChallengeNameType } from "@aws-sdk/client-cognito-identity-provider";
+
+export class ChallengeNameType {
+  public static readonly ADMIN_NO_SRP_AUTH = "ADMIN_NO_SRP_AUTH";
+  public static readonly CUSTOM_CHALLENGE = "CUSTOM_CHALLENGE";
+  public static readonly DEVICE_PASSWORD_VERIFIER = "DEVICE_PASSWORD_VERIFIER";
+  public static readonly DEVICE_SRP_AUTH = "DEVICE_SRP_AUTH";
+  public static readonly MFA_SETUP = "MFA_SETUP";
+  public static readonly NEW_PASSWORD_REQUIRED = "NEW_PASSWORD_REQUIRED";
+  public static readonly PASSWORD_VERIFIER = "PASSWORD_VERIFIER";
+  public static readonly SELECT_MFA_TYPE = "SELECT_MFA_TYPE";
+  public static readonly SMS_MFA = "SMS_MFA";
+  public static readonly SOFTWARE_TOKEN_MFA = "SOFTWARE_TOKEN_MFA";
+};
 
 const appData = (environment.appData as any).default;
 @Injectable({
@@ -186,7 +190,7 @@ export class AuthService {
     const _this = this;
     let result = await _this.backendService.signIn(_this.username, _this.password).toPromise();
     if (result && result.result === "OK") {
-      let user = result.user; 
+      let user = result.data; 
       let challengeName = user.ChallengeName;
       if (challengeName === ChallengeNameType.SOFTWARE_TOKEN_MFA || challengeName === ChallengeNameType.SMS_MFA) {
         _this.confirmUser = user;
@@ -195,7 +199,7 @@ export class AuthService {
           state: "confirmSignIn",
           user: user,
         });
-      } else if (challengeName ===  ChallengeNameType.NEW_PASSWORD_REQUIRED) {
+      } else if (challengeName && challengeName ===  ChallengeNameType.NEW_PASSWORD_REQUIRED) {
         _this.awsService.setAuthState({
           state: "requireNewPassword",      
           session: user,
@@ -605,57 +609,6 @@ export class AuthService {
       // Emit the error so we can stop showing the loading dialog
       // this.errorInfo$.emit(error);
     }
-
-    // this.amplifyService.auth().currentUserInfo()
-    //   .then(user => {
-    //     // Check if user is valid
-    //     if (user && user.id) {
-    //       // User is valid
-    //       // this.amplifyService.setAuthState({ state: 'signedIn', user: user });
-    //       this.isSignedIn = true;
-    //       // now get user and related menu info from backend
-    //       this.retrieveUserInfo();
-    //     }
-    //     else {
-    //       // User was invalid
-    //       this.errorInfo$.emit("Invalid session!");
-    //     }
-    //   })
-    //   .catch(error => {
-    //     this._console.error(error);
-
-    //     // Error occured which means the session was invalid or expired
-    //     // Emit the error so we can stop showing the loading dialog
-    //     this.errorInfo$.emit(error);
-    //   }
-    //   );
-
-    /* 
-// Testing auth token stuff
-this.amplifyService.auth().currentCredentials()
-  .then(credentials => {
-    // let awsPersonalCreds = this.amplifyService.auth().essentialCredentials(credentials);
-    // console.table(awsPersonalCreds);
-    
-    // I get valid accessKeyId, sessionToken, secretAccessKey
-
-    // this.amplifyService.auth().currentSession()
-    //   .then(currentSession => console.table('currentSession= ' + currentSession))
-    //   .catch(error => console.error(error));
-    // // I get an error: no current user
-
-    // this.amplifyService.auth().currentUserPoolUser()
-    //   .then(currentUser => console.table('currentUserPoolUser= ' + currentUser))
-    //   .catch(error => console.error(error));
-    // // I get an error: No current user in userpool
-
-    // this.amplifyService.auth().currentAuthenticatedUser()
-    //   .then(currentAuthUser => console.table('currentAuthUser= ' + currentAuthUser))
-    //   .catch(error => console.error(error));
-    // // I get an error: not authenticated
-  })
-  .catch(error => console.error(error));
-*/
   }
 
   public async getMFAStatus() {
@@ -710,7 +663,7 @@ this.amplifyService.auth().currentCredentials()
     let _this = this;
     let result = await _this.backendService.confirmSignIn(_this.confirmUser.ChallengeParameters.USER_ID_FOR_SRP, _this.confirmUser.Session, challenge, ChallengeNameType.SOFTWARE_TOKEN_MFA).toPromise();
     if (result && result.result === "OK") {
-      let user = result.user; 
+      let user = result.data; 
       let challengeName = user.ChallengeName;
       if (challengeName === ChallengeNameType.NEW_PASSWORD_REQUIRED) {
         _this.awsService.setAuthState({

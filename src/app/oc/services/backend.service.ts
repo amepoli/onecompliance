@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { AmplifyService } from 'aws-amplify-angular';
 import { Observable, from } from 'rxjs';
 import { FormActionType } from '../types';
 import axios from 'axios';
@@ -411,20 +410,6 @@ export class BackendService {
       },
     };
     return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
-  }
-
-  refreshToken(secretHash, refreshToken) {
-    this.awsService.auth();
-    const putPostReq: PostRequest = {
-
-      headers: {},
-      queryStringParameters: { refresh_token: 1 },
-      body: {
-        secretHash,
-        refreshToken
-      },
-    };
-    return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
 
   inviteUser(username: string, company: string, associated_user: string, registry: string, tax_code: string, temporaryPassword: string, profile: string) {
