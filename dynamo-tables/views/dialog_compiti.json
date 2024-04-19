@@ -1,0 +1,60 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_compiti",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "INSERT INTO entrasp.compiti_centri_costo(codice_azienda, id_centro_costo, codice_compito, codice_azienda_compiti, percentuale_competenza) select codice_azienda, $id_centro_costo$, codice_compito, $codice_azienda$, $percentuale_competenza$ from entrasp.compiti cmp where cmp.codice_compito||'~'||cmp.codice_azienda=any(ARRAY[$selected_rows_data$]);"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_part='€global_codice_part€'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.codice_azienda",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_centro_costo AS id, descrizione AS name FROM entrasp.centri_costo where codice_azienda='£codice_azienda£'"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_centro_costo",
+            "label": "Centro Costo",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": 100
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "percentuale_competenza",
+            "label": "% Competenza",
+            "newLine": false,
+            "readOnly": false
+        }
+    ]
+}
