@@ -18,7 +18,8 @@
         "id_argomento_tipo_contratto": "5408",
         "is_hidden_finanziamenti": "false",
         "codice_ruolo": "CLI",
-        "is_hidden_note": "true"
+        "is_hidden_note": "true",
+        "is_hidden_esternalizzazioni": "true"
     },
     "predefinedQueries": [
         {
@@ -966,7 +967,7 @@
                             "dataType": "number",
                             "viewType": "input"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_esternalizzazioni}",
                         "isPrimary": false,
                         "key": "termini_preavviso",
                         "label": "Periodo Preavviso Fornitore",
@@ -981,7 +982,7 @@
                             "dataType": "number",
                             "viewType": "input"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_esternalizzazioni}",
                         "isPrimary": false,
                         "key": "preavviso_intermediario",
                         "label": "Periodo Preavviso Intermediario",
@@ -1000,11 +1001,43 @@
                         "label": "Organo Decisionale",
                         "key": "organo_decisionale",
                         "readOnly": false,
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_esternalizzazioni}",
+                        "isPrimary": false,
+                        "newLine": true,
+                        "size": 3.13,
+                        "tooltip": "Organo Decisionale"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "comboQuery": "select ai.id_anagrafica as id, entrasp.anagrafiche_cognnome(ai.codice_part, ai.id_anagrafica) as name from entrasp.anagrafiche_id ai  where ai.codice_part = '€global_codice_part€'"
+                        },
+                        "label": "Firmatario",
+                        "key": "firmatario",
+                        "readOnly": false,
+                        "isHidden": "$Q{is_hidden_esternalizzazioni}",
                         "isPrimary": false,
                         "newLine": false,
                         "size": 3.13,
-                        "tooltip": "organo_decisionale"
+                        "tooltip": "Firmatario"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "comboQuery": "select ai.id_anagrafica as id, entrasp.anagrafiche_cognnome(ai.codice_part, ai.id_anagrafica) as name from entrasp.anagrafiche_id ai  where ai.codice_part = '€global_codice_part€'"
+                        },
+                        "label": "Utilizzatore",
+                        "key": "utilizzatore",
+                        "readOnly": false,
+                        "isHidden": "$Q{is_hidden_esternalizzazioni}",
+                        "isPrimary": false,
+                        "newLine": false,
+                        "size": 3.13,
+                        "tooltip": "Utilizzatore"
                     }
                 ]
             },
@@ -1233,19 +1266,18 @@
                         "newLine": false
                     },
                     {
-                        "autoGenerate": false,
                         "format": {
-                            "viewType": "label",
-                            "dataType": "text"
+                            "viewType": "invisible"
                         },
-                        "label": "invisible_4",
-                        "key": "invisible_4",
-                        "sameOrigin": false,
-                        "readOnly": false,
+                        "size": 0.6,
                         "isHidden": false,
                         "isPrimary": false,
-                        "size": 2,
-                        "newLine": true
+                        "label": "invisible_2",
+                        "key": "invisible_2",
+                        "sameOrigin": false,
+                        "readOnly": true,
+                        "newLine": true,
+                        "translate": "RESOURCES.invisible_2"
                     }
                 ]
             },
