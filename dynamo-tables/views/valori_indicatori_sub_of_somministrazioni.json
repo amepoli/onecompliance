@@ -6,7 +6,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select va.*, entrasp.indicatori_description(id_indicatore) as indicatore from entrasp.valori_indicatori va inner join entrasp.sondaggi snd using (codice_azienda, id_sondaggio) inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=snd.codice_azienda and snd.id_sondaggio=ss.id_sondaggio inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione=$id_somministrazione$ and mt.id_argomento in (select id_argomento from entrasp.argomenti_report) "
+            "queryString": "select va.*, entrasp.indicatori_description(id_indicatore) as indicatore from entrasp.valori_indicatori va inner join entrasp.sondaggi_somministrati ss on va.codice_azienda=ss.codice_azienda and va.id_sondaggio=ss.id_sondaggio and va.id_somministrazione=ss.id_somministrazione  inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where va.codice_azienda=$codice_azienda$ and va.id_sondaggio=$id_sondaggio$ and va.id_somministrazione=$id_somministrazione$ and mt.id_argomento in (select id_argomento from entrasp.argomenti_report)"
         }
     ],
     "define": {
