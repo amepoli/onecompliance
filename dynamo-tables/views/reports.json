@@ -7,7 +7,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse) =0 order by id_report asc"
+            "queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse) =0 and (codice_azienda is null or codice_azienda in(€global_user_companies€)) order by id_report asc"
         }
     ],
     "form_keys": [
@@ -51,6 +51,23 @@
             "newLine": false,
             "size": 2.5,
             "translate": "RESOURCES.id_report_parent"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€);",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "translate": "RESOURCES.codice_azienda"
         },
         {
             "autoGenerate": false,
@@ -203,7 +220,7 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "width": "10%",
             "isPrimary": false,
             "key": "codice_azienda",
