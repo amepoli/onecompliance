@@ -6,8 +6,7 @@ export const locale = {
             a_codiceazienda: "a_companycode",
             a_disposizione: "Available",
             actions_updates: "Actions/Updates",
-            activate_associazione_consuntivazioni_k:
-                "Active Financial Statements Association",
+            activate_associazione_consuntivazioni_k: "Active Financial Statements Association",
             activate_detail_k: "Activate Detail",
             activate_dettagli_fin: "More details fin",
             activate_oggetti_collegati: "Linked Object",
@@ -98,6 +97,7 @@ export const locale = {
             cab_intermediario_ctp: "CAB Intermediary Counterparty",
             cab_ordinante: "Ordering Cab",
             cab_ordinante_beneficiario: "CAB Ordering Beneficiary",
+            calcola_valori_indicatori: "Calcultate value indicators",
             cancel_project: "Cancel Project",
             cancella_argomento: "delete",
             cancella_art_normativi: "delete",

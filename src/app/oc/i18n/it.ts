@@ -97,6 +97,7 @@ export const locale = {
             cab_intermediario_ctp: "CAB Intermediario Controparte",
             cab_ordinante: "Cab Ordinante",
             cab_ordinante_beneficiario: "CAB Ordinante Beneficiario",
+            calcola_valori_indicatori: "Calcola valori indicatori",
             cancel_project: "Annulla Progetto",
             cancella_argomento: "delete",
             cancella_art_normativi: "delete",
@@ -134,8 +135,7 @@ export const locale = {
             ced_descr: "Cedente",
             cedente: "Cedente",
             centro_gest: "Centro Gestionale Responsabile (liv.1)",
-            centro_gest_liv2:
-                "Centro Gestionale Monitoraggio/Segnalante (liv.2)",
+            centro_gest_liv2: "Centro Gestionale Monitoraggio/Segnalante (liv.2)",
             cessionario: "Cessionario",
             cessionato: "Cessionato",
             cg_actions: " ",
@@ -264,8 +264,7 @@ export const locale = {
             copy: "Copia",
             copy_from_other_check: "Copia da altra Verifica",
             copy_from_valutazione_garanzie: "Duplica Valutazione",
-            copy_the_answer_of_the_check_in_all_the_survey:
-                "Copia risposte della verifica in tutto il sondaggio",
+            copy_the_answer_of_the_check_in_all_the_survey: "Copia risposte della verifica in tutto il sondaggio",
             costo: "Costo Running",
             costo_set_up: "Costo Modulo",
             count_criticita: "Numero Sugg./Critic.",

@@ -426,6 +426,12 @@
                         "outputEventName": "risp_non_applicabile"
                     },
                     {
+                        "icon": "sync",
+                        "label": "Calcola valori indicatori",
+                        "translate": "RESOURCES.calcola_valori_indicatori",
+                        "outputEventName": "calc_val_indicatori"
+                    },
+                    {
                         "icon": "content_copy",
                         "label": "Copia risposte della verifica a tutto il sondaggio",
                         "translate": "RESOURCES.copy_the_answer_of_the_check_in_all_the_survey",
@@ -521,6 +527,24 @@
                         }
                     },
                     "outputEventWhenComplete": "sondaggi_somministrati_reload"
+                },
+                {
+                    "eventName": "calc_val_indicatori",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "successMessage": "Indicatori ricalcolati",
+                    "values": [],
+                    "message": {
+                        "messageText": "Ricalcolare gli indicatori del sondaggio?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.val_ind_somministrazione($codice_azienda$, $id_sondaggio$, $id_somministrazione$)"
+                        }
+                    }
                 },
                 {
                     "eventName": "get_aml_scan",
