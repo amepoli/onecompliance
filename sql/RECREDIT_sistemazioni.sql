@@ -1,4 +1,6 @@
 
+
+
 /*
 
 SELECT id_cessione, codice_azienda, data_pagamento
@@ -105,13 +107,32 @@ select id_cessione, data_pagamento, codice_azienda, capitale_residuo_leg
 from entrasp.crediti_ceduti
 where codice_azienda='RE-CREDIT' and id_cessione=17104
 
-
-select id_cedente, codice_part, entrasp.anagrafiche_cognnome(codice_part, id_cedente), count(id_cessione) 
+-- cessioni per cedente da crediti_ceduti
+select id_cedente, codice_part, entrasp.anagrafiche_cognnome(codice_part, id_cedente), entrasp.anagrafiche_piva_cf(codice_part, id_cedente), count(id_cessione) 
 from entrasp.crediti_ceduti
 where codice_azienda='RE-CREDIT'	
 group by id_cedente, codice_part
 order by codice_part, count(id_cessione) desc
 
+--- pagamenti per cedente
+select cc.id_cedente, cc.codice_part, entrasp.anagrafiche_cognnome(cc.codice_part, cc.id_cedente), entrasp.anagrafiche_piva_cf(cc.codice_part, cc.id_cedente), count(pc.id_pagamento), sum(importo) 
+from entrasp.crediti_ceduti cc
+inner join entrasp.pagamenti_crediti pc using (codice_azienda, id_cessione)	
+where cc.codice_azienda='RE-CREDIT' and pc.data_pagamento>='2023-01-01'
+group by cc.id_cedente, cc.codice_part
+order by cc.codice_part, sum(pc.importo) desc
+
+
+--- dettaglio pagamenti per cedente
+select cc.id_cedente, cc.codice_part, cc.n_fattura, entrasp.anagrafiche_cognnome(cc.codice_part, cc.id_cedente), entrasp.anagrafiche_piva_cf(cc.codice_part, cc.id_cedente), pc.data_pagamento, pc.importo 
+from entrasp.crediti_ceduti cc
+inner join entrasp.pagamenti_crediti pc using (codice_azienda, id_cessione)	
+where cc.codice_azienda='RE-CREDIT' and pc.data_pagamento>='2023-01-01'
+	and cc.id_cedente=62
+order by pc.data_pagamento desc
+
+	
+	
 select cc.codice_azienda, cc.id_cessione, capitale_residuo_leg, data_pagamento
 from entrasp.crediti_ceduti cc
 where cc.codice_azienda||cc.id_cedente
