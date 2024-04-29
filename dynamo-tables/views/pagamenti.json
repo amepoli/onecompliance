@@ -73,24 +73,6 @@
             "translate": "RESOURCES.id_pagamento"
         },
         {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "id_cessione",
-            "label": "ID Cessione",
-            "outputEvent": {
-                "eventName": "to_crediti_ceduti",
-                "eventTrigger": "press"
-            },
-            "readOnly": true,
-            "size": 1
-        },
-        {
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
@@ -701,7 +683,7 @@
             "size": 2,
             "newLine": false,
             "queryCond": "id_controparte::varchar=any(string_to_array(replace($id_controparte_list$, ' ', ''), ','))"
-        },  
+        },
         {
             "fieldName": "id_cedenti_list",
             "format": {
@@ -712,7 +694,7 @@
             "size": 2,
             "newLine": false,
             "queryCond": "id_cessione in(select id_cessione from entrasp.crediti_ceduti where id_cedente::varchar=any(string_to_array(replace($id_cedenti_list$, ' ', ''), ',')))"
-        },  
+        },
         {
             "fieldName": "id_controparte_s",
             "format": {
@@ -861,25 +843,5 @@
                 "queryString": "select entrasp.import_crediti_da_cedere($codice_azienda$, $nome_file$, '€global_username€')"
             }
         ]
-    },
-    "inputEvents": [
-        {
-            "actionTarget": {
-                "name": "crediti_ceduti",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_cessione",
-                        "destination": "id_cessione"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "to_crediti_ceduti"
-        }
-    ]
+    }
 }
