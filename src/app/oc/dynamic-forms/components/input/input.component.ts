@@ -179,6 +179,19 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.field.value = _this.group.get(_this.field.name).value;
       }
     }
+    if(_this.field.inputType === 'number')
+    {
+      let value: any = _this.group.get(_this.field.name).value;
+      if(value)
+      {
+        _this.field.value = value;
+      }
+      else
+      {   
+        _this.field.value = null; 
+        _this.group.get(_this.field.name).setValue(_this.field.value);
+      }
+    }
     else {
       // Copy as it is
       _this.field.value = _this.group.get(_this.field.name).value;
