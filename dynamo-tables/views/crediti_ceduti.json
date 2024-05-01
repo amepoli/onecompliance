@@ -1758,11 +1758,7 @@
             },
             {
                 "label": "Crediti da confrontare",
-                "queryString": "select id_cessione, id_contratto, entrasp.anagrafiche_cognnome($codice_azienda$, id_debitore_ceduto)as debitore_ceduto, entrasp.anagrafiche_cognnome($codice_azienda$, id_cedente)as cedente, n_fattura, data_fattura, importo from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ AND data_pagamento IS NULL AND data_fattura IS NOT NULL"
-            },
-            {
-                "label": "Crediti da confrontare 2",
-                "queryString": "select cc.id_cessione, cc.id_contratto, entrasp.anagrafiche_cognnome($codice_azienda$, cc.id_debitore_ceduto)as debitore_ceduto, entrasp.anagrafiche_cognnome($codice_azienda$, cc.id_cedente)as cedente, cc.n_fattura, cc.data_fattura, pc.data_pagamento, pc.importo from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc on cc.codice_azienda=pc.codice_azienda and cc.id_cessione=pc.id_cessione cc.codice_azienda=$codice_azienda$ and cc."
+                "queryString": "select pc.id_pagamento, cc.id_cedente, cc.codice_part, cc.n_fattura, entrasp.anagrafiche_cognnome(cc.codice_part, cc.id_cedente), entrasp.anagrafiche_piva_cf(cc.codice_part, cc.id_cedente), pc.data_pagamento, pc.importo from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using (codice_azienda, id_cessione) where cc.codice_azienda=$codice_azienda$"
             },
             {
                 "label": "Crediti non pagati per import",
