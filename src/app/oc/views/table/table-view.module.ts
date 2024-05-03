@@ -19,6 +19,7 @@ import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
 import { TableMultiselectToolbarModule } from '../table-multiselect-toolbar/table-multiselect-toolbar.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomChangeDirectiveModule } from 'app/oc/directives';
+import { QuickAddDialogModule } from 'app/oc/dialogs/quickadd.dialog/quickadd.dialog.module';
 
 @NgModule({
     declarations: [TableViewComponent],
@@ -41,8 +42,8 @@ import { DomChangeDirectiveModule } from 'app/oc/directives';
         FormViewModule,
         TableMultiselectToolbarModule,
         OneCompliancePipesModule,
-
-        DomChangeDirectiveModule
+        DomChangeDirectiveModule,
+        QuickAddDialogModule
     ],
     exports: [
         CommonModule,
