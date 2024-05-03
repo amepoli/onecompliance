@@ -8,6 +8,8 @@ import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
 import { DataSharingService } from 'app/oc/services/data_sharing.service';
+import { MatDialog } from '@angular/material/dialog';
+import { QuickAddDialogComponent } from 'app/oc/dialogs/quickadd.dialog/quickadd.dialog.component';
 
 
 interface TableStyleElement {
@@ -178,6 +180,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         private _dataSharingService: DataSharingService,
         private changeDetector: ChangeDetectorRef,
         private _authService: AuthService,
+        public matDialog: MatDialog,
+
     ) {
         // Set selection model
         this.selection = new SelectionModel<any>(this.allowMultiSelect, this.initialSelection);
@@ -950,8 +954,25 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         return cleanedValues;
     }
 
-    quickAdd(): void {
-        this.showQuickAdd = !this.showQuickAdd;
+    async quickAdd() {
+        // this.showQuickAdd = !this.showQuickAdd;
+
+        const _this = this;
+
+        if(!this.showQuickAdd) {
+            const dialogRef = _this.matDialog.open(QuickAddDialogComponent, {
+                width: '1280px',
+                height: 'auto',
+                data: { quickAddFormParams: _this.quickAddFormParams, onEvent: this.onEvent }
+            });
+
+            _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
+                if(result) {
+                    // reload
+                    _this.loadData();
+                }
+            }));
+        }
     }
 
     add() {
