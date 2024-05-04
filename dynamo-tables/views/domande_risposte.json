@@ -139,7 +139,7 @@
     "predefinedQueries": [
         {
             "operation": "selectForm",
-            "queryString": "select *,'€global_username€' as username from entrasp.select_domande_risposte($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
+            "queryString": "select *,id_risposta_prev_radio as id_risposta_prev_cb, peso_rb as peso_cb, codice_colore_peso_rb_k as codice_colore_peso_cb_k, note_rb as note_cb, '€global_username€' as username from entrasp.select_domande_risposte($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
             "type": "main"
         },
         {
@@ -1166,6 +1166,151 @@
                 ]
             },
             "translate": "RESOURCES.risposte_radiobutton"
+        },
+        {
+            "isHidden": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "key": "risposte_combobox",
+            "sameOrigin": false,
+            "label": "risposta_combobox",
+            "saveWhenHidden": false,
+            "inputEvents": [
+                {
+                    "eventName": "domande_risposte_multipla_aperta",
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "values": [
+                        7
+                    ]
+                }
+            ],
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "key": "id_risposta_prev_cb",
+                        "label": "Seleziona risposta",
+                        "translate": "RESOURCES.risposta",
+                        "size": 8.5,
+                        "newLine": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "value": null,
+                            "comboQuery": "select id_risposta_prev as id, risposta as name from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=£id_domanda£ and flag_escludi_risposta != '1' order by ordinamento;"
+                        },
+                        "outputEvent": {
+                            "eventName": "toggle_question",
+                            "eventTrigger": "select"
+                        }
+                    },
+                    {
+                        "isHidden": "$Q{is_hidden_risultato}",
+                        "isPrimary": false,
+                        "readOnly": true,
+                        "newLine": false,
+                        "key": "peso_cb",
+                        "inputEvents": [
+                            {
+                                "eventName": "event_flag_mostra_punteggi",
+                                "actionType": "hide",
+                                "condition": "equalTo",
+                                "values": [
+                                    "0"
+                                ]
+                            },
+                            {
+                                "eventName": "toggle_question",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select peso as peso_cb from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_cb', '$id_risposta_prev_cb$') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;",
+                                "outputEventWhenComplete": "insert_risposta"
+                            },
+                            {
+                                "eventName": "toggle_question",
+                                "condition": "none",
+                                "values": [],
+                                "actionType": "query_style",
+                                "styleAttribute": "background_color",
+                                "queryFunct": "select codice_colore as peso_cb_background_color from entrasp.modelli_test_risultati_righe_da_punteggio_ottenuto($codice_azienda$::varchar, $id_risultato$, (select peso from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_cb', '$id_risposta_prev_cb$') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$)::numeric)"
+                            },
+                            {
+                                "eventName": "toggle_question",
+                                "actionType": "readOnly",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select case when flag_risposta_aperta='1' then false else true end  from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_risposta_prev=entrasp.evaluate_given_field('id_risposta_prev_cb', '£id_risposta_prev_cb£') and id_domanda=$id_domanda$ and id_modello_test_vr=$id_modello_test_vr$ and id_modello_test=$id_modello_test$;"
+                            },
+                            {
+                                "eventName": "insert_risposta",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>entrasp.evaluate_given_field_null('id_risposta_prev_cb', '$id_risposta_prev_cb$')::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_cb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$, $note_cb$, $note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
+                            }
+                        ],
+                        "sameOrigin": false,
+                        "label": "Risultato %",
+                        "size": 1,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "number"
+                        }
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "codice_colore_peso_cb_k",
+                        "outputEvent": {
+                            "eventName": "codice_colore_change_peso_rb",
+                            "eventTrigger": "change"
+                        },
+                        "label": "codice_colore",
+                        "sameOrigin": false,
+                        "newLine": true,
+                        "readOnly": false
+                    },
+                    {
+                        "isHidden": false,
+                        "readOnly": false,
+                        "isPrimary": false,
+                        "sameOrigin": false,
+                        "key": "note_cb",
+                        "label": "Note Risposta",
+                        "format": {
+                            "viewType": "textarea",
+                            "dataType": "text"
+                        },
+                        "outputEvent": {
+                            "eventName": "blur_nota",
+                            "eventTrigger": "blur"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "blur_nota",
+                                "actionType": "query",
+                                "condition": "none",
+                                "values": [],
+                                "queryFunct": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, iddomanda=>$id_domanda$::numeric, idrispostaprev=>entrasp.evaluate_given_field_null('id_risposta_prev_radio', '$id_risposta_prev_radio$')::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar);"
+                            }
+                        ],
+                        "textareaHeight": "M",
+                        "newLine": true,
+                        "size": 10
+                    }
+                ]
+            },
+            "translate": "RESOURCES.risposte_combobox"
         },
         {
             "isHidden": true,
