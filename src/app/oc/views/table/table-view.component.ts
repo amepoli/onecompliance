@@ -955,8 +955,30 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     async quickAdd() {
-        // this.showQuickAdd = !this.showQuickAdd;
+        this.showQuickAdd = !this.showQuickAdd;
+    }
 
+    add() {
+        this.showQuickAddDialog();
+        // let keys = {};
+        // this.viewKeys.filter(x => x.isPrimary).forEach(x => {
+        //     if (this.tableData.keys && this.tableData.keys[x.key]) {
+        //         keys[x.key] = this.tableData.keys[x.key];
+        //     }
+        //     // else if(this.keysArray && this.keysArray.length && this.keysArray[0][x.key]) {
+        //     //     keys[x.key] = this.keysArray[0][x.key];
+        //     // }
+        // });
+        // Object.keys(this.currentKeys).forEach(key => {
+        //     keys[key] = this.currentKeys[key];
+        // });
+
+
+        // const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: keys, index: 0, total: 0 };
+        // setTimeout(() => { this.sendEvent.emit({ eventType: 'add', queryParams: mergedParams }); }, 50);
+    }
+
+    showQuickAddDialog() {
         const _this = this;
 
         if(!this.showQuickAdd) {
@@ -973,25 +995,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 }
             }));
         }
-    }
-
-    add() {
-        let keys = {};
-        this.viewKeys.filter(x => x.isPrimary).forEach(x => {
-            if (this.tableData.keys && this.tableData.keys[x.key]) {
-                keys[x.key] = this.tableData.keys[x.key];
-            }
-            // else if(this.keysArray && this.keysArray.length && this.keysArray[0][x.key]) {
-            //     keys[x.key] = this.keysArray[0][x.key];
-            // }
-        });
-        Object.keys(this.currentKeys).forEach(key => {
-            keys[key] = this.currentKeys[key];
-        });
-
-
-        const mergedParams = { entry: { name: this.targetEntryName, type: 'form' }, keys: keys, index: 0, total: 0 };
-        setTimeout(() => { this.sendEvent.emit({ eventType: 'add', queryParams: mergedParams }); }, 50);
     }
 
     search_submit(value: any) {
