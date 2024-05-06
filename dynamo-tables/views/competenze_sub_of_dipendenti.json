@@ -1,0 +1,287 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "competenze_sub_of_dipendenti",
+    "origin": "entrasp.anagrafiche_competenze",
+    "businessObjectName": "competenze_sub_of_dipendenti",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica",
+            "translate": "RESOURCES.id_anagrafica",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "number",
+                "options": [],
+                "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52266 order by arg.descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_competenza",
+            "label": "Norma di riferimento",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "number",
+                "options": [],
+                "comboQuery": "select id_argomento as id, codice||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52261 order by arg.codice"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_iaf",
+            "label": "IAF di riferimento",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "number",
+                "options": [],
+                "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52262 order by arg.descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_liv_competenza",
+            "label": "Livello",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "dt_inizio",
+            "label": "Data Acquisizione Requisito",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dt_fine",
+            "label": "Data Perdita Requisito",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "textareaHeight": "M",
+            "newLine": true,
+            "readOnly": false
+        }
+    ],
+
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_competenza",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "competenze_sub_of_dipendenti",
+                "viewType": "table",
+                "query": "delete from entrasp.anagrafiche_competenze where codice_part='£codice_part£' AND id_anagrafica='£id_anagrafica£' AND id_argomento_competenza='£id_argomento_competenza£' AND id_argomento_iaf='£id_argomento_iaf£' AND dt_inizio='£dt_inizio£'",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    },
+                    {
+                        "source": "id_argomento_competenza",
+                        "destination": "id_argomento_competenza"
+                    },
+                    {
+                        "source": "id_argomento_iaf",
+                        "destination": "id_argomento_iaf"
+                    },
+                    {
+                        "source": "dt_inizio",
+                        "destination": "dt_inizio"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_competenza",
+            "label": "id_argomento_competenza"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_competenza",
+            "label": "Norma di riferimento",
+            "width": "15%",
+            "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_competenza)"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_iaf",
+            "label": "id_argomento_iaf"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_iaf",
+            "label": "IAF di riferimento",
+            "width": "25%",
+            "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_iaf)"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_liv_competenza",
+            "label": "id_argomento_liv_competenza"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_liv",
+            "label": "Livello",
+            "width": "15%",
+            "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_liv_competenza)"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "dt_inizio",
+            "label": "Data Acquisizione Requisito"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dt_fine",
+            "label": "Data Perdita Requisito"
+        },
+
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "width": "25%"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        }
+    ]
+}
