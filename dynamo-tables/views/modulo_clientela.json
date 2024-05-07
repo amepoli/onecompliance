@@ -2,7 +2,9 @@
     "$schema": "../views.schema.json",
     "entryKey": "modulo_clientela",
     "label": "Modulo Cliente",
-  
+    "origin": "anagrafiche_vr",
+    
+    
     "outputEvents": [
         {
             "eventName": "onSaveAnagrafichevr",
@@ -13,40 +15,175 @@
             "eventTrigger": "onReload"
         }
     ],
-   
-    "predefinedQueries": [
+    "form_keys": [
         {
-            "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva, left(entrasp.contratti_associati_cliente('€global_codice_azienda€', an.id_anagrafica), 150) as strumenti_sottoscritti FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ra.codice_ruolo = 'CLI' ;",
-            "type": "main"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ragione_sociale",
+            "label": "Ragione Sociale",
+            "readOnly": false,
+            "newLine": false
         },
         {
-            "operation": "isInsert",
-            "queryString": "select $id_anagrafica$ is null as label;",
-            "type": "main"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "partita_iva",
+            "label": "Partita Iva",
+            "readOnly": false,
+            "newLine": false
         },
         {
-            "operation": "insert",
-            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'CLI', codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$, idateco => $id_ateco$, codsae => $cod_sae$);",
-            "type": "main"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_fiscale",
+            "label": "Codice Fiscale",
+            "readOnly": false,
+            "newLine": false
         },
         {
-            "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$, idateco => $id_ateco$, codsae => $cod_sae$,tiposoggetto=>$tipo_soggetto$);",
-            "type": "main"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ateco",
+            "label": "ATECO",
+            "readOnly": false,
+            "newLine": false
         },
         {
-            "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(idcentrogestdefault=> $id_centro_gest$, codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$,idateco => $id_ateco$, codsae => $cod_sae$,tiposoggetto=>$tipo_soggetto$);",
-            "type": "postProcessing"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_sender",
+            "label": "Contatto Email",
+            "readOnly": false,
+            "newLine": false
         },
         {
-            "operation": "delete",
-            "queryString": "SELECT entrasp.anagrafica_id_delete($codice_part$, '€global_codice_azienda€', $id_anagrafica$);",
-            "type": "main"
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dati_soggetto",
+            "label": "sede legale",
+            "style": {
+                "background_color": "#2B679D",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "select sigla_provincia as id,descrizione as name from entrasp.province",
+                "dataType": "text",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "provincia",
+            "label": "Provincia",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "citta",
+            "label": "Città",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cap",
+            "label": "CAP",
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "indirizzo",
+            "label": "Indirizzo",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "numero_dipendenti",
+            "label": "Numero Dipendenti Sede",
+            "readOnly": false,
+            "newLine": true
         }
     ],
-    "inputEvents": [
+   
+        "inputEvents": [
         {
             "actionType": "reload",
             "eventName": "formReload"
