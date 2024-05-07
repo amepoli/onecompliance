@@ -37,6 +37,11 @@
             "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro progetto: prego utilizzarne un codice diverso"
         },
         {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');"
+        },
+        {
             "operation": "update",
             "type": "preCheck",
             "queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
@@ -437,45 +442,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "buttonIcon": "update",
-            "key": "avvia_progetti",
-            "label": "Avvia/aggiorna",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "progetti_avvia",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "progetti_avvia",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
-                    "outputEventWhenComplete": "formReload"
-                },
-                {
-                    "eventName": "onAddNewProgetti",
-                    "actionType": "hide",
-                    "condition": "none",
-                    "values": []
-                }
-            ],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1.1,
-            "style": {
-                "background_color": "green"
-            },
-            "translate": "RESOURCES.avvia_progetti"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "viewType": "input",
                 "dataType": "text",
                 "validations": [
@@ -521,7 +487,12 @@
             "isHidden": false,
             "isPrimary": true,
             "newLine": false,
-            "size": 0.73
+            "size": 0.73,
+            "inputEvents": [{
+                "eventName": "onSaveProgetti",
+                "actionType": "query",
+                "queryFunct": "select  entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');"
+            }]
         },
         {
             "autoGenerate": false,
@@ -785,11 +756,27 @@
                  "viewType": "input",
                 "dataType": "text"
             },
+            "queryFunct": "entrasp.descrizione_progetto($id_progetto$,$codice_azienda$)",
             "label": "Modello di Progetto",
             "translate": "RESOURCES.project_template",
-            "key": "codice_attivita",
+            "key": "descr_attivita",
             "readOnly": true,
             "isHidden": false,
+            "isPrimary": false,
+            "size": 3.33,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                 "viewType": "input",
+                "dataType": "text"
+            },
+            
+            "label": "codice_attivita",
+            "key": "codice_attivita",
+            "readOnly": true,
+            "isHidden": true,
             "isPrimary": false,
             "size": 3.33,
             "newLine": false
