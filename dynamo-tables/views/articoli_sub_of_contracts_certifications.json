@@ -1,0 +1,441 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "articoli_sub_of_contracts_certifications",
+    "origin": "entrasp.articoli_contratti",
+    "businessObjectName": "articoli_contratti",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_articolo as id, concat(id_articolo, ' - ', titolo) as name from entrasp.articoli where codice_azienda=$codice_azienda$"
+            },
+            "label": "ID",
+            "key": "id_articolo",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 3,
+            "translate": "RESOURCES.id_articolo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_contratto",
+            "translate": "RESOURCES.id_contract",
+            "key": "id_contratto",
+            "readOnly": true,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "key": "stato",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_attivazione",
+            "label": "Data Attivazione",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.6,
+            "translate": "RESOURCES.data_attivazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_a",
+            "label": "Data Chiusura",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.6
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "validations": [
+                    {
+                        "message": "Necessario specificare il costo",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Prezzo Unitario",
+            "key": "costo",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "n° addetti",
+            "key": "n_addetti",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 1.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52266"
+            },
+            "label": "Sistema di Gestione",
+            "key": "id_argomento_tipo_norma",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 3.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52261"
+            },
+            "label": "Settore",
+            "key": "id_argomento_settore",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 3.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52324"
+            },
+            "label": "complessità",
+            "key": "id_argomento_complessita",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 1.5,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": "0",
+                "validations": [
+                    {
+                        "message": "Sconto massimo 20%",
+                        "name": "max",
+                        "validator": "Validators.max(20)",
+                        "value": 20
+                    },
+                    {
+                        "message": "Necessario specificare % di sconto",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Sconto",
+            "key": "sconto",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 1.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52324"
+            },
+            "label": "Motivazione Sconto",
+            "key": "id_argomento_motivazione",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 4,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Giornate/Uomo",
+            "key": "giornate_uomo",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 1,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Giornate/Uomo Scontate",
+            "key": "giornate_uomo_scontate",
+            "queryFunct": "select round(giornate_uomo*(1-sconto/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 1,
+            "isPrimary": false,
+            "newLine": false,
+            "inputEvents": [
+                {
+                    "actionType": "update",
+                    "eventName": "giornate_change",
+                    "condition": "none",
+                    "values": [],
+                    "updateFunct": "(round(giornate_uomo*(1-sconto/100),2)).toFixed(2);"
+                }
+            ],
+            "outputEvent": {
+                "eventName": "giornate_change",
+                "eventTrigger": "change"
+            }
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Costo Totale",
+            "key": "costo_totale",
+            "queryFunct": "select round((giornate_uomo*(1-sconto/100)*costo),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": false,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_articolo",
+            "label": "id_modulo",
+            "translate": "RESOURCES.id_articolo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_contratto",
+            "label": "id_contratto",
+            "translate": "RESOURCES.id_contract"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "data_attivazione",
+            "label": "Data Attivazione",
+            "translate": "RESOURCES.data_attivazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "entrasp.articoli_titolo(codice_azienda, id_articolo)",
+            "width": "35%",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "articoli",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "id_articolo",
+                        "destination": "id_articolo"
+                    },
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    }
+                ]
+            },
+            "key": "tit_articolo",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "costo",
+            "width": "10%",
+            "label": "Costo unitario",
+            "translate": "RESOURCES.costo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "width": "15%",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato)",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "style": [
+                {
+                    "value": "Cessato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In Scadenza",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In attesa di firma",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Attivo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                }
+            ],
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Giornate/Uomo",
+            "key": "giornate_uomo",
+
+            "isHidden": false,
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Giornate/Uomo Scontate",
+            "key": "giornate_uomo_scontate",
+            "queryFunct": "round(giornate_uomo*(1-sconto/100),2)",
+
+            "isHidden": false,
+
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Costo Totale",
+            "key": "costo_totale",
+            "queryFunct": "round((giornate_uomo*(1-sconto/100)*costo),2)",
+
+            "isHidden": false,
+            "isPrimary": false
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ]
+}
