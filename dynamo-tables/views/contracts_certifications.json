@@ -7,8 +7,8 @@
     "define": {
         "is_hidden_conflicts": "true",
         "is_hidden_invisible_field": "false",
-        "label_id_controparte": "Cliente/Fornitore",
-        "label_controparte": "Cliente/Fornitore",
+        "label_id_controparte": "Cliente",
+        "label_controparte": "Cliente",
         "is_hidden_mifid": "true",
         "size_with_or_without_mifid": "3.14",
         "codice_ruolo": "CLI",
@@ -139,24 +139,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
-                "options": [],
-                "dataType": "text",
-                "comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
-            },
-            "label": "Giudizio Appropriatezza",
-            "key": "giudizio",
-            "readOnly": true,
-            "queryFunct": "entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)",
-            "isHidden": "$Q{is_hidden_mifid}",
-            "isPrimary": false,
-            "newLine": false,
-            "size": 2,
-            "translate": "RESOURCES.giudizio_appropriatezza"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "viewType": "input",
                 "dataType": "number",
                 "value": "1"
@@ -185,21 +167,10 @@
                         "outputEventName": "contratto_duplica"
                     },
                     {
-                        "icon": "warning",
-                        "label": "Gestisci conflitto/attività",
-                        "outputEventName": "compito_create_from_contratto"
-                    },
-                    {
                         "icon": "lock",
                         "label": "Chiudi Contratto",
                         "outputEventName": "close_contract",
                         "tooltip": "E' possibile chiudere il contratto solo se è definita la data cessazione"
-                    },
-                    {
-                        "icon": "lock",
-                        "label": "Registra chiusura rapporto in AUI",
-                        "outputEventName": "close_rapporto_aui",
-                        "tooltip": "E' possibile registrare la chiusura del rapporto in AUI solo se è stato registrato all'apertura"
                     }
                 ]
             },
@@ -223,33 +194,6 @@
                     "outputEventWhenComplete": "navigate_to_new_progetto"
                 },
                 {
-                    "eventName": "compito_create_from_contratto",
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.compiti_rif_bo_insert('contratti', coalesce($descrizione$,entrasp.argomenti_codice_descr_breve($id_argomento_contratto$)||entrasp.anagrafiche_vr_dati_identificativi('€codice_part€', $id_cliente$), 'cnt'||$id_contratto$,'' ), $codice_azienda$, idcontratto=>$id_contratto$) as codice_compito_created",
-                    "condition": "none",
-                    "values": [],
-                    "outputEventWhenComplete": "to_compito_created"
-                },
-                {
-                    "eventName": "close_rapporto_aui",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageTitle": "Registrare chiusura rapporto in AUI?",
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.aui_registra_chiusura_rapporto($codice_azienda$, $id_contratto$, '€global_username€')"
-                        },
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        }
-                    },
-                    "successMessage": "Operazione eseguita con successo",
-                    "outputEventWhenComplete": "survey_reload"
-                },
-                {
                     "eventName": "close_contract",
                     "actionType": "query",
                     "condition": "none",
@@ -264,14 +208,7 @@
             "autoGenerate": false,
             "format": {
                 "viewType": "input",
-                "dataType": "text",
-                "validations": [
-                    {
-                        "message": "Numero contratto necessario",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+                "dataType": "text"
             },
             "label": "N.Contratto",
             "key": "numero_contratto",
@@ -365,22 +302,6 @@
             "readOnly": false,
             "tooltip": "La data di termine del contratto",
             "translate": "RESOURCES.data_contratto_a"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', ragione_sociale) as name from entrasp.anagrafiche_vr an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo= 'FONDO';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Fondo Gestito",
-            "key": "id_strumento_finanziario",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 1.57,
-            "translate": "RESOURCES.id_strumento_finanziario"
         },
         {
             "autoGenerate": false,
@@ -499,6 +420,7 @@
             },
             "label": "Importo",
             "key": "importo",
+            "queryFunct": "select sum(round((giornate_uomo*(1-sconto/100)*costo),2)) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_contratto=$id_contratto$",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
@@ -511,8 +433,9 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Prezzo Unit.",
-            "key": "prezzo_unitario",
+            "label": "Totale Giornate/Uomo",
+            "key": "giornate_uomo_tot",
+            "queryFunct": "select sum(round(giornate_uomo*(1-sconto/100),2)) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_contratto=$id_contratto$",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,

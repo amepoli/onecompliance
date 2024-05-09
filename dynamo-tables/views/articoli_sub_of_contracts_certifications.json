@@ -199,7 +199,11 @@
             "isHidden": false,
             "size": 1.5,
             "isPrimary": false,
-            "newLine": false
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "sconto_change",
+                "eventTrigger": "change"
+            }
         },
         {
             "autoGenerate": false,
@@ -228,7 +232,11 @@
             "isHidden": false,
             "size": 1,
             "isPrimary": false,
-            "newLine": false
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "giornate_change",
+                "eventTrigger": "change"
+            }
         },
         {
             "autoGenerate": false,
@@ -238,10 +246,10 @@
             },
             "label": "Giornate/Uomo Scontate",
             "key": "giornate_uomo_scontate",
-            "queryFunct": "select round(giornate_uomo*(1-sconto/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
             "readOnly": false,
             "isHidden": false,
             "size": 1,
+            "queryFunct": "select round(giornate_uomo*(1-sconto/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
             "isPrimary": false,
             "newLine": false,
             "inputEvents": [
@@ -250,13 +258,16 @@
                     "eventName": "giornate_change",
                     "condition": "none",
                     "values": [],
-                    "updateFunct": "(round(giornate_uomo*(1-sconto/100),2)).toFixed(2);"
+                    "updateFunct": "(round(Number(£giornate_uomo£)*(1-Number(£sconto£)/100),2)).toFixed(2);"
+                },
+                {
+                    "actionType": "update",
+                    "eventName": "sconto_change",
+                    "condition": "none",
+                    "values": [],
+                    "updateFunct": "(round(Number(£giornate_uomo£)*(1-Number(£sconto£)/100),2)).toFixed(2);"
                 }
-            ],
-            "outputEvent": {
-                "eventName": "giornate_change",
-                "eventTrigger": "change"
-            }
+            ]
         },
         {
             "autoGenerate": false,
