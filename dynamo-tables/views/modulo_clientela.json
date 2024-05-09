@@ -1,8 +1,8 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "modulo_clientela",
-    "label": "Modulo Cliente",
-    "origin": "anagrafiche_vr",
+    "label": "Modulo Clientela",
+    "origin": "entrasp.anagrafiche_vr",
     
     
     "outputEvents": [
@@ -17,6 +17,27 @@
     ],
     "form_keys": [
         {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dati_soggetto",
+            "label": "Dettagli Cliente",
+            "style": {
+                "background_color": "#2B679D",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+
+        {
             "autoGenerate": false,
             "format": {
                 "viewType": "input",
@@ -29,6 +50,7 @@
             "readOnly": false,
             "newLine": false
         },
+       
         {
             "autoGenerate": false,
             "format": {
@@ -58,28 +80,18 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "input",
-                "dataType": "text"
+                "viewType": "combobox",
+                "dataType": "text",
+                "comboQuery": "select id_ateco as id, descrizione as name from entrasp.ateco",
+                "options": []
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "ateco",
             "label": "ATECO",
+            "queryFunct": "SELECT id_ateco from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
             "readOnly": false,
-            "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "email_sender",
-            "label": "Contatto Email",
-            "readOnly": false,
-            "newLine": false
+            "newLine": true
         },
         {
             "format": {
@@ -89,7 +101,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "dati_soggetto",
-            "label": "sede legale",
+            "label": "Sede Legale",
             "style": {
                 "background_color": "#2B679D",
                 "font_color": "white",
@@ -109,7 +121,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "stato",
+            "key": "nazione",
             "label": "Stato",
             "readOnly": false,
             "newLine": false
@@ -137,7 +149,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "citta",
+            "key": "comune",
             "label": "Città",
             "readOnly": false,
             "newLine": false
@@ -167,21 +179,10 @@
             "label": "Indirizzo",
             "readOnly": false,
             "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "numero_dipendenti",
-            "label": "Numero Dipendenti Sede",
-            "readOnly": false,
-            "newLine": true
         }
     ],
+   
+   
    
         "inputEvents": [
         {

@@ -754,14 +754,19 @@
         {
             "autoGenerate": false,
             "format": {
-                 "viewType": "input",
+                "comboQuery": "SELECT att.codice_attivita AS id, att.codice ||'-'|| att.descrizione AS name  FROM entrasp.attivita att inner join (select codice_azienda, codice_attivita, max(attivita_vr) maxvr from entrasp.attivita where codice_azienda=$codice_azienda$ group by codice_azienda, codice_attivita) attmax on att.codice_azienda=attmax.codice_azienda and att.codice_attivita=attmax.codice_attivita and att.attivita_vr=attmax.maxvr WHERE att.codice_azienda=$codice_azienda$ and att.codice_attivita_parent is null and att.data_fine_validita is null order by att.codice;",
+                "options": [],
+                "viewType": "combobox",
                 "dataType": "text"
             },
-            "queryFunct": "entrasp.descrizione_progetto($id_progetto$,$codice_azienda$)",
             "label": "Modello di Progetto",
             "translate": "RESOURCES.project_template",
-            "key": "descr_attivita",
-            "readOnly": true,
+            "key": "codice_attivita",
+            "outputEvent": {
+                "eventName": "select_modello",
+                "eventTrigger": "select"
+            },
+            "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
             "size": 3.33,
