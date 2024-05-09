@@ -5,4 +5,8 @@ export interface UserInfo {
   picture: string;
   language: string;
   companies: string[];
+  sync: string;
+  onekyc: boolean;
+  allowedToInvite: boolean;
+  timereport: boolean;
 }

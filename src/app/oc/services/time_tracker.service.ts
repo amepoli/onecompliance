@@ -39,7 +39,7 @@ export class TimeTrackerService {
      */
     checkStatus() {
         let _this = this;
-        const checkTimeReport = true; //_this._authService.getTimeReport()
+        const checkTimeReport = _this._authService.userinfo?.value?.timereport ?? false; //_this._authService.getTimeReport()
         if (checkTimeReport) {
             const userName = _this._authService.getUsername();
             const dateTimeNow = HelperService.getFormattedDateTime((new Date()).toString(), _this._timezoneService.timezoneInfo.utc_offset);

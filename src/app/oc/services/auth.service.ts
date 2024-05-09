@@ -47,6 +47,10 @@ export class AuthService {
     picture: null,
     language: "it",
     companies: [],
+    allowedToInvite: false,
+    onekyc: false,
+    sync: null,
+    timereport: false
   });
 
   // Error Information Event Emitter for catching and emitting
@@ -243,6 +247,10 @@ export class AuthService {
       picture: null,
       language: "it",
       companies: [],
+      allowedToInvite: false,
+      onekyc: false,
+      sync: null,
+      timereport: false
     }); // user data nulled
     // reset the left menu
     this.navigationService.setCurrentNavigation("main");
