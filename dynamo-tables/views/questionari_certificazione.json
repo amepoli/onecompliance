@@ -3,6 +3,18 @@
     "businessObjectName": "questionari_certificazione",
     "entryKey": "questionari_certificazione",
     "origin": "entrasp.questionari_certificazione",
+    "predefinedQueries": [
+        {
+            "type": "postProcessing",
+            "operation": "insert",
+            "queryString": "select x$id_tipo_servizio$"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "update",
+            "queryString": "select x$id_tipo_servizio$"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -61,8 +73,16 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "input",
-                "dataType": "number"
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Inserire la ragione sociale del cliente",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "label": "Ragione Sociale",
             "key": "id_anagrafica",
@@ -423,7 +443,7 @@
                 "viewType": "textarea",
                 "dataType": "text"
             },
-            "label": "non_applicabilita",
+            "label": "Eventuali non applicabilità di punti della norma giustificate",
             "key": "non_applicabilita",
             "textareaHeight": "M",
             "readOnly": false,
@@ -438,7 +458,7 @@
                 "viewType": "textarea",
                 "dataType": "text"
             },
-            "label": "processi_esterno",
+            "label": "Eventuali processi affidati all'esterno",
             "key": "processi_esterno",
             "textareaHeight": "M",
             "readOnly": false,
@@ -467,7 +487,7 @@
                 "dataType": "text"
             },
             "label": "L'Organizzazione è già certificata da un altro Organismo di Certificazione",
-            "key": "certificato_altro_organismo",
+            "key": "certificazione_altro_organismo",
             "readOnly": false,
             "isHidden": false,
             "size": 4,
@@ -712,6 +732,66 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label7",
+            "label": "CONSENSI E PRESCRIZIONI",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.4em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label8",
+            "label": "ALLEGARE L'ELENCO DELLE PRESCRIZIONI LEGISLATIVE APPLICABILI AL PROCESSO E ALL'ATTIVITÀ",
+            "style": {
+                "font_color": "black",
+                "font_size": "1.1em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkbox",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Consenso necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Tenuto conto e condiviso l'informativa per la privacy acconsentiamo al trattamento dei dati",
+            "key": "consenso",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 4,
+            "isPrimary": false,
+            "newLine": true
         }
     ],
 
@@ -735,6 +815,36 @@
             "isHidden": false,
             "isPrimary": true,
             "translate": "RESOURCES.id_contratto"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Cliente",
+            "key": "id_anagrafica",
+            "width": "15%",
+            "isHidden": false,
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "7%",
+            "key": "id_tipo_servizio",
+            "label": "Servizio Richiesto"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "7%",
+            "key": "id_norma",
+            "label": "Certificazione"
         }
     ],
     "hideActions": [
