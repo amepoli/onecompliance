@@ -13,7 +13,8 @@
         "is_hidden_profilo_aml": "false",
         "is_hidden_dettagli": "false",
         "is_hidden_utente_tr": "true",
-        "is_hidden_menu": "false"
+        "is_hidden_menu": "false",
+        "is_hidden_questionario": "true"
     },
     "predefinedQueries": [
         {
@@ -408,6 +409,12 @@
                         "icon": "email",
                         "label": "Invita utente",
                         "outputEventName": "invite_user"
+                    },
+                    {
+                        "icon": "quiz",
+                        "label": "Crea Questionario",
+                        "outputEventName": "crea_questionario",
+                        "isHidden": "$Q{is_hidden_questionario}"
                     }
                 ]
             },
@@ -461,6 +468,14 @@
                     "outputEventWhenComplete": "update_current_version",
                     "values": [],
                     "queryFunct": "delete from entrasp.anagrafiche_vr where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$ and prog_vr=$prog_vr$;"
+                },
+                {
+                    "eventName": "crea_questionario",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Questionario Creato",
+                    "values": [],
+                    "queryFunct": "select entrasp.crea_questionario('€global_codice_azienda€',$id_anagrafica$)"
                 },
                 {
                     "eventName": "nuova_versione_anagrafica_aui",
