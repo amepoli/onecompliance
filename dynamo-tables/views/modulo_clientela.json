@@ -3,8 +3,12 @@
     "entryKey": "modulo_clientela",
     "label": "Modulo Clientela",
     "origin": "entrasp.anagrafiche_vr",
-    
-    
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "SELECT id_anagrafica,ragione_sociale  from entrasp.anagrafiche_vr where codice_part=$codice_part$"
+        }],
     "outputEvents": [
         {
             "eventName": "onSaveAnagrafichevr",
@@ -50,7 +54,7 @@
             "readOnly": false,
             "newLine": false
         },
-       
+
         {
             "autoGenerate": false,
             "format": {
@@ -181,10 +185,20 @@
             "newLine": false
         }
     ],
-   
-   
-   
-        "inputEvents": [
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "ragione_sociale",
+            "label": "Ragione Sociale",
+            "width": "5%"
+        }
+    ],
+
+    "inputEvents": [
         {
             "actionType": "reload",
             "eventName": "formReload"
