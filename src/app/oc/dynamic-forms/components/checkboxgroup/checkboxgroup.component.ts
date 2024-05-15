@@ -70,6 +70,8 @@ export class CheckboxGroupComponent implements OnInit {
       _this.field.value.push(_this.field.options[id].id);
     }
 
+    _this.group.get(_this.field.name).setValue(_this.field.value);
+    
     if (_this.field.eventName !== null) {
       // wait a while before triggering the event
       setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'checkboxgroup' }); }, 50);
