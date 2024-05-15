@@ -5,6 +5,11 @@
     "origin": "entrasp.questionari_certificazione",
     "predefinedQueries": [
         {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select *, entrasp.argomenti_descr_breve_no_id(id_tipo_servizio) as id_tipo_servizio, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as id_anagrafica from entrasp.questionari_certificazione where codice_azienda=$codice_azienda$ and (id_anagrafica=€global_userid€ or (id_centro_gest in (select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€') or id_anagrafica=€global_userid€))"
+        },
+        {
             "type": "postProcessing",
             "operation": "insert",
             "queryString": "select $id_tipo_servizio$"
@@ -531,7 +536,7 @@
             "autoGenerate": false,
             "format": {
                 "viewType": "input",
-                "dataType": "text"
+                "dataType": "date"
             },
             "label": "Data limite per l'ottenimento del certificato",
             "key": "data_ottenimento",
@@ -792,6 +797,74 @@
             "size": 4,
             "isPrimary": false,
             "newLine": true
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 3.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_7",
+            "key": "invisible_7",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "preventivo",
+            "buttonIcon": "arrow_circle_up",
+            "label": "Richiedi Preventivo",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "richiedi_preventivo",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 3,
+            "style": {
+                "background_color": "forestGreen"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "richiedi_preventivo",
+                    "actionType": "show_message",
+                    "message": {
+                        "messageTitle": "Preventivo",
+                        "messageText": "Sei sicuro di voler richiedere un preventivo?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        }
+                    },
+                    "condition": "none",
+                    "values": []
+                }
+            ]
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 3.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_8",
+            "key": "invisible_8",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false
         }
     ],
 
@@ -847,7 +920,6 @@
             "isPrimary": false,
             "width": "7%",
             "key": "id_norma",
-            "queryFunct": "entrasp.argomenti_descr_breve_no_id(id_norma)",
             "label": "Certificazione"
         },
         {
@@ -862,6 +934,23 @@
             "isCheckbox": true,
             "width": "4%",
             "label": "Completo"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "sedi_operative_sub_of_anagrafiche",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_questionario",
+                    "son": "id_questionario"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Sedi"
         }
     ],
     "hideActions": [
