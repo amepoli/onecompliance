@@ -415,6 +415,11 @@
                         "label": "Crea Questionario",
                         "outputEventName": "crea_questionario",
                         "isHidden": "$Q{is_hidden_questionario}"
+                    },
+                    {
+                        "icon": "forward",
+                        "label": "Aggiorna invito utente",
+                        "outputEventName": "invite_user_again"
                     }
                 ]
             },
@@ -509,6 +514,18 @@
                     "condition": "none",
                     "values": [],
                     "customDialogGenericSave": false
+                },
+                {
+                    "eventName": "invite_user_again",
+                    "actionType": "user_api",
+                    "condition": "none",
+                    "values": [],
+                    "userAPIParams": {
+                        "actionType": "invite_user_again",
+                        "userParams": {
+                            "email": "user"
+                        }
+                    }
                 }
             ],
             "translate": "RESOURCES.anagrafiche_vr_actions"
@@ -719,6 +736,20 @@
                         "readOnly": false,
                         "size": 1.84
                     },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "user",
+                        "label": "user",
+                        "newLine": false,
+                        "queryFunct": "SELECT coalesce(dynamo_user, email_sender) as user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false
+                    },   
                     {
                         "autoGenerate": false,
                         "format": {
