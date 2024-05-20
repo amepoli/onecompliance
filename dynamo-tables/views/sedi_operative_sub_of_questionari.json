@@ -81,15 +81,17 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "input",
-                "dataType": "text"
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_nazione AS id, concat(codice_nazione, ' - ' ,descrizione) AS name FROM entrasp.nazioni where cod_banca_italia is not null order by descrizione asc"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "stato",
-            "label": "Stato",
-            "readOnly": false,
-            "newLine": false
+            "key": "codice_nazione",
+            "label": "Nazione",
+            "newLine": false,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -303,9 +305,10 @@
                 "dataType": "text"
             },
             "isHidden": false,
-            "isPrimary": true,
-            "key": "stato",
-            "label": "Stato",
+            "isPrimary": false,
+            "key": "codice_nazione",
+            "queryFunct": "entrasp.nazione_descr(codice_nazione)",
+            "label": "Nazione",
             "width": "15%"
         },
         {

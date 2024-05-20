@@ -19,11 +19,6 @@
             "operation": "selectTable",
             "type": "main",
             "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where cnt.codice_azienda=$codice_azienda$ and cnt.codice_ruolo='CLI' and cnt.id_argomento_contratto!=49580"
-        },
-        {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
         }
     ],
     "outputEvents": [
@@ -301,7 +296,7 @@
                 "viewType": "combobox",
                 "validations": [
                     {
-                        "message": "Inserire il giorno di stipula del contratto",
+                        "message": "Inserire la ragione sociale del cliente",
                         "name": "required",
                         "validator": "Validators.required"
                     }
@@ -313,8 +308,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 5,
-            "translate": "RESOURCES.id_cliente"
+            "size": 5
         },
         {
             "autoGenerate": false,
