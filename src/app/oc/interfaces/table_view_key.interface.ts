@@ -36,10 +36,14 @@ export interface TableViewKey { // as per API specification
             source: string,
             destination: string
         }[],
-        keyToCheck?: string,
         navigationConditions?: {
             ifValue: string,
-            newTarget: string
+            newTarget: string,
+            keyToCheck?: string,
+            keymap?:{
+                source: string,
+                destination: string
+            }[]            
         }[]
     },
     format: {

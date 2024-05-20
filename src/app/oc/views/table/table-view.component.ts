@@ -1138,49 +1138,66 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     performButtonAction(selectedViewKey: TableViewKey, row: MatRow) {
+        const _this = this;
+
         let keys = {};
         if (selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0) {
             selectedViewKey.buttonAction.keymap.forEach(map => {
                 keys[map.destination] = row[map.source];
             })
         }
+        else {
+            keys = row;
+        }
 
         if (selectedViewKey.buttonAction.action == 'navigate') {
 
             let target = selectedViewKey.buttonAction.target;
 
-            if (selectedViewKey.buttonAction.keyToCheck && selectedViewKey.buttonAction.navigationConditions.length > 0) {
-                //console.log('yess');
-                let currentValue = row[selectedViewKey.buttonAction.keyToCheck];
-                //console.log(currentValue);
-                if (currentValue !== undefined) {
-                    selectedViewKey.buttonAction.navigationConditions.forEach(map => {
-                        //console.log(map.ifValue);
-                        if (map.ifValue == currentValue) {
-                            target = map.newTarget;
-                            //console.log(target);
+            if (selectedViewKey.buttonAction.navigationConditions.length > 0) {
+                selectedViewKey.buttonAction.navigationConditions.forEach(condition => {
+                    //console.log('yess');
+                    let currentValue = row[condition.keyToCheck];
+                    //console.log(currentValue);
+                    if (condition.ifValue === undefined || condition.ifValue === null || (condition.ifValue == currentValue)) {
+                        if (condition.keymap && condition.keymap.length > 0) {
+                            keys = {};
+                            condition.keymap.forEach(map => {
+                                keys[map.destination] = row[map.source];
+                            })
                         }
-                    })
-                }
-            }
+                        
+                        if(condition.newTarget) {
+                            //console.log(map.ifValue);
+                            target = condition.newTarget;
 
-            let mergedParams = { entry: { name: target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };
-            this.navigate(mergedParams);
+                        }
+
+                        let mergedParams = { entry: { name: target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };
+                        _this.navigate(mergedParams);
+                        //console.log(target);
+                    }
+                })
+            }
+            else {
+                let mergedParams = { entry: { name: target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };
+                _this.navigate(mergedParams);
+            }
         }
         else if (selectedViewKey.buttonAction.action == 'delete') {
-            this.deleteRow(selectedViewKey, keys);
+            _this.deleteRow(selectedViewKey, keys);
         }
         else if (selectedViewKey.buttonAction.action == 'query') {
-            this.runCustomQuery(selectedViewKey, keys);
+            _this.runCustomQuery(selectedViewKey, keys);
         }
         else if (selectedViewKey.buttonAction.action == 'downloadAttachment') {
-            this.downloadAttachment(selectedViewKey, row);
+            _this.downloadAttachment(selectedViewKey, row);
         }
         else if (selectedViewKey.buttonAction.action == 'downloadReport') {
-            this.downloadReport(selectedViewKey, keys, row);
+            _this.downloadReport(selectedViewKey, keys, row);
         }
         else if (selectedViewKey.buttonAction.action == 'fatture') {
-            this.createFattura(selectedViewKey, keys, row);
+            _this.createFattura(selectedViewKey, keys, row);
         }
         
     }
