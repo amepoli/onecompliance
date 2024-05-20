@@ -682,7 +682,33 @@
                     "buttonAction": {
                         "type": "object",
                         "description": "?: Action to perform if button",
-                        "required": ["action", "target", "viewType", "keymap"],
+                        "required": ["action", "target", "viewType"],
+                        "anyOf": [
+                            {
+                                "properties": {
+                                    "action": {
+                                        "enum": [
+                                            "delete",
+                                            "query",
+                                            "downloadAttachment",
+                                            "downloadReport",
+                                            "fatture"
+                                        ]
+                                    }
+                                },
+                                "required": ["keymap"]
+                            },
+                            {
+                                "properties": {
+                                    "action": {
+                                        "enum": [
+                                            "navigate"
+                                        ]
+                                    }
+                                },
+                                "required": ["navigationConditions"]
+                            }
+                        ],
                         "additionalProperties": false,
                         "properties": {
                             "action": {
@@ -783,24 +809,44 @@
                                     }
                                 }
                             },
-                            "keyToCheck": {
-                                "type": "string",
-                                "description": "M: Field of table_keys to check",
-                                "required": ["navigationConditions"]
-                            },
                             "navigationConditions": {
                                 "type": "array",
                                 "description": "M: Conditions to check",
                                 "items": {
                                     "type": "object",
-                                    "required": ["ifValue", "newTarget"],
-                                    "ifValue": {
-                                        "type": "string",
-                                        "description": "M: Value to check, if equals to keyToCheck then navigate"
-                                    },
-                                    "newTarget": {
-                                        "type": "string",
-                                        "description": "M: Target to navigate if the ifValue is equals to keyToCheck"
+                                    "required": ["ifValue", "newTarget", "keyToCheck", "keymap" ],
+                                    "properties": {
+                                        "ifValue": {
+                                            "type": "string",
+                                            "description": "M: Value to check, if equals to keyToCheck then navigate"
+                                        },
+                                        "newTarget": {
+                                            "type": "string",
+                                            "description": "M: Target to navigate if the ifValue is equals to keyToCheck"
+                                        },
+                                        "keyToCheck": {
+                                            "type": "string",
+                                            "description": "M: Field of table_keys to check"
+                                        },
+                                        "keymap": {
+                                            "type": "array",
+                                            "description": "M: Keymap for mapping keys",
+                                            "items": {
+                                                "type": "object",
+                                                "required": ["source", "destination"],
+                                                "additionalProperties": false,
+                                                "properties": {
+                                                    "source": {
+                                                        "type": "string",
+                                                        "description": "M: Source key"
+                                                    },
+                                                    "destination": {
+                                                        "type": "string",
+                                                        "description": "M: Destination key"
+                                                    }
+                                                }
+                                            }
+                                        }  
                                     }
                                 }
                             }
