@@ -1153,6 +1153,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (selectedViewKey.buttonAction.action == 'navigate') {
 
             let target = selectedViewKey.buttonAction.target;
+            let viewType = selectedViewKey.buttonAction.viewType;
 
             if (selectedViewKey.buttonAction.navigationConditions.length > 0) {
                 selectedViewKey.buttonAction.navigationConditions.forEach(condition => {
@@ -1168,19 +1169,20 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         }
                         
                         if(condition.newTarget) {
-                            //console.log(map.ifValue);
                             target = condition.newTarget;
-
                         }
 
-                        let mergedParams = { entry: { name: target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };
+                        if(condition.newViewType) {
+                            viewType = condition.newViewType;
+                        }
+
+                        let mergedParams = { entry: { name: target, type: viewType }, keys: [keys], index: 1, total: 1 };
                         _this.navigate(mergedParams);
-                        //console.log(target);
                     }
                 })
             }
             else {
-                let mergedParams = { entry: { name: target, type: selectedViewKey.buttonAction.viewType }, keys: [keys], index: 1, total: 1 };
+                let mergedParams = { entry: { name: target, type: viewType }, keys: [keys], index: 1, total: 1 };
                 _this.navigate(mergedParams);
             }
         }
