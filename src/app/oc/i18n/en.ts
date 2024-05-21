@@ -225,10 +225,8 @@ export const locale = {
             codpro: "Prov.Code",
             cognome: "surname",
             cognome_nome_esecutore: "Name",
-            cognome_nome_rag_sociale_ben:
-                "Surname Name / Company Name Beneficiary",
-            cognome_nome_rag_sociale_soggetto:
-                "Name and Surname / Company Name",
+            cognome_nome_rag_sociale_ben: "Surname Name / Company Name Beneficiary",
+            cognome_nome_rag_sociale_soggetto: "Name and Surname / Company Name",
             cointestazioni: "Disputes",
             Collaboratore: "Collaborator",
             colore: "Color",
@@ -263,14 +261,12 @@ export const locale = {
             controvalore: "Countervalue",
             convocazione: "Text of the Convocation",
             copia_da_somministrazione_show_k: "Verify Copy",
-            copia_da_somministrazione_sub_form:
-                "copy_from_administration_sub_form",
+            copia_da_somministrazione_sub_form: "copy_from_administration_sub_form",
             copia_valutazione: "Copy Ratings",
             copy: "Copy",
             copy_from_other_check: "Copy From Other Check",
             copy_from_valutazione_garanzie: "Duplicate Evaluation",
-            copy_the_answer_of_the_check_in_all_the_survey:
-                "Copy the answer of the check in all the survey",
+            copy_the_answer_of_the_check_in_all_the_survey: "Copy the answer of the check in all the survey",
             costo: "Running Cost",
             costo_set_up: "Module Cost",
             count_criticita: "Number Adv./Critic.",
@@ -611,8 +607,7 @@ export const locale = {
             flag_non_applicabile: "Not Applicable",
             flag_non_applicabile_domanda: "Question.not.appl.",
             flag_non_applicabile_risposta: "Answer not appl.",
-            flag_non_applicabile_risposta_null:
-                "Ignore Score If Answer Missing",
+            flag_non_applicabile_risposta_null: "Ignore Score If Answer Missing",
             flag_non_applicabile_sezione: "Sec.non.appl.",
             flag_pct_risultato_inverso: "Invert thresholds",
             flag_pool: "Purchase Pool",
@@ -657,8 +652,7 @@ export const locale = {
             giudizio_mp: "with post judgment (pure multiplier) > than",
             giudizio_mt: "with post judgment (trans multiplier (PI)) > than",
             giudizio_rett_mp: "with adjusted judgment (pure multiplier) > than",
-            giudizio_rett_mt:
-                "with adjusted judgment (trans multiplier (PI)) > than",
+            giudizio_rett_mt: "with adjusted judgment (trans multiplier (PI)) > than",
             giudizio_worst: "Ver.Worst Judgment",
             giustificazione_anomalia: "Anomaly justification",
             grado: "Grade",
@@ -1117,7 +1111,7 @@ export const locale = {
             oggetto: "object",
             ok: "ok",
             open: "Open",
-            origine_segnalazione:"Suspicious transactions Source",
+            origine_segnalazione:"Report Source",
             opposto: "Opp.",
             opposto_combobox: "Opposite to?",
             ordinamento: "Sorting",
