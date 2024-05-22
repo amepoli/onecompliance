@@ -8,16 +8,6 @@
             "type": "main",
             "operation": "selectTable",
             "queryString": "select *, entrasp.argomenti_descr_breve_no_id(id_tipo_servizio) as id_tipo_servizio, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as id_anagrafica from entrasp.questionari_certificazione where codice_azienda=$codice_azienda$ and (id_anagrafica=€global_userid€ or (id_centro_gest in (select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€') or id_anagrafica=€global_userid€))"
-        },
-        {
-            "type": "postProcessing",
-            "operation": "insert",
-            "queryString": "update entrasp.questionari_certificazione set id_norma = entrasp.gestisci_array($id_norma$) where codice_azienda=$codice_azienda$ and id_questionario=$id_questioanrio$"
-        },
-        {
-            "type": "postProcessing",
-            "operation": "update",
-            "queryString": "update entrasp.questionari_certificazione set id_norma = entrasp.gestisci_array($id_norma$) where codice_azienda=$codice_azienda$ and id_questionario=$id_questioanrio$"
         }
     ],
     "form_keys": [
@@ -198,8 +188,6 @@
             "key": "id_norma",
             "readOnly": false,
             "isHidden": false,
-            "sameOrigin": false,
-
             "size": 3.3,
             "isPrimary": false,
             "newLine": false
@@ -892,6 +880,16 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
             "translate": "RESOURCES.company_code"
         },
         {
