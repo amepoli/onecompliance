@@ -706,17 +706,30 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     loadAddElementSettings(addElementSettings: AddElementSettings) {
         this.addElementSettings = addElementSettings;
-        this.addElementSettings.labelQuickAdd = this.addElementSettings.labelQuickAdd ?? "Quick Add";
-        this.addElementSettings.labelAdd = this.addElementSettings.labelAdd ?? "Add Element";
-
-        this.addElementLabel = {
-            label: this.addElementSettings.labelAdd,
-            translate: this.addElementSettings.translateAdd
+        if(this.addElementSettings) {
+            this.addElementSettings.labelQuickAdd = this.addElementSettings.labelQuickAdd ?? "Quick Add";
+            this.addElementSettings.labelAdd = this.addElementSettings.labelAdd ?? "Add Element";
+    
+            this.addElementLabel = {
+                label: this.addElementSettings.labelAdd,
+                translate: this.addElementSettings.translateAdd
+            }
+            
+            this.quickAddLabel = {
+                label: this.addElementSettings.labelQuickAdd,
+                translate: this.addElementSettings.translateQuickAdd
+            }
         }
-        
-        this.quickAddLabel = {
-            label: this.addElementSettings.labelQuickAdd,
-            translate: this.addElementSettings.translateQuickAdd
+        else {
+            this.addElementLabel = {
+                label: "Add Element",
+                translate: null
+            }
+            
+            this.quickAddLabel = {
+                label: "Quick Add",
+                translate: null
+            }
         }
     }
 
