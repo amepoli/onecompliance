@@ -2,7 +2,7 @@ import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleCha
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatRow } from '@angular/material/table';
-import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, Restrictions, SearchToggle, SearchViewKey, SelectionAction, TableViewKey, TableViewParams } from 'app/oc/interfaces';
+import { AddElementSettings, ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, Restrictions, SearchToggle, SearchViewKey, SelectionAction, TableViewKey, TableViewParams } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -162,6 +162,22 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     folders: string[] = [];
     filesSource: object[] = [];
     files: string[] = [];
+
+    addElementSettings: AddElementSettings = {
+        navigateOnSuccess: false,
+        labelAdd: "Add Element",
+        labelQuickAdd: "Quick Add"
+    }
+    
+    addElementLabel: any = {
+        label: "Add Element",
+        translate: null
+    }
+    
+    quickAddLabel: any = {
+        label: "Quick Add",
+        translate: null
+    }
 
     constructor(
         private backendService: BackendService,
@@ -376,6 +392,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
                     _this.loadFormat(params.table_keys);
+                    
+                    // Load add Element Settings 
+                    _this.loadAddElementSettings(params.addElementSettings);
+
                     // signal toolbar about a dashboard 
                     _this._navigationService.onDashboardTableLoad.emit({ origin: _this.tableData.entryName, dashboardTables: params.dashboardTables });
 
@@ -684,6 +704,22 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         }
     }
 
+    loadAddElementSettings(addElementSettings: AddElementSettings) {
+        this.addElementSettings = addElementSettings;
+        this.addElementSettings.labelQuickAdd = this.addElementSettings.labelQuickAdd ?? "Quick Add";
+        this.addElementSettings.labelAdd = this.addElementSettings.labelAdd ?? "Add Element";
+
+        this.addElementLabel = {
+            label: this.addElementSettings.labelAdd,
+            translate: this.addElementSettings.translateAdd
+        }
+        
+        this.quickAddLabel = {
+            label: this.addElementSettings.labelQuickAdd,
+            translate: this.addElementSettings.translateQuickAdd
+        }
+    }
+
     getLevel(row, key) {
         if (this.isLevel == key || (this.hasLevel && this.hasLevel.includes(key))) {
             let text = row[this.isLevel] ? row[this.isLevel].split(this.levelIndentationMarker) : null;
@@ -985,13 +1021,19 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             const dialogRef = _this.matDialog.open(QuickAddDialogComponent, {
                 width: '1280px',
                 height: 'auto',
-                data: { quickAddFormParams: _this.quickAddFormParams, onEvent: this.onEvent }
+                data: { title: _this.addElementLabel, quickAddFormParams: _this.quickAddFormParams, onEvent: this.onEvent }
             });
 
             _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
                 if(result) {
-                    // reload
-                    _this.loadData();
+                    if(_this.addElementSettings && _this.addElementSettings.navigateOnSuccess) {
+                        let mergedParams = { entry: { name: _this.targetEntryName, type: 'form' }, keys: [result.keys], index: 1, total: 1 };
+                        _this.navigate(mergedParams);
+                    }
+                    else {
+                        // reload
+                        _this.loadData();
+                    }
                 }
             }));
         }

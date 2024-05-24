@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { FormViewModule } from 'app/oc/views/form/form-view.module';
 import { QuickAddDialogComponent } from './quickadd.dialog.component';
+import { OneCompliancePipesModule } from 'app/oc/pipes/pipes.module';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import { QuickAddDialogComponent } from './quickadd.dialog.component';
         FuseSearchBarModule,
         FuseShortcutsModule,
         FormViewModule,
+        OneCompliancePipesModule
     ],
     exports: [
         QuickAddDialogComponent
