@@ -1228,7 +1228,7 @@ export const locale = {
             reference: "Comp.",
             reference_date: "Data Competenza",
             reference_survey: "Sondaggi Connessi",
-            registra_operazione: " Registra rapporto in AUI",
+            registra_operazione: "Registrazione standardizzata",
             registry_under_users: "Anagrafiche Associate",
             regolamenti_sub_of_presidi: "Regolamenti Associati",
             relative_survey: "Sondaggio Parent",
