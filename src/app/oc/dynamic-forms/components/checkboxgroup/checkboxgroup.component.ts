@@ -44,10 +44,23 @@ export class CheckboxGroupComponent implements OnInit {
     if (_this.field.value == null || _this.field.value.length == null) {
       _this.field.value = [];
     }
-    _this.field.options.forEach(option => {
-      const selected = (_this.field.value.indexOf(option.id)) > -1 ? true : false;
-      _this.selection.push(selected);
-    });
+    else {
+      const targetType = typeof _this.field.value[0];
+      _this.field.options.forEach(option => {
+        let id: any = option.id;
+        if(typeof id !== targetType) {
+          if(targetType === 'number') {
+            id = parseInt(id);
+          }
+          else if(targetType === 'string') {
+            id = '' + id;
+          }
+        }
+
+        const selected = (_this.field.value.indexOf(id)) > -1 ? true : false;
+        _this.selection.push(selected);
+      });  
+    }
 
     // _this.field.options.map(x => {
     //   return { id: x.id, checked: false }
