@@ -3,23 +3,14 @@
     "entryKey": "settori_sub_of_questionari",
     "origin": "entrasp.settori_questionari",
     "businessObjectName": "settori_questionari",
-
-    "form_keys": [
+    "predefinedQueries": [
         {
-            "autoGenerate": true,
-            "format": {
-                "viewType": "combobox",
-                "dataType": "text",
-                "options": [],
-                "comboQuery": "SELECT id_complessita_settore as id, entrasp.argomenti_descr_breve_no_num(id_argomento_tipo_norma)||' - '||entrasp.argomenti_descr_breve_no_num(id_argomento_settore) as name FROM entrasp.complessita_settori where id_complessita_settore=$id_complessita_settore$"
-            },
-            "label": "Norma - Settore",
-            "key": "id_complessita_settore",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false
-        },
+            "operation": "selectTable",
+            "queryString": "select sq.id_argomento_settore, entrasp.argomenti_descr_breve(sq.id_argomento_settore) as settore, sq.id_questionario, sq.codice_azienda, qs.id_norma, cs.id_argomento_complessita, entrasp.argomenti_descr_breve(cs.id_argomento_complessita) as complessita from entrasp.settori_questionari sq inner join (select * from entrasp.questionari_certificazione qc, unnest(qc.id_norma) as idnorma) qs on sq.codice_azienda=qs.codice_azienda and sq.id_questionario=qs.id_questionario inner join entrasp.complessita_settori cs on qs.idnorma=cs.id_argomento_tipo_norma and sq.id_argomento_settore=cs.id_argomento_settore where sq.id_questionario=$id_questionario$ and sq.codice_azienda=$codice_azienda$",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
         {
             "autoGenerate": true,
             "format": {
@@ -50,30 +41,19 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "input",
-                "dataType": "number"
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, codice||' - '||descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52261"
             },
-            "label": "complessità",
-            "key": "id_argomento_complessita",
-            "queryFunct": "select entrasp.argomenti_descr_breve_no_num(id_argomento_complessita) from entrasp.complessita_settori where id_complessita_settore=$id_complessita_settore$",
-            "readOnly": true,
+            "label": "Settore",
+            "key": "id_argomento_settore",
+            "readOnly": false,
             "isHidden": false,
-            "sameOrigin": false,
-            "isPrimary": false,
-            "newLine": false
+            "isPrimary": true,
+            "newLine": true
         }
     ],
     "table_keys": [
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "id_complessita_settore",
-            "label": "ID",
-            "width": "5%"
-        },
         {
             "format": {
                 "dataType": "number"
@@ -93,6 +73,36 @@
             "key": "codice_azienda",
             "label": "ID",
             "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_settore",
+            "label": "ID",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "complessita",
+            "label": "Complessità",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "settore",
+            "label": "Settore",
+            "width": "15%"
         }
     ]
 }
