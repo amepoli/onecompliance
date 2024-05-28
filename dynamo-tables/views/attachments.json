@@ -14,7 +14,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT rev.cod_rev, rev.data_creazione::date, rev.codice_azienda,b.codice_part,coalesce( rev.id_argomento_stato_approvazione, 6150) as id_argomento_stato_approvazione, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato) AS descr_stato,entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato_approvazione) AS descr_stato_approv, ( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$"
+            "queryString": "SELECT rev.cod_rev, rev.data_creazione::date, rev.codice_azienda,b.codice_part,coalesce(rev.id_argomento_stato_approvazione, 3981) as id_argomento_stato_approvazione, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato) AS descr_stato,entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato_approvazione) AS descr_stato_approv, ( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$"
         },
         {
             "type": "preProcessing",
@@ -24,12 +24,7 @@
         {
             "type": "main",
             "operation": "selectForm",
-            "queryString": "SELECT rev.cod_rev, rev.codice_azienda,b.codice_part, rev.descrizione, rev.id_argomento_stato_approvazione,coalesce( rev.id_argomento_stato, 6150) as rev_id_argomento_stato, rev.data_rif_a, rev.id_risorsa, rev.prog_revisione, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_risorsa=$id_risorsa$ AND rev.prog_revisione=$prog_revisione$"
-        },
-        {
-            "type": "main",
-            "operation": "update",
-            "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name=$client_file_name$, data_rif=$data_rif$, data_rif_a=$data_rif_a$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$descrizione$, id_argomento_stato=$rev_id_argomento_stato$, commento_revisione=$commento_revisione$::varchar, cod_rev=$cod_rev$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
+            "queryString": "SELECT rev.cod_rev, rev.codice_azienda,b.codice_part, rev.descrizione, coalesce(rev.id_argomento_stato_approvazione, 3981) as id_argomento_stato_approvazione,coalesce(rev.id_argomento_stato, 6150) as rev_id_argomento_stato, rev.data_rif_a, rev.id_risorsa, rev.prog_revisione, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_risorsa=$id_risorsa$ AND rev.prog_revisione=$prog_revisione$"
         },
         {
             "type": "postProcessing",
@@ -101,6 +96,7 @@
             "isPrimary": false,
             "key": "anagrafica",
             "label": "Cliente/Fornitore/Dipendente",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)",
             "size": 1.75,
             "newLine": false,
             "readOnly": true,
@@ -148,6 +144,7 @@
             "isPrimary": false,
             "key": "id_argomento_tipo_allegato",
             "label": "Tipo Documento",
+            "sameOrigin": false,
             "outputEvent": {
                 "eventName": "aggiorna_id_tipo_allegato_attachments",
                 "eventTrigger": "select"
@@ -235,11 +232,20 @@
             "format": {
                 "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
                 "options": [],
-                "viewType": "combobox"
+                "viewType": "combobox",
+                "dataType": "text",
+                "value": 4035,
+                "validations": [
+                    {
+                        "message": "Stato caricamento necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "rev_id_argomento_stato",
+            "key": "id_argomento_stato",
             "size": 1.5,
             "label": "Stato Caricamento",
             "readOnly": false,
@@ -252,7 +258,15 @@
                 "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6680;",
                 "options": [],
                 "viewType": "combobox",
-                "dataType": "number"
+                "dataType": "text",
+                "value": 3981,
+                "validations": [
+                    {
+                        "message": "Stato approvazione necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
