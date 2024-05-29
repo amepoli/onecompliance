@@ -1155,7 +1155,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             let target = selectedViewKey.buttonAction.target;
             let viewType = selectedViewKey.buttonAction.viewType;
 
-            if (selectedViewKey.buttonAction.navigationConditions.length > 0) {
+            if (selectedViewKey.buttonAction.navigationConditions && selectedViewKey.buttonAction.navigationConditions.length > 0) {
                 selectedViewKey.buttonAction.navigationConditions.forEach(condition => {
                     //console.log('yess');
                     let currentValue = row[condition.keyToCheck];
