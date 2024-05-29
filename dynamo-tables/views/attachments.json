@@ -14,22 +14,12 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT rev.cod_rev, rev.data_creazione::date, rev.codice_azienda,b.codice_part,coalesce( rev.id_argomento_stato_approvazione, 6150) as id_argomento_stato_approvazione, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato) AS descr_stato,entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato_approvazione) AS descr_stato_approv, ( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$"
+            "queryString": "SELECT rev.cod_rev, rev.data_creazione::date, rev.codice_azienda,b.codice_part,coalesce(rev.id_argomento_stato_approvazione, 3981) as id_argomento_stato_approvazione, rev.id_risorsa, rev.prog_revisione, rev.data_rif_a, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato) AS descr_stato,entrasp.argomenti_descr_breve_no_num( rev.id_argomento_stato_approvazione) AS descr_stato_approv, ( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$"
         },
         {
             "type": "preProcessing",
             "operation": "selectForm",
             "queryString": "select entrasp.files_pre_loading($codice_azienda$, $id_risorsa$, $prog_revisione$)"
-        },
-        {
-            "type": "main",
-            "operation": "selectForm",
-            "queryString": "SELECT rev.cod_rev, rev.codice_azienda,b.codice_part, rev.descrizione, rev.id_argomento_stato_approvazione,coalesce( rev.id_argomento_stato, 6150) as rev_id_argomento_stato, rev.data_rif_a, rev.id_risorsa, rev.prog_revisione, rev.client_file_name,entrasp.anagrafiche_vr_dati_identificativi(b.codice_part,b.id_anagrafica) as anagrafica, rev.revisore, entrasp.argomenti_descr_breve_no_num(b.id_argomento_stato) AS descr_stato,( rev.file_id::text||'^')::text|| rev.client_file_name::text AS stringa, entrasp.argomenti_descr_breve_no_num(b.id_argomento_tipo_allegato) AS tipo_allegato, rev.data_rif,left(entrasp.odg_titolo( rev.codice_azienda, rev.id_odg, rev.id_riunione),100) as titolo_odg, b.id_anagrafica, rev.id_odg, rev.id_riunione, entrasp.centri_gestionali_descr(b.codice_part, b.id_centro_gest) AS centro_gest, rev.data_scadenza,b.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni rev INNER JOIN entrasp.cdms_risorse b on rev.codice_azienda=b.codice_azienda AND rev.id_risorsa=b.id_risorsa where rev.codice_azienda=$codice_azienda$ and rev.id_risorsa=$id_risorsa$ AND rev.prog_revisione=$prog_revisione$"
-        },
-        {
-            "type": "main",
-            "operation": "update",
-            "queryString": "update entrasp.cdms_risorse_revisioni set client_file_name=$client_file_name$, data_rif=$data_rif$, data_rif_a=$data_rif_a$, id_riunione=$id_riunione$, id_odg=$id_odg$, descrizione=$descrizione$, id_argomento_stato=$rev_id_argomento_stato$, commento_revisione=$commento_revisione$::varchar, cod_rev=$cod_rev$ where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ and prog_revisione=$prog_revisione$;"
         },
         {
             "type": "postProcessing",
@@ -101,6 +91,7 @@
             "isPrimary": false,
             "key": "anagrafica",
             "label": "Cliente/Fornitore/Dipendente",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom('€global_codice_part€',(select id_anagrafica from entrasp.cdms_risorse where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ limit 1))",
             "size": 1.75,
             "newLine": false,
             "readOnly": true,
@@ -133,7 +124,7 @@
             "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
             "newLine": false,
-            "queryFunct": "entrasp.centri_gestionali_descr((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), id_centro_gest)",
+            "queryFunct": "entrasp.centri_gestionali_descr('€global_codice_part€', (select id_centro_gest from entrasp.cdms_risorse where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$ limit 1))",
             "size": 1.5,
             "readOnly": true
         },
@@ -148,6 +139,7 @@
             "isPrimary": false,
             "key": "id_argomento_tipo_allegato",
             "label": "Tipo Documento",
+            "sameOrigin": false,
             "outputEvent": {
                 "eventName": "aggiorna_id_tipo_allegato_attachments",
                 "eventTrigger": "select"
@@ -212,8 +204,7 @@
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
-            "size": 0.4,
-            "translate": "RESOURCES.doc_actions"
+            "size": 0.4
         },
         {
             "autoGenerate": false,
@@ -235,11 +226,19 @@
             "format": {
                 "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
                 "options": [],
-                "viewType": "combobox"
+                "viewType": "combobox",
+                "value": 4035,
+                "validations": [
+                    {
+                        "message": "Stato caricamento necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "rev_id_argomento_stato",
+            "key": "id_argomento_stato",
             "size": 1.5,
             "label": "Stato Caricamento",
             "readOnly": false,
@@ -252,7 +251,14 @@
                 "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6680;",
                 "options": [],
                 "viewType": "combobox",
-                "dataType": "number"
+                "value": 3981,
+                "validations": [
+                    {
+                        "message": "Stato approvazione necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
@@ -323,6 +329,7 @@
             "key": "fake",
             "label": "void",
             "newLine": true,
+            "sameOrigin": false,
             "size": 0.4,
             "readOnly": true,
             "translate": "RESOURCES.fake"
@@ -382,6 +389,7 @@
             "key": "stringa",
             "label": "Download",
             "isDownloadButton": true,
+            "queryFunct": "true",
             "newLine": false,
             "size": 0.4,
             "readOnly": false,
@@ -424,9 +432,74 @@
                     "query": "select entrasp.separa_risorse_revisioni_array(array[$selected_rows_data$])",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Assegnare le risorse selzionate a separati flussi informativi?"
+                    "confirmActionMessage": "Assegnare le risorse selezionate a separati flussi informativi?"
                 }
             ]
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "cdms_risorse_oggetti",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_risorsa",
+                    "son": "id_risorsa"
+                },
+                {
+                    "parent": "prog_revisione",
+                    "son": "prog_revisione"
+                }
+            ],
+            "label": "Oggetti collegati",
+            "translate": "RESOURCES.activate_oggetti_collegati"
+        },
+        {
+            "entryKey": "$P{jsonFileDelFlussoInformativo}",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_risorsa",
+                    "son": "id_risorsa"
+                },
+                {
+                    "parent": "rev_id_argomento_stato",
+                    "son": "rev_id_argomento_stato_sup"
+                },
+                {
+                    "parent": "prog_revisione",
+                    "son": "prog_revisione_sup"
+                }
+            ],
+            "label": "$P{labelTabFileDelFlussoInfo}"
+        },
+        {
+            "entryKey": "attachments_linkable",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_argomento_tipo_allegato",
+                    "son": "id_argomento_tipo_allegato"
+                },
+                {
+                    "parent": "id_risorsa",
+                    "son": "id_risorsa_rep"
+                },
+                {
+                    "parent": "prog_revisione",
+                    "son": "prog_revisione_rep"
+                }
+            ],
+            "label": "File di altri flussi informativi"
         }
     ],
     "table_keys": [
@@ -508,7 +581,7 @@
             "key": "anagrafica",
             "width": "14%",
             "label": "Cliente/Fornitore/Dipendente",
-            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica)",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom(codice_part,id_anagrafica)",
             "translate": "RESOURCES.anagrafica"
         },
         {
@@ -963,71 +1036,6 @@
         {
             "viewType": "form",
             "formActionType": "multi-attachments"
-        }
-    ],
-    "subTables": [
-        {
-            "entryKey": "cdms_risorse_oggetti",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_risorsa",
-                    "son": "id_risorsa"
-                },
-                {
-                    "parent": "prog_revisione",
-                    "son": "prog_revisione"
-                }
-            ],
-            "label": "Oggetti collegati",
-            "translate": "RESOURCES.activate_oggetti_collegati"
-        },
-        {
-            "entryKey": "$P{jsonFileDelFlussoInformativo}",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_risorsa",
-                    "son": "id_risorsa"
-                },
-                {
-                    "parent": "rev_id_argomento_stato",
-                    "son": "rev_id_argomento_stato_sup"
-                },
-                {
-                    "parent": "prog_revisione",
-                    "son": "prog_revisione_sup"
-                }
-            ],
-            "label": "$P{labelTabFileDelFlussoInfo}"
-        },
-        {
-            "entryKey": "attachments_linkable",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_argomento_tipo_allegato",
-                    "son": "id_argomento_tipo_allegato"
-                },
-                {
-                    "parent": "id_risorsa",
-                    "son": "id_risorsa_rep"
-                },
-                {
-                    "parent": "prog_revisione",
-                    "son": "prog_revisione_rep"
-                }
-            ],
-            "label": "File di altri flussi informativi"
         }
     ],
     "querySuffixes": {

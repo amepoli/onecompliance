@@ -1,0 +1,128 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "settori_sub_of_questionari",
+    "origin": "entrasp.settori_questionari",
+    "businessObjectName": "settori_questionari",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select sq.id_argomento_settore, entrasp.argomenti_descr_breve(sq.id_argomento_settore) as settore, sq.id_questionario, sq.codice_azienda, qs.id_norma, cs.id_argomento_complessita, entrasp.argomenti_descr_breve(cs.id_argomento_complessita) as complessita, entrasp.argomenti_descr_breve(qs.idnorma) as norma from entrasp.settori_questionari sq inner join (select * from entrasp.questionari_certificazione qc, unnest(qc.id_norma) as idnorma) qs on sq.codice_azienda=qs.codice_azienda and sq.id_questionario=qs.id_questionario left join entrasp.complessita_settori cs on qs.idnorma=cs.id_argomento_tipo_norma and sq.id_argomento_settore=cs.id_argomento_settore where sq.id_questionario=$id_questionario$ and sq.codice_azienda=$codice_azienda$",
+            "type": "main"
+        }
+    ],
+    "addElementSettings": {
+        "labelQuickAdd": "Aggiungi settore",
+        "navigateOnSuccess": false
+    },
+    "form_keys": [
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "autoGenerate": false,
+            "label": "id_questionario",
+            "key": "id_questionario",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, codice||' - '||descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52261"
+            },
+            "label": "Settore",
+            "key": "id_argomento_settore",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": true
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_questionario",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_settore",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "settore",
+            "label": "Settore",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "norma",
+            "label": "Norma",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "complessita",
+            "label": "Complessità",
+            "width": "15%"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by qs.idnorma"
+    },
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}

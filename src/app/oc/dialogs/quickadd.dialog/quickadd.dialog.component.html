@@ -1,7 +1,7 @@
 
 <div mat-dialog-content>
     <div class="quickadd-header ">
-        <h2>Add Element</h2>
+        <h2>{{data.title | octranslate}}</h2>
         <div></div>
         <button mat-button (click)="closeDialog()">
             <mat-icon>cancel</mat-icon>
@@ -10,7 +10,15 @@
     <hr/>
     <div style="max-height: 700px; overflow: auto;">
         <form-view [isQuickAdd]="true" class="quick-add"
-            [tableData]="data.quickAddFormParams" (sendEvent)='onEvent($event)'>
+            [tableData]="data.quickAddFormParams" [showSaveButton]="false" (sendEvent)='onEvent($event)' #formView>
         </form-view>
+    </div>
+    <div style="text-align: center;">
+        <button style="width: 30%; background-color: rgba(48, 161, 48, 0.63) !important;" mat-button (click)="formView.onSave()" form="formView.element_form">
+            <mat-icon *ngIf="formView.savingState === 'save'">save</mat-icon>
+            <mat-icon *ngIf="formView.savingState === 'saving'">cloud_upload</mat-icon>
+            <mat-icon *ngIf="formView.savingState === 'done'">cloud_done</mat-icon>
+            Save
+        </button>
     </div>
 </div>

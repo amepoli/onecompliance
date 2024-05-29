@@ -346,7 +346,47 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                                     _this.savingState = 'save';
                                     if (_this.isQuickAdd) {
                                         _this.isQuickAdd = false;
-                                        _this.sendEvent.emit({ eventType: 'savedForm' }); // notify parent
+                                        
+                                        let keymap = {}
+                                        
+                                        const valueKeys = Object.keys(values);
+
+                                        let resultKeys = [];
+                                        let resultValues = {};
+
+                                        if(result.data) {
+                                            if(result.data && result.data[0] && result.data[0][0]) {
+                                                resultValues = result.data[0][0];
+                                                resultKeys = Object.keys(resultValues);
+                                            }
+                                            else if(result.data && result.data[0]) {
+                                                resultValues = result.data[0];
+                                                resultKeys = Object.keys(resultValues);
+                                            }
+                                        }
+
+                                        _this.formGetter.viewKeys.filter(x => x.isPrimary).forEach(primaryKey => {
+                                            const key = primaryKey.key;
+                                            if( valueKeys.includes(key)) {
+                                                if (primaryKey.format.dataType === 'number' && typeof values[key] === 'string') {
+                                                    keymap[key] = parseInt(values[key]);
+                                                }
+                                                else {
+                                                    keymap[key] = values[key];
+                                                }
+                                            }
+                                            if( resultKeys.includes(key)) {
+                                                if(primaryKey.format.dataType === 'number' && typeof resultValues[key] === 'string') {
+                                                    keymap[key] = parseInt(resultValues[key]);
+                                                }
+                                                else {
+                                                    keymap[key] = resultValues[key];
+                                                }
+                                            }
+
+                                        });
+
+                                        _this.sendEvent.emit({ eventType: 'savedForm', keys: keymap }); // notify parent
                                     }
                                     else if (_this.tableData && _this.tableData.isNew) {
                                         _this.navigationToViewHome(values, result.data);

@@ -211,7 +211,22 @@
             "readOnly": true,
             "queryFunct": "select costo from entrasp.articoli where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$",
             "isHidden": false,
-            "size": 1.5,
+            "size": 1.66,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Costo Giornata/Uomo Scontato",
+            "key": "costo_scontato",
+            "readOnly": true,
+            "queryFunct": "select round (costo*(1-sconto_importo/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "isHidden": false,
+            "size": 1.66,
             "isPrimary": false,
             "newLine": false
         },
@@ -225,9 +240,108 @@
             "key": "giornate_uomo",
             "readOnly": true,
             "isHidden": false,
-            "size": 1,
+            "size": 1.66,
             "isPrimary": false,
             "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Giornate/Uomo Scontate",
+            "key": "giornate_uomo_scontate",
+            "readOnly": true,
+            "isHidden": false,
+            "size": 1.67,
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "isPrimary": false,
+            "newLine": false,
+            "inputEvents": [
+                {
+                    "actionType": "update",
+                    "eventName": "sconto_change",
+                    "condition": "none",
+                    "values": [],
+                    "updateFunct": "(round(Number(£giornate_uomo£)*(1-Number(£sconto£)/100)*(1-Number(£sconto_motivazioni£)/100),2)).toFixed(2);"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Costo Totale",
+            "key": "costo_totale",
+            "queryFunct": "select round (giornate_uomo*costo,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": true,
+            "size": 1.66,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Costo Totale Scontato",
+            "key": "costo_totale_scontato",
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "actionType": "update",
+                    "eventName": "sconto_change",
+                    "condition": "none",
+                    "values": [],
+                    "updateFunct": "(round(round(Number(£giornate_uomo£)*(1-Number(£sconto£)/100)*(1-Number(£sconto_motivazioni£)/100*2)/2*Number(£costo£)*Number(£sconto_importo£)),2)).toFixed(2);"
+                }
+            ],
+            "style": {
+                "font_weight": "600",
+                "font_size": "1.2em"
+            },
+            "size": 1.67,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": "0",
+                "validations": [
+                    {
+                        "message": "Sconto massimo 30%",
+                        "name": "max",
+                        "validator": "Validators.max(30)",
+                        "value": 30
+                    },
+                    {
+                        "message": "Necessario specificare % di sconto",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Sconto MD5",
+            "key": "sconto_motivazioni",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 3.33,
+            "isPrimary": false,
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "sconto_change",
+                "eventTrigger": "change"
+            }
         },
         {
             "autoGenerate": false,
@@ -249,11 +363,11 @@
                     }
                 ]
             },
-            "label": "Sconto %",
+            "label": "Sconto Sistema Integrato",
             "key": "sconto",
             "readOnly": false,
             "isHidden": false,
-            "size": 1.5,
+            "size": 3.33,
             "isPrimary": false,
             "newLine": false,
             "outputEvent": {
@@ -264,31 +378,96 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
+                "viewType": "input",
+                "dataType": "number",
+                "value": "0",
+                "validations": [
+                    {
+                        "message": "Sconto massimo 50%",
+                        "name": "max",
+                        "validator": "Validators.max(50)",
+                        "value": 50
+                    },
+                    {
+                        "message": "Necessario specificare % di sconto",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "Sconto Importo Giornata/Uomo",
+            "key": "sconto_importo",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 3.33,
+            "isPrimary": false,
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "sconto_change",
+                "eventTrigger": "change"
+            }
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
                 "options": [],
-                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52324"
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52344"
             },
             "label": "Motivazione Sconto",
             "key": "id_argomento_motivazione",
             "readOnly": false,
             "isHidden": false,
-            "size": 4,
+            "size": 10,
             "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_ripartizione",
+            "label": "Ripartizione Importi",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 2,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_14",
+            "key": "invisible_14",
+            "sameOrigin": false,
+            "readOnly": true,
             "newLine": false
         },
-
         {
             "autoGenerate": false,
             "format": {
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Giornate/Uomo Scontate",
-            "key": "giornate_uomo_scontate",
+            "label": "Giornate/Uomo Sorveglianza calc",
+            "key": "giornate_uomo_sorveglianza_calc",
             "readOnly": true,
             "isHidden": false,
-            "size": 1,
-            "queryFunct": "select round(giornate_uomo*(1-sconto/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "size": 2,
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2/3,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
             "isPrimary": false,
             "newLine": false,
             "inputEvents": [
@@ -297,7 +476,7 @@
                     "eventName": "sconto_change",
                     "condition": "none",
                     "values": [],
-                    "updateFunct": "(round(Number(£giornate_uomo£)*(1-Number(£sconto£)/100),2)).toFixed(2);"
+                    "updateFunct": "(round(Number(£giornate_uomo£)*(1-Number(£sconto£)/100)*(1-Number(£sconto_motivazioni£)/100),2)).toFixed(2);"
                 }
             ]
         },
@@ -307,24 +486,125 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Costo Totale",
-            "key": "costo_totale",
-            "queryFunct": "select round((giornate_uomo*(1-sconto/100)*costo),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "label": "Giornate/Uomo Rinnovo Calc",
+            "key": "giornate_uomo_rinnovo_calc",
             "readOnly": true,
+            "isHidden": false,
+            "size": 2,
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2/3*2,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "isPrimary": false,
+            "newLine": false,
             "inputEvents": [
                 {
                     "actionType": "update",
                     "eventName": "sconto_change",
                     "condition": "none",
                     "values": [],
-                    "updateFunct": "(round(Number(£giornate_uomo£)*(1-Number(£sconto£)/100)*Number(£costo£)),2)).toFixed(2);"
+                    "updateFunct": "(round(Number(£giornate_uomo£)*(1-Number(£sconto£)/100)*(1-Number(£sconto_motivazioni£)/100),2)).toFixed(2);"
                 }
-            ],
-            "style": {
-                "font_weight": "600",
-                "font_size": "1.2em"
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
             },
-            "size": 2.5,
+            "label": "Giornate/Uomo Sorveglianza",
+            "key": "giornate_uomo_sorveglianza",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 2,
+            "isPrimary": false,
+            "newLine": false,
+            "insertUpdateFunct": "select COALESCE(£giornate_uomo_sorveglianza£, ROUND(ROUND(giornate_uomo * (1 - sconto / 100) * (1 - sconto_motivazioni / 100) * 2) / 2 / 3, 2)) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Giornate/Uomo Rinnovo",
+            "key": "giornate_uomo_rinnovo",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 2,
+            "isPrimary": false,
+            "insertUpdateFunct": "select COALESCE(£giornate_uomo_rinnovo£, ROUND(ROUND(giornate_uomo * (1 - sconto / 100) * (1 - sconto_motivazioni / 100) * 2) / 2 / 3 * 2, 2)) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Acconto",
+            "key": "acconto",
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100)*0.35,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": false,
+            "size": 2,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Saldo Certificazione",
+            "key": "certificazione",
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100)*0.65,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": false,
+            "size": 2,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "1° Audit di Sorveglianza",
+            "key": "sorveglianza_1",
+            "queryFunct": "select round(round(giornate_uomo_sorveglianza*2)/2*costo*(1-sconto_importo/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": false,
+            "size": 2,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "2° Audit di Sorveglianza",
+            "key": "sorveglianza_1",
+            "queryFunct": "select round(round(giornate_uomo_sorveglianza*2)/2*costo*(1-sconto_importo/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": false,
+            "size": 2,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Rinnovo",
+            "key": "rinnovo",
+            "queryFunct": "select round(round(giornate_uomo_rinnovo*2)/2*costo*(1-sconto_importo/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "readOnly": false,
+            "size": 2,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false
@@ -416,7 +696,8 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "costo",
+            "key": "costo_unitario",
+            "queryFunct": "round (costo*(1-sconto_importo/100),2)",
             "width": "10%",
             "label": "Costo unitario"
         },
@@ -479,7 +760,7 @@
             },
             "label": "Giornate/Uomo Scontate",
             "key": "giornate_uomo_scontate",
-            "queryFunct": "round(giornate_uomo*(1-sconto/100),2)",
+            "queryFunct": "round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2,2)",
 
             "isHidden": false,
 
@@ -491,7 +772,7 @@
             },
             "label": "Costo Totale",
             "key": "costo_totale",
-            "queryFunct": "round((giornate_uomo*(1-sconto/100)*costo),2)",
+            "queryFunct": "round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100),2)",
 
             "isHidden": false,
             "isPrimary": false
