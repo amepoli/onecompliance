@@ -143,6 +143,22 @@
             "type": "table"
         },
         {
+            "entryKey": "sondaggi_sub_of_anagrafiche",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_anagrafica"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Sondaggi Associati",
+            "type": "table"
+        },
+        {
             "entryKey": "sondaggi_somministrati_sub_of_anagrafiche",
             "isHidden": false,
             "keys": [
@@ -281,7 +297,7 @@
             },
             "label": "Norma",
             "newLine": false,
-            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_competenza=$norma_s$)"
+            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_competenza=$norma_s$ and anc.dt_fine is null )"
         },
         {
             "fieldName": "settore_s",
@@ -293,7 +309,19 @@
             },
             "label": "Settore IAF",
             "newLine": false,
-            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_iaf=$settore_s$)"
+            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_iaf=$settore_s$ and anc.dt_fine is null)"
+        },
+        {
+            "fieldName": "qualifica_s",
+            "format": {
+                "comboQuery": "select id_argomento as id, codice||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52262 order by arg.codice",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Qualifica",
+            "newLine": true,
+            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_liv_competenza=$qualifica_s$ and anc.dt_fine is null)"
         },
         {
             "fieldName": "soggetti_collegati_s",
