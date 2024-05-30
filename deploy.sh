@@ -2,22 +2,24 @@
 
 if [ $# -eq 0 ]
   then
-    echo "Please provide the target application [gorico, xxx]"
+    echo "Please provide the target application [gorico, gorico_stage]"
     exit 0
 fi
 
-if [ ! -f ${1}_prod.json ]; then
-    echo "Target not found!"
-    exit 0
+#deploy only for gorico (prod)
+if [ $1 == "gorico" ]; then
+    if [ ! -f ${1}_prod.json ]; then
+        echo "Target not found!"
+        exit 0
+    fi
+    #re-deploy dynamo-tables
+    cd dynamo-tables
+    ./deploy_tables.sh $1_prod
+    cd ..
 fi
 
 #remove previous buils
 rm -rf dist/*
-
-#re-deploy dynamo-tables
-cd dynamo-tables
-./deploy_tables.sh $1_prod
-cd ..
 
 #compile application
 npm run build-prod
