@@ -152,15 +152,30 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
+                "viewType": "checkboxgroup",
                 "options": [],
-                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52261"
+                "comboQuery": "SELECT id_element AS id, entrasp.argomenti_codice_descr_breve(id_element) AS name FROM (SELECT unnest(id_argomento_settore) AS id_element FROM entrasp.articoli_contratti WHERE codice_azienda = $codice_azienda$ AND id_articolo = $id_articolo$ and id_contratto=$id_contratto$ ) AS subquery"
             },
             "label": "Settore",
             "key": "id_argomento_settore",
             "readOnly": false,
             "isHidden": false,
-            "size": 3.5,
+            "size": 3,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Complessità Calc.",
+            "key": "id_argomento_complessita_calc",
+            "readOnly": true,
+            "isHidden": false,
+            "queryFunct": "SELECT entrasp.argomenti_descr_breve_no_id(cs.id_argomento_complessita) AS complessita FROM (SELECT ac.id_contratto, unnest(ac.id_argomento_settore) AS id_argomento_settore, ac.id_argomento_tipo_norma FROM entrasp.articoli_contratti ac WHERE ac.id_articolo = $id_articolo$ AND ac.codice_azienda = $codice_azienda$ AND ac.id_contratto = $id_contratto$) AS expanded_ac LEFT JOIN entrasp.complessita_settori cs ON expanded_ac.id_argomento_tipo_norma = cs.id_argomento_tipo_norma AND expanded_ac.id_argomento_settore = cs.id_argomento_settore ORDER BY  complessita LIMIT 1",
+            "size": 0.6,
             "isPrimary": false,
             "newLine": false
         },
@@ -238,6 +253,7 @@
             },
             "label": "Giornate/Uomo",
             "key": "giornate_uomo",
+            "insertUpdateFunct": "entrasp.individua_giornate_uomo(coalesce((SELECT entrasp.argomenti_descr_breve_no_id(cs.id_argomento_complessita) AS complessita FROM (SELECT ac.id_contratto, unnest(ac.id_argomento_settore) AS id_argomento_settore, ac.id_argomento_tipo_norma FROM entrasp.articoli_contratti ac WHERE ac.id_articolo = $id_articolo$ AND ac.codice_azienda = $codice_azienda$ AND ac.id_contratto = $id_contratto$) AS expanded_ac LEFT JOIN entrasp.complessita_settori cs ON expanded_ac.id_argomento_tipo_norma = cs.id_argomento_tipo_norma AND expanded_ac.id_argomento_settore = cs.id_argomento_settore ORDER BY  complessita LIMIT 1)::numeric,id_argomento_complessita), id_argomento_tipo_norma, n_addetti)",
             "readOnly": true,
             "isHidden": false,
             "size": 1.66,

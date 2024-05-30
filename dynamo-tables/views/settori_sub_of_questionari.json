@@ -6,7 +6,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "select sq.id_argomento_settore, entrasp.argomenti_descr_breve(sq.id_argomento_settore) as settore, sq.id_questionario, sq.codice_azienda, qs.id_norma, cs.id_argomento_complessita, entrasp.argomenti_descr_breve(cs.id_argomento_complessita) as complessita, entrasp.argomenti_descr_breve(qs.idnorma) as norma from entrasp.settori_questionari sq inner join (select * from entrasp.questionari_certificazione qc, unnest(qc.id_norma) as idnorma) qs on sq.codice_azienda=qs.codice_azienda and sq.id_questionario=qs.id_questionario left join entrasp.complessita_settori cs on qs.idnorma=cs.id_argomento_tipo_norma and sq.id_argomento_settore=cs.id_argomento_settore where sq.id_questionario=$id_questionario$ and sq.codice_azienda=$codice_azienda$",
+            "queryString": "select true as delete_settori, sq.id_argomento_settore, entrasp.argomenti_codice_descr_breve(sq.id_argomento_settore) as settore, sq.id_questionario, sq.codice_azienda, qs.id_norma, cs.id_argomento_complessita, entrasp.argomenti_descr_breve_no_id(cs.id_argomento_complessita) as complessita, entrasp.argomenti_descr_breve_no_id(qs.idnorma) as norma from entrasp.settori_questionari sq inner join (select * from entrasp.questionari_certificazione qc, unnest(qc.id_norma) as idnorma) qs on sq.codice_azienda=qs.codice_azienda and sq.id_questionario=qs.id_questionario left join entrasp.complessita_settori cs on qs.idnorma=cs.id_argomento_tipo_norma and sq.id_argomento_settore=cs.id_argomento_settore where sq.id_questionario=$id_questionario$ and sq.codice_azienda=$codice_azienda$",
             "type": "main"
         }
     ],
@@ -58,6 +58,45 @@
         }
     ],
     "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_settori",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "settori_sub_of_questionari",
+                "viewType": "form",
+                "query": "delete from entrasp.settori_questionari where codice_azienda='£codice_azienda£' AND id_questionario='£id_questionario£' AND id_argomento_settore='£id_argomento_settore£'",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_questionario",
+                        "destination": "id_questionario"
+                    },
+                    {
+                        "source": "id_argomento_settore",
+                        "destination": "id_argomento_settore"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
         {
             "format": {
                 "dataType": "number"
@@ -117,7 +156,7 @@
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by qs.idnorma"
+        "tableViewSuffix": "order by qs.idnorma, complessita"
     },
     "hideActions": [
         {

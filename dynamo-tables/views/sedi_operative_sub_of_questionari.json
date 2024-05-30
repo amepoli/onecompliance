@@ -3,7 +3,10 @@
     "entryKey": "sedi_operative_sub_of_questionari",
     "origin": "entrasp.sedi_operative_questionari",
     "businessObjectName": "sedi_operative_questionari",
-
+    "addElementSettings": {
+        "labelAdd": "Aggiungi Sede",
+        "navigateOnSuccess": false
+    },
     "form_keys": [
         {
             "autoGenerate": true,
@@ -278,6 +281,45 @@
                 "dataType": "number"
             },
             "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_sedi",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "sedi_operative_sub_of_questionari",
+                "viewType": "form",
+                "query": "delete from entrasp.sedi_operative_questionari where codice_part='£codice_part£' AND id_sede_operativa='£id_sede_operativa£' AND id_anagrafica='£id_anagrafica£'",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_sede_operativa",
+                        "destination": "id_sede_operativa"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
             "isPrimary": true,
             "key": "id_sede_operativa",
             "label": "ID Sede Operativa",
@@ -384,6 +426,12 @@
             "isCheckbox": true,
             "key": "flag_sede_legale",
             "label": "Sede Legale"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
         }
     ]
 }
