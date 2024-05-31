@@ -1,0 +1,167 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "anagrafiche_sub_of_sondaggi",
+    "origin": "entrasp.anagrafiche_sondaggi",
+    "businessObjectName": "anagrafiche_sondaggi",
+
+    "addElementSettings": {
+        "labelQuickAdd": "Associa Assegnatario",
+        "navigateOnSuccess": false
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select an.id_anagrafica as id, an.id_anagrafica||' - '||an.cognome||' '||an.nome as name from entrasp.anagrafiche_id an inner join entrasp.anagrafiche_competenze anco on an.codice_part=anco.codice_part and an.id_anagrafica=anco.id_anagrafica inner join entrasp.articoli_contratti ac on anco.codice_part=(select codice_part from entrasp.aziende where codice_azienda=ac.codice_azienda) and anco.id_argomento_competenza=ac.id_argomento_tipo_norma and anco.id_argomento_iaf=any (ac.id_argomento_settore) inner join entrasp.contratti cnt on ac.codice_azienda=cnt.codice_azienda and ac.id_contratto=cnt.id_contratto inner join entrasp.sondaggi snd on cnt.codice_azienda=snd.codice_azienda and cnt.id_contratto=snd.id_contratto where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$;",
+                "options": [],
+                "dataType": "text",
+                "viewType": "combobox"
+            },
+            "label": "Assegnatario",
+            "key": "id_anagrafica",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_part",
+            "key": "codice_part",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false,
+            "translate": "RESOURCES.codice_part"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "ID Sondaggio",
+            "key": "id_sondaggio",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": true
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "select true",
+            "key": "delete_anagrafiche_sondaggi",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "close",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "sondaggi_sub_of_anagrafiche",
+                "viewType": "table",
+                "query": "delete from entrasp.anagrafiche_sondaggi where codice_part='£codice_part£' AND id_anagrafica='£id_anagrafica£' AND codice_azienda='£codice_azienda£' AND id_sondaggio='£id_sondaggio£'",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    },
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "ID",
+            "key": "id_anagrafica",
+            "isHidden": false,
+            "isPrimary": true
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Assegnatario",
+            "key": "assegnatario",
+            "queryFunct": "entrasp.anagrafiche_cognnome(codice_part, id_anagrafica)",
+            "isHidden": false,
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.partition_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "ID",
+            "key": "id_sondaggio",
+            "isHidden": true,
+            "isPrimary": true
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}
