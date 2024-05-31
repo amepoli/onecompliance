@@ -58,7 +58,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_sondaggio AS id, id_sondaggio|| '-' ||descrizione as name from entrasp.sondaggi where codice_azienda='€global_codice_azienda€';",
+                "comboQuery": "select snd.id_sondaggio as id, snd.id_sondaggio||' - '||snd.descrizione as name from entrasp.sondaggi snd inner join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto inner join entrasp.articoli_contratti ac on cnt.codice_azienda=ac.codice_azienda and cnt.id_contratto=ac.id_contratto inner join entrasp.anagrafiche_competenze anco on cnt.codice_part=anco.codice_part and ac.id_argomento_tipo_norma=anco.id_argomento_competenza and anco.id_argomento_iaf=any (ac.id_argomento_settore) where snd.codice_azienda='€global_codice_azienda€' and anco.id_anagrafica=$id_anagrafica$;",
                 "options": [],
                 "dataType": "text",
                 "viewType": "combobox"
