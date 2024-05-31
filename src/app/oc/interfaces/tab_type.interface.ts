@@ -6,4 +6,5 @@ export interface TabType {
     hidden: boolean;
     inputEvents: { eventName: string, actionType: string, condition: string, values: string[] }[];
     keys: {};
+    renderingOrder: number;
 }

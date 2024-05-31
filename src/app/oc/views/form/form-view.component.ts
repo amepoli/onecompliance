@@ -189,7 +189,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                 type: (tabKey.type != null && tabKey.type === 'tableForm') ? 'tableForm' : 'table',  // if not defined is a table 
                 keys: {},
                 inputEvents: tabKey.inputEvents,
-                hidden: (tabKey.isHidden != null) ? tabKey.isHidden : false
+                hidden: (tabKey.isHidden != null) ? tabKey.isHidden : false,
+                renderingOrder: tabKey.renderingOrder ?? 0
             };
             tabKey.keys.forEach(key => {
                 if (keys[key.parent]) {
