@@ -20,4 +20,5 @@ export interface TabViewKey { // as per API specification
         }
     ];
     isHidden?: boolean;
+    renderingOrder?: number;
 }

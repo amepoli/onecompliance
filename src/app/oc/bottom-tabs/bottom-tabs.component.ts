@@ -93,9 +93,10 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
 
     setFiltered(): void {
         const _this = this;
-        _this.filteredTabs = JSON.parse(JSON.stringify(_this.Tabs)); //.filter(tab => !tab.hidden);
-        if (_this.filteredTabs.length) { // check if any visible tab
-
+        const newTabs = JSON.parse(JSON.stringify(_this.Tabs)); //.filter(tab => !tab.hidden);
+        
+        if (newTabs.length) { // check if any visible tab
+            _this.filteredTabs = newTabs.sort((a, b) => a.renderingOrder - b.renderingOrder)
             // Check if active index is greator than maximum tabs
             if (_this.filteredTabs[_this.activeIndex].hidden) {
                 _this.getFirstVisibleTab();
