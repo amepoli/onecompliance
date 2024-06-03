@@ -253,7 +253,7 @@
             },
             "label": "Giornate/Uomo",
             "key": "giornate_uomo",
-            "insertUpdateFunct": "entrasp.individua_giornate_uomo(coalesce((SELECT entrasp.argomenti_descr_breve_no_id(cs.id_argomento_complessita) AS complessita FROM (SELECT ac.id_contratto, unnest(ac.id_argomento_settore) AS id_argomento_settore, ac.id_argomento_tipo_norma FROM entrasp.articoli_contratti ac WHERE ac.id_articolo = $id_articolo$ AND ac.codice_azienda = $codice_azienda$ AND ac.id_contratto = $id_contratto$) AS expanded_ac LEFT JOIN entrasp.complessita_settori cs ON expanded_ac.id_argomento_tipo_norma = cs.id_argomento_tipo_norma AND expanded_ac.id_argomento_settore = cs.id_argomento_settore ORDER BY  complessita LIMIT 1)::numeric,id_argomento_complessita), id_argomento_tipo_norma, n_addetti)",
+            "insertUpdateFunct": "entrasp.individua_giornate_uomo(coalesce(id_argomento_complessita,(SELECT cs.id_argomento_complessita  FROM (SELECT ac.id_contratto, unnest(ac.id_argomento_settore) AS id_argomento_settore, ac.id_argomento_tipo_norma FROM entrasp.articoli_contratti ac WHERE ac.id_articolo = $id_articolo$ AND ac.codice_azienda = $codice_azienda$ AND ac.id_contratto = $id_contratto$) AS expanded_ac LEFT JOIN entrasp.complessita_settori cs ON expanded_ac.id_argomento_tipo_norma = cs.id_argomento_tipo_norma AND expanded_ac.id_argomento_settore = cs.id_argomento_settore ORDER BY  cs.id_argomento_complessita LIMIT 1)::numeric), id_argomento_tipo_norma, n_addetti)",
             "readOnly": true,
             "isHidden": false,
             "size": 1.66,
