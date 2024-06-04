@@ -17,7 +17,9 @@ export class ForgotPasswordComponent implements OnInit
 
     verificationForm: UntypedFormGroup;
 
-    emailSent = false;
+    // Always keep it true because it's not mandatory to use email since AWS Congnito can
+    // also provide a code to use
+    emailSent = true;
 
     passwordReset = false;
 
@@ -81,7 +83,7 @@ export class ForgotPasswordComponent implements OnInit
     }
 
     onSubmitCode(): void {
-        this.emailSent = false;
+        this.emailSent = true;
         this.passwordReset = true;
         this.authService.forgotPasswordSubmit(this.forgotPasswordForm.value.username, 
             this.verificationForm.value.verificationCode, this.verificationForm.value.password);
