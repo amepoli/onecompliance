@@ -239,7 +239,7 @@
             "label": "Costo Giornata/Uomo Scontato",
             "key": "costo_scontato",
             "readOnly": true,
-            "queryFunct": "select round (costo*(1-sconto_importo/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "queryFunct": "select round (costo*(1-sconto_importo/100)*(1-sconto_libero/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
             "isHidden": false,
             "size": 1.66,
             "isPrimary": false,
@@ -307,7 +307,7 @@
             },
             "label": "Costo Totale Scontato",
             "key": "costo_totale_scontato",
-            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100)*(1-sconto_libero/100),2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
             "readOnly": true,
             "inputEvents": [
                 {
@@ -351,7 +351,7 @@
             "key": "sconto_motivazioni",
             "readOnly": false,
             "isHidden": false,
-            "size": 3.33,
+            "size": 2.5,
             "isPrimary": false,
             "newLine": false,
             "outputEvent": {
@@ -383,7 +383,7 @@
             "key": "sconto",
             "readOnly": false,
             "isHidden": false,
-            "size": 3.33,
+            "size": 2.5,
             "isPrimary": false,
             "newLine": false,
             "outputEvent": {
@@ -415,7 +415,26 @@
             "key": "sconto_importo",
             "readOnly": false,
             "isHidden": false,
-            "size": 3.33,
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "sconto_change",
+                "eventTrigger": "change"
+            }
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": "0"
+            },
+            "label": "Sconto libero",
+            "key": "sconto_libero",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 2.5,
             "isPrimary": false,
             "newLine": true,
             "outputEvent": {
@@ -432,6 +451,20 @@
             },
             "label": "Motivazione Sconto",
             "key": "id_argomento_motivazione",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 10,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Note",
+            "key": "note",
             "readOnly": false,
             "isHidden": false,
             "size": 10,
@@ -558,7 +591,7 @@
             },
             "label": "Acconto",
             "key": "acconto",
-            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100)*0.35,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100)*(1-sconto_libero/100)*0.35,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
             "readOnly": false,
             "size": 2,
             "isHidden": false,
@@ -573,7 +606,7 @@
             },
             "label": "Saldo Certificazione",
             "key": "certificazione",
-            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100)*0.65,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
+            "queryFunct": "select round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100)*(1-sconto_libero/100)*0.65,2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$ and id_contratto=$id_contratto$",
             "readOnly": false,
             "size": 2,
             "isHidden": false,
