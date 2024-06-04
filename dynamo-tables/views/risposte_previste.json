@@ -22,6 +22,10 @@
             "queryString": "update entrasp.risposte rp set peso= rpr.peso from entrasp.risposte_previste rpr where rp.codice_azienda= rpr.codice_azienda and rp.id_domanda = rpr.id_domanda and rp.id_risposta_prev = rpr.id_risposta_prev and rp.id_modello_test = rpr.id_modello_test and rp.id_modello_test_vr = rpr.id_modello_test_vr and rp.peso!=rpr.peso and rp.id_risposta_prev=$id_risposta_prev$ and rp.id_domanda=$id_domanda$ and rp.codice_azienda=$codice_azienda$"
         }
     ],
+    "addElementSettings": {
+        "labelQuickAdd": "Aggiungi risposta prevista",
+        "navigateOnSuccess": false
+    },
     "orderBy": {
         "key": "ordinamento",
         "order": "ascending"
@@ -126,36 +130,6 @@
             "translate": "RESOURCES.id_risposta_prev",
             "readOnly": true,
             "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "cancella_risposte",
-            "label": "delete",
-            "buttonIcon": "delete",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "cancella_risposte",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "cancella_risposte",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "delete from entrasp.risposte_previste where codice_azienda=$codice_azienda$ and id_domanda=$id_domanda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_risposta_prev=$id_risposta_prev$",
-                    "outputEventWhenComplete": "update_template_risposte_previste_righe"
-                }
-            ],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 1,
-            "translate": "RESOURCES.cancella_risposte"
         },
         {
             "autoGenerate": false,
@@ -652,6 +626,10 @@
         {
             "viewType": "form",
             "formActionType": "attachments"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
         }
     ]
 }
