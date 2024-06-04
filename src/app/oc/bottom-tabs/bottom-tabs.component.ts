@@ -39,6 +39,7 @@ export class BottomTabsComponent implements OnChanges, OnDestroy {
     ngOnChanges(changes) {
         const _this = this;
         if (changes.Tabs && _this.Tabs.length) {
+            _this.activeIndex = 0;
             _this.setFiltered();
             _this.subscriptions.forEach(subscription => { subscription.unsubscribe() }); // clean out subscriptions
 
