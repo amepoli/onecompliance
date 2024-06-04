@@ -262,7 +262,8 @@ class Api {
                         request.headers &&
                             Object.keys(request.headers).length > 0
                             ? request.headers
-                            : (_this.authStateChange$.value?.session ? {
+                            : (_this.authStateChange$.value?.session && 
+                                _this.authStateChange$.value?.session?.ChallengeName !== 'NEW_PASSWORD_REQUIRED'? {
                                 Authorization: `Bearer ${_this.authStateChange$.value?.session?.IdToken}`,
                                 "Content-Type": "text/plain",
                                 UserId: _this.authStateChange$.value?.session?.sub,
