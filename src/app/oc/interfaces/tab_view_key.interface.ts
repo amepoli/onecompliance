@@ -20,5 +20,10 @@ export interface TabViewKey { // as per API specification
         }
     ];
     isHidden?: boolean;
+    showByFormKeyCondition?: {
+        key: string,
+        condition: "equalTo" | "notEqualTo" | "greaterThan" | "lessThan",
+        values?: string[]
+    };
     renderingOrder?: number;
 }
