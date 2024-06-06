@@ -107,6 +107,7 @@
             "isPrimary": false,
             "key": "data_attivazione",
             "label": "Data Attivazione",
+            "tooltip": "Inserire la data di inizio erogazione del servizio",
             "newLine": false,
             "readOnly": false,
             "size": 2,
@@ -122,6 +123,7 @@
             "isPrimary": false,
             "key": "data_a",
             "label": "Data Chiusura",
+            "tooltip": "Inserire la data di fine erogazione del servizio",
             "newLine": false,
             "readOnly": false,
             "size": 2
@@ -172,7 +174,8 @@
             "key": "id_argomento_settore",
             "readOnly": false,
             "isHidden": false,
-            "size": 3,
+            "tooltip": "Settori IAF interessati dal servizio. Per modificarli entrare nel questionario collegato al contratto",
+            "size": 5,
             "isPrimary": false,
             "newLine": false
         },
@@ -187,7 +190,8 @@
             "readOnly": true,
             "isHidden": false,
             "queryFunct": "SELECT entrasp.argomenti_descr_breve_no_id(cs.id_argomento_complessita) AS complessita FROM (SELECT ac.id_contratto, unnest(ac.id_argomento_settore) AS id_argomento_settore, ac.id_argomento_tipo_norma FROM entrasp.articoli_contratti ac WHERE ac.id_articolo = $id_articolo$ AND ac.codice_azienda = $codice_azienda$ AND ac.id_contratto = $id_contratto$) AS expanded_ac LEFT JOIN entrasp.complessita_settori cs ON expanded_ac.id_argomento_tipo_norma = cs.id_argomento_tipo_norma AND expanded_ac.id_argomento_settore = cs.id_argomento_settore ORDER BY  complessita LIMIT 1",
-            "size": 0.6,
+            "size": 2,
+            "tooltip": "La complessità è calcolata automaticamente dall'applicazione. È scellta la complessità più alta tra i settori IAF interessati",
             "isPrimary": false,
             "newLine": false
         },
@@ -202,7 +206,8 @@
             "key": "id_argomento_complessita",
             "readOnly": false,
             "isHidden": false,
-            "size": 1.5,
+            "tooltip": "È possibile cambiare la complessità selezionata dalla piattaforma. Modificandola sarà ricalcolato l'intero servizio",
+            "size": 3,
             "isPrimary": false,
             "newLine": true
         },
@@ -238,6 +243,7 @@
             "readOnly": true,
             "queryFunct": "select costo from entrasp.articoli where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$",
             "isHidden": false,
+            "tooltip": "Corrisponde al costo giornata/uomo del servizio prescelto, per modificarlo intervenire nel menu prodotti/servizi",
             "size": 1.66,
             "isPrimary": false,
             "newLine": false
@@ -252,6 +258,7 @@
             "key": "costo_scontato",
             "readOnly": true,
             "queryFunct": "costo_scontato",
+            "tooltip": "Corrisponde al costo giornata/uomo del servizio prescelto al netto degli sconti applicati (intervengono lo sconto importo giornate/uomo e lo sconto libero)",
             "isHidden": false,
             "size": 1.66,
             "isPrimary": false,
