@@ -190,6 +190,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                 keys: {},
                 inputEvents: tabKey.inputEvents,
                 hidden: (tabKey.isHidden != null) ? tabKey.isHidden : false,
+                showByFormKeyCondition: (tabKey.showByFormKeyCondition != null) ? tabKey.showByFormKeyCondition : undefined,
                 renderingOrder: tabKey.renderingOrder ?? 0
             };
             tabKey.keys.forEach(key => {
@@ -197,6 +198,27 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     tab.keys[key.son] = keys[key.parent];
                 }
             });
+            if(tabKey.showByFormKeyCondition && tabKey.showByFormKeyCondition.values && tabKey.showByFormKeyCondition.values.length > 0) {
+                let tabVisible = false;
+                if(tabKey.showByFormKeyCondition.values.includes('*')) {
+                    tabVisible = true;
+                }
+                else if(tabKey.showByFormKeyCondition.condition === 'equalTo') {
+                    tabVisible = tabKey.showByFormKeyCondition.values.includes(keys[tabKey.showByFormKeyCondition.key] + '');
+                }
+                else if(tabKey.showByFormKeyCondition.condition === 'notEqualTo') {
+                    tabVisible = !tabKey.showByFormKeyCondition.values.includes(keys[tabKey.showByFormKeyCondition.key] + '');
+                }
+                else if(tabKey.showByFormKeyCondition.condition === 'lessThan') {
+                    const floatValues = tabKey.showByFormKeyCondition.values.map(x => parseFloat(x));
+                    tabVisible = parseFloat(keys[tabKey.showByFormKeyCondition.key] + '') < Math.min(...floatValues);
+                }
+                else if(tabKey.showByFormKeyCondition.condition === 'greaterThan') {
+                    const floatValues = tabKey.showByFormKeyCondition.values.map(x => parseFloat(x));
+                    tabVisible = parseFloat(keys[tabKey.showByFormKeyCondition.key] + '') > Math.max(...floatValues);
+                }
+                tab.hidden = !tabVisible;
+            }
             tabs.push(tab);
         });
         return tabs;

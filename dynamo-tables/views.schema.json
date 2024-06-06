@@ -1087,6 +1087,34 @@
                         "type": "boolean",
                         "description": "?: if not defined defaults to false"
                     },
+                    "showByFormKeyCondition": {
+                        "type": "object",
+                        "description": "?: Use key from form-view to define isHidden",
+                        "additionalProperties": false,
+                        "properties": {
+                            "key": {
+                                "type": "string",
+                                "description": "M: key from form-view"
+                            },
+                            "condition": {
+                                "type": "string",
+                                "description": "M: condition on received value, only equalTo implemented so far",
+                                "enum": [
+                                    "equalTo",
+                                    "notEqualTo",
+                                    "greaterThan",
+                                    "lessThan"
+                                ]
+                            },
+                            "values": {
+                                "type": "array",
+                                "description": "M: set of values to compare with, condition must be verified for all of them but '*' jolly values",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
                     "keys": {
                         "type": "array",
                         "description": "M: set of key couples that put in relation the record view (parent) with subtable (son)",
