@@ -520,15 +520,10 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "argomento_not_null",
-            "outputEvent": {
-                "eventName": "argomento_not_null",
-                "eventTrigger": "change"
-            },
             "label": "argomento nullo",
             "readOnly": true,
             "queryFunct": "SELECT case WHEN id_argomento IS NULL THEN '1' ELSE '0' end",
-            "newLine": false,
-            "translate": "RESOURCES.argomento_not_null"
+            "newLine": false
         },
         {
             "format": {
@@ -1106,20 +1101,19 @@
         },
         {
             "entryKey": "tag_sub_of_domande",
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "eventName": "argomento_not_null",
-                    "condition": "equalTo",
-                    "values": ["0"]
-                }
-            ],
             "keys": [
                 {
                     "parent": "id_argomento_son",
                     "son": "id_argomento_son"
                 }
             ],
+            "showByFormKeyCondition": {
+                "key": "argomento_not_null",
+                "condition": "notEqualTo",
+                "values": [
+                    "0"
+                ]
+            },
             "label": "TAG",
             "translate": "RESOURCES.tag",
             "renderingOrder": 5
