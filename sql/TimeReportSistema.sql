@@ -10,11 +10,25 @@ where codice_part='QUANTYX' and id_anagrafica=298;
 
 select id_anagrafica, codice_part, dynamo_user, data_avvio_collaborazione 
 from entrasp.anagrafiche_id
-where dynamo_user ilike '%maccario%'
+where dynamo_user ilike '%ivaldi%' or email_sender ilike '%ivaldi%'
 	order by codice_part;
 
+select * from entrasp.employers
+where dynamo_user like '%ivaldi%'
 
-select entrasp.aggiorna_giornate_e_users_da_rendicontare('niannetta')
+SELECT  *		
+FROM entrasp.users	
+where username like '%ivaldi%'
+	
+
+select * from entrasp.giornate_e_users_da_rendicontare
+where dynamo_user like '%ivaldi%'
+order by giorno desc
+
+CALL entrasp.update_tr_quantyx();
+
+	
+select entrasp.aggiorna_giornate_e_users_da_rendicontare('givaldi')
 
 
 -- FUNCTION: entrasp.aggiorna_cdms_bo_cdms_risorse(text, numeric, boolean)
@@ -23,9 +37,7 @@ ALTER TABLE IF EXISTS entrasp.modelli_test_risultati_righe
 	
 select entrasp.aggiorna_giornate_e_users_da_rendicontare('fmaccario@quantyxsim.com')
 
-select * from entrasp.giornate_e_users_da_rendicontare
-where dynamo_user like '%maccario%'
-order by giorno desc
+
 
 select id_anagrafica, codice_part, dynamo_user 
 from entrasp.anagrafiche_id
@@ -46,11 +58,7 @@ dynamo_user,
 	
 	SELECT  entrasp.aggiorna_giornate_e_users_da_rendicontare(dynamo_user)		
 	FROM entrasp.users	
-	
-	SELECT  *		
-	FROM entrasp.users	
-	where username like '%maccario%'
-	
+
 
 	select id_anagrafica, codice_part, dynamo_user, data_fine_collaborazione
 	from entrasp.anagrafiche_id
@@ -126,8 +134,7 @@ where id_centro_gest=43 and codice_azienda in('QUANTYX', 'QUANTYXSRL')
 select id_centro_gest, codice_ruolo, codice_part, id_anagrafica, dynamo_user, data_avvio_collaborazione
 from entrasp.anagrafiche_id where dynamo_user='mguadagnini' and codice_part='AUDITFT'
 
-select * from entrasp.employers
-where dynamo_user like '%maccario%'
+
 
 select id_indicatore, sql_select,  sql_indicatore from entrasp.indicatori
 where id_indicatore in(146, 334)
