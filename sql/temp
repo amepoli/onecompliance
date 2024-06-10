@@ -1,0 +1,40 @@
+select id_indicatore, sql_indicatore, sql_select
+from entrasp.indicatori
+where id_indicatore=351;
+
+SELECT
+	COUNT(ID_PROGETTO)
+FROM
+	ENTRASP.PROGETTI PG
+	INNER JOIN ENTRASP.CENTRI_GESTIONALI CG ON PG.CODICE_PART = CG.CODICE_PART
+	AND PG.ID_CENTRO_GEST = CG.ID_CENTRO_GEST
+WHERE
+	PG.STATO NOT IN ('C', 'N')
+	AND CG.CODICE_AZIENDA_EROGANTE = 'AUDITFT';
+
+SELECT
+	CODICE_AZIENDA,
+	ID_PROGETTO,
+	TITOLO,
+	STATO,
+	CG.ID_CENTRO_GEST,
+	ID_CLIENTE,
+	DATA_INSERIMENTO,
+	 pf.id_progetto,
+    COUNT(CASE WHEN snd.stato = 'A' THEN 1 END) AS stato_A,
+    COUNT(CASE WHEN snd.stato = 'B' THEN 1 END) AS stato_B,
+    COUNT(CASE WHEN snd.stato = 'C' THEN 1 END) AS stato_C,
+    COUNT(CASE WHEN snd.stato = 'D' THEN 1 END) AS stato_D
+
+FROM
+	ENTRASP.PROGETTI PG
+	INNER JOIN ENTRASP.CENTRI_GESTIONALI CG ON PG.CODICE_PART = CG.CODICE_PART
+	AND PG.ID_CENTRO_GEST = CG.ID_CENTRO_GEST
+	inner join entrasp.progetti_fasi pf on pg.codice_azienda=pf_codice_azienda
+	and pg.id_progetto=pf.id_progetto
+	inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda
+	pf.id_sondaggio=snd.id_sondaggio
+WHERE
+	PG.STATO NOT IN ('C', 'N')
+	AND CG.CODICE_AZIENDA_EROGANTE = 'AUDITFT'
+
