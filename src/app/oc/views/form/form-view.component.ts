@@ -22,13 +22,13 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     @Input() isQuickAdd: boolean = false;
     @Input() tableData: FormViewParams;
-    
+
     // Is form-view part of dialog
     @Input() isDialog: boolean = false;
     @Input() showSaveButton: boolean = true;
-    
+
     // Keys that are provided by external source and are passed to the values in onSave function
-    @Input () externalKeys: object = {};
+    @Input() externalKeys: object = {};
 
     @Output() sendEvent = new EventEmitter<any>();
 
@@ -55,7 +55,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     subscriptions: Subscription[] = [];
 
     hideActions: string[] = []; // Hide actions
-    
+
     messages: MessageElement[] = []; // Messages
     @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
@@ -115,7 +115,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     _this.tabKeys = event.tabKeys;
                     _this.n_attach = 0;
                     //_this.getAttachList();
-                    if(!_this._reportService.isLazyLoadingEnabled || _this._reportService.cache[_this.tableData.entryName]) {
+                    if (!_this._reportService.isLazyLoadingEnabled || _this._reportService.cache[_this.tableData.entryName]) {
                         _this.getReportList();
                     }
                     else {
@@ -148,7 +148,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         );
 
         _this.subscriptions.push(subscription);
-        
+
     }
 
     ngOnChanges() {
@@ -198,22 +198,22 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     tab.keys[key.son] = keys[key.parent];
                 }
             });
-            if(tabKey.showByFormKeyCondition && tabKey.showByFormKeyCondition.values && tabKey.showByFormKeyCondition.values.length > 0) {
+            if (tabKey.showByFormKeyCondition && tabKey.showByFormKeyCondition.values && tabKey.showByFormKeyCondition.values.length > 0) {
                 let tabVisible = false;
-                if(tabKey.showByFormKeyCondition.values.includes('*')) {
+                if (tabKey.showByFormKeyCondition.values.includes('*')) {
                     tabVisible = true;
                 }
-                else if(tabKey.showByFormKeyCondition.condition === 'equalTo') {
+                else if (tabKey.showByFormKeyCondition.condition === 'equalTo') {
                     tabVisible = tabKey.showByFormKeyCondition.values.includes(keys[tabKey.showByFormKeyCondition.key] + '');
                 }
-                else if(tabKey.showByFormKeyCondition.condition === 'notEqualTo') {
+                else if (tabKey.showByFormKeyCondition.condition === 'notEqualTo') {
                     tabVisible = !tabKey.showByFormKeyCondition.values.includes(keys[tabKey.showByFormKeyCondition.key] + '');
                 }
-                else if(tabKey.showByFormKeyCondition.condition === 'lessThan') {
+                else if (tabKey.showByFormKeyCondition.condition === 'lessThan') {
                     const floatValues = tabKey.showByFormKeyCondition.values.map(x => parseFloat(x));
                     tabVisible = parseFloat(keys[tabKey.showByFormKeyCondition.key] + '') < Math.min(...floatValues);
                 }
-                else if(tabKey.showByFormKeyCondition.condition === 'greaterThan') {
+                else if (tabKey.showByFormKeyCondition.condition === 'greaterThan') {
                     const floatValues = tabKey.showByFormKeyCondition.values.map(x => parseFloat(x));
                     tabVisible = parseFloat(keys[tabKey.showByFormKeyCondition.key] + '') > Math.max(...floatValues);
                 }
@@ -247,17 +247,16 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         });
                     } else {
                         if (field.isVisible && form.form.get(field.name)) {
-                            if(field.inputType == "date" || field.inputType == "time" || field.inputType == "datetime")
-                            {
+                            if (field.inputType == "date" || field.inputType == "time" || field.inputType == "datetime") {
                                 // Since date, time and datetime use picker, they have issues with empty data
                                 // So this is a manual fix to check if empty value is invalid or not
                                 const isRequired = ValidationsService.checkIfRequired(field.validations);
-                                if(isRequired && !form.form.get(field.name).value) {
+                                if (isRequired && !form.form.get(field.name).value) {
                                     form.form.get(field.name).markAsTouched({ onlySelf: false });
-                                    notValidField.push(`"${field.label}"`);    
+                                    notValidField.push(`"${field.label}"`);
                                 }
                             }
-                            else if(!form.form.get(field.name).valid) {
+                            else if (!form.form.get(field.name).valid) {
                                 form.form.get(field.name).markAsTouched({ onlySelf: false });
                                 //isValid = false;
                                 notValidField.push(`"${field.label}"`);
@@ -310,7 +309,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     onSave() {
         let _this = this;
         let notValidField = _this.isFormValid();
-        
+
         if (!notValidField) {
             // notify parent, which will take care of propagating to siblings if needed 
             _this.sendEvent.emit({ eventType: 'gotSave' });
@@ -318,71 +317,76 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             let values = _this.formGetter.formArray.first.form.value;
 
             // process the booleans (1/0 instead of true/false)
-            for (const value in values) {
+            Object.keys(values).forEach(value => {
                 if (values.hasOwnProperty(value)) {
                     const element = values[value];
-                    if (element == null) {
-                        continue; // skip null entries
+                    if (element === null) {
+                        // continue; // skip null entries
                     }
-                    // make '' -> null
-                    // if (element == '') {
-                    //     values[value] = null;
-                    // }
-                    // decode combos
-                    if (element['id'] != null) {
-                        values[value] = element['id'];
-                    }
-                    // encode boolean
-                    else if (element === true) {
-                        values[value] = '1';
-                    }
-                    else if (element === false) {
-                        values[value] = '0';
-                    }
-                    // To keep the same datetime but add timezone in the end
-                    // else if(element.includes('.000' + _this._timezoneService.timezoneInfo.utc_offset)) {
+                    else {
+                        // make '' -> null
+                        if (element === '') {
+                            const targetKey = _this.formGetter.viewKeys.filter(x => x.key === value)[0];
+                            if (targetKey.format.dataType === 'text' && targetKey.format.viewType === 'input') {
+                                values[value] = targetKey.format.value;
+                            }
+                        }
+                        // decode combos
+                        if (element['id'] != null) {
+                            values[value] = element['id'];
+                        }
+                        // encode boolean
+                        else if (element === true) {
+                            values[value] = '1';
+                        }
+                        else if (element === false) {
+                            values[value] = '0';
+                        }
+                        // To keep the same datetime but add timezone in the end
+                        // else if(element.includes('.000' + _this._timezoneService.timezoneInfo.utc_offset)) {
                         // values[value] = element.replace('.000' + _this._timezoneService.timezoneInfo.utc_offset, '.000Z');
-                    // }
+                        // }
+                    }
                 }
-            }
+            });
 
-            if(_this.externalKeys) {
+            if (_this.externalKeys) {
                 Object.keys(_this.externalKeys).forEach(externalKey => {
                     values[externalKey] = _this.externalKeys[externalKey];
                 });
             }
 
-        
+
 
             _this.savingState = 'saving';
             const subscription = _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
                 result => {
                     _this._console.log(result);
-                    if(result) {
+                    if (result) {
                         if (result.result === 'OK') {
                             // Show success toast
                             _this._toastService.showSuccessToast('Saved');
                             _this.sendEvent.emit({ eventType: 'saved' });
                             _this.savingState = 'done';
-                            if(!_this.isDialog) {
+                            if (!_this.isDialog) {
                                 setTimeout(() => {
                                     _this.savingState = 'save';
                                     if (_this.isQuickAdd) {
                                         _this.isQuickAdd = false;
-                                        
+
                                         let keymap = {}
-                                        
+
                                         const valueKeys = Object.keys(values);
 
                                         let resultKeys = [];
                                         let resultValues = {};
 
-                                        if(result.data) {
-                                            if(result.data && result.data[0] && result.data[0][0]) {
+                                        if (result.data) {
+                                            if (result.data && result.data[0] && result.data[0][0]) {
                                                 resultValues = result.data[0][0];
                                                 resultKeys = Object.keys(resultValues);
                                             }
-                                            else if(result.data && result.data[0]) {
+                                            else if (result.data && result.data[0]) {
                                                 resultValues = result.data[0];
                                                 resultKeys = Object.keys(resultValues);
                                             }
@@ -390,7 +394,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
                                         _this.formGetter.viewKeys.filter(x => x.isPrimary).forEach(primaryKey => {
                                             const key = primaryKey.key;
-                                            if( valueKeys.includes(key)) {
+                                            if (valueKeys.includes(key)) {
                                                 if (primaryKey.format.dataType === 'number' && typeof values[key] === 'string') {
                                                     keymap[key] = parseInt(values[key]);
                                                 }
@@ -398,8 +402,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                                                     keymap[key] = values[key];
                                                 }
                                             }
-                                            if( resultKeys.includes(key)) {
-                                                if(primaryKey.format.dataType === 'number' && typeof resultValues[key] === 'string') {
+                                            if (resultKeys.includes(key)) {
+                                                if (primaryKey.format.dataType === 'number' && typeof resultValues[key] === 'string') {
                                                     keymap[key] = parseInt(resultValues[key]);
                                                 }
                                                 else {
@@ -423,13 +427,13 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                                         _this.formGetter.runOnSaveEvents();
                                         //_this._navigationService.requestBottomTabRefresh();
                                     }
-                                    
+
                                 }, 1000);
                             }
                         }
                         else {
                             // Check if error occured during pre check
-                            if(result.preErrors){
+                            if (result.preErrors) {
                                 _this._dialogService.showErrorDialog("Warning", result.preErrors.join('\n'));
                             }
                             else {
@@ -446,10 +450,10 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         _this.savingState = 'done';
                     }
                 },
-                error =>{
+                error => {
                     // Show error snackbar
                     _this._toastService.showErrorToast(error);
-                    
+
                     _this.savingState = 'save';
                 }
             );
@@ -457,7 +461,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             _this.subscriptions.push(subscription);
         }
         else {
-            _this._toastService.showWarningToast("Form is not valid", "Please check "+ notValidField.join(', '), 5000, true);
+            _this._toastService.showWarningToast("Form is not valid", "Please check " + notValidField.join(', '), 5000, true);
         }
     }
 
@@ -510,7 +514,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         });
     }
 
-    shareElement(azienda){
+    shareElement(azienda) {
         var _this = this;
         let keys = JSON.parse(JSON.stringify(_this.currentKeys));
         keys['chosen_azienda'] = azienda;
@@ -518,29 +522,29 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         let company: string = _this.authService.getCurrentCompany(keys);
 
         _this._actionsService.performFormAction("share", this.messages, entryName, company, keys);
-        
+
     }
 
-    startEvent(){
+    startEvent() {
         var _this = this;
         let keys = JSON.parse(JSON.stringify(_this.currentKeys));
         let entryName: string = _this.tableData.entryName;
         let company: string = _this.authService.getCurrentCompany(keys);
 
         _this._actionsService.performFormAction("startEvent", this.messages, entryName, company, keys);
-        
+
     }
 
-    stopEvent(){
+    stopEvent() {
         var _this = this;
         let keys = JSON.parse(JSON.stringify(_this.currentKeys));
         let entryName: string = _this.tableData.entryName;
         let company: string = _this.authService.getCurrentCompany(keys);
 
         _this._actionsService.performFormAction("stopEvent", this.messages, entryName, company, keys);
-        
+
     }
-    
+
     openDocumentation() {
         DocumentationService.openFormViewDocumentationLink(this.tableData.entryName);
     }
@@ -630,6 +634,6 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         this.messages = this._messagesService.getFormMessages(messageViews);
         this.onMessagesUpdated.emit(messageViews);
     }
-    
+
 }
 
