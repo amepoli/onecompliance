@@ -102,3 +102,130 @@ select * from entrasp.select_domande_risposte(
 select entrasp.trova_tag_contratti_progetto('ASACERT', 45)
 
 */
+
+
+-- FUNCTION: entrasp.domanda_active(text, numeric, numeric, numeric, numeric)
+
+DROP FUNCTION IF EXISTS entrasp.domanda_active(text, numeric, numeric, numeric, numeric);
+
+CREATE OR REPLACE FUNCTION entrasp.domanda_active(
+	codiceazienda text,
+	idmodellotest numeric,
+	idmodellotestvr numeric,
+	iddomanda numeric,
+	idsomministrazione numeric,
+	idsondaggio numeric DEFAULT NULL::numeric)
+    RETURNS integer
+    LANGUAGE 'plpgsql'
+    COST 100
+    IMMUTABLE PARALLEL SAFE 
+AS $BODY$
+declare  active integer;  foreseen_answers  numeric(12,0) []; iddomandarif numeric(12,0); answers_array numeric[]; 
+flagnonvienerisposto boolean; flagnonapplicabilesezione boolean; idargomento numeric; elencotag numeric[];
+
+begin
+
+raise notice '*** NUOVA DOMANDA***';
+
+if idsondaggio is null then
+	select id_sondaggio
+	from entrasp.sondaggi_somministrati
+	where codice_azienda=codiceazienda and id_somministrazione=idsomministrazione
+	into idsondaggio;
+end if;
+--raise notice 'idsondaggio: %', idsondaggio;
+
+select entrasp.trova_tag_contratti_progetto(codiceazienda, idsondaggio)
+into elencotag;
+
+if elencotag[1] is not null then
+		select array_agg(id_argomento_son)
+		from entrasp.argomenti_argomenti aa
+		where id_argomento_father=any(elencotag)
+		into elencotag;
+	--	raise notice 'elencotag: %', elencotag;
+end if;
+
+raise notice 'elencotag: %', elencotag;
+
+select array(select id_risposta_prev from entrasp.risposte 
+             where codice_azienda=codiceazienda and id_somministrazione=idsomministrazione and id_domanda 
+             in (select dm.id_domanda_rif from entrasp.domande dm where dm.codice_azienda=codiceazienda and dm.id_modello_test=idmodellotest 
+                 and dm.id_modello_test_vr=idmodellotestvr and dm.id_domanda=iddomanda)) into answers_array;
+
+select dm.id_domanda_rif, dm.flag_non_viene_risposto, coalesce(flag_non_applicabile_sezione::boolean, false), dm.id_argomento  
+from entrasp.domande dm 
+left join entrasp.domande_sezioni ds on
+dm.codice_azienda=ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione
+where dm.codice_azienda=codiceazienda and dm.id_modello_test=idmodellotest and  dm.id_modello_test_vr=idmodellotestvr and dm.id_domanda=iddomanda 
+into iddomandarif, flagnonvienerisposto, flagnonapplicabilesezione, idargomento;
+
+raise notice 'idargomento: %', idargomento;
+--raise notice 'elencotag: %', elencotag;
+raise notice  'array_length(array_remove(elencotag, NULL), 1): %', array_length(array_remove(elencotag, NULL), 1);
+raise notice 'condizione: %', (array_length(array_remove(elencotag, NULL), 1) IS not NULL and idargomento != ALL(elencotag)); 
+raise notice 'array_length(array_remove(elencotag, NULL), 1) IS not NULL: %', array_length(array_remove(elencotag, NULL), 1) IS not NULL;
+raise notice 'idargomento != ALL(elencotag): %', idargomento != ALL(elencotag);
+
+if flagnonapplicabilesezione=true 
+	or (array_length(array_remove(elencotag, NULL), 1) IS not NULL and idargomento != ALL(elencotag)) then 
+    active:=0;
+    else
+    if iddomandarif is NULL then
+        active:=1;
+        else
+        foreseen_answers:= array(select id_risposta_prev_rif from entrasp.domande where codice_azienda=codiceazienda and id_modello_test=idmodellotest and  id_modello_test_vr=idmodellotestvr and id_domanda=iddomanda);
+        if array_length(answers_array,1)>0 then 
+    --		raise notice 'answer_array:%',answers_array;		
+    --		raise notice 'foreseen_answers:%',foreseen_answers;		
+                if flagnonvienerisposto=false then
+                    if foreseen_answers<@answers_array then 
+            --			raise notice 'caso A';
+                        active:=1;
+                        else
+                        active:=0;
+            --			raise notice 'caso B';
+                    end if;
+                    else
+                    if foreseen_answers<@answers_array then 
+            --			raise notice 'caso A';
+                        active:=0;
+                        else
+                        active:=1;
+            --			raise notice 'caso B';
+                    end if;                                
+                end if;
+            else
+                active:=0;
+    --			raise notice 'caso C';
+        end if;
+    end if;
+end if;
+
+return active;
+end
+$BODY$;
+
+ALTER FUNCTION entrasp.domanda_active(text, numeric, numeric, numeric, numeric, numeric)
+    OWNER TO postgres;
+
+
+--select entrasp.domanda_active('ASACERT', 15, 1, 6, 45);
+
+
+select ss.codice_azienda, dm.id_domanda, dm.descrizione, snd.id_modello_test,  entrasp.domanda_active(snd.codice_azienda,
+	snd.id_modello_test,
+	snd.id_modello_test_vr,
+	dm.id_domanda,
+	ss.id_somministrazione)
+from entrasp.sondaggi_somministrati ss
+	inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio
+	inner join entrasp.domande dm on snd.codice_azienda=dm.codice_azienda and snd.id_modello_test=dm.id_modello_test
+where ss.id_somministrazione=45 and ss.codice_azienda='ASACERT' and dm.id_sezione=2;
+
+
+-- 6, 7 attive, 9, 10, 12, 13 (per tag)
+-- 8, 11 inattiva
+
+-- FUNCTION: entrasp.grc_punteggio_risposte_somministrazione(character varying, numeric)
+
