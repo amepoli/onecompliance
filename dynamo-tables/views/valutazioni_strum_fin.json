@@ -38,16 +38,13 @@
             "label": "Domande e Risposte",
             "translate": "RESOURCES.questions_and_answers",
             "type": "tableForm",
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "eventName": "somministrazioni_flags_sezioni",
-                    "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
-                }
-            ],
+            "showByFormKeyCondition": {
+                "key": "flag_sezioni",
+                "condition": "equalTo",
+                "values": [
+                    "0"
+                ]
+            },
             "isHidden": true,
             "keys": [
                 {
@@ -74,6 +71,13 @@
         },
         {
             "entryKey": "domande_sezioni_sub_of_somministrazioni",
+            "showByFormKeyCondition": {
+                "key": "flag_sezioni",
+                "condition": "equalTo",
+                "values": [
+                    "1"
+                ]
+            },
             "inputEvents": [
                 {
                     "actionType": "show",
@@ -105,6 +109,7 @@
         {
             "entryKey": "sondaggi_somministrati_attachments",
             "isHidden": false,
+            "renderingOrder": 3,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -120,8 +125,7 @@
                 }
             ],
             "label": "Documenti Associati",
-            "translate": "RESOURCES.associated_documents",
-            "type": "tableForm"
+            "translate": "RESOURCES.associated_documents"
         },
         {
             "entryKey": "sondaggi_somministrati_sub_of_sondaggi_somministrati",
@@ -143,15 +147,15 @@
             "type": "table"
         },
         {
-            "entryKey": "contracts_investment",
+            "entryKey": "contracts_investment_sub_of_fondi",
             "keys": [
                 {
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 },
                 {
-                    "parent": "object_key",
-                    "son": "anagrafica_key"
+                    "parent": "id_anagrafica",
+                    "son": "id_strumento_finanziario"
                 }
             ],
             "label": "Mifid: Adeguatezza/appropriatezza",
