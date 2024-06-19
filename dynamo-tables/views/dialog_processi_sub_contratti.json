@@ -1,0 +1,81 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_processi_sub_contratti",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "update entrasp.procedure_contratti pc1 set controllo_certificazione=coalesce($controllo_certificazione$,pc2.controllo_certificazione), controllo_audit_1=coalesce($controllo_audit_1$,pc2.controllo_audit_1), controllo_audit_2=coalesce($controllo_audit_2$,pc2.controllo_audit_2), controllo_rinnovo = coalesce($controllo_rinnovo$,pc2.controllo_rinnovo) from entrasp.procedure_contratti pc2, (select split_part(arr,'~',1) as codiceazienda, split_part(arr,'~',3)::numeric as idprocedura, split_part(arr,'~',2)::numeric as idcontratto from unnest(ARRAY[$selected_rows_data$]) arr) as s where pc1.codice_azienda=pc2.codice_azienda and pc1.id_contratto=pc2.id_contratto and pc1.id_procedura=pc2.id_procedura and pc1.codice_azienda='€global_codice_azienda€' and pc1.id_contratto=s.idcontratto and pc1.id_procedura=s.idprocedura;"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES ('Pianificato', 'Pianificato'),('Controllato', 'Controllato')) t1 (id, name)",
+                "options": [],
+                "value": "Controllato",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_certificazione",
+            "size": 2.5,
+            "label": "CA/RA",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES ('Pianificato', 'Pianificato'),('Controllato', 'Controllato')) t1 (id, name)",
+                "options": [],
+                "value": "Pianificato",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_audit_1",
+            "size": 2.5,
+            "label": "1SA",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES ('Pianificato', 'Pianificato'),('Controllato', 'Controllato')) t1 (id, name)",
+                "options": [],
+                "value": "Pianificato",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_audit_2",
+            "size": 2.5,
+            "label": "2SA",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES ('Pianificato', 'Pianificato'),('Controllato', 'Controllato')) t1 (id, name)",
+                "options": [],
+                "value": "Pianificato",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_rinnovo",
+            "size": 2.5,
+            "label": "RA",
+            "readOnly": false,
+            "newLine": false
+        }
+    ]
+}

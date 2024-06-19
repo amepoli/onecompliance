@@ -3050,7 +3050,7 @@
             },
             {
                 "label": "Domande e Risposte",
-                "queryString": "select id_somministrazione, id_domanda,descrizione,descrizione_sez,punteggio as punteggio_dom,risposta_rp, peso, punteggio_risposta, object_description from entrasp.select_domande_delle_risposte where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ order by id_somministrazione, ordinamento_sezione, ordinamento"
+                "queryString": "select sdr.id_somministrazione,sdr.id_domanda,sdr.descrizione,sdr.descrizione_sez,sdr.punteggio as punteggio_dom,sdr.risposta_rp,sdr.peso,sdr.punteggio_risposta,sdr.object_description,entrasp.argomenti_descr_breve_no_id(aa.id_argomento_father) from entrasp.select_domande_delle_risposte sdr inner join entrasp.argomenti arg on sdr.id_argomento=arg.id_argomento inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where sdr.codice_azienda=$codice_azienda$ and sdr.id_sondaggio=$id_sondaggio$ and aa.id_argomento_father in (select arg.id_argomento from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_father where aa.id_argomento_son in (52481)) order by sdr.id_somministrazione,sdr.ordinamento_sezione,sdr.ordinamento"
             },
             {
                 "key": "rcm",
