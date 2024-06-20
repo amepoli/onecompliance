@@ -327,12 +327,18 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         // make '' -> null
                         if (element === '') {
                             const targetKey = _this.formGetter.viewKeys.filter(x => x.key === value)[0];
-                            if (targetKey.format.dataType === 'text' && targetKey.format.viewType === 'input') {
+                            if (targetKey.format.dataType === 'text' && targetKey.format.viewType === 'input' && targetKey.format.value !== undefined) {
+                                values[value] = targetKey.format.value;
+                            }
+                        }
+                        else if (Array.isArray(element) && element.length === 0) {
+                            const targetKey = _this.formGetter.viewKeys.filter(x => x.key === value)[0];
+                            if (targetKey.format.value !== undefined) {
                                 values[value] = targetKey.format.value;
                             }
                         }
                         // decode combos
-                        if (element['id'] != null) {
+                        else if (element['id'] != null) {
                             values[value] = element['id'];
                         }
                         // encode boolean
