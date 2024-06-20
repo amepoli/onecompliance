@@ -1,0 +1,396 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "procedure_sub_of_settori",
+    "origin": "entrasp.procedure_settori",
+    "businessObjectName": "procedure_settori",
+    "addElementSettings": {
+        "labelQuickAdd": "Associa Processo",
+        "navigateOnSuccess": false
+    },
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "modifica_processi_settori",
+                    "icon": "edit",
+                    "label": "Modifica pianificazione",
+                    "query": "",
+                    "customDialogEntryName": "dialog_processi_sub_settori",
+                    "customDialogTitle": "Modifica Pianificazione"
+                }
+            ]
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_procedura AS id, descrizione_breve AS name  FROM entrasp.procedure_aziendali WHERE codice_azienda=$codice_azienda$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_procedura",
+            "label": "Procedura",
+            "translate": "RESOURCES.id_processo",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_settore",
+            "label": "Settore",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_questionario",
+            "label": "Questionario",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_controllo",
+            "label": "CA/RA",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_controllo_4",
+            "label": "1SA",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_controllo_2",
+            "label": "2SA",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_controllo_3",
+            "label": "RA",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "comboQuery": "SELECT * FROM (VALUES (ARRAY['Pianificato'], ARRAY['Pianificato']),(ARRAY['Controllato'], ARRAY['Controllato']),(ARRAY['Verificato'], ARRAY['Verificato']), (ARRAY['Documentale'], ARRAY['Documentale'])) t1 (id, name)",
+                "options": [],
+                "value": "{Controllato}",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_certificazione",
+            "size": 2.5,
+            "label": "CA/RA",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "comboQuery": "SELECT * FROM (VALUES (ARRAY['Pianificato'], ARRAY['Pianificato']),(ARRAY['Controllato'], ARRAY['Controllato']),(ARRAY['Verificato'], ARRAY['Verificato']), (ARRAY['Documentale'], ARRAY['Documentale'])) t1 (id, name)",
+                "options": [],
+                "value": "{Pianificato}",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_audit_1",
+            "size": 2.5,
+            "label": "1SA",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "comboQuery": "SELECT * FROM (VALUES (ARRAY['Pianificato'], ARRAY['Pianificato']),(ARRAY['Controllato'], ARRAY['Controllato']),(ARRAY['Verificato'], ARRAY['Verificato']), (ARRAY['Documentale'], ARRAY['Documentale'])) t1 (id, name)",
+                "options": [],
+                "value": "{Pianificato}",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_audit_2",
+            "size": 2.5,
+            "label": "2SA",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "comboQuery": "SELECT * FROM (VALUES (ARRAY['Pianificato'], ARRAY['Pianificato']),(ARRAY['Controllato'], ARRAY['Controllato']),(ARRAY['Verificato'], ARRAY['Verificato']), (ARRAY['Documentale'], ARRAY['Documentale'])) t1 (id, name)",
+                "options": [],
+                "value": "{Pianificato}",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_rinnovo",
+            "size": 2.5,
+            "label": "RA",
+            "readOnly": false,
+            "newLine": false
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_settore",
+            "width": "5%",
+            "label": "Settore"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_questionario",
+            "width": "5%",
+            "label": "Questionario"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_procedura",
+            "width": "5%",
+            "label": "Processo",
+            "translate": "RESOURCES.descr_procedura"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_procedure_mdt",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "close",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "procedure_sub_modelli_test",
+                "viewType": "form",
+                "query": "delete from entrasp.procedure_settori where codice_azienda='£codice_azienda£' AND id_procedura=£id_procedura£ AND id_argomento_settore=£id_argomento_settore£ AND id_questionario=£id_questionario£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_argomento_settore",
+                        "destination": "id_argomento_settore"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    },
+                    {
+                        "source": "id_questionario",
+                        "destination": "id_questionario"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_procedure_mdt"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "72%",
+            "key": "descr_procedura",
+            "queryFunct": "entrasp.procedure_aziendali_descr(id_procedura ,codice_azienda)",
+            "label": "Procedura",
+            "translate": "RESOURCES.id_process"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_certificazione",
+            "label": "CA/RA"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_audit_1",
+            "label": "1SA"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_audit_2",
+            "label": "2SA"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "controllo_rinnovo",
+            "label": "RA"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}
