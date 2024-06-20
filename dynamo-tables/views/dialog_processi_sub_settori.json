@@ -5,7 +5,7 @@
         {
             "operation": "update",
             "type": "main",
-            "queryString": "update entrasp.procedure_settori pc1 set controllo_certificazione=coalesce($controllo_certificazione$,pc2.controllo_certificazione), controllo_audit_1=coalesce($controllo_audit_1$,pc2.controllo_audit_1), controllo_audit_2=coalesce($controllo_audit_2$,pc2.controllo_audit_2), controllo_rinnovo = coalesce($controllo_rinnovo$,pc2.controllo_rinnovo) from entrasp.procedure_settori pc2, (select split_part(arr,'~',1) as codiceazienda, split_part(arr,'~',3)::numeric as idquestionario, split_part(arr,'~',2)::numeric as idargomentosettore, split_part(arr,'~',4)::numeric as idprocedura from unnest(ARRAY[$selected_rows_data$]) arr) as s where pc1.codice_azienda=pc2.codice_azienda and pc1.id_argomento_settore=pc2.id_argomento_settore and pc1.id_procedura=pc2.id_procedura and pc1.id_questionario=pc2.id_questionario and pc1.codice_azienda='€global_codice_azienda€' and pc1.id_argomento_settore=s.idargomentosettore and pc1.id_procedura=s.idprocedura and pc1.id_questionario=s.idquestionario;"
+            "queryString": "update entrasp.procedure_settori pc1 set controllo_certificazione = coalesce(string_to_array(trim(both '[]' from '$controllo_certificazione$'), ', '), pc1.controllo_certificazione), controllo_audit_1 = coalesce(nullif (string_to_array(trim(both '[]' from '$controllo_audit_1$'), ', '),''), pc1.controllo_audit_1), controllo_audit_2 = coalesce(nullif (string_to_array(trim(both '[]' from '$controllo_audit_2$'), ', '),''), pc1.controllo_audit_2), controllo_rinnovo = coalesce(nullif (string_to_array(trim(both '[]' from '$controllo_rinnovo$'), ', '),''), pc1.controllo_rinnovo) where pc1.codice_azienda||'~'||pc1.id_argomento_settore||'~'||pc1.id_questionario||'~'||pc1.id_procedura in (select unnest(ARRAY[$selected_rows_data$]));"
         }
     ],
     "form_keys": [
@@ -103,7 +103,8 @@
                 "viewType": "checkboxgroup",
                 "comboQuery": "SELECT * FROM (VALUES (ARRAY['Pianificato'], ARRAY['Pianificato']),(ARRAY['Controllato'], ARRAY['Controllato']),(ARRAY['Verificato'], ARRAY['Verificato']), (ARRAY['Documentale'], ARRAY['Documentale'])) t1 (id, name)",
                 "options": [],
-                "dataType": "text"
+                "dataType": "text",
+                "value": null
             },
             "isHidden": false,
             "isPrimary": false,
