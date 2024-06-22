@@ -31,6 +31,12 @@
             "type": "main",
             "operation": "delete",
             "queryString": "select entrasp.domanda_delete($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
+        },
+        {
+            "type": "preCheck",
+            "operation": "update",
+            "queryString": "SELECT id_sondaggio, id_somministrazione, COUNT(*) as cnt FROM entrasp.risposte WHERE codice_azienda = $codice_azienda$ AND id_modello_test = $id_modello_test$ AND id_modello_test_vr = $id_modello_test_vr$ AND id_domanda = $id_domanda$ and £id_tipo_domanda£=1 GROUP BY id_sondaggio, id_somministrazione HAVING COUNT(*) > 1",
+            "messageNotNull": "Non è possibile modificare il tipo domanda a risposta singola (radio button) perchè esistono verifiche con risposte multiple per questa domanda in questa versione! Se si intende procedere creare una nuova versione"
         }
     ],
     "search_keys": [
