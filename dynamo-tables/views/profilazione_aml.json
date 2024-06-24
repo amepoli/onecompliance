@@ -23,7 +23,7 @@
         {
             "operation": "selectForm",
             "type": "postProcessing",
-            "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
+            "queryString": "SELECT mvr.flag_sezioni, mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
         },
         {
             "operation": "delete",
@@ -1593,15 +1593,15 @@
             "label": "Domande e Risposte",
             "translate": "RESOURCES.questions_and_answers",
             "type": "tableForm",
+            "isHidden": true,
             "renderingOrder": 0,
             "showByFormKeyCondition": {
                 "key": "flag_sezioni",
                 "condition": "equalTo",
                 "values": [
-                    "1"
+                    "0"
                 ]
             },
-            "isHidden": true,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -1627,6 +1627,7 @@
         },
         {
             "entryKey": "domande_sezioni_sub_of_somministrazioni",
+            "isHidden": true,
             "renderingOrder": 1,
             "showByFormKeyCondition": {
                 "key": "flag_sezioni",
@@ -1635,7 +1636,6 @@
                     "1"
                 ]
             },
-            "isHidden": true,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -1651,27 +1651,6 @@
                 }
             ],
             "label": "Domande e Risposte - Sezioni",
-            "type": "table"
-        },
-        {
-            "entryKey": "sondaggi_somministrati_attachments",
-            "isHidden": false,
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_sondaggio",
-                    "son": "id_sondaggio"
-                },
-                {
-                    "parent": "id_somministrazione",
-                    "son": "id_somministrazione"
-                }
-            ],
-            "label": "Documenti Associati",
-            "translate": "RESOURCES.associated_documents",
             "type": "table"
         },
         {
@@ -1691,6 +1670,29 @@
                 }
             ],
             "label": "Profilazioni sul cliente",
+            "renderingOrder": 3,
+            "type": "table"
+        },
+        {
+            "entryKey": "sondaggi_somministrati_attachments",
+            "isHidden": false,
+            "renderingOrder": 4,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                }
+            ],
+            "label": "Documenti Associati",
+            "translate": "RESOURCES.associated_documents",
             "type": "table"
         },
         {
@@ -1706,6 +1708,7 @@
                 }
             ],
             "label": "Penalizzazioni",
+            "renderingOrder": 5,
             "translate": "RESOURCES.penalties"
         },
         {
@@ -1718,6 +1721,7 @@
                 ]
             },
             "isHidden": true,
+            "renderingOrder": 6,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -1737,6 +1741,7 @@
         },
         {
             "entryKey": "sondaggi_son",
+            "renderingOrder": 7,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -1751,6 +1756,7 @@
         },
         {
             "entryKey": "contracts_sub_of_profilazione_aml",
+            "renderingOrder": 8,
             "isHidden": false,
             "keys": [
                 {
@@ -1764,24 +1770,6 @@
             ],
             "label": "Contratti Associati",
             "type": "table"
-        },
-        {
-            "entryKey": "calcolo_punteggi",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_somministrazione",
-                    "son": "id_somministrazione"
-                },
-                {
-                    "parent": "id_sondaggio",
-                    "son": "id_sondaggio"
-                }
-            ],
-            "label": "Calcolo punteggi"
         }
     ],
     "table_keys": [
