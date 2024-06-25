@@ -8,6 +8,13 @@
         "labelQuickAdd": "Nuovo Punto",
         "navigateOnSuccess": false
     },
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select * from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -86,7 +93,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "ordinamento_odg",
+            "key": "ordinamento",
             "label": "Ordinamento",
             "translate": "RESOURCES.ordinamento",
             "newLine": false,
@@ -195,25 +202,6 @@
     ],
     "subTables": [
         {
-            "entryKey": "attachments_sub_of_riunioni",
-            "isHidden": false,
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_riunione",
-                    "son": "id_riunione"
-                },
-                {
-                    "parent": "id_odg",
-                    "son": "id_odg"
-                }
-            ],
-            "label": "Documenti Allegati"
-        },
-        {
             "entryKey": "odg_associated_at_odg",
             "isHidden": false,
             "keys": [
@@ -284,22 +272,18 @@
             ],
             "isButton": true,
             "buttonAction": {
-                "target": "odg_riunioni",
-                "viewType": "form",
-                "query": "delete from entrasp.odg_riunioni where codice_azienda='£codice_azienda£' and id_riunione=£id_riunione£ and id_odg=£id_odg£",
+                "target": "template_odg",
+                "viewType": "table",
+                "query": "delete from entrasp.odg_riunioni where codice_azienda='£codice_azienda£' and id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
                 "action": "query",
                 "keymap": [
                     {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
+                        "source": "id_templ_riunione",
+                        "destination": "id_templ_riunione"
                     },
                     {
-                        "source": "id_riunione",
-                        "destination": "id_riunione"
-                    },
-                    {
-                        "source": "id_odg",
-                        "destination": "id_odg"
+                        "source": "id_templ_odg",
+                        "destination": "id_templ_odg"
                     }
                 ],
                 "confirmAction": true,
@@ -317,7 +301,7 @@
             },
             "isHidden": true,
             "isPrimary": true,
-            "key": "id_odg",
+            "key": "id_templ_odg",
             "width": "5%",
             "label": "ID OdG",
             "translate": "RESOURCES.id_odg"
@@ -349,7 +333,7 @@
             },
             "isHidden": true,
             "isPrimary": true,
-            "key": "id_riunione",
+            "key": "id_templ_riunione",
             "label": "ID riunione",
             "translate": "RESOURCES.id_riunione"
         },
@@ -358,22 +342,10 @@
                 "dataType": "text"
             },
             "isHidden": true,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "codice_azienda",
             "label": "Codice Azienda",
             "translate": "RESOURCES.company_code"
-        },
-        {
-            "format": {
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_riunione",
-            "queryFunct": "entrasp.odg_data(codice_azienda, id_odg, id_riunione)",
-            "label": "Data riunione",
-            "width": "7%",
-            "translate": "RESOURCES.data_riunione"
         },
         {
             "format": {
@@ -381,7 +353,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "ordinamento_odg",
+            "key": "ordinamento",
             "width": "4%",
             "label": "Ord.",
             "translate": "RESOURCES.ordinamento"
@@ -421,9 +393,6 @@
             "width": "45%"
         }
     ],
-    "querySuffixes": {
-        "tableViewSuffix": "order by data_riunione desc,  ordinamento_odg asc"
-    },
     "hideActions": [
         {
             "viewType": "form",

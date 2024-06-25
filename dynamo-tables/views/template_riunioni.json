@@ -17,7 +17,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select id_templ_riunione, codice_protocollo, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, data_riunione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.template_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
+            "queryString": "select id_templ_riunione, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest from entrasp.template_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
         },
         {
             "operation": "update",
@@ -28,16 +28,6 @@
             "operation": "insert",
             "type": "postProcessing",
             "queryString": "update entrasp.templ_riunioni cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
-        },
-        {
-            "type": "main",
-            "operation": "stopEvent",
-            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
-        },
-        {
-            "type": "main",
-            "operation": "startEvent",
-            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'template_riunioni, $id_template_riunione$, '$codice_azienda$'::varchar)"
         }
     ],
     "form_keys": [
@@ -63,7 +53,7 @@
             },
             "isHidden": false,
             "isPrimary": true,
-            "key": "id_template_riunione",
+            "key": "id_templ_riunione",
             "label": "Id Template Riunione",
             "newLine": false,
             "readOnly": true,
@@ -299,7 +289,7 @@
     ],
     "subTables": [
         {
-            "entryKey": "template_odg",
+            "entryKey": "template_odg_sub_of_riunioni",
             "keys": [
                 {
                     "parent": "id_templ_riunione",
@@ -426,17 +416,6 @@
         },
         {
             "format": {
-                "dataType": "datetime"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_riunione",
-            "width": "15%",
-            "label": "Data",
-            "translate": "RESOURCES.data_riunione"
-        },
-        {
-            "format": {
                 "dataType": "number"
             },
             "isHidden": true,
@@ -515,9 +494,6 @@
             "translate": "RESOURCES.time_report_stop_active"
         }
     ],
-    "querySuffixes": {
-        "tableViewSuffix": "order by data_riunione desc"
-    },
     "hideActions": [
         {
             "viewType": "form",
