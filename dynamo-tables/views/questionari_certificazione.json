@@ -814,7 +814,7 @@
             "format": {
                 "viewType": "invisible"
             },
-            "size": 3.5,
+            "size": 2,
             "isHidden": false,
             "isPrimary": false,
             "label": "invisible_7",
@@ -830,9 +830,52 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "preventivo",
+            "key": "preventivo_produci",
             "buttonIcon": "arrow_circle_up",
             "label": "Richiedi Preventivo",
+            "tooltip": "Premere la richiesta una volta completato tutto il questionario e dopo aver inserito le informazioni relative ai settori posto nella sottotabella in fondo alla pagina",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "produci_preventivo",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 3,
+            "style": {
+                "background_color": "forestGreen"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "produci_preventivo",
+                    "actionType": "show_message",
+                    "message": {
+                        "messageTitle": "Preventivo",
+                        "messageText": "Sei sicuro di voler procedere alla creazione del contratto, del preventivo e del progetto?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.crea_contratto_certificazione($codice_azienda$, $id_questionario$)"
+                        }
+                    },
+                    "condition": "none",
+                    "values": []
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "preventivo",
+            "buttonIcon": "arrow_circle_up",
+            "label": "Produci Contratto e Progetto",
             "tooltip": "Premere la richiesta una volta completato tutto il questionario e dopo aver inserito le informazioni relative alle sedi posto nella sottotabella in fondo alla pagina",
             "newLine": false,
             "outputEvent": {
@@ -858,7 +901,7 @@
                         },
                         "actionOnYes": {
                             "actionType": "query",
-                            "queryFunct": "select entrasp.crea_contratto_certificazione($codice_azienda$, $id_questionario$)"
+                            "queryFunct": "select 1"
                         }
                     },
                     "condition": "none",
@@ -870,7 +913,7 @@
             "format": {
                 "viewType": "invisible"
             },
-            "size": 3.5,
+            "size": 2,
             "isHidden": false,
             "isPrimary": false,
             "label": "invisible_8",
