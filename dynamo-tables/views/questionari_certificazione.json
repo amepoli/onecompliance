@@ -3,11 +3,15 @@
     "businessObjectName": "questionari_certificazione",
     "entryKey": "questionari_certificazione",
     "origin": "entrasp.questionari_certificazione",
+    "addElementSettings": {
+        "labelAdd": "Nuovo Questionario",
+        "navigateOnSuccess": true
+    },
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select *, entrasp.argomenti_descr_breve_no_id(id_tipo_servizio) as id_tipo_servizio, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as id_anagrafica, entrasp.argomenti_array(array[id_norma]) as id_norma from entrasp.questionari_certificazione where codice_azienda=$codice_azienda$ and (id_anagrafica=€global_userid€ or (id_centro_gest in (select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€') or id_anagrafica=€global_userid€))"
+            "queryString": "select *, entrasp.argomenti_descr_breve_no_id(id_tipo_servizio) as id_tipo_servizio, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as id_anagrafica, entrasp.argomenti_array(array[id_norma]) as id_norma,entrasp.questionario_completo(codice_azienda, id_questionario) as completezza from entrasp.questionari_certificazione where codice_azienda=$codice_azienda$ and (id_anagrafica=€global_userid€ or (id_centro_gest in (select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€') or id_anagrafica=€global_userid€))"
         }
     ],
     "form_keys": [
@@ -858,7 +862,7 @@
                         },
                         "actionOnYes": {
                             "actionType": "query",
-                            "queryFunct": "select entrasp.crea_contratto_certificazione($codice_azienda$, $id_questionario$)"
+                            "queryFunct": "select 1"
                         }
                     },
                     "condition": "none",
@@ -901,7 +905,7 @@
                         },
                         "actionOnYes": {
                             "actionType": "query",
-                            "queryFunct": "select 1"
+                            "queryFunct": "select entrasp.crea_contratto_certificazione($codice_azienda$, $id_questionario$)"
                         }
                     },
                     "condition": "none",
@@ -993,7 +997,6 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "completezza",
-            "queryFunct": "select 1",
             "sameOrigin": false,
             "isCheckbox": true,
             "width": "4%",
@@ -1036,10 +1039,53 @@
             "label": "Settori Associati"
         }
     ],
+    "search_keys": [
+        {
+            "fieldName": "id_cliente",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cliente",
+            "translate": "RESOURCES.customer",
+            "newLine": false,
+            "queryCond": "id_anagrafica=$id_cliente$"
+        },
+        {
+            "fieldName": "servizio_richiesto",
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, descrizione_breve AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father =52332 order by descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Servizio Richiesto",
+            "newLine": false,
+            "queryCond": "id_tipo_servizio=$servizio_richiesto$"
+        },
+        {
+            "fieldName": "certificazione_s",
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, descrizione_breve AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father =52266 order by descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Norma",
+            "newLine": false,
+            "queryCond": "$certificazione_s$ = any(array [id_norma])"
+        }
+    ],
     "hideActions": [
         {
-            "formActionType": "attachments",
-            "viewType": "form"
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add"
         }
-    ]
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by data_questionario desc limit 200"
+    }
 }
