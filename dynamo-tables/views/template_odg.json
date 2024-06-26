@@ -8,11 +8,14 @@
         "labelQuickAdd": "Nuovo Punto",
         "navigateOnSuccess": false
     },
+    "define": {
+        "is_hidden_riunione": "true"
+    },
     "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select * from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
+            "queryString": "select *, true as delete_templ_odg from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
         }
     ],
     "form_keys": [
@@ -51,9 +54,9 @@
                 "dataType": "number",
                 "options": [],
                 "viewType": "combobox",
-                "comboQuery": "select id_templ_riunione as id, id_riunione||'-'||oggetto as name from entrasp.riunioni where (codice_azienda = $codice_azienda$ or codice_azienda is null)"
+                "comboQuery": "select id_templ_riunione as id, id_templ_riunione||'-'||oggetto as name from entrasp.template_riunioni where (codice_azienda = '€global_codice_azienda€' or codice_azienda is null)"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_riunione}",
             "isPrimary": true,
             "key": "id_templ_riunione",
             "label": "Riunione",
@@ -67,7 +70,8 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3405 order by descrizione"
+                "value": null,
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=52522 order by descrizione"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -106,16 +110,49 @@
                 "dataType": "text",
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "select id_templ_odg as id, titolo as name from entrasp.template_odg where codice_azienda = $codice_azienda$ and id_odg!=£id_odg£"
+                "comboQuery": "select id_templ_odg as id, titolo as name from entrasp.template_odg where id_templ_odg!=£id_templ_odg£ and id_templ_riunione=$id_templ_riunione$ and (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_odg_parent",
+            "key": "id_templ_odg_parent",
             "label": "ID OdG Parent",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false,
             "size": 1,
             "translate": "RESOURCES.id_odg_parent"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "key": "crea_associa_argomento",
+                        "icon": "class",
+                        "label": "Crea e associa argomento",
+                        "translate": "RESOURCES.create_and_associate_tag",
+                        "outputEventName": "create_associate_argomento"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.argomenti_create_and_update_odg_riunione($id_templ_odg$, $id_templ_riunione$, $titolo$, 52522)"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "template_odg_actions",
+            "label": " ",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5
         },
         {
             "autoGenerate": false,
@@ -124,7 +161,7 @@
                 "viewType": "textarea",
                 "validations": [
                     {
-                        "message": "Breve descrizione necessaria",
+                        "message": "Titolo dell'ordine del giorno necessaria",
                         "name": "required",
                         "validator": "Validators.required"
                     }
@@ -133,7 +170,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
-            "label": "Punto",
+            "label": "Punto O.d.G.",
             "newLine": true,
             "readOnly": false,
             "translate": "RESOURCES.titolo_odg"
@@ -202,55 +239,38 @@
     ],
     "subTables": [
         {
-            "entryKey": "odg_associated_at_odg",
-            "isHidden": false,
+            "entryKey": "odg_sub_of_template_odg",
             "keys": [
                 {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
+                    "parent": "id_templ_riunione",
+                    "son": "id_templ_riunione"
                 },
+                {
+                    "parent": "id_templ_odg",
+                    "son": "id_templ_odg_parent"
+                }
+            ],
+            "label": "Sotto Ordini",
+            "renderingOrder": 1
+        },
+        {
+            "entryKey": "tag_sub_of_template_odg",
+            "keys": [
                 {
                     "parent": "id_argomento",
-                    "son": "id_argomento"
+                    "son": "id_argomento_son"
                 }
             ],
-            "label": "Trattazioni del Medesimo Argomento"
-        },
-        {
-            "entryKey": "odg_sub_of_odg",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_riunione",
-                    "son": "id_riunione"
-                },
-                {
-                    "parent": "id_odg",
-                    "son": "id_odg_parent"
-                }
-            ],
-            "label": "Sotto Ordini"
-        },
-        {
-            "entryKey": "consuntivazioni_sub_of_riunioni",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_riunione",
-                    "son": "id_riunione"
-                },
-                {
-                    "parent": "id_odg",
-                    "son": "id_odg"
-                }
-            ],
-            "label": "Aggiornamenti(mail, tr)"
+            "showByFormKeyCondition": {
+                "key": "argomento_not_null",
+                "condition": "notEqualTo",
+                "values": [
+                    "1"
+                ]
+            },
+            "label": "TAG",
+            "translate": "RESOURCES.tag",
+            "renderingOrder": 2
         }
     ],
     "table_keys": [
@@ -262,7 +282,7 @@
             "isPrimary": false,
             "width": "4%",
             "queryFunct": "select true",
-            "key": "delete_procedure_aziendali",
+            "key": "delete_templ_odg",
             "label": "",
             "style": [
                 {
@@ -274,7 +294,7 @@
             "buttonAction": {
                 "target": "template_odg",
                 "viewType": "table",
-                "query": "delete from entrasp.odg_riunioni where codice_azienda='£codice_azienda£' and id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
+                "query": "delete from entrasp.template_odg where id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
                 "action": "query",
                 "keymap": [
                     {
@@ -312,7 +332,7 @@
             },
             "isHidden": true,
             "isPrimary": false,
-            "key": "id_odg_parent",
+            "key": "id_templ_odg_parent",
             "width": "5%",
             "label": "ID OdG",
             "translate": "RESOURCES.id_odg_parent"
@@ -376,7 +396,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "riunione_descr",
-            "queryFunct": "entrasp.riunioni_descr(id_riunione, codice_azienda)",
+            "queryFunct": "entrasp.templ_riunioni_descr(id_templ_riunione)",
             "label": "Riunione",
             "width": "15%",
             "translate": "RESOURCES.riunione_descr"
@@ -393,6 +413,9 @@
             "width": "45%"
         }
     ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by ordinamento"
+    },
     "hideActions": [
         {
             "viewType": "form",
@@ -401,6 +424,10 @@
         {
             "viewType": "table",
             "tableActionType": "add"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add"
         }
     ]
 }

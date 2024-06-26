@@ -10,24 +10,9 @@
     },
     "predefinedQueries": [
         {
-            "operation": "selectForm",
-            "type": "preProcessing",
-            "queryString": "update entrasp.template_riunioni tmplrn set codice_part=az.codice_part from entrasp.aziende az WHERE tmplrn.codice_azienda=az.codice_azienda and id_templ_riunione=$id_templ_riunione$;"
-        },
-        {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select id_templ_riunione, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest from entrasp.template_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
-        },
-        {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "UPDATE entrasp.templ_riunioni cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
-        },
-        {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "update entrasp.templ_riunioni cmp set codice_part=az.codice_part from entrasp.aziende az where cmp.codice_azienda=az.codice_azienda"
+            "queryString": "select id_templ_riunione, oggetto,  codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest from entrasp.template_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
         }
     ],
     "form_keys": [
@@ -79,44 +64,6 @@
                 }
             ],
             "translate": "RESOURCES.id_templ_riunione"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3405 order by descrizione",
-                "validations": [
-                    {
-                        "message": "Campo Obbligatorio",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento",
-            "label": "Tipo Riunione",
-            "newLine": false,
-            "readOnly": false,
-            "size": 2.5,
-            "translate": "RESOURCES.id_argomento"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_centro_gest",
-            "label": "Organo/Comitato/Centro Gestionale",
-            "newLine": false,
-            "readOnly": false,
-            "translate": "RESOURCES.id_centro_gest"
         },
         {
             "autoGenerate": false,
@@ -234,37 +181,6 @@
     ],
     "search_keys": [
         {
-            "fieldName": "stato",
-            "format": {
-                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Stato",
-            "translate": "RESOURCES.status",
-            "newLine": false,
-            "queryCond": "stato='€stato€'"
-        },
-        {
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3352 order by descrizione",
-                "validations": [
-                    {
-                        "message": "Campo Obbligatorio",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
-            },
-            "fieldName": "id_tipo_riunione_s",
-            "label": "Tipo Riunione",
-            "queryCond": "id_argomento=$id_tipo_riunione_s$",
-            "newLine": false,
-            "size": 2.5
-        },
-        {
             "fieldName": "id_templ_riunione",
             "format": {
                 "dataType": "text",
@@ -273,18 +189,6 @@
             "label": "Codice Compito",
             "newLine": false,
             "queryCond": "id_templ_riunione=$id_templ_riunione$"
-        },
-        {
-            "fieldName": "id_centro_gest",
-            "format": {
-                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.template_riunioni WHERE codice_azienda=$codice_azienda$;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
-            "newLine": false,
-            "queryCond": "id_centro_gest=$id_centro_gest$"
         }
     ],
     "subTables": [
@@ -338,81 +242,10 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "codice_protocollo",
-            "width": "6%",
-            "label": "Protocollo",
-            "translate": "RESOURCES.codice_protocollo"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descr_templ_riunione",
-            "queryFunct": "entrasp.argomenti_descr(id_argomento)",
-            "label": "Tipo riunione",
-            "width": "15%",
-            "translate": "RESOURCES.descr_templ_riunione"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descr_centro_gest",
-            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-            "label": "Organo/ Centro Gest",
-            "width": "10%",
-            "translate": "RESOURCES.descr_centro_gest"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
             "key": "oggetto",
             "width": "33%",
             "label": "Oggetto",
             "translate": "RESOURCES.oggetto"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "stato",
-            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
-            "label": "Stato",
-            "translate": "RESOURCES.status",
-            "width": "6%",
-            "style": [
-                {
-                    "value": "Chiuso",
-                    "font_color": "PaleGreen",
-                    "font_weight": "500",
-                    "background_color": "Green",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Provvisorio",
-                    "font_color": "MistyRose",
-                    "font_weight": "500",
-                    "background_color": "MediumPurple",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Aperto",
-                    "font_color": "white",
-                    "font_weight": "500",
-                    "background_color": "royalblue",
-                    "font_size": "medium",
-                    "text_align": "center"
-                }
-            ]
         },
         {
             "format": {
@@ -423,75 +256,6 @@
             "key": "id_cliente",
             "label": "Cliente",
             "translate": "RESOURCES.customer"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "5%",
-            "key": "time_report_play",
-            "label": "",
-            "style": [
-                {
-                    "button_icon": "play_arrow",
-                    "value": "*"
-                }
-            ],
-            "isButton": true,
-            "buttonAction": {
-                "target": "riunioni",
-                "viewType": "form",
-                "action": "query",
-                "query": "select entrasp.business_object_play(('£user_companies£')::text, 'riunioni', '£id_riunione£', '£codice_azienda£')",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_riunione",
-                        "destination": "id_riunione"
-                    }
-                ],
-                "confirmAction": false,
-                "onSuccessAction": "update_time_tracker_and_reload"
-            },
-            "translate": "RESOURCES.time_report_play"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "5%",
-            "key": "time_report_stop_active",
-            "label": "",
-            "style": [
-                {
-                    "button_icon": "stop",
-                    "value": "*",
-                    "background_color": "crimson"
-                }
-            ],
-            "isButton": true,
-            "buttonAction": {
-                "target": "riunioni",
-                "viewType": "form",
-                "action": "query",
-                "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
-                "keymap": [
-                    {
-                        "source": "user_companies",
-                        "destination": "user_companies"
-                    }
-                ],
-                "confirmAction": false,
-                "onSuccessAction": "update_time_tracker_and_reload"
-            },
-            "translate": "RESOURCES.time_report_stop_active"
         }
     ],
     "hideActions": [
