@@ -2,9 +2,16 @@
     "$schema": "../views.schema.json",
     "entryKey": "articoli",
     "origin": "entrasp.articoli",
+    "businessObjectName": "articoli",
     "addElementSettings": {
         "labelAdd": "Nuovo Modulo/Articolo",
         "navigateOnSuccess": false
+    },
+    "define": {
+        "labelIdArticolo": "# modulo/articolo",
+        "labelcosto": "Costo Running",
+        "isHiddenCostoSetUp": "false",
+        "labelid_argomento_articolo": "Tipo Attività"
     },
     "form_keys": [
         {
@@ -29,13 +36,12 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "# modulo/articolo",
+            "label": "$P{labelIdArticolo}",
             "key": "id_articolo",
             "readOnly": true,
             "isHidden": false,
             "isPrimary": true,
-            "newLine": false,
-            "translate": "RESOURCES.id_articolo"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -64,8 +70,7 @@
             "label": "Valida da",
             "newLine": false,
             "readOnly": false,
-            "size": 1.2,
-            "translate": "RESOURCES.data_inserimento"
+            "size": 1.2
         },
         {
             "autoGenerate": false,
@@ -73,13 +78,12 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Costo Running",
+            "label": "$P{labelcosto}",
             "key": "costo",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
-            "translate": "RESOURCES.costo"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -90,7 +94,7 @@
             "label": "Costo Modulo",
             "key": "costo_set_up",
             "readOnly": false,
-            "isHidden": false,
+            "isHidden": "$Q{isHiddenCostoSetUp}",
             "isPrimary": false,
             "newLine": false,
             "translate": "RESOURCES.costo_set_up"
@@ -134,11 +138,10 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_articolo",
-            "label": "Tipo attività",
+            "label": "$P{labelid_argomento_articolo}",
             "readOnly": false,
             "size": 3,
-            "newLine": false,
-            "translate": "RESOURCES.id_argomento_articolo"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -237,6 +240,10 @@
         {
             "tableActionType": "quick-add",
             "viewType": "table"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
         }
     ]
 }
