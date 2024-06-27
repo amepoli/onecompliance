@@ -6,7 +6,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select todg.ordinamento, todg.titolo from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
+            "queryString": "select todg.ordinamento, todg.titolo, extract(day from ora_inizio) as data, extract(hour from odg.ora_inizio)::varchar||'-'|| extract(hour from odg.ora_fine)::varchar as orario from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
         }
     ],
     "table_multiselection_actions": [
@@ -86,17 +86,6 @@
             },
             "isHidden": true,
             "isPrimary": false,
-            "key": "id_templ_odg_parent",
-            "width": "5%",
-            "label": "ID OdG",
-            "translate": "RESOURCES.id_odg_parent"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
             "key": "id_argomento",
             "label": "Argomento",
             "translate": "RESOURCES.tag"
@@ -152,9 +141,29 @@
             "width": "30%",
             "label": "Titolo",
             "translate": "RESOURCES.title"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data",
+            "width": "8%",
+            "label": "Data"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "orario",
+            "width": "15%",
+            "label": "Orario"
         }
-          ],
+    ],
     "querySuffixes": {
         "tableViewSuffix": "order by todg.ordinamento"
-    }    
+    }
 }
