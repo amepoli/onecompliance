@@ -6,20 +6,155 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select todg.titolo from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$ order by todg.ordinamento"
+            "queryString": "select todg.ordinamento, todg.titolo from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
         }
     ],
-    "define": {
-        "is_hidden_riunione": "false"
-    },
-    "hideActions": [
+    "table_multiselection_actions": [
         {
-            "viewType": "form",
-            "formActionType": "attachments"
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "pianifica",
+                    "icon": "edit",
+                    "label": "Pianifica Attività",
+                    "query": "",
+                    "customDialogEntryName": "XXXX",
+                    "customDialogTitle": "Pianifica attività"
+                }
+            ]
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_templ_odg",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "template_odg",
+                "viewType": "table",
+                "query": "delete from entrasp.template_odg where id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "id_templ_riunione",
+                        "destination": "id_templ_riunione"
+                    },
+                    {
+                        "source": "id_templ_odg",
+                        "destination": "id_templ_odg"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "text": "Sei sicuro di voler cancellare il punto all'ordine del giorno?",
+                    "title": "Cancellazione ordine del giorno"
+                },
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_procedure_aziendali"
         },
         {
-            "viewType": "table",
-            "tableActionType": "add"
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_templ_odg",
+            "width": "5%",
+            "label": "ID OdG",
+            "translate": "RESOURCES.id_odg"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_templ_odg_parent",
+            "width": "5%",
+            "label": "ID OdG",
+            "translate": "RESOURCES.id_odg_parent"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Argomento",
+            "translate": "RESOURCES.tag"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_contratto",
+            "label": "id_contratto",
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_templ_riunione",
+            "label": "ID riunione",
+            "translate": "RESOURCES.id_riunione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "width": "4%",
+            "label": "Ord.",
+            "translate": "RESOURCES.ordinamento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "width": "30%",
+            "label": "Titolo",
+            "translate": "RESOURCES.title"
         }
-    ]    
+          ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by todg.ordinamento"
+    }    
 }
