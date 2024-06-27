@@ -650,6 +650,7 @@ export const locale = {
             grado: "Grado",
             grado_ipoteca: "Grado Ipoteca",
             guida_attuativa: "Guida Attuativa",
+            hash: "#",
             hidden_field: "",
             hide: "Nascondi",
             hide_associazione_consuntivazioni_k: "",
