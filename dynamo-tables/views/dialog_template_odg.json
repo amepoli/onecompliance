@@ -5,7 +5,7 @@
         {
             "operation": "update",
             "type": "main",
-            "queryString": "update entrasp.odg_riunioni odg set data_riunione=coalesce ($data_riunione$,odg.data_riunione), ora_inizio=coalesce ($ora_inizio$, odg.ora_inizio), durata=coalesce ($durata$,odg.durata), id_argomento_settore=coalesce($id_argomento_settore$, odg.id_argomento_settore), cantiere=coalesce ($cantiere$, odg.cantiere), id_argomento_controllo = coalesce ($id_argomento_controllo$, odg.id_argomento_controllo), id_argomento_funzione = coalesce(nullif(string_to_array(trim(both '[]' from '$id_argomento_funzione$'), ', '),'{}'), odg.id_argomento_funzione) where odg.id_odg||'~'||odg.id_riunione||'~'||odg.codice_azienda in (select unnest(ARRAY[$selected_rows_data$]))"
+            "queryString": "update entrasp.odg_riunioni odg set id_anagrafica=coalesce ($id_anagrafica$, odg.id_anagrafica), data_riunione=coalesce ($data_riunione$,odg.data_riunione), ora_inizio=coalesce ($ora_inizio$, odg.ora_inizio), durata=coalesce ($durata$,odg.durata), id_argomento_settore=coalesce($id_argomento_settore$, odg.id_argomento_settore), cantiere=coalesce ($cantiere$, odg.cantiere), id_argomento_controllo = coalesce ($id_argomento_controllo$, odg.id_argomento_controllo), id_argomento_funzione = coalesce(nullif(string_to_array(trim(both '[]' from '$id_argomento_funzione$'), ', '),'{}'), odg.id_argomento_funzione) where odg.id_odg||'~'||odg.id_riunione||'~'||odg.codice_azienda||'~'||odg.id_contratto in (select unnest(ARRAY[$selected_rows_data$]))"
         }
     ],
     "form_keys": [
@@ -96,7 +96,7 @@
             "key": "cantiere",
             "readOnly": false,
             "isHidden": false,
-            "size": 2.5,
+            "size": 5,
             "isPrimary": false,
             "newLine": false
         },
@@ -111,7 +111,7 @@
             "key": "id_argomento_controllo",
             "readOnly": false,
             "isHidden": false,
-            "size": 2.5,
+            "size": 5,
             "isPrimary": false,
             "newLine": true
         },
@@ -148,7 +148,22 @@
             "isHidden": false,
             "size": 3.33,
             "isPrimary": false,
-            "newLine": false
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "options": [],
+                "comboQuery": "select an.id_anagrafica as id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.sondaggi snd inner join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto inner join entrasp.anagrafiche_sondaggi ans on snd.codice_azienda=ans.codice_azienda and snd.id_sondaggio=ans.id_sondaggio inner join entrasp.anagrafiche_id an on ans.codice_part=an.codice_part and ans.id_anagrafica=an.id_anagrafica where codice_azienda=€global_codice_azienda€"
+            },
+            "label": "Auditor",
+            "key": "id_anagrafica",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 3.33,
+            "isPrimary": false,
+            "newLine": true
         }
     ]
 }
