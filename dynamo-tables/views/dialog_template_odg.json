@@ -1,0 +1,154 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_template_odg",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "update entrasp.odg_riunioni odg set data_riunione=coalesce ($data_riunione$,odg.data_riunione), ora_inizio=coalesce ($ora_inizio$, odg.ora_inizio), durata=coalesce ($durata$,odg.durata), id_argomento_settore=coalesce($id_argomento_settore$, odg.id_argomento_settore), cantiere=coalesce ($cantiere$, odg.cantiere), id_argomento_controllo = coalesce ($id_argomento_controllo$, odg.id_argomento_controllo), id_argomento_funzione = coalesce(nullif(string_to_array(trim(both '[]' from '$id_argomento_funzione$'), ', '),'{}'), odg.id_argomento_funzione) where odg.id_odg||'~'||odg.id_riunione||'~'||odg.codice_azienda in (select unnest(ARRAY[$selected_rows_data$]))"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_riunione",
+            "label": "Data",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES (8.00,8.00), (9.00,9.00), (10.00,10.00), (11.00,11.00), (12.00,12.00), (13.00,13.00), (14.00,14.00), (15.00,15.00), (16.00,16.00), (17.00,17.00), (18.00,18.00)) AS t1(id, name);",
+                "options": [],
+                "dataType": "text",
+                "value": null
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ora_inizio",
+            "label": "Dalle",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES (8.00,8.00), (9.00,9.00), (10.00,10.00), (11.00,11.00), (12.00,12.00), (13.00,13.00), (14.00,14.00), (15.00,15.00), (16.00,16.00), (17.00,17.00), (18.00,18.00)) AS t1(id, name);",
+                "options": [],
+                "dataType": "text",
+                "value": null
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ora_fine",
+            "label": "Alle",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "durata",
+            "label": "Durata",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT 1"
+            },
+            "label": "Settore",
+            "key": "id_argomento_settore",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Località Cantiere/Sito Operativo",
+            "key": "cantiere",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti where id_argomento in (52523, 52515)"
+            },
+            "label": "Tipo Verifica",
+            "key": "id_argomento_controllo",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_1",
+            "label": "Funzione Valutata",
+            "style": {
+                "font_color": "black",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52524"
+            },
+            "label": "Funzione Auditata",
+            "key": "id_argomento_funzione",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 3.33,
+            "isPrimary": false,
+            "newLine": false
+        }
+    ]
+}

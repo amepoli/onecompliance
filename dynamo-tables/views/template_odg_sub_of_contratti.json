@@ -1,12 +1,12 @@
 {
     "$schema": "../views.schema.json",
-    "inheritsFrom": "template_odg",
     "entryKey": "template_odg_sub_of_contratti",
+    "origin": "entrasp.odg_riunioni",
     "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select todg.ordinamento, todg.titolo, extract(day from ora_inizio) as data, extract(hour from odg.ora_inizio)::varchar||'-'|| extract(hour from odg.ora_fine)::varchar as orario from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
+            "queryString": "select odg.id_odg, odg.id_riunione, odg.codice_azienda, todg.ordinamento, todg.titolo,odg.data_riunione as data, odg.ora_inizio as dalle,odg.ora_fine as alle, odg.id_anagrafica, odg.durata, entrasp.argomenti_descr_breve_no_num(odg.id_argomento_controllo), odg.cantiere, entrasp.argomenti_array(array [odg.id_argomento_funzione]) as funzione_valutata, entrasp.argomenti_descr_breve_no_num(odg.id_argomento_controllo) from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
         }
     ],
     "table_multiselection_actions": [
@@ -21,7 +21,7 @@
                     "icon": "edit",
                     "label": "Pianifica Attività",
                     "query": "",
-                    "customDialogEntryName": "XXXX",
+                    "customDialogEntryName": "dialog_template_odg",
                     "customDialogTitle": "Pianifica attività"
                 }
             ]
@@ -75,6 +75,36 @@
             },
             "isHidden": true,
             "isPrimary": true,
+            "key": "id_odg",
+            "width": "5%",
+            "label": "ID OdG"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_riunione",
+            "width": "5%",
+            "label": "ID OdG"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
             "key": "id_templ_odg",
             "width": "5%",
             "label": "ID OdG",
@@ -114,27 +144,6 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_azienda",
-            "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "ordinamento",
-            "width": "4%",
-            "label": "Ord.",
-            "translate": "RESOURCES.ordinamento"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
@@ -144,7 +153,7 @@
         },
         {
             "format": {
-                "dataType": "text"
+                "dataType": "date"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -154,13 +163,79 @@
         },
         {
             "format": {
-                "dataType": "text"
+                "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "orario",
+            "key": "dalle",
             "width": "15%",
-            "label": "Orario"
+            "label": "Dalle"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "alle",
+            "width": "15%",
+            "label": "Alle"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "durata",
+            "label": "Durata",
+            "width": "8%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Settore",
+            "key": "id_argomento_settore",
+            "isHidden": false,
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Località Cantiere/Sito Operativo",
+            "key": "cantiere",
+            "isHidden": false,
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Tipo Verifica",
+            "key": "id_argomento_controllo",
+            "isHidden": false,
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Auditor",
+            "key": "id_anagrafica",
+            "isHidden": false,
+            "queryFunct": "entrasp.anagrafiche_cognnome('€global_codice_part€', id_anagrafica)",
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Funzione Auditata",
+            "key": "id_argomento_funzione",
+            "isHidden": false,
+            "isPrimary": false
         }
     ],
     "querySuffixes": {
