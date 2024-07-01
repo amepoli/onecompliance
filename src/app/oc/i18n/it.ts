@@ -1400,6 +1400,7 @@ export const locale = {
             task_code: "Codice Compito",
             tasso: "Tasso",
             tasso_attualizzazione: "Tasso Attualizzazione",
+            template_risposta: "Template Risposta",
             template_risposte: "Tipo Risposta",
             termini_ultimi_cancellazione: "Termini ultimi cancellazione",
             testo_normativo: "Testo normativo",

@@ -1413,6 +1413,7 @@ export const locale = {
             task_code: "Task Code",
             tasso: "Badger",
             tasso_attualizzazione: "Actualization rate",
+            template_risposta: "Answer Template",
             template_risposte: "Response Type",
             termini_ultimi_cancellazione: "Cancellation deadlines",
             testo_normativo: "Regulatory text",
