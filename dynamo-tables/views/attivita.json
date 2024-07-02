@@ -124,19 +124,9 @@
             "queryString": "select att.*, (select case when att.id_modello_test is null then false else true end) as visible_button_modello_test, entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr) as codice_attivita_principale, true as create_progetto, entrasp.centri_gestionali_descr(att.codice_part, att.id_centro_gest) as centro_gest from entrasp.attivita att inner join (select codice_azienda, codice_attivita, max(attivita_vr) maxvr from entrasp.attivita where codice_azienda=$codice_azienda$ group by codice_azienda, codice_attivita) attmax on att.codice_azienda=attmax.codice_azienda and att.codice_attivita=attmax.codice_attivita and att.attivita_vr=attmax.maxvr where att.codice_azienda=$codice_azienda$ and att.codice_attivita_parent is null and att.data_fine_validita is null;"
         },
         {
-            "operation": "insert",
-            "queryString": "select entrasp.attivita_order_and_settle($codice_azienda$, $codice_attivita$, $attivita_vr$);",
-            "type": "postProcessing"
-        },
-        {
             "operation": "delete",
             "queryString": "delete from entrasp.attivita att where entrasp.grc_codice_attivita_parent(att.codice_azienda, att.codice_attivita, att.attivita_vr)=$codice_attivita$ and att.codice_azienda=$codice_azienda$",
             "type": "main"
-        },
-        {
-            "operation": "update",
-            "queryString": "select entrasp.attivita_order_and_settle($codice_azienda$, $codice_attivita$, $attivita_vr$)",
-            "type": "postProcessing"
         },
         {
             "type": "main",

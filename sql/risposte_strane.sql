@@ -1,3 +1,45 @@
+--- le seguenti query serve a riprisitnare le risposte mancanti da una vecchia versione
+
+
+
+INSERT INTO entrasp.risposte(
+	codice_azienda, id_modello_test, id_risposta, risposta, id_domanda, id_risposta_prev, object_name, object_key, id_sondaggio, id_somministrazione, punteggio, peso, note, id_modello_test_vr, punteggio_risposta, flag_non_applicabile, numero_allegati, md5, penalizzazione, flag_attiva, num_criticita, id_sezione, risposta_num, risposta_date)
+	
+	SELECT
+	codice_azienda, id_modello_test, id_risposta, risposta, id_domanda, id_risposta_prev, object_name, object_key, id_sondaggio, id_somministrazione, punteggio, peso, note, id_modello_test_vr, punteggio_risposta, flag_non_applicabile, numero_allegati, md5, penalizzazione, flag_attiva, num_criticita, id_sezione, risposta_num, risposta_date
+	
+	
+FROM
+	"20240528".RISPOSTE
+WHERE codice_azienda='FININTSGR'
+	and id_modello_test in(16,616,634)
+	
+	and CODICE_AZIENDA || '-' || ID_SONDAGGIO || '-' || ID_SOMMINISTRAZIONE || '-' || ID_MODELLO_TEST || '-' || ID_MODELLO_TEST_VR || '-' || ID_DOMANDA || '-' || ID_RISPOSTA NOT IN (
+		SELECT
+			CODICE_AZIENDA || '-' || ID_SONDAGGIO || '-' || ID_SOMMINISTRAZIONE || '-' || ID_MODELLO_TEST || '-' || ID_MODELLO_TEST_VR || '-' || ID_DOMANDA || '-' || ID_RISPOSTA
+	from  entrasp.risposte
+	where codice_azienda='FININTSGR'
+	and id_modello_test in(16,616,634)
+	)
+and CODICE_AZIENDA || '-' || ID_SONDAGGIO || '-' || ID_SOMMINISTRAZIONE || '-' || ID_MODELLO_TEST || '-' || ID_MODELLO_TEST_VR || '-' || ID_DOMANDA   NOT IN (
+		SELECT
+			CODICE_AZIENDA || '-' || ID_SONDAGGIO || '-' || ID_SOMMINISTRAZIONE || '-' || ID_MODELLO_TEST || '-' || ID_MODELLO_TEST_VR || '-' || ID_DOMANDA 
+
+	from  entrasp.risposte
+	where codice_azienda='FININTSGR'
+	and id_modello_test in(16,616,634)
+	)
+	and id_sondaggio not in(6814)
+on conflict do nothing
+
+
+----
+
+
+
+
+
+
 select rs2.id_domanda, rs2.id_risposta, rs2.id_risposta_prev, rs2.codice_azienda, rs2.id_sondaggio, rs2.id_somministrazione, 
 	rs2.id_modello_test, rs2.id_modello_test_vr  from entrasp.risposte rs2
 	where rs2.codice_azienda||rs2.id_sondaggio||rs2.id_somministrazione||rs2.id_modello_test||rs2.id_modello_test_vr||rs2.id_domanda
