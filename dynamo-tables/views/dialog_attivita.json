@@ -1,0 +1,45 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_attivita",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.attivita_tagging(codice_azienda, codice_attivita, attivita_vr, $id_argomento_father$, $flag_cancella_tag$::boolean) from entrasp.attivita where codice_azienda||'~'||codice_attivita||'~'||attivita_vr in($selected_rows_data$)"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(52266) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_father",
+            "label": "TAG fasi",
+            "readOnly": false,
+            "newLine": false,
+            "size": 6.66,
+            "translate": "RESOURCES.id_argomento_father"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "key": "flag_cancella_tag",
+            "label": "Cancella tag",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "translate": "RESOURCES.flag_cancella_tag"
+        }
+    ]
+}
