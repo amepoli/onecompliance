@@ -32,11 +32,17 @@ export class MenuOptionsCustomDialogComponent {
             _this.title = data.customDialogTitle;
             _this.showSaveButton = data.customDialogGenericSave ?? true;
 
+            let keys = {
+                codice_azienda: _this._authService.getCurrentCompany()
+            };
+            
+            if(data.formKeys && Object.keys(data.formKeys).length > 0) {
+                keys = {...keys, ...data.formKeys}
+            }
+
             _this.formParams = {
                 entryName: data.customDialogEntryName,
-                keys: {
-                    codice_azienda: _this._authService.getCurrentCompany()
-                },
+                keys: keys,
                 isNew: false,
                 isVisible: true
             };        
