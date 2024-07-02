@@ -4,6 +4,24 @@
     "origin": "entrasp.attivita",
     "businessObjectName": "attivita",
     "label": "Modelli di progetto",
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "modifica_fasi",
+                    "icon": "edit",
+                    "label": "Modifica Fasi",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_attivita",
+                    "customDialogTitle": "Modifica Fasi"
+                }
+            ]
+        }
+    ],
     "outputEvents": [
         {
             "eventName": "attivita_load",
@@ -823,7 +841,8 @@
                     "son": "attivita_vr"
                 }
             ],
-            "label": "Fasi"
+            "label": "Fasi",
+            "renderingOrder": 1
         },
         {
             "entryKey": "progetti_sub_of_attivita",
@@ -837,7 +856,8 @@
                     "son": "codice_attivita"
                 }
             ],
-            "label": "Progetti Associati"
+            "label": "Progetti Associati",
+            "renderingOrder": 2
         },
         {
             "entryKey": "attivita_versioni",
@@ -852,7 +872,8 @@
                 }
             ],
             "label": "Versioni",
-            "translate": "RESOURCES.version"
+            "translate": "RESOURCES.version",
+            "renderingOrder": 3
         },
         {
             "entryKey": "same_attivita_sub_of_attivita",
@@ -866,7 +887,27 @@
                     "son": "codice_attivita"
                 }
             ],
-            "label": "Versioni da Importare"
+            "label": "Versioni da Importare",
+            "renderingOrder": 4
+        },
+        {
+            "entryKey": "tag_sub_of_attivita",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "showByFormKeyCondition": {
+                "key": "argomento_not_null",
+                "condition": "notEqualTo",
+                "values": [
+                    "1"
+                ]
+            },
+            "label": "TAG",
+            "translate": "RESOURCES.tag",
+            "renderingOrder": 5
         }
     ],
     "querySuffixes": {
