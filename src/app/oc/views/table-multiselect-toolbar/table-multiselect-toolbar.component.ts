@@ -22,6 +22,8 @@ export class TableMultiselectToolbarComponent implements DoCheck {
     @Input("selection") selection: SelectionModel<any>;
     @Input("actions") actions: SelectionAction[];
     @Input("viewKeys") viewKeys: TableViewKey[];
+    @Input("externalKeys") externalKeys: object;
+
     subscriptions: Subscription[] = [];
 
     @Output() onReload = new EventEmitter<any>();
@@ -115,6 +117,13 @@ export class TableMultiselectToolbarComponent implements DoCheck {
             };
         }
         
+        if(_this.externalKeys) {
+            menu["formKeys"] = _this.externalKeys;
+        }
+        else {
+            menu["formKeys"] = {};
+        }
+
         // Pop-up example
         const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
             width: '1280px',
