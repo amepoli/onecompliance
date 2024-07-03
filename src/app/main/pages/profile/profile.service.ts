@@ -44,8 +44,8 @@ export class ProfileService implements Resolve<any>
                 this.getAbout(),
                 this.getPhotosVideos()
             ]).then(
-                () => {
-                    resolve();
+                (x: any) => {
+                    resolve(x);
                 },
                 reject
             );
