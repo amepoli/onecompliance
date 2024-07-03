@@ -4,9 +4,9 @@ import { FormTableViewComponent } from './form-table-view.component';
 import { FormGetterModule } from '../form-getter/form-getter.module';
 import { DynamicFormsModule } from 'app/oc/dynamic-forms/dynamic-forms.module';
 import { MatButtonModule } from '@angular/material/button';
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
+import { MatFormFieldModule as MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
+import { MatInputModule as MatInputModule } from '@angular/material/input';
 import { FormViewModule } from '../form/form-view.module';
 
 @NgModule({

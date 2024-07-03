@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MainDashboardsComponent } from './main-dashboards.component';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatCardModule as MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
 import { DashboardModule } from '../views/dashboard/dashboard.module';
 

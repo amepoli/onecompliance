@@ -8,7 +8,7 @@ import { BackendService } from './backend.service';
 import { PubSubService } from 'app/oc/services/pubsub.service';
 import { AuthService } from './auth.service';
 import { DialogService } from './dialog.service';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 import { ConsoleLoggerService } from './console_logger.service';
 import { ExportItem, ExportList, ImportItem, ImportList } from '../interfaces';

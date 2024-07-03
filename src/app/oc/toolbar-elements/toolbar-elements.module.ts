@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
+import { MatProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ToolbarElementsComponent } from './toolbar-elements.component';
 import { TableViewModule } from 'app/oc/views/table/table-view.module';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
+import { MatCardModule as MatCardModule } from '@angular/material/card';
 import { RouterModule } from '@angular/router';
 import { FormViewModule } from '../views/form/form-view.module';
 import { FormViewToolbarModule } from '../views/form-view-toolbar/form-view-toolbar.module';

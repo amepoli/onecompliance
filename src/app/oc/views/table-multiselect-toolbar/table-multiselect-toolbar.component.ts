@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { I } from '@angular/cdk/keycodes';
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { MenuOptionsCustomDialogComponent } from 'app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component';
 import { MenuOption, SelectionAction, SelectionActionParams, TableViewKey } from 'app/oc/interfaces';
 import { AuthService, BackendService, DialogService, ToastService } from 'app/oc/services';

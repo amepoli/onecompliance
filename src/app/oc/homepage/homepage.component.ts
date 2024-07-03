@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FormViewParams, MessageView, TableViewParams, TabType } from '../interfaces';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
+import { MatTabChangeEvent as MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
     selector: 'homepage',

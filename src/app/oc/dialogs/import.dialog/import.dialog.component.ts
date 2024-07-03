@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ConsoleLoggerService } from 'app/oc/services/console_logger.service';
 import { DialogService } from 'app/oc/services/dialog.service';
