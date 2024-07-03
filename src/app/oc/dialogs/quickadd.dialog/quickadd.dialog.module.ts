@@ -9,7 +9,7 @@ import { FuseSearchBarModule, FuseShortcutsModule } from '@fuse/components';
 import { FuseSharedModule } from '@fuse/shared.module';
 
 import { MatProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatFormFieldModule as MatFormFieldModule, MAT_LEGACY_FORM_FIELD_DEFAULT_OPTIONS as MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MatFormFieldModule as MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS as MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatInputModule as MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { FormViewModule } from 'app/oc/views/form/form-view.module';

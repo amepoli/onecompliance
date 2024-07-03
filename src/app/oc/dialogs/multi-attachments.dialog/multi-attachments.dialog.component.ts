@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { MultiFileUploadComponent } from 'app/oc/file-uploader/multi-file-upload/multi-file-upload.component';
