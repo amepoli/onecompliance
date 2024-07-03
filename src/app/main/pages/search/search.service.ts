@@ -40,8 +40,8 @@ export class SearchService implements Resolve<any>
                 this.getClassic(),
                 this.getTable()
             ]).then(
-                () => {
-                    resolve();
+                (x: any) => {
+                    resolve(x);
                 },
                 reject
             );

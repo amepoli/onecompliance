@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild, Output, EventEmitter, OnChanges, SimpleChanges, HostListener, ViewEncapsulation, OnDestroy, AfterViewInit, OnInit } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator as MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource, MatRow } from '@angular/material/table';
+import { MatTableDataSource as MatTableDataSource, MatRow as MatRow } from '@angular/material/table';
 import { ExportItem, FieldConfig, FormViewParams, ImportItem, MessageElement, MessageView, Restrictions, SearchToggle, SearchViewKey, SelectionAction, TableViewKey, TableViewParams } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';

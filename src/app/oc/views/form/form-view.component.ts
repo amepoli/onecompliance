@@ -1,7 +1,7 @@
 import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit, OnDestroy } from '@angular/core';
 
 import 'rxjs/add/operator/filter';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { AttachDialogComponent } from 'app/oc/dialogs/attach.dialog/attach.dialog.component';
 import { MultiAttachmentsDialogComponent } from 'app/oc/dialogs/multi-attachments.dialog/multi-attachments.dialog.component';
 import { FormGetterComponent } from '../form-getter/form-getter.component';

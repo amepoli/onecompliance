@@ -36,8 +36,8 @@ export class EcommerceProductsService implements Resolve<any>
             Promise.all([
                 this.getProducts()
             ]).then(
-                () => {
-                    resolve();
+                (x: any) => {
+                    resolve(x);
                 },
                 reject
             );

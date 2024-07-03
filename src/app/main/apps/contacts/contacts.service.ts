@@ -59,7 +59,7 @@ export class ContactsService implements Resolve<any>
                 this.getContacts(),
                 this.getUserData()
             ]).then(
-                ([files]) => {
+                ([x]) => {
 
                     this.onSearchTextChanged.subscribe(searchText => {
                         this.searchText = searchText;
@@ -71,7 +71,7 @@ export class ContactsService implements Resolve<any>
                         this.getContacts();
                     });
 
-                    resolve();
+                    resolve(x);
 
                 },
                 reject
