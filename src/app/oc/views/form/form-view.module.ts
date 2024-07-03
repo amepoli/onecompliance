@@ -6,7 +6,7 @@ import { MultiAttachmentsDialogComponent } from 'app/oc/dialogs/multi-attachment
 import { FileUploadComponent } from '../../file-uploader/file-upload/file-upload.component';
 import { MultiFileUploadComponent } from 'app/oc/file-uploader/multi-file-upload/multi-file-upload.component';
 import { ProgressComponent } from '../../file-uploader/progress/progress.component';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { MatLegacyOptionModule as MatOptionModule } from '@angular/material/legacy-core';
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';

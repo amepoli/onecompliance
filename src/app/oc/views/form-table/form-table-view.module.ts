@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormTableViewComponent } from './form-table-view.component';
 import { FormGetterModule } from '../form-getter/form-getter.module';
 import { DynamicFormsModule } from 'app/oc/dynamic-forms/dynamic-forms.module';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
