@@ -9,7 +9,7 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Googl
 import { DynamicFieldDirective } from 'app/oc/directives';
 import { SubFormDynamicFieldDirective } from 'app/oc/directives/subform-dynamic-field.directive';
 import { RegulatAPIParams } from 'app/oc/interfaces/regulat_api_params';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MenuOptionsCustomDialogComponent } from 'app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 

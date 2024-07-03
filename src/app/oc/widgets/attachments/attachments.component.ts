@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { AttachDialogComponent } from 'app/oc/dialogs/attach.dialog/attach.dialog.component';
 import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService } from 'app/oc/services';

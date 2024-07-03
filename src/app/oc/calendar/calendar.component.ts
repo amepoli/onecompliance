@@ -25,7 +25,7 @@ import { Subject } from 'rxjs';
 // } from 'angular-calendar';
 // import { EventColor } from 'calendar-utils';
 import * as moment from 'moment';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { CalendarEventDialogComponent } from '../dialogs/calendar-event.dialog/calendar-event.dialog.component';
 import { CalendarService } from '../services/calendar.service';
 import { AuthService, ConsoleLoggerService } from '../services';

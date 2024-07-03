@@ -24,7 +24,7 @@ import { NavigationService } from 'app/oc/services/navigation.service';
 import { ConsoleLoggerService } from 'app/oc/services/console_logger.service';
 import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/oc/interfaces';
 import { DialogService, HelperService, TimeTrackerService } from 'app/oc/services';
-import { MatButton } from '@angular/material/button';
+import { MatLegacyButton as MatButton } from '@angular/material/legacy-button';
 import { MainToolbarDialog } from 'app/oc/interfaces/main_toolbar_dialog.interface';
 
 @Component({
