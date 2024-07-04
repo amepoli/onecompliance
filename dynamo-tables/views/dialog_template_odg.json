@@ -3,8 +3,13 @@
     "entryKey": "dialog_template_odg",
     "predefinedQueries": [
         {
+            "operation": "selectForm",
+            "queryString": "select $codice_azienda$, $id_contratto$",
+            "type": "main"
+        },
+        {
             "operation": "insert",
-            "queryString": "select entrasp.crea_odg_template(ac.codice_azienda, todg.id_templ_odg, $id_contratto$, todg.id_template_riunioni, $id_argomento_settore$, $id_anagrafica$, $durata$,  $ora_inizio$, $data_riunione$, $id_argomento_funzione$, $cantiere$, $id_argomento_controllo$, array_agg(odg.id_odg)) from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione  where todg.id_templ_odg||'~'||todg.id_temp_riunione||'~'||ac.codice_azienda||'~'||ac.id_contratto in (select unnest(ARRAY[$selected_rows_data$||'~'||$id_contratto$]))",
+            "queryString": "select entrasp.crea_odg_template(ac.codice_azienda, todg.id_templ_odg, $id_contratto$, todg.id_template_riunioni, $id_argomento_settore$, $id_anagrafica$, $durata$,  $ora_inizio$, $data_riunione$, $id_argomento_funzione$, $cantiere$, $id_argomento_controllo$, array_agg(odg.id_odg)) from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione  where todg.id_templ_odg||'~'||todg.id_temp_riunione||'~'||ac.codice_azienda||'~'||ac.id_contratto in (select unnest(ARRAY[$selected_rows_data$||'~'||$id_contratto$))",
             "type": "main"
         },
         {
@@ -25,7 +30,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "key": "id_contratto",
             "label": "id_contratto",
