@@ -9,18 +9,13 @@
         },
         {
             "operation": "insert",
-            "queryString": "select entrasp.crea_odg_template(ac.codice_azienda, todg.id_templ_odg, $id_contratto$, todg.id_templ_riunione, $id_argomento_settore$, $id_anagrafica$, $durata$,  $ora_inizio$, $data_riunione$, ARRAY$id_argomento_funzione$, $cantiere$, $id_argomento_controllo$, array_agg(odg.id_odg)) from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione  where ac.codice_azienda||'~'|| todg.id_templ_odg||'~'||ac.id_contratto||'~'||todg.id_templ_riunione in (select unnest(ARRAY[$selected_rows_data$]))",
+            "queryString": "select entrasp.crea_odg_template(ac.codice_azienda, todg.id_templ_odg, $id_contratto$, todg.id_templ_riunione, array$id_argomento_settore$, ARRAY$id_anagrafica$, $durata$,  $ora_inizio$, $data_riunione$, ARRAY$id_argomento_funzione$, $cantiere$, $id_argomento_controllo$, array_agg(odg.id_odg)) from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione  where ac.codice_azienda||'~'|| todg.id_templ_odg||'~'||ac.id_contratto||'~'||todg.id_templ_riunione in (select unnest(ARRAY[$selected_rows_data$])) group by ac.codice_azienda, todg.id_templ_odg, ac.id_contratto, todg.id_templ_riunione, odg.id_argomento_settore, id_anagrafica, durata,  ora_inizio, data_riunione,id_argomento_funzione, cantiere, id_argomento_controllo",
             "type": "main"
         },
         {
             "operation": "isInsert",
             "queryString": "select true as label;",
             "type": "main"
-        },
-        {
-            "operation": "update",
-            "type": "main",
-            "queryString": "update entrasp.odg_riunioni odg set id_anagrafica=coalesce ($id_anagrafica$, odg.id_anagrafica), data_riunione=coalesce ($data_riunione$,odg.data_riunione), ora_inizio=coalesce ($ora_inizio$, odg.ora_inizio), durata=coalesce ($durata$,odg.durata), id_argomento_settore=coalesce($id_argomento_settore$, odg.id_argomento_settore), cantiere=coalesce ($cantiere$, odg.cantiere), id_argomento_controllo = coalesce ($id_argomento_controllo$, odg.id_argomento_controllo), id_argomento_funzione = coalesce(nullif(string_to_array(trim(both '[]' from '$id_argomento_funzione$'), ', '),'{}'), odg.id_argomento_funzione) where odg.id_odg||'~'||odg.id_riunione||'~'||odg.codice_azienda||'~'||odg.id_contratto in (select unnest(ARRAY[$selected_rows_data$]))"
         }
     ],
     "form_keys": [
@@ -56,14 +51,7 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "viewType": "input",
-                "validations": [
-                    {
-                        "message": "Data necessaria",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -80,36 +68,12 @@
                 "comboQuery": "SELECT * FROM (VALUES (8.00,8.00), (9.00,9.00), (10.00,10.00), (11.00,11.00), (12.00,12.00), (13.00,13.00), (14.00,14.00), (15.00,15.00), (16.00,16.00), (17.00,17.00), (18.00,18.00)) AS t1(id, name);",
                 "options": [],
                 "dataType": "text",
-                "value": null,
-                "validations": [
-                    {
-                        "message": "Ora inizio necessaria",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
+                "value": null
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "ora_inizio",
             "label": "Dalle",
-            "newLine": false,
-            "readOnly": false,
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "comboQuery": "SELECT * FROM (VALUES (8.00,8.00), (9.00,9.00), (10.00,10.00), (11.00,11.00), (12.00,12.00), (13.00,13.00), (14.00,14.00), (15.00,15.00), (16.00,16.00), (17.00,17.00), (18.00,18.00)) AS t1(id, name);",
-                "options": [],
-                "dataType": "text",
-                "value": null
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "ora_fine",
-            "label": "Alle",
             "newLine": false,
             "readOnly": false,
             "size": 2
@@ -126,20 +90,21 @@
             "label": "Durata",
             "newLine": false,
             "readOnly": false,
-            "size": 1
+            "size": 2
         },
         {
             "autoGenerate": false,
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "SELECT 1"
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti where id_argomento in (52523, 52515)",
+                "value": null
             },
-            "label": "Settore",
-            "key": "id_argomento_settore",
+            "label": "Tipo Verifica",
+            "key": "id_argomento_controllo",
             "readOnly": false,
             "isHidden": false,
-            "size": 2.5,
+            "size": 4,
             "isPrimary": false,
             "newLine": true
         },
@@ -147,28 +112,14 @@
             "autoGenerate": false,
             "format": {
                 "viewType": "input",
-                "dataType": "text"
+                "dataType": "text",
+                "value": null
             },
             "label": "Località Cantiere/Sito Operativo",
             "key": "cantiere",
             "readOnly": false,
             "isHidden": false,
-            "size": 5,
-            "isPrimary": false,
-            "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti where id_argomento in (52523, 52515)"
-            },
-            "label": "Tipo Verifica",
-            "key": "id_argomento_controllo",
-            "readOnly": false,
-            "isHidden": false,
-            "size": 5,
+            "size": 10,
             "isPrimary": false,
             "newLine": true
         },
@@ -186,7 +137,7 @@
                 "font_color": "black",
                 "font_size": "1.4em",
                 "font_style": "normal",
-                "font_weight": "400"
+                "font_weight": "500"
             },
             "newLine": false,
             "sameOrigin": false,
@@ -206,7 +157,27 @@
                 "font_color": "black",
                 "font_size": "1.4em",
                 "font_style": "normal",
-                "font_weight": "400"
+                "font_weight": "500"
+            },
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_3",
+            "label": "Settore",
+            "style": {
+                "font_color": "black",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "500"
             },
             "newLine": true,
             "sameOrigin": false,
@@ -217,13 +188,14 @@
             "format": {
                 "viewType": "checkboxgroup",
                 "options": [],
-                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52524"
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52524",
+                "value": null
             },
             "label": "Funzione Auditata",
             "key": "id_argomento_funzione",
             "readOnly": false,
             "isHidden": false,
-            "size": 5,
+            "size": 3.33,
             "isPrimary": false,
             "newLine": false
         },
@@ -232,13 +204,29 @@
             "format": {
                 "viewType": "checkboxgroup",
                 "options": [],
-                "comboQuery": "select an.id_anagrafica as id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.sondaggi snd inner join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto inner join entrasp.anagrafiche_sondaggi ans on snd.codice_azienda=ans.codice_azienda and snd.id_sondaggio=ans.id_sondaggio inner join entrasp.anagrafiche_id an on ans.codice_part=an.codice_part and ans.id_anagrafica=an.id_anagrafica where snd.codice_azienda='€global_codice_azienda€'"
+                "comboQuery": "select an.id_anagrafica as id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.sondaggi snd inner join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto inner join entrasp.anagrafiche_sondaggi ans on snd.codice_azienda=ans.codice_azienda and snd.id_sondaggio=ans.id_sondaggio inner join entrasp.anagrafiche_id an on ans.codice_part=an.codice_part and ans.id_anagrafica=an.id_anagrafica where snd.codice_azienda='€global_codice_azienda€' and snd.id_contratto=$id_contratto$",
+                "value": null
             },
             "label": "Auditor",
             "key": "id_anagrafica",
             "readOnly": false,
             "isHidden": false,
-            "size": 5,
+            "size": 3.33,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "options": [],
+                "comboQuery": "select unnest as id, entrasp.argomenti_descr_breve_no_num(unnest) as name from entrasp.articoli_contratti, unnest (id_argomento_settore) where codice_azienda=$codice_azienda$ and id_contratto=$id_contratto$"
+            },
+            "label": "Settore",
+            "key": "id_argomento_settore",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 3.33,
             "isPrimary": false,
             "newLine": true
         }
