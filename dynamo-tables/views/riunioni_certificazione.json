@@ -4,6 +4,140 @@
     "origin": "entrasp.riunioni",
     "entryKey": "riunioni_certificazione",
     "inheritsFrom": "riunioni",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_riunione",
+            "label": "Id Riunione",
+            "newLine": false,
+            "size": 0.5,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "riunione_button_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questa riunione? (ATTENZIONE! La nuova riunione sarà creata e si verrà trasferiti alla stessa)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select £id_riunione£ as id_riunione"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.riunioni_duplica($codice_azienda$::varchar, $id_riunione$::numeric)as id_riunione;"
+                        }
+                    },
+                    "outputEventWhenComplete": "navigate_to_riunione_new"
+                }
+            ],
+            "translate": "RESOURCES.id_riunione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "datetime",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 1.5,
+            "key": "data_riunione",
+            "label": "Data e ora riunione",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.data_riunione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "oggetto",
+            "label": "Oggetto",
+            "newLine": true,
+            "readOnly": false,
+            "size": 8,
+            "translate": "RESOURCES.oggetto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "newLine": false,
+            "readOnly": false,
+            "size": 8
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "duplica_riunione",
+            "label": "Duplica Riunione",
+            "buttonIcon": "content_copy",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "riunione_button_duplica",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5,
+            "translate": "RESOURCES.duplica_riunione"
+        }
+    ],
     "subTables": [
         {
             "entryKey": "odg_riunioni_certificazione",
