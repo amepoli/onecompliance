@@ -502,7 +502,7 @@
         "tableQueries": [
             {
                 "label": "Riepilogo risposte possibili e date",
-                "queryString": "SELECT rp.* FROM entrasp.grc_riepilogo_risposte rp inner join xentrasp.sondaggi snd on rp.id_sondaggio=snd.id_sondaggio and rp.codice_azienda=snd.codice_azienda inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where rp.codice_azienda=$codice_azienda$"
+                "queryString": "select * from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda = snd.codice_azienda and rp.id_sondaggio = snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda = snd.codice_azienda and snd.id_sondaggio = ss.id_sondaggio left join entrasp.progetti_fasi pf on snd.codice_azienda = pf.codice_azienda and snd.id_sondaggio = pf.id_sondaggio inner join lateral (select * from entrasp.grc_riepilogo_risposte_param (snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, idrisposta_param => rp.id_risposta, id_domanda_param => rp.id_domanda, idrispostaprev_param => rp.id_risposta_prev, id_somministrazione_param => ss.id_somministrazione, oggetto_param => ss.object_description, data_esecuzione_param => snd.data_esecuzione, id_sondaggio_param => snd.id_sondaggio)) grc on true where snd.codice_azienda = $codice_azienda$"
             },
             {
                 "label": "Riepilogo Risposte Date",
@@ -560,18 +560,6 @@
             "translate": "RESOURCES.id_check",
             "newLine": true,
             "queryCond": "ss.id_somministrazione=$id_somministrazione$"
-        },
-        {
-            "format": {
-                "comboQuery": "select id_modello_test as id, id_modello_test||'-'||titolo as name from entrasp.modelli_test where codice_azienda=$codice_azienda$",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "fieldName": "id_modello_test_s",
-            "label": "Modello test",
-            "translate": "RESOURCES.id_check_template",
-            "newLine": false,
-            "queryCond": "rp.id_modello_test=$id_modello_test_s$"
         },
         {
             "format": {
