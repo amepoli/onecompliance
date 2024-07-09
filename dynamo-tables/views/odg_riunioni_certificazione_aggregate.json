@@ -2,12 +2,19 @@
     "$schema": "../views.schema.json",
     "businessObjectName": "odg_riunioni",
     "origin": "entrasp.odg_riunioni",
-    "entryKey": "odg_riunioni_certificazione",
-    "label": "Ordini del giorno",
+    "entryKey": "odg_riunioni_certificazione_aggregate",
+    "label": "Ordini del giorno Aggregati",
     "addElementSettings": {
         "labelQuickAdd": "Nuovo Punto",
         "navigateOnSuccess": false
     },
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "SELECT (SELECT TRUE) AS DELETE_PROCEDURE_AZIENDALI, ID_RIUNIONE, CODICE_AZIENDA, DATA_RIUNIONE, (ORA_INIZIO::VARCHAR || '-' || ORA_FINE::VARCHAR) AS DA_A, string_agg(id_odg::varchar, '; ') AS id__odg, string_agg(id_argomento::varchar, '; ') AS id__argomento, string_agg(id_odg_parent::varchar, '; ') AS id__odg_parent, string_agg(ordinamento_odg::varchar, '; ') AS ordinamento__odg, string_agg(ENTRASP.ARGOMENTI_DESCR_BREVE_NO_ID(ID_ARGOMENTO_SETTORE), '; ') AS SETTORE, CANTIERE, string_agg(ENTRASP.ARGOMENTI_DESCR_BREVE_NO_NUM(ID_ARGOMENTO_CONTROLLO), '; ') AS ID_ARGOMENTO_CONTROLLO, string_agg(ENTRASP.RIUNIONI_DESCR(ID_RIUNIONE, CODICE_AZIENDA), '; ') AS RIUNIONE_DESCR, string_agg(ENTRASP.ANAGRAFICHE_COGNNOME('ASACERT', ID_ANAGRAFICA), '; ') AS ID_ANAGRAFICA, string_agg(ENTRASP.ARGOMENTI_ARRAY(ARRAY[ID_ARGOMENTO_FUNZIONE]), '; ') AS ID_ARGOMENTO_FUNZIONE FROM ENTRASP.ODG_RIUNIONI WHERE CODICE_AZIENDA = $codice_azienda$ AND ID_RIUNIONE = $ID_RIUNIONE$ GROUP BY ID_RIUNIONE, CODICE_AZIENDA, DATA_RIUNIONE, DA_A, ORA_INIZIO, ORA_FINE, CANTIERE ORDER BY ORA_INIZIO ASC;"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -618,6 +625,7 @@
     ],
     "querySuffixes": {
         "tableViewSuffix": "order by ora_inizio asc"
+        
     },
     "hideActions": [
         {
