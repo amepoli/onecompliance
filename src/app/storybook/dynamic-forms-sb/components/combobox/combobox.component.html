@@ -1,0 +1,40 @@
+<ng-container *ngIf="showTagsView">
+  <fieldset class="tag-div" [ngStyle]="{'width': '100%'} ">
+      <legend class="tag-div-label">{{field | octranslatesb}}</legend>
+      <div class="tag-container"  *ngFor="let tag of tags" >
+        <p style="padding: 10px;">
+          {{tag.name}}
+        </p>
+        <mat-icon style="color: lightgray;" (click)="onRemoveTag(tag)">close</mat-icon>
+      </div>        
+             <mat-select class="tag-container" [(ngModel)]="value" style="width: 150px;padding: 4px;" [placeholder]="field | octranslatesb" (selectionChange)="onTagsSelection($event)" (openedChange)="openedChange($event)" 
+              [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+              <ngx-mat-select-search [formControl]="tagsFilterCtrl" [placeholderLabel]="'Finder'">
+              <mat-icon ngxMatSelectSearchClear>clear</mat-icon>
+              </ngx-mat-select-search>
+              <mat-option *ngIf="isLazyLoading" value="" [style.color]="'grey'"><span ><mat-icon>cached</mat-icon></span>Loading...</mat-option>
+              <mat-option *ngIf="!isLazyLoading" value="" [style.color]="'grey'">Seleziona</mat-option>
+              <mat-option *ngFor="let item of filteredTagsItems | async" [value]="item">{{item.name}}</mat-option>
+              </mat-select>                 
+  </fieldset>  
+</ng-container>
+
+
+<ng-container *ngIf="debugMode || !showTagsView" >
+  <mat-form-field [ngStyle]="{'width': '100%'}" *ngIf="field.isVisible != false" appearance="outline">
+      <mat-label style="font-size: large;">{{field | octranslatesb}}</mat-label>
+      <mat-select [multiple]="isMultiSelect" [required]="isRequired" [(ngModel)]="field.value" [placeholder]="field | octranslatesb" (selectionChange)="onSelection($event)" (openedChange)="openedChange($event)"
+      [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color" [style.color]="field.style.font_color" [matTooltip]="field.tooltip ?? field.value?.name">
+      <ngx-mat-select-search [formControl]="itemFilterCtrl" [placeholderLabel]="'Finder'">
+      <mat-icon ngxMatSelectSearchClear>clear</mat-icon>
+      </ngx-mat-select-search>
+      <mat-option *ngIf="isLazyLoading" value="" [style.color]="'grey'"><span ><mat-icon>cached</mat-icon></span>Loading...</mat-option>
+      <mat-option *ngIf="!isLazyLoading" value="" [style.color]="'grey'">Seleziona</mat-option>
+      <mat-option *ngFor="let item of filteredItems | async" [value]="item" [disabled]="field.readonly || readOnlyPage || readOnly">{{item.name}}</mat-option>
+      </mat-select>
+      
+      <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+      <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslatesb }}</mat-error>
+      </ng-container>
+  </mat-form-field>
+</ng-container>

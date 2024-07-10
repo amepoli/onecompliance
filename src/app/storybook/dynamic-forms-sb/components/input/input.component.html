@@ -1,0 +1,147 @@
+<ng-container *ngIf="field.isVisible">
+    <ng-container *ngIf="field.readonly && field.eventTrigger === 'press'">
+        <mat-form-field 
+            class="readOnlyPressable readOnly"
+            (click)="onPress()"
+            [ngStyle]="{'width': '100%'}" 
+            appearance="outline" 
+            [formGroup]="group">
+            <mat-label style="font-size: large;  font-weight: bold;"><span>{{ field | octranslatesb }}</span></mat-label>
+            <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+            <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name"
+                [placeholder]="field | octranslatesb" type="text" readonly="true"
+                [style.padding]="'4px'"
+                [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
+                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
+                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+            <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>        
+        </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngIf="field.readonly && !field.eventTrigger">
+        <mat-form-field 
+            class="readOnly"
+            style="width: 100%;"
+            appearance="outline" 
+            [formGroup]="group">
+            <mat-label style="font-size: large; font-weight: bold;">{{ field | octranslatesb }}</mat-label>
+            <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+            <input [required]="isRequired" matInput [value]="field.value || ' '"
+                [placeholder]="field | octranslatesb" readonly="true"
+                [style.padding]="'4px'"
+                [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
+                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
+                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+            <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+            <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+                <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslatesb}}</mat-error>
+            </ng-container>
+        </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngIf="!field.readonly && field.inputType !== 'date' && field.inputType !== 'datetime' && field.inputType !== 'time'">
+        <mat-form-field 
+            class="notReadOnly"
+            style="width: 100%" 
+            appearance="outline" 
+            [formGroup]="group"
+            (click)="onPress()">
+            <mat-label style="font-size: large;">{{field | octranslatesb}}</mat-label>
+            <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+            <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name"
+                [placeholder]="field | octranslatesb" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage"
+                (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()" [style.padding]="'4px'"
+                [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
+                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
+                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+            <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+            <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+                <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslatesb}}</mat-error>
+            </ng-container>
+        </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngIf="!field.readonly && field.inputType === 'date'">
+        <mat-form-field
+            class="notReadOnly" 
+            style="width: 100%"
+            appearance="outline"
+            [formGroup]="group"
+            (click)="onPress()">
+            <mat-label style="font-size: large;">{{field | octranslatesb}}</mat-label>
+            <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+
+            <input [required]="isRequired" matInput [matDatepicker]="datepicker" [value]="field.value"
+                [placeholder]="field | octranslatesb" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage"
+                (blur)="onBlur()" (focus)="onFocus()" (dateChange)="updateValue()" [style.padding]="'4px'"
+                [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
+                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
+                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+            <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+            <mat-datepicker matInput [matDatepicker]="datepicker" #datepicker></mat-datepicker>
+
+            <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+            <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+                <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslatesb}}</mat-error>
+            </ng-container>
+        </mat-form-field>
+    </ng-container>
+
+
+    <ng-container *ngIf="!field.readonly && field.inputType === 'datetime'">
+        <mat-form-field
+            class="notReadOnly" 
+            style="width: 100%"
+            appearance="outline"
+            [formGroup]="group"
+            (click)="onPress()">
+            <mat-label style="font-size: large;">{{field | octranslatesb}}</mat-label>
+            <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+
+            <input [required]="isRequired" matInput [ngxMatDatetimePicker]="datetimepicker" [placeholder]="field | octranslatesb"
+                [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (blur)="onBlur()" (focus)="onFocus()"
+                (dateChange)="updateValue()" [style.padding]="'4px'" [style.border-radius]="'4px'"
+                [style.background-color]="field.style.background_color" [style.color]="field.style.font_color"
+                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size" [matTooltip]="field.tooltip">
+            <mat-datepicker-toggle matSuffix [for]="datetimepicker"></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #datetimepicker [showSpinners]="true" [showSeconds]="true" [stepHour]="true"
+                [stepMinute]="true" [stepSecond]="true" [touchUi]="false" [enableMeridian]="true" [disableMinute]="false"
+                [hideTime]="false">
+            </ngx-mat-datetime-picker>
+
+            <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+            <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+                <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslatesb}}</mat-error>
+            </ng-container>
+        </mat-form-field>
+    </ng-container>
+
+    <ng-container *ngIf="!field.readonly && field.inputType === 'time'">
+        <mat-form-field
+            class="notReadOnly" 
+            style="width: 100%"
+            appearance="outline"
+            [formGroup]="group"
+            (click)="onPress()">
+            <mat-label style="font-size: large;">{{field | octranslatesb}}</mat-label>
+            <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
+
+            <input [required]="isRequired" matInput [ngxMatTimePicker]="timepicker" [placeholder]="field | octranslatesb"
+                [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (blur)="onBlur()" (focus)="onFocus()"
+                (dateChange)="updateValue()" [style.padding]="'4px'" [style.border-radius]="'4px'"
+                [style.background-color]="field.style.background_color" [style.color]="field.style.font_color"
+                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size" [matTooltip]="field.tooltip">
+            <mat-datepicker-toggle matSuffix [for]="timepicker"></mat-datepicker-toggle>
+            <ngx-mat-timepicker [required]="isRequired" [placeholder]="field | octranslatesb" [formControlName]="field.name"
+                [disabled]="field.readonly || readOnlyPage" (blur)="onBlur()" (focus)="onFocus()" (timeChange)="updateValue()"
+                [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
+                [style.color]="field.style.font_color">
+            </ngx-mat-timepicker>
+
+            <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
+            <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
+                <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslatesb}}</mat-error>
+            </ng-container>
+        </mat-form-field>
+    </ng-container>
+</ng-container>
