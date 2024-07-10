@@ -39475,136 +39475,7 @@
         },
         {
             "name": "FilesDataSource",
-            "id": "class-FilesDataSource-ba735098f6c68cf92eca27af99422ea7c4dce32a6a95f526f0d00a43b858d50b582514ec90a79376c8282d417e183c9e9eb6934b1e8f19e7e1ac9792d789d743-2",
-            "file": "src/app/main/apps/file-manager/file-list/file-list.component.ts",
-            "deprecated": false,
-            "deprecationMessage": "",
-            "type": "class",
-            "sourceCode": "import { Component, OnDestroy, OnInit } from '@angular/core';\nimport { DataSource } from '@angular/cdk/collections';\nimport { Observable, Subject } from 'rxjs';\nimport { takeUntil } from 'rxjs/operators';\n\nimport { fuseAnimations } from '@fuse/animations';\nimport { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';\n\nimport { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';\n\n@Component({\n    selector   : 'file-list',\n    templateUrl: './file-list.component.html',\n    styleUrls  : ['./file-list.component.scss'],\n    animations : fuseAnimations\n})\nexport class FileManagerFileListComponent implements OnInit, OnDestroy\n{\n    files: any;\n    dataSource: FilesDataSource | null;\n    displayedColumns = ['icon', 'name', /*'type',*/'rifDate', 'owner', 'modified', 'size'/* , 'detail-button' */];\n    selected: any;\n\n    // Private\n    private _unsubscribeAll: Subject<any>;\n\n    /**\n     * Constructor\n     *\n     * @param {FileManagerService} _fileManagerService\n     * @param {FuseSidebarService} _fuseSidebarService\n     */\n    constructor(\n        private _fileManagerService: FileManagerService,\n        private _fuseSidebarService: FuseSidebarService\n    )\n    {\n        // Set the private defaults\n        this._unsubscribeAll = new Subject();\n    }\n\n    // -----------------------------------------------------------------------------------------------------\n    // @ Lifecycle hooks\n    // -----------------------------------------------------------------------------------------------------\n\n    /**\n     * On init\n     */\n    ngOnInit(): void\n    {\n        this.dataSource = new FilesDataSource(this._fileManagerService);\n\n        this._fileManagerService.onFilesChanged\n            .pipe(takeUntil(this._unsubscribeAll))\n            .subscribe(files => {\n                this.files = files;\n            });\n\n        this._fileManagerService.onFileSelected\n            .pipe(takeUntil(this._unsubscribeAll))\n            .subscribe(selected => {\n                this.selected = selected;\n            });\n    }\n\n    /**\n     * On destroy\n     */\n    ngOnDestroy(): void\n    {\n        // Unsubscribe from all subscriptions\n        this._unsubscribeAll.next();\n        this._unsubscribeAll.complete();\n    }\n\n    // -----------------------------------------------------------------------------------------------------\n    // @ Public methods\n    // -----------------------------------------------------------------------------------------------------\n\n    /**\n     * On select\n     *\n     * @param selected\n     */\n    onSelect(selected): void\n    {\n        this._fileManagerService.onFileSelected.next(selected);\n    }\n\n    /**\n     * Toggle the sidebar\n     *\n     * @param name\n     */\n    toggleSidebar(name): void\n    {\n        this._fuseSidebarService.getSidebar(name).toggleOpen();\n    }\n}\n\nexport class FilesDataSource extends DataSource<any>\n{\n    /**\n     * Constructor\n     *\n     * @param {FileManagerService} _fileManagerService\n     */\n    constructor(\n        private _fileManagerService: FileManagerService\n    )\n    {\n        super();\n    }\n\n    /**\n     * Connect function called by the table to retrieve one stream containing the data to render.\n     *\n     * @returns {Observable<any[]>}\n     */\n    connect(): Observable<any[]>\n    {\n        return this._fileManagerService.onFilesChanged;\n    }\n\n    /**\n     * Disconnect\n     */\n    disconnect(): void\n    {\n    }\n}\n",
-            "constructorObj": {
-                "name": "constructor",
-                "description": "<p>Constructor</p>\n",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "args": [
-                    {
-                        "name": "_fileManagerService",
-                        "type": "FileManagerService",
-                        "deprecated": false,
-                        "deprecationMessage": ""
-                    }
-                ],
-                "line": 102,
-                "rawdescription": "\n\nConstructor\n\n",
-                "jsdoctags": [
-                    {
-                        "name": {
-                            "pos": 2975,
-                            "end": 2994,
-                            "flags": 16842752,
-                            "modifierFlagsCache": 0,
-                            "transformFlags": 0,
-                            "kind": 80,
-                            "escapedText": "_fileManagerService"
-                        },
-                        "type": "FileManagerService",
-                        "deprecated": false,
-                        "deprecationMessage": "",
-                        "tagName": {
-                            "pos": 2948,
-                            "end": 2953,
-                            "flags": 16842752,
-                            "modifierFlagsCache": 0,
-                            "transformFlags": 0,
-                            "kind": 80,
-                            "escapedText": "param"
-                        },
-                        "comment": "",
-                        "typeExpression": {
-                            "pos": 2954,
-                            "end": 2974,
-                            "flags": 16842752,
-                            "modifierFlagsCache": 0,
-                            "transformFlags": 0,
-                            "kind": 316,
-                            "type": {
-                                "pos": 2955,
-                                "end": 2973,
-                                "flags": 16777216,
-                                "modifierFlagsCache": 0,
-                                "transformFlags": 1,
-                                "kind": 183,
-                                "typeName": {
-                                    "pos": 2955,
-                                    "end": 2973,
-                                    "flags": 16777216,
-                                    "modifierFlagsCache": 0,
-                                    "transformFlags": 0,
-                                    "kind": 80,
-                                    "escapedText": "FileManagerService"
-                                }
-                            }
-                        }
-                    }
-                ]
-            },
-            "inputsClass": [],
-            "outputsClass": [],
-            "properties": [],
-            "methods": [
-                {
-                    "name": "connect",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "Observable<any[]>",
-                    "typeParameters": [],
-                    "line": 120,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "rawdescription": "\n\nConnect function called by the table to retrieve one stream containing the data to render.\n\n",
-                    "description": "<p>Connect function called by the table to retrieve one stream containing the data to render.</p>\n",
-                    "jsdoctags": [
-                        {
-                            "tagName": {
-                                "pos": 3233,
-                                "end": 3240,
-                                "flags": 16842752,
-                                "modifierFlagsCache": 0,
-                                "transformFlags": 0,
-                                "kind": 80,
-                                "escapedText": "returns"
-                            },
-                            "comment": "",
-                            "returnType": ""
-                        }
-                    ]
-                },
-                {
-                    "name": "disconnect",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 128,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "rawdescription": "\n\nDisconnect\n",
-                    "description": "<p>Disconnect</p>\n"
-                }
-            ],
-            "indexSignatures": [],
-            "extends": [
-                "DataSource"
-            ],
-            "hostBindings": [],
-            "hostListeners": [],
-            "isDuplicate": true,
-            "duplicateId": 2,
-            "duplicateName": "FilesDataSource-2"
-        },
-        {
-            "name": "FilesDataSource",
-            "id": "class-FilesDataSource-9389f834174533e91f51cb3e0665da0b8fa53793ca6d6cfdae4f43db34dfc1aceb0617e7971225713053ad67b6f7e54d782d998caad221fa0fe61071016e4a84-3",
+            "id": "class-FilesDataSource-9389f834174533e91f51cb3e0665da0b8fa53793ca6d6cfdae4f43db34dfc1aceb0617e7971225713053ad67b6f7e54d782d998caad221fa0fe61071016e4a84-2",
             "file": "src/app/main/apps/e-commerce/orders/orders.component.ts",
             "deprecated": false,
             "deprecationMessage": "",
@@ -40055,12 +39926,12 @@
             "hostBindings": [],
             "hostListeners": [],
             "isDuplicate": true,
-            "duplicateId": 3,
-            "duplicateName": "FilesDataSource-3"
+            "duplicateId": 2,
+            "duplicateName": "FilesDataSource-2"
         },
         {
             "name": "FilesDataSource",
-            "id": "class-FilesDataSource-6c96f957f91f4a6be3cfd922f116723ac9407d264c25e156f36a28ac7024a94b8383a0ee6b62563e3499834b56c318559a446a85332280faf52b82729ebb50a7-4",
+            "id": "class-FilesDataSource-6c96f957f91f4a6be3cfd922f116723ac9407d264c25e156f36a28ac7024a94b8383a0ee6b62563e3499834b56c318559a446a85332280faf52b82729ebb50a7-3",
             "file": "src/app/main/apps/e-commerce/products/products.component.ts",
             "deprecated": false,
             "deprecationMessage": "",
@@ -40508,6 +40379,135 @@
                     }
                 }
             },
+            "hostBindings": [],
+            "hostListeners": [],
+            "isDuplicate": true,
+            "duplicateId": 3,
+            "duplicateName": "FilesDataSource-3"
+        },
+        {
+            "name": "FilesDataSource",
+            "id": "class-FilesDataSource-ba735098f6c68cf92eca27af99422ea7c4dce32a6a95f526f0d00a43b858d50b582514ec90a79376c8282d417e183c9e9eb6934b1e8f19e7e1ac9792d789d743-4",
+            "file": "src/app/main/apps/file-manager/file-list/file-list.component.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "class",
+            "sourceCode": "import { Component, OnDestroy, OnInit } from '@angular/core';\nimport { DataSource } from '@angular/cdk/collections';\nimport { Observable, Subject } from 'rxjs';\nimport { takeUntil } from 'rxjs/operators';\n\nimport { fuseAnimations } from '@fuse/animations';\nimport { FuseSidebarService } from '@fuse/components/sidebar/sidebar.service';\n\nimport { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';\n\n@Component({\n    selector   : 'file-list',\n    templateUrl: './file-list.component.html',\n    styleUrls  : ['./file-list.component.scss'],\n    animations : fuseAnimations\n})\nexport class FileManagerFileListComponent implements OnInit, OnDestroy\n{\n    files: any;\n    dataSource: FilesDataSource | null;\n    displayedColumns = ['icon', 'name', /*'type',*/'rifDate', 'owner', 'modified', 'size'/* , 'detail-button' */];\n    selected: any;\n\n    // Private\n    private _unsubscribeAll: Subject<any>;\n\n    /**\n     * Constructor\n     *\n     * @param {FileManagerService} _fileManagerService\n     * @param {FuseSidebarService} _fuseSidebarService\n     */\n    constructor(\n        private _fileManagerService: FileManagerService,\n        private _fuseSidebarService: FuseSidebarService\n    )\n    {\n        // Set the private defaults\n        this._unsubscribeAll = new Subject();\n    }\n\n    // -----------------------------------------------------------------------------------------------------\n    // @ Lifecycle hooks\n    // -----------------------------------------------------------------------------------------------------\n\n    /**\n     * On init\n     */\n    ngOnInit(): void\n    {\n        this.dataSource = new FilesDataSource(this._fileManagerService);\n\n        this._fileManagerService.onFilesChanged\n            .pipe(takeUntil(this._unsubscribeAll))\n            .subscribe(files => {\n                this.files = files;\n            });\n\n        this._fileManagerService.onFileSelected\n            .pipe(takeUntil(this._unsubscribeAll))\n            .subscribe(selected => {\n                this.selected = selected;\n            });\n    }\n\n    /**\n     * On destroy\n     */\n    ngOnDestroy(): void\n    {\n        // Unsubscribe from all subscriptions\n        this._unsubscribeAll.next();\n        this._unsubscribeAll.complete();\n    }\n\n    // -----------------------------------------------------------------------------------------------------\n    // @ Public methods\n    // -----------------------------------------------------------------------------------------------------\n\n    /**\n     * On select\n     *\n     * @param selected\n     */\n    onSelect(selected): void\n    {\n        this._fileManagerService.onFileSelected.next(selected);\n    }\n\n    /**\n     * Toggle the sidebar\n     *\n     * @param name\n     */\n    toggleSidebar(name): void\n    {\n        this._fuseSidebarService.getSidebar(name).toggleOpen();\n    }\n}\n\nexport class FilesDataSource extends DataSource<any>\n{\n    /**\n     * Constructor\n     *\n     * @param {FileManagerService} _fileManagerService\n     */\n    constructor(\n        private _fileManagerService: FileManagerService\n    )\n    {\n        super();\n    }\n\n    /**\n     * Connect function called by the table to retrieve one stream containing the data to render.\n     *\n     * @returns {Observable<any[]>}\n     */\n    connect(): Observable<any[]>\n    {\n        return this._fileManagerService.onFilesChanged;\n    }\n\n    /**\n     * Disconnect\n     */\n    disconnect(): void\n    {\n    }\n}\n",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "<p>Constructor</p>\n",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [
+                    {
+                        "name": "_fileManagerService",
+                        "type": "FileManagerService",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 102,
+                "rawdescription": "\n\nConstructor\n\n",
+                "jsdoctags": [
+                    {
+                        "name": {
+                            "pos": 2975,
+                            "end": 2994,
+                            "flags": 16842752,
+                            "modifierFlagsCache": 0,
+                            "transformFlags": 0,
+                            "kind": 80,
+                            "escapedText": "_fileManagerService"
+                        },
+                        "type": "FileManagerService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "pos": 2948,
+                            "end": 2953,
+                            "flags": 16842752,
+                            "modifierFlagsCache": 0,
+                            "transformFlags": 0,
+                            "kind": 80,
+                            "escapedText": "param"
+                        },
+                        "comment": "",
+                        "typeExpression": {
+                            "pos": 2954,
+                            "end": 2974,
+                            "flags": 16842752,
+                            "modifierFlagsCache": 0,
+                            "transformFlags": 0,
+                            "kind": 316,
+                            "type": {
+                                "pos": 2955,
+                                "end": 2973,
+                                "flags": 16777216,
+                                "modifierFlagsCache": 0,
+                                "transformFlags": 1,
+                                "kind": 183,
+                                "typeName": {
+                                    "pos": 2955,
+                                    "end": 2973,
+                                    "flags": 16777216,
+                                    "modifierFlagsCache": 0,
+                                    "transformFlags": 0,
+                                    "kind": 80,
+                                    "escapedText": "FileManagerService"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "inputsClass": [],
+            "outputsClass": [],
+            "properties": [],
+            "methods": [
+                {
+                    "name": "connect",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "Observable<any[]>",
+                    "typeParameters": [],
+                    "line": 120,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "rawdescription": "\n\nConnect function called by the table to retrieve one stream containing the data to render.\n\n",
+                    "description": "<p>Connect function called by the table to retrieve one stream containing the data to render.</p>\n",
+                    "jsdoctags": [
+                        {
+                            "tagName": {
+                                "pos": 3233,
+                                "end": 3240,
+                                "flags": 16842752,
+                                "modifierFlagsCache": 0,
+                                "transformFlags": 0,
+                                "kind": 80,
+                                "escapedText": "returns"
+                            },
+                            "comment": "",
+                            "returnType": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "disconnect",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 128,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "rawdescription": "\n\nDisconnect\n",
+                    "description": "<p>Disconnect</p>\n"
+                }
+            ],
+            "indexSignatures": [],
+            "extends": [
+                "DataSource"
+            ],
             "hostBindings": [],
             "hostListeners": [],
             "isDuplicate": true,
