@@ -12,6 +12,7 @@ import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { ImportDialogComponent } from '../dialogs/import.dialog/import.dialog.component';
 import { ConsoleLoggerService } from './console_logger.service';
 import { ExportItem, ExportList, ImportItem, ImportList } from '../interfaces';
+import { saveAs } from 'file-saver';
 
 @Injectable({
     providedIn: 'root'
