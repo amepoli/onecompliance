@@ -11,6 +11,7 @@ import { DialogService } from './dialog.service';
 import { ConsoleLoggerService } from './console_logger.service';
 import { ReportList } from '../interfaces';
 import { HelperService } from './helper.service';
+import { saveAs } from 'file-saver';
 
 @Injectable({
     providedIn: 'root'
