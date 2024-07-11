@@ -128,6 +128,7 @@ export const locale = {
             capitale_residuo_fin: "Importo Residuo Finanziario",
             capitale_residuo_leg: "Cap.res.legale",
             cartella_vai: "Valore di default",
+            catalogo_note: "Catalogo Note",
             categorie_interessati: "Categorie Interessati",
             causale_analitica: "Causale Analitica",
             causale_analitica_descr: "Causale Analitica",
