@@ -3,7 +3,7 @@
     "businessObjectName": "domande",
     "entryKey": "note_sub_of_domande",
     "origin": "entrasp.note_domande",
-   
+
     "table_multiselection_actions": [
         {
             "viewType": "menu",
@@ -12,46 +12,27 @@
             "icon": "more_vert",
             "menuOptions": [
                 {
-                    "key": "modifica_domande",
+                    "key": "associa_nota",
                     "icon": "edit",
-                    "label": "Modifica domande",
-                    "translate": "RESOURCES.modifica_domande",
+                    "label": "Associa Note",
+                    "query": "INSERT INTO entrasp.note_domande(codice_azienda,id_domanda, id_modello_test, id_modello_test_vr,id_nota) WITH split_input AS (SELECT unnest(string_to_array($selected_rows_data$, ',')) AS item),split_columns AS (SELECT (string_to_array(item, '~'))[1],(string_to_array(item, '~'))[2]::numeric,(string_to_array(item, '~'))[3]::numeric,(string_to_array(item, '~'))[4]::numeric,(string_to_array(item, '~'))[5]::numeric FROM split_input) SELECT * FROM split_columns",
                     "reloadOnSuccess": true,
-                    "customDialogEntryName": "dialog_domande",
-                    "customDialogTitle": "Modifica domande"
-                },
-                {
-                    "key": "cancella_domande",
-                    "icon": "delete",
-                    "label": "Elimina domande",
-                    "translate": "RESOURCES.elimina_domande",
-                    "query": "SELECT entrasp.domanda_delete(s.codiceazienda, s.idmodellotest::numeric, s.idmodellotestvr::numeric, s.iddomanda::numeric)FROM (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS iddomanda,split_part(arr,'~',3) AS idmodellotest,split_part(arr,'~',4) AS idmodellotestvr FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s;",
-                    "confirmAction": true,
-                    "reloadOnSuccess": true,
-                    "confirmActionMessage": "Eliminare le domande selezionate?"
+                    "confirmActionMessage": "Associare Le note scelte alla domanda in oggetto?",
+                    "confirmAction": true
                 }
             ]
         }
     ],
-    "addElementSettings": {
-        "labelQuickAdd": "Nuova domanda",
-        "labelAdd": "Nuova domanda",
-        "navigateOnSuccess": false
-    },
 
     "predefinedQueries": [
         {
-          "operation": "selectTable",
-          "type": "main",
-          "queryString": "select cn.nota, cn.codice_azienda, cn.id_nota,nd.id_modello_test,nd.id_domanda,nd.id_modello_test_vr,nd.id_risposte_prev, entrasp.controlla_note(cn.codice_azienda, nd.id_domanda, nd.id_modello_test, nd.id_modello_test_vr, nd.id_nota) ::boolean as associato from entrasp.catalogo_note cn left join entrasp.note_domande nd on cn.codice_azienda=nd.codice_azienda where cn.codice_azienda=$codice_azienda$  "
-
-
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select cn.nota, cn.codice_azienda, cn.id_nota,$id_modello_test$ as id_modello_test,$id_domanda$ as id_domanda,$id_modello_test_vr$ as id_modello_test_vr,id_risposte_prev, entrasp.controlla_note(cn.codice_azienda, nd.id_domanda, nd.id_modello_test, nd.id_modello_test_vr, nd.id_nota) ::boolean as associato from entrasp.catalogo_note cn left join entrasp.note_domande nd on cn.codice_azienda=nd.codice_azienda where cn.codice_azienda=$codice_azienda$  "
         }
     ],
-  
+
     "form_keys": [
-        
-          
         {
             "autoGenerate": false,
             "format": {
@@ -135,11 +116,7 @@
             "newLine": true,
             "readOnly": false
         }
-        
     ],
-    
-   
-   
     "table_keys": [
         {
             "format": {
@@ -151,28 +128,23 @@
             "label": "codice_azienda",
             "translate": "RESOURCES.company_code"
         },
-       
-       
-        
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "width": "5%",
             "isPrimary": true,
             "key": "id_domanda",
             "label": "# Domanda",
             "translate": "RESOURCES.id_domanda"
         },
-       
-       
-       
+
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": "$Q{is_hidden_mt}",
+            "isHidden": true,
             "isPrimary": true,
             "key": "id_modello_test",
             "label": "# Modello",
@@ -189,19 +161,6 @@
             "label": "Versione",
             "translate": "RESOURCES.id_modello_test_vr"
         },
-        
-       
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_risposte_prev",
-            "width": "25%",
-            "label": "Risposte Previste",
-            "translate": "RESOURCES.risposte_previste"
-        },
         {
             "format": {
                 "dataType": "number"
@@ -215,13 +174,34 @@
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "nota",
+            "label": "Nota",
+            "translate": "RESOURCES.id_nota",
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
             "key": "id_risposta_prev",
             "label": "Id Risposta Prev"
-            
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risposte_prev",
+            "width": "10%",
+            "label": "Risposte Previste",
+            "translate": "RESOURCES.risposte_previste"
         },
         {
             "format": {
@@ -230,17 +210,23 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "associato",
-            "label": "Associato"
-            
+            "label": "Associato",
+            "sameOrigin": false,
+            "isCheckbox": true
         }
-
     ],
     "hideActions": [
-       
         {
             "formActionType": "attachments",
             "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
         }
-        
     ]
 }
