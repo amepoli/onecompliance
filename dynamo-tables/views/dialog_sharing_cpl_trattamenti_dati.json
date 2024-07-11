@@ -3,12 +3,42 @@
     "entryKey": "dialog_sharing_cpl_trattamenti_dati",
     "predefinedQueries": [
         {
-            "operation": "update",
+            "operation": "insert",
             "type": "main",
-            "queryString": "select grc_accoda_trattamenti_dati(codazdacuicopiare,codiceazienda_dest,idcentrogestionale)"
+            "queryString": "select grc_accoda_trattamenti_dati($codice_azienda$,$codice_azienda_dest$,$idcentrogestionale$)"
         }
     ],
     "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Azienda",
+            "newLine": true,
+            "queryFunct": "SELECT codice_azienda from entrasp.aziende WHERE codice_azienda=codice_azienda",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_azienda_dest",
+            "label": "Condividi in",
+            "newLine": false,
+            "size": 3,
+            "readOnly": false
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -24,36 +54,6 @@
             "newLine": false,
             "size": 2,
             "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codiceazienda_dest",
-            "label": "Condividi in",
-            "newLine": false,
-            "size": 3,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "flag_trattamento_conto_terzi",
-            "label": "Trattamento conto Terzi",
-            "readOnly": false,
-            "size": 1,
-            "newLine": true,
-            "translate": "RESOURCES.flag_trattamento_conto_terzi"
         }
     ]
 }

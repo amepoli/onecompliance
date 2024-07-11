@@ -505,6 +505,7 @@
                 "queryString": "select * from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda = snd.codice_azienda and rp.id_sondaggio = snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda = snd.codice_azienda and snd.id_sondaggio = ss.id_sondaggio left join entrasp.progetti_fasi pf on snd.codice_azienda = pf.codice_azienda and snd.id_sondaggio = pf.id_sondaggio inner join lateral (select * from entrasp.grc_riepilogo_risposte_param (snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, idrisposta_param => rp.id_risposta, id_domanda_param => rp.id_domanda, idrispostaprev_param => rp.id_risposta_prev, id_somministrazione_param => ss.id_somministrazione, oggetto_param => ss.object_description, data_esecuzione_param => snd.data_esecuzione, id_sondaggio_param => snd.id_sondaggio)) grc on true where snd.codice_azienda = $codice_azienda$"
             },
             {
+                "key": "riepilogo_risposte_date",
                 "label": "Riepilogo Risposte Date",
                 "queryString": "SELECT rp.*, pr.data_inserimento FROM entrasp.grc_riepilogo_risposte_date rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.progetti_fasi pf on snd.id_sondaggio=pf.id_sondaggio and snd.codice_azienda =pf.codice_azienda inner join entrasp.progetti pr on pf.codice_azienda = pr.codice_azienda and pf.id_progetto = pr.id_progetto where rp.codice_azienda=$codice_azienda$"
             },
