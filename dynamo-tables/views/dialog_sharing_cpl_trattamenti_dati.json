@@ -3,26 +3,13 @@
     "entryKey": "dialog_sharing_cpl_trattamenti_dati",
     "predefinedQueries": [
         {
-            "operation": "insert",
+            "operation": "share",
             "type": "main",
-            "queryString": "select grc_accoda_trattamenti_dati($codice_azienda$,$codice_azienda_dest$,$idcentrogestionale$)"
+            "queryString": "select entrasp.grc_accoda_singolo_trattamento_dati(codazdacuicopiare=>€global_codice_azienda€,codiceazienda_dest=>$codice_azienda_dest$,id_trattamento_dati_selezionato , idcentrogestionale=>$id_centro_gest$) FROM entrasp.cpl_trattamenti_dati where codice_azienda='€global_codice_azienda€' and id_trattamento_dati_selezionato=any(ARRAY[$selected_rows_data$])"
         }
     ],
     "form_keys": [
-        {
-            "autoGenerate": true,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_azienda",
-            "label": "Azienda",
-            "newLine": true,
-            "queryFunct": "SELECT codice_azienda from entrasp.aziende WHERE codice_azienda=codice_azienda",
-            "readOnly": true
-        },
+        
         {
             "autoGenerate": false,
             "format": {
