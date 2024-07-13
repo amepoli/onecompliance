@@ -36,6 +36,10 @@ export class MenuOptionsCustomDialogComponent {
                 codice_azienda: _this._authService.getCurrentCompany()
             };
             
+            if(data.keys && Object.keys(data.keys).length > 0) {
+                keys = {...keys, ...data.keys}
+            }
+            
             if(data.formKeys && Object.keys(data.formKeys).length > 0) {
                 keys = {...keys, ...data.formKeys}
             }
