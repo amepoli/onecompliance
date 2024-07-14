@@ -1,0 +1,90 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_domande_associa_note",
+    "origin": "entrasp.domande",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "select 1"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select true as label;",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "# Modello di test",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_modello_test_vr"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_domanda",
+            "label": "ID",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_domanda"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select distinct nd.id_nota as id, concat (nd.id_nota, ' - ', cn.nota) as name from entrasp.note_domande nd inner join entrasp.catalogo_note cn on nd.codice_azienda = cn.codice_azienda and nd.id_nota = cn.id_nota where nd.codice_azienda=$codice_azienda$ and nd.id_domanda = $id_domanda$ and nd.id_modello_test = $id_modello_test$ and nd.id_modello_test_vr = $id_modello_test_vr$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_nota",
+            "label": "Note da Inserire",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": false
+        }
+    ]
+}

@@ -37,11 +37,6 @@
             "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro progetto: prego utilizzarne un codice diverso"
         },
         {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');"
-        },
-        {
             "operation": "update",
             "type": "preCheck",
             "queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
@@ -487,15 +482,7 @@
             "isHidden": false,
             "isPrimary": true,
             "newLine": false,
-            "size": 0.73,
-            "inputEvents": [
-                {
-                    "eventName": "onSaveProgetti",
-                    "actionType": "query",
-                    "queryFunct": "select  entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
-                    "outputEventWhenComplete": "progetti_reload"
-                }
-            ]
+            "size": 0.73
         },
         {
             "autoGenerate": false,
@@ -686,20 +673,6 @@
                     "queryFunct": "select entrasp.aggiorna_contratto_progetto($codice_azienda$, $id_progetto$,£id_contratto£)"
                 }
             ]
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "Codice Part",
-            "key": "codice_part",
-            "readOnly": false,
-            "isHidden": true,
-            "isPrimary": false,
-            "newLine": false,
-            "translate": "RESOURCES.codice_part"
         },
         {
             "autoGenerate": false,
@@ -1244,16 +1217,6 @@
             "label": "Fase bloccata",
             "width": "15%",
             "translate": "RESOURCES.prima_fase_bloccata"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_part",
-            "label": "codice_part",
-            "translate": "RESOURCES.codice_part"
         },
         {
             "format": {

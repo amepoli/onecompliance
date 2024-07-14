@@ -1,0 +1,247 @@
+{
+    "$schema": "../views.schema.json",
+    "businessObjectName": "domande",
+    "entryKey": "note_sub_of_domande",
+    "origin": "entrasp.note_domande",
+
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "associa_nota",
+                    "icon": "note_add",
+                    "label": "Associa Note",
+                    "query": "INSERT INTO entrasp.note_domande(codice_azienda,id_domanda, id_modello_test, id_modello_test_vr,id_nota) WITH split_input AS (SELECT unnest(string_to_array($selected_rows_data$, ',')) AS item),split_columns AS (SELECT (string_to_array(item, '~'))[1],(string_to_array(item, '~'))[2]::numeric,(string_to_array(item, '~'))[3]::numeric,(string_to_array(item, '~'))[4]::numeric,(string_to_array(item, '~'))[5]::numeric FROM split_input) SELECT * FROM split_columns",
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Associare le note scelte alla domanda in oggetto?",
+                    "confirmAction": true
+                },
+                {
+                    "key": "dissocia_nota",
+                    "icon": "close",
+                    "label": "Togli Note",
+                    "query": "delete from entrasp.note_domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr||'~'||id_nota in ($selected_rows_data$)",
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Dissociare le note scelte alla domanda in oggetto?",
+                    "confirmAction": true
+                }
+            ]
+        }
+    ],
+
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "SELECT cn.codice_azienda,cn.id_nota,cn.nota,$id_modello_test$ as id_modello_test,$id_domanda$ as id_domanda,$id_modello_test_vr$ as id_modello_test_vr,nd.id_risposte_prev,CASE WHEN nd.id_domanda = $id_domanda$ AND nd.id_modello_test = $id_modello_test$ AND nd.id_modello_test_vr = $id_modello_test_vr$ THEN true ELSE FALSE END AS associato FROM entrasp.catalogo_note cn LEFT JOIN entrasp.note_domande nd ON cn.codice_azienda = nd.codice_azienda AND cn.id_nota = nd.id_nota WHERE cn.codice_azienda = $codice_azienda$"
+        }
+    ],
+
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_domanda",
+            "label": "ID",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_domanda"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "# Modello di test",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.id_modello_test_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_nota",
+            "label": "ID Nota",
+            "translate": "RESOURCES.id_nota",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_risposte_prev",
+            "label": "ID Risposte Prev",
+            "newLine": true,
+            "readOnly": false
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "width": "5%",
+            "isPrimary": true,
+            "key": "id_domanda",
+            "label": "# Domanda",
+            "translate": "RESOURCES.id_domanda"
+        },
+
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test",
+            "label": "# Modello",
+            "width": "5%",
+            "translate": "RESOURCES.id_modello_test"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
+            "translate": "RESOURCES.id_modello_test_vr"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_nota",
+            "label": "Id Nota",
+            "translate": "RESOURCES.id_nota",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nota",
+            "label": "Nota",
+            "translate": "RESOURCES.id_nota",
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risposta_prev",
+            "label": "Id Risposta Prev"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risposte_prev",
+            "width": "10%",
+            "label": "Risposte Previste",
+            "translate": "RESOURCES.risposte_previste"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "associato",
+            "label": "Associato",
+            "sameOrigin": false,
+            "isCheckbox": true
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ],
+    "restrictions": {
+        "preventNavigationToForm": true
+    },
+    "querySuffixes": {
+        "tableViewSuffix": "order by associato DESC"
+    }
+}
