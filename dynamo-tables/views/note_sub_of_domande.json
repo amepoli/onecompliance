@@ -13,11 +13,20 @@
             "menuOptions": [
                 {
                     "key": "associa_nota",
-                    "icon": "edit",
+                    "icon": "note_add",
                     "label": "Associa Note",
                     "query": "INSERT INTO entrasp.note_domande(codice_azienda,id_domanda, id_modello_test, id_modello_test_vr,id_nota) WITH split_input AS (SELECT unnest(string_to_array($selected_rows_data$, ',')) AS item),split_columns AS (SELECT (string_to_array(item, '~'))[1],(string_to_array(item, '~'))[2]::numeric,(string_to_array(item, '~'))[3]::numeric,(string_to_array(item, '~'))[4]::numeric,(string_to_array(item, '~'))[5]::numeric FROM split_input) SELECT * FROM split_columns",
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Associare Le note scelte alla domanda in oggetto?",
+                    "confirmActionMessage": "Associare le note scelte alla domanda in oggetto?",
+                    "confirmAction": true
+                },
+                {
+                    "key": "dissocia_nota",
+                    "icon": "close",
+                    "label": "Togli Note",
+                    "query": "delete from entrasp.note_domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr||'~'||id_nota in ($selected_rows_data$)",
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Dissociare le note scelte alla domanda in oggetto?",
                     "confirmAction": true
                 }
             ]
@@ -28,7 +37,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select cn.nota, cn.codice_azienda, cn.id_nota,$id_modello_test$ as id_modello_test,$id_domanda$ as id_domanda,$id_modello_test_vr$ as id_modello_test_vr,id_risposte_prev, entrasp.controlla_note(cn.codice_azienda, nd.id_domanda, nd.id_modello_test, nd.id_modello_test_vr, nd.id_nota) ::boolean as associato from entrasp.catalogo_note cn left join entrasp.note_domande nd on cn.codice_azienda=nd.codice_azienda where cn.codice_azienda=$codice_azienda$  "
+            "queryString": "SELECT cn.codice_azienda,cn.id_nota,cn.nota,$id_modello_test$ as id_modello_test,$id_domanda$ as id_domanda,$id_modello_test_vr$ as id_modello_test_vr,nd.id_risposte_prev,CASE WHEN nd.id_domanda = $id_domanda$ AND nd.id_modello_test = $id_modello_test$ AND nd.id_modello_test_vr = $id_modello_test_vr$ THEN true ELSE FALSE END AS associato FROM entrasp.catalogo_note cn LEFT JOIN entrasp.note_domande nd ON cn.codice_azienda = nd.codice_azienda AND cn.id_nota = nd.id_nota WHERE cn.codice_azienda = $codice_azienda$"
         }
     ],
 
@@ -228,5 +237,11 @@
             "tableActionType": "add",
             "viewType": "table"
         }
-    ]
+    ],
+    "restrictions": {
+        "preventNavigationToForm": true
+    },
+    "querySuffixes": {
+        "tableViewSuffix": "order by associato DESC"
+    }
 }
