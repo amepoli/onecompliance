@@ -41,7 +41,7 @@ def aggiungi_translate_directory_e_controlla(directory_path, resource_prefix="RE
             added_elements_total.extend(added_elements)
 
     # Legge il file it.ts per ottenere tutte le traduzioni esistenti
-    with open('/home/alpoli/Developement/onecompliance/src/app/oc/i18n/it.ts', 'r', encoding='utf-8') as it_file:  # Sostituisci con il percorso reale del file it.ts
+    with open('/home/alpoli/Developement/onecompliance/src/app/oc/i18n/it.ts', 'r', encoding='utf-8') as it_file:  # !!Sostituisci con il percorso reale del file it.ts!!
         it_data = it_file.read()
 
     # Controlla gli elementi aggiunti che non esistono nel file it.ts
@@ -52,6 +52,6 @@ def aggiungi_translate_directory_e_controlla(directory_path, resource_prefix="RE
         print(element)
 
 # Usare un percorso ipotetico per l'esempio
-directory_path = '/home/alpoli/Developement/onecompliance/dynamo-tables/views' # Sostituisci con il percorso reale della tua directory
+directory_path = '/home/alpoli/Developement/onecompliance/dynamo-tables/views' # !! Sostituisci con il percorso reale della tua directory!!
 
 aggiungi_translate_directory_e_controlla(directory_path)
