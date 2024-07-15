@@ -1485,13 +1485,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         } else if (event.actionType === 'user_api') {
             _this.runUserManagementEvent(event, value, keyListener);
         } else if (event.actionType === 'dialog') {
+            let data = {...event, keys: {}}
+            _this.viewKeys.filter(x => x.isPrimary).forEach( (viewKey: FormViewKey) => {
+                data.keys[viewKey.key] = value.valueSet[viewKey.key]
+            });
+            data.keys = {...data.keys, ..._this.currentKeys};
             const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
                 width: '1280px',
                 height: 'auto',
-                data: {
-                    ...event,
-                    keys: _this.currentKeys
-                }
+                data: data
             })
 
             const dialogRefSub = dialogRef.afterClosed()
