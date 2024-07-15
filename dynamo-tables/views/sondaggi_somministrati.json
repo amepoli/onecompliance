@@ -44,7 +44,9 @@
             "queryString": "select case when (stato='C' or (entrasp.somministrazione_belongs_user((€global_id_anagrafiche€)::text, $id_sondaggio$, $id_somministrazione$, $codice_azienda$)=false and '€global_profile€'!='admin')) then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
         }
     ],
-    "dashboardTables": ["dashboard_sondaggi"],
+    "dashboardTables": [
+        "dashboard_sondaggi"
+    ],
     "outputEvents": [
         {
             "eventName": "onSaveSomministrazione",
@@ -297,7 +299,8 @@
                 "font_style": "normal",
                 "font_weight": "600"
             },
-            "size": 7.5
+            "size": 7.5,
+            "translate": "RESOURCES.verifica_id_descr"
         },
         {
             "autoGenerate": false,
@@ -351,7 +354,9 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "query",
                     "condition": "notEqualTo",
-                    "values": ["C"],
+                    "values": [
+                        "C"
+                    ],
                     "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'ss', '£stato£', '€global_username€');"
                 }
             ]
@@ -474,7 +479,9 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "hide",
                     "condition": "notEqualTo",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 },
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -674,7 +681,9 @@
                 {
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "condition": "equalTo",
-                    "values": ["C"],
+                    "values": [
+                        "C"
+                    ],
                     "actionType": "query",
                     "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$, '€global_username€') as id_somministrazione_succ;",
                     "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -1180,7 +1189,9 @@
                     "eventName": "event_flag_mostra_punteggi",
                     "actionType": "hide",
                     "condition": "equalTo",
-                    "values": ["0"]
+                    "values": [
+                        "0"
+                    ]
                 }
             ],
             "size": 1.87
@@ -1217,7 +1228,9 @@
                     "eventName": "event_flag_mostra_punteggi",
                     "actionType": "hide",
                     "condition": "equalTo",
-                    "values": ["0"]
+                    "values": [
+                        "0"
+                    ]
                 }
             ],
             "size": 1.87
@@ -1289,7 +1302,9 @@
                     "eventName": "event_flag_mostra_punteggi",
                     "actionType": "hide",
                     "condition": "equalTo",
-                    "values": ["0"]
+                    "values": [
+                        "0"
+                    ]
                 }
             ]
         },
@@ -1382,7 +1397,8 @@
             "isPrimary": false,
             "key": "flag_sezioni",
             "label": "Gestione domande a sezioni",
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.flag_sezioni"
         },
         {
             "autoGenerate": false,
@@ -1882,7 +1898,9 @@
             "showByFormKeyCondition": {
                 "key": "flag_sezioni",
                 "condition": "equalTo",
-                "values": ["0"]
+                "values": [
+                    "0"
+                ]
             },
             "keys": [
                 {
@@ -1914,7 +1932,9 @@
             "showByFormKeyCondition": {
                 "key": "flag_sezioni",
                 "condition": "equalTo",
-                "values": ["1"]
+                "values": [
+                    "1"
+                ]
             },
             "keys": [
                 {
@@ -2107,7 +2127,9 @@
             "showByFormKeyCondition": {
                 "key": "somministrazioni_flag_workflow",
                 "condition": "equalTo",
-                "values": ["1"]
+                "values": [
+                    "1"
+                ]
             },
             "isHidden": true,
             "keys": [
