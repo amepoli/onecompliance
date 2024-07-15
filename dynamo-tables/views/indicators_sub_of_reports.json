@@ -33,300 +33,341 @@
       },
       "inputEvents": [
         {
-          "eventName": "indicatori_reports_cancella",
-          "actionType": "query",
-          "condition": "none",
-          "values": [],
-          "queryFunct": "delete from entrasp.indicatori_report where id_indicatore=$id_indicatore$ and id_report=$id_report$",
-          "outputEventWhenComplete": "update_indicatori_report"
+            "eventName": "update_indicatori_report",
+            "actionType": "reload"
         }
-      ],
-      "readOnly": false,
-      "sameOrigin": false,
-      "size": 1.5
+    ],
+    "addElementSettings": {
+        "labelQuickAdd": "Nuovo indicatore",
+        "labelAdd": "Nuovo indicatore",
+        "navigateOnSuccess": true
     },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT id_indicatore AS id, id_indicatore||'-'||descrizione AS name FROM entrasp.indicatori where codice_azienda is null or codice_azienda = '€global_codice_azienda€'",
-        "options": [],
-        "viewType": "combobox"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_indicatore",
-      "label": "ID Indicatore",
-      "readOnly": false,
-      "newLine": false,
-      "size": 6
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "punti_indicatore",
-      "label": "Punteggio",
-      "translate": "RESOURCES.score",
-      "readOnly": false,
-      "newLine": true,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "ordinamento",
-      "label": "Ordinamento",
-      "translate": "RESOURCES.ordinamento",
-      "readOnly": false,
-      "newLine": true,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_report",
-      "label": "ID Report",
-      "readOnly": true,
-      "newLine": false,
-      "size": 1.5
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "viewType": "input",
-        "value": "TIPO_INDICATORE",
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "tipo_dato_indicatore",
-      "label": "tipo_dato_indicatore",
-      "readOnly": true,
-      "newLine": false
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_INDICATORE';",
-        "options": [],
-        "viewType": "combobox",
-        "dataType": "text",
-        "validations": [
-          {
-            "message": "Selezionare tipo indicatore",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "codice_tipo_indicatore",
-      "label": "Tipo Indicatore",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.4
-    },
-    {
-      "autoGenerate": false,
-      "format": {
-        "dataType": "text",
-        "viewType": "input",
-        "validations": [
-          {
-            "message": "Inserire una descrizione",
-            "name": "required",
-            "validator": "Validators.required"
-          }
-        ]
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione_indicatore",
-      "label": "Descrizione Indicatore",
-      "newLine": false,
-      "readOnly": false,
-      "size": 1.4
-    }
-  ],
-  "table_keys": [
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "4%",
-      "queryFunct": "select true",
-      "key": "delete_indicatori_report",
-      "label": "",
-      "style": [
+    "search_keys": [],
+    "form_keys": [
         {
-          "button_icon": "delete",
-          "value": "*"
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_indicatori_reports",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "indicatori_reports_cancella",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "indicatori_reports_cancella",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "delete from entrasp.indicatori_report where id_indicatore=$id_indicatore$ and id_report=$id_report$",
+                    "outputEventWhenComplete": "update_indicatori_report"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5,
+            "translate": "RESOURCES.cancella_indicatori_reports"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_indicatore AS id, id_indicatore||'-'||descrizione AS name FROM entrasp.indicatori where codice_azienda is null or codice_azienda = '€global_codice_azienda€'",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_indicatore",
+            "label": "ID Indicatore",
+            "readOnly": false,
+            "newLine": false,
+            "size": 6,
+            "translate": "RESOURCES.id_indicatore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "punti_indicatore",
+            "label": "Punteggio",
+            "translate": "RESOURCES.score",
+            "readOnly": false,
+            "newLine": true,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ordinamento",
+            "translate": "RESOURCES.ordinamento",
+            "readOnly": false,
+            "newLine": true,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_report",
+            "label": "ID Report",
+            "readOnly": true,
+            "newLine": false,
+            "size": 1.5,
+            "translate": "RESOURCES.id_report"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "value": "TIPO_INDICATORE",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "tipo_dato_indicatore",
+            "label": "tipo_dato_indicatore",
+            "readOnly": true,
+            "newLine": false,
+            "translate": "RESOURCES.tipo_dato_indicatore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='TIPO_INDICATORE';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Selezionare tipo indicatore",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_tipo_indicatore",
+            "label": "Tipo Indicatore",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.4,
+            "translate": "RESOURCES.codice_tipo_indicatore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire una descrizione",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione_indicatore",
+            "label": "Descrizione Indicatore",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.4,
+            "translate": "RESOURCES.descrizione_indicatore"
         }
-      ],
-      "isButton": true,
-      "buttonAction": {
-        "target": "indicators_sub_of_reports",
-        "viewType": "table",
-        "query": "delete from entrasp.indicatori_report where id_indicatore=£id_indicatore£ AND id_report=£id_report£",
-        "action": "query",
-        "keymap": [
-          {
-            "source": "codice_azienda",
-            "destination": "codice_azienda"
-          },
-          {
-            "source": "id_report",
-            "destination": "id_report"
-          },
-          {
-            "source": "id_indicatore",
-            "destination": "id_indicatore"
-          }
-        ],
-        "onSuccessAction": "reload"
-      }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_indicatori_report",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "indicators_sub_of_reports",
+                "viewType": "table",
+                "query": "delete from entrasp.indicatori_report where id_indicatore=£id_indicatore£ AND id_report=£id_report£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_report",
+                        "destination": "id_report"
+                    },
+                    {
+                        "source": "id_indicatore",
+                        "destination": "id_indicatore"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_indicatori_report"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_indicatore",
+            "label": "ID",
+            "width": "5%",
+            "translate": "RESOURCES.id_indicatore"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "ordinamento",
+            "label": "Ord.",
+            "translate": "RESOURCES.ordinamento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_indicatore",
+            "queryFunct": "entrasp.indicatori_titolo(id_indicatore)",
+            "label": "Indicatore",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "indicators",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "id_indicatore",
+                        "destination": "id_indicatore"
+                    }
+                ]
+            },
+            "width": "20%",
+            "translate": "RESOURCES.descr_indicatore"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_report",
+            "label": "ID Report",
+            "translate": "RESOURCES.id_report"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_tipo_indicatore",
+            "label": "Tipo Indicatore",
+            "translate": "RESOURCES.codice_tipo_indicatore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_codice_tipo_indicatore",
+            "queryFunct": "entrasp.transcodifiche_transcodifica ('TIPO_INDICATORE',codice_tipo_indicatore)",
+            "label": "Tipo Indicatore",
+            "width": "10%",
+            "translate": "RESOURCES.descr_codice_tipo_indicatore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo",
+            "queryFunct": "entrasp.indicatori_tipo(id_indicatore)",
+            "label": "Anomalia/Gest.",
+            "width": "10%",
+            "translate": "RESOURCES.tipo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "tipo_dato_indicatore",
+            "label": "Tipo Dato Indicatore",
+            "translate": "RESOURCES.tipo_dato_indicatore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione_indicatore",
+            "label": "Descrizione",
+            "translate": "RESOURCES.description",
+            "width": "25%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "punti_indicatore",
+            "label": "Punteggio",
+            "translate": "RESOURCES.score",
+            "width": "5%"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by entrasp.indicatori_tipo(id_indicatore), ordinamento"
     },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": true,
-      "key": "id_indicatore",
-      "label": "ID",
-      "width": "5%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "width": "5%",
-      "key": "ordinamento",
-      "label": "Ord.",
-      "translate": "RESOURCES.ordinamento"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_indicatore",
-      "queryFunct": "entrasp.indicatori_titolo(id_indicatore)",
-      "label": "Indicatore",
-      "isInputButton": true,
-      "buttonAction": {
-        "target": "indicators",
-        "viewType": "form",
-        "action": "navigate",
-        "keymap": [
-          {
-            "source": "id_indicatore",
-            "destination": "id_indicatore"
-          }
-        ]
-      },
-      "width": "20%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "id_report",
-      "label": "ID Report"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "codice_tipo_indicatore",
-      "label": "Tipo Indicatore"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descr_codice_tipo_indicatore",
-      "queryFunct": "entrasp.transcodifiche_transcodifica ('TIPO_INDICATORE',codice_tipo_indicatore)",
-      "label": "Tipo Indicatore",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "tipo",
-      "queryFunct": "entrasp.indicatori_tipo(id_indicatore)",
-      "label": "Anomalia/Gest.",
-      "width": "10%"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": true,
-      "isPrimary": true,
-      "key": "tipo_dato_indicatore",
-      "label": "Tipo Dato Indicatore"
-    },
-    {
-      "format": {
-        "dataType": "text"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "descrizione_indicatore",
-      "label": "Descrizione",
-      "translate": "RESOURCES.description",
-      "width": "25%"
-    },
-    {
-      "format": {
-        "dataType": "number"
-      },
-      "isHidden": false,
-      "isPrimary": false,
-      "key": "punti_indicatore",
-      "label": "Punteggio",
-      "translate": "RESOURCES.score",
-      "width": "5%"
-
-    }
-  ],
-  "querySuffixes": {
-    "tableViewSuffix": "order by entrasp.indicatori_tipo(id_indicatore), ordinamento"
-  },
-  "hideActions": [
-    {
-        "tableActionType": "quick-add",
-        "viewType": "table"
-    }
-]
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ]
 }
