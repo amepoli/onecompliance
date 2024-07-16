@@ -1580,7 +1580,6 @@ export const locale = {
 
 
 
-
         },
         VIEWS: {
             sondaggi: "Sondaggi",
