@@ -3,7 +3,6 @@
     "businessObjectName": "domande",
     "entryKey": "note_sub_of_domande",
     "origin": "entrasp.note_domande",
-
     "table_multiselection_actions": [
         {
             "viewType": "menu",
@@ -15,7 +14,7 @@
                     "key": "associa_nota",
                     "icon": "note_add",
                     "label": "Associa Note",
-                    "query": "INSERT INTO entrasp.note_domande(codice_azienda,id_domanda, id_modello_test, id_modello_test_vr,id_nota) WITH split_input AS (SELECT unnest(string_to_array($selected_rows_data$, ',')) AS item),split_columns AS (SELECT (string_to_array(item, '~'))[1],(string_to_array(item, '~'))[2]::numeric,(string_to_array(item, '~'))[3]::numeric,(string_to_array(item, '~'))[4]::numeric,(string_to_array(item, '~'))[5]::numeric FROM split_input) SELECT * FROM split_columns",
+                    "query": "INSERT INTO entrasp.note_domande(codice_azienda,id_domanda, id_modello_test, id_modello_test_vr,id_nota) WITH split_input AS (SELECT unnest(array[$selected_rows_data$]) AS item), split_columns AS (SELECT (string_to_array(item, '~'))[1] AS part1, (string_to_array(item, '~'))[2]::numeric AS part2, (string_to_array(item, '~'))[3]::numeric AS part3, (string_to_array(item, '~'))[4]::numeric AS part4, (string_to_array(item, '~'))[5]::numeric AS part5 FROM split_input) SELECT * FROM split_columns;",
                     "reloadOnSuccess": true,
                     "confirmActionMessage": "Associare le note scelte alla domanda in oggetto?",
                     "confirmAction": true
@@ -40,7 +39,6 @@
             "queryString": "select cn.codice_azienda, cn.id_nota, cn.nota, $id_modello_test$ as id_modello_test, $id_domanda$ as id_domanda, $id_modello_test_vr$ as id_modello_test_vr, nd.id_risposte_prev, case when exists (select 1 from entrasp.note_domande nd where nd.codice_azienda = cn.codice_azienda and nd.id_nota = cn.id_nota and nd.id_domanda = $id_domanda$ and nd.id_modello_test = $id_modello_test$ and nd.id_modello_test_vr = $id_modello_test_vr$) then true else false end as associato from entrasp.catalogo_note cn left join entrasp.note_domande nd on cn.codice_azienda = nd.codice_azienda and cn.id_nota = nd.id_nota AND nd.id_domanda = $id_domanda$ AND nd.id_modello_test = $id_modello_test$ AND nd.id_modello_test_vr = $id_modello_test_vr$ where cn.codice_azienda = $codice_azienda$;"
         }
     ],
-
     "form_keys": [
         {
             "autoGenerate": false,
