@@ -6,12 +6,7 @@
         {
             "operation": "update",
             "type": "main",
-            "queryString": "select 1"
-        },
-        {
-            "operation": "isInsert",
-            "queryString": "select true as label;",
-            "type": "main"
+            "queryString": "update entrasp.risposte set note = (select string_agg(cn.nota, ' - ') from entrasp.note_domande nd inner join entrasp.catalogo_note cn on nd.codice_azienda=cn.codice_azienda and nd.id_nota=cn.id_nota where nd.codice_azienda=$codice_azienda$ and nd.id_modello_test=$id_modello_test$ and nd.id_modello_test_vr=$id_modello_test_vr$ and nd.id_domanda=$id_domanda$ and nd.id_nota=any(array $id_nota$)) where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$ and id_domanda=$id_domanda$"
         },
         {
             "operation": "selectForm",
@@ -103,13 +98,20 @@
             "newLine": true,
             "readOnly": true,
             "translate": "RESOURCES.id_somministrazione"
-        },   
+        },
         {
             "autoGenerate": false,
             "format": {
                 "comboQuery": "select distinct nd.id_nota as id, concat (nd.id_nota, ' - ', cn.nota) as name from entrasp.note_domande nd inner join entrasp.catalogo_note cn on nd.codice_azienda = cn.codice_azienda and nd.id_nota = cn.id_nota where nd.codice_azienda=$codice_azienda$ and nd.id_domanda = $id_domanda$ and nd.id_modello_test = $id_modello_test$ and nd.id_modello_test_vr = $id_modello_test_vr$",
                 "options": [],
-                "viewType": "combobox"
+                "viewType": "checkboxgroup",
+                "validations": [
+                    {
+                        "message": "Selezionare almeno una nota",
+                        "name": "required",
+                        "validator": "validator.required"
+                    }
+                ]
             },
             "isHidden": false,
             "isPrimary": false,
