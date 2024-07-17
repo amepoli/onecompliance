@@ -531,6 +531,7 @@ export const locale = {
             domande_per_ai: "Input per AI",
             domande_sub_of_presidi: "Domande Associate al Presidio",
             domandelabel: "Domanda",
+            domade_sezioni: "Domande - Sezioni",
             doppio_tag: "Doppio Tag",
             dow: "Giorno",
             dt_fine: "Data Fine legame",
