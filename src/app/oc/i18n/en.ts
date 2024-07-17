@@ -1518,7 +1518,7 @@ export const locale = {
             valore_stimato: "Valore Stimato",
             verifica_su: "Check On",
             verificati: "Checked",
-            version: "Version",
+            version: "Vers.",
             viene_risposto: "Is Answered",
             visible_button_compiti: "Task",
             visible_button_modello_test: "Verify Mode",
