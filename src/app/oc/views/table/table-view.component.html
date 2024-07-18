@@ -95,7 +95,7 @@
 
                         <button *ngFor="let item of importList" mat-menu-item (click)="importAdvanced(item)">
                             <mat-icon>upload</mat-icon>
-                            <span>{{item.label}}</span>
+                            <span>{{item | octranslate}}</span>
                         </button>
 
                     </mat-menu>
@@ -128,7 +128,7 @@
 
                         <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedCSV(item)">
                             <mat-icon>file_download</mat-icon>
-                            <span>{{item.label}}</span>
+                            <span>{{item | octranslate}}</span>
                         </button>
                     </mat-menu>
 
@@ -143,7 +143,7 @@
 
                         <button *ngFor="let item of exportList" mat-menu-item (click)="downloadAdvancedExcel(item)">
                             <mat-icon>file_download</mat-icon>
-                            <span>{{item.label}}</span>
+                            <span>{{item | octranslate}}</span>
                         </button>
                     </mat-menu>
 
@@ -226,19 +226,19 @@
                                             </mat-checkbox>
     
                                             <button
-                                                *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.label && row[entry.key]"
+                                                *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.translate && !entry.label && row[entry.key]"
                                                 style="background-color: #25599c; color: white;" 
                                                 [ngStyle]="getElementStyle(entry.key, row[entry.key], row)" mat-icon-button
                                                 (click)="onButtonClick(entry.key, i, row)" [matTooltip]="entry.tooltip">
                                                 <mat-icon>{{getButtonIcon(entry.key, row[entry.key])}}</mat-icon>
                                             </button>
-                                            <button *ngIf="entry.isButton && entry.label && row[entry.key]"
+                                            <button *ngIf="entry.isButton && (entry.translate || entry.label) && row[entry.key]"
                                                 style="background-color: #25599c; color: white;" mat-raised-button
                                                 (click)="onButtonClick(entry.key, i, row)" [matTooltip]="entry.tooltip">
                                                 <mat-icon
                                                     *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}
                                                 </mat-icon>
-                                                {{entry.label}}
+                                                {{entry | octranslate}}
                                             </button>
                                             
                                             <p *ngIf="entry.isInputButton || row[entry.isInputButtonKey]" style="width: fit-content;max-width: 100%; text-align: left;"
