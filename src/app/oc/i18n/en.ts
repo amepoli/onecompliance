@@ -433,7 +433,7 @@ export const locale = {
             delete_rischi_presidi: "Delete",
             delete_rischi_processi: "Delete",
             delete_rischi_tipi: "Delete",
-            delete_risposta: "Delete",
+            delete_risposta: "",
             delete_survey_answer: "Delete Survey Answer",
             delete_template_cons: "Delete",
             delete_trattamenti_asset: "Delete",
