@@ -27,7 +27,7 @@ export const locale = {
             anagrafica_posizione: "Location",
             anagrafiche_descr: "Allowed Users",
             anagrafiche_key: "registry_key",
-            anagrafiche_vr_actions: "Registry Vr Acrions",
+            anagrafiche_vr_actions: "",
             analisi_rischio_insider: "Insider Analysis",
             Analisi_TR: "TR Analysis",
             analysis_criterion: "Analysis Criterion",

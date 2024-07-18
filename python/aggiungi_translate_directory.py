@@ -1,65 +1,77 @@
-import json
 import os
+import json
 
-# Funzione per aggiungere la chiave 'translate' a un singolo file JSON
-def aggiungi_translate(file_path, resource_prefix):
-    try:
-        # Apre e legge il file JSON
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-    except json.JSONDecodeError as e:
-        print(f"Errore nel decodificare il file JSON {file_path}: {e}")
-        return []  # Ritorna una lista vuota in caso di errore
+def process_json_files(directory, log_file):
+    # Lista per raccogliere le chiavi aggiunte
+    added_keys = []
 
-    added_elements = []  # Lista per tracciare gli elementi aggiunti
-
-    # Processa sia 'form_keys' sia 'table_keys' sia 'addElementSettings'
-    for key in ['form_keys', 'table_keys', 'addElementSettings','']:
-        if key in data:
-            # Itera su ogni elemento nella lista associata alla chiave
-            for element in data[key]:
-                # Controlla se l'elemento ha una chiave 'key' o 'label' e non ha già una chiave 'translate'
-                if 'translate' not in element:
-                    if 'key' in element:
-                        element['translate'] = resource_prefix + element['key']
-                        added_elements.append(element['key'])  # Aggiunge la chiave alla lista degli elementi aggiunti
-                    elif 'label' in element:
-                        element['translate'] = resource_prefix + element['label'].replace(' ', '_').lower()
-                        added_elements.append(element['label'])  # Aggiunge la chiave alla lista degli elementi aggiunti
-
-    # Scrive i cambiamenti nel file JSON
-    with open(file_path, 'w', encoding='utf-8') as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)
-    
-    return added_elements
-
-# Funzione per aggiungere la chiave 'translate' a tutti i file JSON in una directory specificata e controllare le chiavi aggiunte
-def aggiungi_translate_directory_e_controlla(directory_path, it_ts_path, missing_elements_path, resource_prefix="RESOURCES."):
-    added_elements_total = []
-
-    for filename in os.listdir(directory_path):
+    # Itera su tutti i file nella directory
+    for filename in os.listdir(directory):
         if filename.endswith(".json"):
-            file_path = os.path.join(directory_path, filename)
-            added_elements = aggiungi_translate(file_path, resource_prefix)
-            added_elements_total.extend(added_elements)
+            filepath = os.path.join(directory, filename)
+            
+            try:
+                # Apri e carica il file JSON
+                with open(filepath, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+                
+                # Modifica i dati aggiungendo la chiave translate se manca
+                modified = False
 
-    # Legge il file it.ts per ottenere tutte le traduzioni esistenti
-    with open(it_ts_path, 'r', encoding='utf-8') as it_file:  # !!Sostituisci con il percorso reale del file it.ts!!
-        it_data = it_file.read()
+                def format_label(label):
+                    return label.lower().replace(" ", "_")
 
-    # Controlla gli elementi aggiunti che non esistono nel file it.ts
-    non_existing_elements = [el for el in added_elements_total if resource_prefix + el not in it_data]
+                def to_title_case(label):
+                    return " ".join(word.capitalize() for word in label.split("_"))
 
-    # Scrive gli elementi mancanti in un file di testo
-    with open(missing_elements_path, 'w', encoding='utf-8') as missing_file:
-        for element in non_existing_elements:
-            missing_file.write(element + '\n')
+                def add_translate_keys(obj):
+                    nonlocal modified
+                    for key, value in obj.items():
+                        if isinstance(value, dict):
+                            if 'translate' not in value:
+                                if 'label' in value:
+                                    translate_key = f"RESOURCES.{key.lower()}"
+                                    value['translate'] = translate_key
+                                    added_keys.append(f'{key.lower()}: "{to_title_case(key.lower())}",')
+                                    modified = True
+                                elif 'labelAdd' in value:
+                                    formatted_label = format_label(value['labelAdd'])
+                                    translate_key = f"RESOURCES.{formatted_label}"
+                                    value['translate'] = translate_key
+                                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                                    modified = True
+                                elif 'labelQuickAdd' in value:
+                                    formatted_label = format_label(value['labelQuickAdd'])
+                                    translate_key = f"RESOURCES.{formatted_label}"
+                                    value['translate'] = translate_key
+                                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                                    modified = True
+                            # Ricorsione per gestire i dizionari annidati
+                            add_translate_keys(value)
+                        elif isinstance(value, list):
+                            for item in value:
+                                if isinstance(item, dict):
+                                    add_translate_keys(item)
+                
+                add_translate_keys(data)
 
-    print(f"Elementi mancanti salvati in {missing_elements_path}")
+                # Salva il JSON modificato di nuovo nel file se sono state fatte modifiche
+                if modified:
+                    with open(filepath, 'w', encoding='utf-8') as file:
+                        json.dump(data, file, ensure_ascii=False, indent=4)
+                    print(f"Modified and saved file: {filename}")  # Debug print
+                else:
+                    print(f"No modifications made to file: {filename}")  # Debug print
 
-# Usare un percorso ipotetico per l'esempio
-directory_path = '/home/apoli/Development/onecompliance/dynamo-tables/views'  # !! Sostituisci con il percorso reale della tua directory!!
-it_ts_path = '/home/apoli/Development/onecompliance/src/app/oc/i18n/it.ts'  # !! Sostituisci con il percorso reale del file it.ts!!
-missing_elements_path = '/home/apoli/Development/onecompliance/python/file_new_translate'  # !! Sostituisci con il percorso reale del file di output!!
+            except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                print(f"Error processing file {filename}: {e}")
 
-aggiungi_translate_directory_e_controlla(directory_path, it_ts_path, missing_elements_path)
+    # Scrivi le chiavi aggiunte nel file di log
+    with open(log_file, 'w', encoding='utf-8') as log:
+        for key in added_keys:
+            log.write(f"{key}\n")
+
+# Esempio di utilizzo
+directory_path = '/home/alpoli/Developement/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
+log_file_path = '/home/alpoli/Developement/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del file di log
+process_json_files(directory_path, log_file_path)
