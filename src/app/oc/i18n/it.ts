@@ -38,7 +38,7 @@ export const locale = {
             anagrafica_posizione: "Posizione",
             anagrafiche_descr: "Utenti Abilitati",
             anagrafiche_key: "anagrafiche_key",
-            anagrafiche_vr_actions: "Anagrafiche Vr Azioni",
+            anagrafiche_vr_actions: "",
             analisi_rischio_insider: "Analisi Insider",
             analysis_criterion: "Criterio di Analisi",
             anno: "Anno",
