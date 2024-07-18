@@ -7,9 +7,12 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse) =0 and (codice_azienda is null or codice_azienda in(€global_user_companies€)) order by id_report asc"
+            "queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and (position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse)=0) and (codice_azienda is null or codice_azienda in(€global_user_companies€))"
         }
     ],
+    "querySuffixes": {
+        "tableViewSuffix": " order by id_report asc"
+    },
     "form_keys": [
         {
             "autoGenerate": true,
@@ -207,6 +210,18 @@
             "renderingOrder": 3
         }
     ],
+    "search_keys": [
+        {
+            "label": "Destinatari",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "fieldName": "destinatari_s",
+            "newLine": false,
+            "queryCond": "id_report in (select id_report from entrasp.destinatari_report where lista_email_destinatari ilike '%'||'€destinatari_s€'||'%')"
+        }
+    ],
     "table_keys": [
         {
             "format": {
@@ -263,6 +278,10 @@
             "translate": "RESOURCES.id_report_parent"
         }
     ],
+    "addElementSettings": {
+        "labelAdd": "Nuovo Report",
+        "navigateOnSuccess": true
+    },
     "hideActions": [
         {
             "formActionType": "attachments",
@@ -279,6 +298,15 @@
         {
             "formActionType": "stopEvent",
             "viewType": "form"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
         }
+
     ]
 }
