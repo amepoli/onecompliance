@@ -38,11 +38,6 @@
             "queryString": "select  id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1"
         },
         {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "update entrasp.sondaggi_somministrati ss set id_anagrafica=split_part(object_key, '|', 2)::numeric where codice_azienda=$codice_azienda$ and id_anagrafica is null and id_sondaggio||'-'||codice_azienda in (select snd.id_sondaggio||'-'||snd.codice_azienda from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where mt.id_tipo_modello_test=5)"
-        },
-        {
             "operation": "stopEvent",
             "type": "main",
             "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
