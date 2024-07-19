@@ -6,7 +6,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select odg.ora_inizio||' - '||odg.ora_fine as da_a, odg.id_odg, odg.id_riunione, ac.id_contratto, ac.codice_azienda, todg.id_templ_odg, todg.titolo, odg.data_riunione as data, odg.durata, entrasp.argomenti_descr_breve_no_num(odg.id_argomento_controllo) as id_argomento_controllo, odg.cantiere, entrasp.argomenti_array(array [odg.id_argomento_funzione]) as id_argomento_funzione, entrasp.argomenti_array(array [odg.id_argomento_settore]) as id_argomento_settore, entrasp.anagrafiche_array((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), (select array_agg(id_anagrafica) from (select id_anagrafica from entrasp.anagrafiche_odg where codice_azienda=$codice_azienda$ and id_odg=odg.id_odg and id_riunione=odg.id_riunione)as subquery)) as id_anagrafica from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join ( select orn.* from entrasp.odg_riunioni orn inner join entrasp.riunioni rn using (id_riunione, codice_azienda) where rn.id_contratto=6 and rn.codice_azienda=$codice_azienda$ ) odg on todg.id_templ_odg=odg.id_templ_odg where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
+            "queryString": "select odg.ora_inizio||' - '||odg.ora_fine as da_a, odg.id_odg, odg.id_riunione, ac.id_contratto, ac.codice_azienda, todg.id_templ_odg, todg.titolo, odg.data_riunione as data, odg.durata, entrasp.argomenti_descr_breve_no_num(odg.id_argomento_controllo) as id_argomento_controllo, odg.cantiere, entrasp.argomenti_array(array [odg.id_argomento_funzione]) as id_argomento_funzione, entrasp.argomenti_array(array [odg.id_argomento_settore]) as id_argomento_settore, entrasp.anagrafiche_array((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), (select array_agg(id_anagrafica) from (select id_anagrafica from entrasp.anagrafiche_odg where codice_azienda=$codice_azienda$ and id_odg=odg.id_odg and id_riunione=odg.id_riunione)as subquery)) as id_anagrafica from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join ( select orn.* from entrasp.odg_riunioni orn inner join entrasp.riunioni rn using (id_riunione, codice_azienda) where rn.id_contratto=$id_contratto$ and rn.codice_azienda=$codice_azienda$ ) odg on todg.id_templ_odg=odg.id_templ_odg where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
         }
     ],
     "table_multiselection_actions": [
@@ -95,16 +95,6 @@
         },
         {
             "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "id_templ_riunione",
-            "label": "ID riunione",
-            "translate": "RESOURCES.id_riunione"
-        },
-        {
-            "format": {
                 "dataType": "text"
             },
             "isHidden": false,
@@ -133,9 +123,9 @@
             "isPrimary": false,
             "key": "da_a",
             "width": "5%",
-            "label": "Dalle - Alle"
+            "label": "Dalle - Alle",
+            "translate": "RESOURCES.dalle__alle"
         },
-
         {
             "format": {
                 "dataType": "number"

@@ -81,7 +81,8 @@
                     {
                         "message": "Data pagamento necessaria",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.data_pagamento_necessaria"
                     }
                 ]
             },
@@ -118,7 +119,8 @@
                     {
                         "message": "Importo necessario",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.importo_necessario"
                     }
                 ]
             },
@@ -230,7 +232,8 @@
                     {
                         "message": "ID cessione necessaria",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.id_cessione_necessaria"
                     }
                 ]
             },
@@ -253,7 +256,8 @@
                     {
                         "message": "Causale necessaria",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.causale_necessaria"
                     }
                 ]
             },
@@ -276,7 +280,8 @@
                     {
                         "message": "Controparte necessaria",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.controparte_necessaria"
                     }
                 ]
             },
@@ -696,7 +701,8 @@
             "label": "ID Pagamento",
             "newLine": false,
             "size": 1.5,
-            "queryCond": "id_pagamento=$id_pagamento_s$"
+            "queryCond": "id_pagamento=$id_pagamento_s$",
+            "translate": "RESOURCES.id_pagamento"
         },
         {
             "fieldName": "id_cessione_s",
@@ -707,7 +713,8 @@
             "label": "ID Cessione",
             "newLine": false,
             "size": 1.5,
-            "queryCond": "id_cessione=$id_cessione_s$"
+            "queryCond": "id_cessione=$id_cessione_s$",
+            "translate": "RESOURCES.id_cessione"
         },
         {
             "fieldName": "id_controparte_list",
@@ -718,7 +725,8 @@
             "label": "Lista controparti",
             "size": 2,
             "newLine": false,
-            "queryCond": "id_controparte::varchar=any(string_to_array(replace($id_controparte_list$, ' ', ''), ','))"
+            "queryCond": "id_controparte::varchar=any(string_to_array(replace($id_controparte_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_controparti"
         },
         {
             "fieldName": "id_cedenti_list",
@@ -729,7 +737,8 @@
             "label": "Lista cedenti",
             "size": 2,
             "newLine": false,
-            "queryCond": "id_cessione in(select id_cessione from entrasp.crediti_ceduti where id_cedente::varchar=any(string_to_array(replace($id_cedenti_list$, ' ', ''), ',')))"
+            "queryCond": "id_cessione in(select id_cessione from entrasp.crediti_ceduti where id_cedente::varchar=any(string_to_array(replace($id_cedenti_list$, ' ', ''), ',')))",
+            "translate": "RESOURCES.lista_cedenti"
         },
         {
             "fieldName": "id_controparte_s",
@@ -741,7 +750,8 @@
             "label": "Controparte",
             "newLine": false,
             "size": 3.0,
-            "queryCond": "id_controparte=$id_controparte_s$"
+            "queryCond": "id_controparte=$id_controparte_s$",
+            "translate": "RESOURCES.controparte"
         },
         {
             "fieldName": "id_mandato_s",
@@ -754,7 +764,8 @@
             "label": "N mandato",
             "newLine": false,
             "size": 3.0,
-            "queryCond": "id_mandato=$id_mandato_s$"
+            "queryCond": "id_mandato=$id_mandato_s$",
+            "translate": "RESOURCES.n_mandato"
         },
         {
             "format": {
@@ -767,7 +778,8 @@
             "fieldName": "id_ricessione_s",
             "label": "Ricessione",
             "queryCond": "id_cessione in(select id_cessione from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_ricessione=$id_ricessione_s$)",
-            "size": 2.0
+            "size": 2.0,
+            "translate": "RESOURCES.ricessione"
         },
         {
             "format": {
@@ -779,7 +791,8 @@
             "fieldName": "id_cessionario_s",
             "label": "Cessionario",
             "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.ricessioni rc on cc.codice_azienda=rc.codice_Azienda and cc.id_ricessione=rc.id_ricessione where cc.codice_azienda=$codice_azienda$ and rc.id_cessionario=$id_cessionario_s$)",
-            "size": 2.0
+            "size": 2.0,
+            "translate": "RESOURCES.cessionario"
         },
         {
             "fieldName": "cessionato_s",
@@ -789,7 +802,8 @@
             "label": "Cessionato",
             "newLine": true,
             "size": 0.8,
-            "queryCond": "entrasp.cessionato(id_cessione, codice_azienda)='1'"
+            "queryCond": "entrasp.cessionato(id_cessione, codice_azienda)='1'",
+            "translate": "RESOURCES.cessionato"
         },
         {
             "fieldName": "data_pagamento_min",
@@ -800,7 +814,8 @@
             "label": "Pagamento dopo il",
             "newLine": false,
             "size": 1.9,
-            "queryCond": "data_pagamento>='€data_pagamento_min€'"
+            "queryCond": "data_pagamento>='€data_pagamento_min€'",
+            "translate": "RESOURCES.pagamento_dopo_il"
         },
         {
             "fieldName": "data_pagamento_max",
@@ -811,7 +826,8 @@
             "label": "Pagamento entro il",
             "newLine": false,
             "size": 1.9,
-            "queryCond": "data_pagamento<='€data_pagamento_max€'"
+            "queryCond": "data_pagamento<='€data_pagamento_max€'",
+            "translate": "RESOURCES.pagamento_entro_il"
         },
         {
             "fieldName": "data_pagamento_",
@@ -822,7 +838,8 @@
             "label": "Data Pagamento",
             "newLine": false,
             "size": 1.9,
-            "queryCond": "data_pagamento='€data_pagamento_€'"
+            "queryCond": "data_pagamento='€data_pagamento_€'",
+            "translate": "RESOURCES.data_pagamento"
         },
         {
             "fieldName": "id_argomento_tipo_pag_s",
@@ -834,7 +851,8 @@
             "label": "Tipo Pagamento",
             "newLine": false,
             "size": 1.9,
-            "queryCond": "id_argomento_tipo_pag=$id_argomento_tipo_pag_s$"
+            "queryCond": "id_argomento_tipo_pag=$id_argomento_tipo_pag_s$",
+            "translate": "RESOURCES.tipo_pagamento"
         },
         {
             "fieldName": "id_argomento_inatteso_s",
@@ -846,7 +864,8 @@
             "label": "Tipo Inatteso",
             "newLine": false,
             "size": 1.9,
-            "queryCond": "id_argomento_inatteso=$id_argomento_inatteso_s$"
+            "queryCond": "id_argomento_inatteso=$id_argomento_inatteso_s$",
+            "translate": "RESOURCES.tipo_inatteso"
         },
         {
             "fieldName": "inatteso",
@@ -856,7 +875,8 @@
             "label": "Inatteso",
             "newLine": true,
             "size": 0.5,
-            "queryCond": "id_argomento_inatteso in(50664, 49921, 49922, 49925, 49926, 49927, 49928)"
+            "queryCond": "id_argomento_inatteso in(50664, 49921, 49922, 49925, 49926, 49927, 49928)",
+            "translate": "RESOURCES.inatteso"
         }
     ],
     "querySuffixes": {
@@ -876,8 +896,10 @@
         "tableQueries": [
             {
                 "label": "Importa movimenti crediti",
-                "queryString": "select entrasp.import_crediti_da_cedere($codice_azienda$, $nome_file$, '€global_username€')"
+                "queryString": "select entrasp.import_crediti_da_cedere($codice_azienda$, $nome_file$, '€global_username€')",
+                "translate": "RESOURCES.importa_movimenti_crediti"
             }
         ]
-    }
+    },
+    "translate": "RESOURCES.pagamenti"
 }

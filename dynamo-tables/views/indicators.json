@@ -128,7 +128,8 @@
                     {
                         "icon": "content_copy",
                         "label": "Duplica indicatore",
-                        "outputEventName": "indicator_duplicate"
+                        "outputEventName": "indicator_duplicate",
+                        "translate": "RESOURCES.duplica_indicatore"
                     }
                 ]
             },
@@ -162,7 +163,8 @@
                     {
                         "message": "Inserire un titolo!",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_un_titolo"
                     }
                 ]
             },
@@ -216,7 +218,8 @@
                     {
                         "message": "Inserire una descrizione",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_una_descrizione"
                     }
                 ]
             },
@@ -240,7 +243,8 @@
                     {
                         "message": "Tipo indicatore",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.tipo_indicatore"
                     }
                 ]
             },
@@ -421,7 +425,8 @@
             },
             "label": "Id Risposta Prev= null",
             "newLine": false,
-            "queryCond": "id_risposta_prev IS null"
+            "queryCond": "id_risposta_prev IS null",
+            "translate": "RESOURCES.id_risposta_prev_null"
         },
         {
             "fieldName": "id_domanda_null",
@@ -431,7 +436,8 @@
             },
             "label": "Id Domanda= null",
             "newLine": true,
-            "queryCond": "id_domanda IS null"
+            "queryCond": "id_domanda IS null",
+            "translate": "RESOURCES.id_domanda_null"
         },
         {
             "fieldName": "testo_ricerca",
@@ -441,7 +447,8 @@
             },
             "label": "Nome/ Descrizione",
             "newLine": true,
-            "queryCond": "(UPPER(titolo) like '%'||UPPER('€testo_ricerca€')||'%' or UPPER(descrizione) like '%'||UPPER('€testo_ricerca€')||'%')"
+            "queryCond": "(UPPER(titolo) like '%'||UPPER('€testo_ricerca€')||'%' or UPPER(descrizione) like '%'||UPPER('€testo_ricerca€')||'%')",
+            "translate": "RESOURCES.nome_descrizione"
         },
         {
             "fieldName": "id_indicatore_s",
@@ -451,7 +458,8 @@
             },
             "label": "ID Indicatore",
             "newLine": false,
-            "queryCond": "id_indicatore=$id_indicatore_s$"
+            "queryCond": "id_indicatore=$id_indicatore_s$",
+            "translate": "RESOURCES.id_indicatore"
         },
         {
             "fieldName": "id_argomento_s",
@@ -461,7 +469,8 @@
             },
             "label": "ID Argomento",
             "newLine": false,
-            "queryCond": "id_argomento=$id_argomento_s$"
+            "queryCond": "id_argomento=$id_argomento_s$",
+            "translate": "RESOURCES.id_argomento"
         },
         {
             "fieldName": "id_report_s",
@@ -471,7 +480,8 @@
             },
             "label": "ID Report",
             "newLine": false,
-            "queryCond": "id_indicatore in(select id_indicatore from entrasp.indicatori_report where id_report=$id_report_s$ and id_indicatore is not null)"
+            "queryCond": "id_indicatore in(select id_indicatore from entrasp.indicatori_report where id_report=$id_report_s$ and id_indicatore is not null)",
+            "translate": "RESOURCES.id_report"
         },
         {
             "fieldName": "no_report",
@@ -482,7 +492,8 @@
             "label": "Non associati a report",
             "newLine": false,
             "size": 1.5,
-            "queryCond": "id_indicatore not in(select id_indicatore from entrasp.indicatori_report where id_indicatore is not null)"
+            "queryCond": "id_indicatore not in(select id_indicatore from entrasp.indicatori_report where id_indicatore is not null)",
+            "translate": "RESOURCES.non_associati_a_report"
         }
     ],
     "subTables": [
@@ -494,7 +505,8 @@
                     "son": "id_indicatore_parent"
                 }
             ],
-            "label": "Sotto indicatori"
+            "label": "Sotto indicatori",
+            "translate": "RESOURCES.sotto_indicatori"
         },
         {
             "entryKey": "reports_sub_of_indicators",
@@ -504,7 +516,8 @@
                     "son": "id_indicatore"
                 }
             ],
-            "label": "Report associati"
+            "label": "Report associati",
+            "translate": "RESOURCES.report_associati"
         },
         {
             "entryKey": "indicators_valori_indicatori",
@@ -514,7 +527,8 @@
                     "son": "id_indicatore"
                 }
             ],
-            "label": "Archivio Indicatori"
+            "label": "Archivio Indicatori",
+            "translate": "RESOURCES.archivio_indicatori"
         },
         {
             "entryKey": "presidi_sub_of_indicatori",
@@ -524,7 +538,8 @@
                     "son": "id_indicatore"
                 }
             ],
-            "label": "Presidi associati"
+            "label": "Presidi associati",
+            "translate": "RESOURCES.presidi_associati"
         }
     ],
     "table_keys": [
@@ -598,19 +613,22 @@
         "formQueries": [
             {
                 "label": "Valore indicatore",
-                "queryString": "select cia.valore_indicatore, cia.stringa_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], '€data_esec_da€'::date, '€data_esec_a€'::date, $codice_azienda$::varchar, ir.codice_tipo_indicatore) cia on cia.idindicatore=ind.id_indicatore;"
+                "queryString": "select cia.valore_indicatore, cia.stringa_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], '€data_esec_da€'::date, '€data_esec_a€'::date, $codice_azienda$::varchar, ir.codice_tipo_indicatore) cia on cia.idindicatore=ind.id_indicatore;",
+                "translate": "RESOURCES.valore_indicatore"
             }
         ],
         "tableQueries": [
             {
                 "label": "Valore indicatore",
-                "queryString": "select cia.valore_indicatore, cia.stringa_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], '€data_esec_da€'::date, '€data_esec_a€'::date, $codice_azienda$::varchar, ir.codice_tipo_indicatore) cia on cia.idindicatore=ind.id_indicatore;"
+                "queryString": "select cia.valore_indicatore, cia.stringa_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], '€data_esec_da€'::date, '€data_esec_a€'::date, $codice_azienda$::varchar, ir.codice_tipo_indicatore) cia on cia.idindicatore=ind.id_indicatore;",
+                "translate": "RESOURCES.valore_indicatore"
             }
         ]
-    },  
+    },
     "addElementSettings": {
         "labelAdd": "Nuovo Indicatore",
-        "navigateOnSuccess": true
+        "navigateOnSuccess": true,
+        "translateAdd": "RESOURCES.nuovo_indicatore"
     },
     "hideActions": [
         {

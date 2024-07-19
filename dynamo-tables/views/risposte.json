@@ -502,17 +502,20 @@
         "tableQueries": [
             {
                 "label": "Riepilogo risposte possibili e date",
-                "queryString": "select grc.* from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda = snd.codice_azienda and rp.id_sondaggio = snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda = snd.codice_azienda and snd.id_sondaggio = ss.id_sondaggio left join entrasp.progetti_fasi pf on snd.codice_azienda = pf.codice_azienda and snd.id_sondaggio = pf.id_sondaggio inner join lateral (select * from entrasp.grc_riepilogo_risposte_param (snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, idrisposta_param => rp.id_risposta, id_domanda_param => rp.id_domanda, idrispostaprev_param => rp.id_risposta_prev, id_somministrazione_param => ss.id_somministrazione, oggetto_param => ss.object_description, data_esecuzione_param => snd.data_esecuzione, id_sondaggio_param => snd.id_sondaggio)) grc on true where snd.codice_azienda = $codice_azienda$"
+                "queryString": "select grc.* from entrasp.risposte rp inner join entrasp.sondaggi snd on rp.codice_azienda = snd.codice_azienda and rp.id_sondaggio = snd.id_sondaggio inner join entrasp.sondaggi_somministrati ss on ss.codice_azienda = snd.codice_azienda and snd.id_sondaggio = ss.id_sondaggio left join entrasp.progetti_fasi pf on snd.codice_azienda = pf.codice_azienda and snd.id_sondaggio = pf.id_sondaggio inner join lateral (select * from entrasp.grc_riepilogo_risposte_param (snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, idrisposta_param => rp.id_risposta, id_domanda_param => rp.id_domanda, idrispostaprev_param => rp.id_risposta_prev, id_somministrazione_param => ss.id_somministrazione, oggetto_param => ss.object_description, data_esecuzione_param => snd.data_esecuzione, id_sondaggio_param => snd.id_sondaggio)) grc on true where snd.codice_azienda = $codice_azienda$",
+                "translate": "RESOURCES.riepilogo_risposte_possibili_e_date"
             },
             {
                 "key": "riepilogo_risposte_date",
                 "label": "Riepilogo Risposte Date",
-                "queryString": "SELECT rp.*, pr.data_inserimento FROM entrasp.grc_riepilogo_risposte_date rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.progetti_fasi pf on snd.id_sondaggio=pf.id_sondaggio and snd.codice_azienda =pf.codice_azienda inner join entrasp.progetti pr on pf.codice_azienda = pr.codice_azienda and pf.id_progetto = pr.id_progetto where rp.codice_azienda=$codice_azienda$"
+                "queryString": "SELECT rp.*, pr.data_inserimento FROM entrasp.grc_riepilogo_risposte_date rp inner join entrasp.sondaggi snd on rp.codice_azienda=snd.codice_azienda and rp.id_sondaggio=snd.id_sondaggio inner join entrasp.progetti_fasi pf on snd.id_sondaggio=pf.id_sondaggio and snd.codice_azienda =pf.codice_azienda inner join entrasp.progetti pr on pf.codice_azienda = pr.codice_azienda and pf.id_progetto = pr.id_progetto where rp.codice_azienda=$codice_azienda$",
+                "translate": "RESOURCES.riepilogo_risposte_date"
             },
             {
                 "key": "export_risposte_negozi",
                 "label": "Risposte Negozi",
-                "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione, avr.annotazioni_interne, ss.data_esecuzione, ss.ris_percentuale, ss.giudizio, rp.risposta, ri.peso, ds.descrizione, dm.id_domanda from entrasp.risposte ri inner join entrasp.risposte_previste rp on ri.codice_azienda=rp.codice_azienda and ri.id_risposta_prev=rp.id_risposta_prev inner join entrasp.sondaggi_somministrati ss on ri.codice_azienda=ss.codice_azienda and ri.id_somministrazione=ss.id_somministrazione and ri.id_sondaggio=ss.id_sondaggio inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica AND avr.prog_vr=entrasp.anagrafiche_vr_max(ss.codice_part, split_part(ss.object_key,'|',2)::numeric) inner join entrasp.domande dm on ri.codice_azienda=dm.codice_azienda and ri.id_modello_test=dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda inner join entrasp.domande_sezioni ds on dm.codice_azienda= ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where ri.codice_azienda=$codice_azienda$"
+                "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione, avr.annotazioni_interne, ss.data_esecuzione, ss.ris_percentuale, ss.giudizio, rp.risposta, ri.peso, ds.descrizione, dm.id_domanda from entrasp.risposte ri inner join entrasp.risposte_previste rp on ri.codice_azienda=rp.codice_azienda and ri.id_risposta_prev=rp.id_risposta_prev inner join entrasp.sondaggi_somministrati ss on ri.codice_azienda=ss.codice_azienda and ri.id_somministrazione=ss.id_somministrazione and ri.id_sondaggio=ss.id_sondaggio inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica AND avr.prog_vr=entrasp.anagrafiche_vr_max(ss.codice_part, split_part(ss.object_key,'|',2)::numeric) inner join entrasp.domande dm on ri.codice_azienda=dm.codice_azienda and ri.id_modello_test=dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda inner join entrasp.domande_sezioni ds on dm.codice_azienda= ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where ri.codice_azienda=$codice_azienda$",
+                "translate": "RESOURCES.risposte_negozi"
             }
         ]
     },
@@ -818,7 +821,8 @@
                 }
             ],
             "label": "Risposte analoghe domande",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.risposte_analoghe_domande"
         },
         {
             "entryKey": "risposte_liv_inferiore",
@@ -837,7 +841,8 @@
                 }
             ],
             "label": "Risp.liv.inf.altre verifiche",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.risplivinfaltre_verifiche"
         },
         {
             "entryKey": "risposte_liv_superiore",
@@ -856,7 +861,8 @@
                 }
             ],
             "label": "Risp.liv.sup.altre verifiche",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.risplivsupaltre_verifiche"
         }
     ],
     "inputEvents": [

@@ -34,7 +34,9 @@
     "addElementSettings": {
         "labelQuickAdd": "Nuova Fase",
         "labelAdd": "Nuova Fase",
-        "navigateOnSuccess": false
+        "navigateOnSuccess": false,
+        "translateAdd": "RESOURCES.nuova_fase",
+        "translateQuickAdd": "RESOURCES.nuova_fase"
     },
     "messages": [
         {
@@ -234,7 +236,8 @@
                     {
                         "message": "Inserire stato della fase",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_stato_della_fase"
                     }
                 ]
             },
@@ -430,7 +433,8 @@
                     {
                         "message": "Inserire stato della fase",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_stato_della_fase"
                     }
                 ]
             },
@@ -557,7 +561,8 @@
                         "isPrimary": false,
                         "sameOrigin": false,
                         "newLine": false,
-                        "size": 2.5
+                        "size": 2.5,
+                        "translate": "RESOURCES.risultato_medio_"
                     },
                     {
                         "autoGenerate": false,
@@ -590,7 +595,8 @@
                                 "styleAttribute": "background_color",
                                 "queryFunct": "select codice_colore as avg_giudizio_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio£';"
                             }
-                        ]
+                        ],
+                        "translate": "RESOURCES.media_giudizio_complessivo"
                     },
                     {
                         "autoGenerate": false,
@@ -606,7 +612,8 @@
                         "isPrimary": false,
                         "sameOrigin": false,
                         "newLine": false,
-                        "size": 2.5
+                        "size": 2.5,
+                        "translate": "RESOURCES.risultato_medio_sulla_verifica_peggiore_"
                     },
                     {
                         "autoGenerate": false,
@@ -640,7 +647,8 @@
                                 "styleAttribute": "background_color",
                                 "queryFunct": "select codice_colore as avg_giudizio_worst_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio_worst£';"
                             }
-                        ]
+                        ],
+                        "translate": "RESOURCES.giudizio_sulla_media_verifica_peggiore"
                     }
                 ]
             },
@@ -693,7 +701,8 @@
             },
             "fieldName": "id_fase_sup_s",
             "newLine": false,
-            "queryCond": "(pf.id_fase=$id_fase_sup_s$ or pf.id_fase_sup=$id_fase_sup_s$)"
+            "queryCond": "(pf.id_fase=$id_fase_sup_s$ or pf.id_fase_sup=$id_fase_sup_s$)",
+            "translate": "RESOURCES.fase_padre"
         },
         {
             "fieldName": "flag_principali",
@@ -714,7 +723,8 @@
             },
             "label": "Data competenza DA",
             "newLine": false,
-            "queryCond": "snd.data_comp >= $dt_competenza_da$"
+            "queryCond": "snd.data_comp >= $dt_competenza_da$",
+            "translate": "RESOURCES.data_competenza_da"
         },
         {
             "fieldName": "dt_competenza_a",
@@ -724,7 +734,8 @@
             },
             "label": "Data competenza A",
             "newLine": false,
-            "queryCond": "snd.data_comp <= $dt_competenza_a$"
+            "queryCond": "snd.data_comp <= $dt_competenza_a$",
+            "translate": "RESOURCES.data_competenza_a"
         }
     ],
     "table_keys": [
@@ -1661,7 +1672,8 @@
                     "son": "id_fase_sup"
                 }
             ],
-            "label": "Sotto fasi"
+            "label": "Sotto fasi",
+            "translate": "RESOURCES.sotto_fasi"
         },
         {
             "entryKey": "consuntivazioni_sub_of_progetti_fasi",
@@ -1675,7 +1687,8 @@
                     "son": "id_fase"
                 }
             ],
-            "label": "Time Report/ Aggiornamenti"
+            "label": "Time Report/ Aggiornamenti",
+            "translate": "RESOURCES.time_report_aggiornamenti"
         }
     ],
     "inputEvents": [
@@ -1816,12 +1829,15 @@
         "tableQueries": [
             {
                 "label": "Sondaggi per anno di competenza",
-                "queryString": "select extract(year from snd.data_comp) as anno_competenza, count(id_sondaggio) from entrasp.sondaggi snd where snd.codice_azienda=$codice_azienda$ and id_sondaggio in (select pf.id_sondaggio from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$) group by extract(year from snd.data_comp)"
+                "queryString": "select extract(year from snd.data_comp) as anno_competenza, count(id_sondaggio) from entrasp.sondaggi snd where snd.codice_azienda=$codice_azienda$ and id_sondaggio in (select pf.id_sondaggio from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$) group by extract(year from snd.data_comp)",
+                "translate": "RESOURCES.sondaggi_per_anno_di_competenza"
             },
             {
                 "label": "Per relazione annuale",
-                "queryString": "select snd.data_comp, snd.data_esecuzione, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, snd.id_sondaggio, snd.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, entrasp.html_pulisci(cp.risultati_emersi) as risultati_emersi, cp.proposte_formulate, cp.follow_up, entrasp.codici_compito_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as codici_compito, snd.stato from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.progetti_fasi pf on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$"
+                "queryString": "select snd.data_comp, snd.data_esecuzione, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, snd.id_sondaggio, snd.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, entrasp.html_pulisci(cp.risultati_emersi) as risultati_emersi, cp.proposte_formulate, cp.follow_up, entrasp.codici_compito_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as codici_compito, snd.stato from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.progetti_fasi pf on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$",
+                "translate": "RESOURCES.per_relazione_annuale"
             }
         ]
-    }
+    },
+    "translate": "RESOURCES.fasi_del_progetto"
 }

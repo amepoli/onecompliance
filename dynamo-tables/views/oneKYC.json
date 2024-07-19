@@ -174,11 +174,13 @@
             {
                 "label": "Admin: estrazioni per tipo e mese",
                 "key": "count_one_kyc_admin",
-                "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) order by codice_azienda, extract(year from date_of_scan), extract(month from date_of_scan)"
+                "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) order by codice_azienda, extract(year from date_of_scan), extract(month from date_of_scan)",
+                "translate": "RESOURCES.admin_estrazioni_per_tipo_e_mese"
             },
             {
                 "label": "Estrazioni per tipo e mese",
-                "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) where codice_azienda=$codice_azienda$ order by codice_azienda,  extract(year from date_of_scan), extract(month from date_of_scan)"
+                "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) where codice_azienda=$codice_azienda$ order by codice_azienda,  extract(year from date_of_scan), extract(month from date_of_scan)",
+                "translate": "RESOURCES.estrazioni_per_tipo_e_mese"
             }
         ]
     },
@@ -192,7 +194,8 @@
             "label": "Esecuzione dopo il",
             "newLine": false,
             "size": 1.25,
-            "queryCond": "date_of_scan>=$data_esec_prevista_min$"
+            "queryCond": "date_of_scan>=$data_esec_prevista_min$",
+            "translate": "RESOURCES.esecuzione_dopo_il"
         },
         {
             "fieldName": "data_esec_prevista_max",
@@ -203,7 +206,8 @@
             "label": "Esecuzione prima del",
             "newLine": false,
             "size": 1.25,
-            "queryCond": "date_of_scan<='€data_esec_prevista_max€'"
+            "queryCond": "date_of_scan<='€data_esec_prevista_max€'",
+            "translate": "RESOURCES.esecuzione_prima_del"
         },
         {
             "fieldName": "anagrafica_s",
@@ -214,7 +218,8 @@
             "label": "Soggetto verificato",
             "newLine": false,
             "size": 1.25,
-            "queryCond": "entrasp.anagrafiche_vr_dati_identificativi(entrasp.codice_part_from_azienda(codice_azienda), id_anagrafica) ilike '%'||$anagrafica_s$||'%'"
+            "queryCond": "entrasp.anagrafiche_vr_dati_identificativi(entrasp.codice_part_from_azienda(codice_azienda), id_anagrafica) ilike '%'||$anagrafica_s$||'%'",
+            "translate": "RESOURCES.soggetto_verificato"
         },
         {
             "fieldName": "tipo_scansione",
@@ -227,7 +232,8 @@
             "label": "Tipo scansione",
             "newLine": false,
             "size": 2,
-            "queryCond": "(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' else 'Deep scan' end)=$tipo_scansione$"
+            "queryCond": "(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' else 'Deep scan' end)=$tipo_scansione$",
+            "translate": "RESOURCES.tipo_scansione"
         },
         {
             "fieldName": "dynamo_user_s",
@@ -240,7 +246,8 @@
             "label": "User",
             "newLine": false,
             "size": 2,
-            "queryCond": "dynamo_user=$dynamo_user_s$"
+            "queryCond": "dynamo_user=$dynamo_user_s$",
+            "translate": "RESOURCES.user"
         },
         {
             "fieldName": "mt_s",
@@ -253,7 +260,8 @@
             "label": "Modello test",
             "size": 3.5,
             "newLine": false,
-            "queryCond": "codice_azienda||'-'||id_somministrazione in(select ss.codice_azienda||'-'||ss.id_somministrazione from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd using(codice_azienda, id_sondaggio) where snd.id_modello_test=$mt_s$ and snd.codice_azienda='€global_codice_azienda€')"
+            "queryCond": "codice_azienda||'-'||id_somministrazione in(select ss.codice_azienda||'-'||ss.id_somministrazione from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd using(codice_azienda, id_sondaggio) where snd.id_modello_test=$mt_s$ and snd.codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.modello_test"
         }
     ]
 }
