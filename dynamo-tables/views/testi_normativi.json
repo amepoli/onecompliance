@@ -196,7 +196,8 @@
             "label": "Lista id",
             "newLine": false,
             "size": 2.5,
-            "queryCond": "id_testo_normativo::text=any(string_to_array(replace($id_testo_normativi_list$, ' ', ''), ','))"
+            "queryCond": "id_testo_normativo::text=any(string_to_array(replace($id_testo_normativi_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_id"
         },
         {
             "fieldName": "id_testo_normativo",
@@ -206,7 +207,8 @@
             },
             "label": "ID",
             "newLine": true,
-            "queryCond": "id_testo_normativo=$id_testo_normativo$"
+            "queryCond": "id_testo_normativo=$id_testo_normativo$",
+            "translate": "RESOURCES.id"
         },
         {
             "fieldName": "descrizione",
@@ -227,7 +229,8 @@
             },
             "label": "Riferimenti",
             "newLine": true,
-            "queryCond": "riferimenti like '%€riferimenti€%'"
+            "queryCond": "riferimenti like '%€riferimenti€%'",
+            "translate": "RESOURCES.riferimenti"
         }
     ],
     "subTables": [
@@ -239,7 +242,8 @@
                     "son": "id_testo_normativo"
                 }
             ],
-            "label": "Articoli"
+            "label": "Articoli",
+            "translate": "RESOURCES.articoli"
         },
         {
             "entryKey": "testi_normativi_aggiornamenti",
@@ -333,9 +337,11 @@
             "queryFunct": "select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418",
             "width": "20%"
         }
-    ], "addElementSettings": {
+    ],
+    "addElementSettings": {
         "labelAdd": "Nuovo Testo Normativo",
-        "navigateOnSuccess": true
+        "navigateOnSuccess": true,
+        "translateAdd": "RESOURCES.nuovo_testo_normativo"
     },
     "hideActions": [
         {
@@ -360,7 +366,8 @@
         "tableQueries": [
             {
                 "label": "Estrazione per mailing list",
-                "queryString": "select tn.id_testo_normativo, riferimenti, tn.descrizione, data_entrata_vigore, tn.note, link_ipertestuale, tna.data_aggiornamento, tna.note as note_aggiornamento, articoli_commento, (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn left join entrasp.testi_normativi_aggiornamenti tna on tn.id_testo_normativo=tna.id_testo_normativo order by greatest(data_aggiornamento, data_entrata_vigore) desc"
+                "queryString": "select tn.id_testo_normativo, riferimenti, tn.descrizione, data_entrata_vigore, tn.note, link_ipertestuale, tna.data_aggiornamento, tna.note as note_aggiornamento, articoli_commento, (select string_agg(entrasp.argomenti_descr_breve_no_num(id_argomento_father), ', ') from entrasp.argomenti_argomenti where id_argomento_son=id_argomento and id_argomento_father!=48418) as tag from entrasp.testi_normativi tn left join entrasp.testi_normativi_aggiornamenti tna on tn.id_testo_normativo=tna.id_testo_normativo order by greatest(data_aggiornamento, data_entrata_vigore) desc",
+                "translate": "RESOURCES.estrazione_per_mailing_list"
             }
         ]
     }
