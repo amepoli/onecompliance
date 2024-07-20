@@ -28,7 +28,7 @@ DELETE FROM entrasp.pagamenti_crediti
 WHERE id_pagamento IN (SELECT id_pagamento FROM cte);
 
 
--- quey per creare l'indice univoco
+-- query per creare l'indice univoco
 CREATE UNIQUE INDEX idx_unique_pagamenti_crediti ON entrasp.pagamenti_crediti (codice_azienda, id_cessione, id_argomento_tipo_pag)
 WHERE id_argomento_tipo_pag = 51486;
 
