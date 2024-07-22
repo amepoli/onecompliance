@@ -8,10 +8,15 @@ def process_json_files(directory, log_file):
 
     # Funzione per rimuovere i caratteri speciali dalle chiavi
     def format_label(label):
-        return re.sub(r'[^a-zA-Z0-9_]', '', label.lower().replace(" ", "_"))
+        if label.strip():
+            return re.sub(r'[^a-zA-Z0-9_]', '', label.lower().replace(" ", "_"))
+        else:
+            return "void"
 
     # Funzione per convertire le chiavi in formato title case
     def to_title_case(label):
+        if label == "void":
+            return "Void"
         return " ".join(word.capitalize() for word in label.split("_"))
 
     # Funzione ricorsiva per aggiungere le chiavi translate
