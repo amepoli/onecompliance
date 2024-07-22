@@ -1733,7 +1733,7 @@ export const locale = {
             notes: "Note",
             notetitolo: "Notetitolo",
             num_allegati: "Numero Allegati",
-            num_argomenti_padre: "num_argomenti_padre",
+            num_argomenti_padre: "Num Argomenti Padre",
             num_compiti: "N.segnalazioni",
             num_cons: "Numero consuntivazioni",
             num_criticita: "Num. Sugg./Criticità",
