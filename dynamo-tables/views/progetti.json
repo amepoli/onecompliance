@@ -281,6 +281,12 @@
                 "menuOptions": [
                     {
                         "icon": "sync_alt",
+                        "label": "Avvia/Aggiorna",
+                        "outputEventName": "avvia_aggiorna",
+                        "key": "avvia_aggiorna"
+                    },
+                    {
+                        "icon": "sync_alt",
                         "label": "Aggiorna codici",
                         "translate": "RESOURCES.code_update",
                         "outputEventName": "codici_aggiorna",
@@ -373,6 +379,14 @@
                     "condition": "none",
                     "values": [],
                     "queryFunct": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;",
+                    "outputEventWhenComplete": "formReload"
+                },
+                {
+                    "eventName": "avvia_aggiorna",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€')",
                     "outputEventWhenComplete": "formReload"
                 },
                 {
@@ -1545,6 +1559,11 @@
             "viewType": "table",
             "tableActionType": "add"
         }
+<<<<<<< HEAD
     ],
     "translate": "RESOURCES.progetti"
 }
+=======
+    ]
+}
+>>>>>>> 29b6dd746 (asacert)
