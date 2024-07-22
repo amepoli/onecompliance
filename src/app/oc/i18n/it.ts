@@ -1951,6 +1951,7 @@ export const locale = {
             preventivi: "Preventivi",
             previous_survey: "Sondaggio Precedente",
             prezzo: "Prezzo",
+            prezzo_unitario: "Prezzo Unitario",
             prima_fase_bloccata: "Fase bloccata",
             primi_6_per_azienda_erogante_e_ricevente_ultimi_12_mesi: "Primi 6 Per Azienda Erogante E Ricevente Ultimi 12 Mesi",
             primo_strato_controllo: "1° Strato",
