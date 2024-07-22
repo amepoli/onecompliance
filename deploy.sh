@@ -20,6 +20,7 @@ if [ $1 == "gorico" ]; then
     fi
     #re-deploy dynamo-tables
     cd dynamo-tables
+    echo "Deploying dynamo-tables in prod..."
     ./deploy_tables.sh $1_prod
     cd ..
 fi
@@ -33,6 +34,7 @@ if [ $1 == "gorico_stage" ]; then
     fi
     #re-deploy dynamo-tables
     cd dynamo-tables
+    echo "Deploying dynamo-tables in stage..."
     ./deploy_tables.sh $1
     cd ..
 fi
