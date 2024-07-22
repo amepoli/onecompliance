@@ -62,7 +62,8 @@
                     "query": "select entrasp.progetto_fase_delete(s.codiceazienda, s.idfase::numeric) from ( SELECT SPLIT_PART(ARR,'~',1) as codiceazienda,SPLIT_PART(ARR,'~',2) as idfase FROM UNNEST(ARRAY[$selected_rows_data$]) ARR) AS s;",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Eliminare la fase, il sondaggio associato e tutte le risposte?"
+                    "confirmActionMessage": "Eliminare la fase, il sondaggio associato e tutte le risposte?",
+                    "translate": "RESOURCES.elimina_fase_e_sondaggi_associati"
                 },
                 {
                     "key": "elimina_solo_fase",
@@ -71,7 +72,8 @@
                     "query": "select entrasp.progetto_solo_fase_delete(s.codiceazienda, s.idfase::numeric) from ( SELECT SPLIT_PART(ARR,'~',1) as codiceazienda,SPLIT_PART(ARR,'~',2) as idfase FROM UNNEST(ARRAY[$selected_rows_data$]) ARR) AS s;",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Eliminare la sola fase (e non il sondaggio associato)?"
+                    "confirmActionMessage": "Eliminare la sola fase (e non il sondaggio associato)?",
+                    "translate": "RESOURCES.elimina_solo_fase"
                 },
                 {
                     "key": "stato_non_previsto",
@@ -80,7 +82,8 @@
                     "query": "update entrasp.sondaggi snd set stato='R' from entrasp.progetti_fasi pf where snd.codice_azienda=pf.codice_azienda and snd.id_sondaggio=pf.id_sondaggio and pf.codice_azienda||'~'||pf.id_fase in ($selected_rows_data$);",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Portare tutti i sondaggi connessi alle fasi selezionate in stato 'Non previsto'?"
+                    "confirmActionMessage": "Portare tutti i sondaggi connessi alle fasi selezionate in stato 'Non previsto'?",
+                    "translate": "RESOURCES.porta_a_stato_non_previsto"
                 }
             ]
         }

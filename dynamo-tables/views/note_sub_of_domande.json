@@ -17,7 +17,8 @@
                     "query": "INSERT INTO entrasp.note_domande(codice_azienda,id_domanda, id_modello_test, id_modello_test_vr,id_nota) WITH split_input AS (SELECT unnest(array[$selected_rows_data$]) AS item), split_columns AS (SELECT (string_to_array(item, '~'))[1] AS part1, (string_to_array(item, '~'))[2]::numeric AS part2, (string_to_array(item, '~'))[3]::numeric AS part3, (string_to_array(item, '~'))[4]::numeric AS part4, (string_to_array(item, '~'))[5]::numeric AS part5 FROM split_input) SELECT * FROM split_columns;",
                     "reloadOnSuccess": true,
                     "confirmActionMessage": "Associare le note scelte alla domanda in oggetto?",
-                    "confirmAction": true
+                    "confirmAction": true,
+                    "translate": "RESOURCES.associa_note"
                 },
                 {
                     "key": "dissocia_nota",
@@ -26,7 +27,8 @@
                     "query": "delete from entrasp.note_domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr||'~'||id_nota in ($selected_rows_data$)",
                     "reloadOnSuccess": true,
                     "confirmActionMessage": "Dissociare le note scelte alla domanda in oggetto?",
-                    "confirmAction": true
+                    "confirmAction": true,
+                    "translate": "RESOURCES.togli_note"
                 }
             ]
         }

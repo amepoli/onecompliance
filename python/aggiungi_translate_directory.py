@@ -15,56 +15,59 @@ def process_json_files(directory, log_file):
         return " ".join(word.capitalize() for word in label.split("_"))
 
     # Funzione ricorsiva per aggiungere le chiavi translate
-    def add_translate_keys(obj):
+    def add_translate_keys(obj, path=''):
         nonlocal modified
         if isinstance(obj, dict):
-            # Salta gli oggetti che contengono "icon": "more_vert"
+            # Salta le modifiche sull'oggetto se contiene "icon": "more_vert"
             if obj.get('icon') == 'more_vert':
-                return
-
-            # Aggiungi la chiave translate se manca
-            if 'label' in obj and 'translate' not in obj and isinstance(obj['label'], str):
-                formatted_label = format_label(obj['label'])
-                translate_key = f"RESOURCES.{formatted_label}"
-                obj['translate'] = translate_key
-                added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
-                modified = True
-            if 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
-                formatted_label = format_label(obj['message'])
-                translate_key = f"RESOURCES.{formatted_label}"
-                obj['translate'] = translate_key
-                added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
-                modified = True
-            if 'labelAdd' in obj and 'translateAdd' not in obj and isinstance(obj['labelAdd'], str):
-                formatted_label = format_label(obj['labelAdd'])
-                translate_key = f"RESOURCES.{formatted_label}"
-                obj['translateAdd'] = translate_key
-                added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
-                modified = True
-            if 'labelQuickAdd' in obj and 'translateQuickAdd' not in obj and isinstance(obj['labelQuickAdd'], str):
-                formatted_label = format_label(obj['labelQuickAdd'])
-                translate_key = f"RESOURCES.{formatted_label}"
-                obj['translateQuickAdd'] = translate_key
-                added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
-                modified = True
+                print(f"Skipping object with 'icon': 'more_vert' at path {path}")
+            else:
+                # Aggiungi la chiave translate se manca
+                if 'label' in obj and 'translate' not in obj and isinstance(obj['label'], str):
+                    formatted_label = format_label(obj['label'])
+                    translate_key = f"RESOURCES.{formatted_label}"
+                    obj['translate'] = translate_key
+                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                    modified = True
+                if 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
+                    formatted_label = format_label(obj['message'])
+                    translate_key = f"RESOURCES.{formatted_label}"
+                    obj['translate'] = translate_key
+                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                    modified = True
+                if 'labelAdd' in obj and 'translateAdd' not in obj and isinstance(obj['labelAdd'], str):
+                    formatted_label = format_label(obj['labelAdd'])
+                    translate_key = f"RESOURCES.{formatted_label}"
+                    obj['translateAdd'] = translate_key
+                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                    modified = True
+                if 'labelQuickAdd' in obj and 'translateQuickAdd' not in obj and isinstance(obj['labelQuickAdd'], str):
+                    formatted_label = format_label(obj['labelQuickAdd'])
+                    translate_key = f"RESOURCES.{formatted_label}"
+                    obj['translateQuickAdd'] = translate_key
+                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                    modified = True
 
             # Ricorsione per gestire i dizionari annidati
             for key, value in obj.items():
-                add_translate_keys(value)
+                new_path = f"{path}.{key}" if path else key
+                add_translate_keys(value, new_path)
+
         elif isinstance(obj, list):
-            for item in obj:
-                add_translate_keys(item)
+            for idx, item in enumerate(obj):
+                new_path = f"{path}[{idx}]"
+                add_translate_keys(item, new_path)
 
     # Itera su tutti i file nella directory
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
             filepath = os.path.join(directory, filename)
-            
+
             try:
                 # Apri e carica il file JSON
                 with open(filepath, 'r', encoding='utf-8') as file:
                     data = json.load(file)
-                
+
                 # Modifica i dati aggiungendo la chiave translate se manca
                 modified = False
                 add_translate_keys(data)
