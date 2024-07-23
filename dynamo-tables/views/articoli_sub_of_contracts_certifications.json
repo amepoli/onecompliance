@@ -3,6 +3,9 @@
     "entryKey": "articoli_sub_of_contracts_certifications",
     "origin": "entrasp.articoli_contratti",
     "businessObjectName": "articoli_contratti",
+    "define": {
+        "ishiddencontratto": true
+    },
     "addElementSettings": {
         "labelAdd": "Nuovo Preventivo",
         "navigateOnSuccess": true,
@@ -90,7 +93,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_PREVENTIVI';",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text"
@@ -131,7 +134,7 @@
             "key": "data_a",
             "label": "Data Fine Servizio",
             "tooltip": "Inserire la data di fine erogazione del servizio",
-            "newLine": false,
+            "newLine": true,
             "readOnly": false,
             "size": 2,
             "translate": "RESOURCES.data_a"
@@ -139,17 +142,82 @@
         {
             "autoGenerate": false,
             "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_fatturazione_27",
+            "label": "Addetti Equivalenti",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "N° Addetti",
-            "key": "n_addetti",
+            "label": "N° Addetti Totale",
+            "key": "n_addetti_totale",
             "readOnly": true,
             "isHidden": false,
-            "size": 2,
+            "size": 2.5,
             "isPrimary": false,
-            "newLine": true,
-            "translate": "RESOURCES.n_addetti"
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "N° Addetti Equivalenti",
+            "key": "n_addetti",
+            "readOnly": false,
+            "isHidden": false,
+            "insertUpdateFunct": "coalesce (£n_addetti£, $n_addetti_totale$)",
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52844"
+            },
+            "label": "Motivazione Addetti Equivalenti",
+            "key": "id_argomento_addetti",
+            "readOnly": false,
+            "isHidden": false,
+            "tooltip": "Motivazione per la discrepanza tra gli addetti calcolati e quelli equivalenti",
+            "size": 5,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Note Addetti",
+            "key": "note_addetti",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 10,
+            "isPrimary": false,
+            "newLine": true
         },
         {
             "autoGenerate": false,
@@ -493,8 +561,7 @@
             "isHidden": false,
             "size": 10,
             "isPrimary": false,
-            "newLine": true,
-            "translate": "RESOURCES.note"
+            "newLine": true
         },
         {
             "autoGenerate": false,
@@ -519,18 +586,19 @@
             "translate": "RESOURCES.label_ripartizione"
         },
         {
+            "autoGenerate": false,
             "format": {
-                "viewType": "invisible"
+                "viewType": "input",
+                "dataType": "number"
             },
-            "size": 2,
+            "label": "% Acconto",
+            "key": "percentuale_acconto",
+            "readOnly": false,
             "isHidden": false,
+            "tooltip": "Questa percentuale designa la ripartizione tra acconto e saldo certificazione",
+            "size": 2,
             "isPrimary": false,
-            "label": "invisible_14",
-            "key": "invisible_14",
-            "sameOrigin": false,
-            "readOnly": true,
-            "newLine": false,
-            "translate": "RESOURCES.invisible_14"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -706,11 +774,21 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": "$Q{ishiddencontratto}",
             "isPrimary": true,
             "key": "id_contratto",
             "label": "id_contratto",
             "translate": "RESOURCES.id_contract"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": "$Q{ishiddencontratto}",
+            "isPrimary": true,
+            "sameOrigin": false,
+            "key": "id_cliente",
+            "label": "Cliente"
         },
         {
             "format": {
@@ -730,23 +808,7 @@
             "isHidden": false,
             "isPrimary": false,
             "queryFunct": "entrasp.articoli_titolo(codice_azienda, id_articolo)",
-            "width": "35%",
-            "isInputButton": true,
-            "buttonAction": {
-                "target": "articoli",
-                "viewType": "form",
-                "action": "navigate",
-                "keymap": [
-                    {
-                        "source": "id_articolo",
-                        "destination": "id_articolo"
-                    },
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    }
-                ]
-            },
+            "width": "25%",
             "key": "tit_articolo",
             "label": "Descrizione",
             "translate": "RESOURCES.description"
@@ -782,36 +844,43 @@
             "isPrimary": false,
             "key": "descr_stato",
             "width": "15%",
-            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato)",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_PREVENTIVI', stato)",
             "label": "Stato",
             "translate": "RESOURCES.status",
             "style": [
                 {
-                    "value": "Cessato",
+                    "value": "Firmato",
                     "font_color": "PaleGreen",
                     "font_weight": "500",
                     "background_color": "Green",
                     "text_align": "center"
                 },
                 {
-                    "value": "In Scadenza",
-                    "font_color": "MistyRose",
+                    "value": "Da Approvare",
+                    "font_color": "Black",
                     "font_weight": "500",
-                    "background_color": "MediumPurple",
+                    "background_color": "#e6e600",
                     "text_align": "center"
                 },
                 {
-                    "value": "In attesa di firma",
-                    "font_color": "MistyRose",
+                    "value": "Da Fare",
+                    "font_color": "Black",
                     "font_weight": "500",
-                    "background_color": "MediumPurple",
+                    "background_color": "#dad4d4",
                     "text_align": "center"
                 },
                 {
-                    "value": "Attivo",
+                    "value": "Da Inviare",
                     "font_color": "white",
                     "font_weight": "500",
-                    "background_color": "royalblue",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non Firmato",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
                     "text_align": "center"
                 }
             ],
