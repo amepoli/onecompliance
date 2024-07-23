@@ -109,6 +109,6 @@ def process_json_files(directory, log_file):
     print("Translation aggiunte: " + str(counter))
 
 # Esempio di utilizzo
-directory_path = '/home/alpoli/Developement/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
-log_file_path = '/home/alpoli/Developement/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del file di log
+directory_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
+log_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del file di log
 process_json_files(directory_path, log_file_path)

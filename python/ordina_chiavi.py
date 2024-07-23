@@ -28,8 +28,8 @@ def ordina_e_rimuovi_duplicate(input_file, output_file):
         print(f"Errore: {e}")
 
 # Esempio di utilizzo
-input_file_path = '/home/alpoli/Developement/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del tuo file di input
-output_file_path = '/home/alpoli/Developement/onecompliance/python/chiavi_ordinate.txt'  # Sostituisci con il percorso del tuo file di output
+input_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del tuo file di input
+output_file_path = '/home/gcrozzolin/Development/onecompliance/python/chiavi_ordinate.txt'  # Sostituisci con il percorso del tuo file di output
 
 ordina_e_rimuovi_duplicate(input_file_path, output_file_path)
 
