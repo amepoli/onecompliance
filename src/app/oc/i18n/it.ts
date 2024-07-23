@@ -38,7 +38,7 @@ export const locale = {
             aggiornamenti_mail_tr: "Aggior. Mail e TR",
             aggiornamenti_time_report: "Aggiornamenti Time Report",
             aggiornamenti_tr: "Aggiornamenti Tr",
-            aggiornamentimail_tr: "Aggiornamentimail Tr",
+            aggiornamentimail_tr: "Aggiornamenti/mail Tr",
             aggiungi_competenza: "Aggiungi Competenza",
             aggiungi_destinatario: "Aggiungi Destinatario",
             aggiungi_ferie: "Aggiungi Ferie",
