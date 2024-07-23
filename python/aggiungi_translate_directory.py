@@ -5,13 +5,15 @@ import re
 def process_json_files(directory, log_file):
     # Lista per raccogliere le chiavi aggiunte
     added_keys = []
+    # Contatore per debugging
+    counter = 0
 
-    # Funzione per rimuovere i caratteri speciali dalle chiavi
+    # Funzione per rimuovere i caratteri speciali dalle chiavi e assicurarsi che non inizino con un numero o carattere speciale
     def format_label(label):
-        if label.strip():
-            return re.sub(r'[^a-zA-Z0-9_]', '', label.lower().replace(" ", "_"))
-        else:
-            return "void"
+        # Mantieni i caratteri speciali nel resto della stringa ma rimuovi all'inizio
+        formatted_label = label.lower().replace(" ", "_")
+        formatted_label = re.sub(r'^[^a-zA-Z]+', '', formatted_label)
+        return formatted_label
 
     # Funzione per convertire le chiavi in formato title case
     def to_title_case(label):
@@ -21,6 +23,7 @@ def process_json_files(directory, log_file):
 
     # Funzione ricorsiva per aggiungere le chiavi translate
     def add_translate_keys(obj, path=''):
+        nonlocal counter
         nonlocal modified
         if isinstance(obj, dict):
             # Salta le modifiche sull'oggetto se contiene "icon": "more_vert"
@@ -30,28 +33,36 @@ def process_json_files(directory, log_file):
                 # Aggiungi la chiave translate se manca
                 if 'label' in obj and 'translate' not in obj and isinstance(obj['label'], str):
                     formatted_label = format_label(obj['label'])
-                    translate_key = f"RESOURCES.{formatted_label}"
-                    obj['translate'] = translate_key
-                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
-                    modified = True
+                    if formatted_label:  # Assicurati che la chiave non sia vuota
+                        translate_key = f"RESOURCES.{formatted_label}"
+                        obj['translate'] = translate_key
+                        added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                        modified = True
+                        counter += 1  # Incrementa il contatore
                 if 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
                     formatted_label = format_label(obj['message'])
-                    translate_key = f"RESOURCES.{formatted_label}"
-                    obj['translate'] = translate_key
-                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
-                    modified = True
+                    if formatted_label:  # Assicurati che la chiave non sia vuota
+                        translate_key = f"RESOURCES.{formatted_label}"
+                        obj['translate'] = translate_key
+                        added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                        modified = True
+                        counter += 1  # Incrementa il contatore
                 if 'labelAdd' in obj and 'translateAdd' not in obj and isinstance(obj['labelAdd'], str):
                     formatted_label = format_label(obj['labelAdd'])
-                    translate_key = f"RESOURCES.{formatted_label}"
-                    obj['translateAdd'] = translate_key
-                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
-                    modified = True
+                    if formatted_label:  # Assicurati che la chiave non sia vuota
+                        translate_key = f"RESOURCES.{formatted_label}"
+                        obj['translateAdd'] = translate_key
+                        added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                        modified = True
+                        counter += 1  # Incrementa il contatore
                 if 'labelQuickAdd' in obj and 'translateQuickAdd' not in obj and isinstance(obj['labelQuickAdd'], str):
                     formatted_label = format_label(obj['labelQuickAdd'])
-                    translate_key = f"RESOURCES.{formatted_label}"
-                    obj['translateQuickAdd'] = translate_key
-                    added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
-                    modified = True
+                    if formatted_label:  # Assicurati che la chiave non sia vuota
+                        translate_key = f"RESOURCES.{formatted_label}"
+                        obj['translateQuickAdd'] = translate_key
+                        added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                        modified = True
+                        counter += 1  # Incrementa il contatore
 
             # Ricorsione per gestire i dizionari annidati
             for key, value in obj.items():
@@ -88,10 +99,14 @@ def process_json_files(directory, log_file):
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 print(f"Error processing file {filename}: {e}")
 
-    # Scrivi le chiavi aggiunte nel file di log
+    # Scrivi le chiavi aggiunte nel file di log con le chiavi in lettere minuscole
     with open(log_file, 'w', encoding='utf-8') as log:
         for key in added_keys:
-            log.write(f"{key}\n")
+            formatted_key = key.lower().split(':')[0]
+            value = key.split(':')[1]
+            log.write(f"{formatted_key}: {value}\n")
+
+    print("Translation aggiunte: " + str(counter))
 
 # Esempio di utilizzo
 directory_path = '/home/alpoli/Developement/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
