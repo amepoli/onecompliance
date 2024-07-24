@@ -11,6 +11,9 @@
         "navigateOnSuccess": true,
         "translateAdd": "RESOURCES.nuovo_preventivo"
     },
+    "querySuffixes": {
+        "formViewSuffix": "group by codice_azienda, id_articolo, id_contratto"
+    },
     "outputEvents": [
         {
             "eventName": "onSaveEvent",
@@ -628,10 +631,10 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Acconto",
+            "label": "Acconto 1° Audit",
             "key": "acconto",
             "queryFunct": "acconto",
-            "readOnly": false,
+            "readOnly": true,
             "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
@@ -644,10 +647,10 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Saldo Certificazione",
+            "label": "Saldo 1° Audit",
             "key": "certificazione",
             "queryFunct": "certificazione",
-            "readOnly": false,
+            "readOnly": true,
             "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
@@ -751,8 +754,74 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "label_sorv_importo",
-            "label": "Sorveglianza e Rinnovo Costi",
+            "key": "label_sorv_1",
+            "label": "1° Sorveglianza",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "size": 2.5,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_sorv_2",
+            "label": "2° Sorveglianza",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "size": 2.5,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_triennio",
+            "label": "Totale Triennio",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "size": 2.5,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_rinn",
+            "label": "Rinnovo",
             "style": {
                 "background_color": "#03a9f4",
                 "font_color": "white",
@@ -761,6 +830,7 @@
                 "font_weight": "400"
             },
             "newLine": true,
+            "size": 2.5,
             "sameOrigin": false,
             "readOnly": false
         },
@@ -776,7 +846,7 @@
             "insertUpdateFunct": "coalesce(£costo_gu_sorveglianza_1£, $costo_scontato$)",
             "isHidden": false,
             "tooltip": "Corrisponde al costo giornata/uomo della prima sorveglianza",
-            "size": 3.33,
+            "size": 2.5,
             "isPrimary": false,
             "newLine": false
         },
@@ -792,9 +862,23 @@
             "insertUpdateFunct": "coalesce(£costo_gu_sorveglianza_2£, $costo_scontato$)",
             "isHidden": false,
             "tooltip": "Corrisponde al costo giornata/uomo della seconda sorveglianza",
-            "size": 3.33,
+            "size": 2.5,
             "isPrimary": false,
             "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_2",
+            "key": "invisible_2",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false,
+            "translate": "RESOURCES.invisible_2"
         },
         {
             "autoGenerate": false,
@@ -822,7 +906,7 @@
             "key": "sorveglianza_1",
             "queryFunct": "sorveglianza_1",
             "readOnly": true,
-            "size": 3.3,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
@@ -838,7 +922,7 @@
             "key": "sorveglianza_2",
             "queryFunct": "sorveglianza_2",
             "readOnly": true,
-            "size": 3.3,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
@@ -850,14 +934,29 @@
                 "viewType": "input",
                 "dataType": "number"
             },
+            "label": "Totale triennio",
+            "key": "triennio",
+            "queryFunct": "sorveglianza_1 + sorveglianza_2 + costo_totale_scontato",
+            "readOnly": true,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
             "label": "Totale Rinnovo",
             "key": "rinnovo",
             "queryFunct": "rinnovo",
             "readOnly": true,
-            "size": 3.3,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
+            "newLine": true,
             "translate": "RESOURCES.rinnovo"
         },
         {
@@ -870,7 +969,7 @@
             "key": "variazione_sorveglianza_1",
             "queryFunct": "ROUND((1 - ROUND(SUM(costo_gu_sorveglianza_1 * giornate_uomo_sorveglianza) / SUM(costo * giornate_uomo_sorveglianza), 2)) * (-100), 2)",
             "readOnly": true,
-            "size": 3.3,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false
@@ -885,7 +984,22 @@
             "key": "variazione_sorveglianza_2",
             "queryFunct": "ROUND((1 - ROUND(SUM(costo_gu_sorveglianza_2 * giornate_uomo_sorveglianza) / SUM(costo * giornate_uomo_sorveglianza), 2)) * (-100), 2)",
             "readOnly": true,
-            "size": 3.3,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Variazione % Rispetto MD5 triennio",
+            "key": "variazione_triennio",
+            "queryFunct": "ROUND((1 - ROUND(SUM(costo_scontato * giornate_uomo_scontate + costo_gu_sorveglianza_1 * giornate_uomo_sorveglianza + costo_gu_sorveglianza_2 * giornate_uomo_sorveglianza) / SUM(costo * giornate_uomo_scontate + costo * giornate_uomo_sorveglianza + costo * giornate_uomo_sorveglianza), 3)) * (-100), 2)",
+            "readOnly": true,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false
@@ -900,7 +1014,7 @@
             "key": "variazione_rinnovo",
             "queryFunct": "ROUND((1 - ROUND(SUM(costo_gu_rinnovo * giornate_uomo_rinnovo) / SUM(costo * giornate_uomo_rinnovo), 2)) * (-100), 2)",
             "readOnly": true,
-            "size": 3.3,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false
