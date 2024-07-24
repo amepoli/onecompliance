@@ -322,10 +322,10 @@
             },
             "label": "Costo Giornata/Uomo",
             "key": "costo",
-            "readOnly": true,
-            "queryFunct": "select costo from entrasp.articoli where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$",
+            "readOnly": false,
+            "insertUpdateFunct": "coalesce(£costo£, (select costo from entrasp.articoli where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$))",
             "isHidden": false,
-            "tooltip": "Corrisponde al costo giornata/uomo del servizio prescelto, per modificarlo intervenire nel menu prodotti/servizi",
+            "tooltip": "Corrisponde al costo giornata/uomo del servizio prescelto",
             "size": 1.66,
             "isPrimary": false,
             "newLine": false,
@@ -572,7 +572,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "label_ripartizione",
-            "label": "Ripartizione Importi",
+            "label": "Ripartizione Audit Di Certificazione",
             "style": {
                 "background_color": "#03a9f4",
                 "font_color": "white",
@@ -599,6 +599,59 @@
             "size": 2,
             "isPrimary": false,
             "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Acconto",
+            "key": "acconto",
+            "queryFunct": "acconto",
+            "readOnly": false,
+            "size": 2,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.acconto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Saldo Certificazione",
+            "key": "certificazione",
+            "queryFunct": "certificazione",
+            "readOnly": false,
+            "size": 2,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.certificazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_sorv",
+            "label": "Sorveglianza e Rinnovo Giornate/Uomo",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -671,18 +724,23 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "input",
-                "dataType": "number"
+                "viewType": "label",
+                "dataType": "text"
             },
-            "label": "Acconto",
-            "key": "acconto",
-            "queryFunct": "acconto",
-            "readOnly": false,
-            "size": 2,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
-            "translate": "RESOURCES.acconto"
+            "key": "label_sorv_importo",
+            "label": "Sorveglianza e Rinnovo Costi",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -690,15 +748,47 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Saldo Certificazione",
-            "key": "certificazione",
-            "queryFunct": "certificazione",
+            "label": "Costo Giornata/Uomo 1° Sorveglianza",
+            "key": "costo_gu_sorveglianza_1",
             "readOnly": false,
-            "size": 2,
+            "insertUpdateFunct": "coalesce(£costo_gu_sorveglianza_1£, $costo_scontato$)",
             "isHidden": false,
+            "tooltip": "Corrisponde al costo giornata/uomo della prima sorveglianza",
+            "size": 3.33,
             "isPrimary": false,
-            "newLine": false,
-            "translate": "RESOURCES.certificazione"
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Costo Giornata/Uomo 2° Sorveglianza",
+            "key": "costo_gu_sorveglianza_2",
+            "readOnly": false,
+            "insertUpdateFunct": "coalesce(£costo_gu_sorveglianza_2£, $costo_scontato$)",
+            "isHidden": false,
+            "tooltip": "Corrisponde al costo giornata/uomo della seconda sorveglianza",
+            "size": 3.33,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Costo Giornata/Uomo Rinnovo",
+            "key": "costo_gu_rinnovo",
+            "readOnly": false,
+            "insertUpdateFunct": "coalesce(£costo_gu_rinnovo£, $costo_scontato$)",
+            "isHidden": false,
+            "tooltip": "Corrisponde al costo giornata/uomo della seconda sorveglianza",
+            "size": 3.33,
+            "isPrimary": false,
+            "newLine": true
         },
         {
             "autoGenerate": false,
@@ -709,8 +799,8 @@
             "label": "1° Audit di Sorveglianza",
             "key": "sorveglianza_1",
             "queryFunct": "sorveglianza_1",
-            "readOnly": false,
-            "size": 2,
+            "readOnly": true,
+            "size": 3.3,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
@@ -725,8 +815,8 @@
             "label": "2° Audit di Sorveglianza",
             "key": "sorveglianza_2",
             "queryFunct": "sorveglianza_2",
-            "readOnly": false,
-            "size": 2,
+            "readOnly": true,
+            "size": 3.3,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
@@ -741,8 +831,8 @@
             "label": "Rinnovo",
             "key": "rinnovo",
             "queryFunct": "rinnovo",
-            "readOnly": false,
-            "size": 2,
+            "readOnly": true,
+            "size": 3.3,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
