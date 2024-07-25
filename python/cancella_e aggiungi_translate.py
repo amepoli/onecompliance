@@ -2,6 +2,34 @@ import os
 import json
 import re
 
+def remove_translate_keys(directory):
+    for filename in os.listdir(directory):
+        if filename.endswith(".json"):
+            filepath = os.path.join(directory, filename)
+            try:
+                with open(filepath, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+                
+                def remove_keys(obj):
+                    if isinstance(obj, dict):
+                        obj.pop('translate', None)
+                        obj.pop('translateAdd', None)
+                        obj.pop('translateQuickAdd', None)
+                        for key, value in obj.items():
+                            remove_keys(value)
+                    elif isinstance(obj, list):
+                        for item in obj:
+                            remove_keys(item)
+                
+                remove_keys(data)
+                
+                with open(filepath, 'w', encoding='utf-8') as file:
+                    json.dump(data, file, ensure_ascii=False, indent=4)
+                print(f"Removed translate keys from file: {filename}")
+                
+            except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                print(f"Error processing file {filename}: {e}")
+
 def process_json_files(directory, log_file):
     # Lista per raccogliere le chiavi aggiunte
     added_keys = []
@@ -119,4 +147,9 @@ def process_json_files(directory, log_file):
 # Esempio di utilizzo
 directory_path = '/home/alpoli/Developement/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
 log_file_path = '/home/alpoli/Developement/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del file di log
+
+# Rimuovi le proprietà translate, translateAdd e translateQuickAdd dai file JSON
+remove_translate_keys(directory_path)
+
+# Esegui i comandi per aggiungere le nuove chiavi translate
 process_json_files(directory_path, log_file_path)
