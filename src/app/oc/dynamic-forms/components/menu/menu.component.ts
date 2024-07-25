@@ -6,7 +6,7 @@ import { PubSubService } from 'app/oc/services';
 @Component({
   selector: "app-menu",
   template: `
-  <div align="center" [ngStyle]="{'display': 'inline-block', 'width': '100%'}" [style.padding-top]="'15px'">
+  <div align="center" [ngStyle]="{'display': 'inline-block', 'width': '100%'}" [style.padding-top]="'0px'">
     <button mat-raised-button color="primary" [disabled]="field.readonly" [matMenuTriggerFor]="matMenu1"
     [style.width]="'100%'" [style.height.px]="'64'" [style.border-radius]="'4px'" [style.background-color]="'#2A4F9D'" [style.color]="field.style && field.style.font_color? field.style.font_color: null"
     [style.padding]="'0px'" [style.border]="'0.1px solid #144FB7'" [matTooltip]="field.tooltip">
@@ -40,7 +40,8 @@ import { PubSubService } from 'app/oc/services';
     // '[style.padding-bottom.px]': 'field.isVisible? "4": "0"',
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
-    '[style.width]': 'field.isVisible? field.width + "%": "0"'
+    '[style.width]': 'field.isVisible? field.width + "%": "0"',
+    '[style.height]': 'field.isVisible? "76px": "0"'
   }
 })
 export class MenuComponent implements OnInit {

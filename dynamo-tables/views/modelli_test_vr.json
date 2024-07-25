@@ -455,7 +455,7 @@
             "readOnly": false,
             "sameOrigin": false,
             "size": 0.6,
-            "translate": "RESOURCES.modelli_test_vr_actions"
+            "translate": "RESOURCES._"
         },
         {
             "autoGenerate": false,
@@ -596,13 +596,15 @@
                     {
                         "message": "Breve descrizione necessaria",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.breve_descrizione_necessaria"
                     },
                     {
                         "name": "maxlength",
                         "message": "Maximum length should be 200",
                         "validator": "Validators.maxLength(200)",
-                        "value": 200
+                        "value": 200,
+                        "translate": "RESOURCES.maximum_length_should_be_200"
                     }
                 ]
             },
@@ -625,7 +627,8 @@
                     {
                         "message": "Campo Necessario",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.campo_necessario"
                     }
                 ]
             },
@@ -681,7 +684,8 @@
                     {
                         "message": "Necessario specificare l'ufficio",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.necessario_specificare_lufficio"
                     }
                 ],
                 "value": "0"
@@ -706,7 +710,8 @@
                     {
                         "message": "Selezionare criterio di analisi",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.selezionare_criterio_di_analisi"
                     }
                 ]
             },
@@ -1001,7 +1006,8 @@
                                 "attributeType": "isHidden",
                                 "queryString": "SELECT '€global_profile€'!='admin' AS label"
                             }
-                        ]
+                        ],
+                        "translate": "RESOURCES.prezzo"
                     },
                     {
                         "autoGenerate": false,
@@ -1023,7 +1029,8 @@
                                 "attributeType": "isHidden",
                                 "queryString": "SELECT '€global_profile€'!='admin' AS label"
                             }
-                        ]
+                        ],
+                        "translate": "RESOURCES.condivisione_auto"
                     },
                     {
                         "autoGenerate": false,
@@ -1036,7 +1043,8 @@
                         "label": "",
                         "newLine": true,
                         "readOnly": false,
-                        "sameOrigin": false
+                        "sameOrigin": false,
+                        "translate": "RESOURCES."
                     },
                     {
                         "autoGenerate": false,
@@ -1894,7 +1902,8 @@
             },
             "label": "No rischio TUF/OICR(6155)",
             "newLine": false,
-            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6155 and ason.id_argomento_son is not null)"
+            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6155 and ason.id_argomento_son is not null)",
+            "translate": "RESOURCES.no_rischio_tufoicr6155"
         }
     ],
     "subTables": [
@@ -1952,7 +1961,8 @@
                     "son": "id_modello_test_vr"
                 }
             ],
-            "label": "Domande - Sezioni"
+            "label": "Domande - Sezioni",
+            "translate": "RESOURCES.domande_sezioni"
         },
         {
             "entryKey": "sondaggi_sub_of_modelli_test",
@@ -2087,7 +2097,8 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Report"
+            "label": "Report",
+            "translate": "RESOURCES.report"
         }
     ],
     "table_keys": [
@@ -2527,43 +2538,52 @@
         "formQueries": [
             {
                 "label": "Template domande per import",
-                "queryString": "select '1' as ordinamento_domanda, '10' as punteggio_domanda, 'domanda' as domanda, 'note domanda' as note_domanda, '1' as ordinamento_sezione, 'sezione' as descrizione_sezione"
+                "queryString": "select '1' as ordinamento_domanda, '10' as punteggio_domanda, 'domanda' as domanda, 'note domanda' as note_domanda, '1' as ordinamento_sezione, 'sezione' as descrizione_sezione",
+                "translate": "RESOURCES.template_domande_per_import"
             },
             {
                 "label": "Risposte previste modelli test",
-                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, ds.descrizione as sezione, dm.id_domanda, dm.punteggio, dm.descrizione as domanda, dm.id_domanda_rif, dm.id_risposta_prev_rif, rp.id_risposta_prev, rp.peso, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda=ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where mt.id_modello_test = $id_modello_test$ and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, ds.ordinamento, dm.ordinamento"
+                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, ds.descrizione as sezione, dm.id_domanda, dm.punteggio, dm.descrizione as domanda, dm.id_domanda_rif, dm.id_risposta_prev_rif, rp.id_risposta_prev, rp.peso, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda=ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where mt.id_modello_test = $id_modello_test$ and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, ds.ordinamento, dm.ordinamento",
+                "translate": "RESOURCES.risposte_previste_modelli_test"
             },
             {
                 "label": "Conta risposte per anno (no versioni)",
-                "queryString": "select extract(year from snd.data_esecuzione) as anno, case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end as ultimo_si_no, rs.id_modello_test, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda) as sezione, rs.id_domanda, dm.descrizione as domanda, rs.punteggio, entrasp.risposte_previste_risposta1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda, rs.id_risposta_prev) as risposta, rs.peso, count(rs.id_risposta)  from entrasp.risposte rs  inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda  inner join entrasp.domande dm on rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda  left join entrasp.estrazione_profili_aml uca  on rs.id_sondaggio=uca.id_sondaggio and rs.codice_azienda=uca.codice_azienda  where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test = $id_modello_test$  group by extract(year from snd.data_esecuzione),  rs.codice_azienda,  rs.id_modello_test,  rs.id_domanda,  rs.id_risposta_prev,  rs.punteggio,  rs.peso,  dm.descrizione,  case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end  order by extract(year from snd.data_esecuzione),  entrasp.domande_sezioni_ord_da_dm1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda),  id_modello_test,  id_domanda,  id_risposta_prev"
+                "queryString": "select extract(year from snd.data_esecuzione) as anno, case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end as ultimo_si_no, rs.id_modello_test, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda) as sezione, rs.id_domanda, dm.descrizione as domanda, rs.punteggio, entrasp.risposte_previste_risposta1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda, rs.id_risposta_prev) as risposta, rs.peso, count(rs.id_risposta)  from entrasp.risposte rs  inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda  inner join entrasp.domande dm on rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda  left join entrasp.estrazione_profili_aml uca  on rs.id_sondaggio=uca.id_sondaggio and rs.codice_azienda=uca.codice_azienda  where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test = $id_modello_test$  group by extract(year from snd.data_esecuzione),  rs.codice_azienda,  rs.id_modello_test,  rs.id_domanda,  rs.id_risposta_prev,  rs.punteggio,  rs.peso,  dm.descrizione,  case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end  order by extract(year from snd.data_esecuzione),  entrasp.domande_sezioni_ord_da_dm1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda),  id_modello_test,  id_domanda,  id_risposta_prev",
+                "translate": "RESOURCES.conta_risposte_per_anno_no_versioni"
             },
             {
                 "label": "Risultato sintetico per domanda",
                 "queryString": "select extract(year from snd.data_esecuzione) as anno, rs.id_modello_test, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda) as sezione, id_domanda, entrasp.domande_descrizione1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda) as domanda,  rs.punteggio, count(id_risposta) as num_risposte, sum(rs.peso*rs.punteggio/100)/count(rs.id_risposta) as risultato from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test = $id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_domanda, rs.punteggio order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda), id_modello_test, id_domanda",
-                "key": "testing10"
+                "key": "testing10",
+                "translate": "RESOURCES.risultato_sintetico_per_domanda"
             },
             {
                 "label": "Conta risposte per anno (con versioni)",
-                "queryString": "select extract(year from snd.data_esecuzione) as anno,  case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end as ultimo_si_no, rs.id_modello_test, rs.id_modello_test_vr, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda) as sezione, rs.id_domanda, dm.punteggio, dm.descrizione, entrasp.risposte_previste_risposta(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev) as risposta, count(rs.id_risposta) from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda inner join entrasp.domande dm on rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda left join entrasp.estrazione_profili_aml uca on rs.id_sondaggio=uca.id_sondaggio and rs.codice_azienda=uca.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test=$id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev, dm.punteggio, dm.descrizione, case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda), id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev"
+                "queryString": "select extract(year from snd.data_esecuzione) as anno,  case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end as ultimo_si_no, rs.id_modello_test, rs.id_modello_test_vr, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda) as sezione, rs.id_domanda, dm.punteggio, dm.descrizione, entrasp.risposte_previste_risposta(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev) as risposta, count(rs.id_risposta) from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda inner join entrasp.domande dm on rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda left join entrasp.estrazione_profili_aml uca on rs.id_sondaggio=uca.id_sondaggio and rs.codice_azienda=uca.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test=$id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev, dm.punteggio, dm.descrizione, case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda), id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev",
+                "translate": "RESOURCES.conta_risposte_per_anno_con_versioni"
             },
             {
                 "key": "export_risposte_negozi",
                 "label": "Risposte Negozi",
-                "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione, avr.annotazioni_interne, ss.data_esecuzione, ss.ris_percentuale, ss.giudizio, rp.risposta, ri.peso, ds.descrizione, dm.id_domanda from entrasp.risposte ri inner join entrasp.risposte_previste rp on ri.codice_azienda=rp.codice_azienda and ri.id_risposta_prev=rp.id_risposta_prev inner join entrasp.sondaggi_somministrati ss on ri.codice_azienda=ss.codice_azienda and ri.id_somministrazione=ss.id_somministrazione and ri.id_sondaggio=ss.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica AND avr.prog_vr=entrasp.anagrafiche_vr_max(ss.codice_part, split_part(ss.object_key,'|',2)::numeric) inner join entrasp.domande dm on ri.codice_azienda=dm.codice_azienda and ri.id_modello_test=dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda inner join entrasp.domande_sezioni ds on dm.codice_azienda= ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where ri.codice_azienda=$codice_azienda$ and ss.data_esecuzione > current_date - interval '18 months' and ri.id_modello_test=$id_modello_test$ ORDER BY avr.id_anagrafica asc"
+                "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione, avr.annotazioni_interne, ss.data_esecuzione, ss.ris_percentuale, ss.giudizio, rp.risposta, ri.peso, ds.descrizione, dm.id_domanda from entrasp.risposte ri inner join entrasp.risposte_previste rp on ri.codice_azienda=rp.codice_azienda and ri.id_risposta_prev=rp.id_risposta_prev inner join entrasp.sondaggi_somministrati ss on ri.codice_azienda=ss.codice_azienda and ri.id_somministrazione=ss.id_somministrazione and ri.id_sondaggio=ss.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica AND avr.prog_vr=entrasp.anagrafiche_vr_max(ss.codice_part, split_part(ss.object_key,'|',2)::numeric) inner join entrasp.domande dm on ri.codice_azienda=dm.codice_azienda and ri.id_modello_test=dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda inner join entrasp.domande_sezioni ds on dm.codice_azienda= ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where ri.codice_azienda=$codice_azienda$ and ss.data_esecuzione > current_date - interval '18 months' and ri.id_modello_test=$id_modello_test$ ORDER BY avr.id_anagrafica asc",
+                "translate": "RESOURCES.risposte_negozi"
             }
         ],
         "tableQueries": [
             {
                 "label": "Risp prev mod test",
-                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda"
+                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda",
+                "translate": "RESOURCES.risp_prev_mod_test"
             },
             {
                 "label": "Risp prev mod test no vers",
-                "queryString": "select distinct mt.id_modello_test, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mt.titolo, dm.id_domanda"
+                "queryString": "select distinct mt.id_modello_test, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mt.titolo, dm.id_domanda",
+                "translate": "RESOURCES.risp_prev_mod_test_no_vers"
             },
             {
                 "label": "Modelli con domande doppie",
-                "queryString": "select descrizione, entrasp.domande_sezione_descr(codice_azienda, id_modello_test, id_modello_test_vr, id_sezione), id_argomento, id_modello_test, id_modello_test_vr, id_domanda, id_sezione from entrasp.domande where codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr in (select codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr from entrasp.domande where id_argomento is null) and codice_azienda=$codice_azienda$ order by codice_azienda, id_modello_test, id_modello_test_vr, descrizione, id_argomento"
+                "queryString": "select descrizione, entrasp.domande_sezione_descr(codice_azienda, id_modello_test, id_modello_test_vr, id_sezione), id_argomento, id_modello_test, id_modello_test_vr, id_domanda, id_sezione from entrasp.domande where codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr in (select codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr from entrasp.domande where id_argomento is null) and codice_azienda=$codice_azienda$ order by codice_azienda, id_modello_test, id_modello_test_vr, descrizione, id_argomento",
+                "translate": "RESOURCES.modelli_con_domande_doppie"
             }
         ]
     },
@@ -2571,7 +2591,8 @@
         "formQueries": [
             {
                 "label": "Importa domande",
-                "queryString": "select entrasp.domande_import($codice_azienda$, $id_modello_test$ , $id_modello_test_vr$, $nome_file$)"
+                "queryString": "select entrasp.domande_import($codice_azienda$, $id_modello_test$ , $id_modello_test_vr$, $nome_file$)",
+                "translate": "RESOURCES.importa_domande"
             }
         ]
     },
@@ -2591,5 +2612,6 @@
             "viewType": "form",
             "formActionType": "attachments"
         }
-    ]
+    ],
+    "translate": "RESOURCES.modelli_di_verifica"
 }

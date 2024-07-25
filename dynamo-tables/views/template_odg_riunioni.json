@@ -1,0 +1,418 @@
+{
+    "$schema": "../views.schema.json",
+    "businessObjectName": "template_odg_riunioni",
+    "origin": "entrasp.template_odg_riunioni",
+    "entryKey": "template_odg_riunioni",
+    "addElementSettings": {
+        "labelQuickAdd": "Nuovo Punto",
+        "navigateOnSuccess": false,
+        "translateQuickAdd": "RESOURCES.nuovo_punto"
+    },
+    "define": {
+        "is_hidden_riunione": "true",
+        "is_hidden_note": "false"
+    },
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select *, true as delete_templ_odg, entrasp.template_odg_descr(id_templ_odg) as titolo from entrasp.template_odg_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_templ_odg as id, id_templ_odg||' - '||titolo as name from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€') "
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_templ_odg",
+            "label": "ID template OdG",
+            "newLine": 9.5,
+            "readOnly": false,
+            "translate": "RESOURCES.id_odg"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_templ_riunione",
+            "label": "ID templ riunione",
+            "newLine": false,
+            "readOnly": true,
+            "translate": "RESOURCES.id_templ_riunione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "key": "crea_associa_argomento",
+                        "icon": "class",
+                        "label": "Crea e associa argomento",
+                        "translate": "RESOURCES.create_and_associate_tag",
+                        "outputEventName": "create_associate_argomento"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.argomenti_create_and_update_odg_riunione($id_templ_odg$, $id_templ_riunione$, $titolo$, 52522)"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "template_odg_actions",
+            "label": " ",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.5,
+            "translate": "RESOURCES.template_odg_actions"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "value": null,
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=52522 order by descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Tipo Odg",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3,
+            "translate": "RESOURCES.id_argomento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ordinamento",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1,
+            "translate": "RESOURCES.ordinamento"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_templ_odg_parent",
+            "label": "ODG Superiore",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3,
+            "translate": "RESOURCES.odg_superiore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ora_inizio",
+            "label": "Ora inizio",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1,
+            "translate": "RESOURCES.ora_inizio"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ora_fine",
+            "label": "Ora Fine",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1,
+            "translate": "RESOURCES.ora_fine"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "n_giorno",
+            "label": "N. Giornata",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1,
+            "translate": "RESOURCES.n_giornata"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "stato",
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "newLine": true,
+            "queryCond": "stato='€stato€'"
+        },
+        {
+            "fieldName": "note_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parole Chiavi",
+            "newLine": false,
+            "queryCond": "UPPER (annotazioni) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'",
+            "translate": "RESOURCES.parole_chiavi"
+        },
+        {
+            "fieldName": "id_tipo_segnalazione_s",
+            "format": {
+                "comboQuery": "select id_tipo_segnalazione as id, descrizione as name from entrasp.tipi_segnalazioni where id_tipo_segnalazione!=0 order by descrizione;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "ID Tipo Segnal.",
+            "newLine": false,
+            "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$",
+            "translate": "RESOURCES.id_tipo_segnal"
+        },
+        {
+            "fieldName": "no_subject",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Non classificati",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "id_argomento is null",
+            "translate": "RESOURCES.non_classificati"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "tag_sub_of_template_odg",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "showByFormKeyCondition": {
+                "key": "argomento_not_null",
+                "condition": "notEqualTo",
+                "values": [
+                    "1"
+                ]
+            },
+            "label": "TAG",
+            "translate": "RESOURCES.tag",
+            "renderingOrder": 1
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_templ_odg",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "template_odg",
+                "viewType": "table",
+                "query": "delete from entrasp.template_odg where id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "id_templ_riunione",
+                        "destination": "id_templ_riunione"
+                    },
+                    {
+                        "source": "id_templ_odg",
+                        "destination": "id_templ_odg"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "text": "Sei sicuro di voler cancellare il punto all'ordine del giorno?",
+                    "title": "Cancellazione ordine del giorno"
+                },
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_procedure_aziendali"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_templ_odg",
+            "width": "5%",
+            "label": "ODG",
+            "translate": "RESOURCES.id_odg"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_templ_riunioni",
+            "width": "5%",
+            "label": "ID OdG",
+            "translate": "RESOURCES.id_odg"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Argomento",
+            "translate": "RESOURCES.tag"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "width": "5%",
+            "label": "Ordinamento",
+            "translate": "RESOURCES.ordinamento"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "n_giorno",
+            "width": "5%",
+            "label": "N. Giornata",
+            "translate": "RESOURCES.n_giornata"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ora_inizio",
+            "width": "5%",
+            "label": "Dalle",
+            "translate": "RESOURCES.dalle"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ora_fine",
+            "width": "5%",
+            "label": "Alle",
+            "translate": "RESOURCES.alle"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "width": "30%",
+            "queryFunct": "entrasp.template_odg_descr(id_templ_odg)",
+            "label": "Titolo",
+            "translate": "RESOURCES.title"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_templ_odg"
+    },
+    "hideActions": [
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "add"
+        }
+    ]
+}

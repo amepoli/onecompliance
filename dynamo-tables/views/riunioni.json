@@ -6,7 +6,8 @@
     "label": "Riunioni",
     "addElementSettings": {
         "labelAdd": "Nuova Riunione",
-        "navigateOnSuccess": false
+        "navigateOnSuccess": false,
+        "translateAdd": "RESOURCES.nuova_riunione"
     },
     "predefinedQueries": [
         {
@@ -17,7 +18,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select id_riunione, codice_protocollo, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, data_riunione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.riunioni where codice_azienda=$codice_azienda$"
+            "queryString": "select id_riunione, codice_protocollo, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, (€global_id_anagrafiche€) as global_id_anagrafiche, data_riunione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.riunioni where codice_azienda=$codice_azienda$"
         },
         {
             "operation": "update",
@@ -40,6 +41,15 @@
             "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'riunioni', $id_riunione$, '$codice_azienda$'::varchar)"
         }
     ],
+    "define": {
+        "is_hidden_argomento": "false",
+        "is_hidden_stato": "false",
+        "is_hidden_presidente": "false",
+        "is_hidden_segretario": "false",
+        "is_hidden_centro_gest": "false",
+        "is_hidden_codice_protocollo": "false",
+        "is_hidden_convocazione": "false"
+    },
     "form_keys": [
         {
             "autoGenerate": false,
@@ -95,16 +105,17 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3405 order by descrizione",
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3352 order by descrizione",
                 "validations": [
                     {
                         "message": "Campo Obbligatorio",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.campo_obbligatorio"
                     }
                 ]
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_argomento}",
             "isPrimary": false,
             "key": "id_argomento",
             "label": "Tipo Riunione",
@@ -122,7 +133,8 @@
                     {
                         "message": "Campo Obbligatorio",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.campo_obbligatorio"
                     }
                 ]
             },
@@ -169,7 +181,7 @@
             "translate": "RESOURCES.status",
             "key": "stato",
             "readOnly": false,
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_stato}",
             "isPrimary": false,
             "newLine": false
         },
@@ -180,7 +192,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_presidente}",
             "isPrimary": false,
             "key": "id_presidente",
             "label": "Presidente",
@@ -195,7 +207,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_segretario}",
             "isPrimary": false,
             "key": "id_segretario",
             "label": "Segretario",
@@ -210,13 +222,13 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_centro_gest}",
             "isPrimary": false,
             "key": "id_centro_gest",
             "label": "Organo/Comitato/Centro Gestionale",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.id_centro_gest"
+            "translate": "RESOURCES.descr_centro_gest"
         },
         {
             "autoGenerate": false,
@@ -224,7 +236,7 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_codice_protocollo}",
             "isPrimary": false,
             "key": "codice_protocollo",
             "label": "Protocollo",
@@ -241,7 +253,8 @@
                     {
                         "message": "Campo Obbligatorio",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.campo_obbligatorio"
                     }
                 ]
             },
@@ -263,11 +276,12 @@
                     {
                         "message": "Campo Obbligatorio",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.campo_obbligatorio"
                     }
                 ]
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_convocazione}",
             "isPrimary": false,
             "key": "convocazione",
             "label": "Testo della Convocazione",
@@ -368,7 +382,8 @@
                     {
                         "message": "Campo Obbligatorio",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.campo_obbligatorio"
                     }
                 ]
             },
@@ -376,7 +391,8 @@
             "label": "Tipo Riunione",
             "queryCond": "id_argomento=$id_tipo_riunione_s$",
             "newLine": false,
-            "size": 2.5
+            "size": 2.5,
+            "translate": "RESOURCES.tipo_riunione"
         },
         {
             "fieldName": "id_riunione",
@@ -386,7 +402,8 @@
             },
             "label": "Codice Compito",
             "newLine": false,
-            "queryCond": "id_riunione=$id_riunione$"
+            "queryCond": "id_riunione=$id_riunione$",
+            "translate": "RESOURCES.codice_compito"
         },
         {
             "fieldName": "id_centro_gest",
@@ -403,7 +420,7 @@
     ],
     "subTables": [
         {
-            "entryKey": "odg_riunioni",
+            "entryKey": "odg_sub_of_riunioni",
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -415,7 +432,8 @@
                 }
             ],
             "label": "Punti all'ordine del giorno",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.punti_allordine_del_giorno"
         },
         {
             "entryKey": "consuntivazioni_sub_of_riunioni",
@@ -429,7 +447,8 @@
                     "son": "id_riunione"
                 }
             ],
-            "label": "Aggiornamenti(mail, tr)"
+            "label": "Aggiornamenti(mail, tr)",
+            "translate": "RESOURCES.aggiornamentimail_tr"
         }
     ],
     "table_keys": [
@@ -569,6 +588,15 @@
         },
         {
             "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "global_id_anagrafiche",
+            "label": "global_id_anagrafiche"
+        },
+        {
+            "format": {
                 "dataType": "number"
             },
             "isHidden": false,
@@ -587,7 +615,7 @@
                 "target": "riunioni",
                 "viewType": "form",
                 "action": "query",
-                "query": "select entrasp.business_object_play(('£user_companies£')::text, 'riunioni', '£id_riunione£', '£codice_azienda£')",
+                "query": "select entrasp.business_object_play(('£global_id_anagrafiche£')::text, 'riunioni', £id_riunione£, '£codice_azienda£'::varchar)",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -596,6 +624,10 @@
                     {
                         "source": "id_riunione",
                         "destination": "id_riunione"
+                    },
+                    {
+                        "source": "global_id_anagrafiche",
+                        "destination": "global_id_anagrafiche"
                     }
                 ],
                 "confirmAction": false,
@@ -624,11 +656,11 @@
                 "target": "riunioni",
                 "viewType": "form",
                 "action": "query",
-                "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+                "query": "select entrasp.time_report_stop(('£global_id_anagrafiche£')::text)",
                 "keymap": [
                     {
-                        "source": "user_companies",
-                        "destination": "user_companies"
+                        "source": "global_id_anagrafiche",
+                        "destination": "global_id_anagrafiche"
                     }
                 ],
                 "confirmAction": false,
@@ -649,5 +681,6 @@
             "tableActionType": "quick-add",
             "viewType": "table"
         }
-    ]
+    ],
+    "translate": "RESOURCES.riunioni"
 }

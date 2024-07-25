@@ -4,7 +4,7 @@
     "origin": "entrasp.attivita",
     "businessObjectName": "attivita",
     "label": "Modelli di progetto",
-     "outputEvents": [
+    "outputEvents": [
         {
             "eventName": "attivita_load",
             "eventTrigger": "onReload"
@@ -109,13 +109,15 @@
                     "label": "Modifica Fasi",
                     "reloadOnSuccess": true,
                     "customDialogEntryName": "dialog_attivita",
-                    "customDialogTitle": "Modifica Fasi"
+                    "customDialogTitle": "Modifica Fasi",
+                    "translate": "RESOURCES.modifica_fasi"
                 }
             ]
         }
     ],
     "define": {
-        "label": "Modello di progetto"
+        "label": "Modello di progetto",
+        "translate": "RESOURCES.modello_di_progetto"
     },
     "predefinedQueries": [
         {
@@ -202,12 +204,14 @@
                     {
                         "icon": "content_copy",
                         "label": "Duplica attività",
-                        "outputEventName": "attivita_duplica"
+                        "outputEventName": "attivita_duplica",
+                        "translate": "RESOURCES.duplica_attivit"
                     },
                     {
                         "icon": "sync_alt",
                         "outputEventName": "codici_aggiorna",
-                        "label": "Aggiorna Codici"
+                        "label": "Aggiorna Codici",
+                        "translate": "RESOURCES.aggiorna_codici"
                     },
                     {
                         "outputEventName": "create_associate_argomento",
@@ -337,7 +341,8 @@
                     {
                         "message": "Codice mancante",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.codice_mancante"
                     }
                 ]
             },
@@ -395,7 +400,8 @@
             "label": "Tipo fase",
             "newLine": true,
             "readOnly": false,
-            "size": 1
+            "size": 1,
+            "translate": "RESOURCES.tipo_fase"
         },
         {
             "autoGenerate": false,
@@ -684,7 +690,8 @@
                         ],
                         "readOnly": false,
                         "sameOrigin": false,
-                        "size": 1.67
+                        "size": 1.67,
+                        "translate": "RESOURCES.modello_verifica_associato"
                     },
                     {
                         "autoGenerate": false,
@@ -698,7 +705,8 @@
                         "label": "Giorni scad. da avvio prog.",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 3.33
+                        "size": 3.33,
+                        "translate": "RESOURCES.giorni_scad_da_avvio_prog"
                     },
                     {
                         "autoGenerate": false,
@@ -723,7 +731,8 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": false,
-                        "size": 3.33
+                        "size": 3.33,
+                        "translate": "RESOURCES.ver"
                     },
                     {
                         "autoGenerate": false,
@@ -737,7 +746,8 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "newLine": false,
-                        "size": 3.33
+                        "size": 3.33,
+                        "translate": "RESOURCES.data_inizio_validit"
                     },
                     {
                         "autoGenerate": false,
@@ -751,7 +761,8 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "newLine": true,
-                        "size": 3.33
+                        "size": 3.33,
+                        "translate": "RESOURCES.data_fine_validit"
                     }
                 ]
             },
@@ -789,7 +800,8 @@
             },
             "label": "Mostra inattivi",
             "newLine": false,
-            "queryCond": "1=1 or (data_fine_validita is not null and codice_azienda=$codice_azienda$)"
+            "queryCond": "1=1 or (data_fine_validita is not null and codice_azienda=$codice_azienda$)",
+            "translate": "RESOURCES.mostra_inattivi"
         },
         {
             "fieldName": "flag_modelli_test_senza_argomento",
@@ -799,7 +811,8 @@
             },
             "label": "Fasi con modelli test senza argomento",
             "newLine": false,
-            "queryCond": "1=1 or id_modello_test in (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento is null)"
+            "queryCond": "1=1 or id_modello_test in (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento is null)",
+            "translate": "RESOURCES.fasi_con_modelli_test_senza_argomento"
         },
         {
             "fieldName": "cod_att_princ_s",
@@ -811,7 +824,8 @@
             },
             "label": "Codice attivita principale",
             "newLine": false,
-            "queryCond": "entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr)= $cod_att_princ_s$"
+            "queryCond": "entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita, attivita_vr)= $cod_att_princ_s$",
+            "translate": "RESOURCES.codice_attivita_principale"
         }
     ],
     "subTables": [
@@ -832,6 +846,7 @@
                 }
             ],
             "label": "Fasi",
+            "translate": "RESOURCES.fasi",
             "renderingOrder": 1
         },
         {
@@ -847,6 +862,7 @@
                 }
             ],
             "label": "Progetti Associati",
+            "translate": "RESOURCES.progetti_associati",
             "renderingOrder": 2
         },
         {
@@ -878,6 +894,7 @@
                 }
             ],
             "label": "Versioni da Importare",
+            "translate": "RESOURCES.vrs_da_importare",
             "renderingOrder": 4
         },
         {
@@ -1124,10 +1141,16 @@
         "tableQueries": [
             {
                 "label": "Estrazione fasi senza mdt",
-                "queryString": "select * from entrasp.attivita where codice_azienda = $codice_azienda$ and codice_attivita_parent is not null and id_modello_test is null"
+                "queryString": "select * from entrasp.attivita where codice_azienda = $codice_azienda$ and codice_attivita_parent is not null and id_modello_test is null",
+                "translate": "RESOURCES.estrazione_fasi_senza_mdt"
             }
         ]
     },
+    "addElementSettings": {
+        "labelAdd": "Nuovo Modello",
+        "navigateOnSuccess": true
+    },
+    
     "hideActions": [
         {
             "viewType": "form",
@@ -1153,5 +1176,6 @@
             "viewType": "table",
             "tableActionType": "quick-add"
         }
-    ]
+    ],
+    "translate": "RESOURCES.modelli_di_progetto"
 }

@@ -101,7 +101,8 @@
                     {
                         "message": "Codice necessario",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.codice_necessario"
                     }
                 ]
             },
@@ -258,7 +259,8 @@
             },
             "fieldName": "codice_azienda",
             "newLine": false,
-            "queryCond": "arg.codice_azienda=$codice_azienda_s$"
+            "queryCond": "arg.codice_azienda=$codice_azienda_s$",
+            "translate": "RESOURCES.codice_azienda_s"
         },
         {
             "fieldName": "stringa_s",
@@ -268,7 +270,8 @@
             },
             "label": "Stringa di ricerca",
             "newLine": true,
-            "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€stringa_s€')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€stringa_s€')||'%')"
+            "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€stringa_s€')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€stringa_s€')||'%')",
+            "translate": "RESOURCES.stringa_di_ricerca"
         },
         {
             "fieldName": "id_argomento_list",
@@ -290,7 +293,8 @@
             },
             "label": "TAG (argomento padre)",
             "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))",
+            "translate": "RESOURCES.tag_argomento_padre"
         },
         {
             "fieldName": "argomento_s2",
@@ -301,7 +305,8 @@
             },
             "label": "$P{label_argomento_s2}",
             "newLine": false,
-            "queryCond": "id_argomento in(select id_argomento_descendants from entrasp.descendants_of_argomento($argomento_s2$, 1))"
+            "queryCond": "id_argomento in(select id_argomento_descendants from entrasp.descendants_of_argomento($argomento_s2$, 1))",
+            "translate": "RESOURCES.plabel_argomento_s2"
         },
         {
             "fieldName": "num_argomenti_padre_max",
@@ -311,7 +316,8 @@
             },
             "label": "Numero argomenti padre minore di",
             "newLine": true,
-            "queryCond": "(select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento)<=$num_argomenti_padre_max$"
+            "queryCond": "(select count(aa2.id_argomento_father) from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_son=arg.id_argomento)<=$num_argomenti_padre_max$",
+            "translate": "RESOURCES.numero_argomenti_padre_minore_di"
         }
     ],
     "table_multiselection_actions": [
@@ -325,7 +331,8 @@
                     "key": "Unifica argomenti",
                     "icon": "merge_type",
                     "label": "Unifica argomenti",
-                    "query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
+                    "query": "SELECT * FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)",
+                    "translate": "RESOURCES.unifica_argomenti"
                 }
             ]
         }
@@ -407,7 +414,8 @@
                     "son": "id_argomento_son"
                 }
             ],
-            "label": "Argomenti padre"
+            "label": "Argomenti padre",
+            "translate": "RESOURCES.argomenti_padre"
         },
         {
             "entryKey": "argomenti_sub_of_argomenti_son",
@@ -417,11 +425,17 @@
                     "son": "id_argomento_father"
                 }
             ],
-            "label": "Argomenti figli"
+            "label": "Argomenti figli",
+            "translate": "RESOURCES.argomenti_figli"
         }
     ],
     "querySuffixes": {
         "tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
+    },
+    "addElementSettings": {
+        "labelAdd": "Nuovo tipo Centro Gestionale",
+        "navigateOnSuccess": true,
+        "translateAdd": "RESOURCES.nuovo_tipo_centro_gestionale"
     },
     "hideActions": [
         {

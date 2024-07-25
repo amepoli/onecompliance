@@ -4,6 +4,147 @@
     "origin": "entrasp.riunioni",
     "entryKey": "riunioni_certificazione",
     "inheritsFrom": "riunioni",
+    "addElementSettings": {
+        "labelAdd": "Nuovo Piano",
+        "navigateOnSuccess": false,
+        "translateAdd": "RESOURCES.nuovo_piano"
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_riunione",
+            "label": "Id Riunione",
+            "newLine": false,
+            "size": 0.5,
+            "readOnly": true,
+            "inputEvents": [
+                {
+                    "eventName": "riunione_button_duplica",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler duplicare questa riunione? (ATTENZIONE! La nuova riunione sarà creata e si verrà trasferiti alla stessa)",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select £id_riunione£ as id_riunione"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.riunioni_duplica($codice_azienda$::varchar, $id_riunione$::numeric)as id_riunione;"
+                        }
+                    },
+                    "outputEventWhenComplete": "navigate_to_riunione_new"
+                }
+            ],
+            "translate": "RESOURCES.id_riunione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "datetime",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.campo_obbligatorio"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 1.5,
+            "key": "data_riunione",
+            "label": "Data e ora riunione",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.data_riunione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Campo Obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.campo_obbligatorio"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "oggetto",
+            "label": "Oggetto",
+            "newLine": true,
+            "readOnly": false,
+            "size": 8,
+            "translate": "RESOURCES.oggetto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "translate": "RESOURCES.notes",
+            "newLine": false,
+            "readOnly": false,
+            "size": 8
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "duplica_riunione",
+            "label": "Duplica Riunione",
+            "buttonIcon": "content_copy",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "riunione_button_duplica",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5,
+            "translate": "RESOURCES.duplica_riunione"
+        }
+    ],
     "subTables": [
         {
             "entryKey": "odg_riunioni_certificazione",
@@ -18,7 +159,229 @@
                 }
             ],
             "label": "Punti Piano",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.punti_piano"
+        },
+        {
+            "entryKey": "odg_riunioni_certificazione_aggregate",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_riunione",
+                    "son": "id_riunione"
+                }
+            ],
+            "label": "Punti Piano Aggregati",
+            "type": "table",
+            "translate": "RESOURCES.punti_piano_aggregati"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "width": "5%",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_riunione",
+            "width": "5%",
+            "label": "ID",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "599",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.id_riunione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_protocollo",
+            "width": "6%",
+            "label": "Protocollo",
+            "translate": "RESOURCES.codice_protocollo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_riunione",
+            "queryFunct": "entrasp.argomenti_descr(id_argomento)",
+            "label": "Tipo riunione",
+            "width": "15%",
+            "translate": "RESOURCES.descr_riunione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_centro_gest",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+            "label": "Organo/ Centro Gest",
+            "width": "10%",
+            "translate": "RESOURCES.descr_centro_gest"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "oggetto",
+            "width": "33%",
+            "label": "Oggetto",
+            "translate": "RESOURCES.oggetto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
+            "label": "Stato",
+            "translate": "RESOURCES.status",
+            "width": "6%",
+            "style": [
+                {
+                    "value": "Chiuso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Provvisorio",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Aperto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "datetime"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_riunione",
+            "width": "15%",
+            "label": "Data",
+            "translate": "RESOURCES.data_riunione"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_cliente",
+            "label": "Cliente",
+            "translate": "RESOURCES.customer"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "time_report_play",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "play_arrow",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "riunioni",
+                "viewType": "form",
+                "action": "query",
+                "query": "select entrasp.business_object_play(('£user_companies£')::text, 'riunioni', '£id_riunione£', '£codice_azienda£')",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_riunione",
+                        "destination": "id_riunione"
+                    }
+                ],
+                "confirmAction": false,
+                "onSuccessAction": "update_time_tracker_and_reload"
+            },
+            "translate": "RESOURCES.time_report_play"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "time_report_stop_active",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "stop",
+                    "value": "*",
+                    "background_color": "crimson"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "riunioni",
+                "viewType": "form",
+                "action": "query",
+                "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+                "keymap": [
+                    {
+                        "source": "user_companies",
+                        "destination": "user_companies"
+                    }
+                ],
+                "confirmAction": false,
+                "onSuccessAction": "update_time_tracker_and_reload"
+            },
+            "translate": "RESOURCES.time_report_stop_active"
         }
     ]
 }

@@ -1,4 +1,36 @@
+-- query per individuare pagamenti doppi in fase di acquisto (parità di codice_azienda, id_Cessione,id_argomento_tipo_pag, importo)
+select codice_azienda, id_Cessione,id_argomento_tipo_pag, importo, id_pagamento
+from entrasp.pagamenti_Crediti
+	where codice_azienda||'-'||id_Cessione||'-'||id_argomento_tipo_pag||'-'||importo in
+(select codice_azienda||'-'||id_Cessione||'-'||id_argomento_tipo_pag||'-'||importo 
+	from entrasp.pagamenti_crediti
+	where id_argomento_tipo_pag=51486
+group by codice_azienda, id_Cessione,id_argomento_tipo_pag, importo
+having count(id_pagamento)>1)
+order by codice_azienda, id_cessione, id_pagamento;
 
+
+-- query per eliminare pagamenti doppi in fase di acquisto (parità di codice_azienda, id_Cessione,id_argomento_tipo_pag, importo)
+
+WITH cte AS (
+    SELECT *
+    FROM (
+        SELECT id_pagamento, id_cessione,
+               ROW_NUMBER() OVER (PARTITION BY codice_azienda, id_cessione, id_argomento_tipo_pag, importo ORDER BY id_pagamento DESC) AS rnum
+        FROM entrasp.pagamenti_crediti
+        WHERE id_argomento_tipo_pag = 51486
+    ) t
+    WHERE t.rnum > 1
+    ORDER BY id_cessione ASC
+    LIMIT 400
+)
+DELETE FROM entrasp.pagamenti_crediti
+WHERE id_pagamento IN (SELECT id_pagamento FROM cte);
+
+
+-- query per creare l'indice univoco
+CREATE UNIQUE INDEX idx_unique_pagamenti_crediti ON entrasp.pagamenti_crediti (codice_azienda, id_cessione, id_argomento_tipo_pag)
+WHERE id_argomento_tipo_pag = 51486;
 
 
 /*

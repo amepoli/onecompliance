@@ -24,7 +24,8 @@
                     "label": "Modifica verifiche",
                     "reloadOnSuccess": true,
                     "customDialogEntryName": "dialog_sondaggi_somministrati",
-                    "customDialogTitle": "Modifica verifiche selezionate"
+                    "customDialogTitle": "Modifica verifiche selezionate",
+                    "translate": "RESOURCES.modifica_verifiche"
                 },
                 {
                     "key": "close_sondaggio_button",
@@ -33,7 +34,8 @@
                     "query": "select entrasp.close_somministrazione_sondaggio_insert_following(s.codiceazienda, s.idsomministrazione::numeric, s.idsondaggio::numeric, '€global_username€') FROM (SELECT split_part(arr,'~',1) AS codiceazienda,split_part(arr,'~',2) AS idsomministrazione,split_part(arr,'~',3) AS idsondaggio FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s;",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Chiudere verifiche selezionate?"
+                    "confirmActionMessage": "Chiudere verifiche selezionate?",
+                    "translate": "RESOURCES.chiudi_verifiche"
                 }
             ]
         }
@@ -44,7 +46,9 @@
             "queryString": "select case when (stato='C' or (entrasp.somministrazione_belongs_user((€global_id_anagrafiche€)::text, $id_sondaggio$, $id_somministrazione$, $codice_azienda$)=false and '€global_profile€'!='admin')) then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
         }
     ],
-    "dashboardTables": ["dashboard_sondaggi"],
+    "dashboardTables": [
+        "dashboard_sondaggi"
+    ],
     "outputEvents": [
         {
             "eventName": "onSaveSomministrazione",
@@ -297,7 +301,8 @@
                 "font_style": "normal",
                 "font_weight": "600"
             },
-            "size": 7.5
+            "size": 7.5,
+            "translate": "RESOURCES.verifica_id_descr"
         },
         {
             "autoGenerate": false,
@@ -351,7 +356,9 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "query",
                     "condition": "notEqualTo",
-                    "values": ["C"],
+                    "values": [
+                        "C"
+                    ],
                     "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'ss', '£stato£', '€global_username€');"
                 }
             ]
@@ -437,13 +444,15 @@
                         "icon": "person_search",
                         "label": "OneKYC - Deep",
                         "isHidden": "$Q{is_hidden_KYC}",
-                        "outputEventName": "get_aml_scan"
+                        "outputEventName": "get_aml_scan",
+                        "translate": "RESOURCES.onekyc__deep"
                     },
                     {
                         "icon": "person_search",
                         "label": "OneKYC - Light",
                         "isHidden": "$Q{is_hidden_KYC}",
-                        "outputEventName": "get_light_aml_scan"
+                        "outputEventName": "get_light_aml_scan",
+                        "translate": "RESOURCES.onekyc__light"
                     },
                     {
                         "icon": "find_replace",
@@ -474,7 +483,9 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "hide",
                     "condition": "notEqualTo",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 },
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -674,7 +685,9 @@
                 {
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "condition": "equalTo",
-                    "values": ["C"],
+                    "values": [
+                        "C"
+                    ],
                     "actionType": "query",
                     "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$, '€global_username€') as id_somministrazione_succ;",
                     "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -817,7 +830,8 @@
                     {
                         "message": "Inserire una data esecuzione!",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_una_data_esecuzione"
                     }
                 ]
             },
@@ -974,7 +988,8 @@
                                 {
                                     "message": "Inserire una data esecuzione!",
                                     "name": "required",
-                                    "validator": "Validators.required"
+                                    "validator": "Validators.required",
+                                    "translate": "RESOURCES.inserire_una_data_esecuzione"
                                 }
                             ]
                         },
@@ -1180,7 +1195,9 @@
                     "eventName": "event_flag_mostra_punteggi",
                     "actionType": "hide",
                     "condition": "equalTo",
-                    "values": ["0"]
+                    "values": [
+                        "0"
+                    ]
                 }
             ],
             "size": 1.87
@@ -1217,7 +1234,9 @@
                     "eventName": "event_flag_mostra_punteggi",
                     "actionType": "hide",
                     "condition": "equalTo",
-                    "values": ["0"]
+                    "values": [
+                        "0"
+                    ]
                 }
             ],
             "size": 1.87
@@ -1289,7 +1308,9 @@
                     "eventName": "event_flag_mostra_punteggi",
                     "actionType": "hide",
                     "condition": "equalTo",
-                    "values": ["0"]
+                    "values": [
+                        "0"
+                    ]
                 }
             ]
         },
@@ -1382,7 +1403,8 @@
             "isPrimary": false,
             "key": "flag_sezioni",
             "label": "Gestione domande a sezioni",
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.flag_sezioni"
         },
         {
             "autoGenerate": false,
@@ -1802,7 +1824,8 @@
             },
             "label": "Alert Discostamenti ADV",
             "newLine": false,
-            "queryCond": "ss.id_somministrazione IN (SELECT id_somministrazione FROM entrasp.risposte WHERE codice_azienda=ss.codice_azienda AND id_domanda=4200 AND ((id_risposta_prev = 3 AND entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) IN ('Basso','Medio-Basso','Medio-Alto') )OR (id_risposta_prev IN (1,2) AND entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda)='Alto'))AND ID_SOMMINISTRAZIONE = SS.ID_SOMMINISTRAZIONE)"
+            "queryCond": "ss.id_somministrazione IN (SELECT id_somministrazione FROM entrasp.risposte WHERE codice_azienda=ss.codice_azienda AND id_domanda=4200 AND ((id_risposta_prev = 3 AND entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) IN ('Basso','Medio-Basso','Medio-Alto') )OR (id_risposta_prev IN (1,2) AND entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda)='Alto'))AND ID_SOMMINISTRAZIONE = SS.ID_SOMMINISTRAZIONE)",
+            "translate": "RESOURCES.alert_discostamenti_adv"
         },
         {
             "fieldName": "incompleto_s",
@@ -1882,7 +1905,9 @@
             "showByFormKeyCondition": {
                 "key": "flag_sezioni",
                 "condition": "equalTo",
-                "values": ["0"]
+                "values": [
+                    "0"
+                ]
             },
             "keys": [
                 {
@@ -1914,7 +1939,9 @@
             "showByFormKeyCondition": {
                 "key": "flag_sezioni",
                 "condition": "equalTo",
-                "values": ["1"]
+                "values": [
+                    "1"
+                ]
             },
             "keys": [
                 {
@@ -1931,7 +1958,8 @@
                 }
             ],
             "label": "Domande e Risposte - Sezioni",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.domande_e_risposte__sezioni"
         },
         {
             "entryKey": "compiti_sub_of_somministrazioni",
@@ -2061,7 +2089,8 @@
                     "son": "id_sondaggio"
                 }
             ],
-            "label": "Calcolo punteggi"
+            "label": "Calcolo punteggi",
+            "translate": "RESOURCES.calcolo_punteggi"
         },
         {
             "entryKey": "valori_indicatori_sub_of_somministrazioni",
@@ -2080,7 +2109,8 @@
                     "son": "id_sondaggio"
                 }
             ],
-            "label": "Indicatori Associati"
+            "label": "Indicatori Associati",
+            "translate": "RESOURCES.indicatori_associati"
         },
         {
             "entryKey": "report_sub_of_sondaggi_somministrati",
@@ -2099,7 +2129,8 @@
                     "son": "id_sondaggio"
                 }
             ],
-            "label": "Report Associati"
+            "label": "Report Associati",
+            "translate": "RESOURCES.report_associati"
         },
         {
             "entryKey": "sondaggi_somministrati_vr",
@@ -2107,7 +2138,9 @@
             "showByFormKeyCondition": {
                 "key": "somministrazioni_flag_workflow",
                 "condition": "equalTo",
-                "values": ["1"]
+                "values": [
+                    "1"
+                ]
             },
             "isHidden": true,
             "keys": [
@@ -2777,57 +2810,68 @@
         "tableQueries": [
             {
                 "label": "Estrazione somministrazioni",
-                "queryString": "SELECT ss.id_somministrazione, snd.id_sondaggio, ss.codice_azienda, ss.data_esecuzione, snd.id_modello_test, snd.id_modello_test_vr, ss.object_description, ss.stato, ss.somministrazione_completata, snd.descrizione as descr_sondaggio, snd.data_prevista, (split_part(ss.object_key, '|', 2)::numeric) AS id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=(split_part(ss.object_key, '|', 2)::numeric) and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ss.codice_azienda=$codice_azienda$"
+                "queryString": "SELECT ss.id_somministrazione, snd.id_sondaggio, ss.codice_azienda, ss.data_esecuzione, snd.id_modello_test, snd.id_modello_test_vr, ss.object_description, ss.stato, ss.somministrazione_completata, snd.descrizione as descr_sondaggio, snd.data_prevista, (split_part(ss.object_key, '|', 2)::numeric) AS id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=(split_part(ss.object_key, '|', 2)::numeric) and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ss.codice_azienda=$codice_azienda$",
+                "translate": "RESOURCES.estrazione_somministrazioni"
             },
             {
                 "label": "Pivot giudizi verifiche",
-                "queryString": "select mtvr.id_modello_test, entrasp.modello_test_titolo(mtvr.codice_azienda, mtvr.id_modello_test) as titolo, extract(year from snd.data_prevista), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, count(ss.id_somministrazione) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ss.codice_azienda=$codice_azienda$ group by mtvr.id_modello_test, entrasp.modello_test_titolo(mtvr.codice_azienda, mtvr.id_modello_test), extract(year from snd.data_prevista), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) order by extract(year from snd.data_prevista), mtvr.id_modello_test, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda)"
+                "queryString": "select mtvr.id_modello_test, entrasp.modello_test_titolo(mtvr.codice_azienda, mtvr.id_modello_test) as titolo, extract(year from snd.data_prevista), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato) as stato, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) as giudizio, count(ss.id_somministrazione) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr where ss.codice_azienda=$codice_azienda$ group by mtvr.id_modello_test, entrasp.modello_test_titolo(mtvr.codice_azienda, mtvr.id_modello_test), extract(year from snd.data_prevista), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda) order by extract(year from snd.data_prevista), mtvr.id_modello_test, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', ss.stato), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, ss.codice_azienda)",
+                "translate": "RESOURCES.pivot_giudizi_verifiche"
             },
             {
                 "label": "Verifiche Negozi",
-                "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione,avr.annotazioni_interne as marchio,ss.data_esecuzione, ss.ris_percentuale, ss.giudizio from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica where ss.codice_azienda=$codice_azienda$"
+                "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione,avr.annotazioni_interne as marchio,ss.data_esecuzione, ss.ris_percentuale, ss.giudizio from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica where ss.codice_azienda=$codice_azienda$",
+                "translate": "RESOURCES.verifiche_negozi"
             }
         ],
         "formQueries": [
             {
                 "label": "Risposte punteggio diverso da 0",
-                "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.punteggio, ri.peso, ri.penalizzazione from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$ and ri.peso!= 0"
+                "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.punteggio, ri.peso, ri.penalizzazione from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$ and ri.peso!= 0",
+                "translate": "RESOURCES.risposte_punteggio_diverso_da_0"
             },
             {
                 "label": "Domande e risposte della verifica",
-                "queryString": "select * from entrasp.punteggi_domande_delle_risposte_estesa where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+                "queryString": "select * from entrasp.punteggi_domande_delle_risposte_estesa where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$",
+                "translate": "RESOURCES.domande_e_risposte_della_verifica"
             },
             {
                 "label": "Verifica completa",
-                "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.punteggio, ri.peso, ri.penalizzazione from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$"
+                "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.punteggio, ri.peso, ri.penalizzazione from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$",
+                "translate": "RESOURCES.verifica_completa"
             },
             {
                 "label": "Template Risposte",
-                "queryString": "select id_domanda, '' as codice_esterno, '' as note FROM entrasp.domande dmd INNER JOIN entrasp.sondaggi snd USING (codice_azienda,id_modello_test,id_modello_test_vr) INNER JOIN entrasp.sondaggi_somministrati ss USING (codice_azienda,id_sondaggio) left join entrasp.domande_sezioni ds on dmd.codice_azienda = ds.codice_azienda and dmd.id_modello_test = ds.id_modello_test and dmd.id_modello_test_vr= ds.id_modello_test_vr and dmd.id_sezione = ds.id_sezione WHERE ss.id_somministrazione=$id_somministrazione$ and dmd.codice_azienda=$codice_azienda$ ORDER BY ds.ordinamento ASC, dmd.ordinamento ASC"
+                "queryString": "select id_domanda, '' as codice_esterno, '' as note FROM entrasp.domande dmd INNER JOIN entrasp.sondaggi snd USING (codice_azienda,id_modello_test,id_modello_test_vr) INNER JOIN entrasp.sondaggi_somministrati ss USING (codice_azienda,id_sondaggio) left join entrasp.domande_sezioni ds on dmd.codice_azienda = ds.codice_azienda and dmd.id_modello_test = ds.id_modello_test and dmd.id_modello_test_vr= ds.id_modello_test_vr and dmd.id_sezione = ds.id_sezione WHERE ss.id_somministrazione=$id_somministrazione$ and dmd.codice_azienda=$codice_azienda$ ORDER BY ds.ordinamento ASC, dmd.ordinamento ASC",
+                "translate": "RESOURCES.template_risposte"
             },
             {
                 "key": "report_ambiente",
                 "label": "Report Ambiente",
                 "queryString": "select * from entrasp.report_data_sondaggi_somministrati('€global_codice_azienda€',30, $id_sondaggio$, $id_somministrazione$);",
-                "isReport": true
+                "isReport": true,
+                "translate": "RESOURCES.report_ambiente"
             },
             {
                 "key": "report_social",
                 "label": "Report Social",
                 "queryString": "select * from entrasp.report_data_sondaggi_somministrati('€global_codice_azienda€',32, $id_sondaggio$, $id_somministrazione$);",
-                "isReport": true
+                "isReport": true,
+                "translate": "RESOURCES.report_social"
             },
             {
                 "key": "report_governance",
                 "label": "Report Governance",
                 "queryString": "select * from entrasp.report_data_sondaggi_somministrati('€global_codice_azienda€',31, $id_sondaggio$, $id_somministrazione$);",
-                "isReport": true
+                "isReport": true,
+                "translate": "RESOURCES.report_governance"
             },
             {
                 "key": "report_totali",
                 "label": "Report Totali",
                 "queryString": "select * from entrasp.report_data_sondaggi_somministrati('€global_codice_azienda€',33, $id_sondaggio$, $id_somministrazione$);",
-                "isReport": true
+                "isReport": true,
+                "translate": "RESOURCES.report_totali"
             }
         ]
     },
@@ -2835,11 +2879,13 @@
         "formQueries": [
             {
                 "label": "Rispondi alla verifica",
-                "queryString": "select entrasp.import_risposte($codice_azienda$, $id_somministrazione$, $nome_file$)"
+                "queryString": "select entrasp.import_risposte($codice_azienda$, $id_somministrazione$, $nome_file$)",
+                "translate": "RESOURCES.rispondi_alla_verifica"
             }
         ]
     },
     "querySuffixes": {
         "tableViewSuffix": "order by ss.id_somministrazione desc limit 100"
-    }
+    },
+    "translate": "RESOURCES.verifiche"
 }

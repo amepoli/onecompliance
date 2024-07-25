@@ -23,7 +23,8 @@
                     "icon": "edit",
                     "label": "Associa centri costo",
                     "customDialogEntryName": "dialog_compiti",
-                    "customDialogTitle": "Associa centri costo"
+                    "customDialogTitle": "Associa centri costo",
+                    "translate": "RESOURCES.associa_centri_costo"
                 }
             ]
         }
@@ -430,7 +431,8 @@
                     "son": "codice_compito"
                 }
             ],
-            "label": "Attività"
+            "label": "Attività",
+            "translate": "RESOURCES.attivit"
         },
         {
             "entryKey": "centri_costo_sub_of_compiti",
@@ -444,7 +446,8 @@
                     "son": "codice_compito"
                 }
             ],
-            "label": "Centri costo associati"
+            "label": "Centri costo associati",
+            "translate": "RESOURCES.centri_costo_associati"
         }
     ],
     "search_keys": [
@@ -457,7 +460,8 @@
             "label": "# Identificativo",
             "newLine": false,
             "queryCond": "codice_compito=$codice_compito$",
-            "size": 1.67
+            "size": 1.67,
+            "translate": "RESOURCES._identificativo"
         },
         {
             "format": {
@@ -494,7 +498,8 @@
             "label": "Durata maggiore di",
             "newLine": false,
             "queryCond": "entrasp.consuntivazioni_time_consumed(codice_azienda, codicecompito => codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0) >= $durata_min$",
-            "size": 1.67
+            "size": 1.67,
+            "translate": "RESOURCES.durata_maggiore_di"
         },
         {
             "fieldName": "non_associata_a_centri_costo",
@@ -505,10 +510,12 @@
             "newLine": false,
             "tooltip": "Individua tutti i compiti non associati ad alcun centro di costo",
             "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€'))",
-            "size": 1.67
+            "size": 1.67,
+            "translate": "RESOURCES.no_centri_costo"
         }
     ],
     "querySuffixes": {
         "tableViewSuffix": "order by minuti_annuali desc"
-    }
+    },
+    "translate": "RESOURCES.compiti"
 }

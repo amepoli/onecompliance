@@ -17,7 +17,7 @@ def aggiungi_translate(file_path, resource_prefix="RESOURCES."):
         json.dump(data, file, indent=4, ensure_ascii=False)
 
 # Esempio di utilizzo della funzione
-file_path = '/home/apoli/Development/onecompliance/dynamo-tables/views/tasks_con_translate.json' # Sostituisci con il percorso effettivo del tuo file JSON
+file_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views/tasks_con_translate.json' # Sostituisci con il percorso effettivo del tuo file JSON
 aggiungi_translate(file_path)
 
 

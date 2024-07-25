@@ -6,11 +6,6 @@
     "inheritsFrom": "compiti",
     "predefinedQueries": [
         {
-            "operation": "selectForm",
-            "type": "preProcessing",
-            "queryString": "update entrasp.compiti cmp set codice_part=az.codice_part from entrasp.aziende az WHERE cmp.codice_azienda=az.codice_azienda and codice_compito=$codice_compito$;"
-        },
-        {
             "operation": "selectTable",
             "type": "main",
             "queryString": "select case when cmp.stato !='C' then true else false end as check,codice_compito, (select descrizione_breve as name from entrasp.argomenti where id_argomento=id_argomento_priorita) AS descr_priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies,entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and id_tipo_segnalazione NOT IN (700,701)"
@@ -45,7 +40,8 @@
                     {
                         "message": "Codice azienda necessario",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.codice_azienda_necessario"
                     }
                 ]
             },
@@ -141,7 +137,8 @@
                     {
                         "icon": "edit",
                         "label": "Inserisci aggiornamento",
-                        "outputEventName": "inserisci_aggiornamento"
+                        "outputEventName": "inserisci_aggiornamento",
+                        "translate": "RESOURCES.inserisci_aggiornamento"
                     }
                 ]
             },
@@ -206,13 +203,15 @@
                     {
                         "message": "Titolo (max 100 caratteri) necessario",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.titolo_max_100_caratteri_necessario"
                     },
                     {
                         "name": "maxlength",
                         "message": "Massimo numero di caratteri: 100",
                         "validator": "Validators.maxLength(100)",
-                        "value": 100
+                        "value": 100,
+                        "translate": "RESOURCES.massimo_numero_di_caratteri_100"
                     }
                 ]
             },
@@ -279,7 +278,8 @@
                     {
                         "message": "Inserire almeno un tipo",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_almeno_un_tipo"
                     }
                 ]
             },
@@ -479,7 +479,8 @@
                         },
                         "newLine": true,
                         "readOnly": true,
-                        "sameOrigin": false
+                        "sameOrigin": false,
+                        "translate": "RESOURCES.sezione_ulteriori_dettagli"
                     },
                     {
                         "autoGenerate": false,
@@ -527,7 +528,8 @@
                         "label": "ID Responsabile",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.67
+                        "size": 1.67,
+                        "translate": "RESOURCES.id_responsabile"
                     },
                     {
                         "autoGenerate": false,
@@ -542,7 +544,8 @@
                         "label": "Centro Gestionale Responsabile",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 3.33
+                        "size": 3.33,
+                        "translate": "RESOURCES.centro_gestionale_responsabile"
                     },
                     {
                         "autoGenerate": false,
@@ -557,7 +560,8 @@
                         "label": "Centro Gestionale Monitoraggio/Segnalante",
                         "newLine": true,
                         "readOnly": false,
-                        "size": 3.34
+                        "size": 3.34,
+                        "translate": "RESOURCES.centro_gestionale_monitoraggiosegnalante"
                     },
                     {
                         "autoGenerate": true,
@@ -571,7 +575,8 @@
                         "label": "$P{label_codice}",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.5
+                        "size": 1.5,
+                        "translate": "RESOURCES.plabel_codice"
                     },
                     {
                         "autoGenerate": false,
@@ -585,7 +590,8 @@
                         "label": "Data Scadenza",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.66
+                        "size": 1.66,
+                        "translate": "RESOURCES.data_scadenza"
                     },
                     {
                         "autoGenerate": false,
@@ -599,7 +605,8 @@
                         "label": "Data Chiusura",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.67
+                        "size": 1.67,
+                        "translate": "RESOURCES.data_chiusura"
                     },
                     {
                         "autoGenerate": false,
@@ -614,7 +621,8 @@
                         "size": 1.66,
                         "label": "Tipo Articolo",
                         "readOnly": false,
-                        "newLine": false
+                        "newLine": false,
+                        "translate": "RESOURCES.tipo_articolo"
                     },
                     {
                         "autoGenerate": false,
@@ -629,7 +637,8 @@
                         "size": 1.67,
                         "label": "Tipo Difformità",
                         "readOnly": false,
-                        "newLine": false
+                        "newLine": false,
+                        "translate": "RESOURCES.tipo_difformit"
                     },
                     {
                         "autoGenerate": false,
@@ -645,7 +654,8 @@
                         "label": "$P{label_codice_parent}",
                         "newLine": true,
                         "readOnly": true,
-                        "size": 3.34
+                        "size": 3.34,
+                        "translate": "RESOURCES.plabel_codice_parent"
                     },
                     {
                         "autoGenerate": false,
@@ -658,7 +668,8 @@
                         "key": "trattamento",
                         "label": "Trattamento -azione intrapresa per risolvere il problema o ridurne gli effetti",
                         "newLine": true,
-                        "readOnly": false
+                        "readOnly": false,
+                        "translate": "RESOURCES.trattamento_azione_intrapresa_per_risolvere_il_problema_o_ridurne_gli_effetti"
                     },
                     {
                         "autoGenerate": false,
@@ -671,7 +682,8 @@
                         "key": "analisi_cause",
                         "label": "Analisi Cause",
                         "newLine": true,
-                        "readOnly": false
+                        "readOnly": false,
+                        "translate": "RESOURCES.analisi_cause"
                     },
                     {
                         "autoGenerate": false,
@@ -686,7 +698,8 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": true,
-                        "size": 1.66
+                        "size": 1.66,
+                        "translate": "RESOURCES.perdita_diretta_potenziale"
                     },
                     {
                         "autoGenerate": false,
@@ -701,7 +714,8 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": true,
-                        "size": 1.67
+                        "size": 1.67,
+                        "translate": "RESOURCES.perdita_diretta_effettiva"
                     },
                     {
                         "autoGenerate": false,
@@ -716,7 +730,8 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": true,
-                        "size": 1.66
+                        "size": 1.66,
+                        "translate": "RESOURCES.perdita_indiretta_potenziale"
                     },
                     {
                         "autoGenerate": false,
@@ -731,7 +746,8 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": true,
-                        "size": 1.67
+                        "size": 1.67,
+                        "translate": "RESOURCES.perdita_indiretta_effettiva"
                     },
                     {
                         "autoGenerate": false,
@@ -746,7 +762,8 @@
                         "readOnly": false,
                         "newLine": false,
                         "sameOrigin": true,
-                        "size": 1
+                        "size": 1,
+                        "translate": "RESOURCES.reclamo"
                     },
                     {
                         "autoGenerate": false,
@@ -761,7 +778,8 @@
                         "readOnly": false,
                         "newLine": false,
                         "sameOrigin": true,
-                        "size": 1
+                        "size": 1,
+                        "translate": "RESOURCES.causa_legale"
                     },
                     {
                         "autoGenerate": false,
@@ -776,7 +794,8 @@
                         "readOnly": false,
                         "newLine": false,
                         "sameOrigin": true,
-                        "size": 1.33
+                        "size": 1.33,
+                        "translate": "RESOURCES.progetto_informatico"
                     }
                 ]
             },
@@ -892,7 +911,8 @@
             },
             "label": "Codice Compito",
             "newLine": false,
-            "queryCond": "codice_compito=$codice_compito$"
+            "queryCond": "codice_compito=$codice_compito$",
+            "translate": "RESOURCES.codice_compito"
         },
         {
             "fieldName": "titolo",
@@ -914,7 +934,8 @@
             },
             "label": "ID Tipo Segnal.",
             "newLine": false,
-            "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$"
+            "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$",
+            "translate": "RESOURCES.id_tipo_segnal"
         },
         {
             "fieldName": "id_centro_gest",
@@ -946,7 +967,8 @@
             },
             "label": "Compiti aperti",
             "newLine": false,
-            "queryCond": "stato!='C'"
+            "queryCond": "stato!='C'",
+            "translate": "RESOURCES.compiti_aperti"
         }
     ],
     "table_keys": [
@@ -1023,7 +1045,8 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "user_companies",
-            "label": "user_companies"
+            "label": "user_companies",
+            "translate": "RESOURCES.user_companies"
         },
         {
             "format": {
@@ -1323,11 +1346,13 @@
         "tableQueries": [
             {
                 "label": "Registro Conflitti d'Interesse",
-                "queryString": "select entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as centro_gest_monitor, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cmp.data_segnalazione, cmp.data_chiusura, substring(cmp.titolo from 1 for 100) as titolo, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_fondo, string_agg(rsc.codice_rischio::varchar, '; ') as rischi_associati from entrasp.compiti cmp left join entrasp.compiti_rischi cmr on cmp.codice_compito=cmr.codice_compito and cmp.codice_azienda=cmr.codice_azienda left join entrasp.rischi rsc on cmr.codice_rischio=rsc.codice_rischio and cmr.codice_azienda=rsc.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione=2 group by entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) , cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) ,entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) , entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato), cmp.data_segnalazione,cmp.data_chiusura, substring(cmp.titolo from 1 for 100) , entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente)"
+                "queryString": "select entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as centro_gest_monitor, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cmp.data_segnalazione, cmp.data_chiusura, substring(cmp.titolo from 1 for 100) as titolo, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_fondo, string_agg(rsc.codice_rischio::varchar, '; ') as rischi_associati from entrasp.compiti cmp left join entrasp.compiti_rischi cmr on cmp.codice_compito=cmr.codice_compito and cmp.codice_azienda=cmr.codice_azienda left join entrasp.rischi rsc on cmr.codice_rischio=rsc.codice_rischio and cmr.codice_azienda=rsc.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione=2 group by entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) , cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) ,entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) , entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato), cmp.data_segnalazione,cmp.data_chiusura, substring(cmp.titolo from 1 for 100) , entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente)",
+                "translate": "RESOURCES.registro_conflitti_dinteresse"
             },
             {
                 "label": "Segnalazioni",
-                "queryString": "select codice_compito, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, titolo, note, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest,entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=0"
+                "queryString": "select codice_compito, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, titolo, note, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest,entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=0",
+                "translate": "RESOURCES.segnalazioni"
             }
         ]
     },

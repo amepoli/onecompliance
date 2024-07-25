@@ -1,0 +1,46 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_sharing_cpl_trattamenti_dati",
+    "predefinedQueries": [
+        {
+            "operation": "share",
+            "type": "main",
+            "queryString": "select entrasp.grc_accoda_singolo_trattamento_dati(codazdacuicopiare=>€global_codice_azienda€,codiceazienda_dest=>$codice_azienda_dest$,id_trattamento_dati_selezionato , idcentrogestionale=>$id_centro_gest$) FROM entrasp.cpl_trattamenti_dati where codice_azienda='€global_codice_azienda€' and id_trattamento_dati_selezionato=any(ARRAY[$selected_rows_data$])"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_azienda_dest",
+            "label": "Condividi in",
+            "newLine": false,
+            "size": 3,
+            "readOnly": false,
+            "translate": "RESOURCES.condividi_in"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "translate": "RESOURCES.office",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        }
+    ]
+}

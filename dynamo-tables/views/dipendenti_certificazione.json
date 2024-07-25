@@ -109,7 +109,6 @@
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stessa e-mail!"
         }
     ],
-
     "subTables": [
         {
             "entryKey": "anagrafiche_vr_attachments",
@@ -142,7 +141,8 @@
                 }
             ],
             "label": "Competenze",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.competenze"
         },
         {
             "entryKey": "sondaggi_sub_of_anagrafiche",
@@ -158,7 +158,8 @@
                 }
             ],
             "label": "Sondaggi Associati",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.sondaggi_associati"
         },
         {
             "entryKey": "sondaggi_somministrati_sub_of_anagrafiche",
@@ -173,7 +174,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Lezioni/Valutazioni"
+            "label": "Lezioni/Valutazioni",
+            "translate": "RESOURCES.lezionivalutazioni"
         },
         {
             "entryKey": "centri_gestionali_sub_of_anagrafiche_vr",
@@ -187,7 +189,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Centri Gestionali"
+            "label": "Centri Gestionali",
+            "translate": "RESOURCES.centri_gestionali"
         },
         {
             "entryKey": "anagrafiche_vr_sub_of_anagrafiche_vr",
@@ -202,7 +205,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Versioni Anagrafica"
+            "label": "Versioni Anagrafica",
+            "translate": "RESOURCES.versioni_anagrafica"
         },
         {
             "entryKey": "contracts_sub_of_dipendenti_certificazione",
@@ -217,7 +221,8 @@
                 }
             ],
             "label": "Contratti gestiti",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.contratti_gestiti"
         }
     ],
     "search_keys": [
@@ -230,7 +235,8 @@
             "label": "Lista id_anagrafica",
             "newLine": false,
             "size": 2.5,
-            "queryCond": "avr.id_anagrafica::varchar=any(string_to_array(replace($id_anagrafica_list$, ' ', ''), ','))"
+            "queryCond": "avr.id_anagrafica::varchar=any(string_to_array(replace($id_anagrafica_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_id_anagrafica"
         },
         {
             "fieldName": "nome_rs",
@@ -240,7 +246,8 @@
             },
             "label": "Nome/Cognome/Ragione Sociale",
             "newLine": false,
-            "queryCond": "(replace(UPPER(an.nome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(an.cognome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(avr.ragione_sociale), '.', '') like '%'||UPPER('€nome_rs€')||'%')"
+            "queryCond": "(replace(UPPER(an.nome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(an.cognome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(avr.ragione_sociale), '.', '') like '%'||UPPER('€nome_rs€')||'%')",
+            "translate": "RESOURCES.nomecognomeragione_sociale"
         },
         {
             "fieldName": "codice_s",
@@ -261,7 +268,8 @@
             },
             "label": "Codice fiscale",
             "newLine": false,
-            "queryCond": "UPPER(avr.codice_fiscale) = UPPER($codice_fiscale_s$)"
+            "queryCond": "UPPER(avr.codice_fiscale) = UPPER($codice_fiscale_s$)",
+            "translate": "RESOURCES.codice_fiscale"
         },
         {
             "fieldName": "ruolo_s",
@@ -273,7 +281,8 @@
             },
             "label": "Ruolo",
             "newLine": false,
-            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')"
+            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.ruolo"
         },
         {
             "fieldName": "tipo_s",
@@ -298,7 +307,8 @@
             },
             "label": "Norma",
             "newLine": false,
-            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_competenza=$norma_s$ and anc.dt_fine is null )"
+            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_competenza=$norma_s$ and anc.dt_fine is null )",
+            "translate": "RESOURCES.norma"
         },
         {
             "fieldName": "settore_s",
@@ -310,7 +320,8 @@
             },
             "label": "Settore IAF",
             "newLine": false,
-            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_iaf=$settore_s$ and anc.dt_fine is null)"
+            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_iaf=$settore_s$ and anc.dt_fine is null)",
+            "translate": "RESOURCES.settore_iaf"
         },
         {
             "fieldName": "qualifica_s",
@@ -322,7 +333,8 @@
             },
             "label": "Qualifica",
             "newLine": true,
-            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_liv_competenza=$qualifica_s$ and anc.dt_fine is null)"
+            "queryCond": "an.id_anagrafica in (select avr.id_anagrafica from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_competenze anc on avr.codice_part=anc.codice_part and avr.id_anagrafica =anc.id_anagrafica where avr.codice_part='€global_codice_part€' and anc.id_argomento_liv_competenza=$qualifica_s$ and anc.dt_fine is null)",
+            "translate": "RESOURCES.qualifica"
         },
         {
             "fieldName": "soggetti_collegati_s",
@@ -334,7 +346,8 @@
             "newLine": false,
             "size": 1,
             "tooltip": "Si intendono tutti i soggetti rilevanti (CdA, sindaci), i soggetti rilevanti (e.g. Funzioni di controllo, CFO), e tutti i soggetti agli stessi collegati (e.g. parenti)",
-            "queryCond": "entrasp.soggetti_collegati(avr.codice_part, avr.id_anagrafica) !='Nessun conflitto'"
+            "queryCond": "entrasp.soggetti_collegati(avr.codice_part, avr.id_anagrafica) !='Nessun conflitto'",
+            "translate": "RESOURCES.parte_correlata_o_soggetti_collegati"
         },
         {
             "fieldName": "con_connessioni_anagrafiche",
@@ -345,7 +358,8 @@
             "label": "Presenza anagrafiche connesse",
             "newLine": false,
             "size": 1,
-            "queryCond": "avr.id_anagrafica in(select ca2.id_anagrafica from entrasp.connessioni_anagrafiche ca2 where ca2.codice_part=$codice_part$)"
+            "queryCond": "avr.id_anagrafica in(select ca2.id_anagrafica from entrasp.connessioni_anagrafiche ca2 where ca2.codice_part=$codice_part$)",
+            "translate": "RESOURCES.presenza_anagrafiche_connesse"
         }
     ]
 }

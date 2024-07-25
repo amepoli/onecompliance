@@ -6,7 +6,8 @@
     "label": "Template ordini del giorno",
     "addElementSettings": {
         "labelQuickAdd": "Nuovo Punto",
-        "navigateOnSuccess": false
+        "navigateOnSuccess": false,
+        "translateQuickAdd": "RESOURCES.nuovo_punto"
     },
     "define": {
         "is_hidden_riunione": "true",
@@ -52,23 +53,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
-                "options": [],
-                "viewType": "combobox",
-                "comboQuery": "select id_templ_riunione as id, id_templ_riunione||'-'||oggetto as name from entrasp.template_riunioni where (codice_azienda = '€global_codice_azienda€' or codice_azienda is null)"
-            },
-            "isHidden": "$Q{is_hidden_riunione}",
-            "isPrimary": true,
-            "key": "id_templ_riunione",
-            "label": "Riunione",
-            "newLine": false,
-            "readOnly": false,
-            "size": 3,
-            "translate": "RESOURCES.id_riunione"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "viewType": "combobox",
                 "options": [],
                 "value": null,
@@ -82,45 +66,6 @@
             "readOnly": false,
             "size": 3,
             "translate": "RESOURCES.id_argomento"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input",
-                "validations": [
-                    {
-                        "message": "Inserire una numerazione!",
-                        "name": "required",
-                        "validator": "Validators.required"
-                    }
-                ]
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "ordinamento",
-            "label": "Ordinamento",
-            "translate": "RESOURCES.ordinamento",
-            "newLine": false,
-            "readOnly": false,
-            "size": 1.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select id_templ_odg as id, titolo as name from entrasp.template_odg where id_templ_odg!=£id_templ_odg£ and id_templ_riunione=$id_templ_riunione$ and (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_templ_odg_parent",
-            "label": "ID OdG Parent",
-            "newLine": false,
-            "readOnly": false,
-            "size": 1,
-            "translate": "RESOURCES.id_odg_parent"
         },
         {
             "autoGenerate": false,
@@ -153,18 +98,20 @@
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
-            "size": 0.5
+            "size": 0.5,
+            "translate": "RESOURCES.template_odg_actions"
         },
         {
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "textarea",
+                "viewType": "input",
                 "validations": [
                     {
                         "message": "Titolo dell'ordine del giorno necessaria",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.titolo_dellordine_del_giorno_necessaria"
                     }
                 ]
             },
@@ -213,7 +160,8 @@
             },
             "label": "Parole Chiavi",
             "newLine": false,
-            "queryCond": "UPPER (annotazioni) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+            "queryCond": "UPPER (annotazioni) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'",
+            "translate": "RESOURCES.parole_chiavi"
         },
         {
             "fieldName": "id_tipo_segnalazione_s",
@@ -224,7 +172,8 @@
             },
             "label": "ID Tipo Segnal.",
             "newLine": false,
-            "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$"
+            "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$",
+            "translate": "RESOURCES.id_tipo_segnal"
         },
         {
             "fieldName": "no_subject",
@@ -235,25 +184,11 @@
             "label": "Non classificati",
             "newLine": false,
             "size": 1,
-            "queryCond": "id_argomento is null"
+            "queryCond": "id_argomento is null",
+            "translate": "RESOURCES.non_classificati"
         }
     ],
     "subTables": [
-        {
-            "entryKey": "odg_sub_of_template_odg",
-            "keys": [
-                {
-                    "parent": "id_templ_riunione",
-                    "son": "id_templ_riunione"
-                },
-                {
-                    "parent": "id_templ_odg",
-                    "son": "id_templ_odg_parent"
-                }
-            ],
-            "label": "Sotto Ordini",
-            "renderingOrder": 1
-        },
         {
             "entryKey": "tag_sub_of_template_odg",
             "keys": [
@@ -271,7 +206,7 @@
             },
             "label": "TAG",
             "translate": "RESOURCES.tag",
-            "renderingOrder": 2
+            "renderingOrder": 1
         }
     ],
     "table_keys": [
@@ -320,23 +255,12 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": true,
             "key": "id_templ_odg",
             "width": "5%",
             "label": "ID OdG",
             "translate": "RESOURCES.id_odg"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_templ_odg_parent",
-            "width": "5%",
-            "label": "ID OdG",
-            "translate": "RESOURCES.id_odg_parent"
         },
         {
             "format": {
@@ -350,16 +274,6 @@
         },
         {
             "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "id_templ_riunione",
-            "label": "ID riunione",
-            "translate": "RESOURCES.id_riunione"
-        },
-        {
-            "format": {
                 "dataType": "text"
             },
             "isHidden": true,
@@ -367,17 +281,6 @@
             "key": "codice_azienda",
             "label": "Codice Azienda",
             "translate": "RESOURCES.company_code"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "ordinamento",
-            "width": "4%",
-            "label": "Ord.",
-            "translate": "RESOURCES.ordinamento"
         },
         {
             "format": {
@@ -394,18 +297,6 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": "$Q{is_hidden_riunione}",
-            "isPrimary": false,
-            "key": "riunione_descr",
-            "queryFunct": "entrasp.templ_riunioni_descr(id_templ_riunione)",
-            "label": "Riunione",
-            "width": "15%",
-            "translate": "RESOURCES.riunione_descr"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
             "isHidden": "$Q{is_hidden_note}",
             "isPrimary": false,
             "key": "annotazioni",
@@ -415,7 +306,7 @@
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by ordinamento"
+        "tableViewSuffix": "order by id_templ_odg"
     },
     "hideActions": [
         {
@@ -425,10 +316,7 @@
         {
             "viewType": "table",
             "tableActionType": "add"
-        },
-        {
-            "viewType": "table",
-            "tableActionType": "quick-add"
         }
-    ]
+    ],
+    "translate": "RESOURCES.template_ordini_del_giorno"
 }

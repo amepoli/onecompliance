@@ -6,7 +6,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select odg.id_odg, odg.id_riunione,ac.id_contratto, ac.codice_azienda, todg.ordinamento, todg.titolo,odg.data_riunione as data, odg.ora_inizio as dalle,odg.ora_fine as alle, odg.id_anagrafica, odg.durata, entrasp.argomenti_descr_breve_no_num(odg.id_argomento_controllo), odg.cantiere, entrasp.argomenti_array(array [odg.id_argomento_funzione]) as funzione_valutata, entrasp.argomenti_descr_breve_no_num(odg.id_argomento_controllo) from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
+            "queryString": "select odg.ora_inizio||' - '||odg.ora_fine as da_a, odg.id_odg, odg.id_riunione, ac.id_contratto, ac.codice_azienda, todg.id_templ_odg, todg.titolo, odg.data_riunione as data, odg.durata, entrasp.argomenti_descr_breve_no_num(odg.id_argomento_controllo) as id_argomento_controllo, odg.cantiere, entrasp.argomenti_array(array [odg.id_argomento_funzione]) as id_argomento_funzione, entrasp.argomenti_array(array [odg.id_argomento_settore]) as id_argomento_settore, entrasp.anagrafiche_array((select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$), (select array_agg(id_anagrafica) from (select id_anagrafica from entrasp.anagrafiche_odg where codice_azienda=$codice_azienda$ and id_odg=odg.id_odg and id_riunione=odg.id_riunione)as subquery)) as id_anagrafica from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join ( select orn.* from entrasp.odg_riunioni orn inner join entrasp.riunioni rn using (id_riunione, codice_azienda) where rn.id_contratto=$id_contratto$ and rn.codice_azienda=$codice_azienda$ ) odg on todg.id_templ_odg=odg.id_templ_odg where ac.codice_azienda=$codice_azienda$ and ac.id_contratto=$id_contratto$"
         }
     ],
     "table_multiselection_actions": [
@@ -22,7 +22,9 @@
                     "label": "Pianifica Attività",
                     "query": "",
                     "customDialogEntryName": "dialog_template_odg",
-                    "customDialogTitle": "Pianifica attività"
+                    "customDialogTitle": "Pianifica attività",
+                    "reloadOnSuccess": true,
+                    "translate": "RESOURCES.pianifica_attivit"
                 }
             ]
         }
@@ -32,62 +34,23 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "4%",
-            "queryFunct": "select true",
-            "key": "delete_templ_odg",
-            "label": "",
-            "style": [
-                {
-                    "button_icon": "delete",
-                    "value": "*"
-                }
-            ],
-            "isButton": true,
-            "buttonAction": {
-                "target": "template_odg",
-                "viewType": "table",
-                "query": "delete from entrasp.template_odg where id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
-                "action": "query",
-                "keymap": [
-                    {
-                        "source": "id_templ_riunione",
-                        "destination": "id_templ_riunione"
-                    },
-                    {
-                        "source": "id_templ_odg",
-                        "destination": "id_templ_odg"
-                    }
-                ],
-                "confirmAction": true,
-                "confirmMessage": {
-                    "text": "Sei sicuro di voler cancellare il punto all'ordine del giorno?",
-                    "title": "Cancellazione ordine del giorno"
-                },
-                "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.delete_procedure_aziendali"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
             "isHidden": true,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_odg",
             "width": "5%",
-            "label": "ID OdG"
+            "label": "ID OdG",
+            "translate": "RESOURCES.id_odg"
         },
         {
             "format": {
                 "dataType": "number"
             },
             "isHidden": true,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_riunione",
             "width": "5%",
-            "label": "ID OdG"
+            "label": "ID OdG",
+            "translate": "RESOURCES.id_riunione"
         },
         {
             "format": {
@@ -104,7 +67,7 @@
                 "dataType": "number"
             },
             "isHidden": true,
-            "isPrimary": false,
+            "isPrimary": true,
             "key": "id_templ_odg",
             "width": "5%",
             "label": "ID OdG",
@@ -118,7 +81,8 @@
             "isPrimary": true,
             "key": "id_contratto",
             "label": "id_contratto",
-            "sameOrigin": false
+            "sameOrigin": false,
+            "translate": "RESOURCES.id_contratto"
         },
         {
             "format": {
@@ -132,22 +96,12 @@
         },
         {
             "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "id_templ_riunione",
-            "label": "ID riunione",
-            "translate": "RESOURCES.id_riunione"
-        },
-        {
-            "format": {
                 "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
-            "width": "30%",
+            "width": "25%",
             "label": "Titolo",
             "translate": "RESOURCES.title"
         },
@@ -158,28 +112,20 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "data",
-            "width": "8%",
-            "label": "Data"
+            "width": "5%",
+            "label": "Data",
+            "translate": "RESOURCES.data"
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "dalle",
-            "width": "15%",
-            "label": "Dalle"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "alle",
-            "width": "15%",
-            "label": "Alle"
+            "key": "da_a",
+            "width": "5%",
+            "label": "Dalle - Alle",
+            "translate": "RESOURCES.dalle__alle"
         },
         {
             "format": {
@@ -189,16 +135,24 @@
             "isPrimary": false,
             "key": "durata",
             "label": "Durata",
-            "width": "8%"
+            "style": [
+                {
+                    "text_align": "center"
+                }
+            ],
+            "width": "4%",
+            "translate": "RESOURCES.durata"
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "label": "Settore",
             "key": "id_argomento_settore",
             "isHidden": false,
-            "isPrimary": false
+            "isPrimary": false,
+            "width": "13%",
+            "translate": "RESOURCES.id_argomento_settore"
         },
         {
             "format": {
@@ -207,39 +161,46 @@
             "label": "Località Cantiere/Sito Operativo",
             "key": "cantiere",
             "isHidden": false,
-            "isPrimary": false
+            "isPrimary": false,
+            "width": "13%",
+            "translate": "RESOURCES.cantiere"
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "label": "Tipo Verifica",
             "key": "id_argomento_controllo",
             "isHidden": false,
-            "isPrimary": false
+            "isPrimary": false,
+            "width": "8%",
+            "translate": "RESOURCES.id_argomento_controllo"
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "label": "Auditor",
             "key": "id_anagrafica",
             "isHidden": false,
-            "queryFunct": "entrasp.anagrafiche_cognnome('€global_codice_part€', id_anagrafica)",
-            "isPrimary": false
+            "isPrimary": false,
+            "width": "10%",
+            "translate": "RESOURCES.id_anagrafica"
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "label": "Funzione Auditata",
             "key": "id_argomento_funzione",
             "isHidden": false,
-            "isPrimary": false
+            "isPrimary": false,
+            "width": "10%",
+            "translate": "RESOURCES.id_argomento_funzione"
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by todg.ordinamento"
+        "tableViewSuffix": "order by todg.id_templ_odg"
     },
     "hideActions": [
         {

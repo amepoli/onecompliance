@@ -20,4 +20,9 @@ export class NavigationSearchComponent {
     filter() {
         this._authService.filterMenu(this.curValue);
     }
+
+    clear() {
+        this.curValue = '';
+        this._authService.filterMenu(this.curValue);
+    }
 }

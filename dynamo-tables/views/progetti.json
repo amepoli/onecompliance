@@ -37,11 +37,6 @@
             "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro progetto: prego utilizzarne un codice diverso"
         },
         {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');"
-        },
-        {
             "operation": "update",
             "type": "preCheck",
             "queryString": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and codice_progetto='£codice_progetto£' and id_progetto!=$id_progetto$",
@@ -90,6 +85,10 @@
     "inputEvents": [
         {
             "eventName": "progetti_reload",
+            "actionType": "reload"
+        },
+        {
+            "eventName": "onSaveProgetti",
             "actionType": "reload"
         },
         {
@@ -234,7 +233,8 @@
                     {
                         "message": "Data progetto necessari",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.data_progetto_necessari"
                     }
                 ]
             },
@@ -281,6 +281,12 @@
                 "menuOptions": [
                     {
                         "icon": "sync_alt",
+                        "label": "Avvia/Aggiorna",
+                        "outputEventName": "avvia_aggiorna",
+                        "key": "avvia_aggiorna"
+                    },
+                    {
+                        "icon": "sync_alt",
                         "label": "Aggiorna codici",
                         "translate": "RESOURCES.code_update",
                         "outputEventName": "codici_aggiorna",
@@ -295,35 +301,41 @@
                     {
                         "icon": "stacked_line_chart",
                         "label": "Modello di progetto associato",
-                        "outputEventName": "to_attivita_associata"
+                        "outputEventName": "to_attivita_associata",
+                        "translate": "RESOURCES.modello_di_progetto_associato"
                     },
                     {
                         "icon": "sync_alt",
                         "label": "Sync. mod. progetto associato",
-                        "outputEventName": "sync_mod_progetto"
+                        "outputEventName": "sync_mod_progetto",
+                        "translate": "RESOURCES.sync_mod_progetto_associato"
                     },
                     {
                         "icon": "content_copy",
                         "label": "Duplica",
-                        "outputEventName": "progetto_duplica"
+                        "outputEventName": "progetto_duplica",
+                        "translate": "RESOURCES.duplica"
                     },
                     {
                         "icon": "copy_all",
                         "label": "Duplica (CON risposte)",
                         "outputEventName": "progetto_duplica_con_risposte",
-                        "key": "progetto_duplica_con_risposte"
+                        "key": "progetto_duplica_con_risposte",
+                        "translate": "RESOURCES.duplica_con_risposte"
                     },
                     {
                         "icon": "sync_alt",
                         "label": "All. date e centri gest",
                         "outputEventName": "allinea_date",
-                        "key": "allinea_date"
+                        "key": "allinea_date",
+                        "translate": "RESOURCES.all_date_e_centri_gest"
                     },
                     {
                         "icon": "sync",
                         "label": "Sync.doc.controparte",
                         "outputEventName": "get_drive_folder_contents",
-                        "key": "get_drive_folder_contents"
+                        "key": "get_drive_folder_contents",
+                        "translate": "RESOURCES.syncdoccontroparte"
                     }
                 ]
             },
@@ -367,6 +379,14 @@
                     "condition": "none",
                     "values": [],
                     "queryFunct": "select entrasp.progetti_fasi_order(codice_azienda, id_progetto, id_fase) from entrasp.progetti_fasi where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$; update entrasp.progetti_fasi set codice=entrasp.calculate_progetto_fase_codice(codice_azienda, id_progetto, id_fase) where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;",
+                    "outputEventWhenComplete": "formReload"
+                },
+                {
+                    "eventName": "avvia_aggiorna",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€')",
                     "outputEventWhenComplete": "formReload"
                 },
                 {
@@ -436,8 +456,7 @@
                         }
                     }
                 }
-            ],
-            "translate": "RESOURCES.progetti_actions"
+            ]
         },
         {
             "autoGenerate": false,
@@ -448,7 +467,8 @@
                     {
                         "message": "Necessario specificare un codice del progetto",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.necessario_specificare_un_codice_del_progetto"
                     }
                 ]
             },
@@ -487,15 +507,7 @@
             "isHidden": false,
             "isPrimary": true,
             "newLine": false,
-            "size": 0.73,
-            "inputEvents": [
-                {
-                    "eventName": "onSaveProgetti",
-                    "actionType": "query",
-                    "queryFunct": "select  entrasp.progetti_fasi_insert(codiceazienda=>$codice_azienda$,titolo_=>$titolo$, idprogetto=> $id_progetto$, codiceattivita=>'€codice_attivita€', attivitavr=>€attivita_vr€, idcliente=> $id_cliente$, data_inserimento=>'€data_inserimento€');",
-                    "outputEventWhenComplete": "progetti_reload"
-                }
-            ]
+            "size": 0.73
         },
         {
             "autoGenerate": false,
@@ -530,7 +542,8 @@
                     {
                         "message": "Necessario specificare un titolo del progetto",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.necessario_specificare_un_titolo_del_progetto"
                     }
                 ]
             },
@@ -555,7 +568,8 @@
                     {
                         "message": "Stato necessario",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.stato_necessario"
                     }
                 ]
             },
@@ -631,7 +645,8 @@
                     {
                         "message": "Nome Cliente Richiesto",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.nome_cliente_richiesto"
                     }
                 ]
             },
@@ -655,7 +670,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.00
+            "size": 2.0
         },
         {
             "autoGenerate": false,
@@ -672,7 +687,7 @@
             "translate": "RESOURCES.contract",
             "newLine": false,
             "readOnly": false,
-            "size": 2.00,
+            "size": 2.0,
             "outputEvent": {
                 "eventTrigger": "select",
                 "eventName": "change_id_contratto"
@@ -686,20 +701,6 @@
                     "queryFunct": "select entrasp.aggiorna_contratto_progetto($codice_azienda$, $id_progetto$,£id_contratto£)"
                 }
             ]
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "Codice Part",
-            "key": "codice_part",
-            "readOnly": false,
-            "isHidden": true,
-            "isPrimary": false,
-            "newLine": false,
-            "translate": "RESOURCES.codice_part"
         },
         {
             "autoGenerate": false,
@@ -725,7 +726,8 @@
                     {
                         "message": "Indicare il centro gestionale!",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.indicare_il_centro_gestionale"
                     }
                 ]
             },
@@ -735,7 +737,7 @@
             "label": "Centro Gestionale",
             "translate": "RESOURCES.office",
             "newLine": false,
-            "size": 2.00,
+            "size": 2.0,
             "readOnly": false
         },
         {
@@ -746,8 +748,8 @@
                 "viewType": "combobox",
                 "validations": [
                     {
-                        "message": "Indicare l'assegnatario"
-                        
+                        "message": "Indicare l'assegnatario",
+                        "translate": "RESOURCES.indicare_lassegnatario"
                     }
                 ]
             },
@@ -757,7 +759,8 @@
             "label": "Assegnatario",
             "newLine": false,
             "size": 1.66,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.id_anagrafica_assegnataria"
         },
         {
             "autoGenerate": false,
@@ -842,7 +845,8 @@
             },
             "fieldName": "codice_progetto_s",
             "newLine": false,
-            "queryCond": "codice_progetto like '€codice_progetto_s€'||'%'"
+            "queryCond": "codice_progetto like '€codice_progetto_s€'||'%'",
+            "translate": "RESOURCES.codice_progetto"
         },
         {
             "label": "Identificativo Progetto",
@@ -852,7 +856,8 @@
             },
             "fieldName": "id_progetto_s",
             "newLine": false,
-            "queryCond": "id_progetto=$id_progetto_s$"
+            "queryCond": "id_progetto=$id_progetto_s$",
+            "translate": "RESOURCES.identificativo_progetto"
         },
         {
             "fieldName": "codice_attivita_s",
@@ -864,7 +869,8 @@
             },
             "label": "Modello di progetto",
             "newLine": false,
-            "queryCond": "codice_attivita=$codice_attivita_s$"
+            "queryCond": "codice_attivita=$codice_attivita_s$",
+            "translate": "RESOURCES.modello_di_progetto"
         },
         {
             "fieldName": "id_cliente",
@@ -912,7 +918,8 @@
             "fieldName": "giudizio_s",
             "label": "Giudizio",
             "newLine": false,
-            "queryCond": "array[id_progetto]<@any(select entrasp.elenco_progetti_con_giudizio(codice_azienda, '€giudizio_s€'))"
+            "queryCond": "array[id_progetto]<@any(select entrasp.elenco_progetti_con_giudizio(codice_azienda, '€giudizio_s€'))",
+            "translate": "RESOURCES.giudizio"
         },
         {
             "fieldName": "id_contratto",
@@ -934,7 +941,8 @@
             },
             "label": "Inserimento dopo il",
             "newLine": false,
-            "queryCond": "data_inserimento>='€data_ins_min€'"
+            "queryCond": "data_inserimento>='€data_ins_min€'",
+            "translate": "RESOURCES.inserimento_dopo_il"
         },
         {
             "fieldName": "data_ins_max",
@@ -944,7 +952,8 @@
             },
             "label": "Inserimento entro il",
             "newLine": false,
-            "queryCond": "data_inserimento<='€data_ins_max€'"
+            "queryCond": "data_inserimento<='€data_ins_max€'",
+            "translate": "RESOURCES.inserimento_entro_il"
         },
         {
             "fieldName": "data_comp",
@@ -976,7 +985,8 @@
             },
             "label": "Con verifiche incomplete",
             "newLine": false,
-            "queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where pf.codice_azienda=$codice_azienda$ and (ss.somministrazione_completata!='Completo' or snd.sondaggio_completato!='Completo') and pf.id_sondaggio is not null)"
+            "queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi_somministrati ss on pf.id_sondaggio=ss.id_sondaggio and pf.codice_azienda=ss.codice_azienda inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where pf.codice_azienda=$codice_azienda$ and (ss.somministrazione_completata!='Completo' or snd.sondaggio_completato!='Completo') and pf.id_sondaggio is not null)",
+            "translate": "RESOURCES.con_verifiche_incomplete"
         },
         {
             "fieldName": "progetti_con_fasi_confermate",
@@ -986,7 +996,8 @@
             },
             "label": "Con verifiche confermate",
             "newLine": false,
-            "queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where pf.codice_azienda=$codice_azienda$ and snd.stato ='A' and pf.id_sondaggio is not null)"
+            "queryCond": "id_progetto in(select id_progetto from entrasp.progetti_fasi pf inner join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda where pf.codice_azienda=$codice_azienda$ and snd.stato ='A' and pf.id_sondaggio is not null)",
+            "translate": "RESOURCES.con_verifiche_confermate"
         },
         {
             "fieldName": "progetti_no_contratto",
@@ -1007,7 +1018,8 @@
             },
             "label": "Senza modello di progetto",
             "newLine": false,
-            "queryCond": "codice_attivita is null"
+            "queryCond": "codice_attivita is null",
+            "translate": "RESOURCES.senza_modello_di_progetto"
         },
         {
             "fieldName": "flag_progetti_aperti",
@@ -1017,7 +1029,8 @@
             },
             "label": "In Svolgimento",
             "newLine": false,
-            "queryCond": "stato not in ('C', 'N', 'R')"
+            "queryCond": "stato not in ('C', 'N', 'R')",
+            "translate": "RESOURCES.in_svolgimento"
         },
         {
             "fieldName": "flag_progetti_miei",
@@ -1136,7 +1149,7 @@
             "key": "codice_progetto",
             "label": "Codice Progetto",
             "translate": "RESOURCES.code",
-            "width": "10%",
+            "width": "6%",
             "style": [
                 {
                     "value": "*",
@@ -1156,7 +1169,7 @@
             "key": "data_inserimento",
             "label": "Data ins.",
             "translate": "RESOURCES.data_ins",
-            "width": "6%"
+            "width": "9%"
         },
         {
             "format": {
@@ -1198,7 +1211,7 @@
             "key": "id_progetto",
             "label": "# Progetto",
             "translate": "RESOURCES.id_project",
-            "width": "5%"
+            "width": "4%"
         },
         {
             "format": {
@@ -1249,22 +1262,12 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_part",
-            "label": "codice_part",
-            "translate": "RESOURCES.codice_part"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
             "translate": "RESOURCES.title",
-            "width": "21%",
+            "width": "19%",
             "style": [
                 {
                     "value": "*",
@@ -1281,7 +1284,7 @@
             "key": "descr_cliente",
             "label": "Cliente",
             "translate": "RESOURCES.customer",
-            "width": "22%",
+            "width": "18%",
             "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_cliente)",
             "style": [
                 {
@@ -1358,7 +1361,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "competenza",
-            "width": "4%",
+            "width": "6%",
             "label": "Comp.",
             "translate": "RESOURCES.competenza"
         },
@@ -1410,7 +1413,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "3%",
+            "width": "5%",
             "key": "time_report_play",
             "label": "",
             "style": [
@@ -1442,7 +1445,7 @@
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
             },
-            "translate": "RESOURCES.time_report_play"
+            "translate": "RESOURCES.void"
         },
         {
             "format": {
@@ -1450,7 +1453,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "3%",
+            "width": "1%",
             "key": "time_report_stop_active",
             "label": " ",
             "style": [
@@ -1483,7 +1486,7 @@
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
             },
-            "translate": "RESOURCES.time_report_stop_active"
+            "translate": "RESOURCES.void"
         }
     ],
     "querySuffixes": {
@@ -1493,33 +1496,40 @@
         "formQueries": [
             {
                 "label": "Progetto-fasi-domande",
-                "queryString": "select pr.codice_progetto, pr.titolo as titolo_progetto, pf.codice as codice_fase,pf.titolo as titolo_fase, snd.id_sondaggio, snd.data_prevista, snd.titolo as titolo_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.descrizione as descrizione_sezione, ds.ordinamento as ordinamento_sezione, dmd.id_domanda, dmd.ordinamento as ordinamento_domanda, dmd.descrizione as domanda, dmd.note as note_domanda, dmd.id_domanda_rif from entrasp.progetti pr inner join entrasp.progetti_fasi pf on pr.codice_azienda=pf.codice_azienda and pr.id_progetto=pf.id_progetto left join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda left join entrasp.modelli_test_vr mvr on snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr and snd.codice_azienda=mvr.codice_azienda left join entrasp.domande dmd on mvr.id_modello_test=dmd.id_modello_test and mvr.id_modello_test_vr=dmd.id_modello_test_vr and mvr.codice_azienda=dmd.codice_azienda left join entrasp.domande_sezioni ds on dmd.id_modello_test=ds.id_modello_test and dmd.id_modello_test_vr=ds.id_modello_test_vr and dmd.codice_azienda=ds.codice_azienda and dmd.id_sezione=ds.id_sezione where pr.codice_azienda=$codice_azienda$ and pr.id_progetto=$id_progetto$ order by pf.ordinamento, ds.ordinamento, dmd.ordinamento"
+                "queryString": "select pr.codice_progetto, pr.titolo as titolo_progetto, pf.codice as codice_fase,pf.titolo as titolo_fase, snd.id_sondaggio, snd.data_prevista, snd.titolo as titolo_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr, ds.id_sezione, ds.descrizione as descrizione_sezione, ds.ordinamento as ordinamento_sezione, dmd.id_domanda, dmd.ordinamento as ordinamento_domanda, dmd.descrizione as domanda, dmd.note as note_domanda, dmd.id_domanda_rif from entrasp.progetti pr inner join entrasp.progetti_fasi pf on pr.codice_azienda=pf.codice_azienda and pr.id_progetto=pf.id_progetto left join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda left join entrasp.modelli_test_vr mvr on snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr and snd.codice_azienda=mvr.codice_azienda left join entrasp.domande dmd on mvr.id_modello_test=dmd.id_modello_test and mvr.id_modello_test_vr=dmd.id_modello_test_vr and mvr.codice_azienda=dmd.codice_azienda left join entrasp.domande_sezioni ds on dmd.id_modello_test=ds.id_modello_test and dmd.id_modello_test_vr=ds.id_modello_test_vr and dmd.codice_azienda=ds.codice_azienda and dmd.id_sezione=ds.id_sezione where pr.codice_azienda=$codice_azienda$ and pr.id_progetto=$id_progetto$ order by pf.ordinamento, ds.ordinamento, dmd.ordinamento",
+                "translate": "RESOURCES.progettofasidomande"
             },
             {
                 "label": "Progetto-risposte-non conformità",
-                "queryString": "select pr.codice_progetto, pr.titolo as titolo_progetto, pf.codice as codice_fase,pf.titolo as titolo_fase, snd.id_sondaggio,rp.id_somministrazione, snd.data_prevista, snd.titolo as titolo_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr , rp.id_domanda, rp.peso, rp.note, array_agg(cmp.codice_compito) as codici_compiti_collegati, (select array_agg(cmp2.codice_compito) from entrasp.compiti cmp2 where codice_compito in(select unnest(array_agg(cmp.codice_compito))) and codice_azienda=$codice_azienda$ AND cmp2.stato != 'C') AS cod_cmp_non_conf_chiuse from entrasp.progetti pr inner join entrasp.progetti_fasi pf on pr.codice_azienda=pf.codice_azienda and pr.id_progetto=pf.id_progetto left join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda left join entrasp.modelli_test_vr mvr on snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr and snd.codice_azienda=mvr.codice_azienda left join entrasp.risposte rp on rp.id_modello_test=mvr.id_modello_test and rp.id_modello_test_vr=mvr.id_modello_test_vr and rp.codice_azienda=mvr.codice_azienda left join entrasp.domande dmd on rp.id_modello_test=dmd.id_modello_test and rp.id_modello_test_vr=dmd.id_modello_test_vr and rp.codice_azienda=dmd.codice_azienda and rp.id_domanda=dmd.id_domanda left join entrasp.compiti_rif_bo crb on crb.id_domanda=dmd.id_domanda and crb.codice_azienda=dmd.codice_azienda left join entrasp.compiti cmp on cmp.codice_compito=crb.codice_compito and cmp.codice_azienda=crb.codice_azienda where pr.codice_azienda=$codice_azienda$ and rp.peso != 0 and cmp.id_tipo_segnalazione = 1 and pr.id_progetto=$id_progetto$ group by pr.codice_progetto, pr.titolo , pf.codice,pf.titolo, snd.id_sondaggio,rp.id_somministrazione, snd.data_prevista, snd.titolo , mvr.id_modello_test, mvr.id_modello_test_vr , rp.id_domanda, rp.peso, rp.note;"
+                "queryString": "select pr.codice_progetto, pr.titolo as titolo_progetto, pf.codice as codice_fase,pf.titolo as titolo_fase, snd.id_sondaggio,rp.id_somministrazione, snd.data_prevista, snd.titolo as titolo_sondaggio, mvr.id_modello_test, mvr.id_modello_test_vr , rp.id_domanda, rp.peso, rp.note, array_agg(cmp.codice_compito) as codici_compiti_collegati, (select array_agg(cmp2.codice_compito) from entrasp.compiti cmp2 where codice_compito in(select unnest(array_agg(cmp.codice_compito))) and codice_azienda=$codice_azienda$ AND cmp2.stato != 'C') AS cod_cmp_non_conf_chiuse from entrasp.progetti pr inner join entrasp.progetti_fasi pf on pr.codice_azienda=pf.codice_azienda and pr.id_progetto=pf.id_progetto left join entrasp.sondaggi snd on pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda left join entrasp.modelli_test_vr mvr on snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr and snd.codice_azienda=mvr.codice_azienda left join entrasp.risposte rp on rp.id_modello_test=mvr.id_modello_test and rp.id_modello_test_vr=mvr.id_modello_test_vr and rp.codice_azienda=mvr.codice_azienda left join entrasp.domande dmd on rp.id_modello_test=dmd.id_modello_test and rp.id_modello_test_vr=dmd.id_modello_test_vr and rp.codice_azienda=dmd.codice_azienda and rp.id_domanda=dmd.id_domanda left join entrasp.compiti_rif_bo crb on crb.id_domanda=dmd.id_domanda and crb.codice_azienda=dmd.codice_azienda left join entrasp.compiti cmp on cmp.codice_compito=crb.codice_compito and cmp.codice_azienda=crb.codice_azienda where pr.codice_azienda=$codice_azienda$ and rp.peso != 0 and cmp.id_tipo_segnalazione = 1 and pr.id_progetto=$id_progetto$ group by pr.codice_progetto, pr.titolo , pf.codice,pf.titolo, snd.id_sondaggio,rp.id_somministrazione, snd.data_prevista, snd.titolo , mvr.id_modello_test, mvr.id_modello_test_vr , rp.id_domanda, rp.peso, rp.note;",
+                "translate": "RESOURCES.progettorispostenon_conformit"
             },
             {
                 "label": "Formazione-partecipanti e ore",
-                "queryString": "SELECT PR.CODICE_PROGETTO, PR.TITOLO AS TITOLO_PROGETTO, PF.CODICE AS CODICE_FASE, PF.TITOLO AS TITOLO_FASE, SND.ID_SONDAGGIO, SND.DATA_ESECUZIONE, snd.data_rilevazione_da as inizio, snd.data_rilevazione_a as fine, snd.durata, SND.TITOLO AS TITOLO_SONDAGGIO, ss.object_key as identificativo, ss.object_description as partecipante FROM ENTRASP.PROGETTI PR INNER JOIN ENTRASP.PROGETTI_FASI PF ON PR.CODICE_AZIENDA = PF.CODICE_AZIENDA AND PR.ID_PROGETTO = PF.ID_PROGETTO LEFT JOIN ENTRASP.SONDAGGI SND ON PF.ID_SONDAGGIO = SND.ID_SONDAGGIO AND PF.CODICE_AZIENDA = SND.CODICE_AZIENDA LEFT JOIN ENTRASP.sondaggi_somministrati ss ON snd.ID_SONDAGGIO = ss.ID_SONDAGGIO and snd.codice_azienda=ss.codice_azienda WHERE PR.CODICE_AZIENDA = $codice_azienda$ AND PR.ID_PROGETTO = $id_progetto$ order by snd.id_sondaggio, ss.object_key;"
+                "queryString": "SELECT PR.CODICE_PROGETTO, PR.TITOLO AS TITOLO_PROGETTO, PF.CODICE AS CODICE_FASE, PF.TITOLO AS TITOLO_FASE, SND.ID_SONDAGGIO, SND.DATA_ESECUZIONE, snd.data_rilevazione_da as inizio, snd.data_rilevazione_a as fine, snd.durata, SND.TITOLO AS TITOLO_SONDAGGIO, ss.object_key as identificativo, ss.object_description as partecipante FROM ENTRASP.PROGETTI PR INNER JOIN ENTRASP.PROGETTI_FASI PF ON PR.CODICE_AZIENDA = PF.CODICE_AZIENDA AND PR.ID_PROGETTO = PF.ID_PROGETTO LEFT JOIN ENTRASP.SONDAGGI SND ON PF.ID_SONDAGGIO = SND.ID_SONDAGGIO AND PF.CODICE_AZIENDA = SND.CODICE_AZIENDA LEFT JOIN ENTRASP.sondaggi_somministrati ss ON snd.ID_SONDAGGIO = ss.ID_SONDAGGIO and snd.codice_azienda=ss.codice_azienda WHERE PR.CODICE_AZIENDA = $codice_azienda$ AND PR.ID_PROGETTO = $id_progetto$ order by snd.id_sondaggio, ss.object_key;",
+                "translate": "RESOURCES.formazionepartecipanti_e_ore"
             }
         ],
         "tableQueries": [
             {
                 "label": "Progetti e verifiche",
-                "queryString": "select prg.data_inserimento, prg.codice_progetto, prg.titolo as titolo_prog, mt.titolo as modello_test, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(prg.codice_part, prg.id_cliente) as controparte, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, snd.id_modello_test,snd.id_modello_test_vr,entrasp.id_sondaggio_precedente(snd.codice_azienda, snd.id_sondaggio), snd.sondaggio_completato, snd.giudizio, snd.codice_azienda, snd.data_prevista,snd.data_esecuzione, substring(snd.descrizione, 1, 150) as titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, snd.id_sondaggio,snd.id_contratto,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria from entrasp.progetti prg inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where prg.codice_azienda=$codice_azienda$"
+                "queryString": "select prg.data_inserimento, prg.codice_progetto, prg.titolo as titolo_prog, mt.titolo as modello_test, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.anagrafiche_vr_dati_identificativi(prg.codice_part, prg.id_cliente) as controparte, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, snd.id_modello_test,snd.id_modello_test_vr,entrasp.id_sondaggio_precedente(snd.codice_azienda, snd.id_sondaggio), snd.sondaggio_completato, snd.giudizio, snd.codice_azienda, snd.data_prevista,snd.data_esecuzione, substring(snd.descrizione, 1, 150) as titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, snd.id_sondaggio,snd.id_contratto,entrasp.anagrafiche_vr_dati_identificativi(snd.codice_part, snd.id_anagrafica) as id_anagrafica_assegnataria from entrasp.progetti prg inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where prg.codice_azienda=$codice_azienda$",
+                "translate": "RESOURCES.progetti_e_verifiche"
             },
             {
                 "label": "Pivot progetti",
-                "queryString": "select extract(year from prg.data_inserimento) as anno, att.codice, att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) as stato, count(prg.id_progetto) from entrasp.progetti prg left join entrasp.attivita att on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita where prg.codice_azienda=$codice_azienda$ group by extract(year from prg.data_inserimento), att.descrizione,  att.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) order by extract(year from prg.data_inserimento), att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato)"
+                "queryString": "select extract(year from prg.data_inserimento) as anno, att.codice, att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) as stato, count(prg.id_progetto) from entrasp.progetti prg left join entrasp.attivita att on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita where prg.codice_azienda=$codice_azienda$ group by extract(year from prg.data_inserimento), att.descrizione,  att.codice, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato) order by extract(year from prg.data_inserimento), att.descrizione,  entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', prg.stato)",
+                "translate": "RESOURCES.pivot_progetti"
             },
             {
                 "label": "Pivot progetti e sondaggi",
-                "queryString": "select extract(year from prg.data_inserimento) as anno, mt.id_modello_test, mt.titolo as modello_test, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, snd.sondaggio_completato, count(prg.id_progetto) from entrasp.progetti prg inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where prg.codice_azienda=$codice_azienda$ group by extract(year from prg.data_inserimento), mt.id_modello_test, mt.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato), snd.sondaggio_completato"
+                "queryString": "select extract(year from prg.data_inserimento) as anno, mt.id_modello_test, mt.titolo as modello_test, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, snd.sondaggio_completato, count(prg.id_progetto) from entrasp.progetti prg inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where prg.codice_azienda=$codice_azienda$ group by extract(year from prg.data_inserimento), mt.id_modello_test, mt.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato), snd.sondaggio_completato",
+                "translate": "RESOURCES.pivot_progetti_e_sondaggi"
             },
             {
                 "label": "Pivot prog e sond. per area",
-                "queryString": "select left(prg.codice_progetto, 3) as area, extract(year from prg.data_inserimento) as anno, mt.id_modello_test, mt.titolo as modello_test, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, snd.sondaggio_completato, count(prg.id_progetto) from entrasp.progetti prg inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where prg.codice_azienda=$codice_azienda$ group by left(prg.codice_progetto, 3), extract(year from prg.data_inserimento), mt.id_modello_test, mt.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato), snd.sondaggio_completato"
+                "queryString": "select left(prg.codice_progetto, 3) as area, extract(year from prg.data_inserimento) as anno, mt.id_modello_test, mt.titolo as modello_test, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio, entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato) as stato, snd.sondaggio_completato, count(prg.id_progetto) from entrasp.progetti prg inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where prg.codice_azienda=$codice_azienda$ group by left(prg.codice_progetto, 3), extract(year from prg.data_inserimento), mt.id_modello_test, mt.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda), entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', snd.stato), snd.sondaggio_completato",
+                "translate": "RESOURCES.pivot_prog_e_sond_per_area"
             }
         ]
     },
@@ -1548,5 +1558,6 @@
             "viewType": "table",
             "tableActionType": "add"
         }
-    ]
+    ],
+    "translate": "RESOURCES.progetti"
 }

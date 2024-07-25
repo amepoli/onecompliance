@@ -7,9 +7,12 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse) =0 and (codice_azienda is null or codice_azienda in(€global_user_companies€)) order by id_report asc"
+            "queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and (position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse)=0) and (codice_azienda is null or codice_azienda in(€global_user_companies€))"
         }
     ],
+    "querySuffixes": {
+        "tableViewSuffix": " order by id_report asc"
+    },
     "form_keys": [
         {
             "autoGenerate": true,
@@ -94,7 +97,8 @@
                     {
                         "icon": "content_copy",
                         "label": "Duplica report",
-                        "outputEventName": "report_duplica"
+                        "outputEventName": "report_duplica",
+                        "translate": "RESOURCES.duplica_report"
                     }
                 ]
             },
@@ -159,16 +163,19 @@
         "formQueries": [
             {
                 "label": "Valore indicatori dell'azienda",
-                "queryString": "select ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, cia.valore_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),$codice_azienda$::varchar,ir.codice_tipo_indicatore::varchar, $codice_part$) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=$id_report$"
+                "queryString": "select ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, cia.valore_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),$codice_azienda$::varchar,ir.codice_tipo_indicatore::varchar, $codice_part$) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=$id_report$",
+                "translate": "RESOURCES.valore_indicatori_dellazienda"
             },
             {
                 "label": "Valore indicatori trasversali",
-                "queryString": "select az.codice_azienda, ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, mn.menu, ind.parametri_menu, ir.codice_tipo_indicatore::varchar, entrasp.transcodifiche_transcodifica (ir.tipo_dato_indicatore,ir.codice_tipo_indicatore) as Desc_tipo_indicatore, ir.descrizione_indicatore, cia.valore_indicatore, cia.stringa_indicatore from entrasp.aziende az, entrasp.indicatori ind left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),az.codice_azienda::varchar,ir.codice_tipo_indicatore::varchar, az.codice_part) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=133 and az.codice_azienda in(€global_user_companies€) order by ind.id_indicatore, az.codice_azienda"
+                "queryString": "select az.codice_azienda, ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, mn.menu, ind.parametri_menu, ir.codice_tipo_indicatore::varchar, entrasp.transcodifiche_transcodifica (ir.tipo_dato_indicatore,ir.codice_tipo_indicatore) as Desc_tipo_indicatore, ir.descrizione_indicatore, cia.valore_indicatore, cia.stringa_indicatore from entrasp.aziende az, entrasp.indicatori ind left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),az.codice_azienda::varchar,ir.codice_tipo_indicatore::varchar, az.codice_part) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=133 and az.codice_azienda in(€global_user_companies€) order by ind.id_indicatore, az.codice_azienda",
+                "translate": "RESOURCES.valore_indicatori_trasversali"
             },
             {
                 "label": "Report",
                 "queryString": "select * from entrasp.report_data('€global_codice_azienda€',$id_report$);",
-                "isReport": true
+                "isReport": true,
+                "translate": "RESOURCES.report"
             }
         ]
     },
@@ -182,7 +189,8 @@
                 }
             ],
             "label": "Indicatori associati",
-            "renderingOrder": 1
+            "renderingOrder": 1,
+            "translate": "RESOURCES.indicatori_associati"
         },
         {
             "entryKey": "reports_sub_of_reports",
@@ -193,7 +201,8 @@
                 }
             ],
             "label": "Sotto Reports",
-            "renderingOrder": 2
+            "renderingOrder": 2,
+            "translate": "RESOURCES.sotto_reports"
         },
         {
             "entryKey": "destinatari_report",
@@ -204,7 +213,21 @@
                 }
             ],
             "label": "Destinatari",
-            "renderingOrder": 3
+            "renderingOrder": 3,
+            "translate": "RESOURCES.destinatari"
+        }
+    ],
+    "search_keys": [
+        {
+            "label": "Destinatari",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "fieldName": "destinatari_s",
+            "newLine": false,
+            "queryCond": "id_report in (select id_report from entrasp.destinatari_report where lista_email_destinatari ilike '%'||'€destinatari_s€'||'%')",
+            "translate": "RESOURCES.destinatari"
         }
     ],
     "table_keys": [
@@ -263,6 +286,11 @@
             "translate": "RESOURCES.id_report_parent"
         }
     ],
+    "addElementSettings": {
+        "labelAdd": "Nuovo Report",
+        "navigateOnSuccess": true,
+        "translateAdd": "RESOURCES.nuovo_report"
+    },
     "hideActions": [
         {
             "formActionType": "attachments",
@@ -279,6 +307,14 @@
         {
             "formActionType": "stopEvent",
             "viewType": "form"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
         }
     ]
 }

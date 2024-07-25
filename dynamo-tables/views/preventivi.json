@@ -1,0 +1,15 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "preventivi",
+    "inheritsFrom": "articoli_sub_of_contracts_certifications",
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "SELECT ac.codice_azienda, ac.id_articolo, ac.id_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom1(cnt.codice_part, cnt.id_cliente) as id_cliente, ac.data_attivazione, entrasp.articoli_titolo(ac.codice_azienda, ac.id_articolo) AS tit_articolo, entrasp.argomenti_descr_breve_no_id(ac.id_argomento_tipo_norma) AS id_argomento_tipo_norma, ROUND(ac.costo * (1 - ac.sconto_importo / 100), 2) AS costo_unitario, entrasp.transcodifiche_transcodifica('STATO_PREVENTIVI', ac.stato) AS descr_stato, ac.giornate_uomo, ROUND(ROUND(ac.giornate_uomo * (1 - ac.sconto / 100) * (1 - (ac.sconto_motivazioni) / 100) * 2) / 2, 2) AS giornate_uomo_scontate, ROUND(ROUND(ac.giornate_uomo * (1 - ac.sconto / 100) * (1 - (ac.sconto_motivazioni) / 100) * 2) / 2 * ac.costo * (1 - ac.sconto_importo / 100), 2) AS costo_totale FROM entrasp.articoli_contratti ac INNER JOIN entrasp.contratti cnt ON ac.codice_azienda = cnt.codice_azienda AND ac.id_contratto = cnt.id_contratto WHERE ac.codice_azienda = '€global_codice_azienda€'"
+        }
+    ],
+    "define": {
+        "ishiddencontratto": false
+    }
+}

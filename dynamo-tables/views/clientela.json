@@ -8,7 +8,8 @@
         "is_hidden_ruolo": "true",
         "is_hidden_ruolo2": "true",
         "is_hidden_contratti_sottoscritti": "false",
-        "is_hidden_profilo_aml": "false"
+        "is_hidden_profilo_aml": "false",
+        "is_hidden_dettagli": "false"
     },
     "table_multiselection_actions": [
         {
@@ -24,7 +25,8 @@
                     "query": "select entrasp.unifica_anagrafiche_selezionate(array[$selected_rows_data$], '€global_username€', '€global_codice_azienda€')",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Unificare le anagrafiche selezionate?"
+                    "confirmActionMessage": "Unificare le anagrafiche selezionate?",
+                    "translate": "RESOURCES.unifica_anagrafiche"
                 }
             ]
         }
@@ -48,7 +50,8 @@
             },
             "label": "ID Anagrafica",
             "newLine": false,
-            "queryCond": "avr.id_anagrafica=$id_anagrafica_s$"
+            "queryCond": "avr.id_anagrafica=$id_anagrafica_s$",
+            "translate": "RESOURCES.id_anagrafica"
         },
         {
             "fieldName": "data_ins_s",
@@ -58,7 +61,8 @@
             },
             "label": "Data inserimento maggiore di",
             "newLine": false,
-            "queryCond": "an.data_ins>=$data_ins_s$"
+            "queryCond": "an.data_ins>=$data_ins_s$",
+            "translate": "RESOURCES.data_inserimento_maggiore_di"
         },
         {
             "fieldName": "nome_rs",
@@ -68,7 +72,8 @@
             },
             "label": "Nome/Cognome/Ragione Sociale",
             "newLine": false,
-            "queryCond": "(replace(UPPER(an.nome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(an.cognome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(avr.ragione_sociale), '.', '') like '%'||UPPER('€nome_rs€')||'%')"
+            "queryCond": "(replace(UPPER(an.nome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(an.cognome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(avr.ragione_sociale), '.', '') like '%'||UPPER('€nome_rs€')||'%')",
+            "translate": "RESOURCES.nomecognomeragione_sociale"
         },
         {
             "fieldName": "id_strumento_fin",
@@ -79,7 +84,8 @@
             },
             "label": "Fondo/Strumento/Finanziario",
             "newLine": false,
-            "queryCond": "an.id_anagrafica in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$id_strumento_fin$ and id_cliente is not null)"
+            "queryCond": "an.id_anagrafica in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$id_strumento_fin$ and id_cliente is not null)",
+            "translate": "RESOURCES.fondostrumentofinanziario"
         },
         {
             "fieldName": "not_id_strumento_fin",
@@ -90,7 +96,8 @@
             },
             "label": "Non con Fondo/Strumento/Finanziario",
             "newLine": true,
-            "queryCond": "an.id_anagrafica not in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$not_id_strumento_fin$ and id_cliente is not null)"
+            "queryCond": "an.id_anagrafica not in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$not_id_strumento_fin$ and id_cliente is not null)",
+            "translate": "RESOURCES.non_con_fondostrumentofinanziario"
         },
         {
             "fieldName": "codice_s",
@@ -111,7 +118,8 @@
             },
             "label": "Partita IVA",
             "newLine": false,
-            "queryCond": "avr.partita_iva = $piva_s$"
+            "queryCond": "avr.partita_iva = $piva_s$",
+            "translate": "RESOURCES.partita_iva"
         },
         {
             "fieldName": "codice_fiscale_s",
@@ -121,7 +129,8 @@
             },
             "label": "Codice fiscale",
             "newLine": false,
-            "queryCond": "avr.codice_fiscale = $codice_fiscale_s$"
+            "queryCond": "avr.codice_fiscale = $codice_fiscale_s$",
+            "translate": "RESOURCES.codice_fiscale"
         },
         {
             "fieldName": "ruolo_s",
@@ -133,7 +142,8 @@
             },
             "label": "Ruolo",
             "newLine": false,
-            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')"
+            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.ruolo"
         },
         {
             "fieldName": "tipo_s",
@@ -157,7 +167,8 @@
             "label": "Con trattamenti dati associati",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica in(select id_responsabile from entrasp.cpl_trattamenti_dati_responsabili where an.codice_part='€global_codice_part€' and id_responsabile is not null union select id_titolare_esterno from entrasp.cpl_trattamenti_dati_titolari_esterni where an.codice_part='€global_codice_part€' and id_titolare_esterno is not null)"
+            "queryCond": "an.id_anagrafica in(select id_responsabile from entrasp.cpl_trattamenti_dati_responsabili where an.codice_part='€global_codice_part€' and id_responsabile is not null union select id_titolare_esterno from entrasp.cpl_trattamenti_dati_titolari_esterni where an.codice_part='€global_codice_part€' and id_titolare_esterno is not null)",
+            "translate": "RESOURCES.con_trattamenti_dati_associati"
         },
         {
             "fieldName": "duplicati_per_partita_iva",
@@ -168,7 +179,8 @@
             "label": "Duplicati per partita iva",
             "newLine": false,
             "size": 1,
-            "queryCond": "avr.partita_iva in(select partita_iva from entrasp.conta_anagrafiche_per_partita_iva where conta>1 and partita_iva is not null and partita_iva!='' and codice_part='€global_codice_part€')"
+            "queryCond": "avr.partita_iva in(select partita_iva from entrasp.conta_anagrafiche_per_partita_iva where conta>1 and partita_iva is not null and partita_iva!='' and codice_part='€global_codice_part€')",
+            "translate": "RESOURCES.duplicati_per_partita_iva"
         },
         {
             "fieldName": "duplicati_per_codice_fiscale",
@@ -179,7 +191,8 @@
             "label": "Duplicati per codice fiscale",
             "newLine": false,
             "size": 1,
-            "queryCond": "avr.codice_fiscale in(select codice_fiscale from entrasp.conta_anagrafiche_per_codice_fiscale where conta>1 and codice_fiscale is not null and codice_fiscale!='' and codice_part='€global_codice_part€')"
+            "queryCond": "avr.codice_fiscale in(select codice_fiscale from entrasp.conta_anagrafiche_per_codice_fiscale where conta>1 and codice_fiscale is not null and codice_fiscale!='' and codice_part='€global_codice_part€')",
+            "translate": "RESOURCES.duplicati_per_codice_fiscale"
         },
         {
             "fieldName": "documenti_scaduti",
@@ -190,7 +203,8 @@
             "label": "Documenti scaduti",
             "newLine": false,
             "size": 1,
-            "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)"
+            "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)",
+            "translate": "RESOURCES.documenti_scaduti"
         },
         {
             "fieldName": "senza_profilazioni",
@@ -201,7 +215,8 @@
             "label": "Senza profilazioni",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica not in(select distinct split_part(object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(object_key, '|', 2),'') is not null)"
+            "queryCond": "an.id_anagrafica not in(select distinct split_part(object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(object_key, '|', 2),'') is not null)",
+            "translate": "RESOURCES.senza_profilazioni"
         },
         {
             "fieldName": "senza_profilazioni_aml",
@@ -212,7 +227,8 @@
             "label": "Senza profilazioni AML",
             "newLine": true,
             "size": 1,
-            "queryCond": "an.id_anagrafica not in(select distinct split_part(ss_prof.object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof inner join entrasp.sondaggi snd_prof on ss_prof.codice_azienda=snd_prof.codice_azienda and ss_prof.id_sondaggio=snd_prof.id_sondaggio inner join entrasp.modelli_test mt_prof on snd_prof.codice_azienda=mt_prof.codice_azienda and snd_prof.id_modello_test=mt_prof.id_modello_test where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(ss_prof.object_key, '|', 2),'') is not null and mt_prof.id_tipo_modello_test=50)"
+            "queryCond": "an.id_anagrafica not in(select distinct split_part(ss_prof.object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof inner join entrasp.sondaggi snd_prof on ss_prof.codice_azienda=snd_prof.codice_azienda and ss_prof.id_sondaggio=snd_prof.id_sondaggio inner join entrasp.modelli_test mt_prof on snd_prof.codice_azienda=mt_prof.codice_azienda and snd_prof.id_modello_test=mt_prof.id_modello_test where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(ss_prof.object_key, '|', 2),'') is not null and mt_prof.id_tipo_modello_test=50)",
+            "translate": "RESOURCES.senza_profilazioni_aml"
         },
         {
             "fieldName": "pep",
@@ -223,7 +239,8 @@
             "label": "PEP",
             "newLine": false,
             "size": 1,
-            "queryCond": "avr.codice in (select epa.codice_anagrafica from entrasp.estrazione_profili_aml epa where epa.codice_azienda = '€global_codice_azienda€' and pep = 'Y')"
+            "queryCond": "avr.codice in (select epa.codice_anagrafica from entrasp.estrazione_profili_aml epa where epa.codice_azienda = '€global_codice_azienda€' and pep = 'Y')",
+            "translate": "RESOURCES.pep"
         },
         {
             "fieldName": "con_tutti_contratti_chiusi",
@@ -234,7 +251,8 @@
             "label": "Con tutti i contratti chiusi",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null) and an.id_anagrafica not in(select distinct an2.id_anagrafica from entrasp.anagrafiche_id an2 left join entrasp.contratti c3 on an2.codice_part=c3.codice_part and an2.id_anagrafica=c3.id_cliente where c3.id_cliente is null and an2.id_anagrafica is not null and an2.codice_part='€global_codice_part€')"
+            "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null) and an.id_anagrafica not in(select distinct an2.id_anagrafica from entrasp.anagrafiche_id an2 left join entrasp.contratti c3 on an2.codice_part=c3.codice_part and an2.id_anagrafica=c3.id_cliente where c3.id_cliente is null and an2.id_anagrafica is not null and an2.codice_part='€global_codice_part€')",
+            "translate": "RESOURCES.con_tutti_i_contratti_chiusi"
         },
         {
             "fieldName": "con_contratti_aperti",
@@ -245,7 +263,8 @@
             "label": "Con contratti attivi",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)"
+            "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)",
+            "translate": "RESOURCES.con_contratti_attivi"
         },
         {
             "fieldName": "con_contratti",
@@ -256,7 +275,8 @@
             "label": "Con contratti",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)"
+            "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)",
+            "translate": "RESOURCES.con_contratti"
         },
         {
             "fieldName": "senza_contratti",
@@ -267,7 +287,8 @@
             "label": "Senza contratti",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)"
+            "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)",
+            "translate": "RESOURCES.senza_contratti"
         },
         {
             "fieldName": "con_progetti",
@@ -278,7 +299,8 @@
             "label": "Con progetti",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica in(SELECT pr.id_cliente FROM entrasp.progetti pr WHERE pr.codice_azienda='€global_codice_azienda€' and pr.id_cliente is not null)"
+            "queryCond": "an.id_anagrafica in(SELECT pr.id_cliente FROM entrasp.progetti pr WHERE pr.codice_azienda='€global_codice_azienda€' and pr.id_cliente is not null)",
+            "translate": "RESOURCES.con_progetti"
         },
         {
             "fieldName": "no_tit_eff",
@@ -289,7 +311,8 @@
             "label": "No tit.effett. o esec.",
             "newLine": true,
             "size": 1,
-            "queryCond": "an.id_anagrafica not in(select id_anagrafica from entrasp.connessioni_anagrafiche where an.codice_part='€global_codice_part€' and codice_ruolo in('TIEF','ESEC') and id_anagrafica is not null) and an.tipo_soggetto='E'"
+            "queryCond": "an.id_anagrafica not in(select id_anagrafica from entrasp.connessioni_anagrafiche where an.codice_part='€global_codice_part€' and codice_ruolo in('TIEF','ESEC') and id_anagrafica is not null) and an.tipo_soggetto='E'",
+            "translate": "RESOURCES.no_titeffett_o_esec"
         },
         {
             "fieldName": "tit_eff_esec_pg",
@@ -300,7 +323,8 @@
             "label": "Tit.effett. o esec. PG",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica in(SELECT ai.id_anagrafica FROM ENTRASP.CONNESSIONI_ANAGRAFICHE ac Inner join entrasp.anagrafiche_id ai on ac.id_anagrafica_conn= ai.id_anagrafica and ac.codice_part = ai.codice_part WHERE ac.CODICE_PART = '€global_codice_part€' AND ac.CODICE_RUOLO in ('TIEF', 'ESEC') AND ac.ID_ANAGRAFICA IS NOT NULL and ai.tipo_soggetto != 'P')"
+            "queryCond": "an.id_anagrafica in(SELECT ai.id_anagrafica FROM ENTRASP.CONNESSIONI_ANAGRAFICHE ac Inner join entrasp.anagrafiche_id ai on ac.id_anagrafica_conn= ai.id_anagrafica and ac.codice_part = ai.codice_part WHERE ac.CODICE_PART = '€global_codice_part€' AND ac.CODICE_RUOLO in ('TIEF', 'ESEC') AND ac.ID_ANAGRAFICA IS NOT NULL and ai.tipo_soggetto != 'P')",
+            "translate": "RESOURCES.titeffett_o_esec_pg"
         },
         {
             "fieldName": "senza_profilazioni_attive",
@@ -311,7 +335,8 @@
             "label": "Senza profilazioni attive",
             "newLine": false,
             "size": 1,
-            "queryCond": "an.id_anagrafica not in(select distinct split_part(ss_prof.object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof inner join entrasp.sondaggi snd_prof on ss_prof.codice_azienda=snd_prof.codice_azienda and ss_prof.id_sondaggio=snd_prof.id_sondaggio inner join entrasp.modelli_test mt_prof on snd_prof.codice_azienda=mt_prof.codice_azienda and snd_prof.id_modello_test=mt_prof.id_modello_test where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(ss_prof.object_key, '|', 2),'') is not null and snd_prof.stato!='C' and snd_prof.data_prevista is not null and mt_prof.id_tipo_modello_test in(50))"
+            "queryCond": "an.id_anagrafica not in(select distinct split_part(ss_prof.object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof inner join entrasp.sondaggi snd_prof on ss_prof.codice_azienda=snd_prof.codice_azienda and ss_prof.id_sondaggio=snd_prof.id_sondaggio inner join entrasp.modelli_test mt_prof on snd_prof.codice_azienda=mt_prof.codice_azienda and snd_prof.id_modello_test=mt_prof.id_modello_test where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(ss_prof.object_key, '|', 2),'') is not null and snd_prof.stato!='C' and snd_prof.data_prevista is not null and mt_prof.id_tipo_modello_test in(50))",
+            "translate": "RESOURCES.senza_profilazioni_attive"
         },
         {
             "fieldName": "senza_documento_identificativo",
@@ -322,7 +347,8 @@
             "label": "Senza documento identificativo",
             "newLine": false,
             "size": 1,
-            "queryCond": "(avr.numero_documento is null or avr.id_argomento_tipo_documento is null)"
+            "queryCond": "(avr.numero_documento is null or avr.id_argomento_tipo_documento is null)",
+            "translate": "RESOURCES.senza_documento_identificativo"
         },
         {
             "fieldName": "senza_codice_ateco",
@@ -333,7 +359,8 @@
             "label": "Senza codice ateco",
             "newLine": false,
             "size": 1,
-            "queryCond": "avr.id_ateco is null"
+            "queryCond": "avr.id_ateco is null",
+            "translate": "RESOURCES.senza_codice_ateco"
         },
         {
             "fieldName": "in_province_ad_alto_rischio",
@@ -344,7 +371,8 @@
             "label": "Prov. alto rischio",
             "newLine": false,
             "size": 1,
-            "queryCond": "avr.provincia in(select pr.sigla_provincia from entrasp.province pr where pr.flag_a_rischio=true)"
+            "queryCond": "avr.provincia in(select pr.sigla_provincia from entrasp.province pr where pr.flag_a_rischio=true)",
+            "translate": "RESOURCES.prov_alto_rischio"
         },
         {
             "fieldName": "in_province_ad_alto_rischio_2",
@@ -355,13 +383,14 @@
             "label": "Prov. alto rischio (ridotta)",
             "newLine": true,
             "size": 1,
-            "queryCond": "avr.provincia in(select pr.sigla_provincia from entrasp.province pr where pr.flag_a_rischio_2=true)"
+            "queryCond": "avr.provincia in(select pr.sigla_provincia from entrasp.province pr where pr.flag_a_rischio_2=true)",
+            "translate": "RESOURCES.prov_alto_rischio_ridotta"
         }
     ],
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva, left(entrasp.contratti_associati_cliente('€global_codice_azienda€', an.id_anagrafica), 150) as strumenti_sottoscritti FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ra.codice_ruolo = 'CLI' ;",
+            "queryString": "SELECT an.codice_part, entrasp.n_contratti_cliente('€global_codice_azienda€', an.id_anagrafica, array['A']) as n_contratti_attivi, an.id_anagrafica, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva, left(entrasp.contratti_associati_cliente('€global_codice_azienda€', an.id_anagrafica), 150) as strumenti_sottoscritti FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ra.codice_ruolo = 'CLI' ;",
             "type": "main"
         },
         {
@@ -404,7 +433,8 @@
                 }
             ],
             "isHidden": false,
-            "label": "Flussi Informativi Associati"
+            "label": "Flussi Informativi Associati",
+            "translate": "RESOURCES.flussi_informativi_associati"
         },
         {
             "entryKey": "anagrafiche_vr_attachments",
@@ -436,7 +466,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Profilazioni Associate"
+            "label": "Profilazioni Associate",
+            "translate": "RESOURCES.profilazioni_associate"
         },
         {
             "entryKey": "centri_gestionali_sub_of_anagrafiche_vr",
@@ -450,7 +481,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Centri Gestionali"
+            "label": "Centri Gestionali",
+            "translate": "RESOURCES.centri_gestionali"
         },
         {
             "entryKey": "connessioni_anagrafiche",
@@ -465,7 +497,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Anagrafiche connesse"
+            "label": "Anagrafiche connesse",
+            "translate": "RESOURCES.anagrafiche_connesse"
         },
         {
             "entryKey": "progetti_sub_of_anagrafiche_vr",
@@ -476,7 +509,8 @@
                     "son": "id_cliente"
                 }
             ],
-            "label": "Progetti associati"
+            "label": "Progetti associati",
+            "translate": "RESOURCES.progetti_associati"
         },
         {
             "entryKey": "anagrafiche_vr_sub_of_anagrafiche_vr",
@@ -491,7 +525,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Variazioni e doc. identificativi"
+            "label": "Variazioni e doc. identificativi",
+            "translate": "RESOURCES.variazioni_e_doc_identificativi"
         },
         {
             "entryKey": "contracts_investment_sub_of_clientela",
@@ -507,7 +542,8 @@
                 }
             ],
             "label": "Contratti",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.contratti"
         }
     ],
     "inputEvents": [
@@ -515,5 +551,6 @@
             "actionType": "reload",
             "eventName": "formReload"
         }
-    ]
+    ],
+    "translate": "RESOURCES.clienti"
 }

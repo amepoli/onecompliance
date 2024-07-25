@@ -136,7 +136,8 @@
                     "son": "codice_azienda_erogante"
                 }
             ],
-            "label": "Time report"
+            "label": "Time report",
+            "translate": "RESOURCES.time_report"
         },
         {
             "entryKey": "compiti_sub_of_user_per_azienda",
@@ -150,7 +151,8 @@
                     "son": "codice_azienda_erogante"
                 }
             ],
-            "label": "Compiti gestiti"
+            "label": "Compiti gestiti",
+            "translate": "RESOURCES.compiti_gestiti"
         }
     ],
     "table_keys": [
@@ -232,23 +234,28 @@
         "tableQueries": [
             {
                 "queryString": "select em.dynamo_user as Utente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, (select generate_series(0, 12) as i) serie where em.codice_azienda in(€global_user_companies€);",
-                "label": "Per azienda erogante ultimi 12 mesi"
+                "label": "Per azienda erogante ultimi 12 mesi",
+                "translate": "RESOURCES.per_azienda_erogante_ultimi_12_mesi"
             },
             {
                 "queryString": "select em.dynamo_user as Utente, az.codice_azienda as Azienda_cliente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, entrasp.aziende az, (select generate_series(0, 5) as i) serie where em.codice_azienda in(€global_user_companies€) and az.codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer))!=0;",
-                "label": "*Ultimi 6* Per azienda erogante e ricevente ultimi 12 mesi"
+                "label": "*Ultimi 6* Per azienda erogante e ricevente ultimi 12 mesi",
+                "translate": "RESOURCES.ultimi_6_per_azienda_erogante_e_ricevente_ultimi_12_mesi"
             },
             {
                 "queryString": "select em.dynamo_user as Utente, az.codice_azienda as Azienda_cliente, em.codice_azienda as Azienda_erogante, em.nome||' '||em.cognome as Denominazione, extract (month from (entrasp.first_day_nth_previous_month(now()::date, i::integer))) as Mese, entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer)) as Giorni_lavorati_nel_mese from entrasp.employers em, entrasp.aziende az, (select generate_series(7, 12) as i) serie where em.codice_azienda in(€global_user_companies€) and az.codice_azienda in(€global_user_companies€) and entrasp.consuntivazioni_time_consumed_azienda(codiceazienda =>az.codice_azienda, codiceaziendaerogante => em.codice_azienda , dynamouser=> dynamo_user, datainizio=>entrasp.first_day_nth_previous_month(now()::date, i::integer), datafine =>entrasp.last_day_nth_previous_month(now()::date, i::integer))!=0;",
-                "label": "*Primi 6* Per azienda erogante e ricevente ultimi 12 mesi"
+                "label": "*Primi 6* Per azienda erogante e ricevente ultimi 12 mesi",
+                "translate": "RESOURCES.primi_6_per_azienda_erogante_e_ricevente_ultimi_12_mesi"
             },
             {
                 "queryString": "select em.dynamo_user as Utente, em.nome||' '||em.cognome as Denominazione, current_date - serie.i * interval '1 day' AS data_riferimento, sum(em.minuti_richiesti_giornalieri) as minuti_richiesti, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE)*480 as minuti_rendicontati, greatest(sum(em.minuti_richiesti_giornalieri)-entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE)*480,0) as minuti_mancanti from entrasp.employers em, (select generate_series(0, 10) as i) serie where em.codice_azienda in(select em2.codice_azienda from entrasp.employers em2 where em2.dynamo_user='€global_username€') and extract (DOW from (current_date - serie.i * interval '1 day')::DATE) not in(0,6) group by em.dynamo_user, em.nome||' '||em.cognome, current_date - serie.i * interval '1 day', entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE) having entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE)*480 < sum(em.minuti_richiesti_giornalieri) order by em.dynamo_user, current_date - serie.i * interval '1 day';",
-                "label": "Giornate anomale per collaboratore"
+                "label": "Giornate anomale per collaboratore",
+                "translate": "RESOURCES.giornate_anomale_per_collaboratore"
             },
             {
                 "queryString": "select Utente, round(sum(minuti_mancanti)/sum(minuti_richiesti),2) as indice_inefficienza_tr from entrasp.consuntivo_ore_per_utente where Utente in (select em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in(select codice_azienda from entrasp.employers em3 where dynamo_user='€global_username€')) group by Utente;",
-                "label": "Indice incompletezza time report per collaboratore"
+                "label": "Indice incompletezza time report per collaboratore",
+                "translate": "RESOURCES.indice_incompletezza_time_report_per_collaboratore"
             }
         ]
     },

@@ -3,10 +3,10 @@
     "entryKey": "anagrafiche_sub_of_sondaggi",
     "origin": "entrasp.anagrafiche_sondaggi",
     "businessObjectName": "anagrafiche_sondaggi",
-
     "addElementSettings": {
         "labelQuickAdd": "Associa assegnatario",
-        "navigateOnSuccess": false
+        "navigateOnSuccess": false,
+        "translateQuickAdd": "RESOURCES.associa_assegnatario"
     },
     "form_keys": [
         {
@@ -22,7 +22,24 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": true,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.id_anagrafica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "text",
+                "options": [],
+                "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52266 order by arg.descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_competenza",
+            "label": "Norma di riferimento",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.id_argomento_competenza"
         },
         {
             "autoGenerate": false,
@@ -49,7 +66,8 @@
             "readOnly": false,
             "isHidden": true,
             "isPrimary": true,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.codice_azienda"
         },
         {
             "autoGenerate": false,
@@ -62,7 +80,8 @@
             "readOnly": false,
             "isHidden": true,
             "isPrimary": true,
-            "newLine": true
+            "newLine": true,
+            "translate": "RESOURCES.id_sondaggio"
         }
     ],
     "table_keys": [
@@ -107,7 +126,8 @@
                     }
                 ],
                 "onSuccessAction": "reload"
-            }
+            },
+            "translate": "RESOURCES.delete_anagrafiche_sondaggi"
         },
         {
             "format": {
@@ -126,7 +146,8 @@
             "label": "ID",
             "key": "id_anagrafica",
             "isHidden": false,
-            "isPrimary": true
+            "isPrimary": true,
+            "translate": "RESOURCES.id_anagrafica"
         },
         {
             "format": {
@@ -136,7 +157,30 @@
             "key": "assegnatario",
             "queryFunct": "entrasp.anagrafiche_cognnome(codice_part, id_anagrafica)",
             "isHidden": false,
-            "isPrimary": false
+            "isPrimary": false,
+            "translate": "RESOURCES.assegnatario"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_liv_competenza",
+            "label": "id_argomento_liv_competenza",
+            "translate": "RESOURCES.id_argomento_liv_competenza"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_liv",
+            "label": "Livello",
+            "width": "15%",
+            "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_liv_competenza)",
+            "translate": "RESOURCES.descr_liv"
         },
         {
             "format": {
@@ -155,7 +199,8 @@
             "label": "ID",
             "key": "id_sondaggio",
             "isHidden": true,
-            "isPrimary": true
+            "isPrimary": true,
+            "translate": "RESOURCES.id_sondaggio"
         }
     ],
     "hideActions": [

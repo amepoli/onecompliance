@@ -279,7 +279,7 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.usersApiName, getReq));
   }
 
-  
+
   enableMFA(): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
@@ -374,15 +374,15 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
   }
 
-  changePassword(username: string, session: any, newPassword: string, challengeName: string ): Observable<any> {
+  changePassword(username: string, session: any, newPassword: string, challengeName: string): Observable<any> {
     const putPostReq: PostRequest = {
       headers: {},
       queryStringParameters: { change_password: 1 },
       body: {
-       username,
-       session,
-       newPassword, 
-       challengeName
+        username,
+        session,
+        newPassword,
+        challengeName
       },
     };
     return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
@@ -437,7 +437,7 @@ export class BackendService {
     const putPostReq: PostRequest = {
       body: null,
       headers: {},
-      queryStringParameters: { delete_user: 1, username: username},
+      queryStringParameters: { delete_user: 1, username: username },
     };
     return from(this.awsService.api().del(this.apiName, this.usersApiName, putPostReq));
   }
@@ -451,7 +451,7 @@ export class BackendService {
     };
     return from(this.awsService.api().post(this.apiName, this.insert_user_to_dynamoApiName, putPostReq));
   }
-  
+
   dissociatesCompanyFromUser(username: string, dissociatesCompany: string) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
@@ -931,9 +931,12 @@ export class BackendService {
     this.awsService.auth();
     const postReq: PostRequest = {
       queryStringParameters: { company },
-      body: { entity }
+      body: {
+        action: 'createInvoice',
+        entity
+      }
     }
-    return from(this.awsService.api().post(this.apiName, this.fattureincloudApiName , postReq));
+    return from(this.awsService.api().post(this.apiName, this.fattureincloudApiName, postReq));
   }
 
 
