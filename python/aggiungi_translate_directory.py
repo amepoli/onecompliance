@@ -10,9 +10,19 @@ def process_json_files(directory, log_file):
 
     # Funzione per rimuovere i caratteri speciali dalle chiavi e assicurarsi che non inizino con un numero o carattere speciale
     def format_label(label):
-        # Mantieni i caratteri speciali nel resto della stringa ma rimuovi all'inizio
-        formatted_label = label.lower().replace(" ", "_")
+        if label == "#":
+            return "hash"
+        # Trova e rimuovi i numeri all'inizio
+        initial_numbers = ''.join(re.findall(r'^\d+', label))
+        # Controlla se c'è un carattere speciale
+        has_special_character = bool(re.search(r'[^a-zA-Z0-9_ ]', label))
+        # Rimuovi i caratteri speciali eccetto numeri e trattini bassi
+        formatted_label = re.sub(r'[^a-zA-Z0-9_]', '', label.lower().replace(" ", "_"))
         formatted_label = re.sub(r'^[^a-zA-Z]+', '', formatted_label)
+        if initial_numbers:
+            formatted_label += f"_{initial_numbers}"
+        if has_special_character:
+            formatted_label += "_sc"
         return formatted_label
 
     # Funzione per convertire le chiavi in formato title case
@@ -36,7 +46,7 @@ def process_json_files(directory, log_file):
                     if formatted_label:  # Assicurati che la chiave non sia vuota
                         translate_key = f"RESOURCES.{formatted_label}"
                         obj['translate'] = translate_key
-                        added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                        added_keys.append(f'{formatted_label}: "{obj["label"]}",')
                         modified = True
                         counter += 1  # Incrementa il contatore
                 if 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
@@ -44,7 +54,7 @@ def process_json_files(directory, log_file):
                     if formatted_label:  # Assicurati che la chiave non sia vuota
                         translate_key = f"RESOURCES.{formatted_label}"
                         obj['translate'] = translate_key
-                        added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                        added_keys.append(f'{formatted_label}: "{obj["message"]}",')
                         modified = True
                         counter += 1  # Incrementa il contatore
                 if 'labelAdd' in obj and 'translateAdd' not in obj and isinstance(obj['labelAdd'], str):
@@ -52,7 +62,7 @@ def process_json_files(directory, log_file):
                     if formatted_label:  # Assicurati che la chiave non sia vuota
                         translate_key = f"RESOURCES.{formatted_label}"
                         obj['translateAdd'] = translate_key
-                        added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                        added_keys.append(f'{formatted_label}: "{obj["labelAdd"]}",')
                         modified = True
                         counter += 1  # Incrementa il contatore
                 if 'labelQuickAdd' in obj and 'translateQuickAdd' not in obj and isinstance(obj['labelQuickAdd'], str):
@@ -60,7 +70,7 @@ def process_json_files(directory, log_file):
                     if formatted_label:  # Assicurati che la chiave non sia vuota
                         translate_key = f"RESOURCES.{formatted_label}"
                         obj['translateQuickAdd'] = translate_key
-                        added_keys.append(f'{formatted_label}: "{to_title_case(formatted_label)}",')
+                        added_keys.append(f'{formatted_label}: "{obj["labelQuickAdd"]}",')
                         modified = True
                         counter += 1  # Incrementa il contatore
 
@@ -99,16 +109,14 @@ def process_json_files(directory, log_file):
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 print(f"Error processing file {filename}: {e}")
 
-    # Scrivi le chiavi aggiunte nel file di log con le chiavi in lettere minuscole
+    # Scrivi le chiavi aggiunte nel file di log
     with open(log_file, 'w', encoding='utf-8') as log:
         for key in added_keys:
-            formatted_key = key.lower().split(':')[0]
-            value = key.split(':')[1]
-            log.write(f"{formatted_key}: {value}\n")
+            log.write(f"{key}\n")
 
     print("Translation aggiunte: " + str(counter))
 
 # Esempio di utilizzo
-directory_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
-log_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del file di log
+directory_path = '/home/alpoli/Developement/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
+log_file_path = '/home/alpoli/Developement/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del file di log
 process_json_files(directory_path, log_file_path)

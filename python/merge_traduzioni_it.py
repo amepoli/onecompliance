@@ -1,91 +1,82 @@
-import json
 import re
+import shutil
 
-def load_json_from_ts(file_path):
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            content = file.read()
-            # Match the RESOURCES section more robustly
-            match = re.search(r'RESOURCES:\s*\{(.*?)\}\s*,\s*VIEWS:', content, re.DOTALL)
-            if match:
-                ts_str = match.group(1)
-                print(f"Found RESOURCES content: {ts_str[:200]}...")  # Print part of the content for debugging
-                json_str = ts_to_json(ts_str)
-                print(f"Converted JSON string: {json_str[:200]}...")  # Print part of the JSON string for debugging
-                return json.loads(json_str)
-            else:
-                print(f"Could not find RESOURCES in file {file_path}")
-                return {}
-    except (json.JSONDecodeError, UnicodeDecodeError, AttributeError) as e:
-        print(f"Error loading file {file_path}: {e}")
-        return {}
+def copy_ts_to_txt(ts_file_path, txt_file_path):
+    # Copia il contenuto del file TypeScript nel file di testo
+    shutil.copyfile(ts_file_path, txt_file_path)
 
-def ts_to_json(ts_content):
-    try:
-        # Add quotes around keys and convert single quotes to double quotes
-        ts_content = re.sub(r'(\w+):', r'"\1":', ts_content)  # Add quotes around keys
-        ts_content = re.sub(r'\'', r'"', ts_content)  # Replace single quotes with double quotes
-        ts_content = re.sub(r',\s*}', r'}', ts_content)  # Remove trailing commas before closing braces
-        ts_content = '{' + ts_content + '}'  # Add enclosing braces
-        print(f"TS to JSON content: {ts_content[:200]}...")  # Print part of the content for debugging
-        return ts_content
-    except Exception as e:
-        print(f"Error converting TypeScript to JSON: {e}")
-        return '{}'
-
-def save_json_to_ts(file_path, data):
-    try:
-        with open(file_path, 'r+', encoding='utf-8') as file:
-            content = file.read()
-            json_str = json.dumps(data, ensure_ascii=False, indent=4)
-            # Convert JSON string back to TypeScript object format
-            json_str = re.sub(r'"(\w+)"\s*:', r'\1:', json_str)  # Remove quotes from keys for TS format
-            json_str = json_str.replace(': "', ": '").replace('",', "',").replace('"}', "'}")
-            new_content = re.sub(r'RESOURCES:\s*\{(.*?)\}\s*,\s*VIEWS:', f'RESOURCES: {json_str},\n        VIEWS:', content, flags=re.DOTALL)
-            file.seek(0)
-            file.write(new_content)
-            file.truncate()
-    except IOError as e:
-        print(f"Error saving file {file_path}: {e}")
-
-def load_new_keys(file_path):
-    new_keys = {}
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            for line in file:
-                match = re.match(r'(\w+)\s*:\s*"(.*)"\s*,?', line.strip())
+def update_first_file_with_missing_keys(file1_path, file2_path):
+    # Leggi le chiavi dal primo file di testo
+    with open(file1_path, 'r') as file1:
+        content1 = file1.read()
+        resources_match = re.search(r'RESOURCES:\s*\{(.*?)\}', content1, re.DOTALL)
+        
+        if resources_match:
+            lines1 = resources_match.group(1).strip().splitlines()
+            keys1 = {}
+            for line in lines1:
+                match = re.match(r'(\s*)(\w+):\s*"([^"]*)",?', line)
                 if match:
-                    key, value = match.groups()
-                    new_keys[key] = value
-    except IOError as e:
-        print(f"Error loading file {file_path}: {e}")
-    return new_keys
+                    indent, key, value = match.groups()
+                    keys1[key] = (value, indent)
+        else:
+            keys1 = {}
 
-def merge_translation_keys(existing_file, new_keys_file):
-    # Load the existing TypeScript file and the new keys from the text file
-    existing_data = load_json_from_ts(existing_file)
-    new_keys = load_new_keys(new_keys_file)
+    # Leggi le chiavi dal secondo file di testo
+    with open(file2_path, 'r') as file2:
+        keys2 = {}
+        for line in file2.read().splitlines():
+            match = re.match(r'(\w+):\s*"([^"]*)"', line.strip())
+            if match:
+                key, value = match.groups()
+                keys2[key] = value
 
-    # Get the existing keys under RESOURCES
-    existing_keys = existing_data
+    # Trova le chiavi mancanti nel primo file di testo
+    missing_keys = {k: v for k, v in keys2.items() if k not in keys1}
 
-    if not existing_keys:
-        print(f"No existing keys found in RESOURCES in file {existing_file}")
-        return
+    # Unisci le chiavi del primo file con le chiavi mancanti
+    updated_keys = keys1.copy()
+    for key, value in missing_keys.items():
+        updated_keys[key] = (value, '    ')  # 4 spazi per nuove chiavi
 
-    # Add new keys if they do not already exist
-    for key, value in new_keys.items():
-        if key not in existing_keys:
-            existing_keys[key] = value
+    # Ordina le chiavi alfabeticamente ignorando gli spazi iniziali
+    sorted_keys = sorted(updated_keys.keys(), key=lambda k: k.strip().lower())
 
-    # Sort the keys alphabetically
-    sorted_keys = dict(sorted(existing_keys.items()))
+    # Costruisci il contenuto aggiornato di RESOURCES
+    resources_content = "RESOURCES: {\n"
+    for key in sorted_keys:
+        value, indent = updated_keys[key]
+        resources_content += f'{indent}{key}: "{value}",\n'
+    resources_content += "}"
 
-    # Save the existing TypeScript file with the new keys
-    save_json_to_ts(existing_file, sorted_keys)
+    # Sostituisci il contenuto di RESOURCES nel primo file di testo
+    new_content = re.sub(r'RESOURCES:\s*\{(.*?)\}', resources_content, content1, flags=re.DOTALL)
 
-# Example usage
-existing_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Replace with the path to the existing file
-new_keys_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_new_translate.txt'  # Replace with the path to the file with new keys
+    # Scrivi il nuovo contenuto nel primo file di testo
+    with open(file1_path, 'w') as file1:
+        file1.write(new_content)
 
-merge_translation_keys(existing_file_path, new_keys_file_path)
+    # Stampa le chiavi che non sono state trascritte
+    for key in keys2.keys():
+        if key in keys1:
+            print(f"Key '{key}' not added because it is already present.")
+        elif key not in updated_keys:
+            print(f"Key '{key}' not added due to an unknown issue.")
+
+def copy_txt_to_ts(txt_file_path, ts_file_path):
+    # Copia il contenuto del file di testo nel file TypeScript
+    shutil.copyfile(txt_file_path, ts_file_path)
+
+# Percorsi dei file di testo e TypeScript
+ts_file_path = '/home/alpoli/Developement/onecompliance/src/app/oc/i18n/it.ts'  # Sostituire con il percorso reale del file TypeScript
+txt_file1_path = '/home/alpoli/Developement/onecompliance/python/it_copy.txt'  # Percorso del primo file di testo
+txt_file2_path = '/home/alpoli/Developement/onecompliance/python/file_new_translate.txt'  # Percorso del secondo file di testo
+
+# Copia il contenuto del file TypeScript nel primo file di testo
+copy_ts_to_txt(ts_file_path, txt_file1_path)
+
+# Aggiorna il primo file di testo con le chiavi mancanti
+update_first_file_with_missing_keys(txt_file1_path, txt_file2_path)
+
+# Copia il contenuto del primo file di testo nel file TypeScript
+copy_txt_to_ts(txt_file1_path, ts_file_path)
