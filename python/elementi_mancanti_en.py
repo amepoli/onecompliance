@@ -1,31 +1,29 @@
-def load_file(file_path):
+import re
+
+def get_keys_and_phrases_from_file(file_path):
+    keys_phrases = {}
     with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read().splitlines()
+        for line in file:
+            match = re.match(r'(\w+):\s*"([^"]*)"', line.strip())
+            if match:
+                key = match.group(1).strip()
+                phrase = match.group(2).strip()
+                keys_phrases[key] = phrase
+    return keys_phrases
 
-def extract_keys(file_content):
-    keys = set()
-    for line in file_content:
-        key = line.split(':')[0].strip()
-        keys.add(key)
-    return keys
+def write_difference_to_file(file1_path, file2_path, output_path):
+    keys_phrases_file1 = get_keys_and_phrases_from_file(file1_path)
+    keys_phrases_file2 = get_keys_and_phrases_from_file(file2_path)
 
-# Carica i file
-file_eng_content = load_file('file_eng.txt')
-file_it_content = load_file('file_it.txt')
+    difference_keys = keys_phrases_file1.keys() - keys_phrases_file2.keys()
 
-# Estrai le chiavi (identificatori unici) dai contenuti dei file
-eng_keys = extract_keys(file_eng_content)
-it_keys = extract_keys(file_it_content)
+    with open(output_path, 'w', encoding='utf-8') as output_file:
+        for key in sorted(difference_keys):
+            output_file.write(f'{key}: "{keys_phrases_file1[key]}"\n')
 
-# Trova gli elementi unici in file_it.txt
-unique_it_keys = it_keys - eng_keys
+# Usage
+file1_path = '/home/alpoli/Developement/onecompliance/python/file_it.txt'
+file2_path = '/home/alpoli/Developement/onecompliance/python/file_eng.txt'
+output_path = '/home/alpoli/Developement/onecompliance/python/file_mancanti_en.txt'
 
-# Stampa gli elementi unici
-print("Elementi unici in 'file_it.txt' non presenti in 'file_eng.txt':")
-for key in unique_it_keys:
-    print(key)
-
-# Salva gli elementi unici in un nuovo file (opzionale)
-with open('unique_items.txt', 'w', encoding='utf-8') as file:
-    for key in unique_it_keys:
-        file.write(f"{key}\n")
+write_difference_to_file(file1_path, file2_path, output_path)

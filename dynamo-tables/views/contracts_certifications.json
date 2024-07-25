@@ -114,20 +114,16 @@
                 "viewType": "menu",
                 "menuOptions": [
                     {
-                        "icon": "stacked_line_chart",
-                        "label": "Crea progetto",
-                        "outputEventName": "progetto_create"
-                    },
-                    {
-                        "icon": "stacked_line_chart",
-                        "label": "Duplica contratto",
-                        "outputEventName": "contratto_duplica"
-                    },
-                    {
                         "icon": "lock",
                         "label": "Chiudi Contratto",
                         "outputEventName": "close_contract",
-                        "tooltip": "E' possibile chiudere il contratto solo se è definita la data cessazione"
+                        "tooltip": "E' possibile chiudere il contratto solo se è definita la data cessazione",
+                        "translate": "RESOURCES.chiudi_contratto"
+                    },
+                    {
+                        "icon": "link",
+                        "label": "Associa Piano",
+                        "outputEventName": "associa_piano"
                     }
                 ]
             },
@@ -143,14 +139,6 @@
             "size": 0.6,
             "inputEvents": [
                 {
-                    "eventName": "progetto_create",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query",
-                    "queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
-                    "outputEventWhenComplete": "navigate_to_new_progetto"
-                },
-                {
                     "eventName": "close_contract",
                     "actionType": "query",
                     "condition": "none",
@@ -158,6 +146,14 @@
                     "queryFunct": "UPDATE entrasp.contratti SET data_cessazione=coalesce('£data_cessazione£',current_date), stato='C' WHERE id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$ RETURNING (SELECT case when count(*) >  0 then 'true' else 'false' end FROM entrasp.contratti cnt INNER JOIN entrasp.registrazioni_rapporti_aui rra  ON cnt.numero_contratto=trim(rra.identificativo_rapporto) and cnt.codice_azienda=rra.codice_azienda WHERE cnt.id_contratto=$id_contratto$ and cnt.codice_azienda=$codice_azienda$)",
                     "successMessage": "Contratto chiuso",
                     "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "associa_piano",
+                    "actionType": "dialog",
+                    "customDialogEntryName": "dialog_contratti_associa_piano",
+                    "customDialogTitle": "Associa Piano",
+                    "condition": "none",
+                    "values": []
                 }
             ]
         },
@@ -208,7 +204,8 @@
                     {
                         "message": "Inserire il giorno di stipula del contratto",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_il_giorno_di_stipula_del_contratto"
                     }
                 ]
             },
@@ -232,7 +229,8 @@
                     {
                         "message": "Tipologia contratto necessaria!",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.tipologia_contratto_necessaria"
                     }
                 ]
             },
@@ -302,7 +300,8 @@
                     {
                         "message": "Inserire la ragione sociale del cliente",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_la_ragione_sociale_del_cliente"
                     }
                 ]
             },
@@ -360,7 +359,8 @@
                     {
                         "message": "Inserire uno stato",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_uno_stato"
                     }
                 ]
             },
@@ -447,8 +447,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": true,
-            "size": 5,
-            "translate": "RESOURCES.id_agente_primario"
+            "size": 5
         },
         {
             "autoGenerate": false,
@@ -470,8 +469,7 @@
             "newLine": true,
             "sameOrigin": false,
             "readOnly": false,
-            "size": 10,
-            "translate": "RESOURCES.label_fatturazione"
+            "size": 10
         },
         {
             "autoGenerate": false,
@@ -487,8 +485,7 @@
             "tooltip": "Somma degli importi delle certificazioni e dei due audit di sorveglianza relativi al contratto in oggetto",
             "isPrimary": false,
             "size": 2,
-            "newLine": false,
-            "translate": "RESOURCES.importo"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -504,8 +501,7 @@
             "tooltip": "Somma delle giornate/uomo delle certificazioni e dei due audit di sorveglianza relativi al contratto in oggetto",
             "isPrimary": false,
             "size": 2,
-            "newLine": false,
-            "translate": "RESOURCES.giornate_uomo_tot"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -519,8 +515,7 @@
             "isHidden": false,
             "isPrimary": false,
             "size": 2,
-            "newLine": false,
-            "translate": "RESOURCES.quantita"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -536,8 +531,7 @@
             "label": "Unità misura intervalli (days, weeks, months)",
             "newLine": false,
             "readOnly": false,
-            "size": 2,
-            "translate": "RESOURCES.interval_value"
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -551,8 +545,7 @@
             "label": "Numero intervalli",
             "newLine": true,
             "readOnly": false,
-            "size": 2,
-            "translate": "RESOURCES.interval_multiplier_ft"
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -569,8 +562,7 @@
             "sameOrigin": true,
             "isPrimary": false,
             "size": 2,
-            "newLine": false,
-            "translate": "RESOURCES.acconto"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -586,8 +578,7 @@
             "tooltip": "Somma della voce saldo delle certificazioni e dei due audit di sorveglianza relativi al contratto in oggetto",
             "isPrimary": false,
             "size": 2,
-            "newLine": false,
-            "translate": "RESOURCES.saldo_1"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -603,8 +594,7 @@
             "tooltip": "Somma degli importi del 1° audit di sorveglianza delle certificazioni e dei due audit di sorveglianza relativi al contratto in oggetto",
             "isPrimary": false,
             "size": 2,
-            "newLine": false,
-            "translate": "RESOURCES.sorv_1"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -620,8 +610,7 @@
             "isHidden": false,
             "isPrimary": false,
             "size": 2,
-            "newLine": false,
-            "translate": "RESOURCES.sorvegli_2"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -637,8 +626,7 @@
             "tooltip": "Somma degli importi del rinnovo delle certificazioni e dei due audit di sorveglianza relativi al contratto in oggetto",
             "isPrimary": false,
             "size": 2,
-            "newLine": false,
-            "translate": "RESOURCES.rinnovo"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -1003,7 +991,8 @@
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.progetti_associati"
         },
         {
             "label": "Preventivi",
@@ -1017,7 +1006,8 @@
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.preventivi"
         },
         {
             "label": "Attività/Segnalazioni associate",
@@ -1031,7 +1021,8 @@
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.attivitsegnalazioni_associate"
         },
         {
             "label": "Fatture",
@@ -1045,7 +1036,8 @@
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.fatture"
         },
         {
             "label": "Programma Triennale",
@@ -1059,7 +1051,8 @@
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.programma_triennale"
         },
         {
             "label": "Piano",
@@ -1073,7 +1066,8 @@
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.piano"
         }
     ],
     "search_keys": [
@@ -1085,7 +1079,8 @@
             },
             "label": "Identificativo contratto",
             "newLine": false,
-            "queryCond": "id_contratto=$id_contratto_s$"
+            "queryCond": "id_contratto=$id_contratto_s$",
+            "translate": "RESOURCES.identificativo_contratto"
         },
         {
             "fieldName": "id_anagrafica_s",
@@ -1096,7 +1091,8 @@
             },
             "label": "$P{label_controparte}",
             "newLine": false,
-            "queryCond": "id_cliente=$id_anagrafica_s$"
+            "queryCond": "id_cliente=$id_anagrafica_s$",
+            "translate": "RESOURCES.plabel_controparte"
         },
         {
             "fieldName": "nome_rs",
@@ -1106,7 +1102,8 @@
             },
             "label": "Nome/Cognome/Ragione Sociale",
             "newLine": false,
-            "queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
+            "queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')",
+            "translate": "RESOURCES.nomecognomeragione_sociale"
         },
         {
             "fieldName": "tipi_contratto_s",
@@ -1117,7 +1114,8 @@
             },
             "label": "Tipo Contratti",
             "newLine": true,
-            "queryCond": "id_argomento_contratto='€tipi_contratto_s€'"
+            "queryCond": "id_argomento_contratto='€tipi_contratto_s€'",
+            "translate": "RESOURCES.tipo_contratti"
         },
         {
             "fieldName": "numero_contratto_s",
@@ -1127,7 +1125,8 @@
             },
             "label": "Numero Contratto",
             "newLine": false,
-            "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
+            "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'",
+            "translate": "RESOURCES.numero_contratto"
         },
         {
             "fieldName": "stato",
@@ -1150,7 +1149,8 @@
             },
             "label": "Fondo/strumento finanziario",
             "newLine": false,
-            "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
+            "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$",
+            "translate": "RESOURCES.fondostrumento_finanziario"
         },
         {
             "format": {
@@ -1162,7 +1162,8 @@
             "label": "Giudizio Appropriatezza",
             "fieldName": "giudizio_s",
             "newLine": true,
-            "queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$"
+            "queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$",
+            "translate": "RESOURCES.giudizio_appropriatezza"
         },
         {
             "fieldName": "profilazioni_n",
@@ -1172,7 +1173,8 @@
             },
             "label": "Senza Profilazioni Aml",
             "newLine": false,
-            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
+            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)",
+            "translate": "RESOURCES.senza_profilazioni_aml"
         },
         {
             "fieldName": "no_progetto",
@@ -1182,7 +1184,8 @@
             },
             "label": "Aperti senza progetto associato",
             "newLine": false,
-            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
+            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'",
+            "translate": "RESOURCES.aperti_senza_progetto_associato"
         },
         {
             "fieldName": "rischio_conflitto",
@@ -1193,7 +1196,8 @@
             "label": "Rischio conflitti",
             "newLine": false,
             "size": 1.5,
-            "queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'"
+            "queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'",
+            "translate": "RESOURCES.rischio_conflitti"
         }
     ],
     "hideActions": [
@@ -1237,7 +1241,8 @@
         "tableQueries": [
             {
                 "label": "Importa contratti",
-                "queryString": "select entrasp.contratti_import($codice_azienda$, $nome_file$)"
+                "queryString": "select entrasp.contratti_import($codice_azienda$, $nome_file$)",
+                "translate": "RESOURCES.importa_contratti"
             }
         ]
     },
@@ -1245,11 +1250,13 @@
         "formQueries": [
             {
                 "label": "Contratto",
-                "queryString": "select * from entrasp.contratti_estrazione($codice_azienda$, $id_contratto$)"
+                "queryString": "select * from entrasp.contratti_estrazione($codice_azienda$, $id_contratto$)",
+                "translate": "RESOURCES.contratto"
             },
             {
                 "label": "Incarico",
-                "queryString": "select * from entrasp.contratti_incarico($codice_azienda$, $id_contratto$)"
+                "queryString": "select * from entrasp.contratti_incarico($codice_azienda$, $id_contratto$)",
+                "translate": "RESOURCES.incarico"
             }
         ]
     }

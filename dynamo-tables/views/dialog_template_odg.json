@@ -9,7 +9,7 @@
         },
         {
             "operation": "insert",
-            "queryString": "select entrasp.crea_odg_template(ac.codice_azienda, todg.id_templ_odg, $id_contratto$, todg.id_templ_riunione, '$id_argomento_settore$', '$id_anagrafica$', $durata$,  $ora_inizio$, $data_riunione$, '$id_argomento_funzione$', $cantiere$, $id_argomento_controllo$, array_agg(odg.id_odg)) from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg and todg.id_templ_riunione=odg.id_templ_riunione  where ac.codice_azienda||'~'|| todg.id_templ_odg||'~'||ac.id_contratto||'~'||todg.id_templ_riunione in (select unnest(ARRAY[$selected_rows_data$])) group by ac.codice_azienda, todg.id_templ_odg, ac.id_contratto, todg.id_templ_riunione, odg.id_argomento_settore, id_anagrafica, durata,  ora_inizio, data_riunione,id_argomento_funzione, cantiere, id_argomento_controllo",
+            "queryString": "select entrasp.crea_odg_template(ac.codice_azienda, todg.id_templ_odg, $id_contratto$, '$id_argomento_settore$', '$id_anagrafica$', $durata$,  $ora_inizio$, $data_riunione$, '$id_argomento_funzione$', $cantiere$, $id_argomento_controllo$, array_agg(odg.id_odg)) from entrasp.articoli_contratti ac inner join entrasp.argomenti_argomenti aa on ac.id_argomento_tipo_norma=aa.id_argomento_father inner join entrasp.template_odg todg on aa.id_argomento_son=todg.id_argomento left join entrasp.odg_riunioni odg on todg.id_templ_odg=odg.id_templ_odg  where ac.codice_azienda||'~'|| todg.id_templ_odg||'~'||ac.id_contratto in (select unnest(ARRAY[$selected_rows_data$])) group by ac.codice_azienda, todg.id_templ_odg, ac.id_contratto, odg.id_argomento_settore, id_anagrafica, durata,  ora_inizio, data_riunione,id_argomento_funzione, cantiere, id_argomento_controllo",
             "type": "main"
         },
         {
@@ -85,24 +85,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
-                "comboQuery": "SELECT * FROM (VALUES (8.00,8.00), (9.00,9.00), (10.00,10.00), (11.00,11.00), (12.00,12.00), (13.00,13.00), (14.00,14.00), (15.00,15.00), (16.00,16.00), (17.00,17.00), (18.00,18.00)) AS t1(id, name);",
-                "options": [],
-                "dataType": "text",
-                "value": null
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "ora_fine",
-            "label": "Alle",
-            "newLine": false,
-            "readOnly": false,
-            "size": 2,
-            "translate": "RESOURCES.ora_fine"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
@@ -151,22 +133,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti where id_argomento in (52523, 52515)"
-            },
-            "label": "Tipo Verifica",
-            "key": "id_argomento_controllo",
-            "readOnly": false,
-            "isHidden": false,
-            "size": 5,
-            "isPrimary": false,
-            "newLine": true,
-            "translate": "RESOURCES.id_argomento_controllo"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "viewType": "label",
                 "dataType": "text"
             },
@@ -203,7 +169,8 @@
             },
             "newLine": false,
             "sameOrigin": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.auditor_coinvolti"
         },
         {
             "autoGenerate": false,
@@ -257,7 +224,8 @@
             "isHidden": false,
             "size": 3.33,
             "isPrimary": false,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.auditor"
         },
         {
             "autoGenerate": false,

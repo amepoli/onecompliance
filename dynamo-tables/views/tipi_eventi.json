@@ -101,7 +101,8 @@
                     "key": "create_event",
                     "icon": "create_event",
                     "label": "Crea evento associato",
-                    "query": "SELECT entrasp.crea_evento ('€global_codice_azienda€', arg.id_argomento) FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);"
+                    "query": "SELECT entrasp.crea_evento ('€global_codice_azienda€', arg.id_argomento) FROM entrasp.argomenti arg WHERE arg.id_argomento IN ($selected_rows_data$);",
+                    "translate": "RESOURCES.crea_evento_associato"
                 },
                 {
                     "key": "delete",
@@ -110,13 +111,15 @@
                     "query": "select true",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Eliminare le scadenze ?"
+                    "confirmActionMessage": "Eliminare le scadenze ?",
+                    "translate": "RESOURCES.delete"
                 },
                 {
                     "key": "merge_argomenti",
                     "icon": "merge_type",
                     "label": "Unifica scadenze",
-                    "query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)"
+                    "query": "SELECT entrasp.unifica_argomenti($selected_rows_data$)",
+                    "translate": "RESOURCES.unifica_scadenze"
                 }
             ]
         }
@@ -156,7 +159,8 @@
                     {
                         "message": "Codice necessario",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.codice_necessario"
                     }
                 ]
             },
@@ -192,7 +196,8 @@
                     {
                         "icon": "content_copy",
                         "label": "Duplica",
-                        "outputEventName": "duplica_argomento"
+                        "outputEventName": "duplica_argomento",
+                        "translate": "RESOURCES.duplica"
                     }
                 ]
             },
@@ -517,7 +522,8 @@
                     "son": "id_argomento_father"
                 }
             ],
-            "label": "Sotto-eventi"
+            "label": "Sotto-eventi",
+            "translate": "RESOURCES.sottoeventi"
         },
         {
             "entryKey": "eventi_scatenanti",
@@ -553,7 +559,8 @@
             "fieldName": "codice_ruolo_s",
             "label": "Ruolo",
             "newLine": false,
-            "queryCond": "arg.id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)"
+            "queryCond": "arg.id_argomento in(select id_argomento_tipo_allegato from entrasp.cdms_risorse rs inner join entrasp.ruoli_anagrafiche ra on rs.codice_azienda=ra.codice_azienda and rs.codice_part=ra.codice_part and codice_ruolo=$codice_ruolo_s$ and ra.codice_azienda='€global_codice_azienda€' and id_argomento_tipo_allegato is not null)",
+            "translate": "RESOURCES.ruolo"
         },
         {
             "label": "codice_azienda_s",
@@ -563,7 +570,8 @@
             },
             "fieldName": "codice_azienda",
             "newLine": true,
-            "queryCond": "arg.codice_azienda=$codice_azienda_s$"
+            "queryCond": "arg.codice_azienda=$codice_azienda_s$",
+            "translate": "RESOURCES.codice_azienda_s"
         },
         {
             "fieldName": "id_argomento_list",
@@ -573,7 +581,8 @@
             },
             "label": "$P{label_id}",
             "newLine": false,
-            "queryCond": "arg.id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+            "queryCond": "arg.id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.plabel_id"
         },
         {
             "fieldName": "argomento_s",
@@ -584,7 +593,8 @@
             },
             "label": "Argomento padre",
             "newLine": false,
-            "queryCond": "arg.id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$argomento_s$)"
+            "queryCond": "arg.id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$argomento_s$)",
+            "translate": "RESOURCES.argomento_padre"
         },
         {
             "fieldName": "tipo_int_s",
@@ -595,7 +605,8 @@
             },
             "label": "Tipo intermediario",
             "newLine": true,
-            "queryCond": "arg.id_argomento in (select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$tipo_int_s$)"
+            "queryCond": "arg.id_argomento in (select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$tipo_int_s$)",
+            "translate": "RESOURCES.tipo_intermediario"
         }
     ],
     "table_keys": [

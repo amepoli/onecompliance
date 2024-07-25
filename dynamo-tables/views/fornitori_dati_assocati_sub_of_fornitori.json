@@ -58,7 +58,8 @@
                     {
                         "message": "Tipo soggetto necessario",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.tipo_soggetto_necessario"
                     }
                 ]
             },
@@ -140,7 +141,8 @@
                         "label": "Nome",
                         "newLine": false,
                         "queryFunct": "SELECT nome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false
+                        "readOnly": false,
+                        "translate": "RESOURCES.nome"
                     },
                     {
                         "autoGenerate": false,
@@ -154,7 +156,8 @@
                         "label": "Cognome",
                         "newLine": true,
                         "queryFunct": "SELECT cognome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false
+                        "readOnly": false,
+                        "translate": "RESOURCES.cognome"
                     }
                 ]
             },
@@ -201,7 +204,8 @@
                         "key": "ragione_sociale",
                         "label": "Ragione sociale",
                         "newLine": true,
-                        "readOnly": false
+                        "readOnly": false,
+                        "translate": "RESOURCES.ragione_sociale"
                     }
                 ]
             },
@@ -528,7 +532,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Valutazioni Associate"
+            "label": "Valutazioni Associate",
+            "translate": "RESOURCES.valutazioni_associate"
         },
         {
             "entryKey": "centri_gestionali_sub_of_anagrafiche_vr",
@@ -542,7 +547,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Centri Gestionali"
+            "label": "Centri Gestionali",
+            "translate": "RESOURCES.centri_gestionali"
         },
         {
             "entryKey": "progetti_sub_of_anagrafiche_vr",
@@ -553,7 +559,8 @@
                     "son": "id_cliente"
                 }
             ],
-            "label": "Progetti associati"
+            "label": "Progetti associati",
+            "translate": "RESOURCES.progetti_associati"
         },
         {
             "entryKey": "anagrafiche_vr_sub_anagrafiche_vr",
@@ -585,7 +592,8 @@
                 }
             ],
             "label": "Contratti gestiti",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.contratti_gestiti"
         },
         {
             "entryKey": "cpl_trattamenti_dati_responsabili_sub_of_fornitori",
@@ -604,7 +612,8 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Trattamenti Dati/Responsabile"
+            "label": "Trattamenti Dati/Responsabile",
+            "translate": "RESOURCES.trattamenti_datiresponsabile"
         },
         {
             "entryKey": "cpl_trattamenti_dati_titolari_sub_of_fornitori",
@@ -623,20 +632,23 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Trattamenti Dati/Titolare"
+            "label": "Trattamenti Dati/Titolare",
+            "translate": "RESOURCES.trattamenti_datititolare"
         }
     ],
     "exportQueries": {
         "tableQueries": [
             {
                 "label": "Resp., tratt.dati, cat.inter., ...",
-                "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento,entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile) as ragione_sociale,td.id_trattamento_dati id_trattamento,td.titolo as trattamento_dati,td.descrizione,entrasp.finalita_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati) as finalita,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_personali') as categorie_dati_personali,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_interessati') as categorie_interessati,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_destinatari') as categorie_destinatari from entrasp.cpl_trattamenti_dati_responsabili tdr inner join entrasp.cpl_trattamenti_dati td on tdr.codice_azienda=td.codice_azienda and tdr.id_trattamento_dati=td.id_trattamento_dati where td.codice_azienda=$codice_azienda$ order by entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile), tdr.id_trattamento_dati"
+                "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento,entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile) as ragione_sociale,td.id_trattamento_dati id_trattamento,td.titolo as trattamento_dati,td.descrizione,entrasp.finalita_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati) as finalita,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_personali') as categorie_dati_personali,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_interessati') as categorie_interessati,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_destinatari') as categorie_destinatari from entrasp.cpl_trattamenti_dati_responsabili tdr inner join entrasp.cpl_trattamenti_dati td on tdr.codice_azienda=td.codice_azienda and tdr.id_trattamento_dati=td.id_trattamento_dati where td.codice_azienda=$codice_azienda$ order by entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile), tdr.id_trattamento_dati",
+                "translate": "RESOURCES.resp_trattdati_catinter_"
             }
         ],
         "formQueries": [
             {
                 "label": "Resp., tratt.dati, cat.inter., ...",
-                "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento,entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile) as ragione_sociale,td.id_trattamento_dati id_trattamento,td.titolo as trattamento_dati,td.descrizione,entrasp.finalita_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati) as finalita,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_personali') as categorie_dati_personali,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_interessati') as categorie_interessati,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_destinatari') as categorie_destinatari from entrasp.cpl_trattamenti_dati_responsabili tdr inner join entrasp.cpl_trattamenti_dati td on tdr.codice_azienda=td.codice_azienda and tdr.id_trattamento_dati=td.id_trattamento_dati where td.codice_azienda=$codice_azienda$ and tdr.id_responsabile=$id_anagrafica$ order by entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile), tdr.id_trattamento_dati"
+                "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento,entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile) as ragione_sociale,td.id_trattamento_dati id_trattamento,td.titolo as trattamento_dati,td.descrizione,entrasp.finalita_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati) as finalita,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_personali') as categorie_dati_personali,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_interessati') as categorie_interessati,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_destinatari') as categorie_destinatari from entrasp.cpl_trattamenti_dati_responsabili tdr inner join entrasp.cpl_trattamenti_dati td on tdr.codice_azienda=td.codice_azienda and tdr.id_trattamento_dati=td.id_trattamento_dati where td.codice_azienda=$codice_azienda$ and tdr.id_responsabile=$id_anagrafica$ order by entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile), tdr.id_trattamento_dati",
+                "translate": "RESOURCES.resp_trattdati_catinter_"
             }
         ]
     }

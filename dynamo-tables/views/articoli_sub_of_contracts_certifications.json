@@ -3,9 +3,16 @@
     "entryKey": "articoli_sub_of_contracts_certifications",
     "origin": "entrasp.articoli_contratti",
     "businessObjectName": "articoli_contratti",
+    "define": {
+        "ishiddencontratto": true
+    },
     "addElementSettings": {
         "labelAdd": "Nuovo Preventivo",
-        "navigateOnSuccess": true
+        "navigateOnSuccess": true,
+        "translateAdd": "RESOURCES.nuovo_preventivo"
+    },
+    "querySuffixes": {
+        "formViewSuffix": "group by codice_azienda, id_articolo, id_contratto"
     },
     "outputEvents": [
         {
@@ -89,7 +96,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_PREVENTIVI';",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text"
@@ -130,7 +137,7 @@
             "key": "data_a",
             "label": "Data Fine Servizio",
             "tooltip": "Inserire la data di fine erogazione del servizio",
-            "newLine": false,
+            "newLine": true,
             "readOnly": false,
             "size": 2,
             "translate": "RESOURCES.data_a"
@@ -138,17 +145,87 @@
         {
             "autoGenerate": false,
             "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_fatturazione_27",
+            "label": "Addetti Equivalenti",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false,
+            "translate": "RESOURCES.n_addetti_l"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "N° Addetti",
-            "key": "n_addetti",
+            "label": "N° Addetti Totale",
+            "key": "n_addetti_totale",
             "readOnly": true,
             "isHidden": false,
-            "size": 2,
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.n_addetti_totale"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "N° Addetti Equivalenti",
+            "key": "n_addetti",
+            "readOnly": false,
+            "isHidden": false,
+            "insertUpdateFunct": "coalesce (£n_addetti£, $n_addetti_totale$)",
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.n_addetti_l"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "options": [],
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52844"
+            },
+            "label": "Motivazione Addetti Equivalenti",
+            "key": "id_argomento_addetti",
+            "readOnly": false,
+            "isHidden": false,
+            "tooltip": "Motivazione per la discrepanza tra gli addetti calcolati e quelli equivalenti",
+            "size": 5,
             "isPrimary": false,
             "newLine": true,
-            "translate": "RESOURCES.n_addetti"
+            "translate": " "
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Note Addetti",
+            "key": "note_addetti",
+            "readOnly": false,
+            "isHidden": false,
+            "size": 10,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.note_addetti"
         },
         {
             "autoGenerate": false,
@@ -251,12 +328,12 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Costo Giornata/Uomo",
+            "label": "Importo Giornata/Uomo",
             "key": "costo",
-            "readOnly": true,
-            "queryFunct": "select costo from entrasp.articoli where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$",
+            "readOnly": false,
+            "insertUpdateFunct": "coalesce(£costo£, (select costo from entrasp.articoli where codice_azienda=$codice_azienda$ and id_articolo=$id_articolo$))",
             "isHidden": false,
-            "tooltip": "Corrisponde al costo giornata/uomo del servizio prescelto, per modificarlo intervenire nel menu prodotti/servizi",
+            "tooltip": "Corrisponde al costo giornata/uomo del servizio prescelto",
             "size": 1.66,
             "isPrimary": false,
             "newLine": false,
@@ -268,7 +345,7 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Costo Giornata/Uomo Scontato",
+            "label": "Importo Giornata/Uomo Scontato",
             "key": "costo_scontato",
             "readOnly": true,
             "queryFunct": "costo_scontato",
@@ -319,10 +396,10 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Costo Totale",
+            "label": "Totale 1° Audit da MD5",
             "key": "costo_totale",
             "queryFunct": "costo_totale",
-            "tooltip": "Corrisponde all'importo della certificazione senza tener conto degli sconti, delle sorveglianze e del rinnovo",
+            "tooltip": "Corrisponde all'importo della certificazione senza tener conto degli sconti sugli importi, delle sorveglianze e del rinnovo",
             "readOnly": true,
             "size": 1.66,
             "isHidden": false,
@@ -336,7 +413,7 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Costo Totale Scontato",
+            "label": "Totale Offerta 1° Audit",
             "key": "costo_totale_scontato",
             "queryFunct": "costo_totale_scontato",
             "tooltip": "Corrisponde all'importo della certificazione senza tener conto delle sorveglianze e del rinnovo al netto degli sconti",
@@ -362,12 +439,14 @@
                         "message": "Sconto massimo 30%",
                         "name": "max",
                         "validator": "Validators.max(30)",
-                        "value": 30
+                        "value": 30,
+                        "translate": "RESOURCES.sconto_massimo_30"
                     },
                     {
                         "message": "Necessario specificare % di sconto",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.necessario_specificare__di_sconto"
                     }
                 ]
             },
@@ -392,12 +471,14 @@
                         "message": "Sconto massimo 20%",
                         "name": "max",
                         "validator": "Validators.max(20)",
-                        "value": 20
+                        "value": 20,
+                        "translate": "RESOURCES.sconto_massimo_20"
                     },
                     {
                         "message": "Necessario specificare % di sconto",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.necessario_specificare__di_sconto"
                     }
                 ]
             },
@@ -422,12 +503,14 @@
                         "message": "Sconto massimo 50%",
                         "name": "max",
                         "validator": "Validators.max(50)",
-                        "value": 50
+                        "value": 50,
+                        "translate": "RESOURCES.sconto_massimo_50"
                     },
                     {
                         "message": "Necessario specificare % di sconto",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.necessario_specificare__di_sconto"
                     }
                 ]
             },
@@ -487,7 +570,7 @@
             "size": 10,
             "isPrimary": false,
             "newLine": true,
-            "translate": "RESOURCES.note"
+            "translate": "RESOURCES.notes"
         },
         {
             "autoGenerate": false,
@@ -498,7 +581,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "label_ripartizione",
-            "label": "Ripartizione Importi",
+            "label": "Ripartizione Importi Audit Di Certificazione",
             "style": {
                 "background_color": "#03a9f4",
                 "font_color": "white",
@@ -512,18 +595,88 @@
             "translate": "RESOURCES.label_ripartizione"
         },
         {
+            "autoGenerate": false,
             "format": {
-                "viewType": "invisible"
+                "viewType": "input",
+                "dataType": "number"
             },
-            "size": 2,
+            "label": "% Acconto",
+            "key": "percentuale_acconto",
+            "readOnly": false,
+            "isHidden": false,
+            "tooltip": "Questa percentuale designa la ripartizione tra acconto e saldo certificazione",
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "% Saldo",
+            "key": "percentuale_saldo",
+            "readOnly": true,
+            "isHidden": false,
+            "sameOrigin": false,
+            "queryFunct": "100-percentuale_acconto",
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Acconto 1° Audit",
+            "key": "acconto",
+            "queryFunct": "acconto",
+            "readOnly": true,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
-            "label": "invisible_14",
-            "key": "invisible_14",
-            "sameOrigin": false,
-            "readOnly": true,
             "newLine": false,
-            "translate": "RESOURCES.invisible_14"
+            "translate": "RESOURCES.acconto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Saldo 1° Audit",
+            "key": "certificazione",
+            "queryFunct": "certificazione",
+            "readOnly": true,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.certificazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_sorv",
+            "label": "Sorveglianza e Rinnovo Giornate/Uomo",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -596,18 +749,90 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "input",
-                "dataType": "number"
+                "viewType": "label",
+                "dataType": "text"
             },
-            "label": "Acconto",
-            "key": "acconto",
-            "queryFunct": "acconto",
-            "readOnly": false,
-            "size": 2,
             "isHidden": false,
             "isPrimary": false,
+            "key": "label_sorv_1",
+            "label": "1° Sorveglianza",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
             "newLine": false,
-            "translate": "RESOURCES.acconto"
+            "size": 2.5,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_sorv_2",
+            "label": "2° Sorveglianza",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "size": 2.5,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_triennio",
+            "label": "Totale Triennio",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "size": 2.5,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_rinn",
+            "label": "Rinnovo",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "size": 2.5,
+            "sameOrigin": false,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -615,15 +840,15 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Saldo Certificazione",
-            "key": "certificazione",
-            "queryFunct": "certificazione",
+            "label": "Importo Giornata/Uomo 1° Sorveglianza",
+            "key": "costo_gu_sorveglianza_1",
             "readOnly": false,
-            "size": 2,
+            "insertUpdateFunct": "coalesce(£costo_gu_sorveglianza_1£, $costo_scontato$)",
             "isHidden": false,
+            "tooltip": "Corrisponde al costo giornata/uomo della prima sorveglianza",
+            "size": 2.5,
             "isPrimary": false,
-            "newLine": false,
-            "translate": "RESOURCES.certificazione"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -631,11 +856,57 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "1° Audit di Sorveglianza",
+            "label": "Importo Giornata/Uomo 2° Sorveglianza",
+            "key": "costo_gu_sorveglianza_2",
+            "readOnly": false,
+            "insertUpdateFunct": "coalesce(£costo_gu_sorveglianza_2£, $costo_scontato$)",
+            "isHidden": false,
+            "tooltip": "Corrisponde al costo giornata/uomo della seconda sorveglianza",
+            "size": 2.5,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_2",
+            "key": "invisible_2",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": false,
+            "translate": "RESOURCES.invisible_2"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Importo Giornata/Uomo Rinnovo",
+            "key": "costo_gu_rinnovo",
+            "readOnly": false,
+            "insertUpdateFunct": "coalesce(£costo_gu_rinnovo£, $costo_scontato$)",
+            "isHidden": false,
+            "tooltip": "Corrisponde al costo giornata/uomo della seconda sorveglianza",
+            "size": 3.33,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Totale 1° Audit di Sorveglianza",
             "key": "sorveglianza_1",
             "queryFunct": "sorveglianza_1",
-            "readOnly": false,
-            "size": 2,
+            "readOnly": true,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
@@ -647,11 +918,11 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "2° Audit di Sorveglianza",
+            "label": "Totale 2° Audit di Sorveglianza",
             "key": "sorveglianza_2",
             "queryFunct": "sorveglianza_2",
-            "readOnly": false,
-            "size": 2,
+            "readOnly": true,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
@@ -663,15 +934,90 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Rinnovo",
-            "key": "rinnovo",
-            "queryFunct": "rinnovo",
-            "readOnly": false,
-            "size": 2,
+            "label": "Totale triennio",
+            "key": "triennio",
+            "queryFunct": "sorveglianza_1 + sorveglianza_2 + costo_totale_scontato",
+            "readOnly": true,
+            "size": 2.5,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Totale Rinnovo",
+            "key": "rinnovo",
+            "queryFunct": "rinnovo",
+            "readOnly": true,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
             "translate": "RESOURCES.rinnovo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Variazione % Rispetto MD5 1° Sorveglianza",
+            "key": "variazione_sorveglianza_1",
+            "queryFunct": "ROUND((1 - ROUND(SUM(costo_gu_sorveglianza_1 * giornate_uomo_sorveglianza) / SUM(costo * giornate_uomo_sorveglianza), 2)) * (-100), 2)",
+            "readOnly": true,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Variazione % Rispetto MD5 2° Sorveglianza",
+            "key": "variazione_sorveglianza_2",
+            "queryFunct": "ROUND((1 - ROUND(SUM(costo_gu_sorveglianza_2 * giornate_uomo_sorveglianza) / SUM(costo * giornate_uomo_sorveglianza), 2)) * (-100), 2)",
+            "readOnly": true,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Variazione % Rispetto MD5 triennio",
+            "key": "variazione_triennio",
+            "queryFunct": "ROUND((1 - ROUND(SUM(costo_scontato * giornate_uomo_scontate + costo_gu_sorveglianza_1 * giornate_uomo_sorveglianza + costo_gu_sorveglianza_2 * giornate_uomo_sorveglianza) / SUM(costo * giornate_uomo_scontate + costo * giornate_uomo_sorveglianza + costo * giornate_uomo_sorveglianza), 3)) * (-100), 2)",
+            "readOnly": true,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Variazione % Rispetto MD5 Rinnovo",
+            "key": "variazione_rinnovo",
+            "queryFunct": "ROUND((1 - ROUND(SUM(costo_gu_rinnovo * giornate_uomo_rinnovo) / SUM(costo * giornate_uomo_rinnovo), 2)) * (-100), 2)",
+            "readOnly": true,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
         }
     ],
     "table_keys": [
@@ -699,11 +1045,21 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": "$Q{ishiddencontratto}",
             "isPrimary": true,
             "key": "id_contratto",
             "label": "id_contratto",
             "translate": "RESOURCES.id_contract"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": "$Q{ishiddencontratto}",
+            "isPrimary": true,
+            "sameOrigin": false,
+            "key": "id_cliente",
+            "label": "Cliente"
         },
         {
             "format": {
@@ -723,23 +1079,7 @@
             "isHidden": false,
             "isPrimary": false,
             "queryFunct": "entrasp.articoli_titolo(codice_azienda, id_articolo)",
-            "width": "35%",
-            "isInputButton": true,
-            "buttonAction": {
-                "target": "articoli",
-                "viewType": "form",
-                "action": "navigate",
-                "keymap": [
-                    {
-                        "source": "id_articolo",
-                        "destination": "id_articolo"
-                    },
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    }
-                ]
-            },
+            "width": "25%",
             "key": "tit_articolo",
             "label": "Descrizione",
             "translate": "RESOURCES.description"
@@ -775,36 +1115,43 @@
             "isPrimary": false,
             "key": "descr_stato",
             "width": "15%",
-            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato)",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_PREVENTIVI', stato)",
             "label": "Stato",
             "translate": "RESOURCES.status",
             "style": [
                 {
-                    "value": "Cessato",
+                    "value": "Firmato",
                     "font_color": "PaleGreen",
                     "font_weight": "500",
                     "background_color": "Green",
                     "text_align": "center"
                 },
                 {
-                    "value": "In Scadenza",
-                    "font_color": "MistyRose",
+                    "value": "Da Approvare",
+                    "font_color": "Black",
                     "font_weight": "500",
-                    "background_color": "MediumPurple",
+                    "background_color": "#e6e600",
                     "text_align": "center"
                 },
                 {
-                    "value": "In attesa di firma",
-                    "font_color": "MistyRose",
+                    "value": "Da Fare",
+                    "font_color": "Black",
                     "font_weight": "500",
-                    "background_color": "MediumPurple",
+                    "background_color": "#dad4d4",
                     "text_align": "center"
                 },
                 {
-                    "value": "Attivo",
+                    "value": "Da Inviare",
                     "font_color": "white",
                     "font_weight": "500",
-                    "background_color": "royalblue",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non Firmato",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
                     "text_align": "center"
                 }
             ],

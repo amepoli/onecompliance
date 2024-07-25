@@ -305,7 +305,8 @@
                 }
             ],
             "label": "Ore per azienda",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.ore_per_azienda"
         },
         {
             "entryKey": "compiti_sub_of_user",
@@ -316,7 +317,8 @@
                 }
             ],
             "label": "Compiti gestiti",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.compiti_gestiti"
         },
         {
             "entryKey": "consuntivazioni_consultant_sub_of_user",
@@ -327,7 +329,8 @@
                 }
             ],
             "label": "Time report",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.time_report"
         },
         {
             "entryKey": "tr_anomali_sub_of_user",
@@ -338,7 +341,8 @@
                 }
             ],
             "label": "Giorni anomali",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.giorni_anomali"
         },
         {
             "entryKey": "tr_incomplete_sub_of_user",
@@ -349,7 +353,8 @@
                 }
             ],
             "label": "Giorni incompleti",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.giorni_incompleti"
         },
         {
             "entryKey": "consuntivazioni_consultant_anomale_user",
@@ -360,7 +365,8 @@
                 }
             ],
             "label": "Consuntivazioni anomale",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.consuntivazioni_anomale"
         },
         {
             "entryKey": "consuntivazioni_sovrapposte_sub_of_user",
@@ -371,7 +377,8 @@
                 }
             ],
             "label": "Consuntivazioni sovrapposte",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.consuntivazioni_sovrapposte"
         }
     ],
     "querySuffixes": {
@@ -382,23 +389,28 @@
         "tableQueries": [
             {
                 "queryString": "select codice_azienda, id_cons, date_time_begin, date_time_end, durata from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part where an.dynamo_user='€global_username€'",
-                "label": "Il mio time report"
+                "label": "Il mio time report",
+                "translate": "RESOURCES.il_mio_time_report"
             },
             {
                 "queryString": "select csn.codice_azienda, an.dynamo_user, entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica) as nome_cognome, extract(year from data_intervento) as anno, extract(month from data_intervento) as mese, round(sum(csn.durata)/60, 2) as ore, round(sum(csn.durata/480), 2) as giorni from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and az.codice_part=an.codice_part where csn.durata>0 and data_intervento between '2022-01-01' and '2100-12-31' group by entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica), csn.codice_azienda, an.dynamo_user, extract(year from data_intervento), extract(month from data_intervento) order by csn.codice_azienda, extract(year from data_intervento), extract(month from data_intervento), an.dynamo_user",
-                "label": "Per user, mese e azienda"
+                "label": "Per user, mese e azienda",
+                "translate": "RESOURCES.per_user_mese_e_azienda"
             },
             {
                 "queryString": "select coalesce(entrasp.anagrafiche_cognnome(cmp.codice_part, cmp.id_cliente), csn.codice_azienda) as cliente, csn.codice_azienda, an.dynamo_user, entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica) as nome_cognome, extract(year from data_intervento) as anno, extract(month from data_intervento) as mese, round(sum(csn.durata)/60, 2) as ore, round(sum(csn.durata/480), 2) as giorni from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and az.codice_part=an.codice_part left join entrasp.compiti cmp on csn.codice_azienda=cmp.codice_azienda and csn.codice_compito=cmp.codice_compito where csn.durata>0 and data_intervento between '2022-01-01' and '2100-12-31' group by entrasp.anagrafiche_cognnome(an.codice_part, an.id_anagrafica), csn.codice_azienda, an.dynamo_user, extract(year from data_intervento), extract(month from data_intervento), cmp.codice_part, cmp.id_cliente order by csn.codice_azienda, extract(year from data_intervento), extract(month from data_intervento), an.dynamo_user",
-                "label": "Per user, mese, azienda, anagr_compito"
+                "label": "Per user, mese, azienda, anagr_compito",
+                "translate": "RESOURCES.per_user_mese_azienda_anagr_compito"
             },
             {
                 "queryString": "select em.dynamo_user as Utente, em.nome||' '||em.cognome as Denominazione, current_date - serie.i * interval '1 day' AS data_riferimento, sum(em.minuti_richiesti_giornalieri) as minuti_richiesti, entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE)*480 as minuti_rendicontati, greatest(sum(em.minuti_richiesti_giornalieri)-entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE)*480,0) as minuti_mancanti from entrasp.employers em, (select generate_series(0, 10) as i) serie where em.codice_azienda in(select em2.codice_azienda from entrasp.employers em2 where em2.dynamo_user='€global_username€') and extract (DOW from (current_date - serie.i * interval '1 day')::DATE) not in(0,6) group by em.dynamo_user, em.nome||' '||em.cognome, current_date - serie.i * interval '1 day', entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE) having entrasp.consuntivazioni_time_consumed_azienda(codiceaziendaerogante => codice_azienda , dynamouser=> dynamo_user, datainizio=>(current_date - serie.i * interval '1 day')::DATE, datafine => (current_date - serie.i * interval '1 day')::DATE)*480 < sum(em.minuti_richiesti_giornalieri) order by em.dynamo_user, current_date - serie.i * interval '1 day';",
-                "label": "Giornate anomale per collaboratore"
+                "label": "Giornate anomale per collaboratore",
+                "translate": "RESOURCES.giornate_anomale_per_collaboratore"
             },
             {
                 "queryString": "select Utente, round(sum(minuti_mancanti)/sum(minuti_richiesti),2) as indice_inefficienza_tr from entrasp.consuntivo_ore_per_utente where Utente in (select em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in(select codice_azienda from entrasp.employers em3 where dynamo_user='€global_username€')) group by Utente;",
-                "label": "Indice incompletezza time report per collaboratore"
+                "label": "Indice incompletezza time report per collaboratore",
+                "translate": "RESOURCES.indice_incompletezza_time_report_per_collaboratore"
             }
         ]
     },

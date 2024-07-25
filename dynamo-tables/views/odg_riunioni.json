@@ -6,7 +6,11 @@
     "label": "Ordini del giorno",
     "addElementSettings": {
         "labelQuickAdd": "Nuovo Punto",
-        "navigateOnSuccess": false
+        "navigateOnSuccess": false,
+        "translateQuickAdd": "RESOURCES.nuovo_punto"
+    },
+    "define": {
+        "is_hidden_id_riunione": "false"
     },
     "form_keys": [
         {
@@ -46,7 +50,7 @@
                 "viewType": "combobox",
                 "comboQuery": "select id_riunione as id, id_riunione||'-'||oggetto as name from entrasp.riunioni where codice_azienda = $codice_azienda$"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_id_riunione}",
             "isPrimary": true,
             "key": "id_riunione",
             "label": "Riunione",
@@ -80,7 +84,8 @@
                     {
                         "message": "Inserire una numerazione!",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_una_numerazione"
                     }
                 ]
             },
@@ -119,7 +124,8 @@
                     {
                         "message": "Breve descrizione necessaria",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.breve_descrizione_necessaria"
                     }
                 ]
             },
@@ -168,7 +174,8 @@
             },
             "label": "Parole Chiavi",
             "newLine": false,
-            "queryCond": "UPPER (annotazioni) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+            "queryCond": "UPPER (annotazioni) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'",
+            "translate": "RESOURCES.parole_chiavi"
         },
         {
             "fieldName": "id_tipo_segnalazione_s",
@@ -179,7 +186,8 @@
             },
             "label": "ID Tipo Segnal.",
             "newLine": false,
-            "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$"
+            "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$",
+            "translate": "RESOURCES.id_tipo_segnal"
         },
         {
             "fieldName": "no_subject",
@@ -190,7 +198,8 @@
             "label": "Non classificati",
             "newLine": false,
             "size": 1,
-            "queryCond": "id_argomento is null"
+            "queryCond": "id_argomento is null",
+            "translate": "RESOURCES.non_classificati"
         }
     ],
     "subTables": [
@@ -211,7 +220,8 @@
                     "son": "id_odg"
                 }
             ],
-            "label": "Documenti Allegati"
+            "label": "Documenti Allegati",
+            "translate": "RESOURCES.documenti_allegati"
         },
         {
             "entryKey": "odg_associated_at_odg",
@@ -226,7 +236,8 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Trattazioni del Medesimo Argomento"
+            "label": "Trattazioni del Medesimo Argomento",
+            "translate": "RESOURCES.trattazioni_del_medesimo_argomento"
         },
         {
             "entryKey": "odg_sub_of_odg",
@@ -244,7 +255,8 @@
                     "son": "id_odg_parent"
                 }
             ],
-            "label": "Sotto Ordini"
+            "label": "Sotto Ordini",
+            "translate": "RESOURCES.sotto_ordini"
         },
         {
             "entryKey": "consuntivazioni_sub_of_riunioni",
@@ -262,7 +274,8 @@
                     "son": "id_odg"
                 }
             ],
-            "label": "Aggiornamenti(mail, tr)"
+            "label": "Aggiornamenti(mail, tr)",
+            "translate": "RESOURCES.aggiornamentimail_tr"
         }
     ],
     "table_keys": [
@@ -433,5 +446,6 @@
             "viewType": "table",
             "tableActionType": "add"
         }
-    ]
+    ],
+    "translate": "RESOURCES.ordini_del_giorno"
 }
