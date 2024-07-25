@@ -1,0 +1,67 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_contratti_associa_piano",
+    "origin": "entrasp.contratti",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto_ass$, $id_sondaggio$, entrasp.evaluate_given_field_null('id_fase_parent','$id_fase_parent$'))"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select true as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "postProcessing",
+            "queryString": "select entrasp.aggiorna_codici_progetto($codice_azienda$, $id_progetto_ass$);"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.company_code",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_contratto",
+            "newLine": false,
+            "readOnly": true,
+            "label": "id_contratto",
+            "translate": "RESOURCES.id_survey"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_templ_riunione AS id,CONCAT (id_templ_riunione, ' - ', oggetto) AS name FROM entrasp.template_riunioni order by id_templ_riunione;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_riunioni_templ",
+            "label": "Template Piano",
+            "newLine": false,
+            "readOnly": false,
+            "sameOrigin": false
+        }
+    ]
+}

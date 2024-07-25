@@ -114,23 +114,16 @@
                 "viewType": "menu",
                 "menuOptions": [
                     {
-                        "icon": "stacked_line_chart",
-                        "label": "Crea progetto",
-                        "outputEventName": "progetto_create",
-                        "translate": "RESOURCES.crea_progetto"
-                    },
-                    {
-                        "icon": "stacked_line_chart",
-                        "label": "Duplica contratto",
-                        "outputEventName": "contratto_duplica",
-                        "translate": "RESOURCES.duplica_contratto"
-                    },
-                    {
                         "icon": "lock",
                         "label": "Chiudi Contratto",
                         "outputEventName": "close_contract",
                         "tooltip": "E' possibile chiudere il contratto solo se è definita la data cessazione",
                         "translate": "RESOURCES.chiudi_contratto"
+                    },
+                    {
+                        "icon": "link",
+                        "label": "Associa Piano",
+                        "outputEventName": "associa_piano"
                     }
                 ]
             },
@@ -146,14 +139,6 @@
             "size": 0.6,
             "inputEvents": [
                 {
-                    "eventName": "progetto_create",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "query",
-                    "queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
-                    "outputEventWhenComplete": "navigate_to_new_progetto"
-                },
-                {
                     "eventName": "close_contract",
                     "actionType": "query",
                     "condition": "none",
@@ -161,6 +146,14 @@
                     "queryFunct": "UPDATE entrasp.contratti SET data_cessazione=coalesce('£data_cessazione£',current_date), stato='C' WHERE id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$ RETURNING (SELECT case when count(*) >  0 then 'true' else 'false' end FROM entrasp.contratti cnt INNER JOIN entrasp.registrazioni_rapporti_aui rra  ON cnt.numero_contratto=trim(rra.identificativo_rapporto) and cnt.codice_azienda=rra.codice_azienda WHERE cnt.id_contratto=$id_contratto$ and cnt.codice_azienda=$codice_azienda$)",
                     "successMessage": "Contratto chiuso",
                     "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "associa_piano",
+                    "actionType": "dialog",
+                    "customDialogEntryName": "dialog_contratti_associa_piano",
+                    "customDialogTitle": "Associa Piano",
+                    "condition": "none",
+                    "values": []
                 }
             ]
         },
