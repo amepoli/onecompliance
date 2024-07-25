@@ -18,7 +18,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select id_riunione, codice_protocollo, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, data_riunione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.riunioni where codice_azienda=$codice_azienda$"
+            "queryString": "select id_riunione, codice_protocollo, oggetto, entrasp.argomenti_descr(id_argomento) as descr_riunione, (€global_id_anagrafiche€) as global_id_anagrafiche, data_riunione, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, codice_azienda,  entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.riunioni where codice_azienda=$codice_azienda$"
         },
         {
             "operation": "update",
@@ -588,6 +588,15 @@
         },
         {
             "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "global_id_anagrafiche",
+            "label": "global_id_anagrafiche"
+        },
+        {
+            "format": {
                 "dataType": "number"
             },
             "isHidden": false,
@@ -606,7 +615,7 @@
                 "target": "riunioni",
                 "viewType": "form",
                 "action": "query",
-                "query": "select entrasp.business_object_play(('£user_companies£')::text, 'riunioni', '£id_riunione£', '£codice_azienda£')",
+                "query": "select entrasp.business_object_play(('£global_id_anagrafiche£')::text, 'riunioni', £id_riunione£, '£codice_azienda£'::varchar)",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -615,6 +624,10 @@
                     {
                         "source": "id_riunione",
                         "destination": "id_riunione"
+                    },
+                    {
+                        "source": "global_id_anagrafiche",
+                        "destination": "global_id_anagrafiche"
                     }
                 ],
                 "confirmAction": false,
