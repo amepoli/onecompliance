@@ -15,10 +15,10 @@ def update_first_file_with_missing_keys(file1_path, file2_path):
             lines1 = resources_match.group(1).strip().splitlines()
             keys1 = {}
             for line in lines1:
-                match = re.match(r'(\s*)(\w+):\s*"([^"]*)",?', line)
+                match = re.match(r'\s*(\w+):\s*"([^"]*)",?', line)
                 if match:
-                    indent, key, value = match.groups()
-                    keys1[key] = (value, indent)
+                    key, value = match.groups()
+                    keys1[key] = value
         else:
             keys1 = {}
 
@@ -37,7 +37,7 @@ def update_first_file_with_missing_keys(file1_path, file2_path):
     # Unisci le chiavi del primo file con le chiavi mancanti
     updated_keys = keys1.copy()
     for key, value in missing_keys.items():
-        updated_keys[key] = (value, '    ')  # 4 spazi per nuove chiavi
+        updated_keys[key] = value
 
     # Ordina le chiavi alfabeticamente ignorando gli spazi iniziali
     sorted_keys = sorted(updated_keys.keys(), key=lambda k: k.strip().lower())
@@ -45,8 +45,8 @@ def update_first_file_with_missing_keys(file1_path, file2_path):
     # Costruisci il contenuto aggiornato di RESOURCES
     resources_content = "RESOURCES: {\n"
     for key in sorted_keys:
-        value, indent = updated_keys[key]
-        resources_content += f'{indent}{key}: "{value}",\n'
+        value = updated_keys[key]
+        resources_content += f'    {key}: "{value}",\n'
     resources_content += "}"
 
     # Sostituisci il contenuto di RESOURCES nel primo file di testo
@@ -56,21 +56,21 @@ def update_first_file_with_missing_keys(file1_path, file2_path):
     with open(file1_path, 'w') as file1:
         file1.write(new_content)
 
-    # Stampa le chiavi che non sono state trascritte
-    for key in keys2.keys():
-        if key in keys1:
-            print(f"Key '{key}' not added because it is already present.")
-        elif key not in updated_keys:
-            print(f"Key '{key}' not added due to an unknown issue.")
+    # Conta e stampa le chiavi aggiunte
+    added_keys_count = len(missing_keys)
+    if added_keys_count > 0:
+        for key in missing_keys.keys():
+            print(f"Added key '{key}'")
+    print(f"Total translations added: {added_keys_count}")
 
 def copy_txt_to_ts(txt_file_path, ts_file_path):
     # Copia il contenuto del file di testo nel file TypeScript
     shutil.copyfile(txt_file_path, ts_file_path)
 
 # Percorsi dei file di testo e TypeScript
-ts_file_path = '/home/alpoli/Developement/onecompliance/src/app/oc/i18n/it.ts'  # Sostituire con il percorso reale del file TypeScript
-txt_file1_path = '/home/alpoli/Developement/onecompliance/python/it_copy.txt'  # Percorso del primo file di testo
-txt_file2_path = '/home/alpoli/Developement/onecompliance/python/file_new_translate.txt'  # Percorso del secondo file di testo
+ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Sostituire con il percorso reale del file TypeScript
+txt_file1_path = '/home/gcrozzolin/Development/onecompliance/python/it_copy.txt'  # Percorso del primo file di testo
+txt_file2_path = '/home/gcrozzolin/Development/onecompliance/python/new_translate.txt'  # Percorso del secondo file di testo
 
 # Copia il contenuto del file TypeScript nel primo file di testo
 copy_ts_to_txt(ts_file_path, txt_file1_path)

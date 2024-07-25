@@ -38,7 +38,7 @@ def process_json_files(directory, log_file):
         if isinstance(obj, dict):
             # Salta le modifiche sull'oggetto se contiene "icon": "more_vert"
             if obj.get('icon') == 'more_vert':
-                print(f"Skipping object with 'icon': 'more_vert' at path {path}")
+                pass  # Ignora gli oggetti con "icon": "more_vert"
             else:
                 # Aggiungi la chiave translate se manca
                 if 'label' in obj and 'translate' not in obj and isinstance(obj['label'], str):
@@ -46,7 +46,7 @@ def process_json_files(directory, log_file):
                     if formatted_label:  # Assicurati che la chiave non sia vuota
                         translate_key = f"RESOURCES.{formatted_label}"
                         obj['translate'] = translate_key
-                        added_keys.append(f'{formatted_label}: "{obj["label"]}",')
+                        added_keys.append((formatted_label, obj['label']))
                         modified = True
                         counter += 1  # Incrementa il contatore
                 if 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
@@ -54,7 +54,7 @@ def process_json_files(directory, log_file):
                     if formatted_label:  # Assicurati che la chiave non sia vuota
                         translate_key = f"RESOURCES.{formatted_label}"
                         obj['translate'] = translate_key
-                        added_keys.append(f'{formatted_label}: "{obj["message"]}",')
+                        added_keys.append((formatted_label, obj['message']))
                         modified = True
                         counter += 1  # Incrementa il contatore
                 if 'labelAdd' in obj and 'translateAdd' not in obj and isinstance(obj['labelAdd'], str):
@@ -62,7 +62,7 @@ def process_json_files(directory, log_file):
                     if formatted_label:  # Assicurati che la chiave non sia vuota
                         translate_key = f"RESOURCES.{formatted_label}"
                         obj['translateAdd'] = translate_key
-                        added_keys.append(f'{formatted_label}: "{obj["labelAdd"]}",')
+                        added_keys.append((formatted_label, obj['labelAdd']))
                         modified = True
                         counter += 1  # Incrementa il contatore
                 if 'labelQuickAdd' in obj and 'translateQuickAdd' not in obj and isinstance(obj['labelQuickAdd'], str):
@@ -70,7 +70,7 @@ def process_json_files(directory, log_file):
                     if formatted_label:  # Assicurati che la chiave non sia vuota
                         translate_key = f"RESOURCES.{formatted_label}"
                         obj['translateQuickAdd'] = translate_key
-                        added_keys.append(f'{formatted_label}: "{obj["labelQuickAdd"]}",')
+                        added_keys.append((formatted_label, obj['labelQuickAdd']))
                         modified = True
                         counter += 1  # Incrementa il contatore
 
@@ -102,21 +102,18 @@ def process_json_files(directory, log_file):
                 if modified:
                     with open(filepath, 'w', encoding='utf-8') as file:
                         json.dump(data, file, ensure_ascii=False, indent=4)
-                    print(f"Modified and saved file: {filename}")  # Debug print
-                else:
-                    print(f"No modifications made to file: {filename}")  # Debug print
 
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 print(f"Error processing file {filename}: {e}")
 
     # Scrivi le chiavi aggiunte nel file di log
     with open(log_file, 'w', encoding='utf-8') as log:
-        for key in added_keys:
-            log.write(f"{key}\n")
+        for key, value in added_keys:
+            log.write(f'{key}: "{value}",\n')
 
-    print("Translation aggiunte: " + str(counter))
+    print(f"Total translations added: {counter}")
 
 # Esempio di utilizzo
-directory_path = '/home/alpoli/Developement/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
-log_file_path = '/home/alpoli/Developement/onecompliance/python/file_new_translate.txt'  # Sostituisci con il percorso del file di log
+directory_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory
+log_file_path = '/home/gcrozzolin/Development/onecompliance/python/new_translate.txt'  # Sostituisci con il percorso del file di log
 process_json_files(directory_path, log_file_path)
