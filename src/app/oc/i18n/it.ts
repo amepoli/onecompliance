@@ -1489,6 +1489,7 @@ export const locale = {
     label_controllo_2: "2SA",
     label_controllo_3: "RA",
     label_controllo_4: "1SA",
+    label_fatturazione: "Fatturazione",
     label_fatturazione_1: "Dettagli Commessa",
     label_fatturazione_2: "Settore IAF",
     label_fatturazione_3: "Preventivo",
