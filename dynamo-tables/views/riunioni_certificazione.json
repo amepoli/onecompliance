@@ -62,7 +62,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "datetime",
+                "dataType": "date",
                 "viewType": "input",
                 "validations": [
                     {
@@ -77,10 +77,54 @@
             "isPrimary": false,
             "size": 1.5,
             "key": "data_riunione",
-            "label": "Data e ora riunione",
+            "label": "Data verifica",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_contratto",
+            "newLine": false,
+            "readOnly": true,
+            "label": "DCT"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES ('IT','IT'), ('UK','UK'), ('UAE','UAE')) AS t1(id, name);",
+                "options": [],
+                "dataType": "text",
+                "value": null
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_nazione",
+            "label": "Nazione",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.data_riunione"
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_protocollo",
+            "queryFunct": "Select codice_nazione::varchar||'_'||id_contratto::numeric||'_'||CAST(EXTRACT(YEAR FROM current_date) AS varchar)",
+            "label": "Protocollo N.",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.codice_protocollo"
         },
         {
             "autoGenerate": false,
@@ -99,11 +143,86 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "oggetto",
-            "label": "Oggetto",
+            "label": "Descrizione Piano",
+            "newLine": false,
+            "readOnly": false,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3405 order by descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Tipo Verifica",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Organo/Comitato/Centro Gestionale",
             "newLine": true,
             "readOnly": false,
-            "size": 8,
-            "translate": "RESOURCES.oggetto"
+            "translate": "RESOURCES.descr_centro_gest",
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_presidente",
+            "label": "RGVI",
+            "size": 3.3,
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_segretario",
+            "size": 3.3,
+            "label": "AVI",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_esperto",
+            "size": 3.4,
+            "label": "ESP/OSS",
+            "newLine": true,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -123,9 +242,24 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "comboQuery": "SELECT distinct id_argomento AS id, descrizione_breve AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father =52266 order by descrizione_breve;",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_norma",
+            "size": 2,
+            "label": "Norma",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
             "isPrimary": false,
             "key": "duplica_riunione",
             "label": "Duplica Riunione",
@@ -141,7 +275,6 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.5,
             "translate": "RESOURCES.duplica_riunione"
         }
     ],
