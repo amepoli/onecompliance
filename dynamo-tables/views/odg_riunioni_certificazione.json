@@ -5,9 +5,9 @@
     "entryKey": "odg_riunioni_certificazione",
     "label": "Ordini del giorno",
     "addElementSettings": {
-        "labelQuickAdd": "Nuovo Punto",
+        "labelAdd": "Nuovo Punto",
         "navigateOnSuccess": false,
-        "translateQuickAdd": "RESOURCES.nuovo_punto"
+        "translateAdd": "RESOURCES.nuovo_punto"
     },
     "form_keys": [
         {
@@ -130,8 +130,11 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
-                "viewType": "input"
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES (8.00,8.00), (9.00,9.00), (10.00,10.00), (11.00,11.00), (12.00,12.00), (13.00,13.00), (14.00,14.00), (15.00,15.00), (16.00,16.00), (17.00,17.00), (18.00,18.00)) AS t1(id, name);",
+                "options": [],
+                "dataType": "text",
+                "value": null
             },
             "isHidden": false,
             "isPrimary": false,
@@ -180,7 +183,7 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "SELECT 1"
+                "comboQuery": "select distinct unnest (ac.id_argomento_settore) as id, entrasp.argomenti_descr_breve_no_id(unnest (ac.id_argomento_settore)) as name from entrasp.odg_riunioni odg inner join entrasp.riunioni ri on  odg.codice_azienda=ri.codice_azienda and odg.id_riunione=ri.id_riunione inner join entrasp.contratti cnt on ri.codice_azienda=cnt.codice_azienda and ri.id_contratto=cnt.id_contratto inner join entrasp.articoli_contratti ac on cnt.codice_azienda=ac.codice_azienda and cnt.id_contratto=ac.id_contratto where odg.codice_azienda=$codice_azienda$ and odg.id_riunione=$id_riunione$"
             },
             "label": "Settore",
             "key": "id_argomento_settore",
@@ -227,7 +230,7 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo='DIP'"
+                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = 'ASACERT'), ans.id_anagrafica) AS name FROM entrasp.odg_riunioni odg INNER JOIN entrasp.riunioni ri ON odg.codice_azienda = ri.codice_azienda AND odg.id_riunione = ri.id_riunione INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where odg.codice_azienda=$codice_azienda$ and odg.id_riunione=$id_riunione$"
             },
             "label": "Auditor",
             "key": "id_anagrafica",
@@ -542,9 +545,20 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "data_riunione",
+            "label": "Data",
+            "width": "5%",
+            "translate": "RESOURCES.ora_inizio"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "ora_inizio",
             "label": "Ora Inizio",
-            "width": "8%",
+            "width": "7%",
             "translate": "RESOURCES.ora_inizio"
         },
         {
@@ -555,7 +569,7 @@
             "isPrimary": false,
             "key": "ora_fine",
             "label": "Ora Fine",
-            "width": "8%",
+            "width": "7%",
             "translate": "RESOURCES.ora_fine"
         },
         {
@@ -657,7 +671,7 @@
         },
         {
             "viewType": "table",
-            "tableActionType": "add"
+            "tableActionType": "quick-add"
         }
     ],
     "translate": "RESOURCES.ordini_del_giorno"

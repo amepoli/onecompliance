@@ -12,7 +12,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "select distinct an.id_anagrafica as id, an.id_anagrafica||' - '||an.cognome||' '||an.nome as name from entrasp.anagrafiche_id an inner join entrasp.anagrafiche_competenze anco on an.codice_part=anco.codice_part and an.id_anagrafica=anco.id_anagrafica inner join entrasp.articoli_contratti ac on anco.codice_part=(select codice_part from entrasp.aziende where codice_azienda=ac.codice_azienda) and anco.id_argomento_competenza=ac.id_argomento_tipo_norma and anco.id_argomento_iaf=any (ac.id_argomento_settore) inner join entrasp.contratti cnt on ac.codice_azienda=cnt.codice_azienda and ac.id_contratto=cnt.id_contratto inner join entrasp.sondaggi snd on cnt.codice_azienda=snd.codice_azienda and cnt.id_contratto=snd.id_contratto where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$;",
+                "comboQuery": "select distinct an.id_anagrafica as id, an.cognome||' '||an.nome||' ('||entrasp.competenze_anagrafica_da_sondaggio($codice_azienda$, $id_sondaggio$, an.id_anagrafica)||')' as name from entrasp.anagrafiche_id an inner join entrasp.anagrafiche_competenze anco on an.codice_part=anco.codice_part and an.id_anagrafica=anco.id_anagrafica inner join entrasp.articoli_contratti ac on anco.codice_part=(select codice_part from entrasp.aziende where codice_azienda=ac.codice_azienda) and anco.id_argomento_competenza=ac.id_argomento_tipo_norma and anco.id_argomento_iaf=any (ac.id_argomento_settore) inner join entrasp.contratti cnt on ac.codice_azienda=cnt.codice_azienda and ac.id_contratto=cnt.id_contratto inner join entrasp.sondaggi snd on cnt.codice_azienda=snd.codice_azienda and cnt.id_contratto=snd.id_contratto where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$;",
                 "options": [],
                 "dataType": "text",
                 "viewType": "combobox"
@@ -22,6 +22,7 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": true,
+            "size": 8,
             "newLine": false,
             "translate": "RESOURCES.id_anagrafica"
         },
@@ -38,6 +39,7 @@
             "key": "id_argomento_liv_competenza",
             "label": "Livello",
             "readOnly": false,
+            "size": 2,
             "newLine": false,
             "translate": "RESOURCES.livello"
         },
