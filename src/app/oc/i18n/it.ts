@@ -2399,6 +2399,7 @@ export const locale = {
     senza_profilazioni: "Senza Profilazioni",
     senza_profilazioni_aml: "Senza Profilazioni Aml",
     senza_profilazioni_attive: "Senza Profilazioni Attive",
+    senza_questionario_associato: "Senza Questionario Associato",
     senza_somministrazione: "Senza Somministrazione",
     senza_tag: "Senza Tag",
     senza_tipocontrollo: "Senza Tipocontrollo",
