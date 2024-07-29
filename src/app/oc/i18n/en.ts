@@ -2099,6 +2099,7 @@ export const locale = {
     procedure_without_presidio: "Without Control",
     procedure_without_rischi: "Without Risks",
     processi: "Process",
+    processi_att_audit: "Processes/Audit Activity",
     procom: "Common Code",
     produci_contratto_e_progetto: "Produce contract and project",
     profilazioni_associate: "Associated prophylactions",
