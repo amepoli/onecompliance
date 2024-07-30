@@ -13,7 +13,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT (SELECT true) AS delete_procedure_aziendali, id_riunione, codice_azienda, data_riunione, (ora_inizio::VARCHAR || '-' || ora_fine::VARCHAR) AS da_a, string_agg(DISTINCT id_odg::varchar, '; ') AS id__odg, string_agg(DISTINCT id_argomento::varchar, '; ') AS id__argomento, string_agg(DISTINCT id_odg_parent::varchar, '; ') AS id__odg_parent, string_agg(DISTINCT ordinamento_odg::varchar, '; ') AS ordinamento__odg, string_agg(DISTINCT entrasp.argomenti_descr_breve_no_id(id_argomento_settore), '; ') AS settore, string_agg(distinct cantiere::varchar,'; ') as cantiere, string_agg(DISTINCT entrasp.argomenti_descr_breve_no_num(id_argomento_controllo), '; ') AS id_argomento_controllo, string_agg(DISTINCT entrasp.riunioni_descr(id_riunione, codice_azienda), '; ') AS riunione_descr, string_agg(DISTINCT entrasp.anagrafiche_cognnome('ASACERT', id_anagrafica), '; ') AS id_anagrafica, string_agg(DISTINCT entrasp.argomenti_array(ARRAY[id_argomento_funzione]), '; ') AS id_argomento_funzione FROM entrasp.odg_riunioni WHERE codice_azienda = $codice_azienda$ AND id_riunione = $id_riunione$ GROUP BY id_riunione, codice_azienda, data_riunione, da_a, ora_inizio, ora_fine, cantiere;"
+            "queryString": "SELECT id_riunione, codice_azienda, data_riunione, (ora_inizio::VARCHAR || '-' || ora_fine::VARCHAR) AS da_a, string_agg(DISTINCT id_odg::varchar, '; ') AS id__odg, string_agg(DISTINCT id_argomento::varchar, '; ') AS id__argomento, string_agg(DISTINCT id_odg_parent::varchar, '; ') AS id__odg_parent, string_agg(DISTINCT ordinamento_odg::varchar, '; ') AS ordinamento__odg, string_agg(distinct titolo::varchar, '; ') as titolo, string_agg(DISTINCT entrasp.argomenti_descr_breve_no_id(id_argomento_settore), '; ') AS settore, string_agg(distinct cantiere::varchar,'; ') as cantiere, string_agg(DISTINCT entrasp.argomenti_descr_breve_no_num(id_argomento_controllo), '; ') AS id_argomento_controllo, string_agg(DISTINCT entrasp.riunioni_descr(id_riunione, codice_azienda), '; ') AS riunione_descr, string_agg(DISTINCT entrasp.anagrafiche_cognnome('ASACERT', id_anagrafica), '; ') AS id_anagrafica, string_agg(DISTINCT entrasp.argomenti_array(ARRAY[id_argomento_funzione]), '; ') AS id_argomento_funzione FROM entrasp.odg_riunioni WHERE codice_azienda = $codice_azienda$ AND id_riunione = $id_riunione$ GROUP BY id_riunione, codice_azienda, data_riunione, da_a, ora_inizio, ora_fine, cantiere;"
         }
     ],
     "form_keys": [
@@ -442,51 +442,6 @@
         }
     ],
     "table_keys": [
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "4%",
-            "queryFunct": "select true",
-            "key": "delete_procedure_aziendali",
-            "label": "",
-            "style": [
-                {
-                    "button_icon": "delete",
-                    "value": "*"
-                }
-            ],
-            "isButton": true,
-            "buttonAction": {
-                "target": "odg_riunioni",
-                "viewType": "form",
-                "query": "delete from entrasp.odg_riunioni where codice_azienda='£codice_azienda£' and id_riunione=£id_riunione£ and id_odg=£id_odg£",
-                "action": "query",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_riunione",
-                        "destination": "id_riunione"
-                    },
-                    {
-                        "source": "id_odg",
-                        "destination": "id_odg"
-                    }
-                ],
-                "confirmAction": true,
-                "confirmMessage": {
-                    "text": "Sei sicuro di voler cancellare il punto all'ordine del giorno?",
-                    "title": "Cancellazione ordine del giorno"
-                },
-                "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.delete_procedure_aziendali"
-        },
         {
             "format": {
                 "dataType": "number"
