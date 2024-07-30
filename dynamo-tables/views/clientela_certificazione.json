@@ -79,30 +79,6 @@
             "translate": "RESOURCES.nomecognomeragione_sociale"
         },
         {
-            "fieldName": "id_strumento_fin",
-            "format": {
-                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an inner join entrasp.contratti cnt on an.id_anagrafica=cnt.id_strumento_finanziario and an.codice_part=cnt.codice_part WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica);",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Fondo/Strumento/Finanziario",
-            "newLine": false,
-            "queryCond": "an.id_anagrafica in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$id_strumento_fin$ and id_cliente is not null)",
-            "translate": "RESOURCES.fondostrumentofinanziario"
-        },
-        {
-            "fieldName": "not_id_strumento_fin",
-            "format": {
-                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an inner join entrasp.contratti cnt on an.id_anagrafica=cnt.id_strumento_finanziario and an.codice_part=cnt.codice_part WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica);",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Non con Fondo/Strumento/Finanziario",
-            "newLine": true,
-            "queryCond": "an.id_anagrafica not in(select id_cliente from entrasp.contratti where id_strumento_finanziario=$not_id_strumento_fin$ and id_cliente is not null)",
-            "translate": "RESOURCES.non_con_fondostrumentofinanziario"
-        },
-        {
             "fieldName": "codice_s",
             "format": {
                 "dataType": "text",
@@ -210,42 +186,6 @@
             "translate": "RESOURCES.documenti_scaduti"
         },
         {
-            "fieldName": "senza_profilazioni",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "Senza profilazioni",
-            "newLine": false,
-            "size": 1,
-            "queryCond": "an.id_anagrafica not in(select distinct split_part(object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(object_key, '|', 2),'') is not null)",
-            "translate": "RESOURCES.senza_profilazioni"
-        },
-        {
-            "fieldName": "senza_profilazioni_aml",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "Senza profilazioni AML",
-            "newLine": true,
-            "size": 1,
-            "queryCond": "an.id_anagrafica not in(select distinct split_part(ss_prof.object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof inner join entrasp.sondaggi snd_prof on ss_prof.codice_azienda=snd_prof.codice_azienda and ss_prof.id_sondaggio=snd_prof.id_sondaggio inner join entrasp.modelli_test mt_prof on snd_prof.codice_azienda=mt_prof.codice_azienda and snd_prof.id_modello_test=mt_prof.id_modello_test where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(ss_prof.object_key, '|', 2),'') is not null and mt_prof.id_tipo_modello_test=50)",
-            "translate": "RESOURCES.senza_profilazioni_aml"
-        },
-        {
-            "fieldName": "pep",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "PEP",
-            "newLine": false,
-            "size": 1,
-            "queryCond": "avr.codice in (select epa.codice_anagrafica from entrasp.estrazione_profili_aml epa where epa.codice_azienda = '€global_codice_azienda€' and pep = 'Y')",
-            "translate": "RESOURCES.pep"
-        },
-        {
             "fieldName": "con_tutti_contratti_chiusi",
             "format": {
                 "value": "0",
@@ -306,42 +246,6 @@
             "translate": "RESOURCES.con_progetti"
         },
         {
-            "fieldName": "no_tit_eff",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "No tit.effett. o esec.",
-            "newLine": true,
-            "size": 1,
-            "queryCond": "an.id_anagrafica not in(select id_anagrafica from entrasp.connessioni_anagrafiche where an.codice_part='€global_codice_part€' and codice_ruolo in('TIEF','ESEC') and id_anagrafica is not null) and an.tipo_soggetto='E'",
-            "translate": "RESOURCES.no_titeffett_o_esec"
-        },
-        {
-            "fieldName": "tit_eff_esec_pg",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "Tit.effett. o esec. PG",
-            "newLine": false,
-            "size": 1,
-            "queryCond": "an.id_anagrafica in(SELECT ai.id_anagrafica FROM ENTRASP.CONNESSIONI_ANAGRAFICHE ac Inner join entrasp.anagrafiche_id ai on ac.id_anagrafica_conn= ai.id_anagrafica and ac.codice_part = ai.codice_part WHERE ac.CODICE_PART = '€global_codice_part€' AND ac.CODICE_RUOLO in ('TIEF', 'ESEC') AND ac.ID_ANAGRAFICA IS NOT NULL and ai.tipo_soggetto != 'P')",
-            "translate": "RESOURCES.titeffett_o_esec_pg"
-        },
-        {
-            "fieldName": "senza_profilazioni_attive",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "Senza profilazioni attive",
-            "newLine": false,
-            "size": 1,
-            "queryCond": "an.id_anagrafica not in(select distinct split_part(ss_prof.object_key, '|', 2)::numeric from entrasp.sondaggi_somministrati ss_prof inner join entrasp.sondaggi snd_prof on ss_prof.codice_azienda=snd_prof.codice_azienda and ss_prof.id_sondaggio=snd_prof.id_sondaggio inner join entrasp.modelli_test mt_prof on snd_prof.codice_azienda=mt_prof.codice_azienda and snd_prof.id_modello_test=mt_prof.id_modello_test where ss_prof.codice_azienda='€global_codice_azienda€' and ss_prof.object_name='anagraficheId' and nullif(split_part(ss_prof.object_key, '|', 2),'') is not null and snd_prof.stato!='C' and snd_prof.data_prevista is not null and mt_prof.id_tipo_modello_test in(50))",
-            "translate": "RESOURCES.senza_profilazioni_attive"
-        },
-        {
             "fieldName": "senza_documento_identificativo",
             "format": {
                 "value": "0",
@@ -366,28 +270,16 @@
             "translate": "RESOURCES.senza_codice_ateco"
         },
         {
-            "fieldName": "in_province_ad_alto_rischio",
+            "fieldName": "senza_questionario_associato",
             "format": {
                 "value": "0",
                 "viewType": "checkbox"
             },
-            "label": "Prov. alto rischio",
+            "label": "Senza questionario associato",
             "newLine": false,
             "size": 1,
-            "queryCond": "avr.provincia in(select pr.sigla_provincia from entrasp.province pr where pr.flag_a_rischio=true)",
-            "translate": "RESOURCES.prov_alto_rischio"
-        },
-        {
-            "fieldName": "in_province_ad_alto_rischio_2",
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "label": "Prov. alto rischio (ridotta)",
-            "newLine": true,
-            "size": 1,
-            "queryCond": "avr.provincia in(select pr.sigla_provincia from entrasp.province pr where pr.flag_a_rischio_2=true)",
-            "translate": "RESOURCES.prov_alto_rischio_ridotta"
+            "queryCond": "",
+            "translate": "RESOURCES.senza_questionario_associato"
         }
     ],
     "predefinedQueries": [
