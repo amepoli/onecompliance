@@ -36,7 +36,7 @@
             "label": "ID OdG",
             "newLine": false,
             "readOnly": true,
-            "size": 0.6,
+            "size": 1,
             "translate": "RESOURCES.id_odg"
         },
         {
@@ -62,7 +62,7 @@
                 "options": [],
                 "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3405 order by descrizione"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_argomento",
             "label": "Tipo Odg",
@@ -75,17 +75,9 @@
             "autoGenerate": false,
             "format": {
                 "dataType": "number",
-                "viewType": "input",
-                "validations": [
-                    {
-                        "message": "Inserire una numerazione!",
-                        "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_una_numerazione"
-                    }
-                ]
+                "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "ordinamento_odg",
             "label": "Ordinamento",
@@ -174,18 +166,18 @@
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "text",
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "select distinct unnest (ac.id_argomento_settore) as id, entrasp.argomenti_descr_breve_no_id(unnest (ac.id_argomento_settore)) as name from entrasp.odg_riunioni odg inner join entrasp.riunioni ri on  odg.codice_azienda=ri.codice_azienda and odg.id_riunione=ri.id_riunione inner join entrasp.contratti cnt on ri.codice_azienda=cnt.codice_azienda and ri.id_contratto=cnt.id_contratto inner join entrasp.articoli_contratti ac on cnt.codice_azienda=ac.codice_azienda and cnt.id_contratto=ac.id_contratto where odg.codice_azienda=$codice_azienda$ and odg.id_riunione=$id_riunione$"
+                "comboQuery": "SELECT * FROM (VALUES ('Settore 1','Settore 1'), ('Settore 2','Settore 2'), ('Settore 3','Settore 3')) AS t1(id, name); "
             },
-            "label": "Settore",
-            "key": "id_argomento_settore",
-            "readOnly": false,
             "isHidden": false,
-            "size": 2.5,
             "isPrimary": false,
+            "key": "settore",
+            "label": "Settore",
             "newLine": false,
-            "translate": "RESOURCES.id_argomento_settore"
+            "size": 2,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -222,17 +214,17 @@
             "autoGenerate": false,
             "format": {
                 "viewType": "combobox",
+                "dataType": "text",
                 "options": [],
-                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = 'ASACERT'), ans.id_anagrafica) AS name FROM entrasp.odg_riunioni odg INNER JOIN entrasp.riunioni ri ON odg.codice_azienda = ri.codice_azienda AND odg.id_riunione = ri.id_riunione INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where odg.codice_azienda=$codice_azienda$ and odg.id_riunione=$id_riunione$"
+                "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52262 order by arg.descrizione"
             },
-            "label": "Auditor",
-            "key": "id_anagrafica",
-            "readOnly": false,
             "isHidden": false,
-            "size": 2.5,
             "isPrimary": false,
-            "newLine": true,
-            "translate": "RESOURCES.id_anagrafica"
+            "key": "id_argomento_liv_competenza",
+            "label": "Auditor",
+            "readOnly": false,
+            "size": 2,
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -578,11 +570,10 @@
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "label": "Settore",
             "key": "settore",
-            "queryFunct": "entrasp.argomenti_descr_breve_no_id(id_argomento_settore)",
             "isHidden": false,
             "isPrimary": false,
             "translate": "RESOURCES.settore"
@@ -636,9 +627,9 @@
                 "dataType": "number"
             },
             "label": "Auditor",
-            "key": "id_anagrafica",
+            "key": "id_argomento_liv_competenza",
             "isHidden": false,
-            "queryFunct": "entrasp.anagrafiche_cognnome('€global_codice_part€', id_anagrafica)",
+            "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_liv_competenza)",
             "isPrimary": false,
             "translate": "RESOURCES.id_anagrafica"
         },
