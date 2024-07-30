@@ -1,6 +1,10 @@
 import os
 import json
 import re
+import shutil
+
+def copy_ts_to_txt(ts_file, txt_file):
+    shutil.copyfile(ts_file, txt_file)
 
 def load_key_value_pairs(txt_file):
     key_value_pairs = {}
@@ -62,7 +66,14 @@ def clean_json_files(directory, key_value_pairs):
 
 # Esempio di utilizzo
 directory_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory di file JSON
-key_value_file_path = '/home/gcrozzolin/Development/onecompliance/python/it_copy.txt'  # Sostituisci con il percorso del file di coppie chiave-valore
+key_value_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # Sostituisci con il percorso del file di coppie chiave-valore
+ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Sostituisci con il percorso del file it.ts
 
+# Copia il contenuto di it.ts in file_it.txt
+copy_ts_to_txt(ts_file_path, key_value_file_path)
+
+# Carica le coppie chiave-valore
 key_value_pairs = load_key_value_pairs(key_value_file_path)
+
+# Pulisce i file JSON nella directory
 clean_json_files(directory_path, key_value_pairs)
