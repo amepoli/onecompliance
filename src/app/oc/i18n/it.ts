@@ -1822,7 +1822,7 @@ export const locale = {
     note_attivita: "Attività specifica svolta nella sede in oggetto SOLO se diversa da quella del questionario",
     note_da_inserire: "Note Da Inserire",
     note_domanda: "Annotazioni Esplicative Domanda",
-    note_essenzialit: "Note Essenzialit",
+    note_essenzialit: "Note Essenzialità",
     note_interne: "Note Interne",
     note_risposta: "Note Risposta",
     note_titolo: "Note/Titolo/Descrizione",

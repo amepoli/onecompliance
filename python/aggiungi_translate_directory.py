@@ -106,6 +106,9 @@ def process_json_files(directory, log_file):
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 print(f"Error processing file {filename}: {e}")
 
+    # Ordina le chiavi aggiunte alfabeticamente
+    added_keys.sort(key=lambda x: x[0])
+
     # Scrivi le chiavi aggiunte nel file di log
     with open(log_file, 'w', encoding='utf-8') as log:
         for key, value in added_keys:
