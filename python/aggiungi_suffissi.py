@@ -75,23 +75,23 @@ def update_keys_in_file(txt_file, key_map):
         file.writelines(updated_lines)
 
 def main(views_path, ts_file_path, temp_file_path):
-    # Step 1: Copy the content of it.ts to file_it.txt
+    
     copy_file(ts_file_path, temp_file_path)
     
-    # Step 2: Update keys in JSON files in the views directory
+    
     key_map = {}
     update_keys_in_json(views_path, key_map)
     
-    # Step 3: Update keys in file_it.txt based on the modified keys in JSON
+    
     update_keys_in_file(temp_file_path, key_map)
     
-    # Print summary
+   
     total_count = len(key_map)
     print(f"Total keys modified: {total_count}")
 
-# Esempio di utilizzo
-views_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della cartella views
-ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Sostituisci con il percorso del file it.ts
-temp_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # Sostituisci con il percorso del file file_it.txt
+
+views_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # !! Sostituisci con il percorso della cartella views
+ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # !! Sostituisci con il percorso del file it.ts
+temp_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # !! Sostituisci con il percorso del file file_it.txt
 
 main(views_path, ts_file_path, temp_file_path)
