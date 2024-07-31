@@ -7,89 +7,103 @@ def copy_file(src, dst):
     shutil.copyfile(src, dst)
 
 def sanitize_label(label):
-    # Rimuove caratteri speciali e aggiunge suffisso _sc se necessario
-    sanitized_label = re.sub(r'[^\w\s]', '', label)
+    # Rimuove i numeri solo se all'inizio della stringa
+    sanitized_label = re.sub(r'^[0-9]+', '', label)
+    # Rimuove i caratteri speciali
+    sanitized_label = re.sub(r'[^\w\s]', '', sanitized_label)
     if len(sanitized_label) < len(label):
         sanitized_label += "_sc"
-    # Rimuove spazi aggiuntivi e sostituisce con _
-    sanitized_label = re.sub(r'\s+', '_', sanitized_label).strip('_')
+    # Sostituisce gli spazi con _
+    sanitized_label = re.sub(r'\s+', '_', sanitized_label).strip('')
     return sanitized_label
 
-def create_translate_key(key, label):
+def create_translate_key(label, entry_key):
     sanitized_label = sanitize_label(label)
-    new_key = f"{key}___{sanitized_label}"
-    # Limite di 500 caratteri
+    sanitized_entry_key = entry_key.lstrip()
+    new_key = f"{sanitized_label}_{sanitized_entry_key}"
     if len(new_key) > 500:
-        new_key = new_key[:500]
-    # Rimuovi eventuali numeri iniziali
-    if new_key[0].isdigit():
-        new_key = "_" + new_key
+        excess_length = len(new_key) - 500
+        sanitized_label = sanitized_label[:-excess_length]
+        new_key = f"{sanitized_label}_{sanitized_entry_key}"
     return new_key
 
-def update_translate_keys(obj, key_map):
+def update_translate_keys(obj, entry_key=None, translations=None):
+    if translations is None:
+        translations = {}
     if isinstance(obj, dict):
-        for key, value in obj.items():
-            if key == 'translate' and isinstance(value, str) and '.' in value:
-                original_key = value.split('.', 1)[1]
-                label = obj.get('label', '')
-                new_key = create_translate_key(original_key, label)
-                key_map[original_key] = new_key
-                obj[key] = f"RESOURCES.{new_key}"
-            else:
-                update_translate_keys(value, key_map)
+        if 'subTables' in obj and isinstance(obj['subTables'], list):
+            for sub_table in obj['subTables']:
+                if 'translate' in sub_table and 'label' in sub_table:
+                    sub_entry_key = sub_table.get('entryKey', entry_key)
+                    new_key = create_translate_key(sub_table['label'], sub_entry_key)
+                    translations[new_key] = sub_table['translate']
+                    sub_table['translate'] = f"RESOURCES.{new_key}"
+                update_translate_keys(sub_table, sub_table.get('entryKey', entry_key), translations)
+        else:
+            for key, value in obj.items():
+                if key == 'translate' and isinstance(value, str):
+                    if 'label' in obj:
+                        new_key = create_translate_key(obj['label'], entry_key)
+                        translations[new_key] = value
+                        obj[key] = f"RESOURCES.{new_key}"
+                else:
+                    update_translate_keys(value, entry_key, translations)
     elif isinstance(obj, list):
         for item in obj:
-            update_translate_keys(item, key_map)
+            update_translate_keys(item, entry_key, translations)
+    return translations
 
-def update_keys_in_json(directory, key_map):
+def update_keys_in_json(directory):
+    all_translations = {}
+    total_modifications = 0
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
             filepath = os.path.join(directory, filename)
             with open(filepath, 'r', encoding='utf-8') as file:
                 data = json.load(file)
 
-            update_translate_keys(data, key_map)
+            entry_key = data.get('entryKey', None)
+            translations = update_translate_keys(data, entry_key)
 
             with open(filepath, 'w', encoding='utf-8') as file:
                 json.dump(data, file, ensure_ascii=False, indent=4)
 
-def update_keys_in_file(txt_file, key_map):
-    with open(txt_file, 'r', encoding='utf-8') as file:
-        lines = file.readlines()
+            all_translations.update(translations)
+            total_modifications += len(translations)
+    return all_translations, total_modifications
 
-    updated_lines = []
-    for line in lines:
-        match = re.match(r'(\w+):\s*"([^"]*)",?', line.strip())
-        if match:
-            key = match.group(1).strip()
-            value = match.group(2).strip()
-            if key in key_map:
-                new_key = key_map[key]
-                updated_lines.append(f'{new_key}: "{value}",\n')
-            else:
-                updated_lines.append(line)
-        else:
-            updated_lines.append(line)
+def update_translations_in_file(translations, file_path):
+    with open(file_path, 'r+', encoding='utf-8') as file:
+        content = file.read()
+        # Cerca e aggiorna la sezione RESOURCES
+        resources_match = re.search(r'RESOURCES\s*:\s*\{[^}]*\}', content, re.DOTALL)
+        if resources_match:
+            resources_content = resources_match.group(0)
+            for key, value in translations.items():
+                # Cerca e aggiorna le chiavi esistenti
+                old_key_match = re.search(rf'{re.escape(key.split("_")[0])}\s*:\s*".*?"', resources_content)
+                if old_key_match:
+                    resources_content = resources_content.replace(old_key_match.group(0), f'{key}: "{value}"')
+                else:
+                    # Aggiungi nuove chiavi
+                    resources_content = resources_content[:-1] + f', {key}: "{value}"' + resources_content[-1]
+            # Aggiorna il contenuto del file con le nuove traduzioni
+            content = content.replace(resources_match.group(0), resources_content)
+            file.seek(0)
+            file.write(content)
+            file.truncate()
 
-    with open(txt_file, 'w', encoding='utf-8') as file:
-        file.writelines(updated_lines)
+def copy_content(src, dst):
+    shutil.copyfile(src, dst)
 
 def main(views_path, ts_file_path, temp_file_path):
-    # Step 1: Copy the content of it.ts to file_it.txt
     copy_file(ts_file_path, temp_file_path)
-    
-    # Step 2: Update keys in JSON files in the views directory
-    key_map = {}
-    update_keys_in_json(views_path, key_map)
-    
-    # Step 3: Update keys in file_it.txt based on the modified keys in JSON
-    update_keys_in_file(temp_file_path, key_map)
-    
-    # Print summary
-    total_count = len(key_map)
-    print(f"Total keys modified: {total_count}")
+    translations, total_modifications = update_keys_in_json(views_path)
+    update_translations_in_file(translations, temp_file_path)
+    copy_content(temp_file_path, ts_file_path)
+    print(f"Finished updating JSON files in {views_path} and copied content to {ts_file_path}")
+    print(f"Total translations modified: {total_modifications}")
 
-# Esempio di utilizzo
 views_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della cartella views
 ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Sostituisci con il percorso del file it.ts
 temp_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # Sostituisci con il percorso del file file_it.txt

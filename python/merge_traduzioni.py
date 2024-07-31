@@ -70,7 +70,7 @@ def copy_txt_to_ts(txt_file_path, ts_file_path):
 # Percorsi dei file di testo e TypeScript
 ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Sostituire con il percorso reale del file TypeScript
 txt_file1_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # Percorso del primo file di testo
-txt_file2_path = '/home/gcrozzolin/Development/onecompliance/python/file_new_translate.txt'  # Percorso del file di testo da cui prendere le nuove traduzioni
+txt_file2_path = '/home/gcrozzolin/Development/onecompliance/python/new_translate.txt'  # Percorso del file di testo da cui prendere le nuove traduzioni
 
 # Copia il contenuto del file TypeScript nel primo file di testo
 copy_ts_to_txt(ts_file_path, txt_file1_path)
