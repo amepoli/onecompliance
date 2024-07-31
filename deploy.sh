@@ -1,57 +1,80 @@
-#/bin/bash
+#!/bin/bash
 
-if [ $# -eq 0 ]
-  then
+# Check if a target application was provided
+if [ $# -eq 0 ]; then
     echo "Please provide the target application [gorico, gorico_stage]"
     exit 0
 fi
 
-
+# Validate the target application
 if [ $1 != "gorico" ] && [ $1 != "gorico_stage" ]; then
     echo "Invalid target application. Please provide 'gorico' or 'gorico_stage'"
     exit 1
 fi
 
-#deploy only for gorico (prod)
+# Function to deploy DynamoDB tables (commented for testing purposes)
+deploy_dynamo_tables() {
+    echo "Run deploy_dynamo_tables with target: $1"
+    local target=$1
+    cd dynamo-tables
+    echo "Deploying dynamo-tables in $target..."
+    ./deploy_tables.sh $target
+    cd ..
+}
+
+# Update local branch based on the target application
+update_local_branch() {
+    if [ $1 == "gorico" ]; then
+        git checkout master
+        git pull origin master
+        echo "Local branch 'master' updated"
+    elif [ $1 == "gorico_stage" ]; then
+        git checkout staging
+        git pull origin staging
+        echo "Local branch 'staging' updated"
+    fi
+}
+
+# Update local branch
+update_local_branch $1
+
+# Deploy for 'gorico' (prod)
 if [ $1 == "gorico" ]; then
     if [ ! -f ${1}_prod.json ]; then
         echo "$1 not found!"
         exit 0
     fi
-    #re-deploy dynamo-tables
-    cd dynamo-tables
-    echo "Deploying dynamo-tables in prod..."
-    ./deploy_tables.sh $1_prod
-    cd ..
+    echo "Would deploy dynamo-tables for ${1}_prod"
+    deploy_dynamo_tables "${1}_prod"
 fi
 
-
-#deploy only for gorico_stage
+# Deploy for 'gorico_stage'
 if [ $1 == "gorico_stage" ]; then
     if [ ! -f ${1}.json ]; then
         echo "$1 not found!"
         exit 0
     fi
-    #re-deploy dynamo-tables
-    cd dynamo-tables
-    echo "Deploying dynamo-tables in stage..."
-    ./deploy_tables.sh $1
-    cd ..
+    echo "Would deploy dynamo-tables for $1"
+    deploy_dynamo_tables "$1"
 fi
 
-#remove previous buils
+# Remove previous builds
 rm -rf dist/*
+echo "Previous builds removed"
 
-#compile application
+# Compile application
 if [ $1 == "gorico" ]; then
+    echo "Would compile application for production"
     npm run build-prod
-fi
-
-if [ $1 == "gorico_stage" ]; then
+elif [ $1 == "gorico_stage" ]; then
+    echo "Would compile application for stage"
     npm run build-stage
 fi
 
-#delete current distribution
+# Delete current distribution from S3 (commented for testing purposes)
 aws s3 rm s3://gorico2-cdk.cloud/$1 --recursive
-#upload files
+echo "Would delete current distribution from S3: s3://gorico2-cdk.cloud/$1"
+
+# Upload new files to S3 (commented for testing purposes)
 aws s3 cp ./dist s3://gorico2-cdk.cloud/$1 --recursive --acl public-read
+echo "Would upload new files to S3: s3://gorico2-cdk.cloud/$1"

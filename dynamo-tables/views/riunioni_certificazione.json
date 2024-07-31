@@ -25,6 +25,27 @@
             "readOnly": false
         },
         {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_piano_1",
+            "label": "Informazioni Piano",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
             "autoGenerate": true,
             "format": {
                 "dataType": "number",
@@ -33,7 +54,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_riunione",
-            "label": "Id Riunione",
+            "label": "# Piano",
             "newLine": false,
             "size": 0.5,
             "readOnly": true,
@@ -56,13 +77,12 @@
                     },
                     "outputEventWhenComplete": "navigate_to_riunione_new"
                 }
-            ],
-            "translate": "RESOURCES.id_riunione"
+            ]
         },
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "datetime",
+                "dataType": "date",
                 "viewType": "input",
                 "validations": [
                     {
@@ -77,10 +97,57 @@
             "isPrimary": false,
             "size": 1.5,
             "key": "data_riunione",
-            "label": "Data e ora riunione",
+            "label": "Data verifica",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.data_riunione"
+            "translate": "RESOURCES.data_verifica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_contratto",
+            "newLine": false,
+            "readOnly": true,
+            "label": "DCT",
+            "translate": "RESOURCES.dct"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT * FROM (VALUES ('IT','IT'), ('UK','UK'), ('UAE','UAE')) AS t1(id, name);",
+                "options": [],
+                "dataType": "text",
+                "value": null
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_nazione",
+            "label": "Nazione",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.nazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_protocollo",
+            "queryFunct": "Select codice_nazione::varchar||'_'||id_contratto::numeric||'_'||CAST(EXTRACT(YEAR FROM current_date) AS varchar)",
+            "label": "Protocollo N.",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.codice_protocollo"
         },
         {
             "autoGenerate": false,
@@ -99,11 +166,237 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "oggetto",
-            "label": "Oggetto",
+            "label": "Descrizione Piano",
+            "newLine": false,
+            "readOnly": false,
+            "size": 4,
+            "translate": "RESOURCES.descrizione_piano"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=3405 order by descrizione"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Tipo Verifica",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.tipo_verifica"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Organo/Comitato/Centro Gestionale",
             "newLine": true,
             "readOnly": false,
-            "size": 8,
-            "translate": "RESOURCES.oggetto"
+            "translate": "RESOURCES.descr_centro_gest",
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_piano_2",
+            "label": "Gruppo Ispettivo",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = $codice_azienda$), ans.id_anagrafica) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_lead_auditor",
+            "label": "RGVI",
+            "size": 2.5,
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.rgvi"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = $codice_azienda$), ans.id_anagrafica) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_auditor_1",
+            "size": 2.5,
+            "label": "AVI 1",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = $codice_azienda$), ans.id_anagrafica) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_auditor_2",
+            "size": 2.5,
+            "label": "AVI 2",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = $codice_azienda$), ans.id_anagrafica) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_auditor_3",
+            "size": 2.5,
+            "label": "AVI 3",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = $codice_azienda$), ans.id_anagrafica) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_auditor_4",
+            "size": 3.3,
+            "label": "AVI 4",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = $codice_azienda$), ans.id_anagrafica) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_auditor_5",
+            "size": 3.3,
+            "label": "AVI 5",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT DISTINCT ans.id_anagrafica AS id, entrasp.anagrafiche_cognnome((SELECT codice_part FROM entrasp.aziende WHERE codice_azienda = $codice_azienda$), ans.id_anagrafica) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.sondaggi snd ON cnt.codice_azienda = snd.codice_azienda AND cnt.id_contratto = snd.id_contratto INNER JOIN entrasp.anagrafiche_sondaggi ans ON snd.codice_azienda = ans.codice_azienda AND snd.id_sondaggio = ans.id_sondaggio where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_esperto",
+            "size": 3.4,
+            "label": "ESP/OSS",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.esposs_sc"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_piano_3",
+            "label": "Settori da Ispezionare",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.4em",
+                "font_style": "normal",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select distinct unnest (ac.id_argomento_settore) as id, entrasp.argomenti_descr_breve_no_id(unnest(ac.id_argomento_settore)) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.articoli_contratti ac ON cnt.codice_azienda = ac.codice_azienda AND cnt.id_contratto = ac.id_contratto where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_settore",
+            "size": 3.3,
+            "label": "Settore 1",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select distinct unnest (ac.id_argomento_settore) as id, entrasp.argomenti_descr_breve_no_id(unnest(ac.id_argomento_settore)) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.articoli_contratti ac ON cnt.codice_azienda = ac.codice_azienda AND cnt.id_contratto = ac.id_contratto where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_settore_2",
+            "size": 3.3,
+            "label": "Settore 2",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select distinct unnest (ac.id_argomento_settore) as id, entrasp.argomenti_descr_breve_no_id(unnest(ac.id_argomento_settore)) AS name FROM entrasp.riunioni ri INNER JOIN entrasp.contratti cnt ON ri.codice_azienda = cnt.codice_azienda AND ri.id_contratto = cnt.id_contratto INNER JOIN entrasp.articoli_contratti ac ON cnt.codice_azienda = ac.codice_azienda AND cnt.id_contratto = ac.id_contratto where ri.codice_azienda=$codice_azienda$ and ri.id_riunione=$id_riunione$",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_settore_3",
+            "size": 3.3,
+            "label": "Settore 3",
+            "newLine": true,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -123,9 +416,25 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "comboQuery": "SELECT distinct id_argomento AS id, descrizione_breve AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father =52266 order by descrizione_breve;",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_norma",
+            "size": 2,
+            "label": "Norma",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.norma"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
             "isPrimary": false,
             "key": "duplica_riunione",
             "label": "Duplica Riunione",
@@ -141,7 +450,6 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1.5,
             "translate": "RESOURCES.duplica_riunione"
         }
     ],
@@ -217,41 +525,6 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "codice_protocollo",
-            "width": "6%",
-            "label": "Protocollo",
-            "translate": "RESOURCES.codice_protocollo"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descr_riunione",
-            "queryFunct": "entrasp.argomenti_descr(id_argomento)",
-            "label": "Tipo riunione",
-            "width": "15%",
-            "translate": "RESOURCES.descr_riunione"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descr_centro_gest",
-            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-            "label": "Organo/ Centro Gest",
-            "width": "10%",
-            "translate": "RESOURCES.descr_centro_gest"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
             "key": "oggetto",
             "width": "33%",
             "label": "Oggetto",
@@ -259,43 +532,7 @@
         },
         {
             "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "stato",
-            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
-            "label": "Stato",
-            "translate": "RESOURCES.status",
-            "width": "6%",
-            "style": [
-                {
-                    "value": "Chiuso",
-                    "font_color": "PaleGreen",
-                    "font_weight": "500",
-                    "background_color": "Green",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Provvisorio",
-                    "font_color": "MistyRose",
-                    "font_weight": "500",
-                    "background_color": "MediumPurple",
-                    "text_align": "center"
-                },
-                {
-                    "value": "Aperto",
-                    "font_color": "white",
-                    "font_weight": "500",
-                    "background_color": "royalblue",
-                    "font_size": "medium",
-                    "text_align": "center"
-                }
-            ]
-        },
-        {
-            "format": {
-                "dataType": "datetime"
+                "dataType": "date"
             },
             "isHidden": false,
             "isPrimary": false,

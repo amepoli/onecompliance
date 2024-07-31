@@ -6,17 +6,12 @@
         {
             "operation": "insert",
             "type": "main",
-            "queryString": "select entrasp.progetti_fasi_insert_from_sondaggio($codice_azienda$,  $id_progetto_ass$, $id_sondaggio$, entrasp.evaluate_given_field_null('id_fase_parent','$id_fase_parent$'))"
+            "queryString": "select entrasp.crea_piano($codice_azienda$, £id_riunioni_templ£, $id_contratto$, '£data_riunione£') from entrasp.contratti where codice_azienda='€global_codice_azienda€' and id_contratto=$id_contratto$"
         },
         {
             "operation": "isInsert",
             "queryString": "select true as label;",
             "type": "main"
-        },
-        {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "select entrasp.aggiorna_codici_progetto($codice_azienda$, $id_progetto_ass$);"
         }
     ],
     "form_keys": [
@@ -61,7 +56,25 @@
             "label": "Template Piano",
             "newLine": false,
             "readOnly": false,
-            "sameOrigin": false
+            "size": 8,
+            "sameOrigin": false,
+            "translate": "RESOURCES.template_piano"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "key": "data_riunione",
+            "label": "Data verifica",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.data_verifica"
         }
     ]
 }

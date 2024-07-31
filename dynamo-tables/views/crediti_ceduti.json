@@ -479,6 +479,7 @@
             },
             "label": "Cessionati",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "id_ricessione is not null",
             "translate": "RESOURCES.cessionati"
         },
@@ -488,7 +489,8 @@
                 "viewType": "checkbox"
             },
             "label": "Cessionati e incassati",
-            "newLine": false,
+            "newLine": true,
+            "size": 1.42,
             "queryCond": "id_cessione in (select cc.id_cessione from entrasp.crediti_ceduti cc where cc.codice_azienda|| '-'||cc.id_cessione in (select pc.codice_azienda|| '-'||pc.id_cessione from entrasp.pagamenti_crediti pc where pc.id_argomento_tipo_pag in (51488,51489)) and cc.id_ricessione is not null and cc.codice_azienda=$codice_azienda$)",
             "translate": "RESOURCES.cessionati_e_incassati"
         },
@@ -499,6 +501,7 @@
             },
             "label": "Esecutivi",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "esecutivo = '1'",
             "translate": "RESOURCES.esecutivi"
         },
@@ -509,6 +512,7 @@
             },
             "label": "Fascicoli Archiviati",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "flag_fasc_archiviato_s = '1'",
             "translate": "RESOURCES.fascicoli_archiviati"
         },
@@ -518,7 +522,8 @@
                 "viewType": "checkbox"
             },
             "label": "Crediti non incassati",
-            "newLine": true,
+            "newLine": false,
+            "size": 1.42,
             "queryCond": "codice_azienda||'-'||id_cessione not in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda=$codice_azienda$ and pag.id_argomento_tipo_pag in(51488,51489,50664))",
             "translate": "RESOURCES.crediti_non_incassati"
         },
@@ -530,7 +535,7 @@
             "label": "Crediti incassati",
             "newLine": false,
             "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda='€global_codice_azienda€' and pag.id_argomento_tipo_pag in(51488))",
-            "size": 0,
+            "size": 1.42,
             "translate": "RESOURCES.crediti_incassati"
         },
         {
@@ -540,6 +545,7 @@
             },
             "label": "Fascicolo non presente",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "fascicolo is null",
             "translate": "RESOURCES.fascicolo_non_presente"
         },
@@ -550,6 +556,7 @@
             },
             "label": "Debitore non presente",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "id_debitore_ceduto is null",
             "translate": "RESOURCES.debitore_non_presente"
         },
@@ -559,7 +566,8 @@
                 "viewType": "checkbox"
             },
             "label": "Data Pagamento Precedente a Data Fattura",
-            "newLine": false,
+            "newLine": true,
+            "size": 1.42,
             "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)",
             "translate": "RESOURCES.data_pagamento_precedente_a_data_fattura"
         },
@@ -570,6 +578,7 @@
             },
             "label": "Data Scadenza precedente a Data Fattura",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "data_fattura>data_scadenza",
             "translate": "RESOURCES.data_scadenza_precedente_a_data_fattura"
         },
@@ -580,6 +589,7 @@
             },
             "label": "Fattura duplicata",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "extract(year from data_fattura)||n_fattura||id_cedente in (select extract(year from data_fattura)||n_fattura||id_cedente from entrasp.crediti_ceduti where codice_azienda='€global_codice_azienda€' group by extract(year from data_fattura),id_cedente,n_fattura having count(*) > 1)",
             "translate": "RESOURCES.fattura_duplicata"
         },
@@ -590,6 +600,7 @@
             },
             "label": "Da lavorare",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "(azionato='0' and flag_pool !='1' and  data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
             "tooltip": "Non azionati, con pagamento avvenuto, non in pool e interessi maggiori di 0",
             "translate": "RESOURCES.da_lavorare"
@@ -601,6 +612,7 @@
             },
             "label": "In Pool",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "(flag_pool='1')",
             "translate": "RESOURCES.in_pool"
         },
@@ -611,6 +623,7 @@
             },
             "label": "Non Cessionati",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "id_ricessione is null",
             "translate": "RESOURCES.non_cessionati"
         },
@@ -622,6 +635,7 @@
             "label": "Capitale res. neg.",
             "tooltip": "Individua le posizioni per le quali ci sia un capitale residuo (legale) negativo",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "capitale_residuo_leg<0",
             "translate": "RESOURCES.capitale_res_neg"
         },
@@ -633,6 +647,7 @@
             "label": "Senza pagamenti associati",
             "tooltip": "Individua le posizioni per le quali ci sia un capitale residuo (legale) negativo",
             "newLine": false,
+            "size": 1.42,
             "queryCond": "not exists(select 1 from entrasp.pagamenti_crediti pc where cc.codice_azienda=pc.codice_azienda and cc.id_cessione=pc.id_cessione)",
             "translate": "RESOURCES.senza_pagamenti_associati"
         }

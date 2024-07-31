@@ -84,10 +84,45 @@
             "isPrimary": false,
             "key": "oggetto",
             "label": "Oggetto",
+            "newLine": false,
+            "readOnly": false,
+            "size": 9.3,
+            "translate": "RESOURCES.oggetto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "class",
+                        "label": "Crea e Associa Tag",
+                        "outputEventName": "crea_e_associa",
+                        "translate": "RESOURCES.crea_e_associa_tag",
+                        "key": "crea_e_associa_argomento"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "crea_e_associa",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.argomenti_create_and_update_template_riunioni($id_templ_riunione$, $oggetto$, $oggetto$, 52849)",
+                    "outputEventWhenComplete": "formReload"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "template_runioni_actions",
+            "label": "void",
+            "translate": "RESOURCES.void",
             "newLine": true,
             "readOnly": false,
-            "size": 10,
-            "translate": "RESOURCES.oggetto"
+            "sameOrigin": false,
+            "size": 0.7
         },
         {
             "autoGenerate": false,
@@ -107,10 +142,26 @@
             "isPrimary": false,
             "key": "convocazione",
             "label": "Testo della Convocazione",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false,
-            "size": 10,
+            "size": 8,
             "translate": "RESOURCES.convocazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||arg.descrizione AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son and aa.id_argomento_father=52849 order by descrizione"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "Tag",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.id_argomento"
         },
         {
             "autoGenerate": false,
@@ -207,6 +258,18 @@
             "label": "Punti all'ordine del giorno",
             "type": "table",
             "translate": "RESOURCES.punti_allordine_del_giorno"
+        },
+        {
+            "entryKey": "tag_sub_of_template_riunioni",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_son"
+                }
+            ],
+            "label": "TAG",
+            "type": "table",
+            "translate": "RESOURCES.tag"
         }
     ],
     "table_keys": [
