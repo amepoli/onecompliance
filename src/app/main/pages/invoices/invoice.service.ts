@@ -35,8 +35,8 @@ export class InvoiceService implements Resolve<any>
             Promise.all([
                 this.getInvoice()
             ]).then(
-                () => {
-                    resolve();
+                (x: any) => {
+                    resolve(x);
                 },
                 reject
             );

@@ -35,8 +35,8 @@ export class FaqService implements Resolve<any>
             Promise.all([
                 this.getFaqs()
             ]).then(
-                () => {
-                    resolve();
+                (x: any) => {
+                    resolve(x);
                 },
                 reject
             );

@@ -51,7 +51,7 @@ const appRoutes: Routes = [];
         // RouterModule.forRoot(appRoutes),
 
         // With hash location strategy
-        RouterModule.forRoot(appRoutes, { onSameUrlNavigation: 'reload', useHash: true, relativeLinkResolution: 'legacy' }),
+        RouterModule.forRoot(appRoutes, { onSameUrlNavigation: 'reload', useHash: true }),
 
         TranslateModule.forRoot(),
 

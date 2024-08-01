@@ -1,5 +1,5 @@
 import { Component, Input, EventEmitter, Output, OnChanges, OnDestroy, OnInit, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
+import { MatTabChangeEvent as MatTabChangeEvent, MatTabGroup as MatTabGroup } from '@angular/material/tabs';
 import { Subscription } from 'rxjs';
 import { FormTableViewParams, TableViewParams, TabType } from '../interfaces';
 import { ConsoleLoggerService, PubSubService } from '../services';

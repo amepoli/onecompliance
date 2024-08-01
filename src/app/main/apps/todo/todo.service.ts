@@ -68,7 +68,7 @@ export class TodoService implements Resolve<any>
                 this.getTags(),
                 this.getTodos()
             ]).then(
-                () => {
+                (x: any) => {
                     if ( this.routeParams.todoId )
                     {
                         this.setCurrentTodo(this.routeParams.todoId);
@@ -90,7 +90,7 @@ export class TodoService implements Resolve<any>
                             this.getTodos();
                         }
                     });
-                    resolve();
+                    resolve(x);
                 },
                 reject
             );
