@@ -270,6 +270,9 @@
             "translate": "RESOURCES.iban_rapp_ctp"
         }
     ],
+    "define": {
+        "is_hidden_contratto": "false"
+    },
     "table_keys": [
         {
             "format": {
@@ -279,6 +282,7 @@
             "isPrimary": true,
             "key": "id_operazione",
             "label": "ID",
+            "width": "5%",
             "translate": "RESOURCES.id_operazione"
         },
         {
@@ -309,6 +313,7 @@
             "key": "data_op",
             "isHidden": false,
             "isPrimary": false,
+            "width": "7%",
             "translate": "RESOURCES.data_op"
         },
         {
@@ -316,10 +321,11 @@
                 "dataType": "text"
             },
             "label": "Causale Analitica",
-            "key": "id_causale",
+            "key": "causale_analitica",
             "queryFunct": "entrasp.causali_codice_descr (id_causale)",
             "isHidden": false,
             "isPrimary": false,
+            "width": "20%",
             "translate": "RESOURCES.id_causale"
         },
         {
@@ -328,9 +334,30 @@
             },
             "label": "Importo",
             "key": "importo",
+            "width": "10%",
             "isHidden": false,
             "isPrimary": false,
             "translate": "RESOURCES.importo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Contratto",
+            "key": "contratto",
+            "isHidden": "$Q{is_hidden_contratto}",
+            "isPrimary": false,
+            "queryFunct": "entrasp.contratti_descr_completa(id_contratto, codice_azienda)",
+            "width": "15%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "ID Contratto",
+            "key": "id_contratto",
+            "isHidden": true,
+            "isPrimary": false
         }
     ],
     "hideActions": [
@@ -339,7 +366,7 @@
             "viewType": "table"
         },
         {
-            "formActionType": "attachments", 
+            "formActionType": "attachments",
             "viewType": "form"
         }
     ]
