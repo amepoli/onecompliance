@@ -3,7 +3,7 @@ select ans.codice_azienda, mt.id_modello_test, ans.id_sondaggio, mt.descrizione,
 	entrasp.anagrafiche_cognnome(cnt.codice_part, cnt.id_cliente) as ragione_sociale, 
 	giornate_uomo_scontate,
 	giornate_uomo_sorveglianza,
-	--cnt.codice,
+	cnt.id_contratto,
 	(select string_agg(soc.citta||', '||soc.indirizzo, '; ') from entrasp.sedi_operative_questionari soc 
 	where soc.id_questionario=qc.id_questionario and soc.codice_azienda=qc.codice_azienda)as sedi, 
 	(select string_agg(entrasp.argomenti_descr_breve_no_id(unnest), '; ') from unnest(ac.id_argomento_settore))as settore, 
@@ -21,11 +21,11 @@ select ans.codice_azienda, mt.id_modello_test, ans.id_sondaggio, mt.descrizione,
 	on cnt.codice_azienda=ac.codice_azienda and cnt.id_contratto=ac.id_contratto
 	inner join entrasp.questionari_certificazione qc
 	on cnt.codice_azienda=qc.codice_azienda and cnt.id_contratto=qc.id_contratto
-	where ans.codice_azienda='ASACERT' 
-	--and amt.id_argomento_father=ac.id_argomento_tipo_norma 
+	where amt.id_argomento_father=ac.id_argomento_tipo_norma
+	and ans.codice_azienda='ASACERT' and ans.id_sondaggio=69  
 	group by sedi, ans.codice_azienda, ans.id_sondaggio, mt.id_modello_test, mt.descrizione, 
 	qc.processo, giornate_uomo_scontate,
 	giornate_uomo_sorveglianza,
-	--cnt.codice, 
+	cnt.id_contratto, 
 	cnt.codice_part, cnt.id_cliente, ac.id_argomento_settore, ac.id_argomento_tipo_norma
 	order by ans.codice_azienda, cnt.id_cliente, mt.id_modello_test, mt.id_modello_test 
