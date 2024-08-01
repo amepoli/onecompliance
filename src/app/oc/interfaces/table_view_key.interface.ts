@@ -16,7 +16,7 @@ export interface TableViewKey { // as per API specification
     isInputButton?: boolean;
     isInputButtonKey?: string;
     buttonAction?: {
-        action: "navigate" | "delete" | "query" | 'downloadAttachment' | 'downloadReport' | 'fatture',
+        action: "navigate" | "delete" | "query" | 'downloadAttachment' | 'downloadReport' | 'createFattura' | 'checkFattura',
         target: string,
         viewType: string,
         query?: string,
@@ -28,11 +28,11 @@ export interface TableViewKey { // as per API specification
             title: string,
             text: string
         },
-        keymap?:{
+        keymap?: {
             source: string,
             destination: string
         }[],
-        onSuccessActionKeymap?:{
+        onSuccessActionKeymap?: {
             source: string,
             destination: string
         }[],
@@ -41,10 +41,10 @@ export interface TableViewKey { // as per API specification
             newTarget: string,
             newViewType: "form" | "table",
             keyToCheck?: string,
-            keymap?:{
+            keymap?: {
                 source: string,
                 destination: string
-            }[]            
+            }[]
         }[]
     },
     format: {

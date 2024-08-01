@@ -40,7 +40,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     @Output() sendEvent = new EventEmitter<any>();
     @Output() onReload = new EventEmitter<any>();
 
-    @ViewChild(MatPaginator,{ static: false }) paginator: MatPaginator;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     format = {};
@@ -69,7 +69,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     displayedColumns: string[];
 
-    styles: {[key: string]: TableStyleElement[] | object} = {};
+    styles: { [key: string]: TableStyleElement[] | object } = {};
     dataSource: MatTableDataSource<any> = null;
     hasData: boolean = false;
     selectedRow: MatRow = null;
@@ -88,7 +88,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     viewKeys: TableViewKey[];  // view fields as specified by the backend
 
     styleQueries: any;
-    
+
     searchKeysLoaded: boolean = false;
     completeSearchKeys: SearchViewKey[]; // Also contains search toggles
     advancedSearchKeys: SearchViewKey[]; // Search keys to show Advanced search
@@ -168,12 +168,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         labelAdd: "Add Element",
         labelQuickAdd: "Quick Add"
     }
-    
+
     addElementLabel: any = {
         label: "Add Element",
         translate: null
     }
-    
+
     quickAddLabel: any = {
         label: "Quick Add",
         translate: null
@@ -312,13 +312,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     public loadData(search_keys = null) {
         const _this = this;
 
-        var tables= _this._authService.getTables();
-        if(tables && tables.readOnly && tables.readOnly.includes(_this.tableData.entryName))
-        {
-          _this.readOnly = true;
+        var tables = _this._authService.getTables();
+        if (tables && tables.readOnly && tables.readOnly.includes(_this.tableData.entryName)) {
+            _this.readOnly = true;
         }
-        else{
-          _this.readOnly = false;
+        else {
+            _this.readOnly = false;
         }
 
         search_keys = search_keys || _this.tableData.searchKeys;
@@ -392,7 +391,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.loadStyle(params.table_keys);
                     _this.loadLevel(params.table_keys);
                     _this.loadFormat(params.table_keys);
-                    
+
                     // Load add Element Settings 
                     _this.loadAddElementSettings(params.addElementSettings);
 
@@ -550,7 +549,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     _this.showAdvSearch = false;
                     results = results.data;
 
-                    if(results['styleQueries']) {
+                    if (results['styleQueries']) {
                         _this.styleQueries = results['styleQueries'];
                         _this.loadStyle(_this.viewKeys);
                     }
@@ -564,20 +563,19 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.loadExplorerData(results);
                     }
 
-                const visibleKeys = _this.viewKeys.filter(x => !x.isHidden).map(x => x.key); 
-                _this.dataSource = new MatTableDataSource(results);
+                    const visibleKeys = _this.viewKeys.filter(x => !x.isHidden).map(x => x.key);
+                    _this.dataSource = new MatTableDataSource(results);
 
-                _this.dataSource.filterPredicate = function(data, filter: string): boolean {
-                    let value = false;
-                    visibleKeys.forEach(visibleKey => {
-                        if(data[visibleKey] && data[visibleKey].toString().toLowerCase().includes(filter.toLowerCase()))
-                        {
-                            value = true;
-                            return;  
-                        }
-                    });
-                    return value;
-                  };
+                    _this.dataSource.filterPredicate = function (data, filter: string): boolean {
+                        let value = false;
+                        visibleKeys.forEach(visibleKey => {
+                            if (data[visibleKey] && data[visibleKey].toString().toLowerCase().includes(filter.toLowerCase())) {
+                                value = true;
+                                return;
+                            }
+                        });
+                        return value;
+                    };
                     _this.dataSource.sort = _this.sort;
                     if (_this.paginator) {
                         _this.dataSource.paginator = _this.paginator;
@@ -638,7 +636,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     autodetectViewMode() {
         let _this = this;
-        const sum = _this.viewKeys.filter(x => !x.isHidden && x.width).map(x => parseFloat(x.width.replace('%', ''))).reduce((sum, n) => sum + n , 0);
+        const sum = _this.viewKeys.filter(x => !x.isHidden && x.width).map(x => parseFloat(x.width.replace('%', ''))).reduce((sum, n) => sum + n, 0);
         _this.wrapView = sum <= 100;
     }
 
@@ -650,11 +648,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             let totalRow = {};
 
             let dataToProcess = _this.dataSource.data;
-            
-            if(_this.paginator) {
+
+            if (_this.paginator) {
                 const skip = _this.paginator.pageSize * _this.paginator.pageIndex;
                 dataToProcess = _this.dataSource.sortData(_this.dataSource.filteredData, _this.dataSource.sort).filter((u, i) => i >= skip)
-                .filter((u: any, i: number) => i < _this.paginator.pageSize);
+                    .filter((u: any, i: number) => i < _this.paginator.pageSize);
             }
 
             totalKeys.forEach(key => {
@@ -706,15 +704,15 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     loadAddElementSettings(addElementSettings: AddElementSettings) {
         this.addElementSettings = addElementSettings;
-        if(this.addElementSettings) {
+        if (this.addElementSettings) {
             this.addElementSettings.labelQuickAdd = this.addElementSettings.labelQuickAdd ?? "Quick Add";
             this.addElementSettings.labelAdd = this.addElementSettings.labelAdd ?? "Add Element";
-    
+
             this.addElementLabel = {
                 label: this.addElementSettings.labelAdd,
                 translate: this.addElementSettings.translateAdd
             }
-            
+
             this.quickAddLabel = {
                 label: this.addElementSettings.labelQuickAdd,
                 translate: this.addElementSettings.translateQuickAdd
@@ -725,7 +723,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 label: "Add Element",
                 translate: null
             }
-            
+
             this.quickAddLabel = {
                 label: "Quick Add",
                 translate: null
@@ -751,8 +749,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 if (!_this.styles[key.key]) {
                     _this.styles[key.key] = [];
                 }
-                Object.keys(_this.styleQueries[key.key]) .forEach(s => {
-                    (_this.styles[key.key] as TableStyleElement[]).push({value: s, condition: "==", style: _this.styleQueries[key.key][s][0]});
+                Object.keys(_this.styleQueries[key.key]).forEach(s => {
+                    (_this.styles[key.key] as TableStyleElement[]).push({ value: s, condition: "==", style: _this.styleQueries[key.key][s][0] });
                 });
             }
             if (key.style && key.style.length) {
@@ -760,7 +758,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     if (!_this.styles[key.key]) {
                         _this.styles[key.key] = [];
                     }
-                    (_this.styles[key.key] as TableStyleElement[]).push({value: style.value, valueKey: style.valueKey, condition: style.condition ?? "==", style: style});
+                    (_this.styles[key.key] as TableStyleElement[]).push({ value: style.value, valueKey: style.valueKey, condition: style.condition ?? "==", style: style });
                 });
             }
         });
@@ -772,7 +770,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             const keys = (this.styles[key] as TableStyleElement[]).map(x => x.value);
 
             keys.forEach(k => {
-                if((this.styles[key] as TableStyleElement[]).some(x => x.value === k && x.style['button_icon'])) {
+                if ((this.styles[key] as TableStyleElement[]).some(x => x.value === k && x.style['button_icon'])) {
                     buttonIconExists = true;
                 }
                 // if (this.styles[key][k]['button_icon']) {
@@ -785,15 +783,15 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     getButtonIcon(key: string, value: string) {
         let style: any = {};
-        if(Array.isArray(this.styles[key])) {
+        if (Array.isArray(this.styles[key])) {
             const valuedStyle = [
                 ...(this.styles[key] as TableStyleElement[]).filter(x => x.value === value),
                 ...(this.styles[key] as TableStyleElement[]).filter(x => x.value === "*"),
             ];
-            
-            if(valuedStyle.length > 0) {
+
+            if (valuedStyle.length > 0) {
                 style = valuedStyle[0].style;
-            } 
+            }
         }
         else {
             style = this.styles[key];
@@ -1030,7 +1028,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     showQuickAddDialog() {
         const _this = this;
 
-        if(!this.showQuickAdd) {
+        if (!this.showQuickAdd) {
             const dialogRef = _this.matDialog.open(QuickAddDialogComponent, {
                 width: '1280px',
                 height: 'auto',
@@ -1038,8 +1036,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             });
 
             _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {
-                if(result) {
-                    if(_this.addElementSettings && _this.addElementSettings.navigateOnSuccess) {
+                if (result) {
+                    if (_this.addElementSettings && _this.addElementSettings.navigateOnSuccess) {
                         let mergedParams = { entry: { name: _this.targetEntryName, type: 'form' }, keys: [result.keys], index: 1, total: 1 };
                         _this.navigate(mergedParams);
                     }
@@ -1222,12 +1220,12 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                                 keys[map.destination] = row[map.source];
                             })
                         }
-                        
-                        if(condition.newTarget) {
+
+                        if (condition.newTarget) {
                             target = condition.newTarget;
                         }
 
-                        if(condition.newViewType) {
+                        if (condition.newViewType) {
                             viewType = condition.newViewType;
                         }
 
@@ -1253,10 +1251,13 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         else if (selectedViewKey.buttonAction.action == 'downloadReport') {
             _this.downloadReport(selectedViewKey, keys, row);
         }
-        else if (selectedViewKey.buttonAction.action == 'fatture') {
+        else if (selectedViewKey.buttonAction.action == 'createFattura') {
             _this.createFattura(selectedViewKey, keys, row);
         }
-        
+        else if (selectedViewKey.buttonAction.action == 'checkFattura') {
+            _this.checkFattura(selectedViewKey); // I need the whole table
+        }
+
     }
 
     performOnSuccessAction(selectedViewKey: TableViewKey, initialKeys: any, responseKeys: any) {
@@ -1393,7 +1394,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let reportName = selectedViewKey.buttonAction.reportName;
         let isForm = selectedViewKey.buttonAction.reportQueryType === 'form';
 
-        _this._importExportService.downloadExcel(this.targetEntryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, null, isForm, row, reportName);   
+        _this._importExportService.downloadExcel(this.targetEntryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, null, isForm, row, reportName);
         /*const filename = data[1];
         if (file_id && filename) {
             _this._dialogService.showLoadingDialog('Downloading report', 'Please wait...');
@@ -1424,7 +1425,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         }
         */
     }
-    
+
     createFattura(selectedViewKey: TableViewKey, keys: any, row: MatRow) {
         let _this = this;
         console.log(row);
@@ -1433,40 +1434,47 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let reportName = selectedViewKey.buttonAction.reportName;
         let isForm = selectedViewKey.buttonAction.reportQueryType === 'form';
         _this._dialogService.showLoadingDialog('Uploading draft', 'Please wait...');
-        _this.backendService.createFattureInCloudInvoice(_this._authService.getCurrentCompany(), row).subscribe(
-            (response:any) => {
-                if (response && response.data) {
-                let keys = {};
-                if (selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0) {
-                    selectedViewKey.buttonAction.keymap.forEach(map => {
-                        keys[map.destination] = response.data[map.source];
-                    })
-                }
-                _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
-                    response => {
-                        if (response.result == 'OK') {
-                            if (selectedViewKey.buttonAction.onSuccessAction != null) {
-                                _this.performOnSuccessAction(selectedViewKey, keys, response.response);
-                            }
+        try {
+            _this.backendService.createFattureInCloudInvoice(_this._authService.getCurrentCompany(), row).subscribe(
+                (response: any) => {
+                    if (response && response.data) {
+                        let keys = {};
+                        if (selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0) {
+                            selectedViewKey.buttonAction.keymap.forEach(map => {
+                                keys[map.destination] = response.data[map.source];
+                            })
                         }
-                    },
-                    error => {
-                        console.error(error);
-                    }
-                )
+                        _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
+                            response => {
+                                if (response.result == 'OK') {
+                                    if (selectedViewKey.buttonAction.onSuccessAction != null) {
+                                        _this.performOnSuccessAction(selectedViewKey, keys, response.response);
+                                    }
+                                }
+                            },
+                            error => {
+                                console.error(error);
+                            }
+                        )
 
-                _this._dialogService.closeDialog();
-                _this._toastService.showSuccessToast('Uploaded successfully!');
-            }
-            else {
-                _this._dialogService.closeDialog();
-                _this._toastService.showErrorToast('An error occured!');
-            }
-        },
-            error => {
-                _this._dialogService.closeDialog();
-                _this._toastService.showErrorToast('An error occured!');
-            });
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showSuccessToast('Uploaded successfully!');
+                    }
+                    else {
+                        _this._dialogService.closeDialog();
+                        _this._toastService.showErrorToast('An error occured!');
+                    }
+                },
+                (error: any) => {
+                    alert(error);
+                    _this._dialogService.closeDialog();
+                    _this._toastService.showErrorToast('An error occured!');
+                });
+        }
+        catch (e) {
+            console.log(e);
+
+        };
         //_this._importExportService.downloadExcel(this.targetEntryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, null, isForm, row, reportName);   
         /*const filename = data[1];
         if (file_id && filename) {
@@ -1497,6 +1505,39 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             _this._toastService.showErrorToast('File does not exist!');
         }
         */
+    }
+
+    checkFattura(selectedViewKey: TableViewKey) {
+        const _this = this;
+
+        // Itera su tutte le righe della tabella
+        _this.dataSource.data.forEach(row => {
+            let keys = {};
+            if (selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0) {
+                selectedViewKey.buttonAction.keymap.forEach(map => {
+                    keys[map.destination] = row[map.source];
+                });
+            } else {
+                keys = row;
+            }
+
+            // Chiamata al backend service per ogni riga
+            _this.backendService.checkFattureInCloudInvoice(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys)).subscribe(
+                (response: any) => {
+                    if (response.result == 'OK') {
+                        // Esegui azioni necessarie su successo
+                        console.log('Check Fattura Success:', response);
+                    } else {
+                        // Gestisci errori
+                        console.error('Check Fattura Error:', response.reason);
+                    }
+                },
+                error => {
+                    // Gestisci errori di chiamata backend
+                    console.error('Check Fattura Backend Error:', error);
+                }
+            );
+        });
     }
 
     getColumnLabels(viewKeys: TableViewKey[]) {
