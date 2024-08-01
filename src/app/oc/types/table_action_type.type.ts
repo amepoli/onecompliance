@@ -1,1 +1,1 @@
-export type TableActionType = "add" | "quick-add" | "import_export";
+export type TableActionType = "add" | "quick-add" | "import_export" | "check_status";
