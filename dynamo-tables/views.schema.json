@@ -181,6 +181,54 @@
                 }
             }
         },
+        "customActions": {
+            "type": "array",
+            "description": "?: set of actions (by means of related icons) to show - by default they are hidden",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["viewType"],
+                "anyOf": [
+                    {
+                        "properties": {
+                            "viewType": {
+                                "enum": ["table"]
+                            }
+                        },
+                        "required": ["tableActionType"]
+                    },
+                    {
+                        "properties": {
+                            "viewType": {
+                                "enum": ["form"]
+                            }
+                        },
+                        "required": ["formActionType"]
+                    }
+                ],
+                "properties": {
+                    "viewType": {
+                        "type": "string",
+                        "description": "M: type of view affected",
+                        "enum": ["table", "form", "bulkTableRows"]
+                    },
+                    "tableActionType": {
+                        "type": "string",
+                        "description": "?: actions when viewType='table'",
+                        "enum": [
+                            "refresh_status"
+                        ]
+                    },
+                    "formActionType": {
+                        "type": "string",
+                        "description": "?: actions when viewType='form'",
+                        "enum": [
+                            "empty"
+                        ]
+                    }
+                }
+            }
+        },
         "widgetsConfiguration": {
             "type": "object",
             "description": "?: widgets configuration",

@@ -5,7 +5,7 @@ export interface MessageElement {
     /**
      * Message Type
      */
-    messageType: FormActionType;
+    messageType: string; //FormActionType;
 
     /**
      * Message Item
