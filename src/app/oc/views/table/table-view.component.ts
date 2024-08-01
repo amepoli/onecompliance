@@ -78,6 +78,9 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     isFullScreen = false;
 
     hideActions: string[] = []; // Hide actions
+
+    customActions: string[] = []; // Custom actions
+
     importList: ImportItem[] = [];
     exportList: ExportItem[] = [];
 
@@ -177,6 +180,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
     quickAddLabel: any = {
         label: "Quick Add",
         translate: null
+    }
+
+    refreshStatusLabel: any = {
+        label: "Refresh status",
+        translate: null        
     }
 
     constructor(
@@ -412,6 +420,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         _this.hideActions = _this.hideActions.concat(params.profileHideActions);
                     }
 
+                    _this.customActions = _this._navigationService.getTableHideActions(params.customActions);
 
                     // Load Import Queries list if available
                     if (params.importQueries && params.importQueries.tableQueries) {
