@@ -4,9 +4,10 @@ select ans.codice_azienda, mt.id_modello_test, ans.id_sondaggio, mt.descrizione,
 	giornate_uomo_scontate,
 	giornate_uomo_sorveglianza,
 	--cnt.codice,
-	(select string_agg(soc.citta||', '||soc.indirizzo, '; ') from entrasp.sedi_operative_questionari soc where soc.id_questionario=qc.id_questionario and soc.codice_azienda=qc.codice_azienda)as sedi, 
+	(select string_agg(soc.citta||', '||soc.indirizzo, '; ') from entrasp.sedi_operative_questionari soc 
+	where soc.id_questionario=qc.id_questionario and soc.codice_azienda=qc.codice_azienda)as sedi, 
 	(select string_agg(entrasp.argomenti_descr_breve_no_id(unnest), '; ') from unnest(ac.id_argomento_settore))as settore, 
-	string_agg(entrasp.anagrafiche_cognnome(ans.codice_part, ans.id_anagrafica)||' ('||entrasp.argomenti_descr_breve_no_id(id_argomento_liv_competenza)||')', '; ')  
+	string_agg(entrasp.anagrafiche_cognnome(ans.codice_part, ans.id_anagrafica)||' ('||entrasp.argomenti_descr_breve_no_id(id_argomento_liv_competenza)||')', '; ') as auditors 
 	from entrasp.anagrafiche_sondaggi ans
 	inner join entrasp.sondaggi snd
 	on ans.codice_azienda=snd.codice_azienda and ans.id_sondaggio=snd.id_sondaggio
