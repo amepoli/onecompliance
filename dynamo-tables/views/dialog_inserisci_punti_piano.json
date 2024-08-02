@@ -27,7 +27,8 @@
             "newLine": false,
             "readOnly": false,
             "size": 1,
-            "translate": "RESOURCES.n_giornata"
+            "translate": "RESOURCES.n_giornata",
+            "tooltip": "Progressivo indicante il numero di giorate di riferimento (1= 1° giornata, 2= 2° giornata, etc.)"
         },
         {
             "autoGenerate": false,
@@ -110,10 +111,29 @@
         {
             "autoGenerate": false,
             "format": {
+                "viewType": "combobox",
+                "options": [],
+                "value": null,
+                "comboQuery": "SELECT distinct tr.id_templ_riunione AS id, tr.id_templ_riunione||'-'||tr.oggetto AS name FROM entrasp.template_odg_riunioni tor inner join entrasp.template_riunioni tr using(id_templ_riunione) where (tor.codice_azienda is null or tor.codice_azienda='€global_codice_azienda€')"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_templ_riunione",
+            "label": "ID templ riunione",
+            "newLine": false,
+            "readOnly": true,
+            "onChangeResetKey": [
+                "id_templ_odg"
+            ],
+            "translate": "RESOURCES.id_templ_riunione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "text",
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "select id_templ_odg as id, id_templ_odg||' - '||titolo as name from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€') "
+                "comboQuery": "SELECT distinct to.id_templ_odg AS id, to.id_templ_odg||'-'||to.titolo AS name FROM entrasp.template_odg_riunioni tor inner join entrasp.template_odg to using(id_templ_odg) where (to.codice_azienda is null or to.codice_azienda='€global_codice_azienda€')"
             },
             "isHidden": false,
             "isPrimary": true,
@@ -123,22 +143,6 @@
             "size": 9,
             "readOnly": false,
             "translate": "RESOURCES.id_odg"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "value": null,
-                "comboQuery": "SELECT id_templ_riunione AS id, id_templ_riunione||'-'||oggetto AS name  FROM entrasp.template_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "id_templ_riunione",
-            "label": "ID templ riunione",
-            "newLine": false,
-            "readOnly": true,
-            "translate": "RESOURCES.id_templ_riunione"
         }
     ]
 }
