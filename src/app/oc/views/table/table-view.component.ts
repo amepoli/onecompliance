@@ -10,6 +10,7 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Googl
 import { DataSharingService } from 'app/oc/services/data_sharing.service';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { QuickAddDialogComponent } from 'app/oc/dialogs/quickadd.dialog/quickadd.dialog.component';
+import { saveAs } from 'file-saver';
 
 
 interface TableStyleElement {
@@ -184,7 +185,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     refreshStatusLabel: any = {
         label: "Refresh status",
-        translate: null        
+        translate: null
     }
 
     constructor(
