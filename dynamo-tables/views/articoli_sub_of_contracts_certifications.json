@@ -362,23 +362,6 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Giornate/Uomo",
-            "key": "giornate_uomo",
-            "readOnly": true,
-            "isHidden": false,
-            "tooltip": "Corrisponde alle giornate/uomo sulla base della complessità e del numero di addetti",
-            "queryFunct": "giornate_uomo",
-            "size": 1.66,
-            "isPrimary": false,
-            "newLine": false,
-            "translate": "RESOURCES.giornate_uomo"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "number"
-            },
             "label": "Giornate/Uomo Scontate",
             "key": "giornate_uomo_scontate",
             "readOnly": true,
@@ -387,8 +370,7 @@
             "size": 1.67,
             "queryFunct": "giornate_uomo_scontate",
             "isPrimary": false,
-            "newLine": false,
-            "translate": "RESOURCES.giornate_uomo_scontate"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -1063,8 +1045,20 @@
             "isHidden": "$Q{ishiddencontratto}",
             "isPrimary": true,
             "key": "id_contratto",
+            "width": "6%",
             "label": "id_contratto",
             "translate": "RESOURCES.id_contract"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "7%",
+            "key": "data_attivazione",
+            "label": "Data Attivazione",
+            "translate": "RESOURCES.data_attivazione"
         },
         {
             "format": {
@@ -1074,19 +1068,9 @@
             "isPrimary": true,
             "sameOrigin": false,
             "key": "id_cliente",
+            "width": "15%",
             "label": "Cliente",
             "translate": "RESOURCES.cliente"
-        },
-        {
-            "format": {
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "10%",
-            "key": "data_attivazione",
-            "label": "Data Attivazione",
-            "translate": "RESOURCES.data_attivazione"
         },
         {
             "format": {
@@ -1095,7 +1079,7 @@
             "isHidden": false,
             "isPrimary": false,
             "queryFunct": "entrasp.articoli_titolo(codice_azienda, id_articolo)",
-            "width": "25%",
+            "width": "10%",
             "key": "tit_articolo",
             "label": "Descrizione",
             "translate": "RESOURCES.description"
@@ -1106,22 +1090,11 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "width": "10%",
             "key": "id_argomento_tipo_norma",
-            "queryFunct": "entrasp.argomenti_descr_breve_no_id(id_argomento_tipo_norma)",
+            "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_tipo_norma)",
             "label": "Norma",
             "translate": "RESOURCES.id_argomento_tipo_norma"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "costo_unitario",
-            "queryFunct": "round (costo*(1-sconto_importo/100),2)",
-            "width": "10%",
-            "label": "Costo unitario",
-            "translate": "RESOURCES.costo_unitario"
         },
         {
             "format": {
@@ -1130,7 +1103,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "descr_stato",
-            "width": "15%",
+            "width": "6%",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_PREVENTIVI', stato)",
             "label": "Stato",
             "translate": "RESOURCES.status",
@@ -1177,22 +1150,11 @@
             "format": {
                 "dataType": "number"
             },
-            "label": "Giornate/Uomo",
-            "key": "giornate_uomo",
-            "isHidden": false,
-            "isPrimary": false,
-            "translate": "RESOURCES.giornate_uomo"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "label": "Giornate/Uomo Scontate",
+            "label": "G.U. Offerta",
             "key": "giornate_uomo_scontate",
-            "queryFunct": "round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2,2)",
             "isHidden": false,
-            "isPrimary": false,
-            "translate": "RESOURCES.giornate_uomo_scontate"
+            "width": "6%",
+            "isPrimary": false
         },
         {
             "format": {
@@ -1200,10 +1162,41 @@
             },
             "label": "Costo Totale",
             "key": "costo_totale",
-            "queryFunct": "round(round(giornate_uomo*(1-sconto/100)*(1-(sconto_motivazioni)/100)*2)/2*costo*(1-sconto_importo/100),2)",
             "isHidden": false,
+            "width": "8%",
             "isPrimary": false,
             "translate": "RESOURCES.costo_totale"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "G.U. Sorveglianza",
+            "key": "giornate_uomo_sorveglianza",
+            "isHidden": false,
+            "width": "6%",
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Totale Sorveglianza",
+            "key": "sorveglianza_1",
+            "isHidden": false,
+            "width": "8%",
+            "isPrimary": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "label": "Totale Triennio",
+            "key": "triennio",
+            "queryFunct": "sorveglianza_1 + sorveglianza_2 + costo_totale_scontato",
+            "isHidden": false,
+            "width": "8%",
+            "isPrimary": false
         }
     ],
     "hideActions": [
