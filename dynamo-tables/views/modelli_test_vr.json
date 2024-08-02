@@ -14,11 +14,6 @@
             "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$;"
         },
         {
-            "type": "preProcessing",
-            "operation": "selectForm",
-            "queryString": "update entrasp.modelli_test mt1 set titolo_cartella=coalesce(mt1.titolo_cartella, mt2.titolo_cartella) from entrasp.modelli_test mt2 where mt1.id_argomento=mt2.id_argomento and mt1.titolo_cartella is null and mt2.titolo_cartella is not null;"
-        },
-        {
             "type": "main",
             "operation": "delete",
             "queryString": "select '€global_username€' as user, entrasp.modello_test_delete($codice_azienda$, $id_modello_test$);"
@@ -591,19 +586,13 @@
             "format": {
                 "dataType": "text",
                 "viewType": "input",
+                "value": null,
                 "validations": [
                     {
-                        "message": "Breve descrizione necessaria",
+                        "message": "Campo Necessario",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.breve_descrizione_necessaria"
-                    },
-                    {
-                        "name": "maxlength",
-                        "message": "Maximum length should be 200",
-                        "validator": "Validators.maxLength(200)",
-                        "value": 200,
-                        "translate": "RESOURCES.maximum_length_should_be_200"
+                        "translate": "RESOURCES.campo_necessario"
                     }
                 ]
             },

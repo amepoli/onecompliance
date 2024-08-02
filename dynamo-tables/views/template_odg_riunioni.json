@@ -4,9 +4,9 @@
     "origin": "entrasp.template_odg_riunioni",
     "entryKey": "template_odg_riunioni",
     "addElementSettings": {
-        "labelQuickAdd": "Nuovo Punto",
+        "labelAdd": "Nuovo Punto",
         "navigateOnSuccess": false,
-        "translateQuickAdd": "RESOURCES.nuovo_punto"
+        "translateAdd": "RESOURCES.nuovo_punto"
     },
     "define": {
         "is_hidden_riunione": "true",
@@ -16,7 +16,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select id_templ_odg,codice_azienda, id_argomento, n_giorno, ora_inizio, ora_fine,settore, entrasp.argomenti_array(id_argomento_funzione) as id_argomento_funzione,entrasp.argomenti_descr_breve_no_num(id_argomento_controllo) as id_argomento_controllo,entrasp.argomenti_descr_breve_no_num(id_argomento_liv_competenza) as id_argomento_liv_competenza,true as delete_templ_odg,entrasp.template_odg_descr(id_templ_odg) as titolo from entrasp.template_odg_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
+            "queryString": "select id_templ_odg,id_templ_riunione, codice_azienda, id_argomento, n_giorno, ora_inizio, ora_fine,settore, entrasp.argomenti_array(id_argomento_funzione) as id_argomento_funzione,entrasp.argomenti_descr_breve_no_num(id_argomento_controllo) as id_argomento_controllo,entrasp.argomenti_descr_breve_no_num(id_argomento_liv_competenza) as id_argomento_liv_competenza,true as delete_templ_odg,entrasp.template_odg_descr(id_templ_odg) as titolo from entrasp.template_odg_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€') and id_templ_riunione=$id_templ_riunione$"
         }
     ],
     "form_keys": [
@@ -339,7 +339,7 @@
             },
             "isHidden": true,
             "isPrimary": true,
-            "key": "id_templ_riunioni",
+            "key": "id_templ_riunione",
             "width": "5%",
             "label": "ID OdG",
             "translate": "RESOURCES.id_odg"
@@ -471,7 +471,7 @@
         },
         {
             "viewType": "table",
-            "tableActionType": "add"
+            "tableActionType": "quick-add"
         }
     ]
 }

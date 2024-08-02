@@ -20,6 +20,25 @@
             "queryString": "select *, true as delete_templ_odg from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
         }
     ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "inserisci_punti",
+                    "icon": "edit",
+                    "label": "Inserisci Punti del Piano",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_inserisci_punti_piano",
+                    "customDialogTitle": "Associa punti del piano a ordine del giorno",
+                    "confirmActionMessage": "Sei sicuro di inserire i punti selezionati nel template di piano selezionato?"
+                }
+            ]
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -199,9 +218,7 @@
             "showByFormKeyCondition": {
                 "key": "argomento_not_null",
                 "condition": "notEqualTo",
-                "values": [
-                    "1"
-                ]
+                "values": ["1"]
             },
             "label": "TAG",
             "translate": "RESOURCES.tag",
@@ -209,47 +226,6 @@
         }
     ],
     "table_keys": [
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "4%",
-            "queryFunct": "select true",
-            "key": "delete_templ_odg",
-            "label": "",
-            "style": [
-                {
-                    "button_icon": "delete",
-                    "value": "*"
-                }
-            ],
-            "isButton": true,
-            "buttonAction": {
-                "target": "template_odg",
-                "viewType": "table",
-                "query": "delete from entrasp.template_odg where id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
-                "action": "query",
-                "keymap": [
-                    {
-                        "source": "id_templ_riunione",
-                        "destination": "id_templ_riunione"
-                    },
-                    {
-                        "source": "id_templ_odg",
-                        "destination": "id_templ_odg"
-                    }
-                ],
-                "confirmAction": true,
-                "confirmMessage": {
-                    "text": "Sei sicuro di voler cancellare il punto all'ordine del giorno?",
-                    "title": "Cancellazione ordine del giorno"
-                },
-                "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.delete_procedure_aziendali"
-        },
         {
             "format": {
                 "dataType": "number"
@@ -302,6 +278,47 @@
             "label": "Note",
             "translate": "RESOURCES.notes",
             "width": "45%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_templ_odg",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "template_odg",
+                "viewType": "table",
+                "query": "delete from entrasp.template_odg where id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "id_templ_riunione",
+                        "destination": "id_templ_riunione"
+                    },
+                    {
+                        "source": "id_templ_odg",
+                        "destination": "id_templ_odg"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "text": "Sei sicuro di voler cancellare il punto all'ordine del giorno?",
+                    "title": "Cancellazione ordine del giorno"
+                },
+                "onSuccessAction": "reload"
+            },
+            "translate": "RESOURCES.delete_procedure_aziendali"
         }
     ],
     "querySuffixes": {
