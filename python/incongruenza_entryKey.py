@@ -21,7 +21,7 @@ def find_mismatched_json_keys(directory_path):
                         print(f"Errore nella decodifica del file JSON: {file_path}")
 
 # Sostituisci 'your_directory_path' con il percorso effettivo della tua directory
-directory_path = '/home/eongaro/Desktop/Development/onecompliance/dynamo-tables/views'
+directory_path = '/home/apoli/Development/onecompliance/dynamo-tables/views'
 find_mismatched_json_keys(directory_path)
 
 
