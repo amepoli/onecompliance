@@ -9442,6 +9442,7 @@ export const locale = {
     viene_risposto_tipi_clienti_mifid: "Viene Risposto",
     VieneRisposto_risposte_sub_of_controlli: "Viene Risposto",
     visible_button_compiti_compiti_sub: "Compito",
+    void: "",
     void_asset_models: "",
     void_attachments: "void",
     void_attachments_tbd: "Download",
