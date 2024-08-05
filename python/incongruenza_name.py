@@ -11,12 +11,12 @@ def find_mismatched_json_keys(directory_path):
                         data = json.load(f)
                         file_name_without_extension = os.path.splitext(file)[0].lower()  # Nome file in minuscolo
                         
-                        if isinstance(data, dict) and 'entryKey' in data:
-                            entry_key = data['entryKey'].lower()  # Chiave in minuscolo
-                            if entry_key != file_name_without_extension:
-                                print(f"File: {file} | Entry Key: {data['entryKey']}")
+                        if isinstance(data, dict) and 'name' in data:
+                            name = data['name'].lower()  # Chiave in minuscolo
+                            if name != file_name_without_extension:
+                                print(f"File: {file} | Name: {data['name']}")
                         else:
-                            print(f"File: {file} non contiene una proprietà 'entryKey' valida.")
+                            print(f"File: {file} non contiene una proprietà 'name' valida.")
                     except json.JSONDecodeError:
                         print(f"Errore nella decodifica del file JSON: {file_path}")
 
