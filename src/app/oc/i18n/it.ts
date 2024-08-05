@@ -227,7 +227,7 @@ export const locale = {
     _prog_sondaggi_sub_of_anagrafiche: "# Prog.",
     _progetti: "",
     _progetti_attachments: "",
-    _progetti_fasi: "#",
+    _progetti_fasi: "",
     _progetti_fasi_formazione: "",
     _progetti_fasi_simplified: "",
     _progetti_sub_of_progetti_for_state_consultant: "",
