@@ -6976,7 +6976,6 @@ export const locale = {
     partizione_reports: "Partizione",
     risposte_previste_crea_e_associa_argomento_domande: "Risposte previste",
     sconsigliato_duplica_anagrafica_anagrafiche_vr: "SCONSIGLIATO",
-}",
     pcod_argomento_argomenti_sub_of_argomenti_son: "$P{cod_argomento}",
     pct_A_quantificatore_giornate_iso: "Percentuale risultato a",
     pct_da_lessons: "pct_da",
