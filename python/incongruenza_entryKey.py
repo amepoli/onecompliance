@@ -9,14 +9,19 @@ def find_mismatched_json_keys(directory_path):
                 with open(file_path, 'r') as f:
                     try:
                         data = json.load(f)
-                        # Assuming the entry key is the top-level key
-                        entry_key = list(data.keys())[0]
-                        file_name_without_extension = os.path.splitext(file)[0]
-                        if entry_key != file_name_without_extension:
-                            print(f"File: {file} | Entry Key: {entry_key}")
+                        file_name_without_extension = os.path.splitext(file)[0].lower()  # Nome file in minuscolo
+                        
+                        if isinstance(data, dict) and 'entryKey' in data:
+                            entry_key = data['entryKey'].lower()  # Chiave in minuscolo
+                            if entry_key != file_name_without_extension:
+                                print(f"File: {file} | Entry Key: {data['entryKey']}")
+                        else:
+                            print(f"File: {file} non contiene una proprietà 'entryKey' valida.")
                     except json.JSONDecodeError:
-                        print(f"Error decoding JSON in file: {file_path}")
+                        print(f"Errore nella decodifica del file JSON: {file_path}")
 
-# Replace 'your_directory_path' with the actual path of your directory
+# Sostituisci 'your_directory_path' con il percorso effettivo della tua directory
 directory_path = '/home/eongaro/Desktop/Development/onecompliance/dynamo-tables/views'
 find_mismatched_json_keys(directory_path)
+
+
