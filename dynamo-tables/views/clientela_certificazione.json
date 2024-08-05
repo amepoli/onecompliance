@@ -28,8 +28,7 @@
                     "query": "select entrasp.unifica_anagrafiche_selezionate(array[$selected_rows_data$], '€global_username€', '€global_codice_azienda€')",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Unificare le anagrafiche selezionate?",
-                    "translate": "RESOURCES.unifica_anagrafiche"
+                    "confirmActionMessage": "Unificare le anagrafiche selezionate?"
                 }
             ]
         }
@@ -54,7 +53,7 @@
             "label": "ID Anagrafica",
             "newLine": false,
             "queryCond": "avr.id_anagrafica=$id_anagrafica_s$",
-            "translate": "RESOURCES.id_anagrafica"
+            "translate": "RESOURCES.id_anagrafica_clientela_certificazione"
         },
         {
             "fieldName": "data_ins_s",
@@ -65,7 +64,7 @@
             "label": "Data inserimento maggiore di",
             "newLine": false,
             "queryCond": "an.data_ins>=$data_ins_s$",
-            "translate": "RESOURCES.data_inserimento_maggiore_di"
+            "translate": "RESOURCES.data_inserimento_maggiore_di_clientela_certificazione"
         },
         {
             "fieldName": "nome_rs",
@@ -76,7 +75,7 @@
             "label": "Nome/Cognome/Ragione Sociale",
             "newLine": false,
             "queryCond": "(replace(UPPER(an.nome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(an.cognome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(avr.ragione_sociale), '.', '') like '%'||UPPER('€nome_rs€')||'%')",
-            "translate": "RESOURCES.nomecognomeragione_sociale"
+            "translate": "RESOURCES.nomecognomeragione_sociale_clientela_certificazione"
         },
         {
             "fieldName": "codice_s",
@@ -85,9 +84,9 @@
                 "viewType": "input"
             },
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "newLine": false,
-            "queryCond": "(UPPER(avr.codice) like '%'||UPPER('€codice_s€')||'%' or UPPER(an.codice) like '%'||UPPER('€codice_s€')||'%')"
+            "queryCond": "(UPPER(avr.codice) like '%'||UPPER('€codice_s€')||'%' or UPPER(an.codice) like '%'||UPPER('€codice_s€')||'%')",
+            "translate": "RESOURCES.codice_clientela_certificazione"
         },
         {
             "fieldName": "piva_s",
@@ -98,7 +97,7 @@
             "label": "Partita IVA",
             "newLine": false,
             "queryCond": "avr.partita_iva = $piva_s$",
-            "translate": "RESOURCES.partita_iva"
+            "translate": "RESOURCES.partita_iva_clientela_certificazione"
         },
         {
             "fieldName": "codice_fiscale_s",
@@ -109,7 +108,7 @@
             "label": "Codice fiscale",
             "newLine": false,
             "queryCond": "avr.codice_fiscale = $codice_fiscale_s$",
-            "translate": "RESOURCES.codice_fiscale"
+            "translate": "RESOURCES.codice_fiscale_clientela_certificazione"
         },
         {
             "fieldName": "ruolo_s",
@@ -122,7 +121,7 @@
             "label": "Ruolo",
             "newLine": false,
             "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')",
-            "translate": "RESOURCES.ruolo"
+            "translate": "RESOURCES.ruolo_clientela_certificazione"
         },
         {
             "fieldName": "tipo_s",
@@ -133,9 +132,9 @@
                 "dataType": "text"
             },
             "label": "Tipo",
-            "translate": "RESOURCES.type",
             "newLine": true,
-            "queryCond": "an.tipo_soggetto = $tipo_s$"
+            "queryCond": "an.tipo_soggetto = $tipo_s$",
+            "translate": "RESOURCES.tipo_clientela_certificazione"
         },
         {
             "fieldName": "associated_trattamenti_dati",
@@ -147,7 +146,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "an.id_anagrafica in(select id_responsabile from entrasp.cpl_trattamenti_dati_responsabili where an.codice_part='€global_codice_part€' and id_responsabile is not null union select id_titolare_esterno from entrasp.cpl_trattamenti_dati_titolari_esterni where an.codice_part='€global_codice_part€' and id_titolare_esterno is not null)",
-            "translate": "RESOURCES.con_trattamenti_dati_associati"
+            "translate": "RESOURCES.con_trattamenti_dati_associati_clientela_certificazione"
         },
         {
             "fieldName": "duplicati_per_partita_iva",
@@ -159,7 +158,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "avr.partita_iva in(select partita_iva from entrasp.conta_anagrafiche_per_partita_iva where conta>1 and partita_iva is not null and partita_iva!='' and codice_part='€global_codice_part€')",
-            "translate": "RESOURCES.duplicati_per_partita_iva"
+            "translate": "RESOURCES.duplicati_per_partita_iva_clientela_certificazione"
         },
         {
             "fieldName": "duplicati_per_codice_fiscale",
@@ -171,7 +170,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "avr.codice_fiscale in(select codice_fiscale from entrasp.conta_anagrafiche_per_codice_fiscale where conta>1 and codice_fiscale is not null and codice_fiscale!='' and codice_part='€global_codice_part€')",
-            "translate": "RESOURCES.duplicati_per_codice_fiscale"
+            "translate": "RESOURCES.duplicati_per_codice_fiscale_clientela_certificazione"
         },
         {
             "fieldName": "documenti_scaduti",
@@ -183,7 +182,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)",
-            "translate": "RESOURCES.documenti_scaduti"
+            "translate": "RESOURCES.documenti_scaduti_clientela_certificazione"
         },
         {
             "fieldName": "con_tutti_contratti_chiusi",
@@ -195,7 +194,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null) and an.id_anagrafica not in(select distinct an2.id_anagrafica from entrasp.anagrafiche_id an2 left join entrasp.contratti c3 on an2.codice_part=c3.codice_part and an2.id_anagrafica=c3.id_cliente where c3.id_cliente is null and an2.id_anagrafica is not null and an2.codice_part='€global_codice_part€')",
-            "translate": "RESOURCES.con_tutti_i_contratti_chiusi"
+            "translate": "RESOURCES.con_tutti_i_contratti_chiusi_clientela_certificazione"
         },
         {
             "fieldName": "con_contratti_aperti",
@@ -207,7 +206,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)",
-            "translate": "RESOURCES.con_contratti_attivi"
+            "translate": "RESOURCES.con_contratti_attivi_clientela_certificazione"
         },
         {
             "fieldName": "con_contratti",
@@ -219,7 +218,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)",
-            "translate": "RESOURCES.con_contratti"
+            "translate": "RESOURCES.con_contratti_clientela_certificazione"
         },
         {
             "fieldName": "senza_contratti",
@@ -231,7 +230,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)",
-            "translate": "RESOURCES.senza_contratti"
+            "translate": "RESOURCES.senza_contratti_clientela_certificazione"
         },
         {
             "fieldName": "con_progetti",
@@ -243,7 +242,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "an.id_anagrafica in(SELECT pr.id_cliente FROM entrasp.progetti pr WHERE pr.codice_azienda='€global_codice_azienda€' and pr.id_cliente is not null)",
-            "translate": "RESOURCES.con_progetti"
+            "translate": "RESOURCES.con_progetti_clientela_certificazione"
         },
         {
             "fieldName": "senza_documento_identificativo",
@@ -255,7 +254,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "(avr.numero_documento is null or avr.id_argomento_tipo_documento is null)",
-            "translate": "RESOURCES.senza_documento_identificativo"
+            "translate": "RESOURCES.senza_documento_identificativo_clientela_certificazione"
         },
         {
             "fieldName": "senza_codice_ateco",
@@ -267,7 +266,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "avr.id_ateco is null",
-            "translate": "RESOURCES.senza_codice_ateco"
+            "translate": "RESOURCES.senza_codice_ateco_clientela_certificazione"
         },
         {
             "fieldName": "senza_questionario_associato",
@@ -279,7 +278,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "",
-            "translate": "RESOURCES.senza_questionario_associato"
+            "translate": "RESOURCES.senza_questionario_associato_clientela_certificazione"
         }
     ],
     "predefinedQueries": [
@@ -345,8 +344,8 @@
                 }
             ],
             "label": "Documenti Associati",
-            "translate": "RESOURCES.associated_documents",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.documenti_associati"
         },
         {
             "entryKey": "questionari_certificazione",
@@ -422,7 +421,7 @@
                 }
             ],
             "label": "Variazioni e doc. identificativi",
-            "translate": "RESOURCES.variazioni_e_doc_identificativi"
+            "translate": "RESOURCES.Variazioniedocidentificativi_anagrafiche_vr_sub_of_anagrafiche_vr"
         },
         {
             "entryKey": "contracts_investment_sub_of_clientela",
@@ -447,6 +446,5 @@
             "actionType": "reload",
             "eventName": "formReload"
         }
-    ],
-    "translate": "RESOURCES.clientela"
+    ]
 }

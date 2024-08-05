@@ -23,9 +23,12 @@ def replace_keys(file_new_translate, file_it, output_file):
         resources_content = match.group(1)
 
         # Sostituisci le chiavi vecchie con quelle nuove
+        update_count = 0
         for old_key, new_key in translate_dict.items():
             old_pattern = re.compile(r'({}\s*:)'.format(re.escape(old_key)))
-            resources_content = old_pattern.sub('{}:'.format(new_key), resources_content)
+            if old_pattern.search(resources_content):
+                resources_content = old_pattern.sub('{}:'.format(new_key), resources_content)
+                update_count += 1
 
         # Ricostruisci il contenuto del file
         new_file_it_content = file_it_content[:match.start(1)] + resources_content + file_it_content[match.end(1):]
@@ -33,6 +36,9 @@ def replace_keys(file_new_translate, file_it, output_file):
         # Salva il nuovo contenuto nel file di output
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(new_file_it_content)
+
+        # Stampa il numero di voci aggiornate
+        print(f"Numero di voci aggiornate: {update_count}")
     else:
         print("Il paragrafo RESOURCES non è stato trovato nel file.")
 

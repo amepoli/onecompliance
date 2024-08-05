@@ -3,13 +3,19 @@ import re
 import json
 
 def clean_string(s):
-    # Remove special characters and numbers at the beginning of the label
-    cleaned = re.sub(r'^[^a-zA-Z]*', '', s)
-    # Replace spaces in the middle of the label with underscores
-    cleaned = re.sub(r'\s+', '_', cleaned)
-    # Remove all non-alphanumeric characters except underscores
-    cleaned = re.sub(r'[^a-zA-Z0-9_]', '', cleaned)
+    # Remove special characters except underscores and alphanumeric characters
+    cleaned = re.sub(r'[^a-zA-Z0-9_]', '', s)
     return cleaned
+
+def adjust_label(label):
+    # Check if the label starts with a number
+    if re.match(r'^\d', label):
+        # Move the leading numbers to the end of the label, separated by an underscore
+        match = re.match(r'^(\d+)(.*)', label)
+        if match:
+            number, rest = match.groups()
+            return f"{rest}_{number}"
+    return label
 
 def process_files(views_path, it_ts_path, file_it_path, file_new_translate_path):
     # Step 1: Copy content of it.ts to file_it.txt
@@ -20,7 +26,6 @@ def process_files(views_path, it_ts_path, file_it_path, file_new_translate_path)
     
     # Initialize counts
     translate_modified = 0
-    sub_tables_translate_modified = 0
 
     # Step 2: Process all JSON files in the given path
     old_new_labels = []
@@ -46,16 +51,13 @@ def process_files(views_path, it_ts_path, file_it_path, file_new_translate_path)
             old_label_clean = old_label.replace("RESOURCES.", "")
             new_label_clean = new_label.replace("RESOURCES.", "")
             file_new_translate.write(f"{old_label_clean} - {new_label_clean}\n")
-            if 'subTables' in old_label:
-                sub_tables_translate_modified += 1
-            else:
-                translate_modified += 1
+            translate_modified += 1
 
     # Step 4: Replace old labels in file_it.txt
     replace_keys(file_new_translate_path, file_it_path, file_it_path)
     
-    # Step 5: Remove duplicate entries from file_it.txt within RESOURCES
-    remove_duplicates_in_resources(file_it_path)
+    # Step 5: Remove duplicate entries and sort RESOURCES in file_it.txt
+    remove_duplicates_and_sort_resources(file_it_path)
     
     # Step 6: Copy content of file_it.txt back to it.ts
     with open(file_it_path, 'r', encoding='utf-8') as file_it:
@@ -65,7 +67,6 @@ def process_files(views_path, it_ts_path, file_it_path, file_new_translate_path)
     
     # Output the number of translates modified
     print(f"Translates modified: {translate_modified}")
-    print(f"SubTables translates modified: {sub_tables_translate_modified}")
 
 def process_json(data, old_new_labels, root_entry_key, current_path):
     modified = False
@@ -88,13 +89,11 @@ def process_json(data, old_new_labels, root_entry_key, current_path):
     return modified, data
 
 def generate_new_label(data, root_entry_key, current_path):
-    label = data.get('label', '')
+    label = data.get('label', data.get('message', ''))
     entry_key = data.get('entryKey', root_entry_key)
-    clean_label = clean_string(label)
+    clean_label = adjust_label(clean_string(label))
     clean_entry_key = clean_string(entry_key)
     new_label = f"RESOURCES.{clean_label}_{clean_entry_key}"
-    if re.search(r'\W+', label) or re.search(r'\W+', entry_key):
-        new_label += "_sc"
     return new_label[:500]
 
 def replace_keys(file_new_translate, file_it, output_file):
@@ -133,7 +132,7 @@ def replace_keys(file_new_translate, file_it, output_file):
     else:
         print("Il paragrafo RESOURCES non è stato trovato nel file.")
 
-def remove_duplicates_in_resources(file_path):
+def remove_duplicates_and_sort_resources(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         file_content = file.read()
     
@@ -150,6 +149,8 @@ def remove_duplicates_in_resources(file_path):
             if line.strip() not in seen:
                 seen.add(line.strip())
                 unique_lines.append(line)
+        
+        unique_lines.sort()  # Sort lines alphabetically
         
         new_resources_content = "\n".join(unique_lines)
         new_file_content = file_content[:match.start(1)] + new_resources_content + file_content[match.end(1):]

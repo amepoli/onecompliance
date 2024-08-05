@@ -17,8 +17,7 @@
                     "query": "INSERT INTO entrasp.note_domande(codice_azienda,id_domanda, id_modello_test, id_modello_test_vr,id_nota) WITH split_input AS (SELECT unnest(array[$selected_rows_data$]) AS item), split_columns AS (SELECT (string_to_array(item, '~'))[1] AS part1, (string_to_array(item, '~'))[2]::numeric AS part2, (string_to_array(item, '~'))[3]::numeric AS part3, (string_to_array(item, '~'))[4]::numeric AS part4, (string_to_array(item, '~'))[5]::numeric AS part5 FROM split_input) SELECT * FROM split_columns;",
                     "reloadOnSuccess": true,
                     "confirmActionMessage": "Associare le note scelte alla domanda in oggetto?",
-                    "confirmAction": true,
-                    "translate": "RESOURCES.associa_note"
+                    "confirmAction": true
                 },
                 {
                     "key": "dissocia_nota",
@@ -27,8 +26,7 @@
                     "query": "delete from entrasp.note_domande where codice_azienda||'~'||id_domanda||'~'||id_modello_test||'~'||id_modello_test_vr||'~'||id_nota in ($selected_rows_data$)",
                     "reloadOnSuccess": true,
                     "confirmActionMessage": "Dissociare le note scelte alla domanda in oggetto?",
-                    "confirmAction": true,
-                    "translate": "RESOURCES.togli_note"
+                    "confirmAction": true
                 }
             ]
         }
@@ -51,9 +49,9 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
             "newLine": true,
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.codice_azienda_note_sub_of_domande"
         },
         {
             "autoGenerate": true,
@@ -67,7 +65,7 @@
             "label": "ID",
             "newLine": true,
             "readOnly": true,
-            "translate": "RESOURCES.id_domanda"
+            "translate": "RESOURCES.id_note_sub_of_domande"
         },
         {
             "autoGenerate": false,
@@ -81,7 +79,7 @@
             "label": "# Modello di test",
             "newLine": true,
             "readOnly": true,
-            "translate": "RESOURCES.id_modello_test"
+            "translate": "RESOURCES._modello_di_test_note_sub_of_domande"
         },
         {
             "autoGenerate": false,
@@ -95,7 +93,7 @@
             "label": "Versione",
             "newLine": true,
             "readOnly": true,
-            "translate": "RESOURCES.id_modello_test_vr"
+            "translate": "RESOURCES.versione_note_sub_of_domande"
         },
         {
             "autoGenerate": false,
@@ -107,9 +105,9 @@
             "isPrimary": true,
             "key": "id_nota",
             "label": "ID Nota",
-            "translate": "RESOURCES.id_nota",
             "newLine": true,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.id_nota_note_sub_of_domande"
         },
         {
             "autoGenerate": false,
@@ -123,7 +121,7 @@
             "label": "ID Risposte Prev",
             "newLine": true,
             "readOnly": false,
-            "translate": "RESOURCES.id_risposte_prev"
+            "translate": "RESOURCES.IDRispostePrev_note_sub_of_domande"
         }
     ],
     "table_keys": [
@@ -135,7 +133,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+            "translate": "RESOURCES.codice_azienda_note_sub_of_domande"
         },
         {
             "format": {
@@ -146,7 +144,7 @@
             "isPrimary": true,
             "key": "id_domanda",
             "label": "# Domanda",
-            "translate": "RESOURCES.id_domanda"
+            "translate": "RESOURCES._domanda_note_sub_of_domande"
         },
         {
             "format": {
@@ -157,7 +155,7 @@
             "key": "id_modello_test",
             "label": "# Modello",
             "width": "5%",
-            "translate": "RESOURCES.id_modello_test"
+            "translate": "RESOURCES._modello_note_sub_of_domande"
         },
         {
             "format": {
@@ -167,7 +165,7 @@
             "isPrimary": true,
             "key": "id_modello_test_vr",
             "label": "Versione",
-            "translate": "RESOURCES.id_modello_test_vr"
+            "translate": "RESOURCES.versione_note_sub_of_domande"
         },
         {
             "format": {
@@ -177,8 +175,8 @@
             "isPrimary": true,
             "key": "id_nota",
             "label": "Id Nota",
-            "translate": "RESOURCES.id_nota",
-            "width": "5%"
+            "width": "5%",
+            "translate": "RESOURCES.id_nota_note_sub_of_domande"
         },
         {
             "format": {
@@ -188,7 +186,7 @@
             "isPrimary": false,
             "key": "nota",
             "label": "Nota",
-            "translate": "RESOURCES.id_nota",
+            "translate": "RESOURCES.Nota_note_sub_of_domande",
             "width": "25%"
         },
         {
@@ -199,7 +197,7 @@
             "isPrimary": false,
             "key": "id_risposta_prev",
             "label": "Id Risposta Prev",
-            "translate": "RESOURCES.id_risposta_prev"
+            "translate": "RESOURCES.id_risposta_prev_note_sub_of_domande"
         },
         {
             "format": {
@@ -210,7 +208,7 @@
             "key": "risposte_prev",
             "width": "10%",
             "label": "Risposte Previste",
-            "translate": "RESOURCES.risposte_previste"
+            "translate": "RESOURCES.RispostePreviste_note_sub_of_domande"
         },
         {
             "format": {
@@ -222,7 +220,7 @@
             "label": "Associato",
             "sameOrigin": false,
             "isCheckbox": true,
-            "translate": "RESOURCES.associato"
+            "translate": "RESOURCES.Associato_note_sub_of_domande"
         }
     ],
     "hideActions": [

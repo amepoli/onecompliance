@@ -18,8 +18,7 @@
                     "confirmAction": true,
                     "confirmActionMessage": "Chiudere le segnalazioni selezionate?",
                     "query": "update entrasp.compiti set stato='C', data_chiusura=current_date where codice_compito IN (SELECT SPLIT_PART(ARR,'~',1) FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€' and stato != 'C';",
-                    "reloadOnSuccess": true,
-                    "translate": "RESOURCES.chiudi_segnalazioni"
+                    "reloadOnSuccess": true
                 },
                 {
                     "key": "unifica",
@@ -28,8 +27,7 @@
                     "query": "select entrasp.unifica_compiti_selezionati(array[$selected_rows_data$],'€global_codice_azienda€')",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Unificare i compiti selezionati?",
-                    "translate": "RESOURCES.unifica_compiti"
+                    "confirmActionMessage": "Unificare i compiti selezionati?"
                 }
             ]
         }
@@ -106,7 +104,7 @@
                         "message": "Codice azienda necessario",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.codice_azienda_necessario"
+                        "translate": "RESOURCES.codice_azienda_necessario_compiti"
                     }
                 ]
             },
@@ -121,7 +119,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 2,
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES.azienda_compiti"
         },
         {
             "autoGenerate": false,
@@ -138,7 +136,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 2,
-            "translate": "RESOURCES.codice_azienda_fatturante"
+            "translate": "RESOURCES.azienda_fatturante_compiti"
         },
         {
             "autoGenerate": false,
@@ -153,7 +151,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 1.5,
-            "translate": "RESOURCES.budgeted_time"
+            "translate": "RESOURCES.tempo_preventivato_min_compiti"
         },
         {
             "autoGenerate": false,
@@ -169,7 +167,7 @@
             "newLine": true,
             "readOnly": false,
             "size": 1.5,
-            "translate": "RESOURCES.invested_time"
+            "translate": "RESOURCES.tempo_investito_giorn_compiti"
         },
         {
             "autoGenerate": true,
@@ -184,7 +182,7 @@
             "newLine": false,
             "readOnly": true,
             "size": 1,
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES.codice_compito_compiti"
         },
         {
             "autoGenerate": false,
@@ -200,7 +198,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 1.2,
-            "translate": "RESOURCES.data_segnalazione"
+            "translate": "RESOURCES.aperto_il_compiti"
         },
         {
             "autoGenerate": false,
@@ -212,10 +210,10 @@
             "isPrimary": false,
             "key": "data_competenza",
             "label": "Data Competenza",
-            "translate": "RESOURCES.reference_date",
             "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
             "newLine": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.data_competenza_compiti"
         },
         {
             "autoGenerate": false,
@@ -227,14 +225,14 @@
                         "message": "Titolo (max 100 caratteri) necessario",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.titolo_max_100_caratteri_necessario"
+                        "translate": "RESOURCES.titolo_max_100_caratteri_necessario_compiti"
                     },
                     {
                         "name": "maxlength",
                         "message": "Massimo numero di caratteri: 100",
                         "validator": "Validators.maxLength(100)",
                         "value": 100,
-                        "translate": "RESOURCES.massimo_numero_di_caratteri_100"
+                        "translate": "RESOURCES.massimo_numero_di_caratteri_100_compiti"
                     }
                 ]
             },
@@ -246,10 +244,10 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "newLine": false,
             "readOnly": false,
-            "size": 4.6
+            "size": 4.6,
+            "translate": "RESOURCES.titolo_compiti"
         },
         {
             "autoGenerate": false,
@@ -290,13 +288,13 @@
                 }
             ],
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "key": "stato",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 1
+            "size": 1,
+            "translate": "RESOURCES.stato_compiti"
         },
         {
             "autoGenerate": false,
@@ -310,7 +308,7 @@
                         "message": "Inserire almeno un tipo",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_almeno_un_tipo"
+                        "translate": "RESOURCES.inserire_almeno_un_tipo_compiti"
                     }
                 ]
             },
@@ -331,7 +329,7 @@
                     "values": []
                 }
             ],
-            "translate": "RESOURCES.id_tipo_segnalazione"
+            "translate": "RESOURCES.tipo_segnalazione_compiti"
         },
         {
             "autoGenerate": false,
@@ -354,10 +352,10 @@
                 }
             ],
             "label": "Descrizione Estesa",
-            "translate": "RESOURCES.description",
             "newLine": true,
             "readOnly": false,
-            "size": 10
+            "size": 10,
+            "translate": "RESOURCES.descrizione_estesa_compiti"
         },
         {
             "autoGenerate": false,
@@ -395,7 +393,7 @@
                     "queryFunct": "select case when id_argomento_priorita=2484 then 'DarkBlue' when id_argomento_priorita=6615 then 'PaleGreen' when id_argomento_priorita=6616 then 'black' when id_argomento_priorita=45115 then 'DarkRed' end as id_argomento_priorita_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
                 }
             ],
-            "translate": "RESOURCES.id_argomento_priorita"
+            "translate": "RESOURCES.priorit_compiti"
         },
         {
             "autoGenerate": false,
@@ -428,7 +426,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 2.5,
-            "translate": "RESOURCES.id_responsabile"
+            "translate": "RESOURCES.responsabile_compiti"
         },
         {
             "autoGenerate": false,
@@ -444,7 +442,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 2.75,
-            "translate": "RESOURCES.id_centro_gest"
+            "translate": "RESOURCES.centro_gestionale_responsabile_compiti"
         },
         {
             "autoGenerate": false,
@@ -460,7 +458,7 @@
             "newLine": true,
             "readOnly": false,
             "size": 2.75,
-            "translate": "RESOURCES.id_centro_gest_monitor"
+            "translate": "RESOURCES.centro_gestionale_monitoraggiosegnalante_compiti"
         },
         {
             "autoGenerate": false,
@@ -484,7 +482,7 @@
                 "background_color": "green",
                 "font_color": "white"
             },
-            "translate": "RESOURCES.inserisci_aggiornamento_k"
+            "translate": "RESOURCES.Inserisciaggiornamento_compiti"
         },
         {
             "format": {
@@ -498,7 +496,7 @@
             "sameOrigin": false,
             "readOnly": true,
             "newLine": false,
-            "translate": "RESOURCES.invisible_2"
+            "translate": "RESOURCES.invisible_2_compiti"
         },
         {
             "autoGenerate": false,
@@ -536,7 +534,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "translate": "RESOURCES.activate_detail_k"
+            "translate": "RESOURCES._compiti"
         },
         {
             "autoGenerate": false,
@@ -574,7 +572,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "translate": "RESOURCES.hide_detail_k"
+            "translate": "RESOURCES._compiti"
         },
         {
             "format": {
@@ -585,7 +583,6 @@
             "isPrimary": false,
             "key": "maggiori_dettagli",
             "label": "Dettagli",
-            "translate": "RESOURCES.details",
             "style": {
                 "background_color": "transparent",
                 "font_color": "black",
@@ -595,7 +592,8 @@
             "newLine": false,
             "readOnly": true,
             "sameOrigin": false,
-            "size": 2.1
+            "size": 2.1,
+            "translate": "RESOURCES.dettagli_compiti"
         },
         {
             "format": {
@@ -615,7 +613,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 3.25,
-                        "translate": "RESOURCES.contropcliente_fornitore_dipendente"
+                        "translate": "RESOURCES.ContropClienteFornitoreDipendente_compiti"
                     },
                     {
                         "autoGenerate": true,
@@ -630,7 +628,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.5,
-                        "translate": "RESOURCES.plabel_codice"
+                        "translate": "RESOURCES.plabel_codice_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -645,7 +643,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.25,
-                        "translate": "RESOURCES.data_scadenza"
+                        "translate": "RESOURCES.data_scadenza_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -660,7 +658,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.25,
-                        "translate": "RESOURCES.data_chiusura"
+                        "translate": "RESOURCES.data_chiusura_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -676,7 +674,7 @@
                         "label": "Tipo Articolo",
                         "readOnly": false,
                         "newLine": false,
-                        "translate": "RESOURCES.tipo_articolo"
+                        "translate": "RESOURCES.tipo_articolo_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -692,7 +690,7 @@
                         "label": "Tipo Difformità",
                         "readOnly": false,
                         "newLine": false,
-                        "translate": "RESOURCES.tipo_difformit"
+                        "translate": "RESOURCES.tipo_difformit_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -709,7 +707,7 @@
                         "newLine": true,
                         "readOnly": true,
                         "size": 1.5,
-                        "translate": "RESOURCES.plabel_codice_parent"
+                        "translate": "RESOURCES.plabel_codice_parent_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -724,7 +722,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 5,
-                        "translate": "RESOURCES.trattamento_azione_intrapresa_per_risolvere_il_problema_o_ridurne_gli_effetti"
+                        "translate": "RESOURCES.trattamento_azione_intrapresa_per_risolvere_il_problema_o_ridurne_gli_effetti_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -739,7 +737,7 @@
                         "newLine": true,
                         "readOnly": false,
                         "size": 5,
-                        "translate": "RESOURCES.analisi_cause"
+                        "translate": "RESOURCES.analisi_cause_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -754,7 +752,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": true,
-                        "translate": "RESOURCES.perdita_diretta_potenziale"
+                        "translate": "RESOURCES.perdita_diretta_potenziale_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -769,7 +767,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": true,
-                        "translate": "RESOURCES.perdita_diretta_effettiva"
+                        "translate": "RESOURCES.perdita_diretta_effettiva_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -784,7 +782,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": true,
-                        "translate": "RESOURCES.perdita_indiretta_potenziale"
+                        "translate": "RESOURCES.perdita_indiretta_potenziale_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -799,7 +797,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "sameOrigin": true,
-                        "translate": "RESOURCES.perdita_indiretta_effettiva"
+                        "translate": "RESOURCES.perdita_indiretta_effettiva_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -814,7 +812,7 @@
                         "readOnly": false,
                         "newLine": false,
                         "sameOrigin": true,
-                        "translate": "RESOURCES.reclamo"
+                        "translate": "RESOURCES.reclamo_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -829,7 +827,7 @@
                         "readOnly": false,
                         "newLine": false,
                         "sameOrigin": true,
-                        "translate": "RESOURCES.causa_legale"
+                        "translate": "RESOURCES.causa_legale_compiti"
                     },
                     {
                         "autoGenerate": false,
@@ -844,7 +842,7 @@
                         "readOnly": false,
                         "newLine": false,
                         "sameOrigin": true,
-                        "translate": "RESOURCES.progetto_informatico"
+                        "translate": "RESOURCES.progetto_informatico_compiti"
                     }
                 ]
             },
@@ -866,11 +864,11 @@
             "isPrimary": false,
             "key": "sezione_detail",
             "label": "Maggiori Dettagli",
-            "translate": "RESOURCES.more_details",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": true,
-            "saveWhenHidden": true
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.maggiori_dettagli_compiti"
         },
         {
             "autoGenerate": false,
@@ -895,7 +893,7 @@
                     "outputEventWhenComplete": "navigate_to_new_cons"
                 }
             ],
-            "translate": "RESOURCES.id_cons"
+            "translate": "RESOURCES.id_cons_compiti"
         },
         {
             "autoGenerate": false,
@@ -910,7 +908,7 @@
             "insertUpdateFunct": "select CURRENT_DATE",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.data_ins"
+            "translate": "RESOURCES.data_inserimento_compiti"
         },
         {
             "autoGenerate": false,
@@ -925,7 +923,7 @@
             "label": "Utente_ins",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.ute_ins"
+            "translate": "RESOURCES.utente_ins_compiti"
         }
     ],
     "search_keys": [
@@ -937,9 +935,9 @@
                 "viewType": "combobox"
             },
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "newLine": false,
-            "queryCond": "cmp.stato='€stato€'"
+            "queryCond": "cmp.stato='€stato€'",
+            "translate": "RESOURCES.stato_compiti"
         },
         {
             "fieldName": "id_responsabile_s",
@@ -951,7 +949,7 @@
             "label": "Responsabile/Negozio",
             "newLine": true,
             "queryCond": "cmp.id_responsabile=$id_responsabile_s$",
-            "translate": "RESOURCES.responsabilenegozio"
+            "translate": "RESOURCES.ResponsabileNegozio_compiti"
         },
         {
             "fieldName": "note_search",
@@ -960,9 +958,9 @@
                 "viewType": "input"
             },
             "label": "Note",
-            "translate": "RESOURCES.notes",
             "newLine": false,
-            "queryCond": "(UPPER (cmp.note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%')"
+            "queryCond": "(UPPER (cmp.note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%')",
+            "translate": "RESOURCES.note_compiti"
         },
         {
             "fieldName": "codice_compito",
@@ -973,7 +971,7 @@
             "label": "Codice Compito",
             "newLine": false,
             "queryCond": "cmp.codice_compito=$codice_compito$",
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES.codice_compito_compiti"
         },
         {
             "fieldName": "id_somministrazione_s",
@@ -984,7 +982,7 @@
             "label": "Id Verifica",
             "newLine": false,
             "queryCond": "cmp.codice_azienda||'-'||cmp.codice_compito in(select codice_azienda||'-'||codice_compito from entrasp.compiti_rif_bo where codice_azienda=$codice_azienda$ and id_somministrazione=$id_somministrazione_s$)",
-            "translate": "RESOURCES.id_verifica"
+            "translate": "RESOURCES.id_verifica_compiti"
         },
         {
             "fieldName": "titolo_s",
@@ -993,9 +991,9 @@
                 "viewType": "input"
             },
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "newLine": true,
-            "queryCond": "(UPPER (cmp.titolo) like '%'||UPPER('€titolo_s€')||'%' or UPPER (note) like '%'||UPPER('€titolo_s€')||'%')"
+            "queryCond": "(UPPER (cmp.titolo) like '%'||UPPER('€titolo_s€')||'%' or UPPER (note) like '%'||UPPER('€titolo_s€')||'%')",
+            "translate": "RESOURCES.titolo_compiti"
         },
         {
             "fieldName": "id_tipo_segnalazione_s",
@@ -1008,7 +1006,7 @@
             "newLine": false,
             "size": 2,
             "queryCond": "cmp.id_tipo_segnalazione=$id_tipo_segnalazione_s$",
-            "translate": "RESOURCES.id_tipo_segnal"
+            "translate": "RESOURCES.id_tipo_segnal_compiti"
         },
         {
             "fieldName": "id_centro_gest_s",
@@ -1021,7 +1019,7 @@
             "newLine": false,
             "size": 2,
             "queryCond": "cmp.id_centro_gest=$id_centro_gest_s$",
-            "translate": "RESOURCES.centro_gest"
+            "translate": "RESOURCES.centro_gest_compiti"
         },
         {
             "fieldName": "id_centro_gest_monitor_s",
@@ -1034,7 +1032,7 @@
             "newLine": false,
             "size": 2,
             "queryCond": "cmp.id_centro_gest_monitor=$id_centro_gest_monitor_s$",
-            "translate": "RESOURCES.centro_gestmonitor"
+            "translate": "RESOURCES.CentroGestMonitor_compiti"
         },
         {
             "fieldName": "flag_compiti_aperti",
@@ -1042,9 +1040,9 @@
                 "viewType": "checkbox"
             },
             "label": "Solo Principali",
-            "translate": "RESOURCES.main_only",
             "newLine": false,
-            "queryCond": "cmp.codice_compito_parent IS null"
+            "queryCond": "cmp.codice_compito_parent IS null",
+            "translate": "RESOURCES.solo_principali_compiti"
         },
         {
             "fieldName": "flag_compiti_non_associati",
@@ -1054,7 +1052,7 @@
             "label": "Non associati a oggetti",
             "newLine": false,
             "queryCond": "cmp.codice_azienda||'-'||cmp.codice_compito not in (select crb.codice_azienda||'-'||crb.codice_compito from entrasp.compiti_rif_bo crb)",
-            "translate": "RESOURCES.non_associati_a_oggetti"
+            "translate": "RESOURCES.Nonassociatiaoggetti_compiti"
         },
         {
             "fieldName": "flag_progetti_miei",
@@ -1063,9 +1061,9 @@
                 "viewType": "toggle"
             },
             "label": "Miei/Mio Ufficio",
-            "translate": "RESOURCES.mine_my_office",
             "newLine": false,
-            "queryCond": "(cmp.id_centro_gest||'-'||cmp.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€')) or cmp.id_centro_gest_monitor||'-'||cmp.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€')))"
+            "queryCond": "(cmp.id_centro_gest||'-'||cmp.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€')) or cmp.id_centro_gest_monitor||'-'||cmp.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€')))",
+            "translate": "RESOURCES.mieimio_ufficio_compiti"
         }
     ],
     "subTables": [
@@ -1112,7 +1110,7 @@
                 }
             ],
             "label": "Rischi associati",
-            "translate": "RESOURCES.rischi_sub_of_procedure"
+            "translate": "RESOURCES.Rischiassociati_rischi_sub_of_compiti"
         },
         {
             "entryKey": "compiti_sub_of_compiti",
@@ -1215,7 +1213,7 @@
                 "confirmAction": false,
                 "onSuccessAction": "reload"
             },
-            "translate": "RESOURCES.check"
+            "translate": "RESOURCES._compiti"
         },
         {
             "format": {
@@ -1225,7 +1223,7 @@
             "isPrimary": false,
             "key": "id_somministrazione",
             "label": "id_somministrazione",
-            "translate": "RESOURCES.id_administration"
+            "translate": "RESOURCES.id_somministrazione_compiti"
         },
         {
             "format": {
@@ -1235,7 +1233,7 @@
             "isPrimary": false,
             "key": "id_sondaggio",
             "label": "id_sondaggio",
-            "translate": "RESOURCES.id_survey"
+            "translate": "RESOURCES.id_sondaggio_compiti"
         },
         {
             "format": {
@@ -1245,7 +1243,7 @@
             "isPrimary": false,
             "key": "id_contratto",
             "label": "id_contratto",
-            "translate": "RESOURCES.id_contract"
+            "translate": "RESOURCES.id_contratto_compiti"
         },
         {
             "format": {
@@ -1255,7 +1253,7 @@
             "isPrimary": false,
             "key": "codice_codifica_stato",
             "label": "codice_codifica_stato",
-            "translate": "RESOURCES.codice_codifica_stato"
+            "translate": "RESOURCES.codice_codifica_stato_compiti"
         },
         {
             "format": {
@@ -1273,7 +1271,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES.plabel_codice_compito_compiti"
         },
         {
             "format": {
@@ -1284,14 +1282,14 @@
             "key": "titolo",
             "width": "36%",
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "style": [
                 {
                     "value": "*",
                     "font_size": "medium",
                     "font_weight": "590"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.titolo_compiti"
         },
         {
             "format": {
@@ -1303,7 +1301,7 @@
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
             "label": "Centro Gest.",
             "width": "10%",
-            "translate": "RESOURCES.descr_centro_gest"
+            "translate": "RESOURCES.centro_gest_compiti"
         },
         {
             "format": {
@@ -1315,7 +1313,7 @@
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor)",
             "label": "Centro Gest.Monit.",
             "width": "8%",
-            "translate": "RESOURCES.descr_centro_gest_monitor"
+            "translate": "RESOURCES.centro_gestmonit_compiti"
         },
         {
             "format": {
@@ -1326,8 +1324,8 @@
             "key": "tipo_segnalazione",
             "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
             "label": "Tipo",
-            "translate": "RESOURCES.type",
-            "width": "10%"
+            "width": "10%",
+            "translate": "RESOURCES.tipo_compiti"
         },
         {
             "format": {
@@ -1370,7 +1368,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.priorita"
+            "translate": "RESOURCES.priorit_compiti"
         },
         {
             "format": {
@@ -1380,7 +1378,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code"
+            "translate": "RESOURCES.codice_azienda_compiti"
         },
         {
             "format": {
@@ -1390,7 +1388,7 @@
             "isPrimary": false,
             "key": "user_companies",
             "label": "user_companies",
-            "translate": "RESOURCES.user_companies"
+            "translate": "RESOURCES.user_companies_compiti"
         },
         {
             "format": {
@@ -1400,7 +1398,7 @@
             "isPrimary": false,
             "key": "codice_compito_parent",
             "label": "Codice Compito Parent",
-            "translate": "RESOURCES.codice_compito_parent"
+            "translate": "RESOURCES.codice_compito_parent_compiti"
         },
         {
             "format": {
@@ -1411,7 +1409,7 @@
             "key": "data_segnalazione",
             "width": "6%",
             "label": "Aperto il",
-            "translate": "RESOURCES.data_segnalazione"
+            "translate": "RESOURCES.aperto_il_compiti"
         },
         {
             "format": {
@@ -1422,7 +1420,7 @@
             "key": "data_chiusura",
             "width": "6%",
             "label": "Chiuso il",
-            "translate": "RESOURCES.data_chiusura"
+            "translate": "RESOURCES.chiuso_il_compiti"
         },
         {
             "format": {
@@ -1432,7 +1430,7 @@
             "isPrimary": false,
             "key": "id_cliente",
             "label": "Cliente",
-            "translate": "RESOURCES.customer"
+            "translate": "RESOURCES.cliente_compiti"
         },
         {
             "format": {
@@ -1443,7 +1441,6 @@
             "key": "stato",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "width": "6%",
             "style": [
                 {
@@ -1474,7 +1471,8 @@
                     "background_color": "orange",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.stato_compiti"
         },
         {
             "format": {
@@ -1514,7 +1512,7 @@
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
             },
-            "translate": "RESOURCES.time_report_play"
+            "translate": "RESOURCES._compiti"
         },
         {
             "format": {
@@ -1555,25 +1553,23 @@
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
             },
-            "translate": "RESOURCES.time_report_stop_active"
+            "translate": "RESOURCES._compiti"
         }
     ],
     "exportQueries": {
         "tableQueries": [
             {
                 "label": "Registro Conflitti d'Interesse",
-                "queryString": "select entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as centro_gest_monitor, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cmp.data_segnalazione, cmp.data_chiusura, substring(cmp.titolo from 1 for 100) as titolo, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_fondo, string_agg(rsc.codice_rischio::varchar, '; ') as rischi_associati from entrasp.compiti cmp left join entrasp.compiti_rischi cmr on cmp.codice_compito=cmr.codice_compito and cmp.codice_azienda=cmr.codice_azienda left join entrasp.rischi rsc on cmr.codice_rischio=rsc.codice_rischio and cmr.codice_azienda=rsc.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione=2 group by entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) , cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) ,entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) , entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato), cmp.data_segnalazione,cmp.data_chiusura, substring(cmp.titolo from 1 for 100) , entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente)",
-                "translate": "RESOURCES.registro_conflitti_dinteresse"
+                "queryString": "select entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as centro_gest_monitor, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cmp.data_segnalazione, cmp.data_chiusura, substring(cmp.titolo from 1 for 100) as titolo, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_fondo, string_agg(rsc.codice_rischio::varchar, '; ') as rischi_associati from entrasp.compiti cmp left join entrasp.compiti_rischi cmr on cmp.codice_compito=cmr.codice_compito and cmp.codice_azienda=cmr.codice_azienda left join entrasp.rischi rsc on cmr.codice_rischio=rsc.codice_rischio and cmr.codice_azienda=rsc.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione=2 group by entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) , cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) ,entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) , entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato), cmp.data_segnalazione,cmp.data_chiusura, substring(cmp.titolo from 1 for 100) , entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente)"
             },
             {
                 "label": "Segnalazioni",
-                "queryString": "select codice_compito, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, titolo, note, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest,entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=0",
-                "translate": "RESOURCES.segnalazioni"
+                "queryString": "select codice_compito, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, titolo, note, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest,entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=0"
             },
             {
                 "label": "Suggerimenti, segnalazioni e relativi aggiornamenti",
                 "queryString": "select cmp.codice_compito, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_desc, cmp.data_segnalazione, cmp.foreseen_date as data_scadenza, cmp.data_chiusura, regexp_replace(cmp.note, E'<[^>]+>', '', 'gi') as descrizione, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as centro_gest_responsabile, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as centro_gest_monitoraggio, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, entrasp.argomenti_descr_breve_no_num(cmp.id_argomento_priorita) as priorita, entrasp.consuntivazioni_del_compito(cmp.codice_azienda, cmp.codice_compito) as aggiornamenti, entrasp.sondaggi_del_compito(codice_azienda, codice_compito) as sondaggi_associati from entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione in(300, 1, 50, 200) order by cmp.data_segnalazione, cmp.codice_compito",
-                "translate": "RESOURCES.suggerimenti_segnalazioni_e_relativi_aggiornamenti"
+                "translate": "RESOURCES.Suggerimentisegnalazionierelativiaggiornamenti_compiti"
             }
         ]
     },
@@ -1589,6 +1585,5 @@
     ],
     "querySuffixes": {
         "tableViewSuffix": "order by time_report_stop_active desc,data_segnalazione desc limit 100"
-    },
-    "translate": "RESOURCES.compiti"
+    }
 }

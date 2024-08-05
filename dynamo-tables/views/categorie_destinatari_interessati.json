@@ -24,15 +24,14 @@
                 }
             ],
             "label": "Trattamenti dati",
-            "translate": "RESOURCES.trattamenti_dati_sub_of_procedure"
+            "translate": "RESOURCES.trattamenti_dati"
         }
     ],
     "exportQueries": {
         "formQueries": [
             {
                 "label": "Trattamenti dati associati alla categoria",
-                "queryString": "select entrasp.argomenti_descr_breve(an.id_argomento_consenso) as tipo_consenso, td.titolo as trattamento, an.codice_articolo_normativo||'-'||rubrica as base_giuridica from entrasp.cpl_trattamenti_dati_categorie tdc inner join entrasp.cpl_trattamenti_dati td on tdc.id_trattamento_dati=td.id_trattamento_dati and tdc.codice_azienda=td.codice_azienda left join entrasp.cpl_trattamenti_dati_finalita tdf on td.codice_azienda=tdf.codice_azienda and td.id_trattamento_dati=tdf.id_trattamento_dati left join entrasp.argomenti_articoli_normativi argan on tdf.id_argomento_finalita=argan.id_argomento left join entrasp.articoli_normativi an on argan.id_articolo_normativo=an.id_articolo_normativo left join entrasp.argomenti arg on an.id_argomento_consenso=arg.id_argomento where tdc.codice_azienda=$codice_azienda$ and tdc.id_argomento_categoria=$id_argomento$ order by td.codice_azienda, entrasp.argomenti_descr_breve(id_argomento_consenso)",
-                "translate": "RESOURCES.trattamenti_dati_associati_alla_categoria"
+                "queryString": "select entrasp.argomenti_descr_breve(an.id_argomento_consenso) as tipo_consenso, td.titolo as trattamento, an.codice_articolo_normativo||'-'||rubrica as base_giuridica from entrasp.cpl_trattamenti_dati_categorie tdc inner join entrasp.cpl_trattamenti_dati td on tdc.id_trattamento_dati=td.id_trattamento_dati and tdc.codice_azienda=td.codice_azienda left join entrasp.cpl_trattamenti_dati_finalita tdf on td.codice_azienda=tdf.codice_azienda and td.id_trattamento_dati=tdf.id_trattamento_dati left join entrasp.argomenti_articoli_normativi argan on tdf.id_argomento_finalita=argan.id_argomento left join entrasp.articoli_normativi an on argan.id_articolo_normativo=an.id_articolo_normativo left join entrasp.argomenti arg on an.id_argomento_consenso=arg.id_argomento where tdc.codice_azienda=$codice_azienda$ and tdc.id_argomento_categoria=$id_argomento$ order by td.codice_azienda, entrasp.argomenti_descr_breve(id_argomento_consenso)"
             }
         ]
     }

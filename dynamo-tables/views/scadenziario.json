@@ -44,8 +44,7 @@
                     "confirmAction": true,
                     "confirmActionMessage": "Eliminare definitivamente gli eventi selezionati e i relativi sondaggi?",
                     "query": "select entrasp.cancella_evento(codice_azienda,codice_compito) from entrasp.compiti where codice_azienda||'~'||codice_compito in ($selected_rows_data$)",
-                    "reloadOnSuccess": true,
-                    "translate": "RESOURCES.elimina"
+                    "reloadOnSuccess": true
                 },
                 {
                     "key": "close_eventi",
@@ -54,8 +53,7 @@
                     "confirmAction": true,
                     "confirmActionMessage": "Contrassegnare come eseguiti gli eventi selezionati?",
                     "query": "select entrasp.chiudi_evento(codice_azienda,codice_compito) from entrasp.compiti where codice_azienda||'~'||codice_compito in ($selected_rows_data$);",
-                    "reloadOnSuccess": true,
-                    "translate": "RESOURCES.contrassegna_come_eseguiti"
+                    "reloadOnSuccess": true
                 }
             ]
         }
@@ -74,7 +72,7 @@
             "newLine": false,
             "readOnly": true,
             "size": 1,
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES._evento_scadenziario"
         },
         {
             "autoGenerate": true,
@@ -86,10 +84,10 @@
             "isPrimary": false,
             "key": "id_sondaggio",
             "label": "id_sondaggio",
-            "translate": "RESOURCES.id_survey",
             "newLine": false,
             "readOnly": true,
-            "size": 1
+            "size": 1,
+            "translate": "RESOURCES.id_sondaggio_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -103,7 +101,7 @@
             "label": "",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES._scadenziario"
         },
         {
             "autoGenerate": false,
@@ -118,7 +116,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 5.4,
-            "translate": "RESOURCES.titolo"
+            "translate": "RESOURCES.descrizione_scadenza_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -131,7 +129,6 @@
             "key": "stato",
             "queryFunct": "entrasp.giudizio_scadenza(foreseen_date::date, stato)",
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "size": 1.5,
             "readOnly": true,
             "newLine": false,
@@ -153,7 +150,8 @@
                     "styleAttribute": "font_color",
                     "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_EVENTI' and codice=$stato$"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.stato_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -182,7 +180,7 @@
                     "outputEventWhenComplete": "reloadScadenze"
                 }
             ],
-            "translate": "RESOURCES.close"
+            "translate": "RESOURCES.scadenza_eseguita_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -193,13 +191,13 @@
                         "icon": "add_to_queue",
                         "label": "Integra sotto-controlli",
                         "outputEventName": "sondaggio_integra",
-                        "translate": "RESOURCES.integra_sottocontrolli"
+                        "translate": "RESOURCES.Integrasottocontrolli_scadenziario"
                     },
                     {
                         "icon": "launch",
                         "label": "Riepilogo risultati",
-                        "translate": "RESOURCES.result_summary",
-                        "outputEventName": "check_existence_riepilogo_risultati"
+                        "outputEventName": "check_existence_riepilogo_risultati",
+                        "translate": "RESOURCES.riepilogo_risultati_scadenziario"
                     }
                 ]
             },
@@ -208,7 +206,6 @@
             "buttonIcon": "more_vert",
             "key": "contratti_actions",
             "label": "void",
-            "translate": "RESOURCES.void",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
@@ -239,7 +236,8 @@
                     "queryFunct": "select check_existence_cpl_risultati as new_riepilogo_risultati from entrasp.check_existence_cpl_risultati($codice_azienda$, $id_sondaggio$)",
                     "outputEventWhenComplete": "to_riepilogo_risultati"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.void_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -252,7 +250,7 @@
                         "validator": "Validators.required",
                         "name": "required",
                         "message": "Specificare il tipo evento",
-                        "translate": "RESOURCES.specificare_il_tipo_evento"
+                        "translate": "RESOURCES.Specificareiltipoevento_scadenziario"
                     }
                 ]
             },
@@ -263,7 +261,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 5,
-            "translate": "RESOURCES.id_argomento_tipo_evento"
+            "translate": "RESOURCES.Tipoevento_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -278,7 +276,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 2,
-            "translate": "RESOURCES.data_competenza"
+            "translate": "RESOURCES.data_di_riferimento_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -290,10 +288,10 @@
             "isPrimary": false,
             "key": "data_chiusura",
             "label": "Data esecuzione",
-            "translate": "RESOURCES.execution_date",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5
+            "size": 1.5,
+            "translate": "RESOURCES.data_esecuzione_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -308,7 +306,7 @@
             "newLine": true,
             "readOnly": false,
             "size": 1.5,
-            "translate": "RESOURCES.foreseen_date"
+            "translate": "RESOURCES.data_scadenza_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -323,7 +321,7 @@
             "label": "Responsabile",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.id_responsabile"
+            "translate": "RESOURCES.responsabile_scadenziario"
         },
         {
             "autoGenerate": false,
@@ -336,9 +334,9 @@
             "isPrimary": false,
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "newLine": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.centro_gestionale_scadenziario"
         }
     ],
     "table_keys": [
@@ -388,7 +386,7 @@
                     }
                 ]
             },
-            "translate": "RESOURCES.check"
+            "translate": "RESOURCES._scadenziario"
         },
         {
             "format": {
@@ -398,7 +396,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "",
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES._scadenziario"
         },
         {
             "format": {
@@ -415,7 +413,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES._evento_scadenziario"
         },
         {
             "format": {
@@ -435,7 +433,7 @@
                     "font_weight": "599"
                 }
             ],
-            "translate": "RESOURCES.foreseen_date"
+            "translate": "RESOURCES.data_scadenza_scadenziario"
         },
         {
             "format": {
@@ -455,7 +453,7 @@
                     "font_weight": "599"
                 }
             ],
-            "translate": "RESOURCES.data_chiusura"
+            "translate": "RESOURCES.data_esec_scadenziario"
         },
         {
             "format": {
@@ -475,7 +473,7 @@
                     "font_weight": "599"
                 }
             ],
-            "translate": "RESOURCES.data_competenza"
+            "translate": "RESOURCES.Datariferimento_scadenziario"
         },
         {
             "format": {
@@ -485,7 +483,6 @@
             "isPrimary": false,
             "key": "tit_compito",
             "label": "Descrizione",
-            "translate": "RESOURCES.description",
             "width": "20%",
             "style": [
                 {
@@ -493,7 +490,8 @@
                     "font_size": "medium",
                     "font_weight": "500"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.descrizione_scadenziario"
         },
         {
             "format": {
@@ -503,7 +501,6 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Descrizione",
-            "translate": "RESOURCES.description",
             "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_evento)",
             "width": "14%",
             "style": [
@@ -512,7 +509,8 @@
                     "font_size": "medium",
                     "font_weight": "500"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.descrizione_scadenziario"
         },
         {
             "format": {
@@ -523,7 +521,6 @@
             "key": "id_sondaggio",
             "width": "8%",
             "label": "id_sondaggio",
-            "translate": "RESOURCES.id_survey",
             "style": [
                 {
                     "value": "*",
@@ -547,7 +544,8 @@
                         "destination": "codice_azienda"
                     }
                 ]
-            }
+            },
+            "translate": "RESOURCES.id_sondaggio_scadenziario"
         },
         {
             "format": {
@@ -559,7 +557,7 @@
             "label": "Ufficio",
             "width": "17%",
             "queryFunct": "entrasp.centri_gestionali_descr('€global_codice_part€', id_centro_gest)",
-            "translate": "RESOURCES.descr_centro_gest"
+            "translate": "RESOURCES.ufficio_scadenziario"
         },
         {
             "format": {
@@ -570,7 +568,7 @@
             "key": "id_argomento_tipo_evento",
             "label": "Argomento Evento",
             "width": "7%",
-            "translate": "RESOURCES.id_argomento_tipo_evento"
+            "translate": "RESOURCES.ArgomentoEvento_scadenziario"
         },
         {
             "format": {
@@ -582,7 +580,7 @@
             "label": "Tipo evento",
             "width": "21%",
             "queryFunct": "entrasp.argomenti_descr(id_argomento_tipo_evento)",
-            "translate": "RESOURCES.descr_tipo_evento"
+            "translate": "RESOURCES.Tipoevento_scadenziario"
         },
         {
             "format": {
@@ -623,7 +621,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.stato"
+            "translate": "RESOURCES.__scadenziario"
         },
         {
             "format": {
@@ -633,9 +631,9 @@
             "isPrimary": false,
             "key": "fake",
             "label": "void",
-            "translate": "RESOURCES.void",
             "width": "2%",
-            "sameOrigin": false
+            "sameOrigin": false,
+            "translate": "RESOURCES.void_scadenziario"
         },
         {
             "format": {
@@ -645,7 +643,7 @@
             "isPrimary": false,
             "key": "codice_compito_parent",
             "label": "",
-            "translate": "RESOURCES.codice_compito_parent"
+            "translate": "RESOURCES._scadenziario"
         },
         {
             "format": {
@@ -655,7 +653,7 @@
             "isPrimary": false,
             "key": "id_tipo_segnalazione",
             "label": "",
-            "translate": "RESOURCES.id_tipo_segnalazione"
+            "translate": "RESOURCES._scadenziario"
         }
     ],
     "subTables": [
@@ -673,12 +671,11 @@
                     "son": "codice_compito_parent"
                 }
             ],
-            "translate": "RESOURCES.eventi_associati"
+            "translate": "RESOURCES.Eventiassociati_scadenziario_sub_of_scadenziario"
         },
         {
             "entryKey": "sondaggi_sub_of_scadenziario",
             "label": "Sondaggi Associati",
-            "translate": "RESOURCES.associate_survey",
             "isHidden": false,
             "keys": [
                 {
@@ -689,7 +686,8 @@
                     "parent": "codice_compito",
                     "son": "codice_compito"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.sondaggi_associati"
         },
         {
             "entryKey": "seleziona_campione",
@@ -705,7 +703,7 @@
                     "son": "id_sondaggio"
                 }
             ],
-            "translate": "RESOURCES.sottocontrolli_associati"
+            "translate": "RESOURCES.Sottocontrolliassociati_seleziona_campione"
         },
         {
             "entryKey": "contratti_sub_of_scadenziario",
@@ -738,7 +736,7 @@
             "label": "Per mese data riferimento",
             "newLine": false,
             "queryCond": "EXTRACT(MONTH FROM compiti.data_segnalazione) = $rif_month$",
-            "translate": "RESOURCES.per_mese_data_riferimento"
+            "translate": "RESOURCES.per_mese_data_riferimento_scadenziario"
         },
         {
             "fieldName": "rif_year",
@@ -749,7 +747,7 @@
             "label": "Per anno data riferimento",
             "newLine": true,
             "queryCond": "EXTRACT(YEAR FROM data_competenza) = $rif_year$",
-            "translate": "RESOURCES.per_anno_data_riferimento"
+            "translate": "RESOURCES.per_anno_data_riferimento_scadenziario"
         },
         {
             "fieldName": "scad_month",
@@ -760,7 +758,7 @@
             "label": "Per mese data scadenza",
             "newLine": false,
             "queryCond": "EXTRACT(MONTH FROM compiti.foreseen_date) = $scad_month$",
-            "translate": "RESOURCES.per_mese_data_scadenza"
+            "translate": "RESOURCES.per_mese_data_scadenza_scadenziario"
         },
         {
             "fieldName": "scad_year",
@@ -771,7 +769,7 @@
             "label": "Per anno data scadenza",
             "newLine": false,
             "queryCond": "EXTRACT(YEAR FROM compiti.foreseen_date) = $scad_year$",
-            "translate": "RESOURCES.per_anno_data_scadenza"
+            "translate": "RESOURCES.per_anno_data_scadenza_scadenziario"
         },
         {
             "fieldName": "flag_progetti_miei",
@@ -780,9 +778,9 @@
                 "viewType": "toggle"
             },
             "label": "Miei/Mio Ufficio",
-            "translate": "RESOURCES.mine_my_office",
             "newLine": false,
-            "queryCond": "compiti.id_centro_gest||'-'||compiti.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€'))"
+            "queryCond": "compiti.id_centro_gest||'-'||compiti.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€'))",
+            "translate": "RESOURCES.mieimio_ufficio_scadenziario"
         },
         {
             "fieldName": "flag_exclude_eseguito",
@@ -793,7 +791,7 @@
             "label": "Escludi eseguite",
             "newLine": false,
             "queryCond": "entrasp.giudizio_scadenza(foreseen_date::date, stato)!='Eseguita'",
-            "translate": "RESOURCES.escludi_eseguite"
+            "translate": "RESOURCES.Escludieseguite_scadenziario"
         }
     ],
     "outputEvents": [

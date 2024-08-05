@@ -37,7 +37,7 @@
             "isPrimary": true,
             "newLine": false,
             "size": 1.4,
-            "translate": "RESOURCES.id_report"
+            "translate": "RESOURCES.id_report_reports"
         },
         {
             "autoGenerate": false,
@@ -53,7 +53,7 @@
             "isPrimary": false,
             "newLine": false,
             "size": 2.5,
-            "translate": "RESOURCES.id_report_parent"
+            "translate": "RESOURCES.report_padre_reports"
         },
         {
             "autoGenerate": false,
@@ -70,7 +70,7 @@
             "isPrimary": false,
             "newLine": false,
             "size": 2.5,
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES.azienda_reports"
         },
         {
             "autoGenerate": false,
@@ -87,7 +87,7 @@
             "isPrimary": false,
             "newLine": false,
             "size": 2.5,
-            "translate": "RESOURCES.codice_part"
+            "translate": "RESOURCES.partizione_reports"
         },
         {
             "autoGenerate": false,
@@ -98,7 +98,7 @@
                         "icon": "content_copy",
                         "label": "Duplica report",
                         "outputEventName": "report_duplica",
-                        "translate": "RESOURCES.duplica_report"
+                        "translate": "RESOURCES.duplica_report_reports"
                     }
                 ]
             },
@@ -108,11 +108,11 @@
             "buttonIcon": "more_vert",
             "key": "report_actions",
             "label": "void",
-            "translate": "RESOURCES.void",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
-            "size": 0.6
+            "size": 0.6,
+            "translate": "RESOURCES.void_reports"
         },
         {
             "autoGenerate": false,
@@ -126,7 +126,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": true,
-            "translate": "RESOURCES.descrizione"
+            "translate": "RESOURCES.report_reports"
         },
         {
             "autoGenerate": false,
@@ -141,7 +141,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "translate": "RESOURCES.data_esec_da"
+            "translate": "RESOURCES.data_esecuzione_da_reports"
         },
         {
             "autoGenerate": false,
@@ -156,26 +156,24 @@
             "sameOrigin": false,
             "isPrimary": false,
             "newLine": false,
-            "translate": "RESOURCES.data_esec_a"
+            "translate": "RESOURCES.data_esecuzione_a_reports"
         }
     ],
     "exportQueries": {
         "formQueries": [
             {
                 "label": "Valore indicatori dell'azienda",
-                "queryString": "select ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, cia.valore_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),$codice_azienda$::varchar,ir.codice_tipo_indicatore::varchar, $codice_part$) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=$id_report$",
-                "translate": "RESOURCES.valore_indicatori_dellazienda"
+                "queryString": "select ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, cia.valore_indicatore, mn.menu, ind.parametri_menu from entrasp.indicatori ind inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),$codice_azienda$::varchar,ir.codice_tipo_indicatore::varchar, $codice_part$) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=$id_report$"
             },
             {
                 "label": "Valore indicatori trasversali",
                 "queryString": "select az.codice_azienda, ind.id_indicatore, ind.descrizione as Descr_Breve_Indicatore, mn.menu, ind.parametri_menu, ir.codice_tipo_indicatore::varchar, entrasp.transcodifiche_transcodifica (ir.tipo_dato_indicatore,ir.codice_tipo_indicatore) as Desc_tipo_indicatore, ir.descrizione_indicatore, cia.valore_indicatore, cia.stringa_indicatore from entrasp.aziende az, entrasp.indicatori ind left join entrasp.menu mn on ind.id_menu=mn.id_menu inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.calcola_indicatore_arg(array[ind.id_argomento], entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'), entrasp.evaluate_given_field_date_null('data_esec_da', '€data_esec_da€', '€'),az.codice_azienda::varchar,ir.codice_tipo_indicatore::varchar, az.codice_part) cia on ind.id_indicatore=(cia.idindicatore)[1] where ir.id_report=133 and az.codice_azienda in(€global_user_companies€) order by ind.id_indicatore, az.codice_azienda",
-                "translate": "RESOURCES.valore_indicatori_trasversali"
+                "translate": "RESOURCES.Valoreindicatoritrasversali_reports"
             },
             {
                 "label": "Report",
                 "queryString": "select * from entrasp.report_data('€global_codice_azienda€',$id_report$);",
-                "isReport": true,
-                "translate": "RESOURCES.report"
+                "isReport": true
             }
         ]
     },
@@ -202,7 +200,7 @@
             ],
             "label": "Sotto Reports",
             "renderingOrder": 2,
-            "translate": "RESOURCES.sotto_reports"
+            "translate": "RESOURCES.SottoReports_reports_sub_of_reports"
         },
         {
             "entryKey": "destinatari_report",
@@ -227,7 +225,7 @@
             "fieldName": "destinatari_s",
             "newLine": false,
             "queryCond": "id_report in (select id_report from entrasp.destinatari_report where lista_email_destinatari ilike '%'||'€destinatari_s€'||'%')",
-            "translate": "RESOURCES.destinatari"
+            "translate": "RESOURCES.destinatari_reports"
         }
     ],
     "table_keys": [
@@ -240,7 +238,7 @@
             "isPrimary": true,
             "key": "id_report",
             "label": "#",
-            "translate": "RESOURCES.id_report"
+            "translate": "RESOURCES._reports"
         },
         {
             "format": {
@@ -251,7 +249,7 @@
             "isPrimary": false,
             "key": "codice_azienda",
             "label": "Azienda",
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES.azienda_reports"
         },
         {
             "format": {
@@ -262,7 +260,7 @@
             "width": "10%",
             "key": "codice_part",
             "label": "Partizione",
-            "translate": "RESOURCES.codice_part"
+            "translate": "RESOURCES.partizione_reports"
         },
         {
             "format": {
@@ -272,7 +270,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Report",
-            "translate": "RESOURCES.descrizione"
+            "translate": "RESOURCES.report_reports"
         },
         {
             "format": {
@@ -283,13 +281,12 @@
             "isPrimary": false,
             "key": "id_report_parent",
             "label": "ID Report",
-            "translate": "RESOURCES.id_report_parent"
+            "translate": "RESOURCES.IDReport_reports"
         }
     ],
     "addElementSettings": {
         "labelAdd": "Nuovo Report",
-        "navigateOnSuccess": true,
-        "translateAdd": "RESOURCES.nuovo_report"
+        "navigateOnSuccess": true
     },
     "hideActions": [
         {

@@ -28,7 +28,7 @@
                     "son": "codice_azienda"
                 }
             ],
-            "translate": "RESOURCES.files_associati"
+            "translate": "RESOURCES.Filesassociati_attachments_sub_of_contratti"
         },
         {
             "label": "Attività/Segnalazioni associate",
@@ -43,7 +43,7 @@
                     "son": "codice_azienda"
                 }
             ],
-            "translate": "RESOURCES.attivitsegnalazioni_associate"
+            "translate": "RESOURCES.AttivitSegnalazioniassociate_compiti_sub_of_contratti"
         }
     ],
     "search_keys": [
@@ -56,7 +56,7 @@
             "label": "Identificativo contratto",
             "newLine": false,
             "queryCond": "id_contratto=$id_contratto_s$",
-            "translate": "RESOURCES.identificativo_contratto"
+            "translate": "RESOURCES.Identificativocontratto_fogli_informativi"
         },
         {
             "fieldName": "id_anagrafica_s",
@@ -68,7 +68,7 @@
             "label": "$P{label_controparte}",
             "newLine": false,
             "queryCond": "id_cliente=$id_anagrafica_s$",
-            "translate": "RESOURCES.plabel_controparte"
+            "translate": "RESOURCES.Plabel_controparte_fogli_informativi"
         },
         {
             "fieldName": "nome_rs",
@@ -79,7 +79,7 @@
             "label": "Nome/Cognome/Ragione Sociale",
             "newLine": false,
             "queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')",
-            "translate": "RESOURCES.nomecognomeragione_sociale"
+            "translate": "RESOURCES.nomecognomeragione_sociale_fogli_informativi"
         },
         {
             "fieldName": "tipi_contratto_s",
@@ -91,7 +91,7 @@
             "label": "Tipo Contratti",
             "newLine": true,
             "queryCond": "id_argomento_contratto='€tipi_contratto_s€'",
-            "translate": "RESOURCES.tipo_contratti"
+            "translate": "RESOURCES.tipo_contratti_fogli_informativi"
         },
         {
             "fieldName": "numero_contratto_s",
@@ -102,7 +102,7 @@
             "label": "Numero Contratto",
             "newLine": false,
             "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'",
-            "translate": "RESOURCES.numero_contratto"
+            "translate": "RESOURCES.numero_contratto_fogli_informativi"
         },
         {
             "fieldName": "stato",
@@ -112,9 +112,9 @@
                 "viewType": "combobox"
             },
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "newLine": false,
-            "queryCond": "cnt.stato='€stato€'"
+            "queryCond": "cnt.stato='€stato€'",
+            "translate": "RESOURCES.stato_fogli_informativi"
         },
         {
             "fieldName": "id_strumento_fin_s",
@@ -126,7 +126,7 @@
             "label": "Fondo/strumento finanziario",
             "newLine": false,
             "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$",
-            "translate": "RESOURCES.fondostrumento_finanziario"
+            "translate": "RESOURCES.fondostrumento_finanziario_fogli_informativi"
         },
         {
             "format": {
@@ -139,7 +139,7 @@
             "fieldName": "giudizio_s",
             "newLine": true,
             "queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$",
-            "translate": "RESOURCES.giudizio_appropriatezza"
+            "translate": "RESOURCES.giudizio_appropriatezza_fogli_informativi"
         },
         {
             "fieldName": "profilazioni_n",
@@ -150,7 +150,7 @@
             "label": "Senza Profilazioni Aml",
             "newLine": false,
             "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)",
-            "translate": "RESOURCES.senza_profilazioni_aml"
+            "translate": "RESOURCES.SenzaProfilazioniAml_fogli_informativi"
         },
         {
             "fieldName": "no_progetto",
@@ -161,7 +161,7 @@
             "label": "Aperti senza progetto associato",
             "newLine": false,
             "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'",
-            "translate": "RESOURCES.aperti_senza_progetto_associato"
+            "translate": "RESOURCES.Apertisenzaprogettoassociato_fogli_informativi"
         },
         {
             "fieldName": "rischio_conflitto",
@@ -173,7 +173,7 @@
             "newLine": false,
             "size": 1.5,
             "queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'",
-            "translate": "RESOURCES.rischio_conflitti"
+            "translate": "RESOURCES.Rischioconflitti_fogli_informativi"
         }
     ]
 }

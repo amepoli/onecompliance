@@ -58,9 +58,6 @@ def update_first_file_with_missing_keys(file1_path, file2_path):
 
     # Conta e stampa le chiavi aggiunte
     added_keys_count = len(missing_keys)
-    if added_keys_count > 0:
-        for key in missing_keys.keys():
-            print(f"Added key '{key}'")
     print(f"Total translations added: {added_keys_count}")
 
 def copy_txt_to_ts(txt_file_path, ts_file_path):
@@ -69,8 +66,8 @@ def copy_txt_to_ts(txt_file_path, ts_file_path):
 
 # Percorsi dei file di testo e TypeScript
 ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Sostituire con il percorso reale del file TypeScript
-txt_file1_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # Percorso del primo file di testo
-txt_file2_path = '/home/gcrozzolin/Development/onecompliance/python/new_translate.txt'  # Percorso del file di testo da cui prendere le nuove traduzioni
+txt_file1_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # Percorso del file di testo da usare per elaborare i dati
+txt_file2_path = '/home/gcrozzolin/Development/onecompliance/python/file_new_translate.txt'  # Percorso del file di testo da cui prendere le nuove traduzioni
 
 # Copia il contenuto del file TypeScript nel primo file di testo
 copy_ts_to_txt(ts_file_path, txt_file1_path)

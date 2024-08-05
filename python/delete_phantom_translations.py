@@ -16,7 +16,7 @@ def load_key_value_pairs(txt_file):
     return key_value_pairs
 
 def clean_json_files(directory, key_value_pairs):
-    any_key_removed = False
+    total_keys_removed = 0
 
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
@@ -26,7 +26,7 @@ def clean_json_files(directory, key_value_pairs):
                     data = json.load(file)
 
                 def remove_invalid_translations(obj):
-                    removed_keys = []
+                    removed_keys = 0
                     if isinstance(obj, dict):
                         keys_to_remove = []
                         for key in ['translate', 'translateAdd', 'translateQuickAdd']:
@@ -37,31 +37,28 @@ def clean_json_files(directory, key_value_pairs):
                                     if key_part not in key_value_pairs:
                                         keys_to_remove.append(key)
                         for key in keys_to_remove:
-                            removed_keys.append(key)
+                            removed_keys += 1
                             obj.pop(key)
                         for key, value in obj.items():
-                            removed_keys.extend(remove_invalid_translations(value))
+                            removed_keys += remove_invalid_translations(value)
                     elif isinstance(obj, list):
                         for item in obj:
-                            removed_keys.extend(remove_invalid_translations(item))
+                            removed_keys += remove_invalid_translations(item)
                     return removed_keys
 
                 removed_keys = remove_invalid_translations(data)
+                total_keys_removed += removed_keys
 
                 # Salva il JSON modificato nel file
                 with open(filepath, 'w', encoding='utf-8') as file:
                     json.dump(data, file, ensure_ascii=False, indent=4)
 
-                # Stampa le chiavi rimosse
-                if removed_keys:
-                    any_key_removed = True
-                    for key in removed_keys:
-                        print(f"Removed key '{key}' from file: {filename}")
-
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 print(f"Error processing file {filename}: {e}")
 
-    if not any_key_removed:
+    if total_keys_removed > 0:
+        print(f"Total keys removed: {total_keys_removed}")
+    else:
         print("No phantom key removed")
 
 # Esempio di utilizzo

@@ -28,7 +28,7 @@
             "isPrimary": false,
             "key": "codice_azienda",
             "label": "",
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES._oneKYC"
         },
         {
             "format": {
@@ -40,7 +40,7 @@
             "key": "id_scan",
             "label": "#",
             "width": "13%",
-            "translate": "RESOURCES.id_scan"
+            "translate": "RESOURCES._oneKYC"
         },
         {
             "format": {
@@ -51,7 +51,7 @@
             "isPrimary": false,
             "key": "id_anagrafica",
             "label": "# Anagrafica",
-            "translate": "RESOURCES.id_anagrafica"
+            "translate": "RESOURCES._anagrafica_onekyc"
         },
         {
             "format": {
@@ -70,7 +70,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.id_somministrazione"
+            "translate": "RESOURCES._verifica_onekyc"
         },
         {
             "format": {
@@ -81,8 +81,8 @@
             "isPrimary": false,
             "key": "descr_anagrafica",
             "label": "Oggetto di verifica",
-            "translate": "RESOURCES.check_subject",
-            "width": "20%"
+            "width": "20%",
+            "translate": "RESOURCES.oggetto_di_verifica_onekyc"
         },
         {
             "format": {
@@ -94,7 +94,7 @@
             "key": "descr_scan_data",
             "label": "Risultato",
             "width": "46%",
-            "translate": "RESOURCES.descr_scan_data"
+            "translate": "RESOURCES.risultato_onekyc"
         },
         {
             "format": {
@@ -106,7 +106,7 @@
             "key": "dynamo_user",
             "label": "User",
             "width": "12%",
-            "translate": "RESOURCES.dynamo_user"
+            "translate": "RESOURCES.user_onekyc"
         },
         {
             "format": {
@@ -117,7 +117,7 @@
             "key": "date_of_scan",
             "label": "Data",
             "width": "7%",
-            "translate": "RESOURCES.date_of_scan"
+            "translate": "RESOURCES.Data_oneKYC"
         },
         {
             "format": {
@@ -128,7 +128,6 @@
             "isPrimary": false,
             "key": "scan_type",
             "label": "Tipo",
-            "translate": "RESOURCES.type",
             "width": "7%",
             "style": [
                 {
@@ -149,7 +148,8 @@
                     "background_color": "blue",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.tipo_onekyc"
         }
     ],
     "restrictions": {
@@ -174,12 +174,12 @@
                 "label": "Admin: estrazioni per tipo e mese",
                 "key": "count_one_kyc_admin",
                 "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) order by codice_azienda, extract(year from date_of_scan), extract(month from date_of_scan)",
-                "translate": "RESOURCES.admin_estrazioni_per_tipo_e_mese"
+                "translate": "RESOURCES.Adminestrazionipertipoemese_oneKYC"
             },
             {
                 "label": "Estrazioni per tipo e mese",
                 "queryString": "select codice_azienda, extract(year from date_of_scan) as anno, extract(month from date_of_scan) as mese, CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END as scan_type, count(id_scan) as conta_per_scan, count(distinct id_anagrafica) as conta_per_anagrafica from imports.aml_scans where codice_azienda in(€global_user_companies€) group by codice_azienda,extract(year from date_of_scan), extract(month from date_of_scan),(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' end) where codice_azienda=$codice_azienda$ order by codice_azienda,  extract(year from date_of_scan), extract(month from date_of_scan)",
-                "translate": "RESOURCES.estrazioni_per_tipo_e_mese"
+                "translate": "RESOURCES.Estrazionipertipoemese_oneKYC"
             }
         ]
     },
@@ -194,7 +194,7 @@
             "newLine": false,
             "size": 1.25,
             "queryCond": "date_of_scan>=$data_esec_prevista_min$",
-            "translate": "RESOURCES.esecuzione_dopo_il"
+            "translate": "RESOURCES.Esecuzionedopoil_oneKYC"
         },
         {
             "fieldName": "data_esec_prevista_max",
@@ -206,7 +206,7 @@
             "newLine": false,
             "size": 1.25,
             "queryCond": "date_of_scan<='€data_esec_prevista_max€'",
-            "translate": "RESOURCES.esecuzione_prima_del"
+            "translate": "RESOURCES.Esecuzioneprimadel_oneKYC"
         },
         {
             "fieldName": "anagrafica_s",
@@ -218,7 +218,7 @@
             "newLine": false,
             "size": 1.25,
             "queryCond": "entrasp.anagrafiche_vr_dati_identificativi(entrasp.codice_part_from_azienda(codice_azienda), id_anagrafica) ilike '%'||$anagrafica_s$||'%'",
-            "translate": "RESOURCES.soggetto_verificato"
+            "translate": "RESOURCES.Soggettoverificato_oneKYC"
         },
         {
             "fieldName": "tipo_scansione",
@@ -232,7 +232,7 @@
             "newLine": false,
             "size": 2,
             "queryCond": "(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' else 'Deep scan' end)=$tipo_scansione$",
-            "translate": "RESOURCES.tipo_scansione"
+            "translate": "RESOURCES.Tiposcansione_oneKYC"
         },
         {
             "fieldName": "dynamo_user_s",
@@ -246,7 +246,7 @@
             "newLine": false,
             "size": 2,
             "queryCond": "dynamo_user=$dynamo_user_s$",
-            "translate": "RESOURCES.user"
+            "translate": "RESOURCES.user_onekyc"
         },
         {
             "fieldName": "mt_s",
@@ -260,7 +260,7 @@
             "size": 3.5,
             "newLine": false,
             "queryCond": "codice_azienda||'-'||id_somministrazione in(select ss.codice_azienda||'-'||ss.id_somministrazione from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd using(codice_azienda, id_sondaggio) where snd.id_modello_test=$mt_s$ and snd.codice_azienda='€global_codice_azienda€')",
-            "translate": "RESOURCES.modello_test"
+            "translate": "RESOURCES.Modellotest_oneKYC"
         }
     ]
 }
