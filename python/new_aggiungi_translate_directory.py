@@ -54,6 +54,41 @@ def process_json_files(directory, log_file):
                 new_path = f"{path}[{idx}]"
                 add_translate_keys(item, entry_key, new_path, in_sub_tables, parent_entry_key)
 
+    def add_translate_keys_subtables(obj, parent_entry_key):
+        nonlocal counter
+        nonlocal modified
+
+        if isinstance(obj, dict):
+            current_entry_key = obj.get('entryKey', parent_entry_key)
+
+            if 'label' in obj and 'translate' not in obj and isinstance(obj['label'], str):
+                base_label = obj['label']
+                combined_label = f"{base_label}_{current_entry_key}" if current_entry_key else base_label
+                formatted_label = format_label(combined_label)
+                if formatted_label:
+                    translate_key = f"RESOURCES.{formatted_label}"
+                    obj['translate'] = translate_key
+                    added_keys.add(f'{formatted_label}: "{base_label}",')
+                    modified = True
+                    counter += 1
+            elif 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
+                base_label = obj['message']
+                combined_label = f"{base_label}_{current_entry_key}" if current_entry_key else base_label
+                formatted_label = format_label(combined_label)
+                if formatted_label:
+                    translate_key = f"RESOURCES.{formatted_label}"
+                    obj['translate'] = translate_key
+                    added_keys.add(f'{formatted_label}: "{base_label}",')
+                    modified = True
+                    counter += 1
+
+            for key, value in obj.items():
+                add_translate_keys_subtables(value, current_entry_key)
+
+        elif isinstance(obj, list):
+            for item in obj:
+                add_translate_keys_subtables(item, parent_entry_key)
+
     # Inizializzare il file di log vuoto
     with open(log_file, 'w', encoding='utf-8') as log:
         log.write("")
@@ -75,7 +110,8 @@ def process_json_files(directory, log_file):
                 if "form_keys" in data:
                     add_translate_keys(data["form_keys"], data.get('entryKey'))
                 if "subTables" in data:
-                    add_translate_keys(data["subTables"], data.get('entryKey'), in_sub_tables=True)
+                    for sub_table in data["subTables"]:
+                        add_translate_keys_subtables(sub_table, sub_table.get('entryKey'))
 
                 if modified:
                     with open(filepath, 'w', encoding='utf-8') as file:
