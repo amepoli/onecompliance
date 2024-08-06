@@ -31,8 +31,7 @@
             "label": "Miei",
             "options": [],
             "comboQuery": "select dynamo_user as id, dynamo_user as name from entrasp.employers where dynamo_user in(select distinct em2.dynamo_user from entrasp.employers em2 where em2.codice_azienda in (select em3.codice_azienda from entrasp.employers em3 where em3.dynamo_user='€global_username€'));",
-            "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'",
-            "translate": "RESOURCES.Miei_tr_hp_project_consultant"
+            "queryCond": "tr_inc.dynamo_user = '$dynamo_s$'"
         }
     ],
     "tiles": [
@@ -63,16 +62,14 @@
                     "icon": "merge_type",
                     "label": "Aggiungi ferie",
                     "reloadOnSuccess": true,
-                    "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user||'~' in( $selected_rows_data$);",
-                    "translate": "RESOURCES.Aggiungiferie_tr_hp_project_consultant"
+                    "query": "select entrasp.inserisci_ferie(coll.giorno::date, entrasp.dynamo_employer(coll.dynamo_user), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user||'~' in( $selected_rows_data$);"
                 },
                 {
                     "key": "aggiungi_minuti_mancanti_per_utente",
                     "icon": "merge_type",
                     "label": "Aggiungi minuti mancanti",
                     "reloadOnSuccess": true,
-                    "query": "select entrasp.inserisci_consuntivazione(entrasp.dynamo_employer(coll.dynamo_user),coll.giorno::date, 5440, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0))), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user||'~' in( $selected_rows_data$);",
-                    "translate": "RESOURCES.Aggiungiminutimancanti_tr_hp_project_consultant"
+                    "query": "select entrasp.inserisci_consuntivazione(entrasp.dynamo_employer(coll.dynamo_user),coll.giorno::date, 5440, greatest(0,(entrasp.minuti_richiesti_user(coll.dynamo_user, coll.giorno::date)- coalesce(csn.minuti_rendicontati,0))), coll.dynamo_user) from (SELECT date_trunc('day', gg):: date as giorno, du.colleghi as dynamo_user FROM generate_series (current_date-400*interval '1 day', current_date, '1 day'::interval) gg,  entrasp.colleghi('€global_username€') du where date_trunc('day', gg)::date>entrasp.dynamo_data_assunzione(du.colleghi)) coll left join (select con.date_time_begin::date, an.dynamo_user, sum(coalesce(con.durata, 0)) as minuti_rendicontati from entrasp.consuntivazioni con inner join entrasp.anagrafiche_id an on con.id_risorsa=an.id_anagrafica and con.codice_part=an.codice_part where an.dynamo_user is not null group by con.date_time_begin::date, an.dynamo_user) csn on coll.giorno::date=csn.date_time_begin::date and coll.dynamo_user=csn.dynamo_user where coll.giorno::date<=current_date and coll.giorno::date<=current_date and coll.giorno::date||'T00:00:00.000Z~'||coll.dynamo_user||'~' in( $selected_rows_data$);"
                 },
                 {
                     "key": "aggiungi_ferie_per_utente",
@@ -93,8 +90,7 @@
             "isPrimary": true,
             "key": "giorno",
             "label": "Data",
-            "width": "8%",
-            "translate": "RESOURCES.data_tr_hp_project_consultant"
+            "width": "8%"
         },
         {
             "format": {
@@ -104,8 +100,7 @@
             "isPrimary": true,
             "key": "dynamo_user",
             "width": "10%",
-            "label": "Utente",
-            "translate": "RESOURCES.utente_tr_hp_project_consultant"
+            "label": "Utente"
         },
         {
             "format": {
@@ -115,8 +110,7 @@
             "isPrimary": false,
             "key": "minuti_rendicontati",
             "label": "Minuti rendicontati",
-            "width": "8%",
-            "translate": "RESOURCES.Minutirendicontati_tr_hp_project_consultant"
+            "width": "8%"
         },
         {
             "format": {
@@ -126,8 +120,7 @@
             "isPrimary": false,
             "key": "minuti_richiesti",
             "label": "Minuti richiesti",
-            "width": "8%",
-            "translate": "RESOURCES.Minutirichiesti_tr_hp_project_consultant"
+            "width": "8%"
         },
         {
             "format": {
@@ -137,8 +130,7 @@
             "isPrimary": false,
             "key": "minuti_mancanti",
             "label": "Minuti mancanti",
-            "width": "8%",
-            "translate": "RESOURCES.Minutimancanti_tr_hp_project_consultant"
+            "width": "8%"
         },
         {
             "format": {
@@ -181,8 +173,7 @@
                     }
                 ],
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.Aggiungiminutimancanti_tr_hp_project_consultant"
+            }
         },
         {
             "format": {
@@ -221,8 +212,7 @@
                     }
                 ],
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.segna_ferie_tr_hp_project_consultant"
+            }
         },
         {
             "format": {
@@ -265,8 +255,7 @@
                     }
                 ],
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.segna_permesso_tr_hp_project_consultant"
+            }
         },
         {
             "format": {
@@ -312,8 +301,7 @@
                     "button_icon": "",
                     "value": "*"
                 }
-            ],
-            "translate": "RESOURCES.dettaglio_tr_hp_project_consultant"
+            ]
         }
     ],
     "search_keys": [
@@ -325,8 +313,7 @@
             },
             "label": "A partire dal",
             "newLine": false,
-            "queryCond": "dd.giorno::date>$date_from$",
-            "translate": "RESOURCES.Apartiredal_tr_hp_project_consultant"
+            "queryCond": "dd.giorno::date>$date_from$"
         },
         {
             "format": {
@@ -339,8 +326,7 @@
             "fieldName": "dynamo_s",
             "label": "Utente",
             "newLine": false,
-            "size": 2,
-            "translate": "RESOURCES.utente_tr_hp_project_consultant"
+            "size": 2
         },
         {
             "fieldName": "miei_aggiornamenti",
@@ -350,8 +336,7 @@
             },
             "label": "Miei aggiornamenti",
             "newLine": false,
-            "queryCond": "coll.dynamo_user='€global_username€'",
-            "translate": "RESOURCES.Mieiaggiornamenti_tr_hp_project_consultant"
+            "queryCond": "coll.dynamo_user='€global_username€'"
         }
     ],
     "querySuffixes": {

@@ -43,8 +43,7 @@
                     "confirmAction": true,
                     "confirmActionMessage": "Eliminare definitivamente gli eventi selezionati e i relativi sondaggi?",
                     "query": "select entrasp.cancella_evento(codice_azienda,codice_compito) from entrasp.compiti where codice_azienda||'~'||codice_compito in ($selected_rows_data$)",
-                    "reloadOnSuccess": true,
-                    "translate": "RESOURCES.Elimina_scadenziario_sub_of_scadenziario"
+                    "reloadOnSuccess": true
                 },
                 {
                     "key": "close_eventi",
@@ -53,8 +52,7 @@
                     "confirmAction": true,
                     "confirmActionMessage": "Contrassegnare come eseguiti gli eventi selezionati?",
                     "query": "select entrasp.chiudi_evento(codice_azienda,codice_compito) from entrasp.compiti where codice_azienda||'~'||codice_compito in ($selected_rows_data$);",
-                    "reloadOnSuccess": true,
-                    "translate": "RESOURCES.Contrassegnacomeeseguiti_scadenziario_sub_of_scadenziario"
+                    "reloadOnSuccess": true
                 }
             ]
         }
@@ -110,8 +108,7 @@
             },
             "label": "Per mese data riferimento",
             "newLine": false,
-            "queryCond": "EXTRACT(MONTH FROM compiti.data_segnalazione) = $rif_month$",
-            "translate": "RESOURCES.per_mese_data_riferimento_scadenziario_sub_of_scadenziario"
+            "queryCond": "EXTRACT(MONTH FROM compiti.data_segnalazione) = $rif_month$"
         },
         {
             "fieldName": "rif_year",
@@ -121,8 +118,7 @@
             },
             "label": "Per anno data riferimento",
             "newLine": true,
-            "queryCond": "EXTRACT(YEAR FROM compiti.data_segnalazione) = $rif_year$",
-            "translate": "RESOURCES.per_anno_data_riferimento_scadenziario_sub_of_scadenziario"
+            "queryCond": "EXTRACT(YEAR FROM compiti.data_segnalazione) = $rif_year$"
         },
         {
             "fieldName": "scad_month",
@@ -132,8 +128,7 @@
             },
             "label": "Per mese data scadenza",
             "newLine": false,
-            "queryCond": "EXTRACT(MONTH FROM compiti.foreseen_date) = $scad_month$",
-            "translate": "RESOURCES.per_mese_data_scadenza_scadenziario_sub_of_scadenziario"
+            "queryCond": "EXTRACT(MONTH FROM compiti.foreseen_date) = $scad_month$"
         },
         {
             "fieldName": "scad_year",
@@ -143,8 +138,7 @@
             },
             "label": "Per anno data scadenza",
             "newLine": false,
-            "queryCond": "EXTRACT(YEAR FROM compiti.foreseen_date) = $scad_year$",
-            "translate": "RESOURCES.per_anno_data_scadenza_scadenziario_sub_of_scadenziario"
+            "queryCond": "EXTRACT(YEAR FROM compiti.foreseen_date) = $scad_year$"
         },
         {
             "fieldName": "flag_progetti_miei",
@@ -154,8 +148,7 @@
             },
             "label": "Miei/Mio Ufficio",
             "newLine": false,
-            "queryCond": "compiti.id_centro_gest||'-'||compiti.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€'))",
-            "translate": "RESOURCES.mieimio_ufficio_scadenziario_sub_of_scadenziario"
+            "queryCond": "compiti.id_centro_gest||'-'||compiti.codice_part in(select cg2.id_centro_gest||'-'||cg2.codice_part from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro||'-'||cg2.codice_part in(select glm.id_gruppo_lavoro||'-'||glm.codice_part from entrasp.gruppi_lavoro_membri glm inner join entrasp.anagrafiche_id an on glm.codice_part=an.codice_part and glm.id_anagrafica=an.id_anagrafica where an.dynamo_user='€global_username€' and an.codice_part='€global_codice_part€'))"
         }
     ]
 }
