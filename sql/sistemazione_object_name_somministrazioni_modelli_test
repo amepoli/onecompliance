@@ -1,0 +1,35 @@
+select ss.codice_azienda, mt.id_modello_Test, mt.titolo, ss.id_sondaggio, ss.object_name, 
+fz.object_name, fz.object_context, ss.object_key, ss.object_description, fz.id_filtro_selezione, fz.descrizione
+from entrasp.sondaggi_somministrati ss
+inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_Azienda and ss.id_sondaggio=snd.id_sondaggio
+inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test
+inner join entrasp.filtri_selezione_oggetti fz on mt.id_filtro_selezione=fz.id_filtro_selezione
+where fz.object_name!=ss.object_name and ss.codice_Azienda in ('ITAGO', 'QUANTYX', 'NEIP3', 'FINAFARM')
+and mt.id_argomento=45421
+order by codice_azienda, mt.id_modello_test, ss.id_sondaggio
+
+
+update entrasp.sondaggi_somministrati
+set object_name='anagraficheId' where codice_Azienda='FINAFARM' and id_sondaggio=9111
+
+select codice_azienda, id_somministrazione, id_sondaggio, object_name, object_key, object_description, object_name
+from entrasp.sondaggi_somministrati
+where codice_Azienda='FINAFARM' and id_sondaggio=9111
+
+
+	ALTER TABLE IF EXISTS entrasp.modelli_test_vr
+    ADD COLUMN id_filtro_selezione numeric(12,0);
+
+	ALTER TABLE IF EXISTS entrasp.modelli_test_vr
+    ADD CONSTRAINT mvr_fsog_fk FOREIGN KEY (id_filtro_selezione)
+    REFERENCES entrasp.filtri_selezione_oggetti (id_filtro_selezione) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    DEFERRABLE;
+
+	update entrasp.modelli_test_vr mvr
+	set id_filtro_selezione=mt.id_filtro_selezione
+	from entrasp.modelli_test mt
+	where mvr.id_modello_Test=mt.id_modello_test and mvr.codice_azienda=mt.codice_azienda
+
+	
