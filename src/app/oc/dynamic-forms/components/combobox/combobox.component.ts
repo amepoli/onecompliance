@@ -14,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"',
-    // '[style.height.px]': 'field.isVisible? "76": "0"',
+    '[style.height.px]': 'field.isVisible? "76": "0"',
   }
 })
 export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
