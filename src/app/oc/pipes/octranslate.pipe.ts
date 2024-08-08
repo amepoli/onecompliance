@@ -17,8 +17,7 @@ export class OCTranslatePipe implements PipeTransform {
         if (value.translate) {
             return this._translateService.instant(value.translate);
         } else {
-            return value.label || value.name || value.title || value.message ;
+            return value.label || value.title || value.message ;
         }
-
     }
 }
