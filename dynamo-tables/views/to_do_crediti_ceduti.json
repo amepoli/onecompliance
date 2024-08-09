@@ -1,0 +1,17 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "to_do_crediti_ceduti",
+    "inheritsFrom": "aggiornamenti_sub_of_crediti",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select *, entrasp.cessione_descr(id_cessione, codice_azienda) as descr_cessione, substring(note from 1 for 100) as note_restricted from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cessione is not null"
+        }
+    ],
+    "define": {
+        "is_hidden_fascicolo": "true",
+        "is_hidden_cessione": "false"
+    },
+    "origin": "entrasp.consuntivazioni"
+}
