@@ -31,7 +31,7 @@ import { saveAs } from 'file-saver';
         }
     `],
     host: {
-        '[style.padding-top.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8": "13": "0"',
+        '[style.padding-top.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8": "13": "8"',
         // '[style.padding-bottom.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "24": "14": "0"',
         '[style.margin-right]': 'field.isVisible?(field.buttonIcon && !field.label) || field.isDownloadButton? "8px": "0.5%": "0"',
         '[style.margin-left]': 'field.isVisible? (field.buttonIcon && !field.label) || field.isDownloadButton? "8px": "0.5%": "0"',
@@ -39,7 +39,7 @@ import { saveAs } from 'file-saver';
         '[style.height.px]': 'field.isVisible? (field.buttonIcon && !field.label) || field.isDownloadButton? "32": field.buttonIcon? "64": "76": "0"',
 
         // Adding margin because there is no padding anymore
-        '[style.margin-top.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8": "8": "0"',
+        // '[style.margin-top.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8": "8": "0"',
         '[style.margin-bottom.px]': 'field.isVisible? field.buttonIcon || field.isDownloadButton? "8": "8": "0"',
 
         // I want to use this in the future :p

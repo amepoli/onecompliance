@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './combobox.component.html',
   styleUrls: ['./combobox.component.scss'],
   host: {
-    // '[style.padding-top.px]': 'field.isVisible? "20": "0"',
+    '[style.padding-top.px]': 'field.isVisible? "8": "0"',
     // '[style.padding-bottom.px]': 'field.isVisible? "20": "0"',
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',

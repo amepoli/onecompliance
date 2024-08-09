@@ -36,7 +36,7 @@ import { PubSubService } from 'app/oc/services';
     }
   `],
   host: {
-    // '[style.padding-top.px]': 'field.isVisible? "4": "0"',
+    '[style.padding-top.px]': 'field.isVisible? "8": "0"',
     // '[style.padding-bottom.px]': 'field.isVisible? "4": "0"',
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
