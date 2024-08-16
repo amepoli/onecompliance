@@ -68,125 +68,6 @@
                     {
                         "autoGenerate": false,
                         "format": {
-                            "comboQuery": "select ss2.id_somministrazione as id, ss2.id_somministrazione||'-'||snd2.data_esecuzione as name from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join  entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join  entrasp.sondaggi snd2 on snd2.codice_azienda=mt.codice_azienda and snd2.id_modello_test=mt.id_modello_test inner join  entrasp.sondaggi_somministrati ss2 on  ss2.codice_azienda=snd2.codice_azienda and ss2.id_sondaggio=snd2.id_sondaggio where ss2.object_key=ss.object_key and ss.id_somministrazione=$id_somministrazione$ and ss.codice_azienda=$codice_azienda$ and ss2.id_somministrazione!=$id_somministrazione$;",
-                            "options": [],
-                            "viewType": "combobox"
-                        },
-                        "isHidden": "$Q{is_comprehension_test}",
-                        "isPrimary": false,
-                        "sameOrigin": false,
-                        "key": "id_somm_to_copy_from",
-                        "label": "Verifica da cui copiare",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 5
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "button"
-                        },
-                        "isHidden": "$Q{is_comprehension_test}",
-                        "isPrimary": false,
-                        "key": "copy_from_somministrazione",
-                        "buttonIcon": "content_copy",
-                        "label": "Copia",
-                        "newLine": false,
-                        "outputEvent": {
-                            "eventName": "change_id_somm_to_copy_from",
-                            "eventTrigger": "press"
-                        },
-                        "inputEvents": [
-                            {
-                                "eventName": "change_id_somm_to_copy_from",
-                                "actionType": "show_message",
-                                "condition": "none",
-                                "values": [],
-                                "message": {
-                                    "messageText": "Sei sicuro di voler copiare o sovrascrivere le risposte copiandole dalla precedente somministrazione? (Saranno cancellate tutte le risposte attualmente date)",
-                                    "actionOnNo": {
-                                        "actionType": "query",
-                                        "queryFunct": "select 1"
-                                    },
-                                    "actionOnYes": {
-                                        "actionType": "query",
-                                        "queryFunct": "select entrasp.accoda_risposte_somministrazione($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, £id_sondaggio£, $id_somministrazione$, $id_somm_to_copy_from$);"
-                                    }
-                                },
-                                "outputEventWhenComplete": "aggiorna_id_sondaggio"
-                            }
-                        ],
-                        "style": {
-                            "background_color": "#25599C",
-                            "font_color": "white"
-                        },
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 1
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "button"
-                        },
-                        "isHidden": "$Q{is_comprehension_test}",
-                        "isPrimary": false,
-                        "key": "copia_da_somministrazione_hide_k",
-                        "buttonIcon": "close",
-                        "label": "Maschera principale",
-                        "newLine": false,
-                        "outputEvent": {
-                            "eventName": "copia_da_somministrazione_hide",
-                            "eventTrigger": "press"
-                        },
-                        "readOnly": false,
-                        "sameOrigin": false,
-                        "size": 1
-                    }
-                ]
-            },
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "condition": "none",
-                    "eventName": "copia_da_somministrazione_show",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "copia_da_somministrazione_hide",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "associa_sondaggio_show",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "associa_progetto_show",
-                    "values": []
-                }
-            ],
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "copia_da_somministrazione_sub_form",
-            "label": "copia_da_somministrazione_sub_form",
-            "newLine": true,
-            "readOnly": false,
-            "sameOrigin": false,
-            "saveWhenHidden": true
-        },
-        {
-            "format": {
-                "viewType": "subform",
-                "subform_keys": [
-                    {
-                        "autoGenerate": false,
-                        "format": {
                             "viewType": "combobox",
                             "options": [],
                             "comboQuery": "select snd.id_sondaggio as id, concat (id_sondaggio, ' - ', snd.titolo) as name from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test where snd.codice_azienda =$codice_azienda$"
@@ -248,9 +129,11 @@
                     "values": []
                 },
                 {
-                    "actionType": "hide",
-                    "condition": "none",
                     "eventName": "copia_da_somministrazione_show",
+                    "actionType": "dialog",
+                    "customDialogEntryName": "dialog_sondaggi_somministrati_copia_altra_verifica",
+                    "customDialogTitle": "Copia da altra Verifica",
+                    "condition": "none",
                     "values": []
                 },
                 {
@@ -427,12 +310,6 @@
                     "actionType": "hide",
                     "condition": "none",
                     "eventName": "associa_sondaggio_show",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "copia_da_somministrazione_show",
                     "values": []
                 }
             ],
@@ -1864,16 +1741,6 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "titolo_sondaggio",
-            "label": "Titolo",
-            "width": "$P{width_titolo}"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
             "isHidden": "$Q{is_hidden_obj_decr}",
             "isPrimary": false,
             "key": "object_description",
@@ -1886,6 +1753,16 @@
                     "font_weight": "590"
                 }
             ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo_sondaggio",
+            "label": "Titolo",
+            "width": "$P{width_titolo}"
         },
         {
             "format": {
