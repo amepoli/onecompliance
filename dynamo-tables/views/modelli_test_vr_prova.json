@@ -30,6 +30,17 @@
             "queryString": "select entrasp.grc_accoda_singolo_modello_test('$codice_azienda$', '$chosen_azienda$', $id_modello_test$, $id_modello_test_vr$);"
         },
         {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£' and id_modello_test!=$id_modello_test$",
+            "messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.argomenti_create_and_update(codice_azienda, id_modello_test, titolo, descrizione , codice, 45) from entrasp.modelli_test where id_argomento is null and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+        },
+        {
             "operation": "insert",
             "type": "preCheck",
             "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£'",
@@ -42,37 +53,20 @@
             "messageNotNull": "Inserimento: il titolo o la descrizione sono già stati utilizzati per un altro modello di test: si prega di controllare o fornire una descrizione più precisa"
         },
         {
-            "operation": "update",
-            "type": "preCheck",
-            "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£' and id_modello_test!=$id_modello_test$",
-            "messageNotNull": "Aggiornamento: il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
-        },
-        {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "select entrasp.argomenti_create_and_update(codice_azienda, id_modello_test, titolo, descrizione , codice, 45) from entrasp.modelli_test where id_argomento is null and codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
-        },
-        {
-            "operation": "isInsert",
-            "queryString": "select $id_modello_test_vr$ is null as label;",
-            "type": "main"
-        },
-        {
-            "type": "preProcessing",
-            "operation": "insert",
-            "queryString": "SELECT id_modello_test, cod as codice, 1 as id_modello_test_vr FROM entrasp.modello_test_insert_temp(codiceazienda_ => $codice_azienda$::varchar, titolo_ => $titolo$, descrizione_ => COALESCE($descrizione$, $titolo$), objectname => COALESCE($object_name$, 'Non definito'::character varying), flagapplicazionesingola => COALESCE($flag_applicazione_singola$::bpchar, '0'::bpchar), documentazionenecessaria => COALESCE($documentazione_necessaria$, 'Non definita'::text), stato_ => COALESCE($stato$, 'P'::bpchar), filter_ => COALESCE($filter$, NULL::text), bindexpression => COALESCE($bind_expression$, ''::text), flagsezioni => COALESCE($flag_sezioni$::bpchar, '0'::bpchar), giornianticipopresdoc => $giorni_anticipo_pres_doc$, codicepart => '€global_codice_part€', idcentrogest => $id_centro_gest$, codice_ => $codice$, idtipomodellotest => $id_tipo_modello_test$, idargomento => $id_argomento$, idmodellotestvr => $id_modello_test_vr$, flagmenu_ => COALESCE($flagmenu$::bpchar, '1'::bpchar), flaglimitarisultatopct => COALESCE($flag_limita_risultato_pct$::bpchar, '0'::bpchar), flagmostrapunteggi => COALESCE($flag_mostra_punteggi$::bpchar, '1'::bpchar), titolo_cartella => $titolo_cartella$);"
-
-        },
-        {
-            "type": "preProcessing",
-            "operation": "update",
-            "queryString": "SELECT entrasp.modello_test_update(codiceazienda => $codice_azienda$, idmodellotest => $id_modello_test$, titolo_ => $titolo$, descrizione_ => COALESCE($descrizione$, $titolo$), objectname => COALESCE($object_name$, 'Non definito'::character varying), flagapplicazionesingola => $flag_applicazione_singola$::character, docnecessaria_ => $documentazione_necessaria$, stato_ => COALESCE($stato$, 'P'::bpchar), filter_ => COALESCE($filter$, NULL::text), bindexpression => COALESCE($bind_expression$, ''::text), flagsezioni => $flag_sezioni$::character, giornianticipopresdoc => COALESCE($giorni_anticipo_pres_doc$, 15), codicepart => '€global_codice_part€', idcentrogest => $id_centro_gest$, codice_ => $codice$, idtipomodellotest => $id_tipo_modello_test$, idargomento => $id_argomento$, idmodellotestvr => $id_modello_test_vr$, flagmenu => COALESCE($flag_menu$, '1'::bpchar), flaglimitarisultatopct => COALESCE($flag_limita_risultato_pct$, '0'::bpchar), flagmostrapunteggi => $flag_mostra_punteggi$::character, titolocartella_ => $titolo_cartella$, flagworkflow => $flag_workflow$::character, flagripianificapercliente => $flag_ripianifica_per_cliente$::character, prezzo_ => $prezzo$, flagcondivisioneautomatica => $flag_condivisione_automatica$::character);"
-        },
-        {
             "operation": "insert",
             "type": "preCheck",
             "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento=£id_argomento£ and id_centro_gest=£id_centro_gest£",
             "messageNotNull": "Inserimento: l'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
+        },
+        {
+            "type": "preProcessing",
+            "operation": "insert",
+            "queryString": "SELECT id_modello_test, cod as codice FROM entrasp.modello_test_insert_temp(codiceazienda_ => $codice_azienda$::varchar, titolo_ => $titolo$, descrizione_ => COALESCE($descrizione$, $titolo$), 'Non definito'::character varying), flagapplicazionesingola => COALESCE($flag_applicazione_singola$::bpchar, '0'::bpchar), documentazionenecessaria => COALESCE($documentazione_necessaria$, 'Non definita'::text), filter_ => COALESCE($filter$, NULL::text), flagsezioni => COALESCE($flag_sezioni$::bpchar, '0'::bpchar), giornianticipopresdoc => $giorni_anticipo_pres_doc$, codicepart => '€global_codice_part€', idcentrogest => $id_centro_gest$, codice_ => $codice$, idtipomodellotest => $id_tipo_modello_test$, idargomento => $id_argomento$, idmodellotestvr => $id_modello_test_vr$, flagmenu_ => COALESCE($flagmenu$::bpchar, '1'::bpchar), flagmostrapunteggi => COALESCE($flag_mostra_punteggi$::bpchar, '1'::bpchar), titolo_cartella => $titolo_cartella$);"
+        },
+        {
+            "type": "preProcessing",
+            "operation": "update",
+            "queryString": "SELECT entrasp.modello_test_update_prova(codiceazienda => $codice_azienda$, idmodellotest => $id_modello_test$, titolo_ => $titolo$, descrizione_ => COALESCE($descrizione$, $titolo$), flagapplicazionesingola => $flag_applicazione_singola$::character, docnecessaria_ => $documentazione_necessaria$, flagsezioni => $flag_sezioni$::character, giornianticipopresdoc => COALESCE($giorni_anticipo_pres_doc$, 15), codicepart => '€global_codice_part€', idcentrogest => $id_centro_gest$, codice_ => $codice$, idtipomodellotest => $id_tipo_modello_test$, idargomento => $id_argomento$, idmodellotestvr => $id_modello_test_vr$, flagmostrapunteggi => $flag_mostra_punteggi$::character, titolocartella_ => $titolo_cartella$, flagworkflow => $flag_workflow$::character, flagripianificapercliente => $flag_ripianifica_per_cliente$::character, prezzo_ => $prezzo$, flagcondivisioneautomatica => $flag_condivisione_automatica$::character);"
         },
         {
             "operation": "update",
@@ -2181,7 +2175,7 @@
                 "dataType": "number"
             },
             "isHidden": true,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_argomento_son",
             "label": "Id_argomento_son"
         }
