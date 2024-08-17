@@ -20,7 +20,7 @@ def find_invalid_json_files(directory):
     return invalid_files
 
 # Example usage
-directory_path = '/home/apoli/Development/onecompliance/dynamo-tables'
+directory_path = '/home/apoli/Development/onecompliance/dynamo-tables/users'
 invalid_files = find_invalid_json_files(directory_path)
 
 if invalid_files:
