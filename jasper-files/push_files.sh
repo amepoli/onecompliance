@@ -8,13 +8,13 @@ fi
 
 if [ $1 == "gorico_prod" ]
   then
-    ssh-keygen -f "/home/jametaj/.ssh/known_hosts" -R "[18.193.201.111]:5222"
+    ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[18.193.201.111]:5222"
     sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@18.193.201.111 <<EOF
 exit
 EOF
     HOSTNAME="18.193.201.111"
 else
-    ssh-keygen -f "/home/jametaj/.ssh/known_hosts" -R "[3.124.34.69]:5222"
+    ssh-keygen -f "$HOME/.ssh/known_hosts" -R "[3.124.34.69]:5222"
     sftp -o "StrictHostKeyChecking=no" -i reports.key -P 5222 reports@3.124.34.69 <<EOF
 exit
 EOF
