@@ -4,7 +4,7 @@
     "predefinedQueries": [
         {
             "operation": "insert",
-            "queryString": "select 1",
+            "queryString": "INSERT INTO entrasp.template_odg_riunioni(id_templ_odg, id_templ_riunione, n_giorno, ora_inizio, ora_fine, settore, id_argomento_liv_competenza, id_argomento_controllo) select ito.*, id_templ_riunione, $n_giorno$, $ora_inizio$, $ora_fine$, $settore$, $id_argomento_liv_competenza$, $id_argomento_controllo$ from unnest(array[$selected_rows_data$]) ito;", 
             "type": "main"
         },
         {
@@ -117,32 +117,12 @@
                 "comboQuery": "SELECT distinct tr.id_templ_riunione AS id, tr.id_templ_riunione||'-'||tr.oggetto AS name FROM entrasp.template_odg_riunioni tor inner join entrasp.template_riunioni tr using(id_templ_riunione) where (tor.codice_azienda is null or tor.codice_azienda='€global_codice_azienda€')"
             },
             "isHidden": false,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_templ_riunione",
             "label": "ID templ riunione",
             "newLine": false,
             "readOnly": false,
-            "onChangeResetKey": [
-                "id_templ_odg"
-            ],
             "translate": "RESOURCES.id_templ_riunione"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT DISTINCT t.id_templ_odg AS id, t.id_templ_odg || '-' || t.titolo AS name FROM entrasp.template_odg_riunioni tor INNER JOIN entrasp.template_odg t USING (id_templ_odg) WHERE (t.codice_azienda is null or t.codice_azienda='€global_codice_azienda€')"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "id_templ_odg",
-            "label": "ID template OdG",
-            "newLine": false,
-            "size": 9,
-            "readOnly": false,
-            "translate": "RESOURCES.id_odg"
         }
     ]
 }
