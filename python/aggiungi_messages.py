@@ -1,3 +1,4 @@
+#serve per aggiungere automaticamente lo script messages [] che serve per personalizzare i pop-up quando si vuole eliminare i dati
 import json
 import os
 import sys
