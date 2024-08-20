@@ -7416,7 +7416,7 @@ export const locale = {
     nuovo_gruppo: "Nuovo Gruppo",
     nuovo_istat_Comune_istat_comuni: "Nuovo Istat Comune",
     nuovo_modello: "Nuovo Modello",
-    nuovo_modello_esg: "Nuovo Modello Esg",
+    nuovo_modello_esg: "Nuovo Modello ESG",
     nuovo_moduloarticolo: "Nuovo Moduloarticolo",
     nuovo_pagamento: "Nuovo Pagamento",
     nuovo_preventivo: "Nuovo Preventivo",

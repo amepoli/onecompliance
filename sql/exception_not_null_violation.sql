@@ -1,0 +1,7 @@
+select aggiungi_script_a_funzione ('crea_questionario',  'exception WHEN not_null_violation THEN
+	RAISE EXCEPTION USING DETAIL=''CAMPI OBBLIGATORI NON VALORIZZATI'', ERRCODE=SQLSTATE, HINT=SQLERRM;
+
+WHEN OTHERS THEN
+	RAISE EXCEPTION USING DETAIL=SQLERRM;')
+
+
