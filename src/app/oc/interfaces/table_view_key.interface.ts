@@ -37,7 +37,7 @@ export interface TableViewKey { // as per API specification
             destination: string
         }[],
         navigationConditions?: {
-            ifValue: string,
+            ifValue: string[],
             newTarget: string,
             newViewType: "form" | "table",
             keyToCheck?: string,
