@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 
 import { NDModule } from '../../oc/nd/nd.module';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
@@ -24,5 +26,12 @@ export class OCButtonComponent {
 
   @Input()
   size?:  'small' | 'large' = 'small';
+
+  @Input()
+  prefixIcon: string;
+
+  @Input()
+  postfixIcon: string;
+
 
 }

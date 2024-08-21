@@ -22,6 +22,14 @@ export class NDButtonComponent {
     @Input()
     size?:  'small' | 'large';
 
-    constructor() { }
+    @Input()
+    prefixIcon: string;
+  
+    @Input()
+    postfixIcon: string;
+    
+    constructor() { 
+        console.log(this.prefixIcon);
+    }
 
 }
