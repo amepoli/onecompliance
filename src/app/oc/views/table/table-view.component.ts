@@ -1223,7 +1223,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     //console.log('yess');
                     let currentValue = row[condition.keyToCheck];
                     //console.log(currentValue);
-                    if (condition.ifValue === undefined || condition.ifValue === null || (condition.ifValue == currentValue)) {
+                    if (condition.ifValue === undefined || condition.ifValue === null || condition.ifValue.length === 0 || (condition.ifValue.includes(currentValue))) {
                         if (condition.keymap && condition.keymap.length > 0) {
                             keys = {};
                             condition.keymap.forEach(map => {
