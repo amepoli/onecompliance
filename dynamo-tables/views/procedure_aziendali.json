@@ -1,6 +1,7 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "procedure_aziendali",
+    "origin": "entrasp.procedure_aziendali",
     "businessObjectName": "procedureAziendali",
     "label": "Processi",
     "predefinedQueries": [
@@ -8,21 +9,6 @@
             "operation": "delete",
             "type": "main",
             "queryString": "select entrasp.procedura_aziendale_delete($codice_azienda$, $id_procedura$);"
-        },
-        {
-            "operation": "selectForm",
-            "type": "preProcessing",
-            "queryString": "update entrasp.procedure_aziendali set codice_part='€global_codice_part€' WHERE codice_azienda=$codice_azienda$ AND id_procedura=$id_procedura$;"
-        },
-        {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "UPDATE entrasp.procedure_aziendali pr set codice_part=az.codice_part from entrasp.aziende az where pr.codice_azienda=az.codice_azienda"
-        },
-        {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "UPDATE entrasp.procedure_aziendali pr set codice_part=az.codice_part from entrasp.aziende az where pr.codice_azienda=az.codice_azienda"
         }
     ],
     "form_keys": [
@@ -251,7 +237,7 @@
             ]
         }
     ],
-    "origin": "entrasp.procedure_aziendali",
+ 
     "search_keys": [
         {
             "fieldName": "id_tipo_processo",
