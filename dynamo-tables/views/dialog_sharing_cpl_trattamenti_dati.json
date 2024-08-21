@@ -3,9 +3,14 @@
     "entryKey": "dialog_sharing_cpl_trattamenti_dati",
     "predefinedQueries": [
         {
-            "operation": "share",
+            "operation": "insert",
             "type": "main",
-            "queryString": "select entrasp.grc_accoda_singolo_trattamento_dati(€global_codice_azienda€::text,$codice_azienda_dest$::varchar,id_trattamento_dati::integer, $id_centro_gest$::integer) FROM entrasp.cpl_trattamenti_dati where codice_azienda='€global_codice_azienda€' and id_trattamento_dati=any(ARRAY[$selected_rows_data$])"
+            "queryString": "select entrasp.grc_accoda_singolo_trattamento_dati('€global_codice_azienda€',$codice_azienda_dest$,id_trattamento_dati, $id_centro_gest$) FROM entrasp.cpl_trattamenti_dati where codice_azienda='€global_codice_azienda€' and id_trattamento_dati=any(ARRAY[$selected_rows_data$])"
+        },
+        {
+            "operation": "isInsert",
+            "type": "main",
+            "queryString": "select true as label"
         }
     ],
     "form_keys": [
