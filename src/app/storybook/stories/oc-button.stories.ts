@@ -19,7 +19,7 @@ const meta: Meta<OCButtonComponent> = {
     layout: 'fullscreen',
   },
   args: {
-    type: 'primary',
+    type: 'filled',
     label: 'This is a test',
     disabled: false
   },
@@ -29,51 +29,51 @@ export default meta;
 type Story = StoryObj<OCButtonComponent>;
 
 
-export const Primary: Story = {
+export const Filled: Story = {
   args: {
-    type: 'primary',
+    type: 'filled',
     label: 'Press me',
     disabled: false
   }
 }
 
-export const PrimaryLarge: Story = {
+export const FilledLarge: Story = {
   args: {
-    type: 'primary',
+    type: 'filled',
     label: 'Press me',
     disabled: false,
     size: 'large'
   }
 }
 
-export const PrimaryDisabled: Story = {
+export const FilledDisabled: Story = {
   args: {
-    type: 'primary',
+    type: 'filled',
     label: 'Press me',
     disabled: true
   }
 }
 
-export const Secondary: Story = {
+export const Outlined: Story = {
   args: {
-    type: 'secondary',
+    type: 'outlined',
     label: 'Press me',
     disabled: false
   }
 }
 
-export const SecondaryLarge: Story = {
+export const OutlinedLarge: Story = {
   args: {
-    type: 'secondary',
+    type: 'outlined',
     label: 'Press me',
     disabled: false,
     size: 'large'
   }
 }
 
-export const SecondaryDisabled: Story = {
+export const OutlinedDisabled: Story = {
   args: {
-    type: 'secondary',
+    type: 'outlined',
     label: 'Press me',
     disabled: true
   }
@@ -81,26 +81,26 @@ export const SecondaryDisabled: Story = {
 
 
 
-export const Light: Story = {
+export const Text: Story = {
   args: {
-    type: 'light',
+    type: 'text',
     label: 'Press me',
     disabled: false
   }
 }
 
-export const LightLarge: Story = {
+export const TextLarge: Story = {
   args: {
-    type: 'light',
+    type: 'text',
     label: 'Press me',
     disabled: false,
     size: 'large'
   }
 }
 
-export const LightDisabled: Story = {
+export const TextDisabled: Story = {
   args: {
-    type: 'light',
+    type: 'text',
     label: 'Press me',
     disabled: true
   }

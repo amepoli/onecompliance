@@ -14,15 +14,15 @@ import { NDModule } from '../../oc/nd/nd.module';
 export class OCButtonComponent {
 
   @Input()
-  type?: 'primary' | 'secondary' | 'light';
+  type?: 'filled' | 'outlined' | 'text' = 'filled';
 
   @Input()
-  label: string;
+  label: string = '';
 
   @Input()
-  disabled: boolean;
+  disabled: boolean = false;
 
   @Input()
-  size?:  'normal' | 'large';
+  size?:  'small' | 'large' = 'small';
 
 }
