@@ -1,7 +1,15 @@
 <ng-container>
     <button 
-        [ngClass]="'oc-button ' + (type === 'secondary'? 'secondary-button': type === 'light'? 'light-button': 'primary-button') + (size === 'large'? ' large': '')"
-        mat-raised-button [disabled]="disabled">
+        [ngClass]="'oc-button ' + (type === 'outlined'? 'outlined-button': type === 'text'? 'text-button': 'filled-button') + (size === 'large'? ' large': '')"
+        mat-fab extended [disabled]="disabled">
+        <div style="display: flex;">
+            <ng-container *ngIf="prefixIcon">
+                <mat-icon class="oc-button-prefix-icon">{{prefixIcon}}</mat-icon>
+            </ng-container>    
             {{label}}
+            <ng-container *ngIf="postfixIcon">
+                <mat-icon class="oc-button-postfix-icon">{{postfixIcon}}</mat-icon>
+            </ng-container>
+        </div>
     </button>
 </ng-container>

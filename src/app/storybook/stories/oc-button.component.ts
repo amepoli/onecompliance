@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 
 import { NDModule } from '../../oc/nd/nd.module';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
@@ -14,15 +16,22 @@ import { NDModule } from '../../oc/nd/nd.module';
 export class OCButtonComponent {
 
   @Input()
-  type?: 'primary' | 'secondary' | 'light';
+  type?: 'filled' | 'outlined' | 'text' = 'filled';
 
   @Input()
-  label: string;
+  label: string = '';
 
   @Input()
-  disabled: boolean;
+  disabled: boolean = false;
 
   @Input()
-  size?:  'normal' | 'large';
+  size?:  'small' | 'large' = 'small';
+
+  @Input()
+  prefixIcon: string;
+
+  @Input()
+  postfixIcon: string;
+
 
 }

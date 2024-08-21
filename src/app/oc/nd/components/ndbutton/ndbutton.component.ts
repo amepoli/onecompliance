@@ -11,7 +11,7 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 export class NDButtonComponent {
 
     @Input()
-    type?: 'primary' | 'secondary' | 'light';
+    type?: 'filled' | 'outlined' | 'text';
   
     @Input()
     label: string;
@@ -20,8 +20,16 @@ export class NDButtonComponent {
     disabled: boolean;
   
     @Input()
-    size?:  'normal' | 'large';
+    size?:  'small' | 'large';
 
-    constructor() { }
+    @Input()
+    prefixIcon: string;
+  
+    @Input()
+    postfixIcon: string;
+    
+    constructor() { 
+        console.log(this.prefixIcon);
+    }
 
 }
