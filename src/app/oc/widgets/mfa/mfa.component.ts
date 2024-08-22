@@ -4,7 +4,7 @@ import { MFADialogComponent } from 'app/oc/dialogs/mfa.dialog/mfa.dialog.compone
 import { AuthService, DialogService, ToastService } from 'app/oc/services';
 import { Subscription } from 'rxjs';
 
-import 'rxjs/add/operator/filter';
+
 
 @Component({
     selector: 'mfa',

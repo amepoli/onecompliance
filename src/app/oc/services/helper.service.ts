@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig, MarkerReplacer } from 'app/oc/interfaces';
-import { isObject } from 'rxjs/internal-compatibility';
+import * as moment from 'moment';
 interface TableStyleElement {
     value: string;
     valueKey?: string;
@@ -144,7 +144,42 @@ export class HelperService {
      * @param time 
      * @returns formatted time
      */
-    public static getFormattedTime(time) {
+    public static getFormattedTime(time: string) {
+        if(time) {
+            let parts = time.split(':')
+            let ampm = 'AM';
+            if(parts.length > 2) {
+                return moment(time, ["HH:mm:ss"]).format("h:mm A")
+                // let hours = parseInt(parts[0]);
+                // if(hours > 12) {
+                //     parts[0] = this.getTwoDigitText(12 - hours);
+                //     ampm = 'PM';
+                // }
+                // return `${parts[0]}:${parts[1]} ${ampm}`
+            }
+        }
+        return time;
+    }
+
+    /**
+     * Get decoded Time
+     * @param time 
+     * @returns decoded time
+     */
+    public static getDecodedTime(time: string) {
+        if(time) {
+            
+            let mainParts = time.split(' ');
+            if (mainParts.length > 1) {
+                return moment(time, ["h:mm A"]).format("HH:mm:ss")
+                // let parts = mainParts[0].split(':')
+                // let hours = parseInt(parts[0]);
+                // if (mainParts[1] === 'PM') {
+                //     parts[0] = this.getTwoDigitText(12 + hours);
+                // }
+                // return `${parts[0]}:${parts[1]}:00`
+            }
+        }
         return time;
     }
 
@@ -366,7 +401,7 @@ export class HelperService {
      */
     public static getValueInValueSet(valueSet: object, key: string) {
         const valueEl = valueSet[key];
-        if (isObject(valueEl)) {
+        if (typeof valueEl === 'object' && valueEl !== null) {
             return valueEl['value'];
         }
         else {

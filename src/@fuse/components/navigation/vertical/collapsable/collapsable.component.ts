@@ -119,7 +119,7 @@ export class FuseNavVerticalCollapsableComponent implements OnInit, OnDestroy
     ngOnDestroy(): void
     {
         // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
+        this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
 
@@ -140,7 +140,7 @@ export class FuseNavVerticalCollapsableComponent implements OnInit, OnDestroy
 
         // Navigation collapse toggled...
         this._fuseNavigationService.onItemCollapsed.next(this.item);
-        this._fuseNavigationService.onItemCollapseToggled.next();
+        this._fuseNavigationService.onItemCollapseToggled.next(null);
     }
 
     /**
@@ -154,7 +154,7 @@ export class FuseNavVerticalCollapsableComponent implements OnInit, OnDestroy
         }
 
         this.isOpen = true;
-        this._fuseNavigationService.onItemCollapseToggled.next();
+        this._fuseNavigationService.onItemCollapseToggled.next(null);
     }
 
     /**
@@ -168,7 +168,7 @@ export class FuseNavVerticalCollapsableComponent implements OnInit, OnDestroy
         }
 
         this.isOpen = false;
-        this._fuseNavigationService.onItemCollapseToggled.next();
+        this._fuseNavigationService.onItemCollapseToggled.next(null);
     }
 
     /**

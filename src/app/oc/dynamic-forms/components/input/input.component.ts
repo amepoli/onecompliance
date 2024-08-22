@@ -32,6 +32,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   subscription: Subscription;
 
+  timeValue: string;
+
   // For future use
   // @HostBinding('style.margin-right') marginRight = '0.5%';
 
@@ -101,12 +103,15 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
         var d = new Date(HelperService.getFormattedDateTime(fieldValue, _this.timezoneService.timezoneInfo.utc_offset)); /* midnight in China on April 13th */
         _this.field.value = d.toLocaleString('en-US', { timeZone: _this.timezoneService.timezoneInfo.timezone });
       }
-      else if (_this.field.inputType === 'time') {
-        _this.field.value = HelperService.getFormattedTime(fieldValue);
-      }
       else {
         _this.field.value = fieldValue;
       }
+    }
+
+    if (_this.field.inputType === 'time') {
+      _this.timeValue = HelperService.getFormattedTime(fieldValue);
+      // _this.field.value = fieldValue;
+      // _this.group.get(_this.field.name).setValue(fieldValue);
     }
   }
 
@@ -196,6 +201,13 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
       // Copy as it is
       _this.field.value = _this.group.get(_this.field.name).value;
     }
+  }
+
+  onTimeSet($event: string) {
+    const _this = this;
+    _this.timeValue = $event;
+    _this.field.value = HelperService.getDecodedTime(_this.timeValue);
+    _this.group.get(_this.field.name).setValue(_this.field.value);
   }
 
   formatValue() {
