@@ -9,7 +9,7 @@ import {
 import { OCButtonComponent } from './oc-button.component';
 
 const meta: Meta<OCButtonComponent> = {
-  title: 'Example/OCButton',
+  title: 'New Design/Button',
   component: OCButtonComponent,
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ['autodocs'],
@@ -19,7 +19,7 @@ const meta: Meta<OCButtonComponent> = {
     layout: 'fullscreen',
   },
   args: {
-    type: 'primary',
+    type: 'filled',
     label: 'This is a test',
     disabled: false
   },
@@ -29,79 +29,158 @@ export default meta;
 type Story = StoryObj<OCButtonComponent>;
 
 
-export const Primary: Story = {
+export const Filled: Story = {
   args: {
-    type: 'primary',
+    type: 'filled',
     label: 'Press me',
-    disabled: false
+    disabled: false,
+    size: 'small'
   }
 }
 
-export const PrimaryLarge: Story = {
+
+export const FilledPrefixIcon: Story = {
   args: {
-    type: 'primary',
+    type: 'filled',
+    label: 'Press me',
+    disabled: false,
+    size: 'small',
+    prefixIcon: 'download'
+  }
+}
+
+export const FilledPostfixIcon: Story = {
+  args: {
+    type: 'filled',
+    label: 'Press me',
+    disabled: false,
+    size: 'small',
+    postfixIcon: 'upload'
+  }
+}
+
+export const FilledBothIcons: Story = {
+  args: {
+    type: 'filled',
+    label: 'Press me',
+    disabled: false,
+    size: 'small',
+    prefixIcon: 'download',
+    postfixIcon: 'upload'
+  }
+}
+
+export const FilledDisabled: Story = {
+  args: {
+    type: 'filled',
+    label: 'Press me',
+    disabled: true,
+    size: 'small'
+  }
+}
+
+export const FilledLarge: Story = {
+  args: {
+    type: 'filled',
     label: 'Press me',
     disabled: false,
     size: 'large'
   }
 }
 
-export const PrimaryDisabled: Story = {
+
+export const FilledLargePrefixIcon: Story = {
   args: {
-    type: 'primary',
+    type: 'filled',
     label: 'Press me',
-    disabled: true
+    disabled: false,
+    size: 'large',
+    prefixIcon: 'download'
   }
 }
 
-export const Secondary: Story = {
+export const FilledLargePostfixIcon: Story = {
   args: {
-    type: 'secondary',
+    type: 'filled',
     label: 'Press me',
-    disabled: false
+    disabled: false,
+    size: 'large',
+    postfixIcon: 'upload'
   }
 }
 
-export const SecondaryLarge: Story = {
+export const FilledLargeBothIcons: Story = {
   args: {
-    type: 'secondary',
+    type: 'filled',
+    label: 'Press me',
+    disabled: false,
+    size: 'large',
+    prefixIcon: 'download',
+    postfixIcon: 'upload'
+  }
+}
+
+export const FilledLargeDisabled: Story = {
+  args: {
+    type: 'filled',
+    label: 'Press me',
+    disabled: true,
+    size: 'large'
+  }
+}
+
+export const Outlined: Story = {
+  args: {
+    type: 'outlined',
+    label: 'Press me',
+    disabled: false,
+    size: 'small'
+  }
+}
+
+export const OutlinedLarge: Story = {
+  args: {
+    type: 'outlined',
     label: 'Press me',
     disabled: false,
     size: 'large'
   }
 }
 
-export const SecondaryDisabled: Story = {
+export const OutlinedDisabled: Story = {
   args: {
-    type: 'secondary',
+    type: 'outlined',
     label: 'Press me',
-    disabled: true
+    disabled: true,
+    size: 'small'
   }
 }
 
 
 
-export const Light: Story = {
+export const Text: Story = {
   args: {
-    type: 'light',
+    type: 'text',
     label: 'Press me',
-    disabled: false
+    disabled: false,
+    size: 'small'
   }
 }
 
-export const LightLarge: Story = {
+export const TextLarge: Story = {
   args: {
-    type: 'light',
+    type: 'text',
     label: 'Press me',
     disabled: false,
     size: 'large'
   }
 }
 
-export const LightDisabled: Story = {
+export const TextDisabled: Story = {
   args: {
-    type: 'light',
+    type: 'text',
     label: 'Press me',
-    disabled: true
+    disabled: true,
+    size: 'small'
   }
 }
