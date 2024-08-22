@@ -7,16 +7,6 @@
             "operation": "selectTable",
             "queryString": "select * ,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as descr_stato, entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa) as esecutore from entrasp.consuntivazioni WHERE codice_azienda=$codice_azienda$ and codice_attivita= $codice_attivita$",
             "type": "main"
-        },
-        {
-            "operation": "insert",
-            "queryString": "update entrasp.consuntivazioni cn set id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-            "type": "postProcessing"
-        },
-        {
-            "operation": "update",
-            "queryString": "update entrasp.consuntivazioni cn set id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-            "type": "postProcessing"
         }
     ]
 }
