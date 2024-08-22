@@ -642,9 +642,7 @@
                     "eventName": "expiry_date_change",
                     "actionType": "readOnly",
                     "condition": "equalTo",
-                    "values": [
-                        null
-                    ]
+                    "values": [null]
                 }
             ]
         },
@@ -732,8 +730,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "id_cliente",
-            "label": "$P{label_controparte}",
-            "width": "0%"
+            "label": "$P{label_controparte}"
         },
         {
             "format": {
@@ -743,7 +740,7 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "width": "19%"
+            "width": "30%"
         },
         {
             "format": {
@@ -754,7 +751,7 @@
             "key": "cliente",
             "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
             "label": "$P{label_controparte}",
-            "width": "15%",
+            "width": "20%",
             "style": [
                 {
                     "value": "*",
@@ -769,30 +766,10 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "13%",
+            "width": "10%",
             "key": "id_argomento_contratto",
             "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento_contratto)",
             "label": "Tipo Contratto"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_strumento_finanziario",
-            "label": "id_strumento_finanziario"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "fondo_gestito",
-            "width": "15%",
-            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario)",
-            "label": "Strum.fin.sottoscritto/acquistato"
         },
         {
             "format": {
@@ -806,32 +783,12 @@
         },
         {
             "format": {
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_contratto_a",
-            "width": "7%",
-            "label": "Data scadenza"
-        },
-        {
-            "format": {
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_cessazione",
-            "width": "7%",
-            "label": "Data Cessazione"
-        },
-        {
-            "format": {
                 "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "descr_stato",
-            "width": "6%",
+            "width": "10%",
             "label": "Stato",
             "style": [
                 {
@@ -1085,60 +1042,6 @@
             "label": "Stato",
             "newLine": false,
             "queryCond": "cnt.stato='€stato€'"
-        },
-        {
-            "fieldName": "id_strumento_fin_s",
-            "format": {
-                "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and ra.codice_ruolo = 'FONDO';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Fondo/strumento finanziario",
-            "newLine": false,
-            "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
-        },
-        {
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "dataType": "text",
-                "comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
-            },
-            "label": "Giudizio Appropriatezza",
-            "fieldName": "giudizio_s",
-            "newLine": true,
-            "queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$"
-        },
-        {
-            "fieldName": "profilazioni_n",
-            "format": {
-                "viewType": "checkbox",
-                "value": "0"
-            },
-            "label": "Senza Profilazioni Aml",
-            "newLine": false,
-            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
-        },
-        {
-            "fieldName": "no_progetto",
-            "format": {
-                "viewType": "checkbox",
-                "value": "0"
-            },
-            "label": "Aperti senza progetto associato",
-            "newLine": false,
-            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
-        },
-        {
-            "fieldName": "rischio_conflitto",
-            "format": {
-                "value": "0",
-                "viewType": "toggle"
-            },
-            "label": "Rischio conflitti",
-            "newLine": false,
-            "size": 1.5,
-            "queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'"
         }
     ],
     "hideActions": [

@@ -81,7 +81,7 @@
                 "viewType": "input"
             },
             "label": "Codice",
-            "newLine": false,
+            "newLine": true,
             "queryCond": "(UPPER(avr.codice) like '%'||UPPER('€codice_s€')||'%' or UPPER(an.codice) like '%'||UPPER('€codice_s€')||'%')"
         },
         {
@@ -136,7 +136,7 @@
             },
             "label": "Con trattamenti dati associati",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "an.id_anagrafica in(select id_responsabile from entrasp.cpl_trattamenti_dati_responsabili where an.codice_part='€global_codice_part€' and id_responsabile is not null union select id_titolare_esterno from entrasp.cpl_trattamenti_dati_titolari_esterni where an.codice_part='€global_codice_part€' and id_titolare_esterno is not null)"
         },
         {
@@ -147,7 +147,7 @@
             },
             "label": "Duplicati per partita iva",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "avr.partita_iva in(select partita_iva from entrasp.conta_anagrafiche_per_partita_iva where conta>1 and partita_iva is not null and partita_iva!='' and codice_part='€global_codice_part€')"
         },
         {
@@ -158,7 +158,7 @@
             },
             "label": "Duplicati per codice fiscale",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "avr.codice_fiscale in(select codice_fiscale from entrasp.conta_anagrafiche_per_codice_fiscale where conta>1 and codice_fiscale is not null and codice_fiscale!='' and codice_part='€global_codice_part€')"
         },
         {
@@ -169,7 +169,7 @@
             },
             "label": "Documenti scaduti",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)"
         },
         {
@@ -180,7 +180,7 @@
             },
             "label": "Con tutti i contratti chiusi",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null) and an.id_anagrafica not in(select distinct an2.id_anagrafica from entrasp.anagrafiche_id an2 left join entrasp.contratti c3 on an2.codice_part=c3.codice_part and an2.id_anagrafica=c3.id_cliente where c3.id_cliente is null and an2.id_anagrafica is not null and an2.codice_part='€global_codice_part€')"
         },
         {
@@ -190,8 +190,8 @@
                 "viewType": "checkbox"
             },
             "label": "Con contratti attivi",
-            "newLine": false,
-            "size": 1,
+            "newLine": true,
+            "size": 1.66,
             "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE stato != 'C' and c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)"
         },
         {
@@ -202,7 +202,7 @@
             },
             "label": "Con contratti",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "an.id_anagrafica in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)"
         },
         {
@@ -213,7 +213,7 @@
             },
             "label": "Senza contratti",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "an.id_anagrafica not in(SELECT c2.id_cliente FROM entrasp.contratti c2 WHERE c2.codice_azienda='€global_codice_azienda€' and c2.id_cliente is not null)"
         },
         {
@@ -224,7 +224,7 @@
             },
             "label": "Con progetti",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "an.id_anagrafica in(SELECT pr.id_cliente FROM entrasp.progetti pr WHERE pr.codice_azienda='€global_codice_azienda€' and pr.id_cliente is not null)"
         },
         {
@@ -235,7 +235,7 @@
             },
             "label": "Senza documento identificativo",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "(avr.numero_documento is null or avr.id_argomento_tipo_documento is null)"
         },
         {
@@ -246,7 +246,7 @@
             },
             "label": "Senza codice ateco",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": "avr.id_ateco is null"
         },
         {
@@ -257,7 +257,7 @@
             },
             "label": "Senza questionario associato",
             "newLine": false,
-            "size": 1,
+            "size": 1.66,
             "queryCond": ""
         }
     ],
