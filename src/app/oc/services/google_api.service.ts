@@ -1,16 +1,8 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { AmplifyService } from 'aws-amplify-angular';
-import { Observable } from 'rxjs/Observable';
-import { AuthState } from 'aws-amplify-angular/dist/src/providers/auth.state';
+import { Injectable } from '@angular/core';
 import { BackendService } from './backend.service';
-import { BehaviorSubject, forkJoin } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
-import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { ToastService } from 'app/oc/services/toast.service';
 
-import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { ConsoleLoggerService } from './console_logger.service';
-import { UserInfo } from '../interfaces';
 import { AuthService } from './auth.service';
 
 @Injectable({

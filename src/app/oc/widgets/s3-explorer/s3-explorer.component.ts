@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { FileManagerViewType } from 'app/oc/interfaces';
 import { AuthService, BackendService, ConsoleLoggerService } from 'app/oc/services';
 
-import 'rxjs/add/operator/filter';
+// 
 import { FormViewComponent } from '../../views/form/form-view.component';
 
 @Component({

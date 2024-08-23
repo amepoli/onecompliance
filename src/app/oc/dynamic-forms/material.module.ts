@@ -13,9 +13,10 @@ import { MatInputModule as MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatRadioModule as MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule as MatSelectModule } from '@angular/material/select';
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { MatTooltipModule as MatTooltipModule } from '@angular/material/tooltip';
+import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
 
 @NgModule({
   imports: [

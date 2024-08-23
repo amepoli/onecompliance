@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges } from '@angular/core';
 import { AuthService } from 'app/oc/services';
 
-import 'rxjs/add/operator/filter';
+
 import { FormViewComponent } from '../form/form-view.component';
 
 @Component({

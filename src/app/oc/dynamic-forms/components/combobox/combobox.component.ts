@@ -139,7 +139,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       this.subscription.unsubscribe();
     }
 
-    this._onDestroy.next();
+    this._onDestroy.next(null);
     this._onDestroy.complete();
   }
 

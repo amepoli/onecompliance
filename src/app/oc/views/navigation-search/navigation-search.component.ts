@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-import 'rxjs/add/operator/filter';
+
 import { AuthService } from 'app/oc/services';
 
 @Component({

@@ -5,7 +5,7 @@ import { MultiAttachmentsDialogComponent } from 'app/oc/dialogs/multi-attachment
 import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService } from 'app/oc/services';
 import { Subscription } from 'rxjs';
 
-import 'rxjs/add/operator/filter';
+
 import { FormViewComponent } from '../../views/form/form-view.component';
 
 @Component({

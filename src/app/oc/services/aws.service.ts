@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs/Observable";
 import { BehaviorSubject, from } from "rxjs";
 import { ConsoleLoggerService } from "./console_logger.service";
 import { OCAuthState, PostRequest } from "../interfaces";
@@ -143,7 +142,7 @@ class Auth {
                         refreshToken
                     },
                   };
-                let result = await from(this.awsService.api().post(appData.apiName, appData.lambdas.auth.apiName, putPostReq, true)).toPromise() as Observable<any>;
+                let result = await this.awsService.api().post(appData.apiName, appData.lambdas.auth.apiName, putPostReq, true);
                 if (result && result["result"] === "OK") { 
                   let data = result["data"];
                   if (data != null) {

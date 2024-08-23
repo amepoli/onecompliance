@@ -7,7 +7,7 @@ import { MenuOption, SelectionAction, SelectionActionParams, TableViewKey } from
 import { AuthService, BackendService, DialogService, ToastService } from 'app/oc/services';
 import { Subscription } from 'rxjs';
 
-import 'rxjs/add/operator/filter';
+
 import { FormViewComponent } from '../form/form-view.component';
 
 @Component({
