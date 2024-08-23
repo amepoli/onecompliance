@@ -461,9 +461,7 @@
                     "eventName": "event_flag_mostra_punteggi",
                     "actionType": "hide",
                     "condition": "equalTo",
-                    "values": [
-                        "0"
-                    ]
+                    "values": ["0"]
                 }
             ],
             "newLine": false,
@@ -690,291 +688,313 @@
             "sameOrigin": false,
             "size": 9
         },
+
         {
             "format": {
-                "viewType": "invisible"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "readOnly": true,
-            "sameOrigin": false,
-            "key": "new_line",
-            "label": "new_line",
-            "newLine": true,
-            "size": 1
-        },
-        {
-            "format": {
-                "dataType": "number",
-                "viewType": "label"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_argomento_domanda",
-            "label": "id_argomento_domanda",
-            "newLine": false,
-            "readOnly": true,
-            "sameOrigin": false
-        },
-        {
-            "format": {
-                "viewType": "invisible"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "readOnly": true,
-            "sameOrigin": false,
-            "key": "no_new_line",
-            "label": "no_new_line",
-            "newLine": false,
-            "size": 3
-        },
-        {
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "readOnly": false,
-            "style": {
-                "font_color": "white",
-                "background_color": "firebrick"
-            },
-            "outputEvent": {
-                "eventName": "get_aml_scan",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "get_aml_scan",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
-                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "format": {
+                            "viewType": "invisible"
                         },
-                        "actionOnYes": {
-                            "actionType": "regulat_api",
-                            "regulatAPIParams": {
-                                "actionType": "get_aml_scan",
-                                "entityParams": {
-                                    "codice_azienda": "codice_azienda",
-                                    "id_anagrafica": "id_anagrafica",
-                                    "id_somministrazione": "id_somministrazione",
-                                    "dynamo_user": "username",
-                                    "is_light_scan": false
-                                }
-                            }
-                        }
-                    }
-                }
-            ],
-            "sameOrigin": false,
-            "key": "kyc_deep",
-            "tooltip": "Controllo OneKYC approfondito",
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when £id_argomento_domanda£=45414 then false else true end as label"
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when £id_risposta£ is not null then true else false end as label"
-                }
-            ],
-            "label": "OneKYC - Deep",
-            "buttonIcon": "person_search",
-            "newLine": false,
-            "size": 2
-        },
-        {
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "readOnly": false,
-            "style": {
-                "font_color": "white",
-                "background_color": "firebrick"
-            },
-            "outputEvent": {
-                "eventName": "invia_mail",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "invia_mail",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageTitle": "INVIA MAIL AL CLIENTE",
-                        "messageText": "Inviare la mail al cliente? Si intende proseguire?",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        },
-                        "actionOnYes": {
-                            "actionType": "email",
-                            "emailActionParameters": {
-                                "subjectKeys": [],
-                                "body": "",
-                                "ccList": [],
-                                "bodyKeys": [],
-                                "recipientKeys": []
-                            }
-                        }
-                    }
-                }
-            ],
-            "sameOrigin": false,
-            "key": "send_mail",
-            "tooltip": "Invia mail",
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when £id_argomento_domanda£=52087 then false else true end as label"
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when £id_risposta£ is not null then true else false end as label"
-                }
-            ],
-            "label": "Invia mail",
-            "buttonIcon": "mail",
-            "newLine": false,
-            "size": 2
-        },
-        {
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "readOnly": false,
-            "outputEvent": {
-                "eventName": "get_light_aml_scan",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "get_light_aml_scan",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
-                        "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        },
-                        "actionOnYes": {
-                            "actionType": "regulat_api",
-                            "regulatAPIParams": {
-                                "actionType": "get_aml_scan",
-                                "entityParams": {
-                                    "codice_azienda": "codice_azienda",
-                                    "id_anagrafica": "id_anagrafica",
-                                    "id_somministrazione": "id_somministrazione",
-                                    "dynamo_user": "username",
-                                    "is_light_scan": true
-                                }
-                            }
-                        }
-                    }
-                }
-            ],
-            "sameOrigin": false,
-            "key": "kyc_light",
-            "tooltip": "Controllo OneKYC limitato alle liste anti-terrorismo",
-            "label": "OneKYC - Light",
-            "buttonIcon": "person_search",
-            "attributeFuncts": [
-                {
-                    "attributeType": "isHidden",
-                    "queryString": "select case when £id_argomento_domanda£=45414 then false else true end as label"
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when £id_risposta£ is not null then true else false end as label"
-                }
-            ],
-            "newLine": false,
-            "size": 2
-        },
-        {
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "readOnly": false,
-            "style": {
-                "font_color": "white",
-                "background_color": "royalblue"
-            },
-            "outputEvent": {
-                "eventName": "check_provincia_event",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "check_provincia_event",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageTitle": "Controllo rischio relativo alla provincia di residenza",
-                        "messageText": "Procedere?",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "SELECT entrasp.check_provincia($codice_azienda$,'€global_codice_part€',$id_anagrafica$, $id_somministrazione$)"
-                        }
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": true,
+                        "sameOrigin": false,
+                        "key": "new_line",
+                        "label": "new_line",
+                        "newLine": true,
+                        "size": 1
                     },
-                    "outputEventWhenComplete": "onSaveD_R"
-                }
-            ],
-            "sameOrigin": false,
-            "key": "check_provincia",
-            "tooltip": "Check provincia",
+                    {
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "label"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "key": "id_argomento_domanda",
+                        "label": "id_argomento_domanda",
+                        "newLine": false,
+                        "readOnly": true,
+                        "sameOrigin": false
+                    },
+                    {
+                        "format": {
+                            "viewType": "invisible"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": true,
+                        "sameOrigin": false,
+                        "key": "no_new_line",
+                        "label": "no_new_line",
+                        "newLine": false,
+                        "size": 3
+                    },
+                    {
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "style": {
+                            "font_color": "white",
+                            "background_color": "firebrick"
+                        },
+                        "outputEvent": {
+                            "eventName": "get_aml_scan",
+                            "eventTrigger": "press"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "get_aml_scan",
+                                "actionType": "show_message",
+                                "condition": "none",
+                                "values": [],
+                                "message": {
+                                    "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                                    "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                                    "actionOnNo": {
+                                        "actionType": "query",
+                                        "queryFunct": "select true"
+                                    },
+                                    "actionOnYes": {
+                                        "actionType": "regulat_api",
+                                        "regulatAPIParams": {
+                                            "actionType": "get_aml_scan",
+                                            "entityParams": {
+                                                "codice_azienda": "codice_azienda",
+                                                "id_anagrafica": "id_anagrafica",
+                                                "id_somministrazione": "id_somministrazione",
+                                                "dynamo_user": "username",
+                                                "is_light_scan": false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "sameOrigin": false,
+                        "key": "kyc_deep",
+                        "tooltip": "Controllo OneKYC approfondito",
+                        "attributeFuncts": [
+                            {
+                                "attributeType": "isHidden",
+                                "queryString": "select case when £id_argomento_domanda£=45414 then false else true end as label"
+                            },
+                            {
+                                "attributeType": "readOnly",
+                                "queryString": "select case when £id_risposta£ is not null then true else false end as label"
+                            }
+                        ],
+                        "label": "OneKYC - Deep",
+                        "buttonIcon": "person_search",
+                        "newLine": false,
+                        "size": 2
+                    },
+                    {
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "style": {
+                            "font_color": "white",
+                            "background_color": "firebrick"
+                        },
+                        "outputEvent": {
+                            "eventName": "invia_mail",
+                            "eventTrigger": "press"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "invia_mail",
+                                "actionType": "show_message",
+                                "condition": "none",
+                                "values": [],
+                                "message": {
+                                    "messageTitle": "INVIA MAIL AL CLIENTE",
+                                    "messageText": "Inviare la mail al cliente? Si intende proseguire?",
+                                    "actionOnNo": {
+                                        "actionType": "query",
+                                        "queryFunct": "select true"
+                                    },
+                                    "actionOnYes": {
+                                        "actionType": "email",
+                                        "emailActionParameters": {
+                                            "subjectKeys": [],
+                                            "body": "",
+                                            "ccList": [],
+                                            "bodyKeys": [],
+                                            "recipientKeys": []
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "sameOrigin": false,
+                        "key": "send_mail",
+                        "tooltip": "Invia mail",
+                        "attributeFuncts": [
+                            {
+                                "attributeType": "isHidden",
+                                "queryString": "select case when £id_argomento_domanda£=52087 then false else true end as label"
+                            },
+                            {
+                                "attributeType": "readOnly",
+                                "queryString": "select case when £id_risposta£ is not null then true else false end as label"
+                            }
+                        ],
+                        "label": "Invia mail",
+                        "buttonIcon": "mail",
+                        "newLine": false,
+                        "size": 2
+                    },
+                    {
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "outputEvent": {
+                            "eventName": "get_light_aml_scan",
+                            "eventTrigger": "press"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "get_light_aml_scan",
+                                "actionType": "show_message",
+                                "condition": "none",
+                                "values": [],
+                                "message": {
+                                    "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC",
+                                    "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                                    "actionOnNo": {
+                                        "actionType": "query",
+                                        "queryFunct": "select true"
+                                    },
+                                    "actionOnYes": {
+                                        "actionType": "regulat_api",
+                                        "regulatAPIParams": {
+                                            "actionType": "get_aml_scan",
+                                            "entityParams": {
+                                                "codice_azienda": "codice_azienda",
+                                                "id_anagrafica": "id_anagrafica",
+                                                "id_somministrazione": "id_somministrazione",
+                                                "dynamo_user": "username",
+                                                "is_light_scan": true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "sameOrigin": false,
+                        "key": "kyc_light",
+                        "tooltip": "Controllo OneKYC limitato alle liste anti-terrorismo",
+                        "label": "OneKYC - Light",
+                        "buttonIcon": "person_search",
+                        "attributeFuncts": [
+                            {
+                                "attributeType": "isHidden",
+                                "queryString": "select case when £id_argomento_domanda£!=45414 then false else true end as label"
+                            },
+                            {
+                                "attributeType": "readOnly",
+                                "queryString": "select case when £id_risposta£ is not null then true else false end as label"
+                            }
+                        ],
+                        "newLine": false,
+                        "size": 2
+                    },
+                    {
+                        "format": {
+                            "viewType": "button"
+                        },
+                        "isHidden": true,
+                        "isPrimary": false,
+                        "readOnly": false,
+                        "style": {
+                            "font_color": "white",
+                            "background_color": "royalblue"
+                        },
+                        "outputEvent": {
+                            "eventName": "check_provincia_event",
+                            "eventTrigger": "press"
+                        },
+                        "inputEvents": [
+                            {
+                                "eventName": "check_provincia_event",
+                                "actionType": "show_message",
+                                "condition": "none",
+                                "values": [],
+                                "message": {
+                                    "messageTitle": "Controllo rischio relativo alla provincia di residenza",
+                                    "messageText": "Procedere?",
+                                    "actionOnNo": {
+                                        "actionType": "query",
+                                        "queryFunct": "select true"
+                                    },
+                                    "actionOnYes": {
+                                        "actionType": "query",
+                                        "queryFunct": "SELECT entrasp.check_provincia($codice_azienda$,'€global_codice_part€',$id_anagrafica$, $id_somministrazione$)"
+                                    }
+                                },
+                                "outputEventWhenComplete": "onSaveD_R"
+                            }
+                        ],
+                        "sameOrigin": false,
+                        "key": "check_provincia",
+                        "tooltip": "Check provincia",
+                        "attributeFuncts": [
+                            {
+                                "attributeType": "isHidden",
+                                "queryString": "select case when £id_argomento_domanda£=43480 then false else true end as label "
+                            },
+                            {
+                                "attributeType": "readOnly",
+                                "queryString": "select case when £id_risposta£ is not null then true else false end as label"
+                            }
+                        ],
+                        "label": "Check provincia",
+                        "buttonIcon": "person_search",
+                        "newLine": false,
+                        "size": 2
+                    },
+                    {
+                        "format": {
+                            "viewType": "invisible"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "readOnly": true,
+                        "sameOrigin": false,
+                        "key": "new_line",
+                        "label": "new_line",
+                        "newLine": true,
+                        "size": 3
+                    }
+                ]
+            },
             "attributeFuncts": [
                 {
                     "attributeType": "isHidden",
-                    "queryString": "select case when £id_argomento_domanda£=43480 then false else true end as label "
-                },
-                {
-                    "attributeType": "readOnly",
-                    "queryString": "select case when £id_risposta£ is not null then true else false end as label"
+                    "queryString": "select case when £id_argomento_domanda£ in (45414, 43480, 52087) then false else true end as label"
                 }
             ],
-            "label": "Check provincia",
-            "buttonIcon": "person_search",
-            "newLine": false,
-            "size": 2
-        },
-        {
-            "format": {
-                "viewType": "invisible"
-            },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
-            "readOnly": true,
-            "sameOrigin": false,
-            "key": "new_line",
-            "label": "new_line",
+            "key": "button_condizionati",
+            "label": "Bottoni condizionati",
             "newLine": true,
-            "size": 3
+            "readOnly": false,
+            "sameOrigin": true
         },
+
         {
             "autoGenerate": false,
             "format": {
@@ -1020,9 +1040,7 @@
                     "eventName": "domande_risposte_multipla_aperta",
                     "actionType": "show",
                     "condition": "equalTo",
-                    "values": [
-                        1
-                    ]
+                    "values": [1]
                 }
             ],
             "format": {
@@ -1057,9 +1075,7 @@
                                 "eventName": "event_flag_mostra_punteggi",
                                 "actionType": "hide",
                                 "condition": "equalTo",
-                                "values": [
-                                    "0"
-                                ]
+                                "values": ["0"]
                             },
                             {
                                 "eventName": "toggle_question",
@@ -1162,9 +1178,7 @@
                     "eventName": "domande_risposte_multipla_aperta",
                     "actionType": "show",
                     "condition": "equalTo",
-                    "values": [
-                        7
-                    ]
+                    "values": [7]
                 }
             ],
             "format": {
@@ -1199,9 +1213,7 @@
                                 "eventName": "event_flag_mostra_punteggi",
                                 "actionType": "hide",
                                 "condition": "equalTo",
-                                "values": [
-                                    "0"
-                                ]
+                                "values": ["0"]
                             },
                             {
                                 "eventName": "toggle_question",
@@ -1304,9 +1316,7 @@
                     "eventName": "domande_risposte_multipla_aperta",
                     "actionType": "show",
                     "condition": "equalTo",
-                    "values": [
-                        3
-                    ]
+                    "values": [3]
                 }
             ],
             "format": {
@@ -1325,9 +1335,7 @@
                                 "eventName": "event_flag_mostra_punteggi",
                                 "actionType": "hide",
                                 "condition": "equalTo",
-                                "values": [
-                                    "0"
-                                ]
+                                "values": ["0"]
                             },
                             {
                                 "eventName": "codice_colore_change_peso_oa",
@@ -1393,9 +1401,7 @@
                     "eventName": "domande_risposte_multipla_aperta",
                     "actionType": "show",
                     "condition": "equalTo",
-                    "values": [
-                        5
-                    ]
+                    "values": [5]
                 }
             ],
             "format": {
@@ -1414,9 +1420,7 @@
                                 "eventName": "event_flag_mostra_punteggi",
                                 "actionType": "hide",
                                 "condition": "equalTo",
-                                "values": [
-                                    "0"
-                                ]
+                                "values": ["0"]
                             },
                             {
                                 "eventName": "codice_colore_change_peso_num",
@@ -1523,9 +1527,7 @@
                     "eventName": "domande_risposte_multipla_aperta",
                     "actionType": "show",
                     "condition": "equalTo",
-                    "values": [
-                        6
-                    ]
+                    "values": [6]
                 }
             ],
             "format": {
@@ -1544,9 +1546,7 @@
                                 "eventName": "event_flag_mostra_punteggi",
                                 "actionType": "hide",
                                 "condition": "equalTo",
-                                "values": [
-                                    "0"
-                                ]
+                                "values": ["0"]
                             },
                             {
                                 "eventName": "codice_colore_change_peso_data",
@@ -1652,9 +1652,7 @@
                     "eventName": "domande_risposte_multipla_aperta",
                     "actionType": "show",
                     "condition": "equalTo",
-                    "values": [
-                        2
-                    ]
+                    "values": [2]
                 }
             ],
             "format": {
@@ -1696,9 +1694,7 @@
                                 "eventName": "event_flag_mostra_punteggi",
                                 "actionType": "hide",
                                 "condition": "equalTo",
-                                "values": [
-                                    "0"
-                                ]
+                                "values": ["0"]
                             },
                             {
                                 "eventName": "toggle_question_mc",
