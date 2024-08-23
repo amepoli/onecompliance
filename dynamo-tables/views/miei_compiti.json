@@ -50,12 +50,12 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT *,(€global_id_anagrafiche€)::text as user_companies,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,codice_compito,codice_azienda) FROM entrasp.compiti_collaboratori where codice_azienda in (€global_user_companies€) and codice_azienda||'-'||codice_compito in(select csn.codice_azienda||'-'||csn.codice_compito from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user='€global_username€')"
+            "queryString": "SELECT *,'€global_username€' as global_username,entrasp.time_report_stop_active_du('€global_username€',codice_compito,codice_azienda) as time_report_stop_active FROM entrasp.compiti_collaboratori where codice_azienda in (€global_user_companies€) and codice_azienda||'-'||codice_compito in(select csn.codice_azienda||'-'||csn.codice_compito from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user='€global_username€')"
         },
         {
             "operation": "startEvent",
             "type": "main",
-            "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+            "queryString": "select entrasp.time_report_play_du('€global_username€', '$codice_compito$', '$codice_azienda$') as play_time_report"
         },
         {
             "operation": "stopEvent",
@@ -235,8 +235,8 @@
             },
             "isHidden": true,
             "isPrimary": false,
-            "key": "user_companies",
-            "label": "user_companies"
+            "key": "global_username",
+            "label": "global_username"
         },
         {
             "format": {
@@ -325,6 +325,7 @@
             "isPrimary": false,
             "width": "5%",
             "key": "time_report_play",
+            "queryFunct": "true",
             "label": " ",
             "style": [
                 {
@@ -337,7 +338,7 @@
                 "target": "compiti",
                 "viewType": "form",
                 "action": "query",
-                "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
+                "query": "select entrasp.entrasp.time_report_play_du(('£global_username£')::text, '£codice_compito£', '£codice_azienda£')",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -348,8 +349,8 @@
                         "destination": "codice_compito"
                     },
                     {
-                        "source": "user_companies",
-                        "destination": "user_companies"
+                        "source": "global_username",
+                        "destination": "global_username"
                     }
                 ],
                 "confirmAction": false,
@@ -377,7 +378,7 @@
                 "target": "compiti",
                 "viewType": "form",
                 "action": "query",
-                "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+                "query": "select entrasp.time_report_stop_active_du(('£global_username£', '£codice_compito£', '£codice_azienda£')::text)",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -388,8 +389,8 @@
                         "destination": "codice_compito"
                     },
                     {
-                        "source": "user_companies",
-                        "destination": "user_companies"
+                        "source": "global_username",
+                        "destination": "global_username"
                     }
                 ],
                 "confirmAction": false,
@@ -482,7 +483,19 @@
             "label": "No Centri Costo",
             "newLine": false,
             "tooltip": "Individua tutti i compiti non associati ad alcun centro di costo",
-            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€'))",
+            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€') and ccc.codice_azienda_compiti||'-'||ccc.codice_compito is not null)",
+            "size": 1.67
+        },
+        {
+            "fieldName": "non_centri_costo_lista",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "No Centri Costo in Lista",
+            "newLine": false,
+            "tooltip": "Individua tutti i compiti non associati ad alcuno centro dei costo in lista",
+            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€') and ccc.id_centro_costo::varchar=any(string_to_array(replace($non_centri_costo_lista$, ' ', ''), ',')))",
             "size": 1.67
         }
     ],
