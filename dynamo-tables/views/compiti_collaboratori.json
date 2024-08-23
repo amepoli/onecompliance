@@ -6,7 +6,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT *,'€global_username€' as global_username,entrasp.time_report_stop_active_du('€global_username€',codice_compito,codice_azienda) as time_report_stop_active FROM entrasp.compiti_collaboratori where codice_azienda in (€global_user_companies€) and codice_azienda||'-'||codice_compito in(select csn.codice_azienda||'-'||csn.codice_compito from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user in(select entrasp.colleghi('€global_username€')))"
+            "queryString": "SELECT *,'€global_username€' as global_username,entrasp.centri_costo_del_compito(cc.codice_azienda, cc.codice_compito) as centro_costo_aggregato, entrasp.time_report_stop_active_du('€global_username€',codice_compito,codice_azienda) as time_report_stop_active FROM entrasp.compiti_collaboratori cc where codice_azienda in (€global_user_companies€) and codice_azienda||'-'||codice_compito in(select csn.codice_azienda||'-'||csn.codice_compito from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user in(select entrasp.colleghi('€global_username€')))"
         },
         {
             "operation": "startEvent",
