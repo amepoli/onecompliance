@@ -12,7 +12,7 @@ def filter_predefined_queries(json_data):
     for query in json_data['predefinedQueries']:
         # Verifica se l'elemento ha le proprietà 'operation' e 'type'
         if 'operation' in query and 'type' in query:
-            if query['operation'] in ['update', 'insert'] and query['type'] in ['preProcessing', 'postProcessing']:
+            if query['operation'] in ['update', 'insert']:
                 filtered_queries.append(query)
     
     return filtered_queries
