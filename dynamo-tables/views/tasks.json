@@ -8,7 +8,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select case when cmp.stato !='C' then true else false end as check,codice_compito, (select descrizione_breve as name from entrasp.argomenti where id_argomento=id_argomento_priorita) AS descr_priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies,entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and id_tipo_segnalazione NOT IN (700,701)"
+            "queryString": "select case when (cmp.stato !='C' or cmp.stato is null) then true else false end as check,codice_compito, (select descrizione_breve as name from entrasp.argomenti where id_argomento=id_argomento_priorita) AS descr_priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies,entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and id_tipo_segnalazione NOT IN (700,701)"
         },
         {
             "operation": "startEvent",
@@ -918,7 +918,17 @@
             },
             "label": "Compiti aperti",
             "newLine": false,
-            "queryCond": "stato!='C'"
+            "queryCond": "(stato!='C' or stato is null)"
+        },
+        {
+            "fieldName": "toggle_non_conformità",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Non conformità",
+            "newLine": false,
+            "queryCond": "id_tipo_segnalazione in(1, 5, 50, 200, 300, 751)"
         }
     ],
     "table_keys": [
