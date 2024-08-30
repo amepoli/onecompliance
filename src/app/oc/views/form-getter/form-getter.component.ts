@@ -985,14 +985,21 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             msgData = msgData.map(m => m === true || m === 'true' || m === 't' ? '1' : m === false || m === 'false' || m === 'f' ? '0' : m);
             // handle jolly chars 
             eventValues = eventValues.map(e => e === '*' ? msgData[eventValues.indexOf(e)] : e);
-
             if (event.condition === 'equalTo') {
-                // tricky way to compare two arrays
-                conditionMet = JSON.stringify(eventValues) === JSON.stringify(msgData);
+                // Check each element instead of comparing arrays as string like before
+                msgData.forEach((curValue: any) => {
+                    if(!eventValues.includes(curValue)) {
+                        conditionMet = false;
+                    }
+                })
             }
             else if (event.condition === 'notEqualTo') {
-                // tricky way to compare two arrays
-                conditionMet = JSON.stringify(eventValues) !== JSON.stringify(msgData);
+                // Check each element instead of comparing arrays as string like before
+                msgData.forEach((curValue: any) => {
+                    if(eventValues.includes(curValue)) {
+                        conditionMet = false;
+                    }
+                })
             }
         }
 
