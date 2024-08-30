@@ -8,6 +8,37 @@
             "operation": "selectTable",
             "queryString": "select distinct (entrasp.argomenti_descr_breve(aa.id_argomento_son)) as presidio, arg.codice from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (5328,48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and aa.id_argomento_father=$id_argomento_son$ and vaf.codice_azienda='€global_codice_azienda€'",
             "type": "main"
+        },
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": ""
+        }
+    ],
+    "form_keys": [
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "readOnly": false,
+            "key": "id_argomento",
+            "label": "id_argomento"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select distinct aa.id_argomento_son as id, entrasp.argomenti_codice_descr_breve(aa.id_argomento_son) as name from entrasp.argomenti_argomenti aa inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and vaf.codice_azienda='€global_codice_azienda€' order by name"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "readOnly": false,
+            "key": "id_argomento_son",
+            "label": "Controllo"
         }
     ],
     "table_keys": [
@@ -64,7 +95,7 @@
         }
     ],
     "addElementSettings": {
-        "labelQuickAdd": "Nuovi Presidi",
+        "labelQuickAdd": "Nuovo Presidio",
         "navigateOnSuccess": false
     },
     "restrictions": {
