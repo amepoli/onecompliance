@@ -6,7 +6,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "select distinct aa.id_argomento_son, aa.id_argomento_father, (entrasp.argomenti_descr_breve(aa.id_argomento_son)) as presidio, arg.codice from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (5328,48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and aa.id_argomento_father=$id_argomento_son$ and vaf.codice_azienda='€global_codice_azienda€'",
+            "queryString": "select distinct aa.id_argomento_father as id_argomento_tipo_allegato, aa.id_argomento_son, aa.id_argomento_father, (entrasp.argomenti_descr_breve(aa.id_argomento_son)) as presidio, arg.codice from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_father inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (5328,48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and aa.id_argomento_father=$id_argomento_son$ and vaf.codice_azienda='€global_codice_azienda€'",
             "type": "main"
         }
     ],
@@ -16,15 +16,14 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": true,
-            "readOnly": false,
-            "key": "id_argomento_son",
-            "label": "id_argomento_son"
+            "readOnly": true,
+            "key": "id_argomento_father",
+            "label": "id_argomento_father -regolamento"
         },
         {
             "format": {
-                "dataType": "text",
                 "viewType": "combobox",
                 "options": [],
                 "comboQuery": "select distinct aa.id_argomento_son as id, entrasp.argomenti_codice_descr_breve(aa.id_argomento_son) as name from entrasp.argomenti_argomenti aa inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (5328,48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and vaf.codice_azienda='€global_codice_azienda€' order by name"
@@ -32,10 +31,11 @@
             "isHidden": false,
             "isPrimary": true,
             "readOnly": false,
-            "key": "id_argomento_father",
+            "key": "id_argomento_son",
             "label": "Controllo"
         }
     ],
+    "subTables": [],
     "table_keys": [
         {
             "format": {
@@ -71,10 +71,19 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": true,
             "key": "id_argomento_father",
-            "label": "id_argomento_father"
+            "label": "id_argomento_father (regolamento)"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_tipo_allegato",
+            "label": "id_argomento_tipo_allegato (regolamento)"
         }
     ],
     "hideActions": [
@@ -103,10 +112,7 @@
         "labelQuickAdd": "Nuovo Presidio",
         "navigateOnSuccess": false
     },
-    "restrictions": {
-        "preventNavigationToForm": true
-    },
-    "querySuffixes": {
+     "querySuffixes": {
         "tableViewSuffix": "order by arg.codice"
     }
 }
