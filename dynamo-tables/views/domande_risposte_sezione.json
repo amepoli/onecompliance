@@ -1,10 +1,52 @@
 {
     "entryKey": "domande_risposte_sezione",
     "$schema": "../views.schema.json",
-    "inheritsFrom": "domande_risposte",
     "define": {
         "is_hidden_risultato": "false"
     },
+    "formRowProperties": [
+        {
+            "inputEvents": [
+                {
+                    "actionType": "showRow",
+                    "condition": "equalTo",
+                    "eventName": "toggle_question",
+                    "keys": [
+                        {
+                            "receiver": "id_domanda_rif",
+                            "sender": "id_domanda"
+                        },
+                        {
+                            "receiver": "id_risposta_prev_rif",
+                            "sender": "%value%"
+                        }
+                    ]
+                },
+                {
+                    "actionType": "showRow",
+                    "condition": "equalTo",
+                    "eventName": "toggle_question_mc",
+                    "keys": [
+                        {
+                            "receiver": "id_domanda_rif",
+                            "sender": "id_domanda"
+                        },
+                        {
+                            "receiver": "id_risposta_prev_rif",
+                            "sender": "%value%"
+                        }
+                    ]
+                }
+            ],
+            "propertyType": "isHidden",
+            "queryString": "select case when entrasp.domanda_active(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_somministrazione$)=1 then false else true end as label from entrasp.domande dm where dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_modello_test_vr=$id_modello_test_vr$ and id_sezione=$id_sezione$ order by dm.ordinamento;"
+        },
+        {
+            "propertyType": "readOnly",
+            "queryString": "select case when (stato='C' or (entrasp.somministrazione_belongs_user((€global_id_anagrafiche€)::text, $id_sondaggio$, $id_somministrazione$, $codice_azienda$)=false and '€global_profile€'!='admin')) then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+        }
+    ],
+    "inheritsFrom": "domande_risposte",
     "predefinedQueries": [
         {
             "operation": "selectForm",
@@ -25,48 +67,16 @@
             "operation": "delete",
             "queryString": "select entrasp.risposte_update_insert(codiceazienda=>$codice_azienda$::varchar, idmodellotest=>$id_modello_test$::numeric, idrisposta=>$id_risposta$::numeric, risposta_=>$risposta$::text, rispostadate=>$risposta_date$::date,rispostanum=>$risposta_num$::numeric, iddomanda=>$id_domanda$::numeric, idrispostaprev=>$id_risposta_prev_radio$::numeric, idsondaggio=>$id_sondaggio$::numeric, idsomministrazione=>$id_somministrazione$::numeric, punteggio_=>$punteggio$::numeric, peso_=>coalesce($peso_oa$, $peso_rb$, $peso_mc$)::numeric, note_=>entrasp.note_domanda($id_tipo_domanda$, $note_rb$,$note_mc$), idmodellotestvr=>$id_modello_test_vr$::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'€risposta_multipla€'::varchar)",
             "type": "main"
-        }
-    ],
-    "formRowProperties": [
-        {
-            "propertyType": "isHidden",
-            "queryString": "select case when entrasp.domanda_active(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, $id_somministrazione$)=1 then false else true end as label from entrasp.domande dm where dm.codice_azienda=$codice_azienda$ and dm.id_modello_test=$id_modello_test$ and dm.id_modello_test_vr=$id_modello_test_vr$ and id_sezione=$id_sezione$ order by dm.ordinamento;",
-            "inputEvents": [
-                {
-                    "eventName": "toggle_question",
-                    "actionType": "showRow",
-                    "condition": "equalTo",
-                    "keys": [
-                        {
-                            "sender": "id_domanda",
-                            "receiver": "id_domanda_rif"
-                        },
-                        {
-                            "sender": "%value%",
-                            "receiver": "id_risposta_prev_rif"
-                        }
-                    ]
-                },
-                {
-                    "eventName": "toggle_question_mc",
-                    "actionType": "showRow",
-                    "condition": "equalTo",
-                    "keys": [
-                        {
-                            "sender": "id_domanda",
-                            "receiver": "id_domanda_rif"
-                        },
-                        {
-                            "sender": "%value%",
-                            "receiver": "id_risposta_prev_rif"
-                        }
-                    ]
-                }
-            ]
         },
         {
-            "propertyType": "readOnly",
-            "queryString": "select case when (stato='C' or (entrasp.somministrazione_belongs_user((€global_id_anagrafiche€)::text, $id_sondaggio$, $id_somministrazione$, $codice_azienda$)=false and '€global_profile€'!='admin')) then true else false end as label from entrasp.sondaggi_somministrati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ and id_somministrazione=$id_somministrazione$"
+            "operation": "insert",
+            "queryString": "SELECT entrasp.aggiorna_punteggi_somministrazioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_sezione$);",
+            "type": "postProcessingAllRows"
+        },
+        {
+            "operation": "update",
+            "queryString": "SELECT entrasp.aggiorna_punteggi_somministrazioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$, $id_sezione$);",
+            "type": "postProcessingAllRows"
         }
     ]
 }
