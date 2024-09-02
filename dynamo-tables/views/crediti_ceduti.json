@@ -463,6 +463,16 @@
             "queryCond": "esecutivo = '1'"
         },
         {
+            "fieldName": "flag_non_esecutivo",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Non Esecutivi",
+            "newLine": false,
+            "size": 1.42,
+            "queryCond": "esecutivo != '1'"
+        },
+        {
             "fieldName": "flag_fasc_archiviato_s",
             "format": {
                 "viewType": "checkbox"
@@ -508,7 +518,7 @@
                 "viewType": "checkbox"
             },
             "label": "Debitore non presente",
-            "newLine": false,
+            "newLine": true,
             "size": 1.42,
             "queryCond": "id_debitore_ceduto is null"
         },
@@ -518,7 +528,7 @@
                 "viewType": "checkbox"
             },
             "label": "Data Pagamento Precedente a Data Fattura",
-            "newLine": true,
+            "newLine": false,
             "size": 1.42,
             "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)"
         },
@@ -580,7 +590,7 @@
             },
             "label": "Capitale res. neg.",
             "tooltip": "Individua le posizioni per le quali ci sia un capitale residuo (legale) negativo",
-            "newLine": false,
+            "newLine": true,
             "size": 1.42,
             "queryCond": "capitale_residuo_leg<0"
         },
@@ -594,6 +604,17 @@
             "newLine": false,
             "size": 1.42,
             "queryCond": "not exists(select 1 from entrasp.pagamenti_crediti pc where cc.codice_azienda=pc.codice_azienda and cc.id_cessione=pc.id_cessione)"
+        },
+        {
+            "fieldName": "senza_aggioramenti",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Senza aggiornamento",
+            "tooltip": "Individua le posizioni per le quali non ci sia un aggiornamento",
+            "newLine": false,
+            "size": 1.42,
+            "queryCond": "not exists(select 1 from entrasp.consuntivazioni csn where cc.codice_azienda=csn.codice_azienda and cc.id_cessione=csn.id_cessione)"
         }
     ],
     "form_keys": [
