@@ -252,6 +252,26 @@
             "queryCond": "interessi_legali_totali>=$interessi_leg_min$"
         },
         {
+            "fieldName": "con_agg_leg",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Con agg.leg.",
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_fascicolo in(select codice_azienda||'-'||id_fascicolo from entrasp.consuntivazioni csn where codice_azienda=$codice_azienda$)"
+        },
+        {
+            "fieldName": "senza_agg_da_numero_giorni",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "No agg.leg. da n_gg",
+            "tooltip": "Senza aggiornamenti legali da un numero di giorni corrispondenti a quelli scritti nella casella",
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_fascicolo not in(select csn.codice_azienda||'-'||csn.id_fascicolo from entrasp.consuntivazioni csn where codice_azienda=$codice_azienda$ and data_intervento>=(current_date-$senza_agg_da_numero_giorni$) and csn.codice_azienda||'-'||csn.id_fascicolo is not null)"
+        },
+        {
             "fieldName": "flag_con_pagamenti",
             "format": {
                 "viewType": "checkbox"
