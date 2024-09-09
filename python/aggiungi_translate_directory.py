@@ -19,7 +19,7 @@ def process_json_files(directory, log_file):
         if label_numbers:
             label_clean += '_' + '_'.join(label_numbers)
         if entry_key_numbers:
-            entry_key_clean += '_' + '_join(entry_key_numbers)'
+            entry_key_clean += '_' + '_'.join(entry_key_numbers)
 
         return f'{label_clean}_{entry_key_clean}'
 
@@ -46,47 +46,44 @@ def process_json_files(directory, log_file):
         nonlocal modified
 
         if isinstance(obj, dict):
-            if obj.get('icon') == 'more_vert':
-                pass
-            else:
-                current_entry_key = parent_entry_key if in_sub_tables else entry_key or obj.get('entryKey')
+            current_entry_key = parent_entry_key if in_sub_tables else entry_key or obj.get('entryKey')
 
-                if 'label' in obj and 'translate' not in obj and isinstance(obj['label'], str):
-                    base_label = obj['label']
-                    if base_label.startswith('$P{'):
-                        base_label = get_define_translation(base_label, define_section)
+            if 'label' in obj and 'translate' not in obj and isinstance(obj['label'], str):
+                base_label = obj['label']
+                if base_label.startswith('$P{'):
+                    base_label = get_define_translation(base_label, define_section)
 
-                    if base_label.strip().lower() in ["", " ", "void"]:
-                        formatted_label = "void"
-                    else:
-                        formatted_label = format_label(base_label, current_entry_key)
-
-                elif 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
-                    base_label = obj['message']
-                    if base_label.startswith('$P{'):
-                        base_label = get_define_translation(base_label, define_section)
-
-                    if base_label.strip().lower() in ["", " ", "void"]:
-                        formatted_label = "void"
-                    else:
-                        formatted_label = format_label(base_label, current_entry_key)
-
+                if base_label.strip().lower() in ["", " ", "void"]:
+                    formatted_label = "void"
                 else:
-                    formatted_label = None
+                    formatted_label = format_label(base_label, current_entry_key)
 
-                if formatted_label is not None:
-                    translate_key = f"RESOURCES.{formatted_label}"
-                    obj['translate'] = translate_key
-                    translation_pair = f'{formatted_label}: "{base_label if formatted_label != "void" else ""}",'
-                    translation_pair = correct_translation_key(translation_pair)
-                    if translation_pair not in added_keys:
-                        added_keys.add(translation_pair)
+            elif 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
+                base_label = obj['message']
+                if base_label.startswith('$P{'):
+                    base_label = get_define_translation(base_label, define_section)
+
+                if base_label.strip().lower() in ["", " ", "void"]:
+                    formatted_label = "void"
+                else:
+                    formatted_label = format_label(base_label, current_entry_key)
+
+            else:
+                formatted_label = None
+
+            if formatted_label is not None:
+                translate_key = f"RESOURCES.{formatted_label}"
+                obj['translate'] = translate_key
+                translation_pair = f'{formatted_label}: "{base_label if formatted_label != "void" else ""}",'
+                translation_pair = correct_translation_key(translation_pair)
+                if translation_pair not in added_keys:
+                    added_keys.add(translation_pair)
                     modified = True  # Assicurarsi che modified sia impostato su True quando si aggiunge una nuova chiave di traduzione
                     counter += 1  # Incrementa il contatore per ogni "translate" aggiunto
 
-                for key, value in obj.items():
-                    new_path = f"{path}.{key}" if path else key
-                    add_translate_keys(value, define_section, entry_key if not in_sub_tables else obj.get('entryKey'), new_path, in_sub_tables, parent_entry_key=current_entry_key if in_sub_tables else None)
+            for key, value in obj.items():
+                new_path = f"{path}.{key}" if path else key
+                add_translate_keys(value, define_section, entry_key if not in_sub_tables else obj.get('entryKey'), new_path, in_sub_tables, parent_entry_key=current_entry_key if in_sub_tables else None)
 
         elif isinstance(obj, list):
             for idx, item in enumerate(obj):
@@ -130,8 +127,8 @@ def process_json_files(directory, log_file):
                 translation_pair = correct_translation_key(translation_pair)
                 if translation_pair not in added_keys:
                     added_keys.add(translation_pair)
-                modified = True  # Assicurarsi che modified sia impostato su True quando si aggiunge una nuova chiave di traduzione
-                counter += 1  # Incrementa il contatore per ogni "translate" aggiunto
+                    modified = True  # Assicurarsi che modified sia impostato su True quando si aggiunge una nuova chiave di traduzione
+                    counter += 1  # Incrementa il contatore per ogni "translate" aggiunto
 
             for key, value in obj.items():
                 add_translate_keys_subtables(value, define_section, current_entry_key)
@@ -183,6 +180,7 @@ def process_json_files(directory, log_file):
 
     print("Traduzioni aggiunte: " + str(counter))
 
+
 def extract_resources_section(file_content):
     stack = []
     resources_start = file_content.find("RESOURCES:")
@@ -210,11 +208,13 @@ def extract_resources_section(file_content):
     
     return resources_content if stack == [] else None
 
+
 def detect_indentation(resources_content):
     match = re.search(r'\n(\s+)\w+:', resources_content)
     if match:
         return match.group(1)
     return ' ' * 12  # Default a 12 spazi se non trovato
+
 
 def ensure_trailing_commas(resources_content, indentation):
     lines = resources_content.split('\n')
@@ -236,6 +236,7 @@ def ensure_trailing_commas(resources_content, indentation):
     
     return '\n'.join(updated_lines)
 
+
 def update_resources_section(resources_content, new_translations, indentation):
     # Estrai le chiavi già presenti nella sezione RESOURCES
     existing_keys = set(re.findall(r'(\w+):\s*".+?"', resources_content))
@@ -253,9 +254,7 @@ def update_resources_section(resources_content, new_translations, indentation):
                 print("Chiave 'void' ignorata.")
                 continue
 
-            if key in existing_keys:
-                print(f"Chiave '{key}' già presente. Non viene aggiunta.")
-            else:
+            if key not in existing_keys:
                 print(f"Chiave '{key}' non trovata. Viene aggiunta.")
                 new_entries.append(f'{indentation}{key}: {value}')
                 existing_keys.add(key)  # Aggiungi la nuova chiave al set per evitare duplicati
@@ -273,6 +272,7 @@ def update_resources_section(resources_content, new_translations, indentation):
 
     return resources_content, len(new_entries)
 
+
 def sort_resources(resources_content, indentation):
     lines = resources_content.split('\n')
     inside_resources = False
@@ -286,6 +286,7 @@ def sort_resources(resources_content, indentation):
             continue
         if '}' in line:
             inside_resources = False
+            result.append(line)
             continue
 
         if inside_resources and ':' in line:
@@ -300,10 +301,10 @@ def sort_resources(resources_content, indentation):
     resource_entries = [f'{indentation}{line}' for line in resource_entries]
 
     # Ricostruisci la sezione RESOURCES mantenendo il formato corretto
-    result.append('\n'.join(resource_entries))
-    result.append('}')
+    result.insert(-1, '\n'.join(resource_entries))
 
     return '\n'.join(result)
+
 
 def main():
     # Usa la directory home dell'utente per costruire percorsi file

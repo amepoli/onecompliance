@@ -2,8 +2,6 @@ export const locale = {
     lang: "it",
     data: {
         RESOURCES: {
-            plabel_controparte_fogli_informativi: "$P{label_controparte}",
-            plabel_id_scadenze: "$P{label_id}",
             _2_consuntivazioni_sovrapposte_sub_of_user: "#2",
             _acconto_articoli_sub_of_contracts_certifications: "% Acconto",
             _aggiornamenti_sub_of_crediti: "#",
@@ -5239,6 +5237,8 @@ export const locale = {
             km_percorsi_consuntivazioni_consultant_sub_of_user_per_azienda_performer: "Km percorsi",
             km_percorsi_insert_sub_of_mie_ore_per_data: "Km percorsi",
             km_percorsi_time_report_insert: "Km percorsi",
+            label_controparte_fogli_informativi: "Label Controparte",
+            label_id_scadenze: "Label Id",
             lavorazione_legale_crediti_ceduti: "Lavorazione Legale",
             lavorazione_legale_dialog_crediti_ceduti_dt_pagamento: "Lavorazione Legale?",
             lavorazione_legale_fatture: "Lavorazione Legale",
@@ -8368,6 +8368,7 @@ export const locale = {
             viene_risposto_risposte: "Viene Risposto",
             viene_risposto_risposte_sub_of_controlli: "Viene Risposto",
             viene_risposto_tipi_clienti_mifid: "Viene Risposto",
+            void: "",
             vr_anagrafiche_vr: "vr",
             vr_attivita_sub_of_attivita: "Vr",
             vr_fasi_sub_of_attivita_import: "Vr",
