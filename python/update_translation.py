@@ -1,125 +1,180 @@
+import re
 import os
 
-def copy_file(src, dst):
-    # Copia il contenuto di un file sorgente in un file di destinazione 
-    with open(src, 'r', encoding='utf-8') as f_src:
-        content = f_src.read()
-    with open(dst, 'w', encoding='utf-8') as f_dst:
-        f_dst.write(content)
+def extract_resources_section(file_content):
+    stack = []
+    resources_start = file_content.find("RESOURCES:")
+    if resources_start == -1:
+        return None
 
-def extract_resources_section(file_path):
-    # Estrae la sezione RESOURCES da un file 
-    with open(file_path, 'r', encoding='utf-8') as file:
-        content = file.read()
+    content = file_content[resources_start:]
+    in_quotes = False
+    resources_content = ""
+    i = 0
 
-    start_index = content.find('RESOURCES: {')
-    if start_index == -1:
-        raise ValueError("Sezione RESOURCES non trovata.")
-    start_index += len('RESOURCES: {')
-
-    bracket_count = 1
-    end_index = start_index
-    while bracket_count > 0 and end_index < len(content):
-        if content[end_index] == '{':
-            bracket_count += 1
-        elif content[end_index] == '}':
-            bracket_count -= 1
-        end_index += 1
-
-    if bracket_count != 0:
-        raise ValueError("Parentesi graffe non corrispondenti nella sezione RESOURCES.")
-
-    resources_content = content[start_index:end_index-1].strip()
-    return resources_content
-
-def write_resources_to_file(resources_content, file_path):
-    # Scrive il contenuto della sezione RESOURCES in un file 
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write(resources_content)
-
-def sort_file(file_path):
-    # Ordina alfabeticamente le righe di un file 
-    with open(file_path, 'r', encoding='utf-8') as file:
-        lines = file.readlines()
-    lines.sort()
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.writelines(lines)
-
-def merge_files(d_file_path, c_file_path):
-    # Unisce il contenuto di due file, aggiungendo chiavi da C a D se non già presenti, mantenendo l'indentazione e l'ordine alfabetico 
-    with open(d_file_path, 'r', encoding='utf-8') as d_file:
-        d_lines = d_file.readlines()
-
-    with open(c_file_path, 'r', encoding='utf-8') as c_file:
-        c_lines = c_file.readlines()
-
-    d_keys = {line.split(':')[0].strip() for line in d_lines}
-    additions = 0
-    for line in c_lines:
-        key = line.split(':')[0].strip()
-        if key not in d_keys:
-            d_lines.append('    ' + line.strip() + '\n')  # Assicura l'indentazione corretta
-            additions += 1
-
-    d_lines.sort()
-    with open(d_file_path, 'w', encoding='utf-8') as d_file:
-        d_file.writelines(d_lines)
+    while i < len(content):
+        char = content[i]
+        if char == '"' and (i == 0 or content[i - 1] != '\\'):
+            in_quotes = not in_quotes
+        elif char == '{' and not in_quotes:
+            stack.append(char)
+        elif char == '}' and not in_quotes:
+            if stack:
+                stack.pop()
+            if not stack:
+                resources_content = content[:i + 1]
+                break
+        i += 1
     
-    print(f"Nuove translate aggiunte: {additions}")
+    return resources_content if stack == [] else None
 
-def update_resources_in_file(b_file_path, resources_content):
-    # Aggiorna la sezione RESOURCES in un file con nuovo contenuto 
-    with open(b_file_path, 'r', encoding='utf-8') as file:
-        content = file.read()
+def detect_indentation(resources_content):
+    match = re.search(r'\n(\s+)\w+:', resources_content)
+    if match:
+        return match.group(1)
+    return ' ' * 12  # Default to 12 spaces if not found
 
-    start_index = content.find('RESOURCES: {')
-    if start_index == -1:
-        raise ValueError("Sezione RESOURCES non trovata.")
-    start_index += len('RESOURCES: {')
+def ensure_trailing_commas(resources_content, indentation):
+    lines = resources_content.split('\n')
+    updated_lines = []
+    inside_resources = False
 
-    bracket_count = 1
-    end_index = start_index
-    while bracket_count > 0 and end_index < len(content):
-        if content[end_index] == '{':
-            bracket_count += 1
-        elif content[end_index] == '}':
-            bracket_count -= 1
-        end_index += 1
+    for line in lines:
+        stripped_line = line.strip()
+        if '{' in stripped_line:
+            inside_resources = True
+        elif '}' in stripped_line:
+            inside_resources = False
+        
+        if inside_resources and ':' in stripped_line and not stripped_line.endswith(',') and re.search(r':\s*".*"$', stripped_line):
+            # Ensure trailing comma on lines with key-value pairs
+            updated_lines.append(f'{indentation}{stripped_line},')
+        else:
+            updated_lines.append(line)
+    
+    return '\n'.join(updated_lines)
 
-    if bracket_count != 0:
-        raise ValueError("Parentesi graffe non corrispondenti nella sezione RESOURCES.")
+def update_resources_section(resources_content, new_translations, indentation):
+    existing_keys = set(re.findall(r'(\w+):\s*".+?"', resources_content))
 
-    updated_content = (content[:start_index] + '\n' + resources_content + '\n' +
-                       content[end_index-1:])
-    with open(b_file_path, 'w', encoding='utf-8') as file:
-        file.write(updated_content)
+    added_count = 0
+    new_entries = []
+
+    for line in new_translations:
+        if ':' in line:
+            key, value = line.split(':', 1)
+            key = key.strip()
+            value = value.strip()
+
+            if key == "void":
+                print("Chiave 'void' ignorata.")
+                continue
+
+            if key in existing_keys:
+                print(f"Chiave '{key}' già presente. Non viene aggiunta.")
+            else:
+                print(f"Chiave '{key}' non trovata. Viene aggiunta.")
+                new_entries.append(f'{indentation}{key}: {value}')
+
+    if new_entries:
+        # Assicurati che tutte le coppie chiave-valore abbiano una virgola finale
+        resources_content = ensure_trailing_commas(resources_content.rstrip().rstrip('}'), indentation)
+        # Aggiungi le nuove chiavi
+        resources_content = resources_content.rstrip()
+        if not resources_content.endswith('\n'):
+            resources_content += '\n'
+        resources_content += '\n'.join(new_entries) + '\n}'
+        # Riordina alfabeticamente le chiavi
+        resources_content = sort_resources(resources_content, indentation)
+
+    return resources_content, len(new_entries)
+
+def sort_resources(resources_content, indentation):
+    lines = resources_content.split('\n')
+    inside_resources = False
+    resource_entries = []
+    result = []
+
+    for line in lines:
+        if '{' in line:
+            inside_resources = True
+            result.append(line)
+            continue
+        if '}' in line:
+            inside_resources = False
+            continue
+
+        if inside_resources and ':' in line:
+            stripped_line = line.strip()
+            if stripped_line:
+                resource_entries.append(stripped_line)
+
+    # Ordina le chiavi ignorando la parte dopo il ":"
+    resource_entries.sort(key=lambda x: x.split(':', 1)[0].strip())
+
+    # Riaggiungi l'indentazione
+    resource_entries = [f'{indentation}{line}' for line in resource_entries]
+
+    # Ricostruisci la sezione RESOURCES mantenendo il formato corretto
+    result.append('\n'.join(resource_entries))
+    result.append('}')
+
+    return '\n'.join(result)
 
 def main():
-    file_a = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'
-    file_b = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'
-    file_c = '/home/gcrozzolin/Development/onecompliance/python/file_new_translate.txt'
-    file_d = '/home/gcrozzolin/Development/onecompliance/python/file_resources.txt'
 
-    # Step 1: Copia il file A nel file B
-    copy_file(file_a, file_b)
+    # Usa la directory home dell'utente per costruire percorsi file
+    home_dir = os.path.expanduser('~')
 
-    # Step 2: Estrai la sezione RESOURCES da B e scrivila in D
-    resources_content = extract_resources_section(file_b)
-    write_resources_to_file(resources_content, file_d)
+    # Definisci i percorsi relativi alla directory home
+    ts_file = os.path.join(home_dir, 'Development/onecompliance/src/app/oc/i18n/it.ts')
+    file_it_path = os.path.join(home_dir, 'Development/onecompliance/python/file_it.txt')
+    new_translate_file = os.path.join(home_dir, 'Development/onecompliance/python/file_new_translate.txt')  # Percorso del file temporaneo
 
-    # Step 3: Ordina il contenuto del file D alfabeticamente
-    sort_file(file_d)
+    # Leggi il contenuto di it.ts
+    with open(ts_file, 'r', encoding='utf-8') as f:
+        ts_content = f.read()
 
-    # Step 4: Unisci il contenuto del file C nel file D
-    merge_files(file_d, file_c)
+    # Copia il contenuto di it.ts in file_it.txt
+    with open(file_it_path, 'w', encoding='utf-8') as f:
+        f.write(ts_content)
 
-    # Step 5: Aggiorna la sezione RESOURCES in B con il contenuto del file D
-    with open(file_d, 'r', encoding='utf-8') as file:
-        updated_resources_content = file.read()
-    update_resources_in_file(file_b, updated_resources_content)
+    # Ora lavoriamo con file_it.txt
+    with open(file_it_path, 'r+', encoding='utf-8') as f:
+        file_it_content = f.read()
 
-    # Step 6: Copia il file B nel file A
-    copy_file(file_b, file_a)
+        # Estrai la sezione RESOURCES da file_it.txt
+        resources_content = extract_resources_section(file_it_content)
+        if not resources_content:
+            print("Errore: non è stata trovata la sezione RESOURCES.")
+            return
+
+        # Determina la corretta tabulazione
+        indentation = detect_indentation(resources_content)
+
+        # Leggi le nuove traduzioni
+        with open(new_translate_file, 'r', encoding='utf-8') as ft:
+            new_translations = ft.readlines()
+
+        # Aggiorna la sezione RESOURCES con le nuove traduzioni
+        updated_resources_content, added_count = update_resources_section(resources_content, new_translations, indentation)
+
+        if updated_resources_content != resources_content:
+            # Sostituisci la vecchia sezione RESOURCES con quella aggiornata in file_it.txt
+            updated_content = file_it_content.replace(resources_content, updated_resources_content)
+            
+            # Sovrascrivi il contenuto aggiornato in file_it.txt
+            f.seek(0)
+            f.write(updated_content)
+            f.truncate()
+
+            # Copia il contenuto aggiornato di file_it.txt di nuovo in it.ts
+            with open(ts_file, 'w', encoding='utf-8') as ft:
+                ft.write(updated_content)
+            
+            print(f"Numero di traduzioni aggiunte: {added_count}")
+        else:
+            print("Nessuna traduzione aggiunta.")
 
 if __name__ == "__main__":
     main()

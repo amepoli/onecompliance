@@ -23,7 +23,7 @@ def get_user_id_from_json(file_path):
         return None
 
 def main():
-    directory = '/home/apoli/Development/onecompliance/dynamo-tables/users'  # Path to the directory containing JSON files
+    directory = '/home/eongaro/Desktop/Development/onecompliance/dynamo-tables/users'  # Path to the directory containing JSON files
     output_file = 'missing_files.txt'
 
     dynamo_user_ids = get_dynamo_user_ids()

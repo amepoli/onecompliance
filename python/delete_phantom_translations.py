@@ -59,12 +59,15 @@ def clean_json_files(directory, key_value_pairs):
     if total_keys_removed > 0:
         print(f"Total keys removed: {total_keys_removed}")
     else:
-        print("No phantom key removed")
+        print("No phantom translation removed")
 
-# Esempio di utilizzo
-directory_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory di file JSON
-key_value_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # Sostituisci con il percorso del file di coppie chiave-valore
-ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Sostituisci con il percorso del file it.ts
+# Usa la directory home dell'utente per costruire percorsi file
+home_dir = os.path.expanduser('~')
+
+# Definisci i percorsi relativi alla directory home
+directory_path = os.path.join(home_dir, 'Development/onecompliance/dynamo-tables/views')
+ts_file_path = os.path.join(home_dir, 'Development/onecompliance/src/app/oc/i18n/it.ts')
+key_value_file_path = os.path.join(home_dir, 'Development/onecompliance/python/file_it.txt')
 
 # Copia il contenuto di it.ts in file_it.txt
 copy_ts_to_txt(ts_file_path, key_value_file_path)
