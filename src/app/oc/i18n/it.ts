@@ -8368,7 +8368,7 @@ export const locale = {
             viene_risposto_risposte: "Viene Risposto",
             viene_risposto_risposte_sub_of_controlli: "Viene Risposto",
             viene_risposto_tipi_clienti_mifid: "Viene Risposto",
-            void: "",
+            void: " ",
             vr_anagrafiche_vr: "vr",
             vr_attivita_sub_of_attivita: "Vr",
             vr_fasi_sub_of_attivita_import: "Vr",
