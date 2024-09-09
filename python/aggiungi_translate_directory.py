@@ -19,7 +19,7 @@ def process_json_files(directory, log_file):
         if label_numbers:
             label_clean += '_' + '_'.join(label_numbers)
         if entry_key_numbers:
-            entry_key_clean += '_' + '_'.join(entry_key_numbers)
+            entry_key_clean += '_' + '_join(entry_key_numbers)'
 
         return f'{label_clean}_{entry_key_clean}'
 
@@ -237,6 +237,7 @@ def ensure_trailing_commas(resources_content, indentation):
     return '\n'.join(updated_lines)
 
 def update_resources_section(resources_content, new_translations, indentation):
+    # Estrai le chiavi già presenti nella sezione RESOURCES
     existing_keys = set(re.findall(r'(\w+):\s*".+?"', resources_content))
 
     added_count = 0
@@ -257,6 +258,7 @@ def update_resources_section(resources_content, new_translations, indentation):
             else:
                 print(f"Chiave '{key}' non trovata. Viene aggiunta.")
                 new_entries.append(f'{indentation}{key}: {value}')
+                existing_keys.add(key)  # Aggiungi la nuova chiave al set per evitare duplicati
 
     if new_entries:
         # Assicurati che tutte le coppie chiave-valore abbiano una virgola finale

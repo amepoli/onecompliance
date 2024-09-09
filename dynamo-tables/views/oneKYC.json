@@ -27,7 +27,8 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "codice_azienda",
-            "label": " "
+            "label": " ",
+            "translate": "RESOURCES.void"
         },
         {
             "format": {
@@ -38,7 +39,8 @@
             "isPrimary": false,
             "key": "id_scan",
             "label": "ID Scan",
-            "width": "13%"
+            "width": "13%",
+            "translate": "RESOURCES.id_scan_onekyc"
         },
         {
             "format": {
@@ -48,7 +50,8 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "id_anagrafica",
-            "label": "# Anagrafica"
+            "label": "# Anagrafica",
+            "translate": "RESOURCES._anagrafica_onekyc"
         },
         {
             "format": {
@@ -57,7 +60,8 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "id_sondaggio",
-            "label": "id_sondaggio"
+            "label": "id_sondaggio",
+            "translate": "RESOURCES.id_sondaggio_onekyc"
         },
         {
             "format": {
@@ -88,7 +92,8 @@
                         "destination": "id_somministrazione"
                     }
                 ]
-            }
+            },
+            "translate": "RESOURCES._verifica_onekyc"
         },
         {
             "format": {
@@ -99,7 +104,8 @@
             "isPrimary": false,
             "key": "descr_anagrafica",
             "label": "Oggetto di verifica",
-            "width": "20%"
+            "width": "20%",
+            "translate": "RESOURCES.oggetto_di_verifica_onekyc"
         },
         {
             "format": {
@@ -110,7 +116,8 @@
             "isPrimary": false,
             "key": "descr_scan_data",
             "label": "Risultato",
-            "width": "30%"
+            "width": "30%",
+            "translate": "RESOURCES.risultato_onekyc"
         },
         {
             "format": {
@@ -121,7 +128,8 @@
             "isPrimary": false,
             "key": "dynamo_user",
             "label": "User",
-            "width": "9%"
+            "width": "9%",
+            "translate": "RESOURCES.user_onekyc"
         },
         {
             "format": {
@@ -131,7 +139,8 @@
             "isPrimary": false,
             "key": "date_of_scan",
             "label": "Data",
-            "width": "7%"
+            "width": "7%",
+            "translate": "RESOURCES.data_onekyc"
         },
         {
             "format": {
@@ -162,7 +171,8 @@
                     "background_color": "blue",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.tipo_onekyc"
         }
     ],
     "restrictions": {
@@ -204,7 +214,8 @@
             "label": "Esecuzione dopo il",
             "newLine": false,
             "size": 1.25,
-            "queryCond": "date_of_scan>=$data_esec_prevista_min$"
+            "queryCond": "date_of_scan>=$data_esec_prevista_min$",
+            "translate": "RESOURCES.esecuzione_dopo_il_onekyc"
         },
         {
             "fieldName": "data_esec_prevista_max",
@@ -215,7 +226,8 @@
             "label": "Esecuzione prima del",
             "newLine": false,
             "size": 1.25,
-            "queryCond": "date_of_scan<='€data_esec_prevista_max€'"
+            "queryCond": "date_of_scan<='€data_esec_prevista_max€'",
+            "translate": "RESOURCES.esecuzione_prima_del_onekyc"
         },
         {
             "fieldName": "anagrafica_s",
@@ -226,7 +238,8 @@
             "label": "Soggetto verificato",
             "newLine": false,
             "size": 1.25,
-            "queryCond": "entrasp.anagrafiche_vr_dati_identificativi(entrasp.codice_part_from_azienda(ams.codice_azienda), id_anagrafica) ilike '%'||$anagrafica_s$||'%'"
+            "queryCond": "entrasp.anagrafiche_vr_dati_identificativi(entrasp.codice_part_from_azienda(ams.codice_azienda), id_anagrafica) ilike '%'||$anagrafica_s$||'%'",
+            "translate": "RESOURCES.soggetto_verificato_onekyc"
         },
         {
             "fieldName": "tipo_scansione",
@@ -239,7 +252,8 @@
             "label": "Tipo scansione",
             "newLine": false,
             "size": 2,
-            "queryCond": "(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' else 'Deep scan' end)=$tipo_scansione$"
+            "queryCond": "(CASE scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' else 'Deep scan' end)=$tipo_scansione$",
+            "translate": "RESOURCES.tipo_scansione_onekyc"
         },
         {
             "fieldName": "dynamo_user_s",
@@ -252,7 +266,8 @@
             "label": "User",
             "newLine": false,
             "size": 2,
-            "queryCond": "dynamo_user=$dynamo_user_s$"
+            "queryCond": "dynamo_user=$dynamo_user_s$",
+            "translate": "RESOURCES.user_onekyc"
         },
         {
             "fieldName": "mt_s",
@@ -265,7 +280,8 @@
             "label": "Modello test",
             "size": 3.5,
             "newLine": false,
-            "queryCond": "ams.codice_azienda||'-'||ams.id_somministrazione in(select ss.codice_azienda||'-'||ss.id_somministrazione from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd using(codice_azienda, id_sondaggio) where snd.id_modello_test=$mt_s$ and snd.codice_azienda='€global_codice_azienda€')"
+            "queryCond": "ams.codice_azienda||'-'||ams.id_somministrazione in(select ss.codice_azienda||'-'||ss.id_somministrazione from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd using(codice_azienda, id_sondaggio) where snd.id_modello_test=$mt_s$ and snd.codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.modello_test_onekyc"
         }
     ]
 }
