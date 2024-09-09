@@ -32,24 +32,34 @@ def generate_new_label(data, root_entry_key, current_path, full_json):
     
     return new_label[:500]
 
-def process_json(data, old_new_labels, root_entry_key, current_path, full_json):
+def key_exists_in_file(file_path, key):
+    """Controlla se una chiave esiste già nel file."""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+        return f'{key}:' in content
+
+def process_json(data, old_new_labels, root_entry_key, current_path, full_json, it_ts_path):
     modified = False
     if 'translate' in data:
         old_label = data['translate']
         if old_label != "RESOURCES.void":
             new_label = generate_new_label(data, root_entry_key, current_path, full_json)
-            if old_label != new_label:
-                old_new_labels.append((old_label, new_label))
-                data['translate'] = new_label
-                modified = True
+            # Controlla se la nuova etichetta esiste già nel file it.ts
+            if not key_exists_in_file(it_ts_path, new_label):
+                if old_label != new_label:
+                    old_new_labels.append((old_label, new_label))
+                    data['translate'] = new_label
+                    modified = True
+            else:
+                print(f"Chiave {new_label} esiste già, nessuna modifica applicata.")
     for key, value in data.items():
         if isinstance(value, dict):
-            sub_modified, data[key] = process_json(value, old_new_labels, root_entry_key, current_path, full_json)
+            sub_modified, data[key] = process_json(value, old_new_labels, root_entry_key, current_path, full_json, it_ts_path)
             modified = modified or sub_modified
         elif isinstance(value, list):
             for i, item in enumerate(value):
                 if isinstance(item, dict):
-                    sub_modified, data[key][i] = process_json(item, old_new_labels, root_entry_key, current_path, full_json)
+                    sub_modified, data[key][i] = process_json(item, old_new_labels, root_entry_key, current_path, full_json, it_ts_path)
                     modified = modified or sub_modified
     return modified, data
 
@@ -80,7 +90,10 @@ def replace_keys(file_new_translate, file_it, output_file):
             for old_key, new_key in translate_dict.items():
                 if f'{old_key}:' in line:
                     # Sostituisci solo la chiave, mantenendo intatti gli spazi e altri caratteri
-                    line = re.sub(rf'\b{re.escape(old_key)}\b', new_key, line)
+                    if not key_exists_in_file(file_it, new_key):
+                        line = re.sub(rf'\b{re.escape(old_key)}\b', new_key, line)
+                    else:
+                        print(f"Chiave {new_key} esiste già, nessuna modifica applicata.")
             updated_lines.append(line)
 
         # Assicurati di mantenere l'ultimo ritorno a capo senza aggiungere una graffa di chiusura
@@ -158,7 +171,7 @@ def process_files(views_path, it_ts_path, file_it_path, file_new_translate_path)
                 entry_key = data.get('entryKey', '')
                 modified = False
                 if isinstance(data, dict):
-                    modified, data = process_json(data, old_new_labels, entry_key, root, full_json)
+                    modified, data = process_json(data, old_new_labels, entry_key, root, full_json, it_ts_path)
                 
                 if modified:
                     with open(file_path, 'w', encoding='utf-8') as json_file:
