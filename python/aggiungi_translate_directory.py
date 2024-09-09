@@ -137,6 +137,45 @@ def process_json_files(directory, log_file):
             for item in obj:
                 add_translate_keys_subtables(item, define_section, parent_entry_key)
 
+    def add_translate_keys_outside_sections(obj, define_section, parent_entry_key=None):
+        """
+        Funzione che si occupa di aggiungere le chiavi translate al di fuori delle sezioni specifiche, 
+        se esistono una 'label' e una 'entryKey'.
+        """
+        nonlocal counter
+        nonlocal modified
+
+        if isinstance(obj, dict):
+            if 'label' in obj and 'entryKey' in obj and 'translate' not in obj:
+                base_label = obj['label']
+                current_entry_key = obj['entryKey']
+
+                if base_label.startswith('$P{'):
+                    base_label = get_define_translation(base_label, define_section)
+
+                if base_label.strip().lower() in ["", " ", "void"]:
+                    formatted_label = "void"
+                else:
+                    formatted_label = format_label(base_label, current_entry_key)
+
+                if formatted_label:
+                    translate_key = f"RESOURCES.{formatted_label}"
+                    obj['translate'] = translate_key
+                    translation_pair = f'{formatted_label}: "{base_label if formatted_label != "void" else ""}",'
+                    translation_pair = correct_translation_key(translation_pair)
+                    if translation_pair not in added_keys:
+                        added_keys.add(translation_pair)
+                        modified = True
+                        counter += 1
+
+            # Continuare la ricerca all'interno di eventuali sotto-oggetti o liste
+            for key, value in obj.items():
+                add_translate_keys_outside_sections(value, define_section, obj.get('entryKey'))
+
+        elif isinstance(obj, list):
+            for item in obj:
+                add_translate_keys_outside_sections(item, define_section, parent_entry_key)
+
     # Creazione del file di log vuoto
     with open(log_file, 'w', encoding='utf-8') as log:
         log.write('')
@@ -162,6 +201,9 @@ def process_json_files(directory, log_file):
                 if "subTables" in data:
                     for sub_table in data["subTables"]:
                         add_translate_keys_subtables(sub_table, define_section, sub_table.get('entryKey'))
+
+                # Aggiungi le chiavi translate al di fuori delle sezioni specifiche
+                add_translate_keys_outside_sections(data, define_section)
 
                 # Salva il file JSON solo se è stato modificato
                 if modified:
