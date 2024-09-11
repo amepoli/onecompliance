@@ -61,15 +61,24 @@ def remove_invalid_translations(json_data, resources_dict, define_dict):
         if isinstance(data, dict):
             if "translate" in data and isinstance(data["translate"], str):
                 translate_key = data["translate"].replace("RESOURCES.", "")
+                if translate_key.strip().lower() == "void":
+                    # Se la chiave translate è "void", ignora questa iterazione
+                    return
+
                 if "label" in data and isinstance(data["label"], str):
                     original_label = data["label"]
+                    # Controlla se la label è "void"
+                    if original_label.strip().lower() == "void":
+                        # Ignora le traduzioni con la label "void"
+                        return
+
                     # Controlla se la label inizia con "$P{"
                     if original_label.startswith("$P{"):
                         # Risolvi la label usando la sottochiave dalla sezione define
                         resolved_label = resolve_label(original_label, define_dict)
                         correct_translation = resources_dict.get(translate_key)
                     else:
-                        # Se la label non inizia con "$P{", cancella il campo translate
+                        # Se la label non inizia con "$P{", cancella il campo translate se non corrisponde
                         correct_translation = resources_dict.get(translate_key)
                         if correct_translation and original_label != correct_translation:
                             print(f"Rimozione per chiave: {translate_key} (Label: {original_label}, Traduzione: {correct_translation})")  # Debug
