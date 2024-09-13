@@ -2,16 +2,14 @@
     "$schema": "../views.schema.json",
     "entryKey": "anagrafiche_sub_of_ruoli",
     "origin": "entrasp.ruoli_anagrafiche",
-   "inheritsFrom": "anagrafiche_vr",
-
+    "inheritsFrom": "anagrafiche_vr",
     "predefinedQueries": [
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select entrasp.anagrafiche_id_codcognnome(ra.codice_part, ra.id_anagrafica) as denominazione, from entrasp.ruoli_anagrafiche rawhere codice_part= '€global_codice_part€' and codice_ruolo= $codice_ruolo$ and codice_azienda= '€global_codice_azienda€'"
+            "queryString": "select entrasp.anagrafiche_id_codcognnome(ra.codice_part, ra.id_anagrafica) as denominazione, ra.id_anagrafica, ra.codice_part from entrasp.ruoli_anagrafiche ra where codice_part= '€global_codice_part€' and codice_ruolo= $codice_ruolo$ and codice_azienda= '€global_codice_azienda€'"
         }
     ],
-   
     "table_keys": [
         {
             "format": {
@@ -21,7 +19,6 @@
             "isPrimary": true,
             "key": "codice_part",
             "label": "codice_part"
-            
         },
         {
             "format": {
@@ -30,20 +27,27 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "denominazione",
-            "label": "denominazione"
-            
+            "label": "Denominazione"
         },
-  {
-        "format": {
-            "dataType": "number"
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "id_anagrafica"
         },
-        "isHidden": true,
-        "isPrimary": true,
-        "key": "id_anagrafica",
-        "label": "id_anagrafica"
-        
-    } ],
-
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_ruolo",
+            "label": "codice_ruolo"
+        }
+    ],
     "addElementSettings": {
         "labelAdd": "Nuovo Ruolo",
         "navigateOnSuccess": true
@@ -57,5 +61,8 @@
             "tableActionType": "quick-add",
             "viewType": "table"
         }
-    ]
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": ""
+    }
 }
