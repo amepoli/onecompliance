@@ -302,15 +302,14 @@
             "translate": "RESOURCES.codice_argomenti"
         },
         {
-            "fieldName": "id_argomento_father_s",
+            "fieldName": "id_argomenti_father_list",
             "format": {
-                "dataType": "number",
+                "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Con argomento padre pari a",
+            "label": "Con argomenti padre uguale a",
             "newLine": false,
-            "queryCond": "id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father_s$)",
-            "translate": "RESOURCES.con_argomento_padre_pari_a_argomenti"
+            "queryCond": "id_argomento::varchar in(select id_argomento_son::varchar from entrasp.argomenti_argomenti where id_argomento_father::varchar=any(string_to_array(replace($id_argomenti_father_list$, ' ', ''), ',')))"
         },
         {
             "fieldName": "descr_rs",

@@ -10,11 +10,13 @@ import { AngularEditorConfig } from "@kolkov/angular-editor";
   templateUrl: './textarea.component.html',
   styleUrls: ['./textarea.component.scss'],
   host: {
-    // '[style.padding-top.px]': 'field.isVisible? "16": "0"',
+    '[style.padding-top.px]': 'field.isVisible? "8": "0"',
     // '[style.padding-bottom.px]': 'field.isVisible? "16": "0"',
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
-    '[style.width]': 'field.isVisible? field.width + "%": "0"'
+    '[style.width]': 'field.isVisible? field.width + "%": "0"',
+    '[style.height.px]': 'field.isVisible? "76": "0"',
+
   }
 })
 export class TextAreaComponent implements OnInit, AfterViewInit {
