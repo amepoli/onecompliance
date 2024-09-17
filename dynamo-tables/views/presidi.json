@@ -1213,7 +1213,7 @@
             },
             {
                 "label": "Regolamenti_Presidi 27001",
-                "queryString": "select entrasp.argomenti_codice_descr_breve(aa.id_argomento_son) as Controllo, entrasp.argomenti_codice_descr_breve(aa.id_argomento_father) as Regolamento from entrasp.argomenti_argomenti aa inner join entrasp.views_attachments_fast vaf on aa.id_argomento_father=vaf.id_argomento_tipo_allegato where aa.id_argomento_son in(select aa2.id_argomento_son from entrasp.argomenti_argomenti aa2 where aa2.id_argomento_father in (48976,48975)) and aa.id_argomento_father in (select aa3.id_argomento_son from entrasp.argomenti_argomenti aa3 where aa3.id_argomento_father=3511) and vaf.codice_azienda=$codice_azienda$ order by controllo"
+                "queryString": "WITH ArgomentiFigli AS (SELECT aa3.id_argomento_son FROM entrasp.argomenti_argomenti aa3 WHERE aa3.id_argomento_father = 3511) SELECT entrasp.argomenti_codice_descr_breve(pr.id_argomento) AS Controllo, entrasp.argomenti_codice_descr_breve(aa.id_argomento_father) AS Regolamento FROM entrasp.presidi pr LEFT JOIN entrasp.argomenti_argomenti aa ON pr.id_argomento = aa.id_argomento_son AND aa.id_argomento_father IN (SELECT id_argomento_son FROM ArgomentiFigli) WHERE pr.codice_azienda = $codice_azienda$ ORDER BY Controllo"
             }
         ]
     },
