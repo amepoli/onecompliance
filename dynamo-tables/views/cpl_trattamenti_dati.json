@@ -94,7 +94,7 @@
             "key": "codice",
             "label": "Codice",
             "newLine": false,
-            "size": 1.2,
+            "size": 1,
             "readOnly": false,
             "translate": "RESOURCES.codice_cpl_trattamenti_dati"
         },
@@ -144,9 +144,41 @@
             "key": "id_argomento_conferimento",
             "label": "Obbligatorietà conferimento",
             "readOnly": false,
-            "newLine": true,
-            "size": 2.5,
+            "newLine": false,
+            "size": 2.2,
             "translate": "RESOURCES.obbligatoriet_conferimento_cpl_trattamenti_dati"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "content_copy",
+                        "label": "Duplica trattamento dati e trattamenti collegati",
+                        "outputEventName": "duplica_trattamento"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "trattamenti_dati_actions",
+            "readOnly": false,
+            "newLine": true,
+            "label": "",
+            "sameOrigin": false,
+            "size": 0.5,
+            "inputEvents": [
+                {
+                    "eventName": "duplica_trattamento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Trattamento duplicato",
+                    "values": [],
+                    "queryFunct": "select entrasp.grc_accoda_singolo_trattamento_dati($codice_azienda$::varchar,$codice_azienda$::varchar,id_trattamento_dati::numeric, $id_centro_gest$::numeric) FROM entrasp.cpl_trattamenti_dati where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$"
+                }
+            ]
         },
         {
             "autoGenerate": false,
@@ -745,7 +777,7 @@
                     "son": "id_trattamento_dati"
                 }
             ],
-            "label": "Titolari Esterni",
+            "label": "Titolari",
             "translate": "RESOURCES.titolari_esterni_cpl_trattamenti_dati_titolari_esterni_sub"
         },
         {
