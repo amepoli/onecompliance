@@ -182,20 +182,35 @@
             "readOnly": false,
             "sameOrigin": false,
             "size": 1.5,
-            "attributeFuncts": [
-                {
-                    "attributeType": "style",
-                    "styleAttribute": "background_color",
-                    "queryString": "select case when stato='C' then '#fada5e' else '#698EC2' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
-                },
+            "attributePostChecks": [
                 {
                     "attributeType": "style",
                     "styleAttribute": "font_color",
-                    "queryString": "select case when stato='C' then 'black' else '#5b635a' end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$ limit 1;"
+                    "resultType": "condition",
+                    "key": "stato",
+                    "conditionType": "equalTo",
+                    "conditionValue": "C",
+                    "resultTrueValue": "black",
+                    "resultFalseValue": "#5b635a"
+                },
+                {
+                    "attributeType": "style",
+                    "styleAttribute": "background_color",
+                    "resultType": "condition",
+                    "key": "stato",
+                    "conditionType": "equalTo",
+                    "conditionValue": "C",
+                    "resultTrueValue": "#fada5e",
+                    "resultFalseValue": "#698EC2"
                 },
                 {
                     "attributeType": "readOnly",
-                    "queryString": "select case when stato='C' then false else true end as label from entrasp.progetti where id_progetto=$id_progetto$ and codice_azienda=$codice_azienda$;"
+                    "resultType": "condition",
+                    "key": "stato",
+                    "conditionType": "equalTo",
+                    "conditionValue": "C",
+                    "resultTrueValue": false,
+                    "resultFalseValue": true
                 }
             ],
             "translate": "RESOURCES.riapri_progetto_progetti"
@@ -819,10 +834,15 @@
                 "eventName": "select_modello",
                 "eventTrigger": "select"
             },
-            "attributeFuncts": [
+            "attributePostChecks": [
                 {
                     "attributeType": "readOnly",
-                    "queryString": "select case when entrasp.descrizione_progetto($id_progetto$, $codice_azienda$) is null then false else true end as label"
+                    "resultType": "condition",
+                    "key": "id_progetto",
+                    "conditionType": "notEqualTo",
+                    "conditionValue": null,
+                    "resultTrueValue": true,
+                    "resultFalseValue": false
                 }
             ],
             "readOnly": false,
