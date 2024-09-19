@@ -1,6 +1,7 @@
 import { MenuOption } from "./menu_option.interface";
 import { EventTriggerType, FormDataType, FormViewType, FormWidgetType } from "../types";
 import { FieldInputEvent } from "./field.interface";
+import { AttributePostChecks } from "./attribute_post_checks.interface";
 
 export interface FormViewKey { // as per API specification
     isHidden: boolean;
@@ -66,4 +67,5 @@ export interface FormViewKey { // as per API specification
         ],
         subform_keys?: FormViewKey[];
     };
+    attributePostChecks?: AttributePostChecks[];
 }
