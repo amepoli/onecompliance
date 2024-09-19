@@ -56,20 +56,22 @@ def process_json_files(directory, log_file):
                     if base_label.startswith('$P{'):
                         base_label = get_define_translation(base_label, define_section)
 
-                    if base_label.strip().lower() in ["", " ", "void"]:
-                        formatted_label = "void"
-                    else:
+                    # Modifica qui: Non aggiungere la traduzione se la label è "", " " o "void"
+                    if base_label.strip().lower() not in ["", " ", "void"]:
                         formatted_label = format_label(base_label, current_entry_key)
+                    else:
+                        formatted_label = None
 
                 elif 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
                     base_label = obj['message']
                     if base_label.startswith('$P{'):
                         base_label = get_define_translation(base_label, define_section)
 
-                    if base_label.strip().lower() in ["", " ", "void"]:
-                        formatted_label = "void"
-                    else:
+                    # Modifica qui: Non aggiungere la traduzione se la message è "", " " o "void"
+                    if base_label.strip().lower() not in ["", " ", "void"]:
                         formatted_label = format_label(base_label, current_entry_key)
+                    else:
+                        formatted_label = None
 
                 else:
                     formatted_label = None
@@ -77,7 +79,7 @@ def process_json_files(directory, log_file):
                 if formatted_label is not None:
                     translate_key = f"RESOURCES.{formatted_label}"
                     obj['translate'] = translate_key
-                    translation_pair = f'{formatted_label}: "{base_label if formatted_label != "void" else ""}",'
+                    translation_pair = f'{formatted_label}: "{base_label}",'
                     translation_pair = correct_translation_key(translation_pair)
                     if translation_pair not in added_keys:
                         added_keys.add(translation_pair)
@@ -105,20 +107,22 @@ def process_json_files(directory, log_file):
                 if base_label.startswith('$P{'):
                     base_label = get_define_translation(base_label, define_section)
 
-                if base_label.strip().lower() in ["", " ", "void"]:
-                    formatted_label = "void"
-                else:
+                # Modifica qui: Non aggiungere la traduzione se la label è "", " " o "void"
+                if base_label.strip().lower() not in ["", " ", "void"]:
                     formatted_label = format_label(base_label, current_entry_key)
+                else:
+                    formatted_label = None
 
             elif 'message' in obj and 'translate' not in obj and isinstance(obj['message'], str):
                 base_label = obj['message']
                 if base_label.startswith('$P{'):
                     base_label = get_define_translation(base_label, define_section)
 
-                if base_label.strip().lower() in ["", " ", "void"]:
-                    formatted_label = "void"
-                else:
+                # Modifica qui: Non aggiungere la traduzione se la message è "", " " o "void"
+                if base_label.strip().lower() not in ["", " ", "void"]:
                     formatted_label = format_label(base_label, current_entry_key)
+                else:
+                    formatted_label = None
 
             else:
                 formatted_label = None
@@ -126,7 +130,7 @@ def process_json_files(directory, log_file):
             if formatted_label is not None:
                 translate_key = f"RESOURCES.{formatted_label}"
                 obj['translate'] = translate_key
-                translation_pair = f'{formatted_label}: "{base_label if formatted_label != "void" else ""}",'
+                translation_pair = f'{formatted_label}: "{base_label}",'
                 translation_pair = correct_translation_key(translation_pair)
                 if translation_pair not in added_keys:
                     added_keys.add(translation_pair)

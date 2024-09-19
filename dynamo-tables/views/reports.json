@@ -20,7 +20,7 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "id_report",
+            "label": "ID Report",
             "key": "id_report",
             "readOnly": true,
             "inputEvents": [
@@ -102,7 +102,7 @@
             "isPrimary": false,
             "buttonIcon": "more_vert",
             "key": "report_actions",
-            "label": " ",
+            "label": "",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
@@ -148,6 +148,20 @@
             "sameOrigin": false,
             "isPrimary": false,
             "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53062 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Argomento",
+            "key": "id_argomento",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
         }
     ],
     "exportQueries": {
@@ -177,8 +191,7 @@
                 }
             ],
             "label": "Indicatori associati",
-            "renderingOrder": 1,
-            "translate": "RESOURCES.indicatori_associati"
+            "renderingOrder": 1
         },
         {
             "entryKey": "reports_sub_of_reports",
@@ -200,8 +213,18 @@
                 }
             ],
             "label": "Destinatari",
-            "renderingOrder": 3,
-            "translate": "RESOURCES.destinatari"
+            "renderingOrder": 3
+        },
+        {
+            "entryKey": "reports_sub_of_report",
+            "keys": [
+                {
+                    "parent": "id_argomento",
+                    "son": "id_argomento_tipo_allegato"
+                }
+            ],
+            "label": "File",
+            "renderingOrder": 4
         }
     ],
     "search_keys": [

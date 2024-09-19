@@ -37,7 +37,8 @@
             },
             "label": "Lista codici_compito",
             "newLine": false,
-            "queryCond": "cmp.codice_compito::varchar=any(string_to_array(replace($codici_compito_list$, ' ', ''), ','))"
+            "queryCond": "cmp.codice_compito::varchar=any(string_to_array(replace($codici_compito_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_codici_compito_consuntivazioni_manager_list"
         },
         {
             "fieldName": "id_cliente",
@@ -48,7 +49,8 @@
             },
             "label": "Cliente",
             "newLine": false,
-            "queryCond": "cmp.id_cliente=$id_cliente$"
+            "queryCond": "cmp.id_cliente=$id_cliente$",
+            "translate": "RESOURCES.cliente_consuntivazioni_manager_list"
         },
         {
             "fieldName": "id_cons",
@@ -58,7 +60,8 @@
             },
             "label": "Id Consuntivazione",
             "newLine": false,
-            "queryCond": "id_cons=$id_cons$"
+            "queryCond": "id_cons=$id_cons$",
+            "translate": "RESOURCES.id_consuntivazione_consuntivazioni_manager_list"
         },
         {
             "format": {
@@ -71,7 +74,8 @@
             "fieldName": "codice_azienda_s",
             "label": "Codice Azienda",
             "newLine": false,
-            "size": 2
+            "size": 2,
+            "translate": "RESOURCES.codice_azienda_consuntivazioni_manager_list"
         },
         {
             "fieldName": "data_esec_prevista_min",
@@ -81,7 +85,8 @@
             },
             "label": "Esecuzione dopo il",
             "newLine": false,
-            "queryCond": "csn.data_intervento>='€data_esec_prevista_min€'"
+            "queryCond": "csn.data_intervento>='€data_esec_prevista_min€'",
+            "translate": "RESOURCES.esecuzione_dopo_il_consuntivazioni_manager_list"
         },
         {
             "fieldName": "data_esec_prevista_max",
@@ -91,7 +96,8 @@
             },
             "label": "Esecuzione prima del",
             "newLine": true,
-            "queryCond": "csn.data_intervento<='€data_esec_prevista_max€'"
+            "queryCond": "csn.data_intervento<='€data_esec_prevista_max€'",
+            "translate": "RESOURCES.esecuzione_prima_del_consuntivazioni_manager_list"
         },
         {
             "fieldName": "parola_search",
@@ -101,7 +107,8 @@
             },
             "label": "Parola chiave",
             "newLine": false,
-            "queryCond": "(upper(csn.note) like '%'||upper('€parola_search€')||'%' or upper(csn.titolo) like '%'||upper('€parola_search€')||'%'"
+            "queryCond": "(upper(csn.note) like '%'||upper('€parola_search€')||'%' or upper(csn.titolo) like '%'||upper('€parola_search€')||'%'",
+            "translate": "RESOURCES.parola_chiave_consuntivazioni_manager_list"
         },
         {
             "fieldName": "durata_ft_min",
@@ -111,7 +118,8 @@
             },
             "label": "Durata fatturazione maggiore di",
             "newLine": false,
-            "queryCond": "csn.durata_ft>=$durata_ft_min$"
+            "queryCond": "csn.durata_ft>=$durata_ft_min$",
+            "translate": "RESOURCES.durata_fatturazione_maggiore_di_consuntivazioni_manager_list"
         },
         {
             "fieldName": "durata_min",
@@ -121,7 +129,8 @@
             },
             "label": "Durata maggiore di",
             "newLine": false,
-            "queryCond": "csn.durata>=$durata_min$"
+            "queryCond": "csn.durata>=$durata_min$",
+            "translate": "RESOURCES.durata_maggiore_di_consuntivazioni_manager_list"
         },
         {
             "fieldName": "durata_max",
@@ -131,7 +140,8 @@
             },
             "label": "Durata minore di",
             "newLine": false,
-            "queryCond": "csn.durata<=$durata_max$"
+            "queryCond": "csn.durata<=$durata_max$",
+            "translate": "RESOURCES.durata_minore_di_consuntivazioni_manager_list"
         },
         {
             "fieldName": "dynamo_user_s",
@@ -143,7 +153,8 @@
             },
             "label": "User",
             "newLine": false,
-            "queryCond": "csn.codice_part||'-'||csn.id_risorsa in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')"
+            "queryCond": "csn.codice_part||'-'||csn.id_risorsa in(select codice_part||'-'||id_anagrafica from entrasp.anagrafiche_id where dynamo_user='€dynamo_user_s€')",
+            "translate": "RESOURCES.user_consuntivazioni_manager_list"
         },
         {
             "fieldName": "stato",
@@ -154,7 +165,8 @@
             },
             "label": "Stato",
             "newLine": true,
-            "queryCond": "csn.stato='€stato€'"
+            "queryCond": "csn.stato='€stato€'",
+            "translate": "RESOURCES.stato_consuntivazioni_manager_list"
         },
         {
             "fieldName": "open",
@@ -165,7 +177,8 @@
             "label": "Aperti",
             "newLine": true,
             "size": 2,
-            "queryCond": "csn.stato!='C'"
+            "queryCond": "csn.stato!='C'",
+            "translate": "RESOURCES.aperti_consuntivazioni_manager_list"
         },
         {
             "fieldName": "azienda_corrente",
@@ -175,7 +188,8 @@
             },
             "label": "Mie consuntivazioni",
             "newLine": false,
-            "queryCond": "csn.id_risorsa||'-'||az.codice_part in(select an.id_anagrafica||'-'||an.codice_part from entrasp.anagrafiche_id an where an.dynamo_user='€global_username€' and an.codice_part=az.codice_part)"
+            "queryCond": "csn.id_risorsa||'-'||az.codice_part in(select an.id_anagrafica||'-'||an.codice_part from entrasp.anagrafiche_id an where an.dynamo_user='€global_username€' and an.codice_part=az.codice_part)",
+            "translate": "RESOURCES.mie_consuntivazioni_consuntivazioni_manager_list"
         }
     ]
 }

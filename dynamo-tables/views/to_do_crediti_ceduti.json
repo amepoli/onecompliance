@@ -1,12 +1,13 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "to_do_crediti_ceduti",
+    "origin": "entrasp.consuntivazioni",
     "inheritsFrom": "aggiornamenti_sub_of_crediti",
     "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select codice_azienda, id_cessione, data_intervento, entrasp.argomenti_descr(id_argomento) as tipo_aggiornamento, entrasp.cessione_descr(id_cessione, codice_azienda) as descr_cessione, substring(note from 1 for 100) as note_restricted, entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa) as esecutore from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cessione is not null"
+            "queryString": "select codice_azienda, id_cons, id_cessione, data_intervento, entrasp.argomenti_descr(id_argomento) as tipo_aggiornamento, entrasp.cessione_descr(id_cessione, codice_azienda) as descr_cessione, substring(note from 1 for 100) as note_restricted, entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa) as esecutore from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cessione is not null"
         }
     ],
     "define": {
@@ -38,7 +39,5 @@
             "size": 3,
             "queryCond": "id_argomento=$id_argomento_s$"
         }
- 
-    ],
-    "origin": "entrasp.consuntivazioni"
+    ]
 }

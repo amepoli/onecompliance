@@ -91,7 +91,7 @@
             "key": "codice",
             "label": "Codice",
             "newLine": false,
-            "size": 1.2,
+            "size": 1,
             "readOnly": false
         },
         {
@@ -138,16 +138,47 @@
             "key": "id_argomento_conferimento",
             "label": "Obbligatorietà conferimento",
             "readOnly": false,
+            "newLine": false,
+            "size": 2.2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "content_copy",
+                        "label": "Duplica trattamento dati e trattamenti collegati",
+                        "outputEventName": "duplica_trattamento"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "trattamenti_dati_actions",
+            "readOnly": false,
             "newLine": true,
-            "size": 2.5
+            "label": "",
+            "sameOrigin": false,
+            "size": 0.5,
+            "inputEvents": [
+                {
+                    "eventName": "duplica_trattamento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Trattamento duplicato",
+                    "values": [],
+                    "queryFunct": "select entrasp.grc_accoda_singolo_trattamento_dati($codice_azienda$::varchar,$codice_azienda$::varchar,id_trattamento_dati::numeric, $id_centro_gest$::numeric) FROM entrasp.cpl_trattamenti_dati where codice_azienda=$codice_azienda$ and id_trattamento_dati=$id_trattamento_dati$"
+                }
+            ]
         },
         {
             "autoGenerate": false,
             "format": {
                 "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=45701 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€');",
                 "options": [],
-                "viewType": "combobox",
-                "dataType": "number"
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -206,7 +237,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "activate_detail_k",
-            "label": " ",
+            "label": "",
             "buttonIcon": "expand_more",
             "newLine": false,
             "size": 0.4,
@@ -243,7 +274,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "hide_detail_k",
-            "label": " ",
+            "label": "",
             "buttonIcon": "expand_less",
             "newLine": false,
             "size": 0.4,
@@ -649,8 +680,7 @@
                     "son": "id_trattamento_dati"
                 }
             ],
-            "label": "Categorie Interessati",
-            "translate": "RESOURCES.categorie_interessati"
+            "label": "Categorie Interessati"
         },
         {
             "entryKey": "categorie_destinatari_sub_of_cpl_trattamenti_dati",
@@ -664,8 +694,7 @@
                     "son": "id_trattamento_dati"
                 }
             ],
-            "label": "Categorie Destinatari",
-            "translate": "RESOURCES.categorie_destinatari"
+            "label": "Categorie Destinatari"
         },
         {
             "entryKey": "misure_tecniche_sub_of_cpl_trattamenti_dati",
@@ -707,7 +736,7 @@
                     "son": "id_trattamento_dati"
                 }
             ],
-            "label": "Titolari Esterni"
+            "label": "Titolari"
         },
         {
             "entryKey": "cpl_trattamenti_dati_responsabili",
@@ -735,8 +764,7 @@
                     "son": "id_trattamento_dati"
                 }
             ],
-            "label": "Centri Gest.Coinvolti",
-            "translate": "RESOURCES.centri_gestcoinvolti"
+            "label": "Centri Gest.Coinvolti"
         },
         {
             "entryKey": "rischi_sub_of_trattamenti_dati",
@@ -750,8 +778,7 @@
                     "son": "id_trattamento_dati"
                 }
             ],
-            "label": "Rischi associati",
-            "translate": "RESOURCES.rischi_associati"
+            "label": "Rischi associati"
         },
         {
             "entryKey": "cpl_trattamenti_dati_sub_procedure_aziendali",
@@ -765,8 +792,7 @@
                     "son": "id_trattamento_dati"
                 }
             ],
-            "label": "Processi",
-            "translate": "RESOURCES.processi"
+            "label": "Processi"
         }
     ],
     "table_keys": [

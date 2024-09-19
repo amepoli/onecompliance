@@ -117,8 +117,7 @@
     ],
     "addElementSettings": {
         "labelAdd": "Nuovo credito",
-        "navigateOnSuccess": true,
-        "translateAdd": "RESOURCES.nuovo_credito"
+        "navigateOnSuccess": true
     },
     "outputEvents": [
         {
@@ -350,7 +349,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "label": "Tipo documento",
+            "label": "Tipo Documento",
             "newLine": true,
             "queryCond": "id_tipo_documento=$id_tipo_doc_s$"
         },
@@ -401,7 +400,7 @@
             "format": {
                 "viewType": "checkbox"
             },
-            "label": " Non Lavorazione Legale",
+            "label": "Non Lavorazione Legale",
             "newLine": false,
             "queryCond": "lavorazione_legale = '0'"
         },
@@ -615,6 +614,17 @@
             "newLine": false,
             "size": 1.42,
             "queryCond": "not exists(select 1 from entrasp.consuntivazioni csn where cc.codice_azienda=csn.codice_azienda and cc.id_cessione=csn.id_cessione)"
+        },
+        {
+            "fieldName": "con_aggioramenti",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Con aggiornamento",
+            "tooltip": "Individua le posizioni per le quali ci sia un aggiornamento",
+            "newLine": false,
+            "size": 1.42,
+            "queryCond": "exists(select 1 from entrasp.consuntivazioni csn where cc.codice_azienda=csn.codice_azienda and cc.id_cessione=csn.id_cessione)"
         }
     ],
     "form_keys": [
@@ -659,7 +669,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "id_cessione",
-            "label": "ID cessione",
+            "label": "ID Cessione",
             "readOnly": true,
             "newLine": false,
             "size": 1
@@ -803,7 +813,7 @@
             "isPrimary": false,
             "buttonIcon": "more_vert",
             "key": "move_nc",
-            "label": " ",
+            "label": "",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
@@ -1691,7 +1701,7 @@
             "key": "lavorazione_legale",
             "width": "8%",
             "sameOrigin": false,
-            "label": "Lavorazione legale"
+            "label": "Lavorazione Legale"
         },
         {
             "format": {
@@ -1700,7 +1710,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "n_mandato",
-            "label": "N° Mandato"
+            "label": "N mandato"
         }
     ],
     "subTables": [
@@ -1716,8 +1726,7 @@
                     "son": "id_cessione"
                 }
             ],
-            "label": "Movimenti",
-            "translate": "RESOURCES.movimenti"
+            "label": "Movimenti"
         },
         {
             "entryKey": "aggiornamenti_sub_of_crediti",

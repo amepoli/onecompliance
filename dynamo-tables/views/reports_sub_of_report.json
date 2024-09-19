@@ -1,0 +1,112 @@
+{
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.argomenti",
+    "businessObjectName": "controlli",
+    "entryKey": "reports_sub_of_report",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select id_argomento_tipo_allegato,data_creazione, client_file_name, stringa, id_risorsa from entrasp.views_attachments_fast where id_argomento_tipo_allegato=$id_argomento_tipo_allegato$ and codice_azienda='€global_codice_azienda€'",
+            "type": "main"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_allegato",
+            "label": "id_argomento_tipo_allegato"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_creazione",
+            "label": "Data Creazione"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "client_file_name",
+            "label": "Nome File"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "stringa",
+            "label": "",
+            "isButton": true,
+            "style": [
+                {
+                    "button_icon": "cloud_download",
+                    "value": "*"
+                }
+            ],
+            "buttonAction": {
+                "target": "attachments",
+                "viewType": "form",
+                "action": "downloadAttachment",
+                "keymap": []
+            }
+        },
+
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_risorsa",
+            "label": "id_risorsa",
+            "translate": "RESOURCES.id_risorsa_regolamenti_sub_of_presidi"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "quick-add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        }
+    ],
+    "restrictions": {
+        "preventNavigationToForm": true
+    },
+    "querySuffixes": {
+        "tableViewSuffix": "order by data_creazione desc limit 100"
+    }
+}

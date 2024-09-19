@@ -66,7 +66,8 @@
             "label": "ID",
             "newLine": false,
             "readOnly": true,
-            "size": 1.25
+            "size": 1.25,
+            "translate": "RESOURCES.id_argomenti"
         },
         {
             "autoGenerate": false,
@@ -77,7 +78,8 @@
                     {
                         "message": "Inserire un codice!",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_un_codice_argomenti"
                     }
                 ]
             },
@@ -87,7 +89,8 @@
             "label": "Codice",
             "newLine": false,
             "readOnly": false,
-            "size": 1.25
+            "size": 1.25,
+            "translate": "RESOURCES.codice_argomenti"
         },
         {
             "autoGenerate": false,
@@ -101,7 +104,8 @@
             "label": "Codice esterno",
             "newLine": false,
             "readOnly": false,
-            "size": 1.25
+            "size": 1.25,
+            "translate": "RESOURCES.codice_esterno_argomenti"
         },
         {
             "autoGenerate": false,
@@ -112,7 +116,8 @@
                     {
                         "message": "Inserire una descrizione breve!",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_una_descrizione_breve_argomenti"
                     }
                 ]
             },
@@ -122,7 +127,8 @@
             "label": "Descrizione Breve",
             "newLine": false,
             "readOnly": false,
-            "size": 5
+            "size": 5,
+            "translate": "RESOURCES.descrizione_breve_argomenti"
         },
         {
             "autoGenerate": false,
@@ -136,7 +142,8 @@
             "label": "Nickname",
             "newLine": true,
             "readOnly": false,
-            "size": 2.5
+            "size": 2.5,
+            "translate": "RESOURCES.nickname_argomenti"
         },
         {
             "autoGenerate": false,
@@ -147,7 +154,8 @@
                     {
                         "message": "Inserire una descrizione",
                         "name": "required",
-                        "validator": "Validators.required"
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_una_descrizione_argomenti"
                     }
                 ]
             },
@@ -157,7 +165,8 @@
             "label": "Descrizione",
             "newLine": false,
             "readOnly": false,
-            "size": 5.5
+            "size": 5.5,
+            "translate": "RESOURCES.descrizione_argomenti"
         },
         {
             "autoGenerate": false,
@@ -173,7 +182,8 @@
             "insertUpdateFunct": "£flag_classificazione£::boolean",
             "isPrimary": false,
             "isHidden": false,
-            "size": 1.5
+            "size": 1.5,
+            "translate": "RESOURCES.argomento_padre_di_classificazione_argomenti"
         },
         {
             "autoGenerate": false,
@@ -189,7 +199,8 @@
             "insertUpdateFunct": "£flag_no_delete£::boolean",
             "isPrimary": false,
             "isHidden": false,
-            "size": 1.5
+            "size": 1.5,
+            "translate": "RESOURCES.non_cancellare_argomenti"
         },
         {
             "autoGenerate": false,
@@ -205,7 +216,8 @@
             "insertUpdateFunct": "£flag_sterile£::boolean",
             "isPrimary": false,
             "isHidden": false,
-            "size": 1.5
+            "size": 1.5,
+            "translate": "RESOURCES.sterile_argomenti"
         },
         {
             "autoGenerate": false,
@@ -221,7 +233,8 @@
             "sameOrigin": false,
             "newLine": false,
             "readOnly": false,
-            "size": 8
+            "size": 8,
+            "translate": "RESOURCES.argomento_con_cui_unire_il_presente_argomenti"
         },
         {
             "autoGenerate": false,
@@ -250,7 +263,8 @@
             ],
             "readOnly": false,
             "sameOrigin": false,
-            "size": 2
+            "size": 2,
+            "translate": "RESOURCES.unifica_argomento_argomenti"
         }
     ],
     "search_keys": [
@@ -262,7 +276,8 @@
             },
             "label": "Lista id argomenti",
             "newLine": false,
-            "queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
+            "queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_id_argomenti_argomenti"
         },
         {
             "fieldName": "id_argomento_magg_s",
@@ -272,7 +287,8 @@
             },
             "label": "Maggiore di ID_argomento",
             "newLine": false,
-            "queryCond": "id_argomento>=$id_argomento_magg_s$"
+            "queryCond": "id_argomento>=$id_argomento_magg_s$",
+            "translate": "RESOURCES.maggiore_di_id_argomento_argomenti"
         },
         {
             "fieldName": "codice_s",
@@ -282,17 +298,18 @@
             },
             "label": "Codice",
             "newLine": false,
-            "queryCond": "upper(codice) like '%'||upper('€codice_s€')||'%'"
+            "queryCond": "upper(codice) like '%'||upper('€codice_s€')||'%'",
+            "translate": "RESOURCES.codice_argomenti"
         },
         {
-            "fieldName": "id_argomento_father_s",
+            "fieldName": "id_argomenti_father_list",
             "format": {
-                "dataType": "number",
+                "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Con argomento padre pari a",
+            "label": "Con argomenti padre uguale a",
             "newLine": false,
-            "queryCond": "id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father_s$)"
+            "queryCond": "id_argomento::varchar in(select id_argomento_son::varchar from entrasp.argomenti_argomenti where id_argomento_father::varchar=any(string_to_array(replace($id_argomenti_father_list$, ' ', ''), ',')))"
         },
         {
             "fieldName": "descr_rs",
@@ -302,7 +319,8 @@
             },
             "label": "Descrizione",
             "newLine": true,
-            "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descr_rs€')||'%' or UPPER(descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
+            "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descr_rs€')||'%' or UPPER(descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')",
+            "translate": "RESOURCES.descrizione_argomenti"
         },
         {
             "fieldName": "categorie_modello_test_s",
@@ -314,7 +332,8 @@
             },
             "label": "Categorie modelli test",
             "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))",
+            "translate": "RESOURCES.categorie_modelli_test_argomenti"
         },
         {
             "fieldName": "categorie_modello_test_s2",
@@ -326,7 +345,8 @@
             },
             "label": "Categorie modelli test 2",
             "newLine": true,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s2$))"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s2$))",
+            "translate": "RESOURCES.categorie_modelli_test_2_argomenti"
         },
         {
             "fieldName": "centro_gestionale_s",
@@ -338,7 +358,8 @@
             },
             "label": "Centro Gestionale",
             "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($centro_gestionale_s$))"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($centro_gestionale_s$))",
+            "translate": "RESOURCES.centro_gestionale_argomenti"
         },
         {
             "fieldName": "tipo_intermediario_s",
@@ -350,7 +371,8 @@
             },
             "label": "Tipo intermediario",
             "newLine": true,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tipo_intermediario_s$))"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tipo_intermediario_s$))",
+            "translate": "RESOURCES.tipo_intermediario_argomenti"
         },
         {
             "fieldName": "livello_controllo_s",
@@ -362,7 +384,8 @@
             },
             "label": "Livello controllo",
             "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))",
+            "translate": "RESOURCES.livello_controllo_argomenti"
         },
         {
             "fieldName": "attivita_s",
@@ -374,7 +397,8 @@
             },
             "label": "Tipo modello di progetto (attivita)",
             "newLine": true,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))",
+            "translate": "RESOURCES.tipo_modello_di_progetto_attivita_argomenti"
         },
         {
             "fieldName": "categoria_calcolata_s",
@@ -386,7 +410,8 @@
             },
             "label": "Categoria calcolata",
             "newLine": false,
-            "queryCond": "id_argomento in(select entrasp.argomenti_category_of($categoria_calcolata_s$))"
+            "queryCond": "id_argomento in(select entrasp.argomenti_category_of($categoria_calcolata_s$))",
+            "translate": "RESOURCES.categoria_calcolata_argomenti"
         },
         {
             "fieldName": "associati_to",
@@ -398,7 +423,8 @@
             },
             "label": "Associato a (modelli di verifica, attività, centri_gestionali, etc)",
             "newLine": true,
-            "queryCond": "id_argomento in(select entrasp.argomenti_associated_to($associati_to$))"
+            "queryCond": "id_argomento in(select entrasp.argomenti_associated_to($associati_to$))",
+            "translate": "RESOURCES.associato_a_modelli_di_verifica_attivit_centri_gestionali_etc_argomenti"
         },
         {
             "fieldName": "flag_classificazione",
@@ -408,7 +434,8 @@
             },
             "label": "Macro categorie",
             "newLine": false,
-            "queryCond": "flag_classificazione=true"
+            "queryCond": "flag_classificazione=true",
+            "translate": "RESOURCES.macro_categorie_argomenti"
         }
     ],
     "subTables": [
@@ -420,7 +447,8 @@
                     "son": "id_argomento_father"
                 }
             ],
-            "label": "Argomenti figli"
+            "label": "Argomenti figli",
+            "translate": "RESOURCES.argomenti_figli_argomenti_sub_of_argomenti_son"
         },
         {
             "entryKey": "argomenti_sub_of_argomenti_father",
@@ -430,7 +458,8 @@
                     "son": "id_argomento_son"
                 }
             ],
-            "label": "Argomenti padre"
+            "label": "Argomenti padre",
+            "translate": "RESOURCES.argomenti_padre_argomenti_sub_of_argomenti_father"
         },
         {
             "entryKey": "compiti_argomenti_sub",
@@ -441,7 +470,7 @@
                 }
             ],
             "label": "Compiti Argomenti",
-            "translate": "RESOURCES.compiti_argomenti"
+            "translate": "RESOURCES.compiti_argomenti_compiti_argomenti_sub"
         },
         {
             "entryKey": "modelli_test_sub_of_argomenti",
@@ -452,7 +481,7 @@
                 }
             ],
             "label": "Modelli Verifica",
-            "translate": "RESOURCES.modelli_verifica"
+            "translate": "RESOURCES.modelli_verifica_modelli_test_sub_of_argomenti"
         },
         {
             "entryKey": "rischi_sub_of_argomenti",
@@ -463,7 +492,7 @@
                 }
             ],
             "label": "Rischi Argomenti",
-            "translate": "RESOURCES.rischi_argomenti"
+            "translate": "RESOURCES.rischi_argomenti_rischi_sub_of_argomenti"
         },
         {
             "entryKey": "contratti_sub_of_argomenti",
@@ -474,7 +503,7 @@
                 }
             ],
             "label": "Contratti",
-            "translate": "RESOURCES.contratti"
+            "translate": "RESOURCES.contratti_contratti_sub_of_argomenti"
         },
         {
             "entryKey": "centri_gestionali_sub_of_argomenti",
@@ -485,7 +514,7 @@
                 }
             ],
             "label": "Centri Gestionali",
-            "translate": "RESOURCES.centri_gestionali"
+            "translate": "RESOURCES.centri_gestionali_centri_gestionali_sub_of_argomenti"
         },
         {
             "entryKey": "domande_sub_of_argomenti",
@@ -496,7 +525,7 @@
                 }
             ],
             "label": "Domande",
-            "translate": "RESOURCES.domande"
+            "translate": "RESOURCES.domande_domande_sub_of_argomenti"
         },
         {
             "entryKey": "attivita_sub_of_argomenti",
@@ -507,7 +536,7 @@
                 }
             ],
             "label": "Attività",
-            "translate": "RESOURCES.attivit"
+            "translate": "RESOURCES.attivit_attivita_sub_of_argomenti"
         },
         {
             "entryKey": "aziende_tasks_sub_of_argomenti",
@@ -517,7 +546,8 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Aziende"
+            "label": "Aziende",
+            "translate": "RESOURCES.aziende_aziende_tasks_sub_of_argomenti"
         },
         {
             "entryKey": "cpl_trattamenti_dati_sub_of_argomenti",
@@ -527,7 +557,8 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Trattamenti dati"
+            "label": "Trattamenti dati",
+            "translate": "RESOURCES.trattamenti_dati_cpl_trattamenti_dati_sub_of_argomenti"
         }
     ],
     "table_multiselection_actions": [
@@ -556,7 +587,8 @@
             "isPrimary": true,
             "key": "id_argomento",
             "label": "ID",
-            "width": "10%"
+            "width": "10%",
+            "translate": "RESOURCES.id_argomenti"
         },
         {
             "format": {
@@ -566,7 +598,8 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "width": "10%"
+            "width": "10%",
+            "translate": "RESOURCES.codice_argomenti"
         },
         {
             "format": {
@@ -576,7 +609,8 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "width": "30%"
+            "width": "30%",
+            "translate": "RESOURCES.descrizione_argomenti"
         },
         {
             "format": {
@@ -586,7 +620,8 @@
             "isPrimary": false,
             "key": "descrizione_breve",
             "label": "Descrizione Breve",
-            "width": "20%"
+            "width": "20%",
+            "translate": "RESOURCES.descrizione_breve_argomenti"
         },
         {
             "format": {
@@ -597,7 +632,8 @@
             "isPrimary": false,
             "key": "flag_classificazione",
             "label": "Argomento di classificazione",
-            "width": "10%"
+            "width": "10%",
+            "translate": "RESOURCES.argomento_di_classificazione_argomenti"
         },
         {
             "format": {
@@ -608,7 +644,8 @@
             "isPrimary": false,
             "key": "flag_no_delete",
             "label": "Non cancellare",
-            "width": "10%"
+            "width": "10%",
+            "translate": "RESOURCES.non_cancellare_argomenti"
         }
     ],
     "querySuffixes": {
@@ -640,5 +677,4 @@
             "viewType": "table"
         }
     ]
-    
 }
