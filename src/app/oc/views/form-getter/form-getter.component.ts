@@ -569,7 +569,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             }
                         }
 
-                        let value = results.data[i][postCheck.key];
+                        let value = typeof results.data[i][postCheck.key] === 'object'? results.data[i][postCheck.key].value : results.data[i][postCheck.key];
 
                         if(postCheck.resultType === 'condition') {
                             if(conditionMet) {
@@ -906,6 +906,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
 
         if (field != null) {
+            if(attributeStyle != null) {
+                field.style = {...attributeStyle};
+            }
+
             fieldValue = {
                 table: _this.formParams.entryName,
                 label: field.label,
@@ -930,7 +934,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 buttonIcon: (field.buttonIcon != null) ? field.buttonIcon : null,
                 confirmButtonAction: (field.confirmButtonAction != null) ? field.confirmButtonAction : false,
                 isDownloadButton: (field.isDownloadButton != null) ? field.isDownloadButton : false,
-                style: attributeStyle != null ? Object.assign(field.style, attributeStyle) : (field.style != null) ? field.style : null,
+                style: field.style,
                 width: (field.size != null) ? (field.size * 10) : null, // leave a 0.5% margin left and right   
                 options: (element != null && element.options != null) ? element.options : [],
                 menuOptions: (field.format != null && field.format.menuOptions != null) ? field.format.menuOptions : [],
