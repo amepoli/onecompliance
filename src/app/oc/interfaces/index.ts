@@ -45,3 +45,4 @@ export * from './oc_auth_state.interface';
 export * from './get_request.interface';
 export * from './post_request.interface';
 export * from './add_element_settings.interface';
+export * from './attribute_post_checks.interface';

@@ -1,9 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, ViewChildren, QueryList, AfterViewInit, OnDestroy, SimpleChanges, ChangeDetectorRef, ViewChild, Attribute } from '@angular/core';
 import { DynamicFormComponent } from 'app/oc/dynamic-forms/components/dynamic-form/dynamic-form.component';
 import { ComboboxComponent } from 'app/oc/dynamic-forms/components/combobox/combobox.component';
 import { Subscription } from 'rxjs';
 import { SubformComponent } from 'app/oc/dynamic-forms/components/subform/subform.component';
-import { EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
+import { AttributePostChecks, EmailActionParameters, ExportItem, FieldConfig, FormGetterParams, FormViewKey, GoogleAPIParams, ImportItem, MessageView, OutputEvent, WidgetsConfigurations } from 'app/oc/interfaces';
 import { FormDataType } from 'app/oc/types';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, NavigationService, PubSubService, TimeTrackerService, ToastService, ValidationsService } from 'app/oc/services';
 import { DynamicFieldDirective } from 'app/oc/directives';
@@ -96,6 +96,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             onSaveAction: 'reload'
         }
     };
+
+    attributePostChecks: {[key: string]: AttributePostChecks[]} = {};
 
 
     constructor(
@@ -375,6 +377,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         }
                     }
 
+                    _this.loadAttributePostChecks();
 
                     // signal toolbar about a dashboard 
                     _this._navigationService.onDashboardTableLoad.emit({ origin: _this.formParams.entryName, dashboardTables: params.dashboardTables });
@@ -388,11 +391,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             if (formRowProperty.inputEvents && formRowProperty.inputEvents.length) {
                                 for (let j = 0; j < formRowProperty.inputEvents.length; j++) {
                                     const event = formRowProperty.inputEvents[j];
-                                    const subcription = _this.pubSubService.subscribe(event.eventName,
-                                        value => {
-                                            _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
-                                        });
-                                    _this.formSubscriptions.push(subcription);
+                                    setTimeout(() => {
+                                        const subcription = _this.pubSubService.subscribe(event.eventName,
+                                            value => {
+                                                _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
+                                            });
+                                        _this.formSubscriptions.push(subcription);
+                                    }, 50);
                                 }
                             }
                         }
@@ -409,15 +414,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         if (params.inputEvents != null) {  // subscribe to global table events
                             for (let i = 0; i < params.inputEvents.length; i++) {
                                 const event = params.inputEvents[i];
-                                const subcription = _this.pubSubService.subscribe(event.eventName,
+                                setTimeout(() => {
+                                    const subcription = _this.pubSubService.subscribe(event.eventName,
                                     value => {
 
                                         _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
                                     });
-                                _this.formSubscriptions.push(subcription);
+                                    _this.formSubscriptions.push(subcription);
+                                }, 50);
                             }
                         }
-                        _this.subscribeFieldInputEvents(_this.viewKeys);
+                        setTimeout(() => {
+                            _this.subscribeFieldInputEvents(_this.viewKeys);
+                        }, 50);
                     }
                     // load output events if any
                     if (params.outputEvents != null) {
@@ -444,6 +453,159 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 }
             });
         _this.generalSubscriptions.push(subscription);
+    }
+
+    loadAttributePostChecks() {
+        const _this = this;
+
+        let attributePostChecks = {};
+
+        _this.viewKeys.forEach(key => {
+            if(key.attributePostChecks && key.attributePostChecks.length) {
+                attributePostChecks[key.key] = key.attributePostChecks;
+            }
+        });
+        _this.attributePostChecks = attributePostChecks;
+    }
+
+    applyAttributePostChecks(results: any) {
+        const _this = this;
+        if(Array.isArray(results.data)) {
+            for(let i = 0; i < results.data.length; i++) {
+                Object.keys(_this.attributePostChecks).forEach((key) => {
+                    _this.attributePostChecks[key].forEach((postCheck) => {
+
+                        let conditionMet = true;
+                        if ( postCheck.resultType === 'condition') {
+                            if(postCheck.conditionType === 'equalTo') {
+                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value === postCheck.conditionValue) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }    
+                                }
+                                else {
+                                    if(results.data[i][postCheck.key] === postCheck.conditionValue) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }
+                                }
+                            }
+                            else if(postCheck.conditionType === 'notEqualTo') {
+                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value !== postCheck.conditionValue) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }    
+                                }
+                                else {
+                                    if(results.data[i][postCheck.key] !== postCheck.conditionValue) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }
+                                }
+                            }
+                            else if(postCheck.conditionType === 'greaterThan') {
+                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value > postCheck.conditionValue) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }    
+                                }
+                                else {
+                                    if(results.data[i][postCheck.key] > postCheck.conditionValue) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }
+                                }
+                            }
+                            else if(postCheck.conditionType === 'lessThan') {
+                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value < postCheck.conditionValue) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }    
+                                }
+                                else {
+                                    if(results.data[i][postCheck.key] < postCheck.conditionValue) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }
+                                }
+                            }
+                            else if(postCheck.conditionType === 'Includes') {
+                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value.includes(postCheck.conditionValue)) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }    
+                                }
+                                else {
+                                    if(results.data[i][postCheck.key].includes(postCheck.conditionValue)) {
+                                        conditionMet = true;
+                                    }
+                                    else {
+                                        conditionMet = false;
+                                    }
+                                }
+                            }
+                        }
+
+                        let value = results.data[i][postCheck.key];
+
+                        if(postCheck.resultType === 'condition') {
+                            if(conditionMet) {
+                                value = postCheck.resultTrueValue;
+                            }
+                            else {
+                                value = postCheck.resultFalseValue;
+                            }
+                        }
+                        
+                        if(postCheck.attributeType !== 'style') {
+                            if(!results.attributes[key]) {
+                                results.attributes[key] = {}
+                            }
+                            if(!results.attributes[key][postCheck.attributeType]) {
+                                results.attributes[key][postCheck.attributeType] = [];
+                            }
+                            results.attributes[key][postCheck.attributeType][i] = value;
+                        }
+                        else {
+                            if(!results.attributes[key]) {
+                                results.attributes[key] = {}
+                            }
+                            if(!results.attributes[key][postCheck.attributeType]) {
+                                results.attributes[key][postCheck.attributeType] = {};
+                            }
+                            if(!results.attributes[key][postCheck.attributeType][postCheck.styleAttribute]) {
+                                results.attributes[key][postCheck.attributeType][postCheck.styleAttribute] = [];
+                            }
+                            results.attributes[key][postCheck.attributeType][postCheck.styleAttribute][i] = value;
+                        }
+                    })
+                })
+            }
+        }
+        return results;
     }
 
     sendEmail(data: any, outputEventWhenComplete: string, value: any) {
@@ -508,7 +670,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this.formSubscriptions.push(lazy_subscription);
             }
             if (key.format.viewType === 'subform' && key.format.subform_keys != null) {
-                _this.subscribeFieldInputEvents(key.format.subform_keys);
+                // _this.subscribeFieldInputEvents(key.format.subform_keys);
             }
         }
     }
@@ -545,6 +707,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
+                    results = _this.applyAttributePostChecks(results)
                     _this.isReadOnly = results.flags.readOnly;
                     // hide/make read only relevant rows if any
                     if (results.properties.hidden != null && results.properties.hidden.length) {
