@@ -33,6 +33,10 @@
             "type": "main"
         }
     ],
+    "addElementSettings": {
+        "labelQuickAdd": "Nuova risposta",
+        "navigateOnSuccess": true
+    },
     "form_keys": [
         {
             "autoGenerate": false,
@@ -47,36 +51,6 @@
             "readOnly": false,
             "newLine": false,
             "translate": "RESOURCES.codice_azienda_template_risposte_previste_righe"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "cancella_risposte",
-            "label": "delete",
-            "buttonIcon": "delete",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "cancella_risposte",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "cancella_risposte",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "delete from entrasp.template_risposte_previste_righe where codice_azienda=$codice_azienda$ and id_template_rp=$id_template_rp$ and id_riga=$id_riga$",
-                    "outputEventWhenComplete": "update_template_risposte_previste_righe"
-                }
-            ],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 0.5,
-            "translate": "RESOURCES.delete_template_risposte_previste_righe"
         },
         {
             "autoGenerate": true,
@@ -217,10 +191,90 @@
             "translate": "RESOURCES.non_applicabile_template_risposte_previste_righe"
         }
     ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.codice_azienda_template_risposte_previste"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_template_rp",
+            "label": "ID",
+            "translate": "RESOURCES.id_template_risposte_previste"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_riga",
+            "label": "Riga",
+            "translate": "RESOURCES.riga_template_risposte_previste_righe"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ordinamento",
+            "label": "Ordinamento",
+            "translate": "RESOURCES.ordinamento_template_risposte_previste_righe"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "peso",
+            "label": "Peso",
+            "translate": "RESOURCES.peso_template_risposte_previste_righe"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risposta",
+            "label": "Risposta",
+            "translate": "RESOURCES.risposta_template_risposte_previste_righe"
+        }
+    ],
     "outputEvents": [
         {
             "eventName": "savedForm",
             "eventTrigger": "onSave"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
         }
     ]
 }
