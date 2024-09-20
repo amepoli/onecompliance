@@ -1568,7 +1568,7 @@
                 {
                     "eventName": "compito_create",
                     "actionType": "query",
-                    "queryFunct": "select entrasp.compiti_rif_bo_insert('sondaggi', $titolo$, $codice_azienda$, $id_sondaggio$) as codice_compito_created",
+                    "queryFunct": "select entrasp.compiti_rif_bo_insert('sondaggi', $titolo$, $codice_azienda$, $id_sondaggio$, proposteformulate=>(select proposte_formulate from entrasp.cpl_risultati where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$ limit 1)) as codice_compito_created",
                     "condition": "none",
                     "values": [],
                     "outputEventWhenComplete": "to_compito_created"
