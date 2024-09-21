@@ -478,7 +478,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         let conditionMet = true;
                         if ( postCheck.resultType === 'condition') {
                             if(postCheck.conditionType === 'equalTo') {
-                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
                                     if(results.data[i][postCheck.key].value === postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
@@ -496,7 +496,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                             else if(postCheck.conditionType === 'notEqualTo') {
-                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
                                     if(results.data[i][postCheck.key].value !== postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
@@ -514,7 +514,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                             else if(postCheck.conditionType === 'greaterThan') {
-                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
                                     if(results.data[i][postCheck.key].value > postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
@@ -532,7 +532,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                             else if(postCheck.conditionType === 'lessThan') {
-                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
                                     if(results.data[i][postCheck.key].value < postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
@@ -550,7 +550,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 }
                             }
                             else if(postCheck.conditionType === 'Includes') {
-                                if(typeof results.data[i][postCheck.key] === 'object') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
                                     if(results.data[i][postCheck.key].value.includes(postCheck.conditionValue)) {
                                         conditionMet = true;
                                     }
@@ -569,7 +569,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             }
                         }
 
-                        let value = typeof results.data[i][postCheck.key] === 'object'? results.data[i][postCheck.key].value : results.data[i][postCheck.key];
+                        let value = results.data[i][postCheck.key] != null && (results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object')? results.data[i][postCheck.key].value : results.data[i][postCheck.key];
 
                         if(postCheck.resultType === 'condition') {
                             if(conditionMet) {
