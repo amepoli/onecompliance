@@ -670,7 +670,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 _this.formSubscriptions.push(lazy_subscription);
             }
             if (key.format.viewType === 'subform' && key.format.subform_keys != null) {
-                // _this.subscribeFieldInputEvents(key.format.subform_keys);
+                // uncommented to get subform's event states' update
+                _this.subscribeFieldInputEvents(key.format.subform_keys);
             }
         }
     }
