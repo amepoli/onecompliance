@@ -120,11 +120,24 @@ from entrasp.anagrafiche_id an, entrasp.consuntivazioni csn
 	where durata >600 and an.dynamo_user='annarita' order by date_time_begin desc
 
 
-	select codice_azienda, id_cons, date_time_begin, date_time_end, durata from entrasp.consuntivazioni csn
+	select csn.codice_azienda, id_cons, date_time_begin, date_time_end, durata, an.email_sender, an.codice_part, an.dynamo_user from entrasp.consuntivazioni csn
 	inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part
-	where an.dynamo_user like '%benedetti%'  and id_cons=5429
+	where an.dynamo_user is null and an.nome ilike '%ilippo%' and an.cognome ilike '%sganzerla%'
+
+	select distinct an.id_anagrafica, an.email_sender, an.codice_part, an.dynamo_user from entrasp.consuntivazioni csn
+	inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part
+	--where an.dynamo_user is null and an.nome ilike '%ilippo%' and an.cognome ilike '%sganzerla%'
+	where an.email_sender like '%quantyx.net'
+
+	update entrasp.anagrafiche_id
+	set dynamo_user='fsganzerla', email_sender='fsganzerla@quantyx.com'
+	where 
 	
-	
+	select *
+	from entrasp.users
+	where username ilike '%ganzerla%'
+
+
 	select * from entrasp.ruoli
 	where descrizione ilike '%manager%'
 
