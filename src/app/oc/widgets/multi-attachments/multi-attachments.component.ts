@@ -19,11 +19,12 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
     @Input("keys") keys: any;
     @Input("tooltip") tooltip: any;
     @Input("businessObjectName") businessObjectName: any;
-                    
+    @Input('initialCount') initialCount: number;
+
     @Output() onClick = new EventEmitter<boolean>();
     @Output() onSave: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-    
+    firstRun: boolean = true;
     numAttachments: number = 0;
     subscriptions: Subscription[] = [];
 
@@ -49,11 +50,14 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
     }
     
     ngAfterViewInit() {
-        this.getAttachList();
+        // this.getAttachList();
     }
     
     ngOnChanges(changes) {
-        this.getAttachList();
+        this.getAttachList(this.firstRun && this.initialCount != null);
+        if(this.firstRun) {
+            this.firstRun = false;
+        }
     }
 
     performClick(){
@@ -80,46 +84,52 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
         }));
     }
 
-    getAttachList() {
+    getAttachList(takeInitialCount: boolean = false) {
         const _this = this;
         //console.table(_this.keys);
-        
-        if(_this.keys && _this.entryName) {
-                    const subscription = _this.backendService.getAttachList(_this.entryName, _this.authService.getCurrentCompany(_this.keys), _this.keys, _this.businessObjectName).subscribe(
-            result => {
-                _this._console.log(result);
-                if (result.result === 'OK') {
-                    let listFiles = result.list;
-                    const files = [];
-                    if (listFiles) {
-                        _this.numAttachments = listFiles.length;
-                        listFiles.forEach(element => {
-                            const file = {
-                                'name': element.client_file_name,
-                                'type': 'document',
-                                'owner': element.autore,
-                                'size': _this._fileService.getFileSize(element.dimensione),
-                                'modified': new Date(element.data_upd).toLocaleString(),
-                                'opened': new Date(element.data_ins).toLocaleString(),
-                                'created': new Date(element.data_creazione).toLocaleString(),
-                                'extention': '',
-                                'location': '',
-                                'offline': true,
-                                'rifDate': new Date(element.data_rif_a).toLocaleDateString()
-
-                            };
-                            files.push(file);
-                        });
+        if(takeInitialCount) {
+            if(_this.initialCount !== undefined && _this.initialCount !== null) {
+                _this.numAttachments = _this.initialCount;
+            }
+        }
+        else {
+            if(_this.keys && _this.entryName) {
+                        const subscription = _this.backendService.getAttachList(_this.entryName, _this.authService.getCurrentCompany(_this.keys), _this.keys, _this.businessObjectName).subscribe(
+                result => {
+                    _this._console.log(result);
+                    if (result.result === 'OK') {
+                        let listFiles = result.list;
+                        const files = [];
+                        if (listFiles) {
+                            _this.numAttachments = listFiles.length;
+                            listFiles.forEach(element => {
+                                const file = {
+                                    'name': element.client_file_name,
+                                    'type': 'document',
+                                    'owner': element.autore,
+                                    'size': _this._fileService.getFileSize(element.dimensione),
+                                    'modified': new Date(element.data_upd).toLocaleString(),
+                                    'opened': new Date(element.data_ins).toLocaleString(),
+                                    'created': new Date(element.data_creazione).toLocaleString(),
+                                    'extention': '',
+                                    'location': '',
+                                    'offline': true,
+                                    'rifDate': new Date(element.data_rif_a).toLocaleDateString()
+    
+                                };
+                                files.push(file);
+                            });
+                        }
+                        // _this._fileService.files = files;
+                        // _this._fileService.getFiles();
                     }
-                    // _this._fileService.files = files;
-                    // _this._fileService.getFiles();
-                }
-                else {
-                    // Show error snackbar
-                    _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
-                }
-            });
-            _this.subscriptions.push(subscription);
+                    else {
+                        // Show error snackbar
+                        _this._toastService.showErrorToast("Error ",JSON.stringify(result.reason.detail));
+                    }
+                });
+                _this.subscriptions.push(subscription);
+            }
         }
     }
 
