@@ -45,7 +45,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT codice::character AS id, ordinamento||'-'||transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZI_EFFICACIA' and ordinamento<=5 order by ordinamento;",
+                "comboQuery": "SELECT codice AS id, ordinamento||'-'||transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZI_EFFICACIA' and ordinamento<=5 order by ordinamento;",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text"
@@ -219,7 +219,8 @@
             "width": "15%",
             "isPrimary": false,
             "key": "giudizio_efficacia",
-            "queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZI_EFFICACIA', giudizio_efficacia)",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZI_EFFICACIA', giudizio_efficacia)::varchar",
+            "styleQuery": "select transcodifica as giudizio_efficacia, background_color, character_color as font_color, '500' as font_weight, 'center' as text_align from entrasp.transcodifiche where tipo_dato='GIUDIZI_EFFICACIA'",
             "label": "Efficacia"
         },
         {
@@ -291,6 +292,10 @@
         {
             "tableActionType": "add",
             "viewType": "table"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
         }
     ]
 }
