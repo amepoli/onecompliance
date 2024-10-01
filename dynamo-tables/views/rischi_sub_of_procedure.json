@@ -1242,12 +1242,12 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select rs.*, fr.id_procedura, fr.id_argomento_tipo_fonte_rischio, fr.id_fonte_rischio from entrasp.rischi rs inner join entrasp.fonti_rischio fr on rs.codice_azienda=fr.codice_azienda and rs.codice_rischio=fr.codice_rischio where fr.codice_azienda=$codice_azienda$ and fr.id_procedura=$id_procedura$ and codice_tipo_fonte_rischio='PROC'"
+            "queryString": "select rs.*, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_pre) as rischio_inerente, entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_pre,0), coalesce(rs.intensita_singola_pre,0)) as rischio_inerente_pi,entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_post) as rischio_residuo,entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_post,0), coalesce(rs.intensita_singola_post,0)) as rischio_residuo_pi,entrasp.srr_rr(rs.codice_azienda, coalesce(rs.probabilita_post,0), coalesce(rs.intensita_singola_post,0)) as risk_response,entrasp.cpl_soglie_descrizione(rs.codice_azienda,'T',rs.intensita_totale_post_rilevata) as rischio_residuo_rett,entrasp.srr_giudizio_pi(rs.codice_azienda, coalesce(rs.probabilita_post_rilevata,0), coalesce(rs.intensita_singola_post_rilevata,0)) as rischio_residuo_rett_pi,entrasp.srr_rr(rs.codice_azienda, coalesce(rs.probabilita_post_rilevata,0), coalesce(rs.intensita_singola_post_rilevata,0)) as risk_response_rett,entrasp.cpl_soglie_descrizione(rs.codice_azienda,'P',rs.probabilita_post) as probabilita,entrasp.cpl_soglie_descrizione(rs.codice_azienda,'I',rs.intensita_singola_post) as impatto, id_procedura, fr.id_argomento_tipo_fonte_rischio, fr.id_fonte_rischio from entrasp.rischi rs inner join entrasp.fonti_rischio fr on rs.codice_azienda=fr.codice_azienda and rs.codice_rischio=fr.codice_rischio where fr.codice_azienda=$codice_azienda$ and fr.id_procedura=$id_procedura$ and codice_tipo_fonte_rischio='PROC'"
         }
     ],
     "addElementSettings": {
-        "labelAdd": "Associa nuovo rischio",
-        "labelQuickAdd": "Associa nuovo rischio",
+        "labelAdd": "Associa rischio",
+        "labelQuickAdd": "Associa rischio",
         "navigateOnSuccess": false
     },
     "hideActions": [
