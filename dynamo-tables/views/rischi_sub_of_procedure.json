@@ -170,10 +170,10 @@
                 "dataType": "text"
             },
             "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.codice_azienda_rischi_sub_of_procedure"
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.codice_part_rischi"
         },
         {
             "format": {
@@ -181,48 +181,48 @@
             },
             "isHidden": true,
             "isPrimary": true,
-            "key": "id_procedura",
-            "label": "ID Procedura",
-            "translate": "RESOURCES.id_procedura_rischi_sub_of_procedure"
+            "key": "id_fonte_rischio",
+            "label": "id_fonte_rischio"
         },
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_argomento_tipo_fonte_rischio",
+            "label": "id_argomento_tipo_fonte_rischio",
+            "translate": "RESOURCES.id_argomento_tipo_fonte_rischio_rischi_sub_of_procedure"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
             "isPrimary": false,
-            "width": "4%",
-            "queryFunct": "select true",
-            "key": "delete_rischi_processi",
-            "label": "",
-            "style": [
-                {
-                    "button_icon": "delete",
-                    "value": "*"
-                }
-            ],
-            "isButton": true,
-            "buttonAction": {
-                "target": "rischi_sub_of_procedure",
-                "viewType": "form",
-                "query": "delete from entrasp.fonti_rischio where codice_azienda='£codice_azienda£' AND codice_rischio='£codice_rischio£' AND id_procedura=£id_procedura£",
-                "action": "query",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_procedura",
-                        "destination": "id_procedura"
-                    },
-                    {
-                        "source": "codice_rischio",
-                        "destination": "codice_rischio"
-                    }
-                ],
-                "onSuccessAction": "reload"
-            }
+            "key": "id_centro_gest",
+            "label": "id_centro_gest",
+            "translate": "RESOURCES.id_centro_gest_rischi"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_procedura",
+            "label": "id_procedura"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.codice_azienda_rischi"
         },
         {
             "format": {
@@ -231,8 +231,8 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_rischio",
-            "label": "Rischio",
-            "translate": "RESOURCES.rischio_rischi_sub_of_procedure"
+            "label": "Codice Rischio (PK)",
+            "translate": "RESOURCES.codice_rischio_pk_rischi"
         },
         {
             "format": {
@@ -240,26 +240,1024 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "queryFunct": "substring(entrasp.rischi_titolo(codice_rischio, codice_azienda), 1, 220)",
-            "key": "desc_codice_rischio",
-            "label": "Rischio",
-            "isInputButton": true,
-            "buttonAction": {
-                "target": "rischi",
-                "viewType": "form",
-                "action": "navigate",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "codice_rischio",
-                        "destination": "codice_rischio"
-                    }
-                ]
+            "key": "codice",
+            "width": "5%",
+            "label": "Codice",
+            "translate": "RESOURCES.codice_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
             },
-            "translate": "RESOURCES.rischio_rischi_sub_of_procedure"
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "sameOrigin": false,
+            "translate": "RESOURCES.id_sondaggio_rischi"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "width": "10%",
+            "label": "data_fine_attivita",
+            "translate": "RESOURCES.data_fine_attivita_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "width": "20%",
+            "label": "Titolo",
+            "translate": "RESOURCES.titolo_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centro_gest",
+            "width": "10%",
+            "label": "Centro Gestionale Resp. (liv.1)",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+            "translate": "RESOURCES.centro_gestionale_resp_liv1_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "8%",
+            "key": "rischio_inerente",
+            "label": "Rischio Inerente",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "0-Non applicabile",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "grey",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Immateriale",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#68E7F4",
+                    "text_align": "center"
+                },
+                {
+                    "value": "1-Immateriale",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "2-Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Lieve",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "3-Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Media",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "4-Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Gravissima",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "5-Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ],
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_pre)",
+            "translate": "RESOURCES.rischio_inerente_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "8%",
+            "key": "rischio_inerente_pi",
+            "label": "Risch.Inerente(mt)",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "0-Non applicabile",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "grey",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Immateriale",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#68E7F4",
+                    "text_align": "center"
+                },
+                {
+                    "value": "1-Immateriale",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "2-Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Lieve",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "3-Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Media",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "4-Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Gravissima",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "5-Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ],
+            "queryFunct": "entrasp.srr_giudizio_pi($codice_azienda$, coalesce(probabilita_pre,0), coalesce(intensita_singola_pre,0))",
+            "translate": "RESOURCES.rischinerentemt_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rischio_residuo",
+            "width": "8%",
+            "label": "Rischio Residuo",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "0-Non applicabile",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "grey",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Immateriale",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#68E7F4",
+                    "text_align": "center"
+                },
+                {
+                    "value": "1-Immateriale",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#68E7F4",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "2-Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Lieve",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "3-Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Media",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "4-Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Gravissima",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                },
+                {
+                    "value": "5-Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ],
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post)",
+            "translate": "RESOURCES.rischio_residuo_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "8%",
+            "key": "rischio_residuo_pi",
+            "label": "Risch.Residuo(mt)",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "0-Non applicabile",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "grey",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Immateriale",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#68E7F4",
+                    "text_align": "center"
+                },
+                {
+                    "value": "1-Immateriale",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "2-Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Lieve",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "3-Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Media",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "4-Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Gravissima",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "5-Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ],
+            "queryFunct": "entrasp.srr_giudizio_pi($codice_azienda$, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0))",
+            "translate": "RESOURCES.rischresiduomt_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risk_response",
+            "width": "8%",
+            "label": "Risk Resp.",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Accettare",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Gestire",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "yellow",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Trasferire",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Evitare",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ],
+            "queryFunct": "entrasp.srr_rr(codice_azienda, coalesce(probabilita_post,0), coalesce(intensita_singola_post,0))",
+            "translate": "RESOURCES.risk_resp_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rischio_residuo_rett",
+            "width": "8%",
+            "label": "Rischio Residuo Rett.",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "0-Non applicabile",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "grey",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Immateriale",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#68E7F4",
+                    "text_align": "center"
+                },
+                {
+                    "value": "1-Immateriale",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#68E7F4",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "2-Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Lieve",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "3-Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Media",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "4-Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Gravissima",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                },
+                {
+                    "value": "5-Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ],
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'T',intensita_totale_post_rilevata)",
+            "translate": "RESOURCES.rischio_residuo_rett_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "8%",
+            "key": "rischio_residuo_rett_pi",
+            "label": "Risch.Res.Rett.(mt)",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "0-Non applicabile",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "grey",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Immateriale",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#68E7F4",
+                    "text_align": "center"
+                },
+                {
+                    "value": "1-Immateriale",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "2-Basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Lieve",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#8BC34A",
+                    "text_align": "center"
+                },
+                {
+                    "value": "3-Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#F2FD5F",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-basso",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Media",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#FFF59D",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "4-Grave",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#ff9657",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Gravissima",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#FF7276",
+                    "text_align": "center"
+                },
+                {
+                    "value": "5-Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Catastrofico",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ],
+            "queryFunct": "entrasp.srr_giudizio_pi($codice_azienda$, coalesce(probabilita_post_rilevata,0), coalesce(intensita_singola_post_rilevata,0))",
+            "translate": "RESOURCES.rischresrettmt_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risk_response_rett",
+            "width": "8%",
+            "label": "Risk Resp.Rett.",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Accettare",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Gestire",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "yellow",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Trasferire",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Evitare",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ],
+            "queryFunct": "entrasp.srr_rr(codice_azienda, coalesce(probabilita_post_rilevata,0), coalesce(intensita_singola_post_rilevata,0))",
+            "translate": "RESOURCES.risk_resprett_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "probabilita",
+            "label": "Probabilita",
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'P',probabilita_post)",
+            "translate": "RESOURCES.probabilita_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "impatto",
+            "label": "Impatto",
+            "queryFunct": "entrasp.cpl_soglie_descrizione(codice_azienda,'I',intensita_singola_post)",
+            "translate": "RESOURCES.impatto_rischi"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_rischio",
+            "label": "id_tipo_rischio",
+            "queryFunct": "select null",
+            "translate": "RESOURCES.id_tipo_rischio_rischi"
+        }
+    ],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select rs.*, fr.id_procedura, fr.id_argomento_tipo_fonte_rischio, fr.id_fonte_rischio from entrasp.rischi rs inner join entrasp.fonti_rischio fr on rs.codice_azienda=fr.codice_azienda and rs.codice_rischio=fr.codice_rischio where fr.codice_azienda=$codice_azienda$ and fr.id_procedura=$id_procedura$ and codice_tipo_fonte_rischio='PROC'"
+        }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Associa nuovo rischio",
+        "labelQuickAdd": "Associa nuovo rischio",
+        "navigateOnSuccess": false
+    },
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
         }
     ]
 }
