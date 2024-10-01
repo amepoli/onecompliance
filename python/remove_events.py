@@ -39,5 +39,5 @@ def remove_events_from_json(file_path):
         print(f"Errore durante l'elaborazione del file: {e}")
 
 # Specifica il percorso del file JSON
-file_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views/domande_risposte.json'
+file_path = '/home/apoli/Development/onecompliance/dynamo-tables/views/domande_risposte.json'
 remove_events_from_json(file_path)
