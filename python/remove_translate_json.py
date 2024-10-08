@@ -37,5 +37,5 @@ def main(input_file):
     print(f"Proprietà 'translate' rimosse: {len(removed_properties)}")
 
 if __name__ == "__main__":
-    input_file = '/home/apoli/Development/onecompliance/dynamo-tables/views/fornitori_dati_associati_sub_of_fornitori.json'  # Inserisci il path del file di input
+    input_file = '/home/apoli/Development/onecompliance/dynamo-tables/views/dialog_crediti_ceduti_dt_pagamento.json'  # Inserisci il path del file di input
     main(input_file)

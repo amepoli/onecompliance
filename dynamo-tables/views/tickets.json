@@ -2,7 +2,9 @@
     "$schema": "../views.schema.json",
     "entryKey": "tickets",
     "inheritsFrom": "data_breach",
-    "dashboardTables": ["dashboard_compiti"],
+    "dashboardTables": [
+        "dashboard_compiti"
+    ],
     "table_multiselection_actions": [
         {
             "viewType": "menu",
@@ -40,7 +42,6 @@
             ]
         }
     ],
-
     "predefinedQueries": [
         {
             "operation": "selectForm",
@@ -141,6 +142,57 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6614 order by id_argomento;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_priorita",
+            "size": 2,
+            "label": "Priorità",
+            "readOnly": false,
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "codice_colore_priorita",
+                "eventTrigger": "load"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_priorita",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when id_argomento_priorita=2484 then 'White' when id_argomento_priorita=6615 then 'Green' when id_argomento_priorita=6616 then 'yellow' when id_argomento_priorita=45115 then 'fireBrick' end as id_argomento_priorita_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "codice_colore_testo_priorita",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select case when id_argomento_priorita=2484 then 'DarkBlue' when id_argomento_priorita=6615 then 'PaleGreen' when id_argomento_priorita=6616 then 'black' when id_argomento_priorita=45115 then 'DarkRed' end as id_argomento_priorita_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6735;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_difformita",
+            "label": "Tipo Difformità",
+            "readOnly": false,
+            "newLine": true
         },
         {
             "autoGenerate": true,
@@ -317,8 +369,7 @@
                     {
                         "message": "Breve descrizione necessaria",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.breve_descrizione_necessaria_offerte"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -339,8 +390,7 @@
                     {
                         "message": "Breve descrizione necessaria",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.breve_descrizione_necessaria_offerte"
+                        "validator": "Validators.required"
                     }
                 ]
             },

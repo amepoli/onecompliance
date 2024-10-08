@@ -94,10 +94,24 @@
                         "icon": "content_copy",
                         "label": "Duplica report",
                         "outputEventName": "report_duplica"
+                    },
+                    {
+                        "icon": "class",
+                        "label": "Crea e associa argomento",
+                        "outputEventName": "create_associate_argomento"
                     }
                 ]
             },
-            "inputEvents": [],
+            "inputEvents": [
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "indicators_reload",
+                    "queryFunct": "select entrasp.argomenti_create_and_update_report($id_report$, $descrizione$, $descrizione$ , 'REP.'||$id_report$, 53062)"
+                }
+            ],
             "isHidden": false,
             "isPrimary": false,
             "buttonIcon": "more_vert",
@@ -288,6 +302,12 @@
             "isPrimary": false,
             "key": "id_report_parent",
             "label": "ID Report"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "indicators_reload"
         }
     ],
     "addElementSettings": {
