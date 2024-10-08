@@ -1,63 +1,92 @@
-import { Component, OnInit } from '@angular/core';
-import { UntypedFormGroup } from '@angular/forms';
-import { FieldConfig } from 'app/oc/interfaces';
-import { PubSubService } from 'app/oc/services';
+import { Component, OnInit } from "@angular/core";
+import { UntypedFormGroup } from "@angular/forms";
+import { FieldConfig } from "app/oc/interfaces";
+import { PubSubService } from "app/oc/services";
 
 @Component({
-  selector: 'app-checkbox',
-  template: `
-<span [formGroup]="group" >
-  <mat-checkbox color="primary" *ngIf="field.isVisible != false" [ngStyle]="{'width': '100%'}" [ngModel]="field.value" [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (change)="onCheck($event)" [matTooltip]="field.tooltip">{{field | octranslate}}</mat-checkbox>
-</span>`,
-  styles: [`
-    :host ::ng-deep .mat-form-field-wrapper {
-      padding-bottom: 2px !important;
-    }
-  `],
-  host: {
-    // '[style.padding-top.px]': 'field.isVisible? "20": "0"',
-    // '[style.padding-bottom.px]': 'field.isVisible? "20": "0"',
-    '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
-    '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
-    '[style.width]': 'field.isVisible? field.width + "%": "0"',
-    '[style.height.px]': 'field.isVisible? "100%": "0"',
-  }
+    selector: "app-checkbox",
+    template: ` <span [formGroup]="group">
+        <mat-checkbox
+            color="primary"
+            *ngIf="field.isVisible != false"
+            [ngStyle]="{ width: '100%' }"
+            [ngModel]="field.value"
+            [formControlName]="field.name"
+            [disabled]="field.readonly || readOnlyPage"
+            (change)="onCheck($event)"
+            [ocTooltip]="field.tooltip"
+            >{{ field | octranslate }}</mat-checkbox
+        >
+    </span>`,
+    styles: [
+        `
+            :host ::ng-deep .mat-form-field-wrapper {
+                padding-bottom: 2px !important;
+            }
+        `,
+    ],
+    host: {
+        // '[style.padding-top.px]': 'field.isVisible? "20": "0"',
+        // '[style.padding-bottom.px]': 'field.isVisible? "20": "0"',
+        "[style.margin-right]": 'field.isVisible? "0.5%": "0"',
+        "[style.margin-left]": 'field.isVisible? "0.5%": "0"',
+        "[style.width]": 'field.isVisible? field.width + "%": "0"',
+        "[style.height.px]": 'field.isVisible? "100%": "0"',
+    },
 })
 export class CheckboxComponent implements OnInit {
-  field: FieldConfig;
-  group: UntypedFormGroup;
-  readOnlyPage: boolean; // field.readonly overridden by page
+    field: FieldConfig;
+    group: UntypedFormGroup;
+    readOnlyPage: boolean; // field.readonly overridden by page
 
-  constructor(private pubSubService: PubSubService) { }
-  ngOnInit() {
+    constructor(private pubSubService: PubSubService) {}
+    ngOnInit() {
+        const _this = this;
 
-    const _this = this;
-
-    if (typeof _this.field.value === 'string') {
-      _this.field.value = parseInt(_this.field.value, 10);
+        if (typeof _this.field.value === "string") {
+            _this.field.value = parseInt(_this.field.value, 10);
+        }
+        if (
+            _this.field.eventName !== null &&
+            _this.field.eventTrigger === "change"
+        ) {
+            if (!_this.field.conditionalQuery) {
+                // No condition required, wait a while before triggering the event
+                setTimeout(() => {
+                    _this.pubSubService.publishEvent(_this.field.eventName, {
+                        origin: _this.field.name,
+                        index: _this.field.index,
+                        valueSet: _this.field.fullValueSet,
+                        data: _this.field.value,
+                        type: "change",
+                    });
+                }, 50);
+            }
+        }
     }
-    if (_this.field.eventName !== null && _this.field.eventTrigger === 'change') {
-      if (!_this.field.conditionalQuery) {
-        // No condition required, wait a while before triggering the event
-        setTimeout(() => { _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, valueSet: _this.field.fullValueSet, data: _this.field.value, type: 'change' }); }, 50);
-      }
-    }
-  }
 
-  onCheck(event: any) {
-    const _this = this;
-    if (_this.field.eventName !== null) {
-      if (!_this.field.conditionalQuery) {
-        // No condition required, wait a while before triggering the event
-        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked ? '1' : '0', type: _this.field.eventTrigger });
-      }
-      else {
-        // First need to run a query
-        // Query here
-        // wait a while before triggering the event
-        _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: event.checked ? '1' : '0', type: _this.field.eventTrigger });
-      }
-
+    onCheck(event: any) {
+        const _this = this;
+        if (_this.field.eventName !== null) {
+            if (!_this.field.conditionalQuery) {
+                // No condition required, wait a while before triggering the event
+                _this.pubSubService.publishEvent(_this.field.eventName, {
+                    origin: _this.field.name,
+                    index: _this.field.index,
+                    data: event.checked ? "1" : "0",
+                    type: _this.field.eventTrigger,
+                });
+            } else {
+                // First need to run a query
+                // Query here
+                // wait a while before triggering the event
+                _this.pubSubService.publishEvent(_this.field.eventName, {
+                    origin: _this.field.name,
+                    index: _this.field.index,
+                    data: event.checked ? "1" : "0",
+                    type: _this.field.eventTrigger,
+                });
+            }
+        }
     }
-  }
 }
