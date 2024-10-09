@@ -1,0 +1,39 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_azioni",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "update entrasp.consuntivazioni cns1 set data_chiusura_ticket = $data_chiusura_ticket$, note =  cns2.note||' - '|| $note$ from entrasp.consuntivazioni cns2 where cns1.codice_azienda = cns2.codice_azienda and cns1.id_cons = cns2.id_cons and cns1.codice_azienda||'~'||cns1.id_cons in ($selected_rows_data$)"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_chiusura_ticket",
+            "label": "Data Chiusura",
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"               
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "newLine": true,
+            "readOnly": false,
+            "size": 7
+        }
+    ]
+}
