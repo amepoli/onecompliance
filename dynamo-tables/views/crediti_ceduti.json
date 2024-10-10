@@ -634,8 +634,8 @@
             "label": "Da aggiornare",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "SELECT ENTRASP.CONTRATTI_DESCR(CC.ID_CONTRATTO, CC.CODICE_AZIENDA) AS CONTRATTO_DESCR, ENTRASP.ANAGRAFICHE_VR_DATI_IDENTIFICATIVI(CC.CODICE_PART, CC.ID_CEDENTE) AS CED_DESCR, DATA_PAGAMENTO, ID_RICESSIONE, (CASE WHEN ID_RICESSIONE IS NOT NULL THEN '1' ELSE '0' END) AS CESSIONATO, ENTRASP.CAMPO_VALORIZZATO(CC.NOTE) AS NOTE_VALORIZZATE, ENTRASP.ANAGRAFICHE_VR_DATI_IDENTIFICATIVI(CC.CODICE_PART, CC.ID_DEBITORE_CEDUTO) AS DEB_DESCR, CC.CODICE_AZIENDA, CC.ID_CESSIONE, ENTRASP.CONTRATTI_DESCR(CC.ID_CONTRATTO, CC.CODICE_AZIENDA) AS DESCR_CONTRATTO, CC.ID_CONTRATTO, CC.TRANCHE, CC.N_FATTURA, CC.DATA_SCADENZA, CC.DATA_FATTURA, CC.IMPORTO, CC.DATA_PAGAMENTO, CC.AZIONATO, CC.OPPOSTO, ENTRASP.FASCICOLO_DESCR(CC.ID_FASCICOLO, CC.CODICE_AZIENDA) AS FASCICOLO, ENTRASP.CALCOLA_SCADUTO(CC.DATA_FATTURA, CC.DATA_PAGAMENTO) AS GIORNI_SCADUTO, CC.LAVORAZIONE_LEGALE, CC.INTERESSI_LEGALI, CC.CAPITALE_RESIDUO_LEG FROM ENTRASP.CREDITI_CEDUTI CC WHERE CODICE_AZIENDA = $codice_azienda$ AND codice_azienda || '-' || id_cessione NOT IN (SELECT pag.codice_azienda || '-' || pag.id_cessione FROM entrasp.pagamenti_crediti pag WHERE pag.codice_azienda = 'RE-CREDIT' AND pag.id_argomento_tipo_pag IN (51488, 51489, 50664) AND pag.codice_azienda || '-' || pag.id_cessione IS NOT NULL) AND esecutivo != '1' AND codice_azienda || '-' || id_cessione NOT IN (SELECT cns.codice_azienda || '-' || cns.id_cessione FROM entrasp.consuntivazioni cns WHERE cns.codice_azienda = $codice_azienda$ AND cns.codice_azienda || '-' || cns.id_cessione IS NOT NULL AND cns.data_intervento >= NOW() - INTERVAL '180 days') AND codice_azienda || '-' || id_cessione NOT IN (SELECT cc.codice_azienda || '-' || cc.id_cessione FROM entrasp.crediti_ceduti cc INNER JOIN entrasp.fascicoli fsc ON cc.codice_azienda = fsc.codice_azienda AND cc.id_fascicolo = fsc.id_fascicolo WHERE fsc.codice_azienda || '-' || fsc.id_fascicolo NOT IN (SELECT cns.codice_azienda || '-' || cns.id_fascicolo FROM entrasp.consuntivazioni cns WHERE cns.codice_azienda = $codice_azienda$ AND cns.codice_azienda || '-' || cns.id_fascicolo IS NOT NULL AND cns.data_intervento >= NOW() - INTERVAL '180 days')) AND cc.id_tipo_documento != 50664",
-            "tooltip": "Non incassati, non esecutivi, non aggiornati da 180 giorni"
+            "queryCond": "(cc.id_tipo_documento != 50664 AND cc.data_pagamento is null AND cc.esecutivo != '1' and cc.data_fattura <= NOW() - INTERVAL '240 days' AND cc.codice_azienda || '-' || cc.id_cessione NOT IN (SELECT cns.codice_azienda || '-' || cns.id_cessione FROM entrasp.consuntivazioni cns WHERE cns.codice_azienda = $codice_azienda$ AND cns.codice_azienda || '-' || cns.id_cessione IS NOT NULL AND cns.data_intervento >= NOW() - INTERVAL '180 days') AND cc.codice_azienda || '-' || cc.id_cessione NOT IN (SELECT cci.codice_azienda || '-' || cci.id_cessione FROM entrasp.crediti_ceduti cci INNER JOIN entrasp.fascicoli fsc ON cci.codice_azienda = fsc.codice_azienda AND cci.id_fascicolo = fsc.id_fascicolo WHERE fsc.codice_azienda || '-' || fsc.id_fascicolo NOT IN (SELECT cns.codice_azienda || '-' || cns.id_fascicolo FROM entrasp.consuntivazioni cns WHERE cns.codice_azienda = $codice_azienda$ AND cns.codice_azienda || '-' || cns.id_fascicolo IS NOT NULL AND cns.data_intervento >= NOW() - INTERVAL '180 days')))",
+            "tooltip": "Non incassati, non esecutivi, non aggiornati da 180 giorni e con data fattura con più di 240 giorni"
         }
     ],
     "form_keys": [
@@ -1410,33 +1410,25 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_documento",
-                    "values": [
-                        "5342"
-                    ]
+                    "values": ["5342"]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_documento_load",
-                    "values": [
-                        "5342"
-                    ]
+                    "values": ["5342"]
                 },
                 {
                     "actionType": "hide",
                     "eventName": "combo_tipo_documento",
                     "condition": "equalTo",
-                    "values": [
-                        "50664"
-                    ]
+                    "values": ["50664"]
                 },
                 {
                     "actionType": "hide",
                     "eventName": "tipo_documento_load",
                     "condition": "equalTo",
-                    "values": [
-                        "50664"
-                    ]
+                    "values": ["50664"]
                 }
             ],
             "isHidden": true,
