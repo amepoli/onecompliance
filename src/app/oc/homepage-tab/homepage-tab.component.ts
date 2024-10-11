@@ -13,6 +13,7 @@ import { FormViewParams, MessageView, TableViewParams, TabType } from '../interf
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
 import { DataSharingService } from '../services/data_sharing.service';
 import { ToolbarElementsComponent } from '../toolbar-elements/toolbar-elements.component';
+import { memoize } from '../decorators/memoize';
 
 @Component({
     selector: 'homepage-tab',
@@ -58,10 +59,11 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
         const _this = this;
 
         this.tiles = [];
-        
-        
+
+
     }
 
+    @memoize()
     ngOnChanges(changes: SimpleChanges) {
         if (changes.entry && this.entry && this.entry.length && changes.entry.previousValue !== this.entry) {
             this.loadTab();
@@ -81,32 +83,32 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
     }
-    
+
 
     ngOnDestroy() {
-        
+
     }
 
     loadTab(updateTileOnly: boolean = false) {
         const _this = this;
         let keys = {};
-        if(this.toolbarElements && this.toolbarElements.toolbar_elements && this.toolbarElements.toolbar_elements.length) {
-            this.toolbarElements.toolbar_elements.filter( element => element.viewType === "toggle" && element.checked).forEach( element => {
+        if (this.toolbarElements && this.toolbarElements.toolbar_elements && this.toolbarElements.toolbar_elements.length) {
+            this.toolbarElements.toolbar_elements.filter(element => element.viewType === "toggle" && element.checked).forEach(element => {
                 keys[element.fieldName] = true
             });
-            this.toolbarElements.toolbar_elements.filter( element => element.viewType === "combobox" && element.selected).forEach( element => {
+            this.toolbarElements.toolbar_elements.filter(element => element.viewType === "combobox" && element.selected).forEach(element => {
                 keys[element.fieldName] = element.selected
             });
         }
-        
-        if(_this.entry) {
+
+        if (_this.entry) {
             _this.isLoading = true;
-            _this.backendService.loadHomePageTab(_this.entry,  _this.authService.getCurrentCompany({}), keys).subscribe(
+            _this.backendService.loadHomePageTab(_this.entry, _this.authService.getCurrentCompany({}), keys).subscribe(
                 response => {
-                    if(response.result === 'OK') {
+                    if (response.result === 'OK') {
                         _this.entryKey = _this.entry;
                         _this.loadTiles(response.response.tiles);
-                        if(!updateTileOnly) {
+                        if (!updateTileOnly) {
                             _this.loadToolbarElements(response.response.toolbar_elements);
                         }
                     }
@@ -121,7 +123,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     handleScroll($event) {
-       
+
     }
 
     reload() {
@@ -135,10 +137,10 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
     loadTiles(tiles: any) {
         this.tiles = [];
-        if(tiles && tiles.length) {
+        if (tiles && tiles.length) {
             tiles.forEach(tile => {
                 this.tiles.push(tile);
-                if(tile.new_line) {
+                if (tile.new_line) {
                     this.tiles.push(
                         {
                             isNewLineTile: true
@@ -150,17 +152,17 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     loadToolbarElements(toolbar_elements: any) {
-        let leftElement = toolbar_elements.filter( x => x.position === 'left');
+        let leftElement = toolbar_elements.filter(x => x.position === 'left');
         let spacer = {
             viewType: 'spacer'
-        };        
-        let rightElement = toolbar_elements.filter( x => x.position === 'right');
-        
-        
+        };
+        let rightElement = toolbar_elements.filter(x => x.position === 'right');
+
+
         this.toolbar_elements = [];
-        
-        leftElement.map( element => {
-            if(element.viewType === 'toggle') {
+
+        leftElement.map(element => {
+            if (element.viewType === 'toggle') {
                 this.toolbar_elements.push({
                     ...element,
                     checked: false
@@ -176,8 +178,8 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.toolbar_elements.push(spacer);
 
-        rightElement.map( element => {
-            if(element.viewType === 'toggle') {
+        rightElement.map(element => {
+            if (element.viewType === 'toggle') {
                 this.toolbar_elements.push({
                     ...element,
                     checked: false
@@ -204,7 +206,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
         let additionalKeys: object = this.tiles[i] && this.tiles[i].content && this.tiles[i].content.navigationAdditionalKeys;
         let keys = Object.assign({}, this.searchKeys || {}, additionalKeys || {});
         this._dataSharingService.setData('homepageSearchKeys', keys);
-        this.router.navigate([`/oc/main-table/${this.entryKey}`]);   
+        this.router.navigate([`/oc/main-table/${this.entryKey}`]);
     }
 
 }
