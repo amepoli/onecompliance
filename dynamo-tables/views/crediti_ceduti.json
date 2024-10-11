@@ -559,8 +559,8 @@
             "label": "Da lavorare",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "(azionato='0' and flag_pool !='1' and  data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
-            "tooltip": "Non azionati, con pagamento avvenuto, non in pool e interessi maggiori di 0"
+            "queryCond": "(azionato='0' and flag_pool !='1' and lavorazione_legale='0' and data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
+            "tooltip": "Non azionati, non in lavorazione, con pagamento avvenuto, non in pool e interessi maggiori di 0"
         },
         {
             "fieldName": "pool",
@@ -1771,15 +1771,19 @@
             },
             {
                 "label": "Crediti pagati, scaduti, non azionati",
-                "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.data_mandato, cre.id_argomento_inatteso, cre.data_inatteso,cre.note_inatteso, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi,,cre.capitale_residuo_leg, cre.note, entrasp.interessi_scaduto_pagato(cre.id_cessione,cre.codice_azienda) from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.codice_azienda=$codice_azienda$ and cre.data_pagamento is not null and cre.data_pagamento>(cre.data_fattura + interval '60 days') and cre.azionato='0' limit 3500"
+                "queryString": "select cre.id_cessione, cnt.numero_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_debitore_ceduto) as debitore_ceduto,entrasp.anagrafiche_vr_dati_identificativi_nom(cre.codice_part, cre.id_acquirente) as acquirente, cre.importo, cre.tranche, cre.lotto,cre.n_fattura, cre.data_fattura, cre.data_scadenza, cre.data_pagamento, cre.cig, cre.data_mandato, cre.id_argomento_inatteso, cre.data_inatteso,cre.note_inatteso, cre.fascicolo, cre.fasc_archiviato, cre.lavorazione_legale, cre.azionato, cre.opposto, cre.accettazione_cessione, cre.esecutivo, cre.autorita_giudiziaria, cre.recupero_interessi,cre.capitale_residuo_leg, cre.note, entrasp.interessi_scaduto_pagato(cre.id_cessione,cre.codice_azienda) from entrasp.crediti_ceduti cre inner join entrasp.contratti cnt on cre.codice_azienda=cnt.codice_azienda and cre.id_contratto=cnt.id_contratto where cre.codice_azienda=$codice_azienda$ and cre.data_pagamento is not null and cre.data_pagamento>(cre.data_fattura + interval '60 days') and cre.azionato='0' limit 3500"
             },
             {
                 "label": "Crediti da confrontare",
                 "queryString": "select pc.id_pagamento, ccid_cessione, cc.id_cedente, cc.codice_part, cc.n_fattura, entrasp.anagrafiche_cognnome(cc.codice_part, cc.id_cedente), entrasp.anagrafiche_piva_cf(cc.codice_part, cc.id_cedente), pc.data_pagamento, pc.importo from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using (codice_azienda, id_cessione) where cc.codice_azienda=$codice_azienda$"
-            },
+            }, 
             {
                 "label": "Crediti non pagati per import",
                 "queryString": "select id_cessione,entrasp.contratti_descr(id_contratto, codice_azienda) as id_n_contratto, tranche, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as debitore_ceduto, n_fattura, data_fattura, importo, null as data_pagamento, null as n_mandato, azionato, fascicolo, entrasp.ricessione_descr(id_ricessione, codice_azienda) as ricessione, 51488 as id_causale_pagamento, id_debitore_ceduto as id_controparte, importo as incasso, note, null as id_conto_corrente from entrasp.crediti_ceduti where codice_azienda= $codice_azienda$ and codice_azienda||'-'||id_cessione not in(select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.id_argomento_tipo_pag in(51488, 51489, 50664))"
+            },
+            {
+                "label": "Crediti da lavorare",
+                "queryString": "select cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as contratto_descr,  entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, data_pagamento, cc.note, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, entrasp.fascicolo_descr(cc.id_fascicolo, cc.codice_azienda) as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.id_ricessione||' - '||entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_ricessione) as ricessione from entrasp.crediti_ceduti cc where (cc.azionato='0' and cc.flag_pool !='1' and cc.lavorazione_legale='0' and cc.data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0) and codice_azienda=$codice_azienda$"
             }
         ]
     },
