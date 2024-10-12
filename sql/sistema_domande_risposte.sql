@@ -1,5 +1,7 @@
 -- FUNCTION: entrasp.risposte_update_insert(character varying, numeric, numeric, text, numeric, date, numeric, numeric, numeric, numeric, numeric, numeric, text, numeric, numeric, character varying, character varying, character varying)
 
+DROP FUNCTION IF EXISTS entrasp.risposte_update_insert(character varying, numeric, numeric, text, numeric, numeric, numeric, numeric, text, numeric, numeric, numeric, character varying, numeric, date, numeric, character varying, character varying);
+
 DROP FUNCTION IF EXISTS entrasp.risposte_update_insert(character varying, numeric, numeric, text, numeric, date, numeric, numeric, numeric, numeric, numeric, numeric, text, numeric, numeric, character varying, character varying, character varying);
 
 CREATE OR REPLACE FUNCTION entrasp.risposte_update_insert(
@@ -13,12 +15,12 @@ CREATE OR REPLACE FUNCTION entrasp.risposte_update_insert(
 	note_ text,
 	idmodellotestvr numeric,
 	punteggiorisposta numeric,
-	risposta_ text default null::text,
-	peso_ numeric default null::numeric,
-	rispostamultipla character varying default null::varchar,
-	rispostanum numeric default null::numeric,
-	rispostadate date default null::Date,
-	idrispostaprev numeric default null::numeric,
+	risposta_ text DEFAULT NULL::text,
+	peso_ numeric DEFAULT NULL::numeric,
+	rispostamultipla character varying DEFAULT NULL::character varying,
+	rispostanum numeric DEFAULT NULL::numeric,
+	rispostadate date DEFAULT NULL::date,
+	idrispostaprev numeric DEFAULT NULL::numeric,
 	objectname character varying DEFAULT NULL::character varying,
 	objectkey character varying DEFAULT NULL::character varying)
     RETURNS void
@@ -343,3 +345,6 @@ ELSEIF idtipodomanda = 2 THEN
 
 END
 $BODY$;
+
+ALTER FUNCTION entrasp.risposte_update_insert(character varying, numeric, numeric, numeric, numeric, numeric, numeric, text, numeric, numeric, text, numeric, character varying, numeric, date, numeric, character varying, character varying)
+    OWNER TO amedeo;
