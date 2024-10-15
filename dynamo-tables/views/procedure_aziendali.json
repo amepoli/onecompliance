@@ -768,7 +768,7 @@
             },
             {
                 "label": "Processi per import",
-                "queryString": "SELECT codice, descrizione_breve, id_procedura, id_procedura_parent, id_centro_gest, descrizione, id_tipo_processo, stato_attuazione, id_anagrafica_societa FROM entrasp.procedure_aziendali WHERE codice_azienda = $codice_azienda$;"
+                "queryString": "SELECT id_procedura, codice, descrizione_breve, descrizione, entrasp.procedure_aziendali_descr(id_procedura_parent, codice_azienda) AS procedura_superiore, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) AS ufficio, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS tipo_processo, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) AS stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_societa) AS gruppo FROM entrasp.procedure_aziendali WHERE codice_azienda = $codice_azienda$;"
             }
         ],
         "formQueries": [
