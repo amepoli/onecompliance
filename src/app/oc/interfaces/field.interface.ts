@@ -97,4 +97,5 @@ export interface FieldConfig {
   inputEvents?: FieldInputEvent[];
   lazyLoading?: boolean;
   widgetType?: FormWidgetType;
+  padding?: string;
 }
