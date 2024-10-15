@@ -6,12 +6,211 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_ruolo='CLI' and cnt.id_argomento_contratto=49580"
+            "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, cnt.codice_azienda, cnt.tan, cnt.numero_contratto, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato, teg, spread, tax_min, tax_max, tass_mo, moraperc  from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_ruolo='CLI' and cnt.id_argomento_contratto=49580"
         },
         {
             "operation": "update",
             "type": "postProcessing",
             "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+        }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Nuovo foglio informativo",
+        "navigateOnSuccess": false
+    },
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_contratto_principale",
+            "label": "id_contratto_principale"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_agente_primario",
+            "label": "id_agente_primario"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "3%",
+            "key": "id_contratto",
+            "label": "#"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "6%",
+            "isPrimary": false,
+            "key": "numero_contratto",
+            "label": "N.Contratto",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "590"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "width": "13%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_stipulazione",
+            "width": "6%",
+            "label": "Dt.inizio.valid."
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_contratto_a",
+            "width": "7%",
+            "label": "Dt.fine.valid."
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "width": "6%",
+            "label": "Stato",
+            "style": [
+                {
+                    "value": "Cessato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Offerta rifiutata",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#C0C0C0",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In Scadenza",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In attesa di firma",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Attivo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                }
+            ],
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tan",
+            "label": "TAN",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "teg",
+            "label": "TEG",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "spread",
+            "label": "Spread",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tass_mo",
+            "label": "Tasso mora",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tax_max",
+            "label": "Tasso massimo",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_evento",
+            "label": "id_argomento_evento"
         }
     ],
     "subTables": [
@@ -150,17 +349,6 @@
             "label": "Aperti senza progetto associato",
             "newLine": false,
             "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
-        },
-        {
-            "fieldName": "rischio_conflitto",
-            "format": {
-                "value": "0",
-                "viewType": "toggle"
-            },
-            "label": "Rischio conflitti",
-            "newLine": false,
-            "size": 1.5,
-            "queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'"
         }
     ],
     "querySuffixes": {
