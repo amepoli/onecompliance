@@ -11,7 +11,6 @@ import { DataSharingService } from 'app/oc/services/data_sharing.service';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { QuickAddDialogComponent } from 'app/oc/dialogs/quickadd.dialog/quickadd.dialog.component';
 import { saveAs } from 'file-saver';
-import { memoize } from 'app/oc/decorators/memoize';
 
 
 interface TableStyleElement {
@@ -216,7 +215,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.calculateTableHeight();
     }
 
-    @memoize()
     ngOnChanges(changes: SimpleChanges): void {
         const _this = this;
         _this._console.log(`isCurTab: ${_this.isCurTab}`);
