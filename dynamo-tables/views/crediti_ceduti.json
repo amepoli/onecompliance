@@ -383,8 +383,20 @@
                 "viewType": "combobox"
             },
             "label": "Ricessione",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "id_ricessione=$id_ricessione_s$"
+        },
+        {
+            "fieldName": "id_aggiornamento_s",
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento || ' - ' || arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son  WHERE id_argomento_father=52927",
+            "options": [],
+            "viewType": "combobox"
+            },
+            "label": "Aggiornamento",
+            "tooltip": "Individua tutti quei crediti il cui aggiornamento sia pari a",
+            "newLine": true,
+            "queryCond": "cc.codice_azienda||'-'||cc.id_cessione in(select codice_azienda||'-'||id_cessione from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_argomento=$id_aggiornamento_s$ and id_cessione is not null)"
         },
         {
             "fieldName": "flag_lav_legale",
@@ -469,7 +481,7 @@
             "label": "Non Esecutivi",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "esecutivo != '1'"
+            "queryCond": "(cc.esecutivo = '0' or cc.esecutivo is null)"
         },
         {
             "fieldName": "flag_fasc_archiviato_s",
@@ -489,7 +501,7 @@
             "label": "Crediti non incassati",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "data_pagamento is null"
+            "queryCond": "(cc.data_pagamento is null or cc.capitale_residuo_leg>0)"
         },
         {
             "fieldName": "data_pagamento_not_null",
@@ -498,7 +510,7 @@
             },
             "label": "Crediti incassati",
             "newLine": false,
-            "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda='€global_codice_azienda€' and pag.id_argomento_tipo_pag in(51488))",
+            "queryCond": "data_pagamento is not null",
             "size": 1.42
         },
         {
@@ -529,7 +541,7 @@
             "label": "Data Pagamento Precedente a Data Fattura",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)"
+            "queryCond": "data_pagamento<data_fattura"
         },
         {
             "fieldName": "dt_scad_prec_dt_fatt",
@@ -559,8 +571,8 @@
             "label": "Da lavorare",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "(azionato='0' and flag_pool !='1' and lavorazione_legale='0' and data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
-            "tooltip": "Non azionati, non in lavorazione, con pagamento avvenuto, non in pool e interessi maggiori di 0"
+            "queryCond": "(azionato='0' and flag_pool !='1' and lavorazione_legale='0' and data_pagamento is not null and esecutivo='0' and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
+            "tooltip": "Non azionati, non in lavorazione, con pagamento avvenuto, non in pool, non esecutivo e interessi maggiori di 0"
         },
         {
             "fieldName": "pool",
@@ -797,15 +809,17 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "date",
+                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
+            "sameOrigin": false,
             "key": "data_scadenza",
+            "queryFunct": "TO_CHAR(data_fattura::date + interval '60 days', 'DD/MM/YYYY')",
             "label": "Data Scadenza",
-            "readOnly": false,
+            "readOnly": true,
             "size": 1.5
         },
         {
@@ -1782,8 +1796,8 @@
                 "queryString": "select id_cessione,entrasp.contratti_descr(id_contratto, codice_azienda) as id_n_contratto, tranche, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cedente) as cedente, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_debitore_ceduto) as debitore_ceduto, n_fattura, data_fattura, importo, null as data_pagamento, null as n_mandato, azionato, fascicolo, entrasp.ricessione_descr(id_ricessione, codice_azienda) as ricessione, 51488 as id_causale_pagamento, id_debitore_ceduto as id_controparte, importo as incasso, note, null as id_conto_corrente from entrasp.crediti_ceduti where codice_azienda= $codice_azienda$ and data_pagamento is null"
             },
             {
-                "label": "Crediti da lavorare",
-                "queryString": "select cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as contratto_descr,  entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, data_pagamento, cc.note, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, entrasp.fascicolo_descr(cc.id_fascicolo, cc.codice_azienda) as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, entrasp.ricessione_descr_estesa(cc.id_ricessione, cc.codice_azienda) as ricessione from entrasp.crediti_ceduti cc where (cc.azionato='0' and cc.flag_pool !='1' and cc.lavorazione_legale='0' and cc.data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0) and codice_azienda=$codice_azienda$"
+                "label": "Estrazione estesa",
+                "queryString": "select cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as contratto_descr,  entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, data_pagamento, cc.note, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, entrasp.fascicolo_descr(cc.id_fascicolo, cc.codice_azienda) as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, entrasp.ricessione_descr_estesa(cc.id_ricessione, cc.codice_azienda) as ricessione from entrasp.crediti_ceduti cc where codice_azienda=$codice_azienda$"
             }
         ]
     },

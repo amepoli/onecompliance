@@ -1,0 +1,78 @@
+-- FUNCTION: entrasp.crea_json_verifica(character varying, numeric, numeric)
+--DROP FUNCTION IF EXISTS entrasp.crea_json_verifica(character varying, numeric, numeric);
+
+CREATE OR REPLACE FUNCTION entrasp.crea_json_verifica(
+	codiceazienda character varying,
+	idmodellotest numeric,
+	idmodellotestvr numeric,
+	idsondaggio numeric default null,
+	idsomministrazione numeric default null)
+    RETURNS text
+    LANGUAGE 'plpgsql'
+    COST 100
+    IMMUTABLE PARALLEL SAFE 
+AS $BODY$
+DECLARE
+    result JSON; -- Variabile di tipo JSON,
+	idrisultato numeric;
+BEGIN
+    -- Esegui la query e assegna il risultato alla variabile
+    
+	if idmodellotest is null or idmodellotestvr is null and idsondaggio is not null then
+		select id_modello_test, id_modello_test_vr
+		from entrasp.sondaggi
+		where codice_azienda=codiceazienda and id_sondaggio=idsondaggio
+		into idmodellotest, idmodellotestvr;
+	end if;
+
+	select id_risultato
+	from entrasp.modelli_test_vr
+	where codice_azienda=codiceazienda and id_modello_test=idmodellotest and id_modello_test_vr=idmodellotestvr
+	into idrisultato;
+	
+	SELECT json_agg(json_build_object(
+            'id_domanda', dm.id_domanda, 
+            'descrizione', dm.descrizione,
+            'note_domanda', dm.note,
+            'condition', entrasp.domanda_condition(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda), 
+            'type', td.html_type,
+            'note', NULL, -- Puoi aggiungere qui altre note o commenti
+            'risposte_previste', (
+                SELECT json_agg(json_build_object(
+                    'id_risposta_prev', rp.id_risposta_prev,
+                    'risposta', rp.risposta,
+                    'ordinamento', rp.ordinamento,
+                    'peso', rp.peso,
+					'chosen', case when rs.id_risposta_prev is not null then true else false end,
+					'background_color', (select background_color from entrasp.answers_attributes_from_pct(codiceazienda, idrisultato, rp.peso)),
+					'font_color', (select font_color from entrasp.answers_attributes_from_pct(codiceazienda, idrisultato, rp.peso))
+                ) ORDER BY rp.ordinamento
+				) -- Ordina le risposte per il campo ordinamento
+                FROM entrasp.risposte_previste rp
+                left join (select codice_azienda, id_sondaggio, id_somministrazione, id_modello_test, id_modello_test_vr, id_domanda, id_risposta,id_risposta_prev
+							from entrasp.risposte where codice_azienda=codiceazienda and id_sondaggio=idsondaggio and id_somministrazione=idsomministrazione) rs
+				on rp.codice_azienda=rs.codice_azienda and rp.id_domanda=rs.id_domanda and rp.id_modello_test=rs.id_modello_test and
+				   rp.id_modello_test_vr=rs.id_modello_test_vr and rp.id_risposta_prev=rs.id_risposta_prev 
+				WHERE rp.codice_azienda = dm.codice_azienda
+                  AND rp.id_domanda = dm.id_domanda
+                  AND rp.id_modello_test_vr = dm.id_modello_test_vr
+                  AND rp.id_modello_test = dm.id_modello_test
+            )
+        ) order by dm.ordinamento) 
+    INTO result
+    FROM entrasp.domande dm 
+    INNER JOIN entrasp.tipi_domande td ON dm.id_tipo_domanda = td.id_tipo_domanda
+    WHERE dm.codice_azienda = codiceazienda
+      AND dm.id_modello_test = idmodellotest
+      AND dm.id_modello_test_vr = idmodellotestvr;
+
+    -- Restituisci il risultato come testo
+    RETURN result::text; -- Converti il risultato JSON in formato testo
+END;
+$BODY$;
+
+ALTER FUNCTION entrasp.crea_json_verifica(character varying, numeric, numeric, numeric, numeric)
+    OWNER TO postgres;
+
+
+select entrasp.crea_json_verifica('IREN', 107, 2, 84, 84);

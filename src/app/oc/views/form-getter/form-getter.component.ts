@@ -13,8 +13,6 @@ import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { MenuOptionsCustomDialogComponent } from 'app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 
-import { memoize } from 'app/oc/decorators/memoize';
-
 @Component({
     selector: 'form-getter',
     templateUrl: './form-getter.component.html',
@@ -99,7 +97,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
     };
 
-    attributePostChecks: { [key: string]: AttributePostChecks[] } = {};
+    attributePostChecks: {[key: string]: AttributePostChecks[]} = {};
 
 
     constructor(
@@ -120,7 +118,6 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     }
 
-    @memoize()
     ngOnChanges(changes: SimpleChanges) {
         if (changes.filter && this.results && this.results.length) {
             this.applyFilter();
@@ -209,13 +206,12 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         });
     }
 
-    @memoize()
-    public resetPagination(filteredFormData: FieldConfig[][]) {
-        if (filteredFormData && filteredFormData.length) {
+    public resetPagination() {
+        if (this.filteredFormData && this.filteredFormData.length) {
             this.pagination = {
                 curPage: 1,
                 curRecords: [],
-                totalPages: Math.ceil(filteredFormData.length / this.recordsPerPage)
+                totalPages: Math.ceil(this.filteredFormData.length / this.recordsPerPage)
             };
             this.updatePagination(0);
         }
@@ -420,10 +416,10 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 const event = params.inputEvents[i];
                                 setTimeout(() => {
                                     const subcription = _this.pubSubService.subscribe(event.eventName,
-                                        value => {
+                                    value => {
 
-                                            _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
-                                        });
+                                        _this.eventCallback(event, value, null); // null as keyListener means that the full table is affected
+                                    });
                                     _this.formSubscriptions.push(subcription);
                                 }, 50);
                             }
@@ -465,7 +461,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         let attributePostChecks = {};
 
         _this.viewKeys.forEach(key => {
-            if (key.attributePostChecks && key.attributePostChecks.length) {
+            if(key.attributePostChecks && key.attributePostChecks.length) {
                 attributePostChecks[key.key] = key.attributePostChecks;
             }
         });
@@ -474,24 +470,24 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
 
     applyAttributePostChecks(results: any) {
         const _this = this;
-        if (Array.isArray(results.data)) {
-            for (let i = 0; i < results.data.length; i++) {
+        if(Array.isArray(results.data)) {
+            for(let i = 0; i < results.data.length; i++) {
                 Object.keys(_this.attributePostChecks).forEach((key) => {
                     _this.attributePostChecks[key].forEach((postCheck) => {
 
                         let conditionMet = true;
-                        if (postCheck.resultType === 'condition') {
-                            if (postCheck.conditionType === 'equalTo') {
-                                if (results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
-                                    if (results.data[i][postCheck.key].value === postCheck.conditionValue) {
+                        if ( postCheck.resultType === 'condition') {
+                            if(postCheck.conditionType === 'equalTo') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value === postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
                                     else {
                                         conditionMet = false;
-                                    }
+                                    }    
                                 }
                                 else {
-                                    if (results.data[i][postCheck.key] === postCheck.conditionValue) {
+                                    if(results.data[i][postCheck.key] === postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
                                     else {
@@ -499,17 +495,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             }
-                            else if (postCheck.conditionType === 'notEqualTo') {
-                                if (results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
-                                    if (results.data[i][postCheck.key].value !== postCheck.conditionValue) {
+                            else if(postCheck.conditionType === 'notEqualTo') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value !== postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
                                     else {
                                         conditionMet = false;
-                                    }
+                                    }    
                                 }
                                 else {
-                                    if (results.data[i][postCheck.key] !== postCheck.conditionValue) {
+                                    if(results.data[i][postCheck.key] !== postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
                                     else {
@@ -517,17 +513,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             }
-                            else if (postCheck.conditionType === 'greaterThan') {
-                                if (results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
-                                    if (results.data[i][postCheck.key].value > postCheck.conditionValue) {
+                            else if(postCheck.conditionType === 'greaterThan') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value > postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
                                     else {
                                         conditionMet = false;
-                                    }
+                                    }    
                                 }
                                 else {
-                                    if (results.data[i][postCheck.key] > postCheck.conditionValue) {
+                                    if(results.data[i][postCheck.key] > postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
                                     else {
@@ -535,17 +531,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             }
-                            else if (postCheck.conditionType === 'lessThan') {
-                                if (results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
-                                    if (results.data[i][postCheck.key].value < postCheck.conditionValue) {
+                            else if(postCheck.conditionType === 'lessThan') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value < postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
                                     else {
                                         conditionMet = false;
-                                    }
+                                    }    
                                 }
                                 else {
-                                    if (results.data[i][postCheck.key] < postCheck.conditionValue) {
+                                    if(results.data[i][postCheck.key] < postCheck.conditionValue) {
                                         conditionMet = true;
                                     }
                                     else {
@@ -553,17 +549,17 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                     }
                                 }
                             }
-                            else if (postCheck.conditionType === 'Includes') {
-                                if (results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
-                                    if (results.data[i][postCheck.key].value.includes(postCheck.conditionValue)) {
+                            else if(postCheck.conditionType === 'Includes') {
+                                if(results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') {
+                                    if(results.data[i][postCheck.key].value.includes(postCheck.conditionValue)) {
                                         conditionMet = true;
                                     }
                                     else {
                                         conditionMet = false;
-                                    }
+                                    }    
                                 }
                                 else {
-                                    if (results.data[i][postCheck.key].includes(postCheck.conditionValue)) {
+                                    if(results.data[i][postCheck.key].includes(postCheck.conditionValue)) {
                                         conditionMet = true;
                                     }
                                     else {
@@ -573,34 +569,34 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             }
                         }
 
-                        let value = results.data[i][postCheck.key] != null && (results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object') ? results.data[i][postCheck.key].value : results.data[i][postCheck.key];
+                        let value = results.data[i][postCheck.key] != null && (results.data[i][postCheck.key] != null && typeof results.data[i][postCheck.key] === 'object')? results.data[i][postCheck.key].value : results.data[i][postCheck.key];
 
-                        if (postCheck.resultType === 'condition') {
-                            if (conditionMet) {
+                        if(postCheck.resultType === 'condition') {
+                            if(conditionMet) {
                                 value = postCheck.resultTrueValue;
                             }
                             else {
                                 value = postCheck.resultFalseValue;
                             }
                         }
-
-                        if (postCheck.attributeType !== 'style') {
-                            if (!results.attributes[key]) {
+                        
+                        if(postCheck.attributeType !== 'style') {
+                            if(!results.attributes[key]) {
                                 results.attributes[key] = {}
                             }
-                            if (!results.attributes[key][postCheck.attributeType]) {
+                            if(!results.attributes[key][postCheck.attributeType]) {
                                 results.attributes[key][postCheck.attributeType] = [];
                             }
                             results.attributes[key][postCheck.attributeType][i] = value;
                         }
                         else {
-                            if (!results.attributes[key]) {
+                            if(!results.attributes[key]) {
                                 results.attributes[key] = {}
                             }
-                            if (!results.attributes[key][postCheck.attributeType]) {
+                            if(!results.attributes[key][postCheck.attributeType]) {
                                 results.attributes[key][postCheck.attributeType] = {};
                             }
-                            if (!results.attributes[key][postCheck.attributeType][postCheck.styleAttribute]) {
+                            if(!results.attributes[key][postCheck.attributeType][postCheck.styleAttribute]) {
                                 results.attributes[key][postCheck.attributeType][postCheck.styleAttribute] = [];
                             }
                             results.attributes[key][postCheck.attributeType][postCheck.styleAttribute][i] = value;
@@ -656,13 +652,13 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                     _this.formSubscriptions.push(subscription);
                 }
             }
-            if (key.onChangeResetKey) {
+            if(key.onChangeResetKey) {
                 const reset_by_key_subscription = _this.pubSubService.subscribe(_this.formParams.entryName + '_' + key.key + '_reset_by_key',
-                    value => {
-                        _this.eventCallback({ actionType: 'reset_by_key' }, value, value.data);
-                    });
-                _this.formSubscriptions.push(reset_by_key_subscription);
-
+                value => {
+                    _this.eventCallback({ actionType: 'reset_by_key' }, value, value.data);
+                });
+            _this.formSubscriptions.push(reset_by_key_subscription);
+                
             }
             // subscribe to combos
             if (key.format.viewType === 'combobox') {
@@ -773,7 +769,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         // prepare the form
         _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this.getFormData(_this.viewKeys, results)));
         _this.quickAddData = _this.filteredFormData.map(x => false);
-        _this.resetPagination(this.filteredFormData);
+        _this.resetPagination();
 
         // process the form
         _this.process_form(_this.filteredFormData);
@@ -814,7 +810,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                         _this.quickAddData = [true];
                     }
                     // add it to the top of the list
-                    _this.resetPagination(_this.filteredFormData);
+                    _this.resetPagination();
 
                 }
                 else {
@@ -911,8 +907,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         }
 
         if (field != null) {
-            if (attributeStyle != null) {
-                field.style = { ...attributeStyle };
+            if(attributeStyle != null) {
+                field.style = {...attributeStyle};
             }
 
             fieldValue = {
@@ -1160,7 +1156,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             if (event.condition === 'equalTo') {
                 // Check each element instead of comparing arrays as string like before
                 msgData.forEach((curValue: any) => {
-                    if (!eventValues.includes(curValue)) {
+                    if(!eventValues.includes(curValue)) {
                         conditionMet = false;
                     }
                 })
@@ -1168,7 +1164,7 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
             else if (event.condition === 'notEqualTo') {
                 // Check each element instead of comparing arrays as string like before
                 msgData.forEach((curValue: any) => {
-                    if (eventValues.includes(curValue)) {
+                    if(eventValues.includes(curValue)) {
                         conditionMet = false;
                     }
                 })
@@ -1304,15 +1300,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                             continue; // skip null entries
                         }
                         if (Array.isArray(element) && element.length > 0) {
-                            if (element.length === 1 && element[0] === null) {
+                            if(element.length === 1 && element[0] === null) {
                                 continue; // skip null entries
                                 // chiavi[key] = 'ARRAY[NULL]';
                             }
-                            else if (typeof element[0] === 'object' && Object.keys(element[0]).length > 0 && element[0]['id']) {
-                                chiavi[key] = 'ARRAY[' + element.map(x => x.id).join(',') + ']';
+                            else if(typeof element[0] === 'object' && Object.keys(element[0]).length > 0 && element[0]['id']) {
+                                chiavi[key] = 'ARRAY[' +  element.map(x => x.id).join(',') + ']';
                             }
                             else {
-                                chiavi[key] = 'ARRAY[' + element.map(x => x).join(',') + ']';
+                                chiavi[key] = 'ARRAY[' +  element.map(x => x).join(',') + ']';
                             }
                         }
                         // decode combos
@@ -1381,18 +1377,20 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                 if (comboboxEl) {
                                     let combobox: ComboboxComponent = null;
                                     combobox = <ComboboxComponent>comboboxEl.componentRef.instance;
-                                    if (combobox.field.isMultiSelect || combobox.field.showTagsView) {
+                                    if(combobox.field.isMultiSelect || combobox.field.showTagsView) 
+                                    {
                                         let comboValues = [];
-                                        if (combobox.field.value != null) {
+                                        if(combobox.field.value != null)
+                                        {
                                             combobox.field.value.forEach(comboValue => {
-                                                if (typeof comboValue === 'object') {
-                                                    if (comboValue.id !== undefined) {
-                                                        comboValues.push(comboValue.id);
-                                                    }
+                                                if(typeof comboValue === 'object') {
+                                                   if(comboValue.id !== undefined) {
+                                                       comboValues.push(comboValue.id);
+                                                   } 
                                                 }
                                                 else {
                                                     var possibleValues = result.filter(x => x.id === comboValue);
-                                                    if (possibleValues && possibleValues.length > 0) {
+                                                    if(possibleValues && possibleValues.length > 0) {
                                                         comboValues.push(possibleValues[0].id);
                                                     }
                                                 }
@@ -1404,14 +1402,15 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                                             combobox.setValue(comboValues);
                                         }
 
-                                    } else {
+                                    }else
+                                    {
                                         const comboValue = combobox.field.value != null ? combobox.field.value.id : null;
                                         combobox.setOptions(result, true, true);
                                         if (comboValue != null) {
                                             combobox.setValue(comboValue);
                                         }
                                     }
-
+                                  
                                 }
                             } else {  // query_style
                                 const filterFormData = (dataset, param) => {
@@ -1491,18 +1490,19 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 // To reset only combobox
                 // let combobox: ComboboxComponent = <ComboboxComponent>current_line.dynamicFields.find(df => df.field.name === value.data).componentRef.instance;
                 // combobox.reset();
-
+                
                 // To try generically all dynamic fields
-                if (value.data) {
+                if(value.data)
+                {
                     value.data.forEach(v => {
                         let dynamicField: any = <any>current_line.dynamicFields.find(df => df.field.name === v)?.componentRef?.instance ?? null;
-                        if (dynamicField && dynamicField.reset) {
+                        if(dynamicField && dynamicField.reset) {
                             dynamicField.reset();
                         }
                         else {
                             _this._toastService.showErrorToast("Error", "Error resetting " + v);
-                        }
-                    });
+                        }      
+                    });   
                 }
             }
         } else if ((event.actionType === 'update' || event.actionType === 'update_style') && conditionMet) {
@@ -1660,11 +1660,11 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
         } else if (event.actionType === 'user_api') {
             _this.runUserManagementEvent(event, value, keyListener);
         } else if (event.actionType === 'dialog') {
-            let data = { ...event, keys: {} }
-            _this.viewKeys.filter(x => x.isPrimary).forEach((viewKey: FormViewKey) => {
+            let data = {...event, keys: {}}
+            _this.viewKeys.filter(x => x.isPrimary).forEach( (viewKey: FormViewKey) => {
                 data.keys[viewKey.key] = value.valueSet[viewKey.key]
             });
-            data.keys = { ...data.keys, ..._this.currentKeys };
+            data.keys = {...data.keys, ..._this.currentKeys};
             const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
                 width: '1280px',
                 height: 'auto',
