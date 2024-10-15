@@ -2,6 +2,11 @@
     "$schema": "../views.schema.json",
     "entryKey": "anagrafiche_sub_of_asset",
     "inheritsFrom": "asset_sub_of_anagrafiche",
+    "addElementSettings": {
+        "labelQuickAdd": "Nuovo Utente Abilitato",
+        "labelAdd": "Nuovo Utente Abilitato",
+        "navigateOnSuccess": false
+    },
     "form_keys": [
         {
             "autoGenerate": false,
@@ -13,8 +18,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "readOnly": true,
-            "translate": "RESOURCES.codice_azienda_anagrafiche_sub_of_asset"
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -26,13 +30,12 @@
             "isPrimary": true,
             "key": "codice_part",
             "label": "codice_part",
-            "readOnly": true,
-            "translate": "RESOURCES.codice_part_anagrafiche_sub_of_asset"
+            "readOnly": true
         },
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', ragione_sociale) as name from entrasp.anagrafiche_vr an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and codice_ruolo= 'DIP';",
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, coalesce  ((ai.nome ||' '|| ai.cognome), an.ragione_sociale) as name FROM entrasp.anagrafiche_vr an inner join entrasp.anagrafiche_id ai using (codice_part,id_anagrafica) WHERE an.codice_part = '€global_codice_part€'",
                 "options": [],
                 "viewType": "combobox"
             },
@@ -41,8 +44,22 @@
             "key": "id_anagrafica",
             "label": "Utente Abilitato",
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.utente_abilitato_anagrafiche_sub_of_asset"
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select ru.codice_ruolo as id, ru.descrizione as name from entrasp.ruoli ru where ru.codice_ruolo in ('AMMSIS','DIP','UT','ND')",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_ruolo",
+            "label": "Ruolo",
+            "readOnly": false,
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -55,8 +72,7 @@
             "key": "id_asset",
             "label": "id_asset",
             "readOnly": true,
-            "newLine": false,
-            "translate": "RESOURCES.id_asset_anagrafiche_sub_of_asset"
+            "newLine": false
         }
     ],
     "table_keys": [
@@ -67,8 +83,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.codice_azienda_anagrafiche_sub_of_asset"
+            "label": "codice_azienda"
         },
         {
             "format": {
@@ -120,8 +135,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "id_asset",
-            "label": "Asset",
-            "translate": "RESOURCES.asset_anagrafiche_sub_of_asset"
+            "label": "Asset"
         },
         {
             "format": {
@@ -132,8 +146,7 @@
             "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica)",
             "key": "anagrafiche_descr",
             "sameOrigin": false,
-            "label": "Utenti Abilitati",
-            "translate": "RESOURCES.utenti_abilitati_anagrafiche_sub_of_asset"
+            "label": "Utenti Abilitati"
         },
         {
             "format": {
@@ -142,8 +155,16 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "id_anagrafica",
-            "label": "ID",
-            "translate": "RESOURCES.id_anagrafiche_sub_of_asset"
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_ruolo",
+            "label": "Ruolo"
         },
         {
             "format": {
@@ -176,8 +197,7 @@
                     "button_icon": "",
                     "value": "*"
                 }
-            ],
-            "translate": "RESOURCES.utente_anagrafiche_sub_of_asset"
+            ]
         }
     ]
 }
