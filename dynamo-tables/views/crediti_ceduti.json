@@ -498,7 +498,7 @@
             },
             "label": "Crediti incassati",
             "newLine": false,
-            "queryCond": "codice_azienda||'-'||id_cessione in (select pag.codice_azienda||'-'||pag.id_cessione from entrasp.pagamenti_crediti pag where pag.codice_azienda='€global_codice_azienda€' and pag.id_argomento_tipo_pag in(51488))",
+            "queryCond": "data_pagamento is not null",
             "size": 1.42
         },
         {
@@ -529,7 +529,7 @@
             "label": "Data Pagamento Precedente a Data Fattura",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "codice_azienda||'-'||id_cessione in(select cc.codice_azienda||'-'||cc.id_cessione from entrasp.crediti_ceduti cc inner join entrasp.pagamenti_crediti pc using(codice_azienda, id_cessione) where cc.codice_azienda='RE-CREDIT' and pc.id_argomento_tipo_pag in(51487, 51488) and pc.data_pagamento<cc.data_fattura)"
+            "queryCond": "data_pagamento<data_fattura"
         },
         {
             "fieldName": "dt_scad_prec_dt_fatt",
@@ -797,15 +797,17 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "date",
+                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
+            "sameOrigin": false,
             "key": "data_scadenza",
+            "queryFunct": "TO_CHAR(data_fattura::date + interval '60 days', 'DD/MM/YYYY')",
             "label": "Data Scadenza",
-            "readOnly": false,
+            "readOnly": true,
             "size": 1.5
         },
         {
