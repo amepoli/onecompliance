@@ -383,8 +383,20 @@
                 "viewType": "combobox"
             },
             "label": "Ricessione",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "id_ricessione=$id_ricessione_s$"
+        },
+        {
+            "fieldName": "id_aggiornamento_s",
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento || ' - ' || arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son  WHERE id_argomento_father=52927",
+            "options": [],
+            "viewType": "combobox"
+            },
+            "label": "Aggiornamento",
+            "tooltip": "Individua tutti quei crediti il cui aggiornamento sia pari a",
+            "newLine": true,
+            "queryCond": "cc.codice_azienda||'-'||cc.id_cessione in(select codice_azienda||'-'||id_cessione from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_argomento=$id_aggiornamento_s$ and id_cessione is not null)"
         },
         {
             "fieldName": "flag_lav_legale",
@@ -469,7 +481,7 @@
             "label": "Non Esecutivi",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "esecutivo != '1'"
+            "queryCond": "(cc.esecutivo = '0' or cc.esecutivo is null)"
         },
         {
             "fieldName": "flag_fasc_archiviato_s",
@@ -489,7 +501,7 @@
             "label": "Crediti non incassati",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "data_pagamento is null"
+            "queryCond": "(cc.data_pagamento is null or cc.capitale_residuo_leg>0)"
         },
         {
             "fieldName": "data_pagamento_not_null",
@@ -559,8 +571,8 @@
             "label": "Da lavorare",
             "newLine": false,
             "size": 1.42,
-            "queryCond": "(azionato='0' and flag_pool !='1' and lavorazione_legale='0' and data_pagamento is not null and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
-            "tooltip": "Non azionati, non in lavorazione, con pagamento avvenuto, non in pool e interessi maggiori di 0"
+            "queryCond": "(azionato='0' and flag_pool !='1' and lavorazione_legale='0' and data_pagamento is not null and esecutivo='0' and entrasp.interessi_scaduto_pagato(cc.id_cessione,cc.codice_azienda)>0)",
+            "tooltip": "Non azionati, non in lavorazione, con pagamento avvenuto, non in pool, non esecutivo e interessi maggiori di 0"
         },
         {
             "fieldName": "pool",
