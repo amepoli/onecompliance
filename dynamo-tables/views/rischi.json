@@ -2581,6 +2581,10 @@
             {
                 "label": "rischi per import",
                 "queryString": "select codice_rischio, titolo, descrizione, entrasp.centri_gestionali_nome(codice_part, id_centro_gest) as id_centro_gest, codice, entrasp.centri_gestionali_nome(codice_part, id_centro_gest_liv2) as id_centro_gest_liv2 from entrasp.rischi where codice_azienda=$codice_azienda$"
+            },
+            {
+                "label": "Rischi-Presidi per import",
+                "queryString": "select codice_rischio, entrasp.rischi_cod_tit(codice_azienda, codice_rischio) as titolo, id_presidio, entrasp.presidi_descr(id_presidio, codice_azienda) from entrasp.rischi_presidi where codice_azienda=$codice_azienda$"
             }
         ]
     },
@@ -2589,6 +2593,10 @@
             {
                 "label": "Importa/Modifica Rischi",
                 "queryString": "select entrasp.import_rischi_update($codice_azienda$, $nome_file$)"
+            },
+            {
+                "label": "Associa Rischi-Presidi",
+                "queryString": "select entrasp.associa_rischi_presidi($codice_azienda$, $nome_file$)"
             }
         ]
     },

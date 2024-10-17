@@ -704,6 +704,10 @@
             {
                 "label": "Importazione/Modifica Processi",
                 "queryString": "select entrasp.import_update_procedure_aziendali($codice_azienda$,$nome_file$)"
+            },
+            {
+                "label": "Associa Processi-Presidi",
+                "queryString": "select entrasp.associa_processi_presidi($codice_azienda$,$nome_file$)"
             }
         ]
     },
@@ -728,6 +732,10 @@
             {
                 "label": "Processi per import",
                 "queryString": "SELECT id_procedura, codice, descrizione_breve, descrizione, id_procedura_parent, entrasp.centri_gestionali_nome(codice_part, id_centro_gest) AS ufficio, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS tipo_processo, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) AS stato, entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part, id_anagrafica_societa) AS gruppo FROM entrasp.procedure_aziendali WHERE codice_azienda = $codice_azienda$;"
+            },
+            {
+                "label": "Associa Processi-Presidi",
+                "queryString": "select id_presidio, entrasp.presidi_descr(id_presidio, codice_azienda), id_procedura, entrasp.procedure_aziendali_descr(id_procedura, codice_azienda) from entrasp.procedure_aziendali_presidi where codice_azienda=$codice_azienda$"
             }
         ],
         "formQueries": [
