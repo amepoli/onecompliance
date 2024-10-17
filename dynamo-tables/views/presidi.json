@@ -1214,14 +1214,18 @@
             {
                 "label": "Regolamenti_Presidi 27001",
                 "queryString": "WITH ArgomentiFigli AS (SELECT aa3.id_argomento_son FROM entrasp.argomenti_argomenti aa3 WHERE aa3.id_argomento_father = 3511) SELECT entrasp.argomenti_codice_descr_breve(pr.id_argomento) AS Controllo, entrasp.argomenti_codice_descr_breve(aa.id_argomento_father) AS Regolamento FROM entrasp.presidi pr LEFT JOIN entrasp.argomenti_argomenti aa ON pr.id_argomento = aa.id_argomento_son AND aa.id_argomento_father IN (SELECT id_argomento_son FROM ArgomentiFigli) WHERE pr.codice_azienda = $codice_azienda$ ORDER BY Controllo"
+            },
+            {
+                "label": "Presidi per import",
+                "queryString": "SELECT id_presidio, codice, descrizione_breve, descrizione, entrasp.centri_gestionali_nome(codice_part, id_centro_gest) AS ufficio, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) AS stato_attuazione, entrasp.tipo_processo_descr(id_tipo_presidio, codice_azienda) AS tipo, entrasp.argomenti_descr_breve(id_argomento_stato_automazione) AS automazione, note, guida_attuativa, entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part, id_anagrafica_societa) AS id_anagrafica_societa FROM entrasp.presidi WHERE codice_azienda = $codice_azienda$"
             }
         ]
     },
     "importQueries": {
         "tableQueries": [
             {
-                "label": "Aggiorna presidi",
-                "queryString": "select entrasp.import_presidi_update($codice_azienda$, $nome_file$, '€global_username€')"
+                "label": "Import/modifica presidi",
+                "queryString": "select entrasp.import_presidi_update($codice_azienda$, $nome_file$)"
             }
         ]
     },

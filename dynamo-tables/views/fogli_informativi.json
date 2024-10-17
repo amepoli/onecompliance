@@ -1,17 +1,587 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "fogli_informativi",
-    "inheritsFrom": "contracts_investment",
+    "origin": "entrasp.contratti",
     "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto))as giudizio, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_ruolo='CLI' and cnt.id_argomento_contratto=49580"
+            "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, cnt.codice_azienda, cnt.tan, cnt.numero_contratto, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato, teg, spread, tax_min, tax_max, tass_mo, moraperc  from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_ruolo='CLI' and cnt.id_argomento_contratto=49580"
         },
         {
             "operation": "update",
             "type": "postProcessing",
             "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+        }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Nuovo foglio informativo",
+        "navigateOnSuccess": false
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "value": "$P{codice_ruolo}"
+            },
+            "label": "codice_ruolo",
+            "key": "codice_ruolo",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "# Contratto",
+            "key": "id_contratto",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 1.5,
+            "inputEvents": [
+                {
+                    "eventName": "contratto_duplica",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.duplica_contratto ($codice_azienda$, $id_contratto$) as id_contratto"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire il giorno di stipula del contratto",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_stipulazione",
+            "label": "Data Stipula",
+            "size": 1,
+            "readOnly": false,
+            "newLine": false,
+            "tooltip": "La data nella quale la controparte ha sottoscritto il contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select distinct arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(5408,5402,3526) order by arg.id_argomento||'-'||arg.descrizione_breve",
+                "options": [],
+                "viewType": "combobox",
+                "value": 49580,
+                "validations": [
+                    {
+                        "message": "Tipologia contratto necessaria!",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_contratto",
+            "label": "Tipo Contratto",
+            "newLine": false,
+            "readOnly": true,
+            "size": 2.63
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "value": "A",
+                "validations": [
+                    {
+                        "message": "Inserire uno stato",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "outputEvent": {
+                "eventName": "stato_load",
+                "eventTrigger": "load"
+            },
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.13
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": "1"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_contratto",
+            "label": "",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Numero contratto necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "label": "N.Contratto",
+            "key": "numero_contratto",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_contratto_da",
+            "label": "Data Inizio Validità",
+            "size": 2,
+            "readOnly": false,
+            "newLine": false,
+            "tooltip": "La data di inizio validità del foglio informativo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_contratto_a",
+            "label": "Data Fine Validità",
+            "size": 2,
+            "newLine": false,
+            "readOnly": false,
+            "tooltip": "La data di fine validità del foglio informativo"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Descrizione",
+            "key": "descrizione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 4,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "TEG",
+            "key": "teg",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Spread",
+            "key": "spread",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Tasso Min",
+            "key": "tax_min",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Tasso Max",
+            "key": "tax_max",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Tasso Mora",
+            "key": "tass_mo",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Mora %",
+            "key": "moraperc",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Agenzia",
+            "key": "agenzia",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "idanapromo",
+            "key": "idanapromo",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "TAN/tasso leasing",
+            "key": "tan",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "Tasso pre",
+            "key": "tass_pre",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "TAEG",
+            "key": "taegreal",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 2,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "invisible"
+            },
+            "size": 2,
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "invisible_2",
+            "key": "invisible_2",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": true
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_contratto_principale",
+            "label": "id_contratto_principale"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_agente_primario",
+            "label": "id_agente_primario"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "3%",
+            "key": "id_contratto",
+            "label": "#"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "6%",
+            "isPrimary": false,
+            "key": "numero_contratto",
+            "label": "N.Contratto",
+            "style": [
+                {
+                    "value": "*",
+                    "background_color": "lightblue",
+                    "text_align": "center",
+                    "font_weight": "590"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "width": "13%"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_stipulazione",
+            "width": "6%",
+            "label": "Dt.inizio.valid."
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_contratto_a",
+            "width": "7%",
+            "label": "Dt.fine.valid."
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "width": "6%",
+            "label": "Stato",
+            "style": [
+                {
+                    "value": "Cessato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Offerta rifiutata",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#C0C0C0",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In Scadenza",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In attesa di firma",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Attivo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                }
+            ],
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tan",
+            "label": "TAN",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "teg",
+            "label": "TEG",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "spread",
+            "label": "Spread",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tass_mo",
+            "label": "Tasso mora",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tax_max",
+            "label": "Tasso massimo",
+            "width": "6%"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_evento",
+            "label": "id_argomento_evento"
         }
     ],
     "subTables": [
@@ -51,41 +621,9 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "label": "Identificativo contratto",
+            "label": "Id Foglio informativo",
             "newLine": false,
             "queryCond": "id_contratto=$id_contratto_s$"
-        },
-        {
-            "fieldName": "id_anagrafica_s",
-            "format": {
-                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Label Controparte",
-            "newLine": false,
-            "queryCond": "id_cliente=$id_anagrafica_s$"
-        },
-        {
-            "fieldName": "nome_rs",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "Nome/Cognome/Ragione Sociale",
-            "newLine": false,
-            "queryCond": "(UPPER(entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)) like '%'||UPPER('€nome_rs€')||'%')"
-        },
-        {
-            "fieldName": "tipi_contratto_s",
-            "format": {
-                "comboQuery": "select id_argomento as id, descrizione as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (5402,3526)",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Tipo Contratti",
-            "newLine": true,
-            "queryCond": "id_argomento_contratto='€tipi_contratto_s€'"
         },
         {
             "fieldName": "numero_contratto_s",
@@ -93,7 +631,7 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Numero Contratto",
+            "label": "Numero Foglio informativo",
             "newLine": false,
             "queryCond": "UPPER(numero_contratto) like '%'||UPPER('€numero_contratto_s€')||'%'"
         },
@@ -107,63 +645,19 @@
             "label": "Stato",
             "newLine": false,
             "queryCond": "cnt.stato='€stato€'"
-        },
-        {
-            "fieldName": "id_strumento_fin_s",
-            "format": {
-                "comboQuery": "SELECT an.id_anagrafica as id , entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and ra.codice_ruolo = 'FONDO';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "label": "Fondo/strumento finanziario",
-            "newLine": false,
-            "queryCond": "id_strumento_finanziario=$id_strumento_fin_s$"
-        },
-        {
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "dataType": "text",
-                "comboQuery": "select codice as id,transcodifica as name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZIO_MIFID'"
-            },
-            "label": "Giudizio Appropriatezza",
-            "fieldName": "giudizio_s",
-            "newLine": true,
-            "queryCond": "entrasp.giudizio_mifid_appropriatezza(cnt.codice_azienda, cnt.id_contratto)=$giudizio_s$"
-        },
-        {
-            "fieldName": "profilazioni_n",
-            "format": {
-                "viewType": "checkbox",
-                "value": "0"
-            },
-            "label": "Senza Profilazioni Aml",
-            "newLine": false,
-            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.sondaggi snd inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda AND snd.id_modello_test=mt.id_modello_test WHERE mt.id_tipo_modello_test=50 and snd.codice_azienda=$codice_azienda$ and id_contratto is not null)"
-        },
-        {
-            "fieldName": "no_progetto",
-            "format": {
-                "viewType": "checkbox",
-                "value": "0"
-            },
-            "label": "Aperti senza progetto associato",
-            "newLine": false,
-            "queryCond": "cnt.id_contratto not in (select id_contratto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_contratto is not null) and cnt.stato='A'"
-        },
-        {
-            "fieldName": "rischio_conflitto",
-            "format": {
-                "value": "0",
-                "viewType": "toggle"
-            },
-            "label": "Rischio conflitti",
-            "newLine": false,
-            "size": 1.5,
-            "queryCond": "entrasp.contratti_in_conflitto(cnt.codice_azienda, cnt.id_contratto)!='Nessun conflitto'"
         }
     ],
     "querySuffixes": {
         "tableViewSuffix": "order by descrizione, data_cessazione desc"
-    }
+    },
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ]
 }
