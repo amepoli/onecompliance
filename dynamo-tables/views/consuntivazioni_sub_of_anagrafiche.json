@@ -7,33 +7,14 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELCET "
+            "queryString": "SELECT codice_part, codice_azienda, id_cons, data_intervento AS data, id_argomento, note FROM entrasp.consuntivazioni WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$;"
         }
     ],
-    "define": {
-        "is_hidden_delete": "false"
-    },
     "addElementSettings": {
-        "labelAdd": "Nuova consuntivazione",
-        "labelQuickAdd": "Nuova consuntivazione",
-        "navigateOnSuccess": true
+        "labelAdd": "Nuova richiesta",
+        "labelQuickAdd": "Nuova richiesta",
+        "navigateOnSuccess": false
     },
-    "outputEvents": [
-        {
-            "eventName": "consuntivazioni_sub_reload",
-            "eventTrigger": "onReload"
-        },
-        {
-            "eventName": "consuntivazioni_sub_save",
-            "eventTrigger": "onSave"
-        }
-    ],
-    "inputEvents": [
-        {
-            "actionType": "reload",
-            "eventName": "consuntivazioni_reload"
-        }
-    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -41,7 +22,7 @@
                 "viewType": "input",
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "Codice Azienda",
@@ -50,21 +31,7 @@
             "size": 2
         },
         {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_part",
-            "label": "codice_part",
-            "newLine": true,
-            "readOnly": true,
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
+            "autoGenerate": true,
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -79,27 +46,28 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
-                "viewType": "input"
+                "viewType": "input",
+                "dataType": "date"
             },
-            "isHidden": true,
+            "label": "data_intervento",
+            "isHidden": false,
             "isPrimary": false,
-            "key": "id_anagrafica",
-            "label": "Anagrafica",
+            "key": "data_intervento",
             "newLine": false,
             "readOnly": false
         },
         {
             "autoGenerate": false,
             "format": {
+                "viewType": "combobox",
                 "comboQuery": "SELECT id_argomento as id, id_argomento||'-'||descrizione_breve as name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53669",
-                "options": [],
-                "viewType": "combobox"
+                "dataType": "number",
+                "options": []
             },
+            "label": "Diritto richiesto",
             "isHidden": false,
             "isPrimary": false,
-            "key": "tipo_consuntivazione",
-            "label": "Tipo consuntivazione",
+            "key": "id_argomento",
             "newLine": false,
             "readOnly": false
         },
@@ -133,8 +101,8 @@
             },
             "isHidden": true,
             "isPrimary": false,
-            "key": "codice_compito",
-            "label": "codice_compito"
+            "key": "codice_part",
+            "label": "Codice"
         },
         {
             "format": {
@@ -147,15 +115,6 @@
         },
         {
             "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "ordinamento",
-            "label": "Ordinamento"
-        },
-        {
-            "format": {
                 "dataType": "text"
             },
             "isHidden": true,
@@ -163,7 +122,7 @@
             "key": "codice_azienda",
             "label": "Codice Azienda",
             "width": "10%"
-        },
+        }, 
         {
             "format": {
                 "dataType": "number"
@@ -213,222 +172,36 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "data_intervento",
-            "label": "Data Intervento",
+            "label": "Data richiesta",
             "width": "7%"
         },
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "durata",
-            "showTotal": true,
-            "label": "Durata Interv.(min.)",
-            "width": "8%"
-        },
-        {
-            "format": {
-                "dataType": "text",
-                "value": "€global_id_anagrafiche€"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "esecutore",
-            "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa)",
-            "label": "Esecutore",
-            "width": "12%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descr_stato",
-            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
-            "label": "Stato",
-            "width": "6%",
-            "style": [
-                {
-                    "value": "Chiuso",
-                    "font_color": "green",
-                    "font_weight": "500"
-                },
-                {
-                    "value": "Provvisorio",
-                    "font_color": "#BA68C8",
-                    "font_weight": "500"
-                },
-                {
-                    "value": "Pianificato",
-                    "font_color": "#FF8100",
-                    "font_weight": "500"
-                },
-                {
-                    "value": "Attesa Riscontro",
-                    "font_color": "#FF0000",
-                    "font_weight": "500"
-                },
-                {
-                    "value": "In Svolgimento",
-                    "font_color": " #A1A100",
-                    "font_weight": "500"
-                },
-                {
-                    "value": "Annullato",
-                    "font_color": "grey",
-                    "font_weight": "500"
-                }
-            ]
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "sender",
-            "label": "From",
-            "width": "12%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "thread",
-            "label": "Thread",
-            "width": "20%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "note_restricted",
-            "queryFunct": "substring(note from 1 for 100)",
-            "label": "Note",
-            "width": "18%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
             "isHidden": true,
             "isPrimary": false,
-            "key": "codice_attivita",
-            "label": "codice_attivita"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_progetto",
-            "label": "id_progetto"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_asset",
-            "label": "id_asset"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_modello_test",
-            "label": "id_modello_test"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_registrazione",
-            "label": "id_registrazione"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_fase",
-            "label": "id_fase"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_sondaggio",
-            "label": "id_sondaggio"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_riunione",
-            "label": "id_riunione"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_odg",
-            "label": "id_odg"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
+            "queryFunct": "entrasp.argomenti_descr(id_argomento)",
             "key": "id_argomento",
-            "label": "Id_argomento"
+            "label": "Diritto richiesto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "note"
         },
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
-            "key": "id_argomento_tipo_documento",
-            "label": "id_argomento_tipo_documento"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_cliente",
-            "label": "id_cliente"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_contratto",
-            "label": "id_contratto"
+            "key": "id_anagrafica",
+            "label": "id_anagrafica"
         }
     ],
     "hideActions": [
