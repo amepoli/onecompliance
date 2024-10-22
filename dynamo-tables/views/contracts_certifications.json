@@ -453,9 +453,9 @@
                 "viewType": "input",
                 "dataType": "number"
             },
-            "label": "Importo Totale",
+            "label": "Importo Triennio",
             "key": "importo",
-            "queryFunct": "select sum (costo_totale_scontato) + sum (sorveglianza_1) + sum (sorveglianza_2)from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_contratto=$id_contratto$",
+            "queryFunct": "select sum (costo_totale_scontato) + sum (sorveglianza_1) + sum (sorveglianza_2) from entrasp.articoli_contratti where codice_azienda=$codice_azienda$ and id_contratto=$id_contratto$",
             "readOnly": true,
             "isHidden": false,
             "tooltip": "Somma degli importi delle certificazioni e dei due audit di sorveglianza relativi al contratto in oggetto",
@@ -1093,6 +1093,10 @@
             {
                 "label": "Contratto",
                 "queryString": "select * from entrasp.contratti_estrazione($codice_azienda$, $id_contratto$)"
+            },
+            {
+                "label": "Info Certificazioni",
+                "queryString": "SELECT entrasp.articoli_titolo(codice_azienda, id_articolo) AS servizio_richiesto, entrasp.argomenti_descr_breve_no_num(id_argomento_tipo_norma) AS norma, id_contratto, n_addetti, giornate_uomo_scontate AS giornate_uomo_offerta, costo_scontato AS costo_gu_offerta, costo_totale_scontato AS totale_certificazione, acconto, certificazione AS saldo, giornate_uomo_sorveglianza, giornate_uomo_rinnovo, sorveglianza_1 AS importo_sorveglianza_1, sorveglianza_2 AS importo_sorveglianza_2, rinnovo AS importo_rinnovo FROM entrasp.articoli_contratti WHERE codice_azienda = $codice_azienda$ AND id_contratto = $id_contratto$;"
             },
             {
                 "label": "Incarico",
