@@ -7,7 +7,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT codice_part, codice_azienda, id_cons, data_intervento AS data, id_argomento, note FROM entrasp.consuntivazioni WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$;"
+            "queryString": "SELECT entrasp.argomenti_descr_breve(cns.id_argomento) as id_argomento, cns.id_anagrafica, cns.codice_part, cns.codice_azienda, cns.id_cons, cns.data_intervento, cns.note FROM entrasp.consuntivazioni cns INNER JOIN entrasp.argomenti_argomenti aa ON cns.id_argomento = aa.id_argomento_son WHERE cns.codice_part = $codice_part$ AND cns.id_anagrafica = $id_anagrafica$ AND aa.id_argomento_father = 53669;"
         }
     ],
     "addElementSettings": {
@@ -120,8 +120,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "Codice Azienda",
-            "width": "10%"
+            "label": "Codice Azienda"
         }, 
         {
             "format": {
@@ -179,11 +178,11 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
-            "queryFunct": "entrasp.argomenti_descr(id_argomento)",
             "key": "id_argomento",
-            "label": "Diritto richiesto"
+            "label": "Diritto richiesto",
+            "width": "40%"
         },
         {
             "format": {
@@ -192,13 +191,14 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "note",
-            "label": "note"
+            "label": "note",
+            "width": "48%"
         },
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_anagrafica",
             "label": "id_anagrafica"
