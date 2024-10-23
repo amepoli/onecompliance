@@ -328,113 +328,235 @@
             "size": 3
         },
         {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "activate_detail_k",
+            "label": "",
+            "buttonIcon": "expand_more",
+            "newLine": false,
+            "size": 0.4,
+            "outputEvent": {
+                "eventName": "activate_detail",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "show",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#9FACBD",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "hide_detail_k",
+            "label": "",
+            "buttonIcon": "expand_less",
+            "newLine": false,
+            "size": 0.4,
+            "outputEvent": {
+                "eventName": "hide_detail",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
             "format": {
                 "dataType": "text",
                 "viewType": "label"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "opposizione_label",
-            "label": "Opposizione",
+            "key": "maggiori_dettagli",
+            "label": "Opposizioni",
             "style": {
-                "background_color": "#03a9f4",
-                "font_color": "white",
+                "background_color": "transparent",
+                "font_color": "black",
                 "font_size": "1.3em",
-                "font_style": "italic",
                 "font_weight": "400"
             },
-            "newLine": true,
+            "newLine": false,
             "readOnly": true,
             "sameOrigin": false
         },
         {
-            "autoGenerate": false,
             "format": {
-                "dataType": "boolean",
-                "viewType": "checkbox"
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "label"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "opposizione_label",
+                        "label": "Opposizione",
+                        "style": {
+                            "background_color": "#03a9f4",
+                            "font_color": "white",
+                            "font_size": "1.3em",
+                            "font_style": "italic",
+                            "font_weight": "400"
+                        },
+                        "newLine": true,
+                        "readOnly": true,
+                        "sameOrigin": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "key": "opposto",
+                        "label": "Opposto",
+                        "readOnly": false,
+                        "size": 5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "checkboxgroup",
+                            "options": [],
+                            "comboQuery": "SELECT ID_ARGOMENTO AS ID, DESCRIZIONE_BREVE AS NAME FROM ENTRASP.ARGOMENTI ARG INNER JOIN ENTRASP.ARGOMENTI_ARGOMENTI AA ON ARG.ID_ARGOMENTO = AA.ID_ARGOMENTO_SON WHERE AA.ID_ARGOMENTO_FATHER = 53646"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "key": "id_argomento_opposizione",
+                        "label": "Motivazione opposizione",
+                        "readOnly": false,
+                        "size": 5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "data_recupero",
+                        "label": "Data stimata di recupero",
+                        "newLine": false,
+                        "size": 2.5,
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "perdite",
+                        "label": "Rischi di perdite da costi legali",
+                        "newLine": false,
+                        "size": 2.5,
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "dataType": "text",
+                            "options": [],
+                            "comboQuery": "SELECT generate_series(1, 8)::numeric AS id, generate_series(1, 8) AS name"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "key": "contestazione_credito",
+                        "label": "Contestazione del Credito",
+                        "readOnly": false,
+                        "size": 2.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "dataType": "text",
+                            "comboQuery": "SELECT generate_series(1, 8)::numeric AS id, generate_series(1, 8) AS name"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "key": "carenza_rifiuto_espresso",
+                        "label": "Carenza di legittimazione attiva in caso di rifiuto espresso della cessione",
+                        "readOnly": false,
+                        "size": 2.5
+                    }
+                ]
             },
-            "isHidden": false,
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "activate_detail",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "hide_detail",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
             "isPrimary": false,
-            "newLine": false,
-            "key": "opposto",
-            "label": "Opposto",
-            "readOnly": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "checkboxgroup",
-                "options": [],
-                "comboQuery": "SELECT ID_ARGOMENTO AS ID, DESCRIZIONE_BREVE AS NAME FROM ENTRASP.ARGOMENTI ARG INNER JOIN ENTRASP.ARGOMENTI_ARGOMENTI AA ON ARG.ID_ARGOMENTO = AA.ID_ARGOMENTO_SON WHERE AA.ID_ARGOMENTO_FATHER = 53646"
-            },
-            "isHidden": false,
-            "isPrimary": false,
+            "key": "sezione_detail",
+            "label": "Opposizioni",
             "newLine": true,
-            "key": "id_argomento_opposizione",
-            "label": "Motivazione opposizione",
             "readOnly": false,
-            "size": 5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_recupero",
-            "label": "Data stimata di recupero",
-            "newLine": false,
-            "size": 2.5,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "perdite",
-            "label": "Rischi di perdite da costi legali",
-            "newLine": false,
-            "size": 2.5,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "dataType": "text",
-                "options": [],
-                "comboQuery": "SELECT generate_series(1, 8)::numeric AS id, generate_series(1, 8) AS name"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "contestazione_credito",
-            "label": "Contestazione del Credito",
-            "readOnly": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "dataType": "text",
-                "comboQuery": "SELECT generate_series(1, 8)::numeric AS id, generate_series(1, 8) AS name"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true,
-            "key": "carenza_rifiuto_espresso",
-            "label": "Carenza di legittimazione attiva in caso di rifiuto espresso della cessione",
-            "readOnly": false,
-            "size": 2.5
+            "sameOrigin": true,
+            "saveWhenHidden": true
         }
     ],
     "table_keys": [
