@@ -1,0 +1,141 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "crea_azienda",
+    "businessObjectName": "aziende",
+    "inheritsFrom": "mie_ore_aziende",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "SELECT codice_azienda, codice_part from entrasp.aziende where codice_azienda in (€global_user_companies€)",
+            "type": "main"
+        }
+    ],
+    "addElementSettings": {
+        "labelQuickAdd": "Crea Azienda",
+        "navigateOnSuccess": false
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Capogruppo dell'azienda",
+            "key": "codice_part",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "miei_compiti_sub_of_mie_ore_aziende",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                }
+            ],
+            "label": "Compiti",
+            "translate": "RESOURCES.compiti_miei_compiti_sub_of_mie_ore_aziende"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "cliente_s",
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Cliente",
+            "newLine": false,
+            "queryCond": "(codice_azienda='€cliente_s€' and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, datainizio=>'2021-01-01'::date, datafine=>'2022-12-31'::date) is not null)",
+            "translate": "RESOURCES.cliente_mie_ore_aziende"
+        },
+        {
+            "fieldName": "fornitore_s",
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.employers where dynamo_user='€global_username€' order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Fornitore",
+            "newLine": false,
+            "queryCond": "(codice_azienda_erogante='€fornitore_s€' and entrasp.consuntivazioni_time_consumed_azienda(codice_azienda, codice_azienda_erogante, '2021-01-01'::date, '2022-12-31'::date) is not null)",
+            "translate": "RESOURCES.fornitore_mie_ore_aziende"
+        },
+        {
+            "fieldName": "data_esec_min",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Esecuzione dopo il",
+            "newLine": false,
+            "queryCond": "snd.data_esecuzione>='€data_esec_min€'",
+            "translate": "RESOURCES.data_esecuzione_dopo_il_mie_ore_aziende"
+        },
+        {
+            "fieldName": "data_esec_max",
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "label": "Data Esecuzione entro il",
+            "newLine": true,
+            "queryCond": "snd.data_esecuzione<='€data_esec_max€'",
+            "translate": "RESOURCES.data_esecuzione_entro_il_mie_ore_aziende"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Crea azienda",
+            "width": "40%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_part",
+            "label": "Codice part"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by codice_azienda"
+    },
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "table",
+            "formActionType": "import_export"
+        }
+    ]
+}
