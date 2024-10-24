@@ -2360,7 +2360,8 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 const temporaryPassword = HelperService.generatePassword(9);
                 const company = formValues['codice_azienda'];
                 const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
-                const profile = formValues['profile'] ? formValues['profile'].id : null;
+                //const profile = formValues['profile'] ? formValues['profile'].id : null;
+                const profile = null;
                 const registry = formValues['id_anagrafica'];
                 const tax_code = formValues['codice_fiscale'];
 
@@ -2371,6 +2372,35 @@ export class FormGetterComponent implements OnChanges, AfterViewInit, OnDestroy 
                 } else {
                     _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showSuccessToast('User invited successfully');
+                    _this._dialogService.closeDialog();
+                    this.refreshView();
+                }
+            } else {
+                _this._console.error("User isn't allowed to invite!");
+                _this._dialogService.showErrorDialog("Missing authorization", "You are not subscribed to invite users");
+            }
+        }
+        else if (userAPIParams.actionType === 'copy_user') {
+            if (_this.authService.getAllowedToManage()) {
+
+                let loadingToast = _this._toastService.showLoadingToast("Copying user...", "Please wait");
+
+                const username = formValues['email_to'].trim();
+                const temporaryPassword = HelperService.generatePassword(9);
+                const company = formValues['codice_azienda'];
+                const associated_user = formValues['associa_user'] ? formValues['associa_user'].id : null;
+                //const profile = formValues['profile'] ? formValues['profile'].id : null;
+                const profile = null;
+                const registry = formValues['id_anagrafica'];
+                const tax_code = formValues['codice_fiscale'];
+
+                let inviteUser: any = await _this.backendService.copyUser(username, company, associated_user, registry, tax_code, profile).toPromise();
+                if (inviteUser.result === 'KO') {
+                    _this._toastService.hideLoadingToast(loadingToast);
+                    _this._toastService.showErrorToast(inviteUser.reason.message);
+                } else {
+                    _this._toastService.hideLoadingToast(loadingToast);
+                    _this._toastService.showSuccessToast('User copied successfully');
                     _this._dialogService.closeDialog();
                     this.refreshView();
                 }
