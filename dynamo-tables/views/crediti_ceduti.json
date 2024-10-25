@@ -110,7 +110,7 @@
     ],
     "predefinedQueries": [
         {
-            "queryString": "select entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as contratto_descr,  entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, data_pagamento, id_ricessione,(case when id_ricessione is not null then '1' else '0' end) as ceduto, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, entrasp.fascicolo_descr(cc.id_fascicolo, cc.codice_azienda) as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.capitale_residuo_leg from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
+            "queryString": "select entrasp.credito_riceduto(cc.codice_azienda, cc.id_cessione) as ceduto, entrasp.transcodifiche_transcodifica('STATO_DEBITORE_CEDUTO', (select entrasp.stato_debitore(cc.codice_azienda, cc.id_cessione)))as stato_debitore, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as contratto_descr,  entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, data_pagamento, id_ricessione, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, entrasp.fascicolo_descr(cc.id_fascicolo, cc.codice_azienda) as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.capitale_residuo_leg from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
             "operation": "selectTable",
             "type": "main"
         }
@@ -390,8 +390,8 @@
             "fieldName": "id_aggiornamento_s",
             "format": {
                 "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento || ' - ' || arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son  WHERE id_argomento_father=52927",
-            "options": [],
-            "viewType": "combobox"
+                "options": [],
+                "viewType": "combobox"
             },
             "label": "Aggiornamento",
             "tooltip": "Individua tutti quei crediti il cui aggiornamento sia pari a",
@@ -1603,7 +1603,7 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "interessi_legali",
             "showTotal": true,
@@ -1625,11 +1625,45 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "capitale_residuo_leg",
             "width": "6%",
             "label": "Capitale residuo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "stato_debitore",
+            "width": "6%",
+            "style": [
+                {
+                    "value": "Accettato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Negato",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Nessun Riscontro",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "Grey",
+                    "text_align": "center"
+                }
+            ],
+            "label": "Stato Deb. Ced."
         },
         {
             "format": {
@@ -1649,7 +1683,6 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "ceduto",
-            "queryFunct": "case when id_ricessione is not null then '1' else '0' end",
             "sameOrigin": false,
             "isCheckbox": true,
             "width": "4%",
@@ -1724,7 +1757,7 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "n_mandato",
             "label": "N mandato"
