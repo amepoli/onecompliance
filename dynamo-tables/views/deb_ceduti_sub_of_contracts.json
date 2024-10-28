@@ -47,7 +47,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT an.id_anagrafica as id, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and an.codice_part||'-'||an.id_anagrafica in(select cc.codice_part||'-'||cc.id_debitore_ceduto cc from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_part€')",
+                "comboQuery": "SELECT an.id_anagrafica as id, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as name FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part='€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', an.id_anagrafica) and ra.codice_ruolo='DEC'",
                 "options": [],
                 "viewType": "combobox"
             },
@@ -175,6 +175,10 @@
                     {
                         "source": "id_anagrafica",
                         "destination": "id_anagrafica"
+                    },
+                    {
+                        "source": "data_inizio_validita",
+                        "destination": "data_inizio_validita"
                     }
                 ],
                 "onSuccessAction": "reload"
@@ -217,6 +221,13 @@
                     "font_color": "PaleGreen",
                     "font_weight": "500",
                     "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Mandato",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "LightGreen",
                     "text_align": "center"
                 },
                 {
