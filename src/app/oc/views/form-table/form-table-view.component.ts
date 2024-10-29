@@ -256,7 +256,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
           }
           else {
             // Show error snackbar
-            _this.formGetter.showErrorToast(result.reason);
+            _this._toastService.showErrorToastWithReason(result.reason);
           }
         }));
     }

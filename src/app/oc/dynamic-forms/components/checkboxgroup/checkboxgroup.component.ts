@@ -18,7 +18,10 @@ import { PubSubService } from "app/oc/services";
                     (change)="onCheck(i, $event.checked)"
                     [ocTooltip]="field.tooltip"
                 ></mat-checkbox>
-                <label class="checkboxgroup-label-padding" [style.background-color]="checkboxGroupItemsStyle[item.id].background_color">{{
+                <label class="checkboxgroup-label-padding" 
+                    [style.background-color]="checkboxGroupItemsStyle[item.id].background_color"
+                    [style.color]="checkboxGroupItemsStyle[item.id].font_color"
+                >{{
                     item.name
                 }}</label>
             </div>
@@ -156,19 +159,29 @@ export class CheckboxGroupComponent implements OnInit {
     updateCheckboxGroupItemsStyle() {
         const _this = this;
         _this.checkboxGroupItemsStyle = {};
-        _this.field.checkboxGroupItemsStyle.forEach(x => {
-            if(_this.field.value.includes(x.id)) {
-                _this.checkboxGroupItemsStyle[x.id] = {
-                    background_color: x.background_color,
-                    font_color: x.font_color
+        if(_this.field.checkboxGroupItemsStyle && _this.field.checkboxGroupItemsStyle.length > 0) {
+            _this.field.checkboxGroupItemsStyle.forEach(x => {
+                if(_this.field.value.includes(x.id)) {
+                    _this.checkboxGroupItemsStyle[x.id] = {
+                        background_color: x.background_color,
+                        font_color: x.font_color
+                    }
                 }
-            }
-            else {
+                else {
+                    _this.checkboxGroupItemsStyle[x.id] = {
+                        background_color: 'transparent',
+                        font_color: 'black'
+                    }
+                }
+            });
+        }
+        else {
+            _this.field.options.forEach(x => {
                 _this.checkboxGroupItemsStyle[x.id] = {
                     background_color: 'transparent',
                     font_color: 'black'
                 }
-            }
-        });
+            });
+        }
     }
 }
