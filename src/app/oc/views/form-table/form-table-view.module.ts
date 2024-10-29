@@ -7,13 +7,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule as MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule as MatInputModule } from '@angular/material/input';
-import { FormViewModule } from '../form/form-view.module';
+import { DomandeRisposteModule } from 'app/oc/custom-components/domande-risposte/domande-risposte.module';
 
 @NgModule({
     declarations: [FormTableViewComponent],
     imports: [
         CommonModule,
         FormGetterModule,
+        DomandeRisposteModule,
         DynamicFormsModule,
         MatButtonModule,
         MatIconModule,

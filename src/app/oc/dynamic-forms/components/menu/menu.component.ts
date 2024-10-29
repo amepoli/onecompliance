@@ -131,7 +131,8 @@ export class MenuComponent implements OnInit {
 
     onClick(item: MenuOption) {
         const _this = this;
-        setTimeout(() => {
+        item.onClick && item.onClick(item, _this.field);
+        item.outputEventName && setTimeout(() => {
             _this.pubSubService.publishEvent(item.outputEventName, {
                 showEventProcessing: true,
                 origin: _this.field.name,

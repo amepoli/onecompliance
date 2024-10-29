@@ -126,6 +126,8 @@ export class ButtonComponent implements OnInit, OnDestroy {
     onClickButton() {
         const _this = this;
 
+        _this.field.onClick && _this.field.onClick(_this.field);
+        
         // check first if it is a download button
         if (_this.field.isDownloadButton && _this.field.value != null) {
             // button value must be file_id^filename
