@@ -1,41 +1,46 @@
 <div class="form-table-view-component">
-    <div #formTableViewToolbar class="p-0 mat-elevation-z1 form-table-view-toolbar"
-        [class.form-table-view-toolbar-sticky]="isFormTableViewToolbarSticky">
-        <mat-form-field class="form-table-view-filter-field">
-            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-            <mat-icon matSuffix>filter_alt</mat-icon>
-        </mat-form-field>
-        <div style="flex-grow: 1"></div>
-        <div class="div2">
-        <button mat-button (click)="reload()">
-            <mat-icon>refresh</mat-icon>
-            Reload
-        </button>
-        <button mat-button (click)="saveChanges()" *ngIf="!formGetter.hideActions.includes('save')" style="background-color: rgb(48, 161, 48);" matTooltip="Save Element">
-            <mat-icon>save</mat-icon>
-            Save
-        </button>
-        <button mat-button (click)="addNew()" *ngIf="!formGetter.hideActions.includes('quick-add')" class="add-button" matTooltip="Add Element"
-            matTooltip="Add element">
-            <mat-icon>add</mat-icon>
-            Quick Add
-        </button>
-        <button mat-button (click)="fullScreen()">
-            <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
-            <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
-            FullScreen
-        </button>
-    </div>
+    <ng-container *ngIf="isDomandeRisposte === false">
+        <div #formTableViewToolbar class="p-0 mat-elevation-z1 form-table-view-toolbar"
+            [class.form-table-view-toolbar-sticky]="isFormTableViewToolbarSticky">
+            <mat-form-field class="form-table-view-filter-field">
+                <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+                <mat-icon matSuffix>filter_alt</mat-icon>
+            </mat-form-field>
+            <div style="flex-grow: 1"></div>
+            <div class="div2">
+                <button mat-button (click)="reload()">
+                    <mat-icon>refresh</mat-icon>
+                    Reload
+                </button>
+                <button mat-button (click)="saveChanges()" *ngIf="!formGetter.hideActions.includes('save')" style="background-color: rgb(48, 161, 48);" matTooltip="Save Element">
+                    <mat-icon>save</mat-icon>
+                    Save
+                </button>
+                <button mat-button (click)="addNew()" *ngIf="!formGetter.hideActions.includes('quick-add')" class="add-button" matTooltip="Add Element"
+                    matTooltip="Add element">
+                    <mat-icon>add</mat-icon>
+                    Quick Add
+                </button>
+                <button mat-button (click)="fullScreen()">
+                    <mat-icon *ngIf="!isFullScreen">fullscreen</mat-icon>
+                    <mat-icon *ngIf="isFullScreen">fullscreen_exit</mat-icon>
+                    FullScreen
+                </button>
+            </div>
 
 
 
 
 
-    </div>
-
-    <form-getter #formGetter [class.form-table-view-content]="!isFormTableViewToolbarSticky"
-        [class.form-table-view-content-sticky]="isFormTableViewToolbarSticky" [filter]="filter"
-        [formParams]='getterParams' (onReload)="reload()" [isTabMode]="isTabMode"
-        (onMessagesUpdated)="updateMessages($event)">
-    </form-getter>
+        </div>
+    
+        <form-getter #formGetter [class.form-table-view-content]="!isFormTableViewToolbarSticky"
+            [class.form-table-view-content-sticky]="isFormTableViewToolbarSticky" [filter]="filter"
+            [formParams]='getterParams' (onReload)="reload()" [isTabMode]="isTabMode"
+            (onMessagesUpdated)="updateMessages($event)">
+        </form-getter>
+    </ng-container>
+    <ng-container *ngIf="isDomandeRisposte === true">
+        <domande-risposte [domandeRisposteParams]="domandeRisposteParams"></domande-risposte>
+    </ng-container>
 </div>

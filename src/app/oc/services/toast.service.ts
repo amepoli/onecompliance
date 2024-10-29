@@ -168,6 +168,30 @@ export class ToastService {
     }
 
     /**
+     * Show Error Snackbar Toast
+     * 
+     * @param reason
+     * 
+     * Show an error toast with the given reason.
+     * 
+     * The title of the toast is "Error " and the text is the JSON.stringify of reason.detail followed by reason.hint.
+     * The toast is shown for 5000 milliseconds and can be dismissed by clicking.
+     */
+    public showErrorToastWithReason(reason: any) {
+        this.showErrorToast(
+            "Error ",
+            reason.detail == undefined
+                ? ""
+                : JSON.stringify(reason.detail) +
+                      (reason.hint == undefined
+                          ? ""
+                          : JSON.stringify(reason.hint)),
+            5000,
+            true,
+        );
+    }
+    
+    /**
      * Show Loading Snackbar Toast
      *
      * @param title

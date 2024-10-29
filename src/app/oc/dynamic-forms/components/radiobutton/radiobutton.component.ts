@@ -78,6 +78,9 @@ export class RadiobuttonComponent implements OnInit {
     onCheck(event: any): void {
         const _this = this;
 
+        // Run the onClick function if provided
+        _this.field.onClick && _this.field.onClick(event, _this.field);
+
         _this._console.log(event);
         _this._console.log(_this.field.eventName);
 

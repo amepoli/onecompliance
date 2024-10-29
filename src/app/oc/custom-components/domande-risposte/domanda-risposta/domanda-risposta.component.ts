@@ -1,26 +1,17 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    OnInit,
-    Output,
-    ViewChildren,
-    QueryList,
-    SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, ViewChildren, QueryList, SimpleChanges } from "@angular/core";
 import { UntypedFormGroup, UntypedFormBuilder } from "@angular/forms";
 import { FormsService, ValidationsService } from "app/oc/services";
 import { FieldConfig } from "app/oc/interfaces";
 import { DynamicFieldDirective } from "app/oc/directives";
+import { memoize } from "app/oc/decorators/memoize";
 
 @Component({
     exportAs: "dynamicForm",
-    selector: "dynamic-form",
-    templateUrl: "./dynamic-form.component.html",
-    styleUrls: ["./dynamic-form.component.scss"],
+    selector: "domanda-risposta",
+    templateUrl: "./domanda-risposta.component.html",
+    styleUrls: ["./domanda-risposta.component.scss"],
 })
-export class DynamicFormComponent implements OnInit, OnChanges {
+export class DomandaRispostaComponent implements OnChanges {
     @Input() isQuickAdd: boolean = false;
 
     @Input() fields: FieldConfig[] = [];
@@ -34,24 +25,22 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     @ViewChildren(DynamicFieldDirective)
     dynamicFields: QueryList<DynamicFieldDirective>;
 
-    form: UntypedFormGroup;
+    form: UntypedFormGroup = null;
 
     get value() {
         return this.form.value;
     }
+    
     constructor(
         private fb: UntypedFormBuilder,
         private formsService: FormsService,
     ) {}
 
-    ngOnInit() {
-        //this.form = this.createControl();
-    }
-
-    visibleFields: FieldConfig[] = [];
-
+    @memoize()
     ngOnChanges(changes: SimpleChanges) {
-        this.form = this.createControl();
+        if(this.fields) {
+            this.form = this.formsService.createControl(this.fb, this.fields);
+        }
     }
 
     onSubmit(event: Event) {
@@ -62,12 +51,5 @@ export class DynamicFormComponent implements OnInit, OnChanges {
         } else {
             ValidationsService.validateAllFormFields(this.form);
         }
-    }
-
-    createControl() {
-        this.visibleFields = this.fields;
-            // .filter(x => x.isVisible);
-            // .filter((x) => !(!x.isVisible && x.subform));
-        return this.formsService.createControl(this.fb, this.visibleFields);
     }
 }

@@ -11,5 +11,6 @@ export interface MenuOption {
   outputEventName?: string;
   customDialogGenericSave?: boolean;
   customDialogEntryName?: string;             
-  customDialogTitle?: string;             
+  customDialogTitle?: string;
+  onClick?: Function;
 }

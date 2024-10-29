@@ -17,6 +17,7 @@ import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-mat
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { MatTooltipModule as MatTooltipModule } from '@angular/material/tooltip';
 import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
@@ -54,6 +55,7 @@ import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
     MatCheckboxModule,
     MatRadioModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
     NgxMatTimepickerModule,
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
