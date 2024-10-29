@@ -169,6 +169,14 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
+  getDomandeRisposte(company: string, entryName: string, keys: object): Observable<any> {
+    this.awsService.auth();
+    const getReq: GetRequest = {
+      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), is_domande_risposte_get_request: 1 }
+    }
+    return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
+  }
+  
   getAttachList(entryName: string, company: string, keys: any, businessObjectName: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {

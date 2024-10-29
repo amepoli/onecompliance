@@ -18,7 +18,7 @@ import { PubSubService } from "app/oc/services";
                     (change)="onCheck(i, $event.checked)"
                     [ocTooltip]="field.tooltip"
                 ></mat-checkbox>
-                <label class="checkboxgroup-label-padding">{{
+                <label class="checkboxgroup-label-padding" [style.background-color]="checkboxGroupItemsStyle[item.id].background_color">{{
                     item.name
                 }}</label>
             </div>
@@ -49,6 +49,13 @@ export class CheckboxGroupComponent implements OnInit {
 
     selection = [];
 
+    checkboxGroupItemsStyle: any = {
+        id: {
+            background_color: 'transparent',
+            font_color: 'black'
+        }
+    }
+
     constructor(private pubSubService: PubSubService) {}
     ngOnInit() {
         const _this = this;
@@ -73,6 +80,8 @@ export class CheckboxGroupComponent implements OnInit {
             });
         }
 
+        _this.updateCheckboxGroupItemsStyle();
+
         // _this.field.options.map(x => {
         //   return { id: x.id, checked: false }
         // });
@@ -93,6 +102,9 @@ export class CheckboxGroupComponent implements OnInit {
         const _this = this;
 
         this.selection[id] = checked ? 1 : 0;
+
+        // Run the onClick function if provided
+        _this.field.onClick && _this.field.onClick(event, _this.field);
 
         var index = _this.field.value.indexOf(_this.field.options[id].id);
 
@@ -120,6 +132,9 @@ export class CheckboxGroupComponent implements OnInit {
         if (_this.field.onChangeResetKey) {
             _this.sendResetByKeyEvent();
         }
+
+        _this.updateCheckboxGroupItemsStyle();
+
     }
 
     sendResetByKeyEvent() {
@@ -136,5 +151,24 @@ export class CheckboxGroupComponent implements OnInit {
 
     public reset() {
         this.field.value = [];
+    }
+
+    updateCheckboxGroupItemsStyle() {
+        const _this = this;
+        _this.checkboxGroupItemsStyle = {};
+        _this.field.checkboxGroupItemsStyle.forEach(x => {
+            if(_this.field.value.includes(x.id)) {
+                _this.checkboxGroupItemsStyle[x.id] = {
+                    background_color: x.background_color,
+                    font_color: x.font_color
+                }
+            }
+            else {
+                _this.checkboxGroupItemsStyle[x.id] = {
+                    background_color: 'transparent',
+                    font_color: 'black'
+                }
+            }
+        });
     }
 }

@@ -50,6 +50,12 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   subscriptions: Subscription[] = [];
 
+  isDomandeRisposte?: boolean = null;
+  domandeRisposteParams: any = {
+    entryName: '',
+    keys: {}
+  };
+
   constructor(
     private cdRef: ChangeDetectorRef,
     private backendService: BackendService,
@@ -97,6 +103,16 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
       _this._console.log("inside form-table-view isCurTab changes!");
     }
 
+    if(_this.tableData.entryName === 'domande_risposte' || _this.tableData.entryName === 'domande_risposte_sezione') {
+      _this.isDomandeRisposte = true;
+      _this.domandeRisposteParams = {
+        entryName: _this.tableData.entryName,
+        keys: _this.tableData.keys
+      }
+    }
+    else {
+      _this.isDomandeRisposte = false;
+    }
   }
 
   ngAfterViewInit() {

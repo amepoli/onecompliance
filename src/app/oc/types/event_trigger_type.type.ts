@@ -1,1 +1,1 @@
-export type EventTriggerType = 'change' | 'focus' | 'blur';
+export type EventTriggerType = 'change' | 'focus' | 'blur' | 'press';
