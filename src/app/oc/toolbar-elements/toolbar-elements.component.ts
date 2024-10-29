@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { FormViewParams, MessageView, TableViewParams, TabType } from '../interfaces';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, HelperService, ImportExportService, NavigationService, PubSubService, ReportService, ScrollService, TimeTrackerService, ToastService } from '../services';
+import { memoize } from '../decorators/memoize';
 
 @Component({
     selector: 'toolbar-elements',
@@ -46,6 +47,7 @@ export class ToolbarElementsComponent implements OnInit, AfterViewInit, OnDestro
         this.toolbar_elements;
     }
 
+    @memoize()
     ngOnChanges(changes: SimpleChanges) {
         if (changes.entry && this.toolbar_elements && this.toolbar_elements.length && changes.toolbar_elements.previousValue !== this.toolbar_elements) {
             // Updated
@@ -65,23 +67,23 @@ export class ToolbarElementsComponent implements OnInit, AfterViewInit, OnDestro
 
     ngAfterViewInit() {
     }
-    
+
 
     ngOnDestroy() {
     }
 
     updateSearchToggle(index: number, checked: boolean) {
         this.toolbar_elements[index].checked = checked;
-        this.emitSearchKeys();        
+        this.emitSearchKeys();
     }
-    
+
     emitSearchKeys() {
         let keys = {};
-        this.toolbar_elements.filter( element => element.viewType === "toggle" && element.checked).forEach( element => {
+        this.toolbar_elements.filter(element => element.viewType === "toggle" && element.checked).forEach(element => {
             keys[element.fieldName] = true
         });
 
-        this.toolbar_elements.filter( element => element.viewType === "combobox" && element.selected).forEach( element => {
+        this.toolbar_elements.filter(element => element.viewType === "combobox" && element.selected).forEach(element => {
             keys[element.fieldName] = element.selected
         });
 
