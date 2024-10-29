@@ -33,19 +33,7 @@ export class EmailService {
     ) {
     }
 
-    public showErrorToast(reason: any) {
-        this._toastService.showErrorToast(
-            "Error ",
-            reason.detail == undefined
-                ? ""
-                : JSON.stringify(reason.detail) +
-                      (reason.hint == undefined
-                          ? ""
-                          : JSON.stringify(reason.hint)),
-            5000,
-            true,
-        );
-    }
+    
 
     public performSendEmail(event: any, formValues: any, value: any, currentKeys: any) {
         let _this = this;
@@ -215,13 +203,13 @@ export class EmailService {
                                 );
                             }
                         } else {
-                            _this.showErrorToast(result.Error);
+                            _this._toastService.showErrorToastWithReason(result.Error);
                         }
                         subscription.unsubscribe();
                     },
                     (error) => {
                         _this._dialogService.closeDialog();
-                        _this.showErrorToast(error);
+                        _this._toastService.showErrorToastWithReason(error);
                         subscription.unsubscribe();
                     },
                 );

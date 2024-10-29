@@ -449,7 +449,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                             }
                             else {
                                 // Show error snackbar
-                                _this.formGetter.showErrorToast(result.reason);
+                                _this._toastService.showErrorToastWithReason(result.reason);
                             }
                             _this.savingState = 'save';
                         }
@@ -512,7 +512,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         }
                         else {
                             // Show error snackbar
-                            _this.formGetter.showErrorToast(result.reason);
+                            _this._toastService.showErrorToastWithReason(result.reason);
                         }
                     },
                     error => {
@@ -624,7 +624,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                 }
                 else {
                     // Show error snackbar
-                    _this.formGetter.showErrorToast(result.reason);
+                    _this._toastService.showErrorToastWithReason(result.reason);
                 }
             });
         _this.subscriptions.push(subscription);

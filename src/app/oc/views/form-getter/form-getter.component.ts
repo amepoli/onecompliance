@@ -307,19 +307,6 @@ export class FormGetterComponent
         }
     }
 
-    public showErrorToast(reason: any) {
-        this._toastService.showErrorToast(
-            "Error ",
-            reason.detail == undefined
-                ? ""
-                : JSON.stringify(reason.detail) +
-                      (reason.hint == undefined
-                          ? ""
-                          : JSON.stringify(reason.hint)),
-            5000,
-            true,
-        );
-    }
     public showMainToolbarDialog(outputEventName: string) {
         if (this.filteredFormData != null) {
             let field = this.filteredFormData[0][0];
@@ -580,7 +567,7 @@ export class FormGetterComponent
                         _this.isAuthorized = false;
                     } else {
                         // Show error snackbar
-                        _this.showErrorToast(results.reason);
+                        _this._toastService.showErrorToastWithReason(results.reason);
                     }
                     // // Show error snackbar
                     // _this._toastService.showErrorToast(results.reason);
@@ -952,7 +939,7 @@ export class FormGetterComponent
                         _this.isLoading = false;
                     } else {
                         // Show error snackbar
-                        _this.showErrorToast(results.reason);
+                        _this._toastService.showErrorToastWithReason(results.reason);
 
                         // Set results empty
                         _this.results = [];
@@ -963,7 +950,7 @@ export class FormGetterComponent
                     }
                 },
                 (error) => {
-                    _this.showErrorToast(error);
+                    _this._toastService.showErrorToastWithReason(error);
 
                     // Set results empty
                     _this.results = [];
@@ -1031,12 +1018,12 @@ export class FormGetterComponent
                         _this.resetPagination(_this.filteredFormData);
                     } else {
                         // Show error snackbar
-                        _this.showErrorToast(result.reason);
+                        _this._toastService.showErrorToastWithReason(result.reason);
                     }
                     _this.isAddingNew = false;
                 },
                 (error) => {
-                    _this.showErrorToast(error);
+                    _this._toastService.showErrorToastWithReason(error);
                     _this.isAddingNew = false;
                 },
             );
@@ -1798,7 +1785,7 @@ export class FormGetterComponent
                                 //console.table(result);
 
                                 _this._console.log(result);
-                                _this.showErrorToast(result.reason);
+                                _this._toastService.showErrorToastWithReason(result.reason);
                             }
                         },
                         (error) => {
@@ -1946,10 +1933,32 @@ export class FormGetterComponent
                         // _this._console.log(JSON.stringify(event));
                         // _this.sendEmail({ templateKey: 'test' });
                     } else if (actionType === "regulat_api") {
-                        _this.runRegulatEvent(
+                        const formValues = _this.formArray.first.form.value;
+                        const regulatAPIParams: RegulatAPIParams = event.regulatAPIParams;
+
+                        const keys = {
+                            codiceAziendaAML: formValues[
+                                regulatAPIParams.entityParams.codice_azienda
+                            ],
+                            idAnagraficaAML: formValues[
+                                regulatAPIParams.entityParams.id_anagrafica
+                            ],
+                            idSomministrazioneAML: formValues[
+                                regulatAPIParams.entityParams
+                                    .id_somministrazione
+                            ],
+                            dynamoUserAML: formValues[
+                                regulatAPIParams.entityParams.dynamo_user
+                            ],
+                            isLightScan: event.regulatAPIParams.entityParams.is_light_scan,
+                        }
+
+                        _this._formsService.runRegulatEvent(
                             event.message.actionOnYes,
                             value,
                             keyListener,
+                            formValues,
+                            keys
                         );
                     } else if (actionType === "user_api") {
                         _this.runUserManagementEvent(event, value, keyListener);
@@ -2228,12 +2237,12 @@ export class FormGetterComponent
                                             );
                                         }
                                     } else {
-                                        _this.showErrorToast(response.data);
+                                        _this._toastService.showErrorToastWithReason(response.data);
                                     }
                                 },
                                 (error) => {
                                     _this._console.log(error);
-                                    _this.showErrorToast(error);
+                                    _this._toastService.showErrorToastWithReason(error);
                                 },
                             );
                     }
@@ -2294,14 +2303,14 @@ export class FormGetterComponent
                                                 );
                                             }
                                         } else {
-                                            _this.showErrorToast(
+                                            _this._toastService.showErrorToastWithReason(
                                                 response["reason"],
                                             );
                                         }
                                     },
                                     (error) => {
                                         _this._console.log(error);
-                                        _this.showErrorToast(error);
+                                        _this._toastService.showErrorToastWithReason(error);
                                     },
                                 );
                         }
@@ -2350,14 +2359,14 @@ export class FormGetterComponent
                                                 );
                                             }
                                         } else {
-                                            _this.showErrorToast(
+                                            _this._toastService.showErrorToastWithReason(
                                                 response["reason"],
                                             );
                                         }
                                     },
                                     (error) => {
                                         _this._console.log(error);
-                                        _this.showErrorToast(error);
+                                        _this._toastService.showErrorToastWithReason(error);
                                     },
                                 );
                         }
@@ -2406,14 +2415,14 @@ export class FormGetterComponent
                                                 );
                                             }
                                         } else {
-                                            _this.showErrorToast(
+                                            _this._toastService.showErrorToastWithReason(
                                                 response["reason"],
                                             );
                                         }
                                     },
                                     (error) => {
                                         _this._console.log(error);
-                                        _this.showErrorToast(error);
+                                        _this._toastService.showErrorToastWithReason(error);
                                     },
                                 );
                         }
@@ -2801,7 +2810,7 @@ export class FormGetterComponent
                             _this._console.log("KO");
                             _this._toastService.hideLoadingToast(loadingToast);
                             //_this._dialogService.closeDialog();
-                            _this.showErrorToast(connected_registries.reason);
+                            _this._toastService.showErrorToastWithReason(connected_registries.reason);
                         } else {
                             let connectedRegistries =
                                 connected_registries.response;
@@ -2866,7 +2875,7 @@ export class FormGetterComponent
                             _this._console.log("KO");
                             _this._toastService.hideLoadingToast(loadingToast);
                             //_this._dialogService.closeDialog();
-                            _this.showErrorToast(connected_checks.reason);
+                            _this._toastService.showErrorToastWithReason(connected_checks.reason);
                         } else {
                             let connectedChecks = connected_checks.response;
 

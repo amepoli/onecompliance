@@ -531,7 +531,7 @@ export class DomandeRisposteComponent implements OnChanges
                 "label": "N.",
                 "newLine": false,
                 "readOnly": true,
-                "size": 0.5,
+                "size": 1,
                 "style": {
                     "font_color": "black",
                     "font_weight": "600"
@@ -1267,7 +1267,7 @@ export class DomandeRisposteComponent implements OnChanges
         return index;
     }
 
-    eventCallback(event: any, value: any, keyListener: string, index: number) {
+    async eventCallback(event: any, value: any, keyListener: string, index: number) {
         const _this = this;
         // Run query
         let chiavi = {};
@@ -1294,7 +1294,7 @@ export class DomandeRisposteComponent implements OnChanges
                     "No",
                     "info",
                 )
-                .then((result) => {
+                .then(async (result) => {
                     // Initialize with No action info
                     var actionType = event.message.actionOnNo.actionType;
                     var queryFunct = event.message.actionOnNo.queryFunct;
@@ -1334,12 +1334,22 @@ export class DomandeRisposteComponent implements OnChanges
                         // _this.sendEmail({ templateKey: 'test' });
                     } 
                     else if (actionType === "regulat_api") {
-                        _this.runRegulatEvent(
+                        const keys = {
+                            codiceAziendaAML: _this.domandeRisposteParams.keys.codice_azienda,
+                            idAnagraficaAML: _this.domandaKeys[index].id_anagrafica,
+                            idSomministrazioneAML: _this.domandaKeys[index].id_somministrazione,
+                            dynamoUserAML: _this.authService.userinfo.value.username,
+                            isLightScan: event.regulatAPIParams.entityParams.is_light_scan,
+                        }
+
+                        await _this._formsService.runRegulatEvent(
                             event.message.actionOnYes,
                             value,
                             keyListener,
-                            index
+                            _this.formArray[index].form.value,
+                            keys
                         );
+                        _this.reload();
                     }
                     // } else if (actionType === "user_api") {
                     //     _this.runUserManagementEvent(event, value, keyListener);
@@ -1630,7 +1640,7 @@ export class DomandeRisposteComponent implements OnChanges
                                 //console.table(result);
 
                                 _this._console.log(result);
-                                _this.showErrorToast(result.reason);
+                                _this._toastService.showErrorToastWithReason(result.reason);
                             }
                         },
                         (error) => {
@@ -1678,20 +1688,6 @@ export class DomandeRisposteComponent implements OnChanges
                 },
             );
         }
-    }
-
-    showErrorToast(reason: any) {
-        this._toastService.showErrorToast(
-            "Error ",
-            reason.detail == undefined
-                ? ""
-                : JSON.stringify(reason.detail) +
-                      (reason.hint == undefined
-                          ? ""
-                          : JSON.stringify(reason.hint)),
-            5000,
-            true,
-        );
     }
 
     
@@ -1936,221 +1932,7 @@ export class DomandeRisposteComponent implements OnChanges
     }
 
 
-    async runRegulatEvent(event, value, keyListener, index: number) {
-        let _this = this;
-        const regulatAPIParams: RegulatAPIParams = event.regulatAPIParams;
-        let formValues = _this.formArray.first.form.value;
-
-        // process the booleans (1/0 instead of true/false)
-        for (const value in formValues) {
-            if (formValues.hasOwnProperty(value)) {
-                const element = formValues[value];
-                if (element == null) {
-                    continue; // skip null entries
-                }
-                // decode combos
-                if (element["id"] != null) {
-                    formValues[value] = element["id"];
-                }
-                // encode boolean
-                else if (element === true) {
-                    formValues[value] = "1";
-                } else if (element === false) {
-                    formValues[value] = "0";
-                }
-            }
-        }
-
-        if (!regulatAPIParams || !regulatAPIParams.actionType) {
-            _this._toastService.showErrorToast("Missing Regulat API params");
-        } else {
-            if (_this.authService.getOneKYCAuth()) {
-                if (regulatAPIParams.actionType === "get_aml_scan") {
-                    if (!regulatAPIParams.entityParams) {
-                        _this._toastService.showErrorToast(
-                            "Missing Regulat API entity params",
-                        );
-                    } else {
-                        let loadingToast = _this._toastService.showLoadingToast(
-                            "Running OneKYC",
-                            "Please wait, it may takes a few minutes",
-                        );
-                        //_this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
-
-                        const codiceAziendaAML = _this.domandeRisposteParams.keys.codice_azienda;
-                            // formValues[
-                            //     regulatAPIParams.entityParams.codice_azienda
-                            // ];
-                        const idAnagraficaAML = _this.domandaKeys[index].id_anagrafica;
-                            // formValues[
-                            //     regulatAPIParams.entityParams.id_anagrafica
-                            // ];
-                        const idSomministrazioneAML = _this.domandaKeys[index].id_somministrazione;
-                            // formValues[
-                            //     regulatAPIParams.entityParams
-                            //         .id_somministrazione
-                            // ];
-                        const dynamoUserAML = _this.authService.userinfo.value.username;
-                            // formValues[
-                            //     regulatAPIParams.entityParams.dynamo_user
-                            // ];
-                        const isLightScan = 
-                            regulatAPIParams.entityParams.is_light_scan;
-
-                        //First step, get connected registries
-                        let connected_registries = await _this.backendService
-                            .getConnectedRegistries(
-                                codiceAziendaAML,
-                                idAnagraficaAML,
-                            )
-                            .toPromise();
-                        _this._console.log(connected_registries.response);
-
-                        if (connected_registries.response === "KO") {
-                            _this._console.log("KO");
-                            _this._toastService.hideLoadingToast(loadingToast);
-                            //_this._dialogService.closeDialog();
-                            _this.showErrorToast(connected_registries.reason);
-                        } else {
-                            let connectedRegistries =
-                                connected_registries.response;
-
-                            //Second step, query regulat.io
-                            let scan_contents = await _this.backendService
-                                .getAmlScan(
-                                    codiceAziendaAML,
-                                    connectedRegistries,
-                                    idSomministrazioneAML,
-                                    dynamoUserAML,
-                                    isLightScan,
-                                )
-                                .toPromise();
-                            _this._console.log(scan_contents);
-
-                            _this._toastService.hideLoadingToast(loadingToast);
-                            //_this._dialogService.closeDialog();
-                            _this._toastService.showSuccessToast(
-                                "OneKYC: Completed!",
-                            ); // show success toast
-                            this.reload(); // refresh the view
-                        }
-                    }
-                } else if (regulatAPIParams.actionType === "get_aml_scans") {
-                    if (!regulatAPIParams.surveyParams) {
-                        _this._toastService.showErrorToast(
-                            "Missing Regulat API survey params",
-                        );
-                    } else {
-                        let loadingToast = _this._toastService.showLoadingToast(
-                            "Running OneKYC",
-                            "Please wait, it may takes a few minutes",
-                        );
-                        //_this._dialogService.showLoadingDialog('Running OneKYC', 'Please wait...');
-
-                        const codiceAziendaAML =
-                            formValues[
-                                regulatAPIParams.surveyParams.codice_azienda
-                            ];
-                        const idSondaggioAML =
-                            formValues[
-                                regulatAPIParams.surveyParams.id_sondaggio
-                            ];
-                        const dynamoUserAML =
-                            formValues[
-                                regulatAPIParams.surveyParams.dynamo_user
-                            ];
-                        const isLightScan =
-                            regulatAPIParams.surveyParams.is_light_scan;
-
-                        //First step, get connected registries
-                        let connected_checks = await _this.backendService
-                            .getConnectedChecks(
-                                codiceAziendaAML,
-                                idSondaggioAML,
-                            )
-                            .toPromise();
-                        _this._console.log(connected_checks.response);
-
-                        if (connected_checks.response === "KO") {
-                            _this._console.log("KO");
-                            _this._toastService.hideLoadingToast(loadingToast);
-                            //_this._dialogService.closeDialog();
-                            _this.showErrorToast(connected_checks.reason);
-                        } else {
-                            let connectedChecks = connected_checks.response;
-
-                            for (let i = 0; i < connectedChecks.length; i++) {
-                                _this._console.log(
-                                    connectedChecks[i].id_somministrazione,
-                                );
-
-                                //First step, get connected registries
-                                let connected_registries =
-                                    await _this.backendService
-                                        .getConnectedRegistriesFromCheck(
-                                            codiceAziendaAML,
-                                            connectedChecks[i]
-                                                .id_somministrazione,
-                                        )
-                                        .toPromise();
-                                _this._console.log(
-                                    connected_registries.response,
-                                );
-
-                                if (connected_registries.response === "KO") {
-                                    _this._console.log("KO");
-                                    _this._toastService.hideLoadingToast(
-                                        loadingToast,
-                                    );
-                                    //_this._dialogService.closeDialog();
-                                    _this._toastService.showErrorToast(
-                                        connected_registries.reason,
-                                    );
-                                    return;
-                                } else {
-                                    let connectedRegistries =
-                                        connected_registries.response;
-
-                                    //Second step, query regulat.io
-                                    let scan_contents =
-                                        await _this.backendService
-                                            .getAmlScan(
-                                                codiceAziendaAML,
-                                                connectedRegistries,
-                                                connectedChecks[i]
-                                                    .id_somministrazione,
-                                                dynamoUserAML,
-                                                isLightScan,
-                                            )
-                                            .toPromise();
-                                    _this._console.log(scan_contents);
-                                }
-                            }
-                            _this._toastService.hideLoadingToast(loadingToast);
-                            //_this._dialogService.closeDialog();
-                            _this._toastService.showSuccessToast(
-                                "OneKYC: Completed!",
-                            ); // show success toast
-                            this.reload(); // refresh the view
-                        }
-                    }
-                } else {
-                    _this._toastService.showErrorToast(
-                        "Missing Regulat Api Params",
-                    );
-                }
-            } else {
-                _this._console.error(
-                    "You are not subscribed to use OneKYC service",
-                );
-                _this._dialogService.showErrorDialog(
-                    "Missing authorization",
-                    "You are not subscribed to use OneKYC service",
-                );
-            }
-        }
-    }
-
+    
 
 
 }
