@@ -177,6 +177,16 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
   
+  updateDomandeRisposte(company: string, entryName: string, keys: object, data: any): Observable<any> {
+    this.awsService.auth();    
+    const putPostReq: PostRequest = {
+      body: {data: data},
+      headers: {},
+      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), is_domande_risposte_update_request: 1 }
+    };
+    return from(this.awsService.api().post(this.apiName, this.tablesApiName, putPostReq));
+  }
+
   getAttachList(entryName: string, company: string, keys: any, businessObjectName: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {

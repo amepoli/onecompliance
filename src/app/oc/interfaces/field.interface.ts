@@ -117,4 +117,5 @@ export interface FieldConfig {
     lazyLoading?: boolean;
     widgetType?: FormWidgetType;
     onClick?: Function;
+    onBlur?: Function;
 }

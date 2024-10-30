@@ -105,10 +105,7 @@ export class CheckboxGroupComponent implements OnInit {
         const _this = this;
 
         this.selection[id] = checked ? 1 : 0;
-
-        // Run the onClick function if provided
-        _this.field.onClick && _this.field.onClick(event, _this.field);
-
+        
         var index = _this.field.value.indexOf(_this.field.options[id].id);
 
         if (index > -1 && !checked) {
@@ -137,6 +134,9 @@ export class CheckboxGroupComponent implements OnInit {
         }
 
         _this.updateCheckboxGroupItemsStyle();
+
+        // Run the onClick function if provided
+        _this.field.onClick && _this.field.onClick({value: {id: _this.field.value}}, _this.field);
 
     }
 

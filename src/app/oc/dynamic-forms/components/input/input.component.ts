@@ -130,6 +130,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       _this.sendResetByKeyEvent()
     }
+
+    _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
   }
 
   onFocus(): void {

@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 
 import { FormViewComponent } from '../../views/form/form-view.component';
 import { memoize } from 'app/oc/decorators/memoize';
+import { FieldConfig } from 'app/oc/interfaces';
 
 @Component({
     selector: 'multi-attachments',
@@ -21,6 +22,7 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
     @Input("tooltip") tooltip: any;
     @Input("businessObjectName") businessObjectName: any;
     @Input('initialCount') initialCount: number;
+    @Input("field") field: FieldConfig;
 
     @Output() onClick = new EventEmitter<boolean>();
     @Output() onSave: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -56,7 +58,7 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
 
     @memoize()
     ngOnChanges(changes: SimpleChanges) {
-        this.getAttachList(this.firstRun && this.initialCount != null);
+        this.getAttachList(this.firstRun && ((this.initialCount != null && this.initialCount > 0) || (this.field.value != null && this.field.value > 0)));
         if (this.firstRun) {
             this.firstRun = false;
         }
@@ -90,8 +92,11 @@ export class MultiAttachmentsComponent implements OnInit, AfterViewInit, OnChang
         const _this = this;
         //console.table(_this.keys);
         if (takeInitialCount) {
-            if (_this.initialCount !== undefined && _this.initialCount !== null) {
+            if (_this.initialCount !== undefined && _this.initialCount !== null && _this.initialCount > 0) {
                 _this.numAttachments = _this.initialCount;
+            }
+            else if (_this.field.value !== undefined && _this.field.value !== null && _this.field.value > 0) {
+                _this.numAttachments = _this.field.value;
             }
         }
         else {

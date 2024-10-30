@@ -27,6 +27,7 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   group: UntypedFormGroup;
   readOnlyPage: boolean = false; // field.readonly overridden by page
   isRequired = false; // field is required or not
+  businessObjectName: string = 'riepilogoRisposte';
 
   subscription: Subscription;
 
@@ -52,6 +53,10 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
 
+    if(_this.field.fullValueSet.businessObjectName) {
+      _this.businessObjectName = _this.field.fullValueSet.businessObjectName;
+    }
+    
     _this.fileService.onSave.subscribe(entryName => {
       _this.attachmentOnSave(entryName);
     })
