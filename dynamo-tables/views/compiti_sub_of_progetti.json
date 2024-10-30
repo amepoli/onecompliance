@@ -72,7 +72,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select case when cmp.stato !='C' then true else false end as check,codice_compito,entrasp.argomenti_descr_breve_no_num(id_argomento_priorita) as priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo,  entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, cmp.id_progetto from entrasp.compiti cmp where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=150 and id_progetto=$id_progetto$"
+            "queryString": "select case when cmp.stato !='C' then true else false end as check,codice_compito,entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor,foreseen_date, entrasp.argomenti_descr_breve_no_num(id_argomento_priorita) as priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo,  entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato, cmp.id_progetto from entrasp.compiti cmp where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=150 and id_progetto=$id_progetto$"
         },
         {
             "operation": "startEvent",
@@ -145,7 +145,21 @@
             "label": "Data Attività/Parere",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "foreseen_date",
+            "label": "Data Scadenza",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -160,6 +174,90 @@
             "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
             "newLine": false,
             "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "value": "C"
+            },
+            "outputEvent": {
+                "eventName": "check_permission",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_change_compiti",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$",
+                    "outputEventWhenComplete": "codice_colore_change_compiti2"
+                },
+                {
+                    "eventName": "codice_colore_change_compiti2",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select character_color as stato_font_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
+                },
+                {
+                    "eventName": "check_permission",
+                    "values": [],
+                    "condition": "none",
+                    "actionType": "query",
+                    "queryFunct": "UPDATE entrasp.compiti set stato='£stato£' where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
+                }
+            ],
+            "label": "Stato",
+            "key": "stato",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6614 order by id_argomento;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_priorita",
+            "size": 2,
+            "label": "Priorità",
+            "readOnly": false,
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "codice_colore_priorita",
+                "eventTrigger": "load"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_priorita",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when id_argomento_priorita=2484 then 'White' when id_argomento_priorita=6615 then 'Green' when id_argomento_priorita=6616 then 'yellow' when id_argomento_priorita=45115 then 'fireBrick' end as id_argomento_priorita_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "codice_colore_testo_priorita",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select case when id_argomento_priorita=2484 then 'DarkBlue' when id_argomento_priorita=6615 then 'PaleGreen' when id_argomento_priorita=6616 then 'black' when id_argomento_priorita=45115 then 'DarkRed' end as id_argomento_priorita_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                }
+            ]
         },
         {
             "autoGenerate": false,
@@ -195,22 +293,6 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "value": "C",
-                "viewType": "input"
-            },
-
-            "label": "Stato",
-            "key": "stato",
-            "readOnly": false,
-            "isHidden": true,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 1
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "dataType": "number",
                 "viewType": "input",
                 "value": 150
@@ -233,7 +315,7 @@
             "textareaHeight": "S",
             "isPrimary": false,
             "key": "note",
-            "label": "Descrizione Modifica",
+            "label": "Descrizione Attività/Parere",
             "newLine": true,
             "readOnly": false,
             "size": 10
@@ -269,6 +351,35 @@
             "newLine": false,
             "readOnly": false,
             "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest_monitor",
+            "label": "Centro Gestionale Monitoraggio/Segnalante",
+            "newLine": true,
+            "readOnly": false,
+            "size": 2.75
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trattamento",
+            "label": "Azione Richiesta",
+            "newLine": false,
+            "readOnly": false,
+            "size": 5
         }
     ],
     "search_keys": [
@@ -581,6 +692,17 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "tipo_segnalazione",
+            "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
+            "label": "Tipo",
+            "width": "10%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "titolo",
             "width": "36%",
             "label": "Titolo",
@@ -607,29 +729,19 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
             "key": "descr_centro_gest_monitor",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor)",
             "label": "Centro Gest.Monit.",
             "width": "8%"
         },
+
         {
             "format": {
                 "dataType": "text"
             },
             "isHidden": false,
-            "isPrimary": false,
-            "key": "tipo_segnalazione",
-            "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
-            "label": "Tipo",
-            "width": "10%"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
             "isPrimary": false,
             "key": "priorita",
             "label": "Priorità",
@@ -708,11 +820,11 @@
             "format": {
                 "dataType": "date"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
-            "key": "data_chiusura",
+            "key": "foreseen_date",
             "width": "6%",
-            "label": "Chiuso il"
+            "label": "Scadenza"
         },
         {
             "format": {
@@ -727,7 +839,7 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
             "key": "stato",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
