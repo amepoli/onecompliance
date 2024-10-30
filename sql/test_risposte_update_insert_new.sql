@@ -1,17 +1,36 @@
-select entrasp.crea_json_verifica('DEMO', 50, 1, 235, 255)
+select entrasp.crea_json_verifica('DEMO', 50, 1, 235, 255);
 
 select id_domanda, descrizione, id_modello_test, id_modello_test_vr
 from entrasp.domande dm
-where codice_azienda='DEMO' and id_modello_test=50 and id_modello_test_vr=1
+where codice_azienda='DEMO' and id_modello_test=50 and id_modello_test_vr=1;
 
 select entrasp.risposte_update_insert_new(
 codiceazienda=>'DEMO'::varchar,  iddomanda=>3::numeric, 
 idsondaggio=>235::numeric, idsomministrazione=>255::numeric, 
-rispostadate=>'2024-10-30'::date, peso_=>30
-note_=>'risposta di tipo data'::text);
+rispostadate=>'2024-10-28'::date, peso_=>20,
+noterisposta=>'risposta di tipo data 2'::text);
 
-select * from entrasp.risposte where codice_azienda='DEMO' and id_sondaggio=235 and id_somministrazione=255 and id_domanda=3;
+select * from entrasp.risposte 
+where codice_azienda='DEMO' and id_sondaggio=235 and id_somministrazione=255 and id_domanda=3;
 
+delete from entrasp.risposte
+where codice_azienda='DEMO' and id_sondaggio=235 and id_somministrazione=255;
+
+select * from entrasp.risposte_previste 
+where id_domanda=5 
+and codice_azienda='DEMO' and id_modello_test=50 and id_modello_test_vr=1
+
+select * from entrasp.risposte 
+where codice_azienda='DEMO' 
+and id_sondaggio=235 and id_somministrazione=255 and id_domanda=5;
+
+select sondaggio_completato, giudizio
+from entrasp.sondaggi
+where codice_azienda='DEMO' and id_sondaggio=235
+
+
+
+********
 select entrasp.risposte_update_insert_new(
 codiceazienda=>'DEMO'::varchar,  iddomanda=>4::numeric, 
 idsondaggio=>235::numeric, idsomministrazione=>255::numeric, 
@@ -34,14 +53,12 @@ select sondaggio_completato, giudizio
 from entrasp.sondaggi
 where codice_azienda='DEMO' and id_sondaggio=235
 
-
-
 *****
 
 select entrasp.risposte_update_insert_new(
 codiceazienda=>'DEMO'::varchar,  iddomanda=>5::numeric, 
 idsondaggio=>235::numeric, idsomministrazione=>255::numeric, 
-idrispostaprev=>86032::numeric, noterisposta=>'risposta tipo combobox: sì'::text);
+rispostamultipla=>'array[86033, 86034]'::varchar, noterisposta=>'risposta tipo combobox: sì'::text);
 
 select * from entrasp.risposte where codice_azienda='DEMO' and id_sondaggio=235 
 and id_somministrazione=255 and id_domanda=5;
@@ -59,6 +76,10 @@ where codice_azienda='DEMO' and id_sondaggio=235 and id_somministrazione=255 and
 select sondaggio_completato, giudizio
 from entrasp.sondaggi
 where codice_azienda='DEMO' and id_sondaggio=235
+
+select * from entrasp.risposte_previste 
+where id_domanda=5
+and codice_azienda='DEMO' and id_modello_test=50 and id_modello_test_vr=1
 
 
 *****
