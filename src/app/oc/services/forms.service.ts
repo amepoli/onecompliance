@@ -598,6 +598,45 @@ export class FormsService {
         }
     }
 
-    
-
+    processFormValues(formValues: any) {
+        for (const key in formValues) {
+            if (formValues.hasOwnProperty(key)) {
+                const element = formValues[key];
+                if (element == null) {
+                    continue; // skip null entries
+                }
+                if (Array.isArray(element) && element.length > 0) {
+                    if (element.length === 1 && element[0] === null) {
+                        continue; // skip null entries
+                        // formValues[key] = 'ARRAY[NULL]';
+                    } else if (
+                        typeof element[0] === "object" &&
+                        Object.keys(element[0]).length > 0 &&
+                        element[0]["id"]
+                    ) {
+                        formValues[key] =
+                            "ARRAY[" +
+                            element.map((x) => x.id).join(",") +
+                            "]";
+                    } else {
+                        formValues[key] =
+                            "ARRAY[" +
+                            element.map((x) => x).join(",") +
+                            "]";
+                    }
+                }
+                // decode combos
+                else if (element["id"] != null) {
+                    formValues[key] = element["id"];
+                }
+                // encode boolean
+                else if (element === true) {
+                    formValues[key] = "1";
+                } else if (element === false) {
+                    formValues[key] = "0";
+                }
+            }
+        }
+        return formValues;
+    }
 }
