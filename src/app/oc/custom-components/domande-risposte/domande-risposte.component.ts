@@ -167,8 +167,12 @@ export class DomandeRisposteComponent implements OnChanges
                     case 'note_risposta':
                         curFormData[j].onBlur = (event: any, field: FieldConfig) => _this.updateNoteRisposta(i);
                         break;
+                    case 'peso':
+                        curFormData[j].onBlur = (event: any, field: FieldConfig) => _this.updateDomandaRisposta(i);
+                        break;
                     case 'risposte_previste':
                         curFormData[j].onClick = (event: any, field: FieldConfig) => _this.updateRispostPreviste(event, field, i);
+                        curFormData[j].onBlur = (event: any, field: FieldConfig) => _this.updateDomandaRisposta(i);
                         break;
                     default: return;
                 }
@@ -197,23 +201,23 @@ export class DomandeRisposteComponent implements OnChanges
         const _this = this;
         let viewKeys: FormViewKey[] = [
             {
-                "format": {
-                    "dataType": "number",
-                    "viewType": "input"
+                format: {
+                    dataType: "number",
+                    viewType: "input"
                 },
-                "isHidden": false,
-                "isVisible": true,
-                "isPrimary": false,
-                "key": "id_domanda",
-                "label": "N.",
-                "newLine": false,
-                "readOnly": true,
-                "size": 1,
-                "style": {
-                    "font_color": "black",
-                    "font_weight": "600"
+                isHidden: false,
+                isVisible: true,
+                isPrimary: false,
+                key: "id_domanda",
+                label: "N.",
+                newLine: false,
+                readOnly: true,
+                size: 1,
+                style: {
+                    font_color: "black",
+                    font_weight: "600"
                 },
-                "translate": "RESOURCES.n_domande_risposte"
+                translate: "RESOURCES.n_domande_risposte"
             },
             {
                 format: {
@@ -232,143 +236,164 @@ export class DomandeRisposteComponent implements OnChanges
                 translate: "RESOURCES.domanda_domande_risposte",
             },
             {
-                "autoGenerate": false,
-                "buttonIcon": "more_vert",
-                "format": {
-                    "menuOptions": [
+                autoGenerate: false,
+                buttonIcon: "more_vert",
+                format: {
+                    menuOptions: [
                         // {
-                        //     "icon": "report_problem",
-                        //     "label": "Crea Segnalazione",
-                        //     "outputEventName": "risposte_update_insert_on_create",
-                        //     "onClick": () => {_this.creaSegnalazione()},
-                        //     "translate": "RESOURCES.crea_segnalazione_domande_risposte"
+                        //     icon: "report_problem",
+                        //     label: "Crea Segnalazione",
+                        //     outputEventName: "risposte_update_insert_on_create",
+                        //     onClick: () => {_this.creaSegnalazione()},
+                        //     translate: "RESOURCES.crea_segnalazione_domande_risposte"
                         // },
                         // {
-                        //     "icon": "launch",
-                        //     "label": "Vai a segnalazione",
-                        //     "outputEventName": "segnalazione_navigate",
-                        //     "translate": "RESOURCES.vai_a_segnalazione_domande_risposte"
+                        //     icon: "launch",
+                        //     label: "Vai a segnalazione",
+                        //     outputEventName: "segnalazione_navigate",
+                        //     translate: "RESOURCES.vai_a_segnalazione_domande_risposte"
                         // },
                         // {
-                        //     "icon": "close",
-                        //     "label": "Dissocia Segnalazione",
-                        //     "outputEventName": "dissocia_segnalazione",
-                        //     "translate": "RESOURCES.dissocia_segnalazione_domande_risposte"
+                        //     icon: "close",
+                        //     label: "Dissocia Segnalazione",
+                        //     outputEventName: "dissocia_segnalazione",
+                        //     translate: "RESOURCES.dissocia_segnalazione_domande_risposte"
                         // },
-                        // {
-                        //     "icon": "delete",
-                        //     "label": "Cancella risposta",
-                        //     "outputEventName": "delete_risposta",
-                        //     "translate": "RESOURCES.cancella_risposta_domande_risposte"
-                        // },
-                        {
-                            "icon": "content_copy",
-                            "label": "Copia questa risp. sulle verifiche (somministrazioni) del sondaggio",
-                            "outputEventName": "answer_copy",
-                            "onClick": (item: any, field: FieldConfig) => {_this.answerCopy(item, field, index)},
-                            "translate": "RESOURCES.copia_questa_risp_sulle_verifiche_somministrazioni_del_sondaggio_domande_risposte"
-                        },
-                        {
-                            "icon": "link",
-                            "label": "Seleziona note",
-                            "outputEventName": "associa_note",
-                            onClick: (item: any, field: FieldConfig) => {_this.associaNote(item, field, index)},
-                            "translate": "RESOURCES.seleziona_note_domande_risposte"
-                        }
+                        ...(
+                            result.type === 'radiobutton' ?
+                            [
+                                {
+                                    icon: "delete",
+                                    label: "Cancella risposta",
+                                    outputEventName: "delete_risposta",
+                                    translate: "RESOURCES.cancella_risposta_domande_risposte"
+                                },
+                                {
+                                    icon: "content_copy",
+                                    label: "Copia questa risp. sulle verifiche (somministrazioni) del sondaggio",
+                                    outputEventName: "answer_copy",
+                                    onClick: (item: any, field: FieldConfig) => {_this.answerCopy(item, field, index)},
+                                    translate: "RESOURCES.copia_questa_risp_sulle_verifiche_somministrazioni_del_sondaggio_domande_risposte"
+                                },
+                                {
+                                    icon: "link",
+                                    label: "Seleziona note",
+                                    outputEventName: "associa_note",
+                                    onClick: (item: any, field: FieldConfig) => {_this.associaNote(item, field, index)},
+                                    translate: "RESOURCES.seleziona_note_domande_risposte"
+                                }
+                            ]:
+                            [
+                                {
+                                    icon: "content_copy",
+                                    label: "Copia questa risp. sulle verifiche (somministrazioni) del sondaggio",
+                                    outputEventName: "answer_copy",
+                                    onClick: (item: any, field: FieldConfig) => {_this.answerCopy(item, field, index)},
+                                    translate: "RESOURCES.copia_questa_risp_sulle_verifiche_somministrazioni_del_sondaggio_domande_risposte"
+                                },
+                                {
+                                    icon: "link",
+                                    label: "Seleziona note",
+                                    outputEventName: "associa_note",
+                                    onClick: (item: any, field: FieldConfig) => {_this.associaNote(item, field, index)},
+                                    translate: "RESOURCES.seleziona_note_domande_risposte"
+                                }
+                            ]
+                        )
                     ],
-                    "viewType": "menu"
+                    viewType: "menu"
                 },
-                "inputEvents": [
+                inputEvents: [
                     {
-                        "actionType": "show_message",
-                        "condition": "none",
-                        "eventName": "delete_risposta",
-                        "message": {
-                            "actionOnNo": {
-                                "actionType": "skip",
-                                "queryFunct": "select 1"
+                        actionType: "show_message",
+                        condition: "none",
+                        eventName: "delete_risposta",
+                        message: {
+                            actionOnNo: {
+                                actionType: "skip",
+                                queryFunct: "select 1"
                             },
-                            "actionOnYes": {
-                                "actionType": "query",
-                                "queryFunct": "SELECT entrasp.delete_risposta( $codice_azienda$,$id_domanda$,$id_modello_test$,$id_modello_test_vr$,$id_sondaggio$,$id_somministrazione$, $id_sezione$)"
+                            actionOnYes: {
+                                actionType: "query",
+                                queryFunct: "SELECT entrasp.delete_risposta( $codice_azienda$,$id_domanda$,$id_modello_test$,$id_modello_test_vr$,$id_sondaggio$,$id_somministrazione$, $id_sezione$)"
                             },
-                            "messageText": "Cancellare definitivamente la risposta?"
+                            messageText: "Cancellare definitivamente la risposta?"
                         },
-                        "outputEventWhenComplete": "triggerReload",
-                        "successMessage": "Risposta cancellata correttamente",
-                        "values": []
+                        outputEventWhenComplete: "triggerReload",
+                        successMessage: "Risposta cancellata correttamente",
+                        values: []
                     },
                     {
-                        "actionType": "show_message",
-                        "condition": "none",
-                        "eventName": "dissocia_segnalazione",
-                        "message": {
-                            "actionOnNo": {
-                                "actionType": "skip",
-                                "queryFunct": "select 1"
+                        actionType: "show_message",
+                        condition: "none",
+                        eventName: "dissocia_segnalazione",
+                        message: {
+                            actionOnNo: {
+                                actionType: "skip",
+                                queryFunct: "select 1"
                             },
-                            "actionOnYes": {
-                                "actionType": "query",
-                                "queryFunct": "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£' and id_domanda=£id_domanda£ and object_name='riepilogoRisposte' and id_somministrazione=$id_somministrazione$"
+                            actionOnYes: {
+                                actionType: "query",
+                                queryFunct: "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£' and id_domanda=£id_domanda£ and object_name='riepilogoRisposte' and id_somministrazione=$id_somministrazione$"
                             },
-                            "messageText": "Dissociare la segnalazione dalla domanda?"
+                            messageText: "Dissociare la segnalazione dalla domanda?"
                         },
-                        "outputEventWhenComplete": "triggerReload",
-                        "successMessage": "Segnalazione dissociata correttamente",
-                        "values": []
+                        outputEventWhenComplete: "triggerReload",
+                        successMessage: "Segnalazione dissociata correttamente",
+                        values: []
                     },
                     {
-                        "actionType": "show_message",
-                        "condition": "none",
-                        "eventName": "answer_copy",
-                        "message": {
-                            "actionOnNo": {
-                                "actionType": "skip",
-                                "queryFunct": "select 1"
+                        actionType: "show_message",
+                        condition: "none",
+                        eventName: "answer_copy",
+                        message: {
+                            actionOnNo: {
+                                actionType: "skip",
+                                queryFunct: "select 1"
                             },
-                            "actionOnYes": {
-                                "actionType": "query",
-                                "queryFunct": "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$, $id_domanda$, false) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
+                            actionOnYes: {
+                                actionType: "query",
+                                queryFunct: "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$, $id_domanda$, false) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
                             },
-                            "messageText": "Copiare questa risposta su tutte le verifiche (somministrazioni) del sondaggio?"
+                            messageText: "Copiare questa risposta su tutte le verifiche (somministrazioni) del sondaggio?"
                         },
-                        "successMessage": "Risposte copiate correttamente",
-                        "values": []
+                        successMessage: "Risposte copiate correttamente",
+                        values: []
                     },
                     {
-                        "actionType": "dialog",
-                        "condition": "none",
-                        "customDialogEntryName": "dialog_domande_associa_note",
-                        "customDialogTitle": "Associa Nota",
-                        "eventName": "associa_note",
-                        "outputEventWhenComplete": "triggerReload",
-                        "values": []
+                        actionType: "dialog",
+                        condition: "none",
+                        customDialogEntryName: "dialog_domande_associa_note",
+                        customDialogTitle: "Associa Nota",
+                        eventName: "associa_note",
+                        outputEventWhenComplete: "triggerReload",
+                        values: []
                     }
                 ],
-                "isHidden": false,
-                "isVisible": true,
-                "isPrimary": false,
-                "key": "domande_actions",
-                "label": "",
-                "newLine": false,
-                "readOnly": false,
-                "sameOrigin": false,
-                "size": 0.6
+                isHidden: false,
+                isVisible: true,
+                isPrimary: false,
+                key: "domande_actions",
+                label: "",
+                newLine: false,
+                readOnly: false,
+                sameOrigin: false,
+                size: 0.6
             },
             {
-                "autoGenerate": false,
-                "format": {
-                    "viewType": "widget",
-                    "widgetType": "multi-attachments"
+                autoGenerate: false,
+                format: {
+                    viewType: "widget",
+                    widgetType: "multi-attachments"
                 },
-                "isHidden": false,
-                "isVisible": true,
-                "isPrimary": false,
-                "key": "num_allegati",
-                "label": "All.",
-                "newLine": true,
-                "readOnly": true,
-                "size": 0.75
+                isHidden: false,
+                isVisible: true,
+                isPrimary: false,
+                key: "num_allegati",
+                label: "All.",
+                newLine: true,
+                readOnly: true,
+                size: 0.75
             },
             {
                 format: {
@@ -395,103 +420,103 @@ export class DomandeRisposteComponent implements OnChanges
         ];
 
         viewKeys.push({
-            "format": {
-                "dataType": "text",
-                "value": null,
-                "viewType": "label"
+            format: {
+                dataType: "text",
+                value: null,
+                viewType: "label"
             },
-            "isHidden": false,
-            "isVisible": true,
-            "isPrimary": false,
-            "key": "risposta",
-            "label": "Risposta",
-            "newLine": false,
-            "readOnly": true,
-            "sameOrigin": false,
-            "size": 9,
-            "style": {
-                "background_color": "#03a9f4",
-                "font_color": "white",
-                "font_size": "1.3em",
-                "font_style": "italic",
-                "font_weight": "400"
+            isHidden: false,
+            isVisible: true,
+            isPrimary: false,
+            key: "risposta",
+            label: "Risposta",
+            newLine: false,
+            readOnly: true,
+            sameOrigin: false,
+            size: 9,
+            style: {
+                background_color: "#03a9f4",
+                font_color: "white",
+                font_size: "1.3em",
+                font_style: "italic",
+                font_weight: "400"
             },
-            "translate": "RESOURCES.risposta_domande_risposte"
+            translate: "RESOURCES.risposta_domande_risposte"
         });
 
 
         viewKeys.push({
-            "format": {
-                "viewType": "invisible"
+            format: {
+                viewType: "invisible"
             },
-            "isVisible": true,
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "no_new_line",
-            "label": "no_new_line",
-            "newLine": false,
-            "readOnly": true,
-            "sameOrigin": false,
-            "size": 3,
-            "translate": "RESOURCES.no_new_line_domande_risposte"
+            isVisible: true,
+            isHidden: false,
+            isPrimary: false,
+            key: "no_new_line",
+            label: "no_new_line",
+            newLine: false,
+            readOnly: true,
+            sameOrigin: false,
+            size: 3,
+            translate: "RESOURCES.no_new_line_domande_risposte"
         });
 
         var addInvisible = false;
 
         if(result.kycDeepButton) {
             viewKeys.push({
-                "buttonIcon": "person_search",
-                "format": {
-                    "viewType": "button"
+                buttonIcon: "person_search",
+                format: {
+                    viewType: "button"
                 },
-                "isHidden": false,
-                "isVisible": true,
-                "isPrimary": false,
-                "key": "kyc_deep",
-                "label": "OneKYC - Deep",
-                "newLine": false,
-                "outputEvent": {
-                    "eventName": "get_aml_scan",
-                    "eventTrigger": "press"
+                isHidden: false,
+                isVisible: true,
+                isPrimary: false,
+                key: "kyc_deep",
+                label: "OneKYC - Deep",
+                newLine: false,
+                outputEvent: {
+                    eventName: "get_aml_scan",
+                    eventTrigger: "press"
                 },
-                "readOnly": false,
-                "sameOrigin": false,
-                "size": 2,
-                "style": {
-                    "background_color": "firebrick",
-                    "font_color": "white"
+                readOnly: false,
+                sameOrigin: false,
+                size: 2,
+                style: {
+                    background_color: "firebrick",
+                    font_color: "white"
                 },
-                "tooltip": "Controllo OneKYC approfondito",
-                "translate": "RESOURCES.onekyc__deep_domande_risposte",
+                tooltip: "Controllo OneKYC approfondito",
+                translate: "RESOURCES.onekyc__deep_domande_risposte",
             });
             addInvisible = true;
         };
         
         if(result.mailButton) {
             viewKeys.push({
-                "buttonIcon": "mail",
-                "format": {
-                    "viewType": "button"
+                buttonIcon: "mail",
+                format: {
+                    viewType: "button"
                 },
-                "isHidden": false,
-                "isVisible": true,
-                "isPrimary": false,
-                "key": "send_mail",
-                "label": "Invia mail",
-                "newLine": false,
-                "outputEvent": {
-                    "eventName": "invia_mail",
-                    "eventTrigger": "press"
+                isHidden: false,
+                isVisible: true,
+                isPrimary: false,
+                key: "send_mail",
+                label: "Invia mail",
+                newLine: false,
+                outputEvent: {
+                    eventName: "invia_mail",
+                    eventTrigger: "press"
                 },
-                "readOnly": false,
-                "sameOrigin": false,
-                "size": 2,
-                "style": {
-                    "background_color": "firebrick",
-                    "font_color": "white"
+                readOnly: false,
+                sameOrigin: false,
+                size: 2,
+                style: {
+                    background_color: "firebrick",
+                    font_color: "white"
                 },
-                "tooltip": "Invia mail",
-                "translate": "RESOURCES.invia_mail_domande_risposte",   
+                tooltip: "Invia mail",
+                translate: "RESOURCES.invia_mail_domande_risposte",   
             });
             addInvisible = true;
         }
@@ -499,25 +524,25 @@ export class DomandeRisposteComponent implements OnChanges
         if(result.kycLightButton) {
             viewKeys.push(
                 {
-                    "buttonIcon": "person_search",
-                    "format": {
-                        "viewType": "button"
+                    buttonIcon: "person_search",
+                    format: {
+                        viewType: "button"
                     },
-                    "isHidden": false,
-                    "isVisible": true,
-                    "isPrimary": false,
-                    "key": "kyc_light",
-                    "label": "OneKYC - Light",
-                    "newLine": false,
-                    "outputEvent": {
-                        "eventName": "get_light_aml_scan",
-                        "eventTrigger": "press"
+                    isHidden: false,
+                    isVisible: true,
+                    isPrimary: false,
+                    key: "kyc_light",
+                    label: "OneKYC - Light",
+                    newLine: false,
+                    outputEvent: {
+                        eventName: "get_light_aml_scan",
+                        eventTrigger: "press"
                     },
-                    "readOnly": false,
-                    "sameOrigin": false,
-                    "size": 2,
-                    "tooltip": "Controllo OneKYC limitato alle liste anti-terrorismo",
-                    "translate": "RESOURCES.onekyc__light_domande_risposte",
+                    readOnly: false,
+                    sameOrigin: false,
+                    size: 2,
+                    tooltip: "Controllo OneKYC limitato alle liste anti-terrorismo",
+                    translate: "RESOURCES.onekyc__light_domande_risposte",
                 }
             );
             addInvisible = true;
@@ -525,29 +550,29 @@ export class DomandeRisposteComponent implements OnChanges
 
         if(result.checkProvincia) {
             viewKeys.push({
-                "buttonIcon": "person_search",
-                "format": {
-                    "viewType": "button"
+                buttonIcon: "person_search",
+                format: {
+                    viewType: "button"
                 },
-                "isHidden": false,
-                "isVisible": true,
-                "isPrimary": false,
-                "key": "check_provincia",
-                "label": "Check provincia",
-                "newLine": false,
-                "outputEvent": {
-                    "eventName": "check_provincia_event",
-                    "eventTrigger": "press"
+                isHidden: false,
+                isVisible: true,
+                isPrimary: false,
+                key: "check_provincia",
+                label: "Check provincia",
+                newLine: false,
+                outputEvent: {
+                    eventName: "check_provincia_event",
+                    eventTrigger: "press"
                 },
-                "readOnly": false,
-                "sameOrigin": false,
-                "size": 2,
-                "style": {
-                    "background_color": "royalblue",
-                    "font_color": "white"
+                readOnly: false,
+                sameOrigin: false,
+                size: 2,
+                style: {
+                    background_color: "royalblue",
+                    font_color: "white"
                 },
-                "tooltip": "Check provincia",
-                "translate": "RESOURCES.check_provincia_domande_risposte",
+                tooltip: "Check provincia",
+                translate: "RESOURCES.check_provincia_domande_risposte",
             });
             addInvisible = true;
         }
@@ -555,19 +580,19 @@ export class DomandeRisposteComponent implements OnChanges
         if(addInvisible && !addInvisible){
             viewKeys.push(
                 {
-                    "format": {
-                        "viewType": "invisible"
+                    format: {
+                        viewType: "invisible"
                     },
-                    "isHidden": false,
-                    "isVisible": true,
-                    "isPrimary": false,
-                    "key": "new_line",
-                    "label": "new_line",
-                    "newLine": true,
-                    "readOnly": true,
-                    "sameOrigin": false,
-                    "size": 3,
-                    "translate": "RESOURCES.new_line_domande_risposte"
+                    isHidden: false,
+                    isVisible: true,
+                    isPrimary: false,
+                    key: "new_line",
+                    label: "new_line",
+                    newLine: true,
+                    readOnly: true,
+                    sameOrigin: false,
+                    size: 3,
+                    translate: "RESOURCES.new_line_domande_risposte"
                 }
             );
         }
@@ -879,7 +904,7 @@ export class DomandeRisposteComponent implements OnChanges
                     }
                     
                     if(formData[i].name === 'peso') {
-                        if(value) {
+                        if(value && value.length > 0) {
                             formData[i].value = result["risposte_previste_options"].filter((x: any) => value.includes(x.id_risposta_prev)).map(x => x.peso_ans).reduce((a, b) => a + b);
                         }
                         formData[i].style = {};
@@ -1048,24 +1073,8 @@ export class DomandeRisposteComponent implements OnChanges
                                 chiavi[value.origin] = value.data;
                             }
                             // process values
-                            for (const key in chiavi) {
-                                if (chiavi.hasOwnProperty(key)) {
-                                    const element = chiavi[key];
-                                    if (element == null) {
-                                        continue; // skip null entries
-                                    }
-                                    // decode combos
-                                    if (element["id"] != null) {
-                                        chiavi[key] = element["id"];
-                                    }
-                                    // encode boolean
-                                    else if (element === true) {
-                                        chiavi[key] = "1";
-                                    } else if (element === false) {
-                                        chiavi[key] = "0";
-                                    }
-                                }
-                            }
+                            chiavi = _this._formsService.processFormValues(chiavi);
+
                             const subscription = _this.backendService
                                 .postEvent(
                                     _this.domandeRisposteParams.entryName,
@@ -1168,45 +1177,8 @@ export class DomandeRisposteComponent implements OnChanges
                     chiavi[value.origin] = value.data;
                 }
                 // process values
-                for (const key in chiavi) {
-                    if (chiavi.hasOwnProperty(key)) {
-                        const element = chiavi[key];
-                        if (element == null) {
-                            continue; // skip null entries
-                        }
-                        if (Array.isArray(element) && element.length > 0) {
-                            if (element.length === 1 && element[0] === null) {
-                                continue; // skip null entries
-                                // chiavi[key] = 'ARRAY[NULL]';
-                            } else if (
-                                typeof element[0] === "object" &&
-                                Object.keys(element[0]).length > 0 &&
-                                element[0]["id"]
-                            ) {
-                                chiavi[key] =
-                                    "ARRAY[" +
-                                    element.map((x) => x.id).join(",") +
-                                    "]";
-                            } else {
-                                chiavi[key] =
-                                    "ARRAY[" +
-                                    element.map((x) => x).join(",") +
-                                    "]";
-                            }
-                        }
-                        // decode combos
-                        else if (element["id"] != null) {
-                            chiavi[key] = element["id"];
-                        }
-                        // decode multi-combo / tags
-                        // encode boolean
-                        else if (element === true) {
-                            chiavi[key] = "1";
-                        } else if (element === false) {
-                            chiavi[key] = "0";
-                        }
-                    }
-                }
+                chiavi = _this._formsService.processFormValues(chiavi);
+
                 if (value.showEventProcessing === true) {
                     _this._dialogService.showLoadingDialog(
                         "Processing",
@@ -1400,9 +1372,6 @@ export class DomandeRisposteComponent implements OnChanges
                     };
                 }
             });
-
-            this.updateDomandaRisposta(index);
-
             // console.log(field);
         }
         else if(field.type === 'checkboxgroup') {
@@ -1416,6 +1385,8 @@ export class DomandeRisposteComponent implements OnChanges
                 }
             });
         }
+
+        this.updateDomandaRisposta(index);
     }
 
     updateNoteRisposta(index: number) {
@@ -1424,20 +1395,34 @@ export class DomandeRisposteComponent implements OnChanges
 
     updateDomandaRisposta(index: number) {
         const type = this.data[index].type;
-        const values = this.formArray.toArray()[index].form.value;
+        let values = this._formsService.processFormValues(this.formArray.toArray()[index].form.value);
         var data = {
             type: type
         };
 
-        if(type === 'radiobutton') {
-            if(values.risposte_previste == null || typeof values.risposte_previste === 'number') {
-                data["id_risposta_prev"] = values.risposte_previste;
-            }
-            else {
-                data["id_risposta_prev"] = values.risposte_previste.id;
-            }
+        if(type === 'radiobutton' || type === 'combobox') {
+            data["id_risposta_prev"] = values.risposte_previste;
             data["noterispostarisposta"] = values.note_risposta ?? ""
         }
+        else if(type === 'checkboxgroup') {
+            data["risposta_multipla"] = values.risposte_previste;
+            data["noterispostarisposta"] = values.note_risposta ?? ""
+        }
+        else if(type === 'text') {
+            data["peso_ans"] = values.peso ?? "";
+            data["noterispostarisposta"] = values.note_risposta ?? ""
+        }
+        else if(type === 'date') {
+            data["risposta_data"] = values.risposte_previste;
+            data["peso_ans"] = values.peso ?? "";
+            data["noterispostarisposta"] = values.note_risposta ?? ""
+        }
+        else if(type === 'number') {
+            data["risposta_num"] = values.risposte_previste;
+            data["peso_ans"] = values.peso ?? "";
+            data["noterispostarisposta"] = values.note_risposta ?? ""
+        }
+
 
         this.backendService.updateDomandeRisposte(this.data[index].keys.codice_azienda, this.domandeRisposteParams.entryName, this.data[index].keys, data).subscribe(
             result => {
@@ -1457,22 +1442,22 @@ export class DomandeRisposteComponent implements OnChanges
 
     answerCopy(item: any, field: FieldConfig, index: number) {
         this.eventCallback({
-            "actionType": "show_message",
-            "condition": "none",
-            "eventName": "answer_copy",
-            "message": {
-                "actionOnNo": {
-                    "actionType": "skip",
-                    "queryFunct": "select 1"
+            actionType: "show_message",
+            condition: "none",
+            eventName: "answer_copy",
+            message: {
+                actionOnNo: {
+                    actionType: "skip",
+                    queryFunct: "select 1"
                 },
-                "actionOnYes": {
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$, $id_domanda$, false) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
+                actionOnYes: {
+                    actionType: "query",
+                    queryFunct: "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$, $id_domanda$, false) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
                 },
-                "messageText": "Copiare questa risposta su tutte le verifiche (somministrazioni) del sondaggio?"
+                messageText: "Copiare questa risposta su tutte le verifiche (somministrazioni) del sondaggio?"
             },
-            "successMessage": "Risposte copiate correttamente",
-            "values": []
+            successMessage: "Risposte copiate correttamente",
+            values: []
         }, {
             showEventProcessing: true,
             origin: field.name,
@@ -1486,13 +1471,13 @@ export class DomandeRisposteComponent implements OnChanges
 
     associaNote(item: any, field: FieldConfig, index: number) {
         this.eventCallback({
-            "actionType": "dialog",
-            "condition": "none",
-            "customDialogEntryName": "dialog_domande_associa_note",
-            "customDialogTitle": "Associa Nota",
-            "eventName": "associa_note",
-            "outputEventWhenComplete": "triggerReload",
-            "values": []
+            actionType: "dialog",
+            condition: "none",
+            customDialogEntryName: "dialog_domande_associa_note",
+            customDialogTitle: "Associa Nota",
+            eventName: "associa_note",
+            outputEventWhenComplete: "triggerReload",
+            values: []
         }, {
             showEventProcessing: true,
             origin: field.name,
@@ -1506,29 +1491,29 @@ export class DomandeRisposteComponent implements OnChanges
 
     sendMail(field: FieldConfig, index: number) {
         this.eventCallback({
-            "actionType": "show_message",
-            "condition": "none",
-            "eventName": "invia_mail",
-            "message": {
-                "actionOnNo": {
-                    "actionType": "skip",
-                    "queryFunct": "select true"
+            actionType: "show_message",
+            condition: "none",
+            eventName: "invia_mail",
+            message: {
+                actionOnNo: {
+                    actionType: "skip",
+                    queryFunct: "select true"
                 },
-                "actionOnYes": {
-                    "actionType": "email",
-                    "emailActionParameters": {
-                        "subject": "",
-                        "body": "",
-                        "bodyKeys": [],
-                        "ccList": [],
-                        "recipientKeys": [],
-                        "subjectKeys": []
+                actionOnYes: {
+                    actionType: "email",
+                    emailActionParameters: {
+                        subject: "",
+                        body: "",
+                        bodyKeys: [],
+                        ccList: [],
+                        recipientKeys: [],
+                        subjectKeys: []
                     }
                 },
-                "messageText": "Inviare la mail al cliente? Si intende proseguire?",
-                "messageTitle": "INVIA MAIL AL CLIENTE"
+                messageText: "Inviare la mail al cliente? Si intende proseguire?",
+                messageTitle: "INVIA MAIL AL CLIENTE"
             },
-            "values": []
+            values: []
         },
         {
             showEventProcessing: true,
@@ -1544,31 +1529,31 @@ export class DomandeRisposteComponent implements OnChanges
 
     kycDeep(field: FieldConfig, index: number) {
         this.eventCallback({
-            "actionType": "show_message",
-            "condition": "none",
-            "eventName": "get_aml_scan",
-            "message": {
-                "actionOnNo": {
-                    "actionType": "skip",
-                    "queryFunct": "select true"
+            actionType: "show_message",
+            condition: "none",
+            eventName: "get_aml_scan",
+            message: {
+                actionOnNo: {
+                    actionType: "skip",
+                    queryFunct: "select true"
                 },
-                "actionOnYes": {
-                    "actionType": "regulat_api",
-                    "regulatAPIParams": {
-                        "actionType": "get_aml_scan",
-                        "entityParams": {
-                            "codice_azienda": "codice_azienda",
-                            "dynamo_user": "username",
-                            "id_anagrafica": "id_anagrafica",
-                            "id_somministrazione": "id_somministrazione",
-                            "is_light_scan": false
+                actionOnYes: {
+                    actionType: "regulat_api",
+                    regulatAPIParams: {
+                        actionType: "get_aml_scan",
+                        entityParams: {
+                            codice_azienda: "codice_azienda",
+                            dynamo_user: "username",
+                            id_anagrafica: "id_anagrafica",
+                            id_somministrazione: "id_somministrazione",
+                            is_light_scan: false
                         }
                     }
                 },
-                "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
-                "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC"
+                messageText: "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                messageTitle: "SERVIZIO A PAGAMENTO: OneKYC"
             },
-            "values": []
+            values: []
         },
         {
             showEventProcessing: true,
@@ -1584,31 +1569,31 @@ export class DomandeRisposteComponent implements OnChanges
 
     kycLight(field: FieldConfig, index: number) {
         this.eventCallback({
-            "actionType": "show_message",
-            "condition": "none",
-            "eventName": "get_light_aml_scan",
-            "message": {
-                "actionOnNo": {
-                    "actionType": "skip",
-                    "queryFunct": "select true"
+            actionType: "show_message",
+            condition: "none",
+            eventName: "get_light_aml_scan",
+            message: {
+                actionOnNo: {
+                    actionType: "skip",
+                    queryFunct: "select true"
                 },
-                "actionOnYes": {
-                    "actionType": "regulat_api",
-                    "regulatAPIParams": {
-                        "actionType": "get_aml_scan",
-                        "entityParams": {
-                            "codice_azienda": "codice_azienda",
-                            "dynamo_user": "username",
-                            "id_anagrafica": "id_anagrafica",
-                            "id_somministrazione": "id_somministrazione",
-                            "is_light_scan": true
+                actionOnYes: {
+                    actionType: "regulat_api",
+                    regulatAPIParams: {
+                        actionType: "get_aml_scan",
+                        entityParams: {
+                            codice_azienda: "codice_azienda",
+                            dynamo_user: "username",
+                            id_anagrafica: "id_anagrafica",
+                            id_somministrazione: "id_somministrazione",
+                            is_light_scan: true
                         }
                     }
                 },
-                "messageText": "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
-                "messageTitle": "SERVIZIO A PAGAMENTO: OneKYC"
+                messageText: "L'avvio comporta l'addebito dei costi secondo il piano tariffario concordato. Si intende proseguire?",
+                messageTitle: "SERVIZIO A PAGAMENTO: OneKYC"
             },
-            "values": []
+            values: []
         },
         {
             showEventProcessing: true,
@@ -1623,23 +1608,23 @@ export class DomandeRisposteComponent implements OnChanges
 
     checkProvincia(field: FieldConfig, index: number) {
         this.eventCallback({
-            "actionType": "show_message",
-            "condition": "none",
-            "eventName": "check_provincia_event",
-            "message": {
-                "actionOnNo": {
-                    "actionType": "skip",
-                    "queryFunct": "select true"
+            actionType: "show_message",
+            condition: "none",
+            eventName: "check_provincia_event",
+            message: {
+                actionOnNo: {
+                    actionType: "skip",
+                    queryFunct: "select true"
                 },
-                "actionOnYes": {
-                    "actionType": "query",
-                    "queryFunct": "SELECT entrasp.check_provincia($codice_azienda$,'€global_codice_part€',$id_anagrafica$, $id_somministrazione$)"
+                actionOnYes: {
+                    actionType: "query",
+                    queryFunct: "SELECT entrasp.check_provincia($codice_azienda$,'€global_codice_part€',$id_anagrafica$, $id_somministrazione$)"
                 },
-                "messageText": "Procedere?",
-                "messageTitle": "Controllo rischio relativo alla provincia di residenza"
+                messageText: "Procedere?",
+                messageTitle: "Controllo rischio relativo alla provincia di residenza"
             },
-            "outputEventWhenComplete": "onSaveD_R",
-            "values": []
+            outputEventWhenComplete: "onSaveD_R",
+            values: []
         },
         {
             showEventProcessing: true,

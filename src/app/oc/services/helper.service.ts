@@ -108,7 +108,7 @@ export class HelperService {
      */
     public static getFormattedDateTime(dateTime: any, timezone: string = 'Z') {
         //Check the format and fix it is not Long Date time
-        if (dateTime.includes(',')) {
+        if (typeof dateTime === 'string' && dateTime.includes(',')) {
             // This was manually added and so we need to format it
             const parts = dateTime.replace(' ', '').split(',');
             const dateParts = parts[0].split('/');

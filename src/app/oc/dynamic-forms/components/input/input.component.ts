@@ -203,6 +203,9 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
       // Copy as it is
       _this.field.value = _this.group.get(_this.field.name).value;
     }
+
+    _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
+
   }
 
   onTimeSet($event: string) {
