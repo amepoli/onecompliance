@@ -42,7 +42,7 @@ export interface DomandaRispostaElement {
     num_allegati?: number;
     note_risposta?: string;
     compito?: object;
-    keys?: object;
+    keys?: any;
 }
 
 export interface DomandeRisposteParams {
@@ -83,340 +83,8 @@ export class DomandeRisposteComponent implements OnChanges
     attributes = {};
     externalKeys = {};
 
-    resultsDefault: DomandaRispostaElement[] = [
-        {
-            "id_domanda": 1,
-            "descrizione": "Radio button",
-            "note_domanda": "-",
-            "condition": null,
-            "type": "radiobutton",
-            "kycDeepButton": true,
-            "kycLightButton": true,
-            "mailButton": false,
-            "checkProvincia": false,
-            "peso": 0.00,
-            "background_color": null,
-            "font_color": null,
-            "num_allegati": 1,
-            "risposta_data": null,
-            "risposta_num": null,
-            "note_risposta": null,
-            "risposte_previste_options": [
-                {
-                    "id_risposta_prev": 86024,
-                    "risposta": "Sì",
-                    "ordinamento": 1,
-                    "chosen": false,
-                    "peso_ans": 0.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                },
-                {
-                    "id_risposta_prev": 86036,
-                    "risposta": "No",
-                    "ordinamento": 2,
-                    "chosen": true,
-                    "peso_ans": 100.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                },
-                {
-                    "id_risposta_prev": 86035,
-                    "risposta": "Non applicabile",
-                    "ordinamento": 3,
-                    "chosen": false,
-                    "peso_ans": 0.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                }
-            ],
-            "compito": {
-                "codice_azienda": "DEMO",
-                "codice_compito": "198"
-            },
-            "keys": {
-                "codice_azienda": "DEMO",
-                "id_modello_test": 50,
-                "id_modello_test_vr": 1,
-                "id_sondaggio": 235,
-                "id_somministrazione": 255,
-                "id_sezione": null,
-                "id_domanda": 1
-            }
-        },
-        {
-            "id_domanda": 2,
-            "descrizione": "Check box",
-            "note_domanda": "-",
-            "condition": [
-                {
-                    "id_domanda": 1,
-                    "id_risposta_prev": 86024,
-                    "condition": "equal"
-                }
-            ],
-            "type": "checkboxgroup",
-            "kycDeepButton": false,
-            "kycLightButton": false,
-            "mailButton": false,
-            "checkProvincia": false,
-            "peso": 150.00,
-            "background_color": null,
-            "font_color": null,
-            "num_allegati": 2,
-            "risposta_data": null,
-            "risposta_num": null,
-            "note_risposta": null,
-            "risposte_previste_options": [
-                {
-                    "id_risposta_prev": 86033,
-                    "risposta": "Yes",
-                    "ordinamento": 1,
-                    "chosen": false,
-                    "peso_ans": 0.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                },
-                {
-                    "id_risposta_prev": 86034,
-                    "risposta": "In progress",
-                    "ordinamento": 2,
-                    "chosen": true,
-                    "peso_ans": 50.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                },
-                {
-                    "id_risposta_prev": 86032,
-                    "risposta": "No",
-                    "ordinamento": 3,
-                    "chosen": true,
-                    "peso_ans": 100.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                }
-            ],
-            "compito": null,
-            "keys": {
-                "codice_azienda": "DEMO",
-                "id_modello_test": 50,
-                "id_modello_test_vr": 1,
-                "id_sondaggio": 235,
-                "id_somministrazione": 255,
-                "id_sezione": null,
-                "id_domanda": 2
-            }
-        },
-        {
-            "id_domanda": 2,
-            "descrizione": "Check box",
-            "note_domanda": "-",
-            "condition": [
-                {
-                    "id_domanda": 1,
-                    "id_risposta_prev": 86024,
-                    "condition": "equal"
-                }
-            ],
-            "type": "checkboxgroup",
-            "kycDeepButton": false,
-            "kycLightButton": false,
-            "mailButton": false,
-            "checkProvincia": false,
-            "peso": 150.00,
-            "background_color": null,
-            "font_color": null,
-            "num_allegati": 0,
-            "risposta_data": null,
-            "risposta_num": null,
-            "note_risposta": null,
-            "risposte_previste_options": [
-                {
-                    "id_risposta_prev": 86033,
-                    "risposta": "Yes",
-                    "ordinamento": 1,
-                    "chosen": false,
-                    "peso_ans": 0.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                },
-                {
-                    "id_risposta_prev": 86034,
-                    "risposta": "In progress",
-                    "ordinamento": 2,
-                    "chosen": true,
-                    "peso_ans": 50.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                },
-                {
-                    "id_risposta_prev": 86032,
-                    "risposta": "No",
-                    "ordinamento": 3,
-                    "chosen": true,
-                    "peso_ans": 100.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                }
-            ],
-            "compito": null,
-            "keys": {
-                "codice_azienda": "DEMO",
-                "id_modello_test": 50,
-                "id_modello_test_vr": 1,
-                "id_sondaggio": 235,
-                "id_somministrazione": 255,
-                "id_sezione": null,
-                "id_domanda": 2
-            }
-        },
-        {
-            "id_domanda": 5,
-            "descrizione": "Combobox",
-            "note_domanda": "-",
-            "condition": null,
-            "type": "combobox",
-            "kycDeepButton": false,
-            "kycLightButton": false,
-            "mailButton": false,
-            "checkProvincia": false,
-            "peso": null,
-            "background_color": null,
-            "font_color": null,
-            "num_allegati": 0,
-            "risposta_data": null,
-            "risposta_num": null,
-            "note_risposta": null,
-            "risposte_previste_options": [
-                {
-                    "id_risposta_prev": 86033,
-                    "risposta": "Yes",
-                    "ordinamento": 1,
-                    "chosen": false,
-                    "peso_ans": 0.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                },
-                {
-                    "id_risposta_prev": 86034,
-                    "risposta": "In progress",
-                    "ordinamento": 2,
-                    "chosen": true,
-                    "peso_ans": 50.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                },
-                {
-                    "id_risposta_prev": 86032,
-                    "risposta": "No",
-                    "ordinamento": 3,
-                    "chosen": false,
-                    "peso_ans": 100.00,
-                    "background_color_ans": null,
-                    "font_color_ans": null
-                }
-            ],
-            "compito": null,
-            "keys": {
-                "codice_azienda": "DEMO",
-                "id_modello_test": 50,
-                "id_modello_test_vr": 1,
-                "id_sondaggio": 235,
-                "id_somministrazione": 255,
-                "id_sezione": null,
-                "id_domanda": 5
-            }
-        },
-        {
-            "id_domanda": 3,
-            "descrizione": "Date answer",
-            "note_domanda": "-",
-            "condition": null,
-            "type": "date",
-            "kycDeepButton": false,
-            "kycLightButton": false,
-            "mailButton": false,
-            "checkProvincia": false,
-            "peso": 3,
-            "background_color": null,
-            "font_color": null,
-            "num_allegati": 0,
-            "risposta_data": "2020-02-03",
-            "risposta_num": null,
-            "note_risposta": null,
-            "risposte_previste_options": null,
-            "compito": null,
-            "keys": {
-                "codice_azienda": "DEMO",
-                "id_modello_test": 50,
-                "id_modello_test_vr": 1,
-                "id_sondaggio": 235,
-                "id_somministrazione": 255,
-                "id_sezione": null,
-                "id_domanda": 3
-            }
-        },
-        {
-            "id_domanda": 4,
-            "descrizione": "Risposta number",
-            "note_domanda": "-",
-            "condition": null,
-            "type": "number",
-            "kycDeepButton": false,
-            "kycLightButton": false,
-            "mailButton": false,
-            "checkProvincia": false,
-            "peso": 1,
-            "background_color": null,
-            "font_color": null,
-            "num_allegati": 0,
-            "risposta_data": null,
-            "risposta_num": null,
-            "note_risposta": null,
-            "risposte_previste_options": null,
-            "compito": null,
-            "keys": {
-                "codice_azienda": "DEMO",
-                "id_modello_test": 50,
-                "id_modello_test_vr": 1,
-                "id_sondaggio": 235,
-                "id_somministrazione": 255,
-                "id_sezione": null,
-                "id_domanda": 4
-            }
-        },
-        {
-            "id_domanda": 6,
-            "descrizione": "Open answer",
-            "note_domanda": "-",
-            "condition": null,
-            "type": "text",
-            "kycDeepButton": false,
-            "kycLightButton": false,
-            "mailButton": false,
-            "checkProvincia": false,
-            "peso": 2,
-            "background_color": null,
-            "font_color": null,
-            "num_allegati": 0,
-            "risposta_data": null,
-            "risposta_num": null,
-            "risposta_text": "Text response",
-            "note_risposta": null,
-            "risposte_previste_options": null,
-            "compito": null,
-            "keys": {
-                "codice_azienda": "DEMO",
-                "id_modello_test": 50,
-                "id_modello_test_vr": 1,
-                "id_sondaggio": 235,
-                "id_somministrazione": 255,
-                "id_sezione": null,
-                "id_domanda": 6
-            }
-        }
-    ];
-    
+    businessObjectName: string = 'riepilogoRisposte';
+
     data: DomandaRispostaElement[] = [];
 
     domandaKeys: any[] = [];
@@ -472,7 +140,15 @@ export class DomandeRisposteComponent implements OnChanges
         _this.viewKeys = results.map((x, i) => _this.prepareView(x, i));
 
         for(let i = 0; i < results.length; i++) {
-            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [results[i]], _this.attributes, _this.formParams[i], results[i].keys, _this.isReadOnly)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
+            const keys: any = {...results[i], ...results[i].keys, businessObjectName: _this.businessObjectName};
+            if(keys.hasOwnProperty('keys')){
+                delete keys.keys;
+            }
+            if(keys.hasOwnProperty('risposte_previste_options')){
+                delete keys.risposte_previste_options;
+            }
+
+            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [keys], _this.attributes, _this.formParams[i], results[i].keys, _this.isReadOnly)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
             
             curFormData.forEach((_, j) => {
                 switch(curFormData[j].name) {
@@ -488,10 +164,11 @@ export class DomandeRisposteComponent implements OnChanges
                     case 'check_provincia':
                         curFormData[j].onClick = (field: FieldConfig) => _this.checkProvincia(field, i);
                         break;
+                    case 'note_risposta':
+                        curFormData[j].onBlur = (event: any, field: FieldConfig) => _this.updateNoteRisposta(i);
+                        break;
                     case 'risposte_previste':
-                        if(curFormData[j].type === 'radiobutton') {
-                            curFormData[j].onClick = (event: any, field: FieldConfig) => _this.updateRispostaPrevista(event, field, i);
-                        }
+                        curFormData[j].onClick = (event: any, field: FieldConfig) => _this.updateRispostPreviste(event, field, i);
                         break;
                     default: return;
                 }
@@ -786,7 +463,6 @@ export class DomandeRisposteComponent implements OnChanges
                 },
                 "tooltip": "Controllo OneKYC approfondito",
                 "translate": "RESOURCES.onekyc__deep_domande_risposte",
-                // "onClick": (field: FieldConfig) => {_this.kycDeep(field)},
             });
             addInvisible = true;
         };
@@ -815,8 +491,7 @@ export class DomandeRisposteComponent implements OnChanges
                     "font_color": "white"
                 },
                 "tooltip": "Invia mail",
-                "translate": "RESOURCES.invia_mail_domande_risposte",
-                // "onClick": (field: FieldConfig) => {_this.sendMail(field)},             
+                "translate": "RESOURCES.invia_mail_domande_risposte",   
             });
             addInvisible = true;
         }
@@ -843,7 +518,6 @@ export class DomandeRisposteComponent implements OnChanges
                     "size": 2,
                     "tooltip": "Controllo OneKYC limitato alle liste anti-terrorismo",
                     "translate": "RESOURCES.onekyc__light_domande_risposte",
-                    // "onClick": (field: FieldConfig) => {_this.kycLight(field)},
                 }
             );
             addInvisible = true;
@@ -874,7 +548,6 @@ export class DomandeRisposteComponent implements OnChanges
                 },
                 "tooltip": "Check provincia",
                 "translate": "RESOURCES.check_provincia_domande_risposte",
-                // "onClick": (field: FieldConfig) => {_this.checkProvincia(field)},
             });
             addInvisible = true;
         }
@@ -1129,7 +802,7 @@ export class DomandeRisposteComponent implements OnChanges
                 label: "Note",
                 isVisible: true,
                 newLine: true,
-                readOnly: true,
+                readOnly: false,
                 size: 10,
                 style: {
                     font_color: "black",
@@ -1160,8 +833,17 @@ export class DomandeRisposteComponent implements OnChanges
                         formData[i].options = options;
                         formData[i].value = value;
                     }
-                    if(formData[i].name === 'peso' && value) {
-                        formData[i].value = result["risposte_previste_options"].find((x: any) => x.id_risposta_prev == value).peso_ans;
+                    if(formData[i].name === 'peso') {
+                        if(value) {
+                            formData[i].value = result["risposte_previste_options"].find((x: any) => x.id_risposta_prev == value).peso_ans;
+                        }
+                        formData[i].style = {};
+                        if(result.background_color) {
+                            formData[i].style = {...formData[i].style, background_color: result.background_color};
+                        }
+                        if(result.font_color) {
+                            formData[i].style = {...formData[i].style, font_color: result.font_color};
+                        }
                     }
                 })
             }
@@ -1201,12 +883,12 @@ export class DomandeRisposteComponent implements OnChanges
                             formData[i].value = result["risposte_previste_options"].filter((x: any) => value.includes(x.id_risposta_prev)).map(x => x.peso_ans).reduce((a, b) => a + b);
                         }
                         formData[i].style = {};
-                        if(result.background_color) {
-                            formData[i].style = {...formData[i].style, background_color: result.background_color};
-                        }
-                        if(result.font_color) {
-                            formData[i].style = {...formData[i].style, font_color: result.font_color};
-                        }
+                        // if(result.background_color) {
+                        //     formData[i].style = {...formData[i].style, background_color: result.background_color};
+                        // }
+                        // if(result.font_color) {
+                        //     formData[i].style = {...formData[i].style, font_color: result.font_color};
+                        // }
                     }
                 })
             }
@@ -1298,12 +980,15 @@ export class DomandeRisposteComponent implements OnChanges
                     // Initialize with No action info
                     var actionType = event.message.actionOnNo.actionType;
                     var queryFunct = event.message.actionOnNo.queryFunct;
+                    var regulatAPIParams = event.message.actionOnNo.regulatAPIParams;
+
                     var action = "actionNo";
 
                     // If user clicked yes, load yes action info
                     if (result.value === true) {
                         actionType = event.message.actionOnYes.actionType;
                         queryFunct = event.message.actionOnYes.queryFunct;
+                        regulatAPIParams = event.message.actionOnYes.regulatAPIParams;
                         action = "actionYes";
                     }
 
@@ -1322,13 +1007,10 @@ export class DomandeRisposteComponent implements OnChanges
                     //     _this._timeTrackerService.checkStatus();
                     // } 
                     else if (actionType === "email") {
-                        // iterate over all indexes when full table or instead affect the target index only
-                            // some lines might be hidden, search for the right one
-                            const current_line = childrenArray.find(
-                                (c) => c.fields[0].index === index,
-                            );
+                            const current_line = childrenArray[index];
+
                             let formValues = current_line.form.value;
-                            _this._emailService.performSendEmail(event, formValues, value, _this.domandaKeys[index-1]);
+                            _this._emailService.performSendEmail(event, formValues, value, _this.domandaKeys[index]);
                         
                         // _this._console.log(JSON.stringify(event));
                         // _this.sendEmail({ templateKey: 'test' });
@@ -1339,14 +1021,18 @@ export class DomandeRisposteComponent implements OnChanges
                             idAnagraficaAML: _this.domandaKeys[index].id_anagrafica,
                             idSomministrazioneAML: _this.domandaKeys[index].id_somministrazione,
                             dynamoUserAML: _this.authService.userinfo.value.username,
-                            isLightScan: event.regulatAPIParams.entityParams.is_light_scan,
+                            isLightScan: regulatAPIParams.entityParams.is_light_scan,
                         }
+
+                        const current_line = childrenArray[index];
+
+                        let formValues = current_line.form.value;
 
                         await _this._formsService.runRegulatEvent(
                             event.message.actionOnYes,
                             value,
                             keyListener,
-                            _this.formArray[index].form.value,
+                            formValues,
                             keys
                         );
                         _this.reload();
@@ -1354,13 +1040,9 @@ export class DomandeRisposteComponent implements OnChanges
                     // } else if (actionType === "user_api") {
                     //     _this.runUserManagementEvent(event, value, keyListener);
                     // } 
-                    else {
-                        // iterate over all indexes when full table or instead affect the target index only
-                            // some lines might be hidden, search for the right one
-                            const current_line = childrenArray.find(
-                                (c) => c.fields[0].index === index,
-                            );
-                            chiavi = current_line.form.value;
+                    else if (actionType === "query"){
+                            const current_line = childrenArray[index];
+                            chiavi = {...current_line.form.value, ...this.domandaKeys[index], ..._this.externalKeys};
                             // fix problem with changed value that might be not updated yet by getting it directly from event
                             if (value.type === "change") {
                                 chiavi[value.origin] = value.data;
@@ -1457,13 +1139,16 @@ export class DomandeRisposteComponent implements OnChanges
                             // _this.generalSubscriptions.push(subscription);
                         
                     }
+                    else {
+                        //Skip
+                    }
                 });
         }
         else if(event.actionType === "query") {
             let chiavi = {};
             const target_index = value.type !== "page" ? value.index : null; // null means the event comes from the full table
             let index = target_index == null ? _this.formArray.length : 1;
-            const targetViewField = _this.viewKeys[index-1].find(
+            const targetViewField = _this.viewKeys[index].find(
                 (viewKey) => viewKey.key === keyListener,
             );
             const childrenArray = _this.formArray.toArray();
@@ -1472,14 +1157,12 @@ export class DomandeRisposteComponent implements OnChanges
                 index--;
                 const current_index =
                     target_index != null ? target_index : index;
-                // some lines might be hidden, search for the right one
-                const current_line = childrenArray.find(
-                    (c) => c.fields[0].index === current_index,
-                );
+                const current_line = childrenArray[index];
+
                 if (current_line == null) {
                     continue;
                 }
-                chiavi = current_line.form.value;
+                chiavi = {...current_line.form.value, ...this.domandaKeys[index], ..._this.externalKeys};
                 // fix problem with changed value that might be not updated yet by getting it directly from event
                 if (value.type === "change") {
                     chiavi[value.origin] = value.data;
@@ -1702,8 +1385,8 @@ export class DomandeRisposteComponent implements OnChanges
         this.loadData();
     }
 
-    updateRispostaPrevista(event: any, field: FieldConfig, index: number) {
-        if(field.type === 'radiobutton') {
+    updateRispostPreviste(event: any, field: FieldConfig, index: number) {
+        if(field.type === 'radiobutton' || field.type === 'combobox') {
             const newAnswer = this.data[index].risposte_previste_options.find(x => x.id_risposta_prev === event.value.id);
             const newPeso = newAnswer.peso_ans;
             this.data[index].peso = newPeso;
@@ -1717,14 +1400,53 @@ export class DomandeRisposteComponent implements OnChanges
                     };
                 }
             });
+
+            this.updateDomandaRisposta(index);
+
             // console.log(field);
         }
         else if(field.type === 'checkboxgroup') {
-            /// TODO:
+            const newAnswers = this.data[index].risposte_previste_options.filter(x => event.value.id.includes(x.id_risposta_prev)).map(x => x.peso_ans);
+            const newPeso = newAnswers.reduce((a, b) => a + b, 0);
+            this.data[index].peso = newPeso;
+            // this.prepareData(this.data);
+            this.formData[index].forEach((x, i) => {
+                if(x.name === 'peso') {
+                    this.formData[index][i].value = newPeso;
+                }
+            });
         }
-        else if(field.type === 'combobox') {
-            /// TODO:
+    }
+
+    updateNoteRisposta(index: number) {
+        this.updateDomandaRisposta(index);
+    }
+
+    updateDomandaRisposta(index: number) {
+        const type = this.data[index].type;
+        const values = this.formArray.toArray()[index].form.value;
+        var data = {
+            type: type
+        };
+
+        if(type === 'radiobutton') {
+            if(values.risposte_previste == null || typeof values.risposte_previste === 'number') {
+                data["id_risposta_prev"] = values.risposte_previste;
+            }
+            else {
+                data["id_risposta_prev"] = values.risposte_previste.id;
+            }
+            data["noterispostarisposta"] = values.note_risposta ?? ""
         }
+
+        this.backendService.updateDomandeRisposte(this.data[index].keys.codice_azienda, this.domandeRisposteParams.entryName, this.data[index].keys, data).subscribe(
+            result => {
+                console.log(result);
+            },
+            error => {
+                console.log(error);
+            }
+        )
     }
 
     creaSegnalazione() {

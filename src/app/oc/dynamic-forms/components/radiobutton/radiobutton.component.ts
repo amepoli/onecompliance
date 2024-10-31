@@ -78,6 +78,9 @@ export class RadiobuttonComponent implements OnInit {
     onCheck(event: any): void {
         const _this = this;
 
+        _this.group.get(_this.field.name).setValue(event.value.id);
+        _this.field.value = event.value.id;
+
         // Run the onClick function if provided
         _this.field.onClick && _this.field.onClick(event, _this.field);
 

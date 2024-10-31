@@ -288,6 +288,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     _this.lazyLoad();
     _this.value = null;
+
+    // Run the onClick function if provided
+    _this.field.onClick && _this.field.onClick({value: {id: _this.field.value}}, _this.field);
+
   }
 
   private filterOptionsBasedOnSelectedTags(options : any)
