@@ -266,6 +266,7 @@ export class DomandeRisposteComponent implements OnChanges
                                     icon: "delete",
                                     label: "Cancella risposta",
                                     outputEventName: "delete_risposta",
+                                    onClick: (item: any, field: FieldConfig) => {_this.resetRispostaPrevista(item, field, index)},
                                     translate: "RESOURCES.cancella_risposta_domande_risposte"
                                 },
                                 {
@@ -1358,7 +1359,7 @@ export class DomandeRisposteComponent implements OnChanges
     }
 
     updateRispostPreviste(event: any, field: FieldConfig, index: number) {
-        if(field.type === 'radiobutton' || field.type === 'combobox') {
+        if(this.data[index].type === 'radiobutton' || this.data[index].type === 'combobox') {
             const newAnswer = this.data[index].risposte_previste_options.find(x => x.id_risposta_prev === event.value.id);
             const newPeso = newAnswer.peso_ans;
             this.data[index].peso = newPeso;
@@ -1374,7 +1375,7 @@ export class DomandeRisposteComponent implements OnChanges
             });
             // console.log(field);
         }
-        else if(field.type === 'checkboxgroup') {
+        else if(this.data[index].type === 'checkboxgroup') {
             const newAnswers = this.data[index].risposte_previste_options.filter(x => event.value.id.includes(x.id_risposta_prev)).map(x => x.peso_ans);
             const newPeso = newAnswers.reduce((a, b) => a + b, 0);
             this.data[index].peso = newPeso;
@@ -1432,6 +1433,27 @@ export class DomandeRisposteComponent implements OnChanges
                 console.log(error);
             }
         )
+    }
+
+    resetRispostaPrevista(item: any, field: FieldConfig, index: number) {
+        if(this.data[index].type === 'radiobutton' || this.data[index].type === 'combobox') {
+            this.formArray.toArray()[index].form.patchValue({risposte_previste: null});
+            const newPeso = null;
+            this.data[index].peso = newPeso;
+            // this.prepareData(this.data);
+            this.formData[index].forEach((x, i) => {
+                if(x.name === 'peso') {
+                    this.formData[index][i].value = newPeso;
+                    this.formData[index][i].style = {
+                        background_color: null,
+                        font_color: null,
+                    };
+                }
+            });
+            // console.log(field);
+        }
+
+        this.updateDomandaRisposta(index);
     }
 
     creaSegnalazione() {
