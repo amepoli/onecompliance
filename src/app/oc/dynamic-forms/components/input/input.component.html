@@ -1,5 +1,5 @@
 <ng-container *ngIf="field.isVisible">
-    <ng-container *ngIf="field.readonly && field.eventTrigger === 'press'">
+    <ng-container *ngIf="field.readonly && (field.eventTrigger || field.onClick)">
         <mat-form-field 
             class="readOnlyPressable readOnly"
             (click)="onPress()"
@@ -18,7 +18,7 @@
         </mat-form-field>
     </ng-container>
 
-    <ng-container *ngIf="field.readonly && !field.eventTrigger">
+    <ng-container *ngIf="field.readonly && !field.eventTrigger && !field.onClick">
         <mat-form-field 
             class="readOnly"
             style="width: 100%;"

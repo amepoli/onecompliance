@@ -27,6 +27,7 @@ export interface FormViewKey { // as per API specification
         font_size?: string;
         font_style?: "italic" | "normal";
         font_weight?: string;
+        text_decoration?: string;
     };
     key: string;
     label: string;

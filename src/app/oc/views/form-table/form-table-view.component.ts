@@ -69,14 +69,16 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   ngOnInit() {
     const _this = this;
-    _this.subscriptions.push(_this.formGetter.sendEvent.subscribe(
-      event => {
-        if (event.eventType === 'updateData') {   // child downloaded data
-
-        } else { // just forward the event to parent
-          _this.sendEvent.emit(event);
-        }
-      }));
+    if(_this.formGetter) {
+      _this.subscriptions.push(_this.formGetter.sendEvent.subscribe(
+        event => {
+          if (event.eventType === 'updateData') {   // child downloaded data
+  
+          } else { // just forward the event to parent
+            _this.sendEvent.emit(event);
+          }
+        }));
+    }
     this.calculateFormHeight();
   }
 
@@ -314,5 +316,9 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   updateToolbarOffset() {
     let offset = ScrollService.cumulativeOffset(this.formTableViewToolbar.nativeElement);
     this.formTableViewToolbarPosition = offset.top - 150;
+  }
+
+  onEvent(event: any) {
+    this.sendEvent.emit(event);
   }
 }
