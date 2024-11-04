@@ -58,7 +58,7 @@ where codice_azienda='DEMO' and id_sondaggio=235
 select entrasp.risposte_update_insert_new(
 codiceazienda=>'DEMO'::varchar,  iddomanda=>5::numeric, 
 idsondaggio=>235::numeric, idsomministrazione=>255::numeric, 
-rispostamultipla=>'array[86033, 86034]'::varchar, noterisposta=>'risposta tipo combobox: sì'::text);
+idrispostaprev=>86032::numeric, noterisposta=>'risposta tipo combobox: sì'::text);
 
 select * from entrasp.risposte where codice_azienda='DEMO' and id_sondaggio=235 
 and id_somministrazione=255 and id_domanda=5;
@@ -127,6 +127,29 @@ SELECT id_modello_test, id_modello_test_vr
 	FROM entrasp.sondaggi
 	WHERE codice_azienda = 'DEMO'
 		and id_sondaggio = 235
+
+
+
+select rs.id_domanda, dm.descrizione, rs.id_risposta, entrasp.sondaggi_somministrati_complete(rs.codice_azienda,
+	rs.id_somministrazione,
+	rs.id_sondaggio), entrasp.domanda_active(
+	rs.codice_azienda,
+	rs.id_modello_test,
+	rs.id_modello_test_vr,
+	dm.id_domanda,
+	rs.id_somministrazione,
+	rs.id_sondaggio),
+	ss.somministrazione_completata,
+	rs.id_sondaggio,
+	rs.id_somministrazione
+from entrasp.risposte rs
+right join entrasp.domande dm
+using (codice_azienda, id_modello_test, id_modello_test_vr, id_domanda)
+right join entrasp.sondaggi_somministrati ss
+on rs.codice_azienda=ss.codice_azienda and rs.id_sondaggio=ss.id_sondaggio 
+and rs.id_somministrazione=ss.id_somministrazione
+where ss.codice_azienda='DEMO' and ss.id_sondaggio=235
+
 
 
 entrasp.risposte_update_insert_new(
