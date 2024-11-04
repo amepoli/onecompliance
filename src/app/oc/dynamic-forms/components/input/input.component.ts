@@ -143,6 +143,10 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onPress(): void {
     const _this = this;
+
+    // Trigger click event
+    _this.field.onClick && _this.field.onClick(_this.field);
+
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'press') {
       // Confirm first if confirmation is true before performing action
       if (_this.field.confirmButtonAction) {

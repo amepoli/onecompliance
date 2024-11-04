@@ -200,6 +200,8 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
         _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
       }
     }
+
+    this.field.onClick && this.field.onClick(this.field);
   }
   
   updateValue() {

@@ -1,54 +1,13 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, AfterViewInit, ViewChild, QueryList, ViewChildren, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, QueryList, ViewChildren, Input, OnChanges, SimpleChanges, Output, EventEmitter } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Location } from "@angular/common";
-import { HttpClient } from "@angular/common/http";
-import { FieldConfig, FormViewKey, Item, RegulatAPIParams} from "../../interfaces";
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, EmailService, FormsService, HelperService, ImportExportService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from "../../services";
-import { MatTabChangeEvent as MatTabChangeEvent } from "@angular/material/tabs";
-import { UntypedFormBuilder } from "@angular/forms";
+import { DomandaRispostaElement, DomandeRisposteParams, FieldConfig, FormViewKey, Item } from "../../interfaces";
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, EmailService, FormsService, HelperService, ToastService } from "../../services";
 import { ComboboxComponent } from "app/oc/dynamic-forms/components/combobox/combobox.component";
 import { DomandaRispostaComponent } from "./domanda-risposta/domanda-risposta.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MenuOptionsCustomDialogComponent } from "app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component";
-import { add } from "lodash";
 import { memoize } from "app/oc/decorators/memoize";
-
-export interface DomandaRispostaResponse {
-    id_risposta_prev: number;
-    risposta: string;
-    chosen: boolean;
-    ordinamento: number;
-    peso_ans: number;
-    background_color_ans: string;
-    font_color_ans: string;
-}
-export interface DomandaRispostaElement {
-    id_domanda: number;
-    descrizione: string;
-    note_domanda: string;
-    condition: any,
-    type: "checkboxgroup" | "radiobutton" | "combobox" | "text" | "number" | "date";
-    kycDeepButton?: boolean;
-    kycLightButton?: boolean;
-    mailButton?: boolean;
-    checkProvincia?: boolean;
-    peso: number;
-    background_color: string;
-    font_color: string;
-    risposta_data?: string;
-    risposta_num?: number;
-    risposta_text?: string;
-    risposte_previste_options?: DomandaRispostaResponse[];
-    num_allegati?: number;
-    note_risposta?: string;
-    compito?: object;
-    keys?: any;
-}
-
-export interface DomandeRisposteParams {
-    keys: any;
-    entryName: string;
-}
 
 @Component({
     selector: "domande-risposte",
@@ -67,6 +26,8 @@ export class DomandeRisposteComponent implements OnChanges
         keys: {},
         entryName: "domande_risposte",
     };
+
+    @Output() sendEvent = new EventEmitter<any>();
 
     tabs: any = null;
     activeIndex = 0;
@@ -106,7 +67,6 @@ export class DomandeRisposteComponent implements OnChanges
         private cutomDialog: MatDialog,
         private _emailService: EmailService
     ) {
-        // this.loadData();
     }
 
     @memoize()
@@ -122,8 +82,8 @@ export class DomandeRisposteComponent implements OnChanges
         const subscription = _this.backendService.getDomandeRisposte(_this.domandeRisposteParams.keys.codice_azienda, this.domandeRisposteParams.entryName, _this.domandeRisposteParams.keys).subscribe(result => {
             if(result && result.data && result.data.crea_json_verifica) {
                 const results: DomandaRispostaElement[] = JSON.parse(result.data.crea_json_verifica);
-                _this.data = results;
-                _this.prepareData(results);
+                _this.data = results.map(x => ({...x, codice_compito: x.compito? x.compito.codice_compito: null}));
+                _this.prepareData(_this.data);
             }
             subscription.unsubscribe();
             _this.isLoading = false;
@@ -147,11 +107,27 @@ export class DomandeRisposteComponent implements OnChanges
             if(keys.hasOwnProperty('risposte_previste_options')){
                 delete keys.risposte_previste_options;
             }
+            
+            let newKeys = {};
+            Object.keys(keys).map(key => {
+                if(keys[key] != null && typeof keys[key] === "number") {
+                    newKeys[key] = "" + keys[key];
+                }
+                else {
+                    newKeys[key] = keys[key];
+                }
+            });
 
-            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [keys], _this.attributes, _this.formParams[i], results[i].keys, _this.isReadOnly)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
+            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [newKeys], _this.attributes, _this.formParams[i], results[i].keys, _this.isReadOnly)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
             
             curFormData.forEach((_, j) => {
                 switch(curFormData[j].name) {
+                    case 'descrizione':
+                        curFormData[j].onClick = (field: FieldConfig) => _this.navigateToDomandeDettaglio(field, i);
+                        break;
+                    case 'codice_compito':
+                        curFormData[j].onClick = (field: FieldConfig) => _this.navigateToCompiti(field, i);
+                        break;
                     case 'kyc_deep':
                         curFormData[j].onClick = (field: FieldConfig) => _this.kycDeep(field, i);
                         break;
@@ -208,11 +184,11 @@ export class DomandeRisposteComponent implements OnChanges
                 isHidden: false,
                 isVisible: true,
                 isPrimary: false,
-                key: "id_domanda",
+                key: "ordinamento",
                 label: "N.",
                 newLine: false,
                 readOnly: true,
-                size: 1,
+                size: 0.5,
                 style: {
                     font_color: "black",
                     font_weight: "600"
@@ -221,8 +197,8 @@ export class DomandeRisposteComponent implements OnChanges
             },
             {
                 format: {
-                    dataType: "text",
-                    viewType: "textarea",
+                    dataType: "number",
+                    viewType: "input",
                 },
                 isHidden: false,
                 isPrimary: false,
@@ -231,9 +207,47 @@ export class DomandeRisposteComponent implements OnChanges
                 isVisible: true,
                 newLine: false,
                 readOnly: true,
-                size: 5.55,
+                size: 6.5,
                 textareaHeight: "S",
                 translate: "RESOURCES.domanda_domande_risposte",
+            }
+        ];
+        if(result.codice_compito) {
+            viewKeys = [
+                ...viewKeys,
+                {
+                    format: {
+                        dataType: "number",
+                        viewType: "input",
+                    },
+                    isHidden: false,
+                    isVisible: true,
+                    isPrimary: false,
+                    key: "codice_compito",
+                    label: "NC",
+                    newLine: false,
+                    readOnly: true,
+                    size: 1,
+                    textareaHeight: "S",
+                }
+            ]
+        }
+
+        viewKeys = [
+            ...viewKeys,
+            {
+                format: {
+                    dataType: "number",
+                    viewType: "input"
+                },
+                isHidden: false,
+                isVisible: true,
+                isPrimary: false,
+                key: "punteggio",
+                label: "Punteggio",
+                newLine: false,
+                readOnly: true,
+                size: 0.5,
             },
             {
                 autoGenerate: false,
@@ -262,6 +276,16 @@ export class DomandeRisposteComponent implements OnChanges
                         ...(
                             result.type === 'radiobutton' ?
                             [
+                                {
+                                    icon: "link",
+                                    label: "Crea segnalazione",
+                                    onClick: (item: any, field: FieldConfig) => {_this.creaSegnalazione(item, field, index)},
+                                },
+                                {
+                                    icon: "link",
+                                    label: "Associa compito",
+                                    onClick: (item: any, field: FieldConfig) => {_this.associaCompito(item, field, index)}
+                                },
                                 {
                                     icon: "delete",
                                     label: "Cancella risposta",
@@ -394,7 +418,7 @@ export class DomandeRisposteComponent implements OnChanges
                 label: "All.",
                 newLine: true,
                 readOnly: true,
-                size: 0.75
+                size: 0.6
             },
             {
                 format: {
@@ -1363,7 +1387,6 @@ export class DomandeRisposteComponent implements OnChanges
             const newAnswer = this.data[index].risposte_previste_options.find(x => x.id_risposta_prev === event.value.id);
             const newPeso = newAnswer.peso_ans;
             this.data[index].peso = newPeso;
-            // this.prepareData(this.data);
             this.formData[index].forEach((x, i) => {
                 if(x.name === 'peso') {
                     this.formData[index][i].value = newPeso;
@@ -1373,13 +1396,11 @@ export class DomandeRisposteComponent implements OnChanges
                     };
                 }
             });
-            // console.log(field);
         }
         else if(this.data[index].type === 'checkboxgroup') {
             const newAnswers = this.data[index].risposte_previste_options.filter(x => event.value.id.includes(x.id_risposta_prev)).map(x => x.peso_ans);
             const newPeso = newAnswers.reduce((a, b) => a + b, 0);
             this.data[index].peso = newPeso;
-            // this.prepareData(this.data);
             this.formData[index].forEach((x, i) => {
                 if(x.name === 'peso') {
                     this.formData[index][i].value = newPeso;
@@ -1395,8 +1416,9 @@ export class DomandeRisposteComponent implements OnChanges
     }
 
     updateDomandaRisposta(index: number) {
-        const type = this.data[index].type;
-        let values = this._formsService.processFormValues(this.formArray.toArray()[index].form.value);
+        const _this = this;
+        const type = _this.data[index].type;
+        let values = _this._formsService.processFormValues(_this.formArray.toArray()[index].form.value);
         var data = {
             type: type
         };
@@ -1425,12 +1447,12 @@ export class DomandeRisposteComponent implements OnChanges
         }
 
 
-        this.backendService.updateDomandeRisposte(this.data[index].keys.codice_azienda, this.domandeRisposteParams.entryName, this.data[index].keys, data).subscribe(
+        _this.backendService.updateDomandeRisposte(_this.data[index].keys.codice_azienda, _this.domandeRisposteParams.entryName, _this.data[index].keys, data).subscribe(
             result => {
-                console.log(result);
+                _this._toastService.showInfoToast('Saved!');
             },
             error => {
-                console.log(error);
+                _this._toastService.showErrorToast('An error occured!', error);
             }
         )
     }
@@ -1440,7 +1462,6 @@ export class DomandeRisposteComponent implements OnChanges
             this.formArray.toArray()[index].form.patchValue({risposte_previste: null});
             const newPeso = null;
             this.data[index].peso = newPeso;
-            // this.prepareData(this.data);
             this.formData[index].forEach((x, i) => {
                 if(x.name === 'peso') {
                     this.formData[index][i].value = newPeso;
@@ -1450,16 +1471,49 @@ export class DomandeRisposteComponent implements OnChanges
                     };
                 }
             });
-            // console.log(field);
         }
 
         this.updateDomandaRisposta(index);
     }
 
-    creaSegnalazione() {
-        alert('Yeah!');
-        // Crea Segnalazione
-        // Navigate
+    creaSegnalazione(item: any, field: FieldConfig, index: number) {
+        this.eventCallback({
+            actionType: "dialog",
+            condition: "none",
+            customDialogEntryName: "dialog_crea_compito_from_domande",
+            customDialogTitle: "Crea segnalazione",
+            eventName: "crea_segnalazione",
+            outputEventWhenComplete: "triggerReload",
+            values: []
+        }, {
+            showEventProcessing: true,
+            origin: field.name,
+            index: field.index,
+            valueSet: field.fullValueSet,
+            data: item.label,
+            type: "menu",
+        }, field.name,
+        index);
+    }
+
+    associaCompito(item: any, field: FieldConfig, index: number) {
+        this.eventCallback({
+            actionType: "dialog",
+            condition: "none",
+            customDialogEntryName: "dialog_associa_compito_from_domande",
+            customDialogTitle: "Associa compito",
+            eventName: "associa_compito",
+            outputEventWhenComplete: "triggerReload",
+            values: []
+        }, {
+            showEventProcessing: true,
+            origin: field.name,
+            index: field.index,
+            valueSet: field.fullValueSet,
+            data: item.label,
+            type: "menu",
+        }, field.name,
+        index);
     }
 
     answerCopy(item: any, field: FieldConfig, index: number) {
@@ -1547,6 +1601,29 @@ export class DomandeRisposteComponent implements OnChanges
         }, field.name,
         index);
         
+    }
+
+    navigate(params: any) {
+        setTimeout(() => { this.sendEvent.emit({ eventType: 'navigate', queryParams: params }); }, 50);
+    }
+
+    navigateToDomandeDettaglio(field: FieldConfig, index: number) {
+        const targetEntryName = "domande_dettaglio";
+        const keys = {
+            codice_azienda: this.domandaKeys[index].codice_azienda,
+            id_domanda: this.domandaKeys[index].id_domanda,
+            id_modello_test: this.domandaKeys[index].id_modello_test,
+            id_modello_test_vr: this.domandaKeys[index].id_modello_test_vr
+        };
+
+        const mergedParams = { entry: { name: targetEntryName, type: 'form' }, keys: [keys], index: index + 1, total: 1 };
+        this.navigate(mergedParams);
+    }
+
+    navigateToCompiti(field: FieldConfig, index: number) {
+        const targetEntryName = "non_conformita";
+        const mergedParams = { entry: { name: targetEntryName, type: 'form' }, keys: [this.data[index].compito], index: index + 1, total: 1 };
+        this.navigate(mergedParams);
     }
 
     kycDeep(field: FieldConfig, index: number) {

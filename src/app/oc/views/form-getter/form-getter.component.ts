@@ -572,6 +572,8 @@ export class FormGetterComponent
                     // // Show error snackbar
                     // _this._toastService.showErrorToast(results.reason);
                 }
+            }, error => {
+                _this._console.log(error);
             });
         _this.generalSubscriptions.push(subscription);
     }
