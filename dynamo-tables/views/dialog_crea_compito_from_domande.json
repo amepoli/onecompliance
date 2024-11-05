@@ -10,8 +10,13 @@
         },
         {
             "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "INSERT INTO entrasp.compiti_rif_bo(codice_azienda, codice_compito, object_name, object_key, id_modello_test, id_modello_test_vr, id_domanda) VALUES ($codice_azienda$, $codice_compito$, 'riepilogo_Risposte', $codice_azienda$||'#'||$id_sondaggio$$||'#'||$id_somministrazione$||'#'||$id_modello_test$||'#'||$id_modello_test_vr$||'#'||$id_domanda, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
+            "type": "main",
+            "queryString": "select entrasp.compito_insert($codice_azienda$::varchar, null::varchar, '€global_username€', current_date::timestamp without time zone, null::numeric, coalesce ('£data_segnalazione£'::date,current_date), '£titolo£'::varchar, '£note£'::text, £id_centro_gest_monitor£::numeric, coalesce ('£stato£'::character, 'A'), £id_responsabile£::numeric, 1, boolean_rif_bo=>true, nomebo=>'riepilogoRisposte', idsondaggio=>$id_sondaggio$, idsomministrazione=>$id_somministrazione$ , idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, iddomanda=>$id_domanda$)"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select true as label;",
+            "type": "main"
         }
     ]
 }
