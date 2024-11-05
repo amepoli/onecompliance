@@ -1,4 +1,4 @@
-select entrasp.crea_json_verifica('DEMO', 50, 1, 235, 255);
+select entrasp.crea_json_verifica('DEMO', 50, 1, 235, 255);
 
 select id_domanda, descrizione, id_modello_test, id_modello_test_vr
 from entrasp.domande dm
@@ -102,9 +102,50 @@ and codice_azienda='DEMO' and id_modello_test=50 and id_modello_test_vr=1
 ******
 
 select entrasp.risposte_update_insert_new(
-codiceazienda=>$codice_azienda$::varchar, iddomanda=>$id_domanda$::numeric, 
+codiceazienda=>'DEMO'::varchar, iddomanda=>2::numeric, 
 idsondaggio=>235::numeric, idsomministrazione=>255::numeric, 
-idrispostaprev=>$id_risposta_prev$::numeric, note_=>$note_risposta$::text, peso_=>$peso_ans$);
+rispostamultipla=>array[]::numeric[], noterisposta=>'risposta_checkbox'::text);
+
+select * from entrasp.risposte 
+where codice_azienda='DEMO' and id_sondaggio=235 
+and id_somministrazione=255 and id_domanda=2;
+
+    DELETE FROM entrasp.risposte
+		    WHERE codice_azienda = 'DEMO'
+		      AND id_modello_test = 50
+		      AND id_modello_test_vr = 1
+		      AND id_domanda = 2
+			  and id_sondaggio=235
+			  and id_somministrazione=255
+	      AND id_risposta_prev NOT IN (SELECT unnest(array[86034]));
+
+
+
+select rs.id_domanda, dm.descrizione, rs.id_risposta, entrasp.sondaggi_somministrati_complete(rs.codice_azienda,
+	rs.id_somministrazione,
+	rs.id_sondaggio), entrasp.domanda_active(
+	rs.codice_azienda,
+	rs.id_modello_test,
+	rs.id_modello_test_vr,
+	dm.id_domanda,
+	rs.id_somministrazione,
+	rs.id_sondaggio),
+	ss.somministrazione_completata,
+	rs.id_sondaggio,
+	rs.id_somministrazione
+from entrasp.risposte rs
+right join entrasp.domande dm
+using (codice_azienda, id_modello_test, id_modello_test_vr, id_domanda)
+right join entrasp.sondaggi_somministrati ss
+on rs.codice_azienda=ss.codice_azienda and rs.id_sondaggio=ss.id_sondaggio 
+and rs.id_somministrazione=ss.id_somministrazione
+where ss.codice_azienda='DEMO' and ss.id_sondaggio=235
+
+select * from entrasp.risposte_previste 
+Esawhere id_domanda=2
+and codice_azienda='DEMO' and id_modello_test=50 and id_modello_test_vr=1
+
+
 
 *****
 select entrasp.risposte_update_insert_new(
