@@ -1,0 +1,117 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_associa_compito_from_domande",
+    "inheritsFrom": "compiti_sub_of_progetti",
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select $codice_azienda$ as codice_azienda, entrasp.codice_compito_from_domanda($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_domanda$) as codice_compito, $id_domanda$ as id_domanda, $id_modello_test$ as id_modello_test, $id_modello_test_vr$ as id_modello_test_vr, $id_sondaggio$ as id_sondaggio, $id_somministrazione$ as id_somministrazione"
+        },
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "INSERT INTO entrasp.compiti_rif_bo(codice_azienda, codice_compito, object_name, object_key, id_modello_test, id_modello_test_vr, id_domanda) VALUES ($codice_azienda$, $codice_compito$, 'riepilogo_Risposte', $codice_azienda$||'#'||$id_sondaggio$$||'#'||$id_somministrazione$||'#'||$id_modello_test$||'#'||$id_modello_test_vr$||'#'||$id_domanda, $id_modello_test$, $id_modello_test_vr$, $id_domanda$);"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "id_modello_test",
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "id_modello_test_vr",
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_sondaggio",
+            "label": "id_sondaggio",
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_somministrazione",
+            "label": "id_somministrazione",
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_domanda",
+            "label": "id_domanda",
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "comboQuery": "select codice_compito as id, codice_compito||'-'||titolo as name from entrasp.compiti where codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "codice_compito",
+            "label": "Compito",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+        }
+    ]
+}
