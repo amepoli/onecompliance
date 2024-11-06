@@ -82,7 +82,12 @@ export class DomandeRisposteComponent implements OnChanges
         const subscription = _this.backendService.getDomandeRisposte(_this.domandeRisposteParams.keys.codice_azienda, this.domandeRisposteParams.entryName, _this.domandeRisposteParams.keys).subscribe(result => {
             if(result && result.data && result.data.crea_json_verifica) {
                 const results: DomandaRispostaElement[] = JSON.parse(result.data.crea_json_verifica);
-                _this.data = results.map(x => ({...x, codice_compito: x.compito? x.compito.codice_compito: null}));
+                _this.data = results.map(x => (
+                    {
+                        ...x, 
+                        codice_compito: x.compito? x.compito.codice_compito: null,
+                    }
+                ));
                 _this.prepareData(_this.data);
             }
             subscription.unsubscribe();
@@ -187,7 +192,7 @@ export class DomandeRisposteComponent implements OnChanges
                 key: "ordinamento",
                 label: "N.",
                 newLine: false,
-                readOnly: true,
+                readOnly: result.readonly || true,
                 size: 0.5,
                 style: {
                     font_color: "black",
@@ -206,7 +211,7 @@ export class DomandeRisposteComponent implements OnChanges
                 label: "Domanda",
                 isVisible: true,
                 newLine: false,
-                readOnly: true,
+                readOnly: result.readonly || true,
                 size: 6.5,
                 textareaHeight: "S",
                 translate: "RESOURCES.domanda_domande_risposte",
@@ -226,7 +231,7 @@ export class DomandeRisposteComponent implements OnChanges
                     key: "codice_compito",
                     label: "NC",
                     newLine: false,
-                    readOnly: true,
+                    readOnly: result.readonly || true,
                     size: 1,
                     textareaHeight: "S",
                 }
@@ -246,86 +251,14 @@ export class DomandeRisposteComponent implements OnChanges
                 key: "punteggio",
                 label: "Punteggio",
                 newLine: false,
-                readOnly: true,
+                readOnly: result.readonly || true,
                 size: 0.5,
             },
             {
                 autoGenerate: false,
                 buttonIcon: "more_vert",
                 format: {
-                    menuOptions: [
-                        // {
-                        //     icon: "report_problem",
-                        //     label: "Crea Segnalazione",
-                        //     outputEventName: "risposte_update_insert_on_create",
-                        //     onClick: () => {_this.creaSegnalazione()},
-                        //     translate: "RESOURCES.crea_segnalazione_domande_risposte"
-                        // },
-                        // {
-                        //     icon: "launch",
-                        //     label: "Vai a segnalazione",
-                        //     outputEventName: "segnalazione_navigate",
-                        //     translate: "RESOURCES.vai_a_segnalazione_domande_risposte"
-                        // },
-                        // {
-                        //     icon: "close",
-                        //     label: "Dissocia Segnalazione",
-                        //     outputEventName: "dissocia_segnalazione",
-                        //     translate: "RESOURCES.dissocia_segnalazione_domande_risposte"
-                        // },
-                        ...(
-                            result.type === 'radiobutton' ?
-                            [
-                                {
-                                    icon: "link",
-                                    label: "Crea segnalazione",
-                                    onClick: (item: any, field: FieldConfig) => {_this.creaSegnalazione(item, field, index)},
-                                },
-                                {
-                                    icon: "link",
-                                    label: "Associa compito",
-                                    onClick: (item: any, field: FieldConfig) => {_this.associaCompito(item, field, index)}
-                                },
-                                {
-                                    icon: "delete",
-                                    label: "Cancella risposta",
-                                    outputEventName: "delete_risposta",
-                                    onClick: (item: any, field: FieldConfig) => {_this.resetRispostaPrevista(item, field, index)},
-                                    translate: "RESOURCES.cancella_risposta_domande_risposte"
-                                },
-                                {
-                                    icon: "content_copy",
-                                    label: "Copia questa risp. sulle verifiche (somministrazioni) del sondaggio",
-                                    outputEventName: "answer_copy",
-                                    onClick: (item: any, field: FieldConfig) => {_this.answerCopy(item, field, index)},
-                                    translate: "RESOURCES.copia_questa_risp_sulle_verifiche_somministrazioni_del_sondaggio_domande_risposte"
-                                },
-                                {
-                                    icon: "link",
-                                    label: "Seleziona note",
-                                    outputEventName: "associa_note",
-                                    onClick: (item: any, field: FieldConfig) => {_this.associaNote(item, field, index)},
-                                    translate: "RESOURCES.seleziona_note_domande_risposte"
-                                }
-                            ]:
-                            [
-                                {
-                                    icon: "content_copy",
-                                    label: "Copia questa risp. sulle verifiche (somministrazioni) del sondaggio",
-                                    outputEventName: "answer_copy",
-                                    onClick: (item: any, field: FieldConfig) => {_this.answerCopy(item, field, index)},
-                                    translate: "RESOURCES.copia_questa_risp_sulle_verifiche_somministrazioni_del_sondaggio_domande_risposte"
-                                },
-                                {
-                                    icon: "link",
-                                    label: "Seleziona note",
-                                    outputEventName: "associa_note",
-                                    onClick: (item: any, field: FieldConfig) => {_this.associaNote(item, field, index)},
-                                    translate: "RESOURCES.seleziona_note_domande_risposte"
-                                }
-                            ]
-                        )
-                    ],
+                    menuOptions: _this.getMenuActions(result, index),
                     viewType: "menu"
                 },
                 inputEvents: [
@@ -401,7 +334,7 @@ export class DomandeRisposteComponent implements OnChanges
                 key: "domande_actions",
                 label: "",
                 newLine: false,
-                readOnly: false,
+                readOnly: result.readonly || false,
                 sameOrigin: false,
                 size: 0.6
             },
@@ -417,7 +350,7 @@ export class DomandeRisposteComponent implements OnChanges
                 key: "num_allegati",
                 label: "All.",
                 newLine: true,
-                readOnly: true,
+                readOnly: result.readonly || true,
                 size: 0.6
             },
             {
@@ -431,7 +364,7 @@ export class DomandeRisposteComponent implements OnChanges
                 label: "Annotazioni Esplicative Domanda",
                 isVisible: true,
                 newLine: true,
-                readOnly: true,
+                readOnly: result.readonly || true,
                 size: 10,
                 style: {
                     font_color: "black",
@@ -456,7 +389,7 @@ export class DomandeRisposteComponent implements OnChanges
             key: "risposta",
             label: "Risposta",
             newLine: false,
-            readOnly: true,
+            readOnly: result.readonly || true,
             sameOrigin: false,
             size: 9,
             style: {
@@ -480,7 +413,7 @@ export class DomandeRisposteComponent implements OnChanges
             key: "no_new_line",
             label: "no_new_line",
             newLine: false,
-            readOnly: true,
+            readOnly: result.readonly || true,
             sameOrigin: false,
             size: 3,
             translate: "RESOURCES.no_new_line_domande_risposte"
@@ -504,7 +437,7 @@ export class DomandeRisposteComponent implements OnChanges
                     eventName: "get_aml_scan",
                     eventTrigger: "press"
                 },
-                readOnly: false,
+                readOnly: result.readonly || false,
                 sameOrigin: false,
                 size: 2,
                 style: {
@@ -533,7 +466,7 @@ export class DomandeRisposteComponent implements OnChanges
                     eventName: "invia_mail",
                     eventTrigger: "press"
                 },
-                readOnly: false,
+                readOnly: result.readonly || false,
                 sameOrigin: false,
                 size: 2,
                 style: {
@@ -563,7 +496,7 @@ export class DomandeRisposteComponent implements OnChanges
                         eventName: "get_light_aml_scan",
                         eventTrigger: "press"
                     },
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     sameOrigin: false,
                     size: 2,
                     tooltip: "Controllo OneKYC limitato alle liste anti-terrorismo",
@@ -589,7 +522,7 @@ export class DomandeRisposteComponent implements OnChanges
                     eventName: "check_provincia_event",
                     eventTrigger: "press"
                 },
-                readOnly: false,
+                readOnly: result.readonly || false,
                 sameOrigin: false,
                 size: 2,
                 style: {
@@ -614,7 +547,7 @@ export class DomandeRisposteComponent implements OnChanges
                     key: "new_line",
                     label: "new_line",
                     newLine: true,
-                    readOnly: true,
+                    readOnly: result.readonly || true,
                     sameOrigin: false,
                     size: 3,
                     translate: "RESOURCES.new_line_domande_risposte"
@@ -640,7 +573,7 @@ export class DomandeRisposteComponent implements OnChanges
                     label: "Risposta",
                     isVisible: true,
                     newLine: false,
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     size: 8.5,
                     translate: "RESOURCES.risposta_domande_risposte",
                 },
@@ -655,7 +588,7 @@ export class DomandeRisposteComponent implements OnChanges
                     key: "peso",
                     label: "Risultato %",
                     newLine: false,
-                    readOnly: true,
+                    readOnly: result.readonly || true,
                     size: 1,
                     translate: "RESOURCES.risultato__domande_risposte"
                 },
@@ -679,7 +612,7 @@ export class DomandeRisposteComponent implements OnChanges
                     label: "Risposta",
                     isVisible: true,
                     newLine: false,
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     size: 8.5,
                     translate: "RESOURCES.risposta_domande_risposte",
                 },
@@ -694,7 +627,7 @@ export class DomandeRisposteComponent implements OnChanges
                     key: "peso",
                     label: "Risultato %",
                     newLine: false,
-                    readOnly: true,
+                    readOnly: result.readonly || true,
                     size: 1,
                     translate: "RESOURCES.risultato__domande_risposte"
                 },
@@ -718,7 +651,7 @@ export class DomandeRisposteComponent implements OnChanges
                     label: "Risposta",
                     isVisible: true,
                     newLine: false,
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     size: 8.5,
                     translate: "RESOURCES.risposta_domande_risposte",
                 },
@@ -733,7 +666,7 @@ export class DomandeRisposteComponent implements OnChanges
                     key: "peso",
                     label: "Risultato %",
                     newLine: false,
-                    readOnly: true,
+                    readOnly: result.readonly || true,
                     size: 1,
                     translate: "RESOURCES.risultato__domande_risposte"
                 },
@@ -758,7 +691,7 @@ export class DomandeRisposteComponent implements OnChanges
                     label: "Risposta",
                     isVisible: true,
                     newLine: false,
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     size: 1,
                     translate: "RESOURCES.risposta_domande_risposte",
                 },
@@ -773,7 +706,7 @@ export class DomandeRisposteComponent implements OnChanges
                     key: "peso",
                     label: "Risultato %",
                     newLine: false,
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     size: 1,
                     translate: "RESOURCES.risultato__domande_risposte"
                 },
@@ -798,7 +731,7 @@ export class DomandeRisposteComponent implements OnChanges
                     label: "Risposta",
                     isVisible: true,
                     newLine: false,
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     size: 1,
                     translate: "RESOURCES.risposta_domande_risposte",
                 },
@@ -813,7 +746,7 @@ export class DomandeRisposteComponent implements OnChanges
                     key: "peso",
                     label: "Risultato %",
                     newLine: false,
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     size: 1,
                     translate: "RESOURCES.risultato__domande_risposte"
                 },
@@ -833,7 +766,7 @@ export class DomandeRisposteComponent implements OnChanges
                     key: "peso",
                     label: "Risultato %",
                     newLine: false,
-                    readOnly: false,
+                    readOnly: result.readonly || false,
                     size: 1,
                     translate: "RESOURCES.risultato__domande_risposte"
                 },
@@ -852,7 +785,7 @@ export class DomandeRisposteComponent implements OnChanges
                 label: "Note",
                 isVisible: true,
                 newLine: true,
-                readOnly: false,
+                readOnly: result.readonly || false,
                 size: 10,
                 style: {
                     font_color: "black",
@@ -864,6 +797,72 @@ export class DomandeRisposteComponent implements OnChanges
             }
         ];
         return viewKeys;
+    }
+
+    getMenuActions(result: DomandaRispostaElement, index: number) {
+        const _this = this;
+        // {
+        //     icon: "report_problem",
+        //     label: "Crea Segnalazione",
+        //     outputEventName: "risposte_update_insert_on_create",
+        //     onClick: () => {_this.creaSegnalazione()},
+        //     translate: "RESOURCES.crea_segnalazione_domande_risposte"
+        // },
+        // {
+        //     icon: "launch",
+        //     label: "Vai a segnalazione",
+        //     outputEventName: "segnalazione_navigate",
+        //     translate: "RESOURCES.vai_a_segnalazione_domande_risposte"
+        // },
+        // {
+        //     icon: "close",
+        //     label: "Dissocia Segnalazione",
+        //     outputEventName: "dissocia_segnalazione",
+        //     translate: "RESOURCES.dissocia_segnalazione_domande_risposte"
+        // },
+        let menuActions: any[] = [
+            {
+                icon: "report_problem",
+                label: "Crea segnalazione",
+                onClick: (item: any, field: FieldConfig) => {_this.creaSegnalazione(item, field, index)},
+                translate: "RESOURCES.crea_segnalazione_domande_risposte"
+            },
+            {
+                icon: "link",
+                label: "Associa compito",
+                onClick: (item: any, field: FieldConfig) => {_this.associaCompito(item, field, index)}
+            },
+        ];
+
+        if(result.type === 'radiobutton') {
+            menuActions = [...menuActions, 
+                {
+                    icon: "delete",
+                    label: "Cancella risposta",
+                    outputEventName: "delete_risposta",
+                    onClick: (item: any, field: FieldConfig) => {_this.resetRispostaPrevista(item, field, index)},
+                    translate: "RESOURCES.cancella_risposta_domande_risposte"
+                },
+            ]
+        }
+
+        menuActions = [...menuActions, 
+            {
+                icon: "content_copy",
+                label: "Copia questa risp. sulle verifiche (somministrazioni) del sondaggio",
+                outputEventName: "answer_copy",
+                onClick: (item: any, field: FieldConfig) => {_this.answerCopy(item, field, index)},
+                translate: "RESOURCES.copia_questa_risp_sulle_verifiche_somministrazioni_del_sondaggio_domande_risposte"
+            },
+            {
+                icon: "link",
+                label: "Seleziona note",
+                outputEventName: "associa_note",
+                onClick: (item: any, field: FieldConfig) => {_this.associaNote(item, field, index)},
+                translate: "RESOURCES.seleziona_note_domande_risposte"
+            }
+        ];
+        return menuActions;
     }
 
     addOptionsAndValue(formData: FieldConfig[], result: DomandaRispostaElement){
@@ -893,6 +892,12 @@ export class DomandeRisposteComponent implements OnChanges
                         }
                         if(result.font_color) {
                             formData[i].style = {...formData[i].style, font_color: result.font_color};
+                        }
+                        if(result["risposte_previste_options"][valueIndex].background_color_ans) {
+                            formData[i].style = {...formData[i].style, background_color: result["risposte_previste_options"][valueIndex].background_color_ans};
+                        }
+                        if(result["risposte_previste_options"][valueIndex].font_color_ans) {
+                            formData[i].style = {...formData[i].style, font_color: result["risposte_previste_options"][valueIndex].font_color_ans};
                         }
                     }
                 })
@@ -1356,12 +1361,8 @@ export class DomandeRisposteComponent implements OnChanges
                 (response: any) => {
                     dialogRefSub.unsubscribe();
 
-                    // if (event.outputEventWhenComplete != null) {
-                    //     _this.pubSubService.publishEvent(
-                    //         event.outputEventWhenComplete,
-                    //         value,
-                    //     );
-                    // }
+                    // Reload data
+                    _this.reload();
                 },
                 (error: any) => {
                     dialogRefSub.unsubscribe();
@@ -1449,7 +1450,12 @@ export class DomandeRisposteComponent implements OnChanges
 
         _this.backendService.updateDomandeRisposte(_this.data[index].keys.codice_azienda, _this.domandeRisposteParams.entryName, _this.data[index].keys, data).subscribe(
             result => {
-                _this._toastService.showInfoToast('Saved!');
+                if(result.result == "OK") {
+                    _this._toastService.showInfoToast('Saved!');
+                }
+                else {
+                    _this._toastService.showErrorToastWithReason(result.reason);
+                }
             },
             error => {
                 _this._toastService.showErrorToast('An error occured!', error);

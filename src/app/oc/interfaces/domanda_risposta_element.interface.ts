@@ -27,4 +27,5 @@ export interface DomandaRispostaElement {
     };
     codice_compito?: string;
     keys?: any;
+    readonly: boolean;
 }
