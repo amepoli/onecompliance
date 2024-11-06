@@ -35,8 +35,6 @@ export class DomandeRisposteComponent implements OnChanges
 
     entryName: string
     isQuickAdd: boolean = false;
-    readOnlyPage: boolean = false;
-    isReadOnly: boolean = false;
     
     isLoading: boolean = true;
     
@@ -123,8 +121,8 @@ export class DomandeRisposteComponent implements OnChanges
                 }
             });
 
-            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [newKeys], _this.attributes, _this.formParams[i], results[i].keys, _this.isReadOnly)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
-            
+            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [newKeys], _this.attributes, _this.formParams[i], results[i].keys, results[i].readonly)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
+                        
             curFormData.forEach((_, j) => {
                 switch(curFormData[j].name) {
                     case 'descrizione':
