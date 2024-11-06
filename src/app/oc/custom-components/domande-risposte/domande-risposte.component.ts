@@ -891,11 +891,13 @@ export class DomandeRisposteComponent implements OnChanges
                         if(result.font_color) {
                             formData[i].style = {...formData[i].style, font_color: result.font_color};
                         }
-                        if(result["risposte_previste_options"][valueIndex].background_color_ans) {
-                            formData[i].style = {...formData[i].style, background_color: result["risposte_previste_options"][valueIndex].background_color_ans};
-                        }
-                        if(result["risposte_previste_options"][valueIndex].font_color_ans) {
-                            formData[i].style = {...formData[i].style, font_color: result["risposte_previste_options"][valueIndex].font_color_ans};
+                        if(valueIndex>-1) {
+                            if(result["risposte_previste_options"][valueIndex].background_color_ans) {
+                                formData[i].style = {...formData[i].style, background_color: result["risposte_previste_options"][valueIndex].background_color_ans};
+                            }
+                            if(result["risposte_previste_options"][valueIndex].font_color_ans) {
+                                formData[i].style = {...formData[i].style, font_color: result["risposte_previste_options"][valueIndex].font_color_ans};
+                            }
                         }
                     }
                 })
