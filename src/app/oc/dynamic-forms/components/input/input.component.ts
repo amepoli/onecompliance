@@ -104,7 +104,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.field.value = d.toLocaleString('en-US', { timeZone: _this.timezoneService.timezoneInfo.timezone });
       }
       else {
-        _this.field.value = fieldValue;
+        _this.field.value = fieldValue != null && typeof fieldValue === 'number' ? fieldValue.toString() : fieldValue;
       }
     }
 
