@@ -143,6 +143,7 @@
         ],
         "deny": [],
         "form_keys": [],
+
         "readOnly": [
             "aggiornamenti_sub_of_contratti",
             "aggiornamenti_sub_of_crediti",
@@ -163,15 +164,9 @@
             "crediti_ceduti_sub_of_mandati",
             "crediti_ceduti_sub_of_ricessioni",
             "crediti_ceduti_sub_of_tranche",
-            "dialog_crediti_ceduti_dt_pagamento",
-            "dialog_inserisci_movimenti_crediti",
-            "dialog_pag_debi_ced",
-            "dialog_pagamenti_crediti",
-            "dialog_ricessioni",
+
             "domande_risposte",
             "domande_sezioni_sub_of_somministrazioni",
-            "fe_attachment_form",
-            "fe_multi_attachment_form",
             "mandati",
             "monitoraggio",
             "operazioni",
@@ -221,7 +216,6 @@
             "presidi_sub_of_domande",
             "domande_condizionate",
             "tag_sub_of_domande",
-            "dialog_sondaggi_somministrati",
             "domande_sezioni_detail",
             "sondaggi_sub_of_modelli_test",
             "seleziona_campione",
@@ -254,7 +248,74 @@
             "risposte_sub_of_risposte_previste",
             "dialog_domande"
         ],
-        "table_keys": [],
-        "queryCond": []
+        "table_keys": [
+            {
+                "entry": "progetti_fasi",
+                "hide": ["visible_button_modello_test"]
+            },
+            {
+                "entry": "modelli_test_vr",
+                "hide": ["id_argomento"]
+            }
+        ],
+        "queryCond": [
+            {
+                "entry": "modelli_test_vr",
+                "viewType": "table",
+                "queryString": "id_centro_gest in(select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€')"
+            },
+            {
+                "entry": "sondaggi",
+                "viewType": "table",
+                "queryString": "snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€')"
+            },
+            {
+                "entry": "sondaggi_somministrati",
+                "viewType": "table",
+                "queryString": "(snd.id_centro_gest in(select cg2.id_centro_gest from entrasp.centri_gestionali cg2 where cg2.id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri glm where glm.id_anagrafica=€global_userid€ and glm.codice_part='€global_codice_part€') and snd.codice_part='€global_codice_part€') or ss.id_anagrafica=€global_userid€)"
+            },
+            {
+                "entry": "consuntivazioni_list",
+                "viewType": "table",
+                "queryString": "entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric=csn.id_risorsa"
+            },
+            {
+                "entry": "comprehension_tests",
+                "queryString": "ss.id_anagrafica=€global_userid€",
+                "viewType": "table"
+            }
+        ]
+    },
+    "menuOptions": {
+        "deny": [
+            {
+                "entry": "modelli_test_vr",
+                "key": "modelli_test_vr_actions",
+                "options": [
+                    "tagga_tutte_risposte",
+                    "tagga_risposte",
+                    "tagga_tutte_domande",
+                    "crea_associa_argomento"
+                ]
+            },
+            {
+                "entry": "sondaggi",
+                "key": "sondaggi_actions",
+                "options": ["get_drive_folder_contents"]
+            },
+            {
+                "entry": "anagrafiche_vr",
+                "key": "anagrafiche_vr_actions",
+                "options": [
+                    "get_drive_folder_contents",
+                    "get_emails_by_codice_azienda"
+                ]
+            },
+            {
+                "entry": "progetti",
+                "key": "progetti_actions",
+                "options": ["get_drive_folder_contents", "codici_aggiorna"]
+            }
+        ]
     }
 }
