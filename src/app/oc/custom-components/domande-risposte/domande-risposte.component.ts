@@ -1390,7 +1390,7 @@ export class DomandeRisposteComponent implements OnChanges
             this.data[index].peso = newPeso;
             this.formData[index].forEach((x, i) => {
                 if(x.name === 'peso') {
-                    this.formData[index][i].value = newPeso;
+                    this.formData[index][i].value = '' + newPeso;
                     this.formData[index][i].style = {
                         background_color: newAnswer.background_color_ans,
                         font_color: newAnswer.font_color_ans,
@@ -1404,7 +1404,7 @@ export class DomandeRisposteComponent implements OnChanges
             this.data[index].peso = newPeso;
             this.formData[index].forEach((x, i) => {
                 if(x.name === 'peso') {
-                    this.formData[index][i].value = newPeso;
+                    this.formData[index][i].value = '' + newPeso;
                 }
             });
         }
@@ -1470,7 +1470,7 @@ export class DomandeRisposteComponent implements OnChanges
             this.data[index].peso = newPeso;
             this.formData[index].forEach((x, i) => {
                 if(x.name === 'peso') {
-                    this.formData[index][i].value = newPeso;
+                    this.formData[index][i].value = '' + newPeso;
                     this.formData[index][i].style = {
                         background_color: null,
                         font_color: null,
