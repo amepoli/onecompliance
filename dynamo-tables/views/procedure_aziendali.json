@@ -1,6 +1,7 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "procedure_aziendali",
+    "origin": "entrasp.procedure_aziendali",
     "businessObjectName": "procedureAziendali",
     "label": "Processi",
     "predefinedQueries": [
@@ -8,21 +9,6 @@
             "operation": "delete",
             "type": "main",
             "queryString": "select entrasp.procedura_aziendale_delete($codice_azienda$, $id_procedura$);"
-        },
-        {
-            "operation": "selectForm",
-            "type": "preProcessing",
-            "queryString": "update entrasp.procedure_aziendali set codice_part='€global_codice_part€' WHERE codice_azienda=$codice_azienda$ AND id_procedura=$id_procedura$;"
-        },
-        {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "UPDATE entrasp.procedure_aziendali pr set codice_part=az.codice_part from entrasp.aziende az where pr.codice_azienda=az.codice_azienda"
-        },
-        {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "UPDATE entrasp.procedure_aziendali pr set codice_part=az.codice_part from entrasp.aziende az where pr.codice_azienda=az.codice_azienda"
         }
     ],
     "form_keys": [
@@ -36,7 +22,6 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
             "newLine": true,
             "readOnly": true
         },
@@ -50,7 +35,6 @@
             "isPrimary": true,
             "key": "id_procedura",
             "label": "Id Processo",
-            "translate": "RESOURCES.id_process",
             "newLine": false,
             "size": 1.5,
             "readOnly": true
@@ -63,7 +47,6 @@
                 "viewType": "combobox"
             },
             "label": "Società gruppo/cliente",
-            "translate": "RESOURCES.id_anagrafica_societa",
             "newLine": false,
             "readOnly": false,
             "isPrimary": false,
@@ -79,8 +62,7 @@
                     {
                         "message": "Inserire codice",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_codice"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -88,7 +70,6 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "newLine": false,
             "size": 2,
             "readOnly": false
@@ -103,8 +84,7 @@
                     {
                         "message": "Inserire tipo processo",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_tipo_processo"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -112,7 +92,6 @@
             "isPrimary": false,
             "key": "id_tipo_processo",
             "label": "Tipo Processo",
-            "translate": "RESOURCES.id_tipo_processo",
             "newLine": true,
             "size": 3,
             "readOnly": false
@@ -126,8 +105,7 @@
                     {
                         "message": "Necessaria breve descrizione",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.necessaria_breve_descrizione"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -135,7 +113,6 @@
             "isPrimary": false,
             "key": "descrizione_breve",
             "label": "Descrizione Breve",
-            "translate": "RESOURCES.title",
             "newLine": false,
             "readOnly": false,
             "size": 6
@@ -150,8 +127,7 @@
                     {
                         "message": "Centro gestionale mancante",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.centro_gestionale_mancante"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -159,7 +135,6 @@
             "isPrimary": false,
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "newLine": true,
             "readOnly": false,
             "size": 4
@@ -174,7 +149,6 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione Estesa",
-            "translate": "RESOURCES.description",
             "newLine": true,
             "textareaHeight": "L",
             "readOnly": false
@@ -189,8 +163,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_procedura_parent",
-            "label": "id_procedura_parent",
-            "translate": "RESOURCES.id_procedura_parent",
+            "label": "Processo di livello superiore",
             "newLine": false,
             "readOnly": false,
             "size": 6
@@ -208,9 +181,8 @@
             "isPrimary": false,
             "key": "stato_attuazione",
             "label": "Stato Attuazione",
-            "translate": "RESOURCES.status",
-            "size": 4,
-            "newLine": true,
+            "size": 2,
+            "newLine": false,
             "readOnly": false,
             "outputEvent": {
                 "eventName": "procedura_change_stato",
@@ -236,8 +208,8 @@
             "isPrimary": false,
             "key": "crea_presidio",
             "label": "Crea presidio associato",
-            "translate": "RESOURCES.crea_presidio",
-            "newLine": false,
+            "newLine": true,
+            "size": 1,
             "outputEvent": {
                 "eventName": "presidio_create",
                 "eventTrigger": "press"
@@ -266,7 +238,6 @@
             ]
         }
     ],
-    "origin": "entrasp.procedure_aziendali",
     "search_keys": [
         {
             "fieldName": "id_tipo_processo",
@@ -276,7 +247,6 @@
                 "viewType": "combobox"
             },
             "label": "Id Processo",
-            "translate": "RESOURCES.id_process",
             "newLine": false,
             "size": 2,
             "queryCond": "id_tipo_processo=$id_tipo_processo$"
@@ -288,7 +258,6 @@
                 "viewType": "input"
             },
             "label": "Id Processo",
-            "translate": "RESOURCES.id_process",
             "newLine": false,
             "size": 1,
             "queryCond": "id_procedura=$id_procedura$"
@@ -301,7 +270,6 @@
                 "viewType": "combobox"
             },
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "newLine": false,
             "queryCond": "id_centro_gest=$id_centro_gest$"
         },
@@ -313,7 +281,6 @@
                 "viewType": "combobox"
             },
             "label": "Procedura Superiore",
-            "translate": "RESOURCES.id_procedura_parent",
             "newLine": true,
             "queryCond": "id_procedura_parent=$id_procedura_parent$"
         },
@@ -324,7 +291,6 @@
                 "viewType": "input"
             },
             "label": "Parola chiave",
-            "translate": "RESOURCES.key_word",
             "newLine": false,
             "size": 5,
             "queryCond": "(upper(descrizione_breve) like '%'||upper('€parola_search€')||'%' or upper(descrizione) like '%'||upper('€parola_search€')||'%')"
@@ -336,7 +302,6 @@
                 "viewType": "input"
             },
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "newLine": false,
             "size": 1,
             "queryCond": "codice=$codice$"
@@ -348,7 +313,6 @@
                 "viewType": "input"
             },
             "label": "Sondaggi con data competenza dal",
-            "translate": "RESOURCES.data_comp_prevista_min",
             "newLine": false,
             "size": 2,
             "queryCond": "id_procedura in (select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.data_comp>='€data_comp_prevista_min€')"
@@ -360,7 +324,6 @@
                 "viewType": "input"
             },
             "label": "Sondaggi con data competenza fino al",
-            "translate": "RESOURCES.data_comp_prevista_max",
             "newLine": true,
             "size": 2,
             "queryCond": "id_procedura in (select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.data_comp<='€data_comp_prevista_max€')"
@@ -372,7 +335,6 @@
                 "viewType": "checkbox"
             },
             "label": "Solo Principali",
-            "translate": "RESOURCES.main_only",
             "newLine": false,
             "queryCond": "id_procedura_parent IS null"
         },
@@ -384,8 +346,7 @@
             },
             "label": "Mai verificati",
             "newLine": false,
-            "queryCond": "id_procedura not in(select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')",
-            "translate": "RESOURCES.mai_verificati"
+            "queryCond": "id_procedura not in(select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         },
         {
             "fieldName": "verificati",
@@ -394,7 +355,6 @@
                 "viewType": "checkbox"
             },
             "label": "Già verificati",
-            "translate": "RESOURCES.verificati",
             "newLine": false,
             "queryCond": "id_procedura in(select pmt.id_procedura from entrasp.sondaggi snd inner join entrasp.procedure_modelli_test pmt on snd.id_modello_test = pmt.id_modello_test and snd.codice_azienda=pmt.codice_azienda where snd.codice_azienda = $codice_azienda$ and snd.stato = 'C')"
         },
@@ -405,7 +365,6 @@
                 "viewType": "checkbox"
             },
             "label": "Senza rischi",
-            "translate": "RESOURCES.procedure_without_rischi",
             "newLine": false,
             "queryCond": "id_procedura not in(select id_procedura from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura is not null)"
         },
@@ -416,7 +375,6 @@
                 "viewType": "checkbox"
             },
             "label": "Con rischi",
-            "translate": "RESOURCES.procedure_with_rischi",
             "newLine": true,
             "queryCond": "id_procedura in(select id_procedura from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and id_procedura is not null)"
         },
@@ -427,7 +385,6 @@
                 "viewType": "checkbox"
             },
             "label": "Con presidio",
-            "translate": "RESOURCES.procedure_with_presidio",
             "newLine": false,
             "queryCond": "id_procedura in(select distinct id_procedura from entrasp.procedure_aziendali_presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
         },
@@ -438,7 +395,6 @@
                 "viewType": "checkbox"
             },
             "label": "Senza presidio",
-            "translate": "RESOURCES.procedure_without_presidio",
             "newLine": false,
             "queryCond": "id_procedura not in(select distinct id_procedura from entrasp.presidi where codice_azienda=$codice_azienda$ and id_procedura is not null)"
         },
@@ -449,7 +405,6 @@
                 "viewType": "checkbox"
             },
             "label": "Senza centro gestionale",
-            "translate": "RESOURCES.procedure_without_centro_gest",
             "newLine": false,
             "queryCond": "id_centro_gest is null"
         },
@@ -460,7 +415,6 @@
                 "viewType": "checkbox"
             },
             "label": "Senza modelli di verifica",
-            "translate": "RESOURCES.no_mdt",
             "newLine": false,
             "queryCond": "id_procedura not in(select distinct id_procedura from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$)"
         },
@@ -471,7 +425,6 @@
                 "viewType": "checkbox"
             },
             "label": "Con modelli di verifica",
-            "translate": "RESOURCES.with_mdt",
             "newLine": false,
             "queryCond": "id_procedura in(select distinct id_procedura from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$)"
         },
@@ -484,13 +437,13 @@
             "label": "Max id proc.",
             "newLine": false,
             "size": 1,
-            "queryCond": "id_procedura=(select max(id_procedura) from entrasp.procedure_aziendali where codice_azienda='€global_codice_azienda€')",
-            "translate": "RESOURCES.max_id_proc"
+            "queryCond": "id_procedura=(select max(id_procedura) from entrasp.procedure_aziendali where codice_azienda='€global_codice_azienda€')"
         }
     ],
     "subTables": [
         {
             "entryKey": "procedure_aziendali_sub",
+            "renderingOrder": 1,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -501,11 +454,11 @@
                     "son": "id_procedura_parent"
                 }
             ],
-            "label": "Sotto-processi",
-            "translate": "RESOURCES.procedure_aziendali_sub"
+            "label": "Sotto-processi"
         },
         {
             "entryKey": "rischi_sub_of_procedure",
+            "renderingOrder": 2,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -516,27 +469,11 @@
                     "son": "id_procedura"
                 }
             ],
-            "label": "Rischi associati",
-            "translate": "RESOURCES.rischi_sub_of_procedure"
-        },
-        {
-            "entryKey": "trattamenti_dati_sub_of_procedure",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_procedura",
-                    "son": "id_procedura"
-                }
-            ],
-            "type": "tableForm",
-            "label": "Trattamenti dati associati",
-            "translate": "RESOURCES.trattamenti_dati_sub_of_procedure"
+            "label": "Rischi associati"
         },
         {
             "entryKey": "presidi_sub_of_procedure",
+            "renderingOrder": 3,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -547,11 +484,26 @@
                     "son": "id_procedura"
                 }
             ],
-            "label": "Presidi Associati",
-            "translate": "RESOURCES.presidi_sub_of_procedure"
+            "label": "Presidi Associati"
+        },
+        {
+            "entryKey": "trattamenti_dati_sub_of_procedure",
+            "renderingOrder": 4,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_procedura",
+                    "son": "id_procedura"
+                }
+            ],
+            "label": "Trattamenti dati associati"
         },
         {
             "entryKey": "modelli_test_sub_procedure",
+            "renderingOrder": 5,
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -562,8 +514,7 @@
                     "son": "id_procedura"
                 }
             ],
-            "label": "Modelli Verifica Associati",
-            "translate": "RESOURCES.modelli_test_sub_procedure"
+            "label": "Modelli Verifica Associati"
         }
     ],
     "table_keys": [
@@ -574,18 +525,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "codice_part",
-            "label": "codice_part",
-            "translate": "RESOURCES.partition_code"
+            "label": "codice_azienda"
         },
         {
             "format": {
@@ -594,8 +534,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "id_tipo_processo",
-            "label": "id_tipo_processo",
-            "translate": "RESOURCES.id_tipo_processo"
+            "label": "id_tipo_processo"
         },
         {
             "format": {
@@ -635,8 +574,7 @@
                     "title": "Cancellazione procedure aziendali"
                 },
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.delete_procedure_aziendali"
+            }
         },
         {
             "format": {
@@ -646,8 +584,7 @@
             "isPrimary": true,
             "key": "id_procedura",
             "width": "5%",
-            "label": "Id Proc.",
-            "translate": "RESOURCES.id_process"
+            "label": "Id Proc."
         },
         {
             "format": {
@@ -658,8 +595,7 @@
             "key": "cliente",
             "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_societa)",
             "width": "15%",
-            "label": "Società/Cliente",
-            "translate": "RESOURCES.id_anagrafica_societa"
+            "label": "Società/Cliente"
         },
         {
             "format": {
@@ -669,8 +605,7 @@
             "isPrimary": false,
             "key": "codice",
             "width": "5%",
-            "label": "Cod.",
-            "translate": "RESOURCES.codice"
+            "label": "Cod."
         },
         {
             "format": {
@@ -680,8 +615,7 @@
             "isPrimary": false,
             "key": "descrizione_breve",
             "width": "30%",
-            "label": "Titolo",
-            "translate": "RESOURCES.title"
+            "label": "Titolo"
         },
         {
             "format": {
@@ -691,7 +625,6 @@
             "isPrimary": false,
             "key": "descrizioni_centro_gestionale",
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "width": "10%",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
         },
@@ -703,8 +636,7 @@
             "isPrimary": false,
             "key": "id_procedura_parent",
             "width": "5%",
-            "label": "Id Processo Superiore",
-            "translate": "RESOURCES.id_procedura_parent"
+            "label": "Id Processo Superiore"
         },
         {
             "format": {
@@ -715,8 +647,7 @@
             "key": "Descr_procedura_parent",
             "queryFunct": "substring(id_procedura_parent||'-'||entrasp.procedure_aziendali_descr(id_procedura_parent,codice_azienda), 1, 60)",
             "width": "15%",
-            "label": "Procedura Superiore",
-            "translate": "RESOURCES.id_procedura_parent"
+            "label": "Procedura Superiore"
         },
         {
             "format": {
@@ -727,7 +658,6 @@
             "key": "stato_attuazione",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione)",
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "width": "8%",
             "style": [
                 {
@@ -756,8 +686,7 @@
             "key": "id_tipo_processo_trans",
             "queryFunct": "entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda)",
             "width": "10%",
-            "label": "Tipo Processo",
-            "translate": "RESOURCES.id_tipo_processo"
+            "label": "Tipo Processo"
         }
     ],
     "messages": [
@@ -770,46 +699,59 @@
             }
         }
     ],
+    "importQueries": {
+        "tableQueries": [
+            {
+                "label": "Importazione/Modifica Processi",
+                "queryString": "select entrasp.import_update_procedure_aziendali($codice_azienda$,$nome_file$)"
+            },
+            {
+                "label": "Associa Processi-Presidi",
+                "queryString": "select entrasp.associa_processi_presidi($codice_azienda$,$nome_file$)"
+            }
+        ]
+    },
     "exportQueries": {
         "tableQueries": [
             {
                 "label": "Processi e rischi associati (3 liv)",
-                "translate": "",
                 "queryString": "select pa1.id_procedura as liv1_id_proc, pa1.codice as liv1_cod, pa1.descrizione_breve as liv1_proc_titolo, pa1.id_procedura_parent as liv1_id_pp, rsk1.codice as rsk1_codice, rsk1.titolo as rsk1_titolo, pa2.id_procedura as liv2_id_proc, pa2.codice as liv2_cod, pa2.descrizione_breve as liv2_proc_titolo, pa2.id_procedura_parent as liv2_id_pp, rsk2.codice as rsk2_codice, rsk2.titolo as rsk2_titolo, pa3.id_procedura as liv3_id_proc, pa3.codice as liv3_cod ,pa3.descrizione_breve as liv3_proc_titolo, pa3.id_procedura_parent as liv3_id_pp, rsk3.codice as rsk3_codice, rsk3.titolo as rsk3_titolo from entrasp.procedure_aziendali pa1 left join entrasp.procedure_aziendali pa2 on pa1.id_procedura=pa2.id_procedura_parent and pa1.codice_azienda=pa2.codice_azienda left join entrasp.procedure_aziendali pa3 on pa2.id_procedura=pa3.id_procedura_parent and pa2.codice_azienda=pa3.codice_azienda left join entrasp.fonti_rischio fr1 on pa1.id_procedura=fr1.id_procedura and pa1.codice_azienda=fr1.codice_azienda left join entrasp.rischi rsk1 on fr1.codice_rischio=rsk1.codice_rischio and fr1.codice_azienda=rsk1.codice_azienda left join entrasp.fonti_rischio fr2 on pa2.id_procedura=fr2.id_procedura and pa2.codice_azienda=fr2.codice_azienda left join entrasp.rischi rsk2 on fr2.codice_rischio=rsk2.codice_rischio and fr2.codice_azienda=rsk2.codice_azienda left join entrasp.fonti_rischio fr3 on pa1.id_procedura=fr3.id_procedura and pa3.codice_azienda=fr3.codice_azienda left join entrasp.rischi rsk3 on fr3.codice_rischio=rsk3.codice_rischio and fr3.codice_azienda=rsk3.codice_azienda where pa1.id_procedura_parent is null and pa1.codice_azienda=$codice_azienda$ order by pa1.codice, pa2.codice, pa3.codice"
             },
             {
                 "label": "Procedure, rischi, presidi",
-                "queryString": "select prc.codice_azienda, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gest, prc.descrizione, prc.stato_attuazione, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda=fr.codice_azienda and prc.id_procedura=fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio=rs.codice_rischio and fr.codice_azienda=rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where prc.codice_azienda=$codice_azienda$",
-                "translate": "RESOURCES.procedure_rischi_presidi"
+                "queryString": "select prc.codice_azienda, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gest, prc.descrizione, prc.stato_attuazione, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda=fr.codice_azienda and prc.id_procedura=fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio=rs.codice_rischio and fr.codice_azienda=rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where prc.codice_azienda=$codice_azienda$"
             },
             {
                 "label": "Rischi, presidi e procedure associate (più efficiente)",
-                "queryString": "select prc.codice_azienda, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv2, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione, 'Presidi' as Prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.rischi rs left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where rs.codice_azienda=$codice_azienda$",
-                "translate": "RESOURCES.rischi_presidi_e_procedure_associate_pi_efficiente"
+                "queryString": "select prc.codice_azienda, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Centro_gestMonit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv2, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione, 'Presidi' as Prs, prs.id_presidio, prs.descrizione_breve, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gestpres from entrasp.rischi rs left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura left join entrasp.rischi_presidi rp on rs.codice_rischio=rp.codice_rischio and rs.codice_azienda=rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio=prs.id_presidio and rp.codice_azienda=prs.codice_azienda where rs.codice_azienda=$codice_azienda$"
             },
             {
                 "label": "Presidi, rischi e procedure associate",
-                "queryString": "select prs.codice_azienda, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, prs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gest_pres, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Cento_gest_Monit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione from entrasp.presidi prs left join entrasp.rischi_presidi rp on prs.id_presidio=rp.id_presidio and prs.codice_azienda=rp.codice_azienda left join entrasp.rischi rs on rp.codice_rischio=rs.codice_rischio and rp.codice_azienda=rs.codice_azienda left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc  on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura where prs.codice_azienda=$codice_azienda$ and prc.id_procedura=$id_procedura$",
-                "translate": "RESOURCES.presidi_rischi_e_procedure_associate"
+                "queryString": "select prs.codice_azienda, 'Presidio' as prs, prs.id_presidio, prs.descrizione_breve, prs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as Centro_gest_pres, 'Rischi' as rs, rs.codice_rischio, rs.descrizione, rs.id_centro_gest, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as Cento_gest_Monit_liv1, rs.id_centro_gest_liv2, entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as Centro_gestMonit_liv1, 'Procedure' as prc, prc.id_procedura, prc.codice, prc.descrizione_breve, prc.ordinamento, prc.descrizione, prc.stato_attuazione from entrasp.presidi prs left join entrasp.rischi_presidi rp on prs.id_presidio=rp.id_presidio and prs.codice_azienda=rp.codice_azienda left join entrasp.rischi rs on rp.codice_rischio=rs.codice_rischio and rp.codice_azienda=rs.codice_azienda left join entrasp.fonti_rischio fr on rs.codice_rischio=fr.codice_rischio and rs.codice_azienda=fr.codice_azienda left join entrasp.procedure_aziendali prc  on fr.codice_azienda=prc.codice_azienda and fr.id_procedura=prc.id_procedura where prs.codice_azienda=$codice_azienda$ and prc.id_procedura=$id_procedura$"
+            },
+            {
+                "label": "Processi per import",
+                "queryString": "SELECT id_procedura, codice, descrizione_breve, descrizione, id_procedura_parent, entrasp.centri_gestionali_nome(codice_part, id_centro_gest) AS ufficio, entrasp.tipo_processo_descr(id_tipo_processo, codice_azienda) AS tipo_processo, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione) AS stato, entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part, id_anagrafica_societa) AS gruppo FROM entrasp.procedure_aziendali WHERE codice_azienda = $codice_azienda$;"
+            },
+            {
+                "label": "Associa Processi-Presidi",
+                "queryString": "select id_presidio, entrasp.presidi_descr(id_presidio, codice_azienda), id_procedura, entrasp.procedure_aziendali_descr(id_procedura, codice_azienda) from entrasp.procedure_aziendali_presidi where codice_azienda=$codice_azienda$"
             }
         ],
         "formQueries": [
             {
                 "label": "RCM-Risk Cnt Mat.(limitata)",
-                "queryString": "select prc.codice_azienda, 'Procedure' as prc,prc.id_procedura,entrasp.procedure_aziendali_codice(entrasp.id_procedura_parent_liv(prc.codice_azienda, prc.id_procedura, 2), prc.codice_azienda) as cod_liv1, entrasp.procedure_aziendali_descr(entrasp.id_procedura_parent_liv(prc.codice_azienda, prc.id_procedura, 2), prc.codice_azienda) as descr_liv1, entrasp.procedure_aziendali_codice(entrasp.id_procedura_parent_liv(prc.codice_azienda, prc.id_procedura, 1), prc.codice_azienda) as cod_liv2, entrasp.procedure_aziendali_descr(entrasp.id_procedura_parent_liv(prc.codice_azienda, prc.id_procedura, 1), prc.codice_azienda) as descr_liv2, prc.codice,prc.descrizione_breve as descr_breve_proc,prc.descrizione as descr_procedura,prc.ordinamento,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, prc.stato_attuazione,'Rischi' as rs, rs.codice_rischio, rs.descrizione as descr_rischio,rs.id_centro_gest as id_cg_rischio,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest_monit_liv1,rs.id_centro_gest_liv2,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as centro_gest_monit_liv1,'Presidio' as prs,prs.id_presidio,prs.codice as cod_presidio, entrasp.tipo_processo_descr(prs.id_tipo_presidio, prs.codice_azienda) as tipo_controllo, prs.descrizione_breve as descr_breve_pres, prs.descrizione as descr_presidio, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as centro_gest_pres,dm.id_domanda,dm.descrizione as descr_dom,dm.note as testing_procedure from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda = fr.codice_azienda and prc.id_procedura = fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio = rs.codice_rischio and fr.codice_azienda = rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio = rp.codice_rischio and rs.codice_azienda = rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio = prs.id_presidio and rp.codice_azienda = prs.codice_azienda left join entrasp.domande_presidi dp on prs.id_presidio = dp.id_presidio and prs.codice_azienda = dp.codice_azienda left join entrasp.domande dm on dp.id_domanda = dm.id_domanda and prc.codice_azienda = dm.codice_azienda and dp.id_modello_test = dm.id_modello_test and dp.id_modello_test_vr = dm.id_modello_test_vr inner join entrasp.procedure_aziendali_presidi pap on prc.codice_azienda=pap.codice_azienda and prc.id_procedura=pap.id_procedura and prs.id_presidio=pap.id_presidio and prs.codice_azienda=pap.codice_azienda where prc.codice_azienda = $codice_azienda$ AND prc.id_procedura IN ( WITH RECURSIVE sotto_procedure AS ( SELECT id_procedura, id_procedura_parent, codice_azienda FROM entrasp.procedure_aziendali WHERE id_procedura = $id_procedura$ AND codice_azienda=prc.codice_azienda UNION ALL SELECT t.id_procedura, t.id_procedura_parent, t.codice_azienda FROM entrasp.procedure_aziendali t INNER JOIN sotto_procedure sp ON t.id_procedura_parent = sp.id_procedura AND t.codice_azienda=sp.codice_azienda ) SELECT DISTINCT id_procedura FROM sotto_procedure)",
-                "translate": "RESOURCES.rcmrisk_cnt_matlimitata"
+                "queryString": "select prc.codice_azienda, 'Procedure' as prc,prc.id_procedura,entrasp.procedure_aziendali_codice(entrasp.id_procedura_parent_liv(prc.codice_azienda, prc.id_procedura, 2), prc.codice_azienda) as cod_liv1, entrasp.procedure_aziendali_descr(entrasp.id_procedura_parent_liv(prc.codice_azienda, prc.id_procedura, 2), prc.codice_azienda) as descr_liv1, entrasp.procedure_aziendali_codice(entrasp.id_procedura_parent_liv(prc.codice_azienda, prc.id_procedura, 1), prc.codice_azienda) as cod_liv2, entrasp.procedure_aziendali_descr(entrasp.id_procedura_parent_liv(prc.codice_azienda, prc.id_procedura, 1), prc.codice_azienda) as descr_liv2, prc.codice,prc.descrizione_breve as descr_breve_proc,prc.descrizione as descr_procedura,prc.ordinamento,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, prc.stato_attuazione,'Rischi' as rs, rs.codice_rischio, rs.descrizione as descr_rischio,rs.id_centro_gest as id_cg_rischio,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest_monit_liv1,rs.id_centro_gest_liv2,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as centro_gest_monit_liv1,'Presidio' as prs,prs.id_presidio,prs.codice as cod_presidio, entrasp.tipo_processo_descr(prs.id_tipo_presidio, prs.codice_azienda) as tipo_controllo, prs.descrizione_breve as descr_breve_pres, prs.descrizione as descr_presidio, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as centro_gest_pres,dm.id_domanda,dm.descrizione as descr_dom,dm.note as testing_procedure from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda = fr.codice_azienda and prc.id_procedura = fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio = rs.codice_rischio and fr.codice_azienda = rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio = rp.codice_rischio and rs.codice_azienda = rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio = prs.id_presidio and rp.codice_azienda = prs.codice_azienda left join entrasp.domande_presidi dp on prs.id_presidio = dp.id_presidio and prs.codice_azienda = dp.codice_azienda left join entrasp.domande dm on dp.id_domanda = dm.id_domanda and prc.codice_azienda = dm.codice_azienda and dp.id_modello_test = dm.id_modello_test and dp.id_modello_test_vr = dm.id_modello_test_vr inner join entrasp.procedure_aziendali_presidi pap on prc.codice_azienda=pap.codice_azienda and prc.id_procedura=pap.id_procedura and prs.id_presidio=pap.id_presidio and prs.codice_azienda=pap.codice_azienda where prc.codice_azienda = $codice_azienda$ AND prc.id_procedura IN ( WITH RECURSIVE sotto_procedure AS ( SELECT id_procedura, id_procedura_parent, codice_azienda FROM entrasp.procedure_aziendali WHERE id_procedura = $id_procedura$ AND codice_azienda=prc.codice_azienda UNION ALL SELECT t.id_procedura, t.id_procedura_parent, t.codice_azienda FROM entrasp.procedure_aziendali t INNER JOIN sotto_procedure sp ON t.id_procedura_parent = sp.id_procedura AND t.codice_azienda=sp.codice_azienda ) SELECT DISTINCT id_procedura FROM sotto_procedure)"
             },
             {
                 "label": "RCM-Risk Cnt Mat.(estesa)",
-                "queryString": "select prc.codice_azienda, 'Procedure' as prc,prc.id_procedura,prc.codice,prc.descrizione_breve as descr_breve_proc,prc.descrizione as descr_procedura,prc.ordinamento,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, prc.stato_attuazione,'Rischi' as rs, rs.codice_rischio, rs.descrizione as descr_rischio,rs.id_centro_gest as id_cg_rischio,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest_monit_liv1,rs.id_centro_gest_liv2,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as centro_gest_monit_liv1,'Presidio' as prs,prs.id_presidio,prs.codice as cod_presidio, prs.descrizione_breve as descr_breve_pres, prs.descrizione as descr_presidio, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as centro_gest_pres,dm.id_domanda,dm.descrizione as descr_dom,dm.note as testing_procedure from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda = fr.codice_azienda and prc.id_procedura = fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio = rs.codice_rischio and fr.codice_azienda = rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio = rp.codice_rischio and rs.codice_azienda = rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio = prs.id_presidio and rp.codice_azienda = prs.codice_azienda left join entrasp.domande_presidi dp on prs.id_presidio = dp.id_presidio and prs.codice_azienda = dp.codice_azienda left join entrasp.domande dm on dp.id_domanda = dm.id_domanda and prc.codice_azienda = dm.codice_azienda and dp.id_modello_test = dm.id_modello_test and dp.id_modello_test_vr = dm.id_modello_test_vr where prc.codice_azienda = $codice_azienda$ AND prc.id_procedura IN ( WITH RECURSIVE sotto_procedure AS ( SELECT id_procedura, id_procedura_parent, codice_azienda FROM entrasp.procedure_aziendali WHERE id_procedura = $id_procedura$ AND codice_azienda=prc.codice_azienda UNION ALL SELECT t.id_procedura, t.id_procedura_parent, t.codice_azienda FROM entrasp.procedure_aziendali t INNER JOIN sotto_procedure sp ON t.id_procedura_parent = sp.id_procedura AND t.codice_azienda=sp.codice_azienda ) SELECT DISTINCT id_procedura FROM sotto_procedure)",
-                "translate": "RESOURCES.rcmrisk_cnt_matestesa"
+                "queryString": "select prc.codice_azienda, 'Procedure' as prc,prc.id_procedura,prc.codice,prc.descrizione_breve as descr_breve_proc,prc.descrizione as descr_procedura,prc.ordinamento,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest, prc.stato_attuazione,'Rischi' as rs, rs.codice_rischio, rs.descrizione as descr_rischio,rs.id_centro_gest as id_cg_rischio,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest) as centro_gest_monit_liv1,rs.id_centro_gest_liv2,entrasp.centri_gestionali_descr(rs.codice_part, rs.id_centro_gest_liv2) as centro_gest_monit_liv1,'Presidio' as prs,prs.id_presidio,prs.codice as cod_presidio, prs.descrizione_breve as descr_breve_pres, prs.descrizione as descr_presidio, entrasp.centri_gestionali_descr(rs.codice_part, prs.id_centro_gest) as centro_gest_pres,dm.id_domanda,dm.descrizione as descr_dom,dm.note as testing_procedure from entrasp.procedure_aziendali prc left join entrasp.fonti_rischio fr on prc.codice_azienda = fr.codice_azienda and prc.id_procedura = fr.id_procedura left join entrasp.rischi rs on fr.codice_rischio = rs.codice_rischio and fr.codice_azienda = rs.codice_azienda left join entrasp.rischi_presidi rp on rs.codice_rischio = rp.codice_rischio and rs.codice_azienda = rp.codice_azienda left join entrasp.presidi prs on rp.id_presidio = prs.id_presidio and rp.codice_azienda = prs.codice_azienda left join entrasp.domande_presidi dp on prs.id_presidio = dp.id_presidio and prs.codice_azienda = dp.codice_azienda left join entrasp.domande dm on dp.id_domanda = dm.id_domanda and prc.codice_azienda = dm.codice_azienda and dp.id_modello_test = dm.id_modello_test and dp.id_modello_test_vr = dm.id_modello_test_vr where prc.codice_azienda = $codice_azienda$ AND prc.id_procedura IN ( WITH RECURSIVE sotto_procedure AS ( SELECT id_procedura, id_procedura_parent, codice_azienda FROM entrasp.procedure_aziendali WHERE id_procedura = $id_procedura$ AND codice_azienda=prc.codice_azienda UNION ALL SELECT t.id_procedura, t.id_procedura_parent, t.codice_azienda FROM entrasp.procedure_aziendali t INNER JOIN sotto_procedure sp ON t.id_procedura_parent = sp.id_procedura AND t.codice_azienda=sp.codice_azienda ) SELECT DISTINCT id_procedura FROM sotto_procedure)"
             }
         ]
     },
     "addElementSettings": {
-        "labelAdd": "Nuovo Rischio Presidio",
-        "navigateOnSuccess": true,
-        "translateAdd": "RESOURCES.nuovo_rischio_presidio"
+        "labelAdd": "Nuovo sotto processo",
+        "navigateOnSuccess": true
     },
     "hideActions": [
         {
@@ -823,6 +765,5 @@
     ],
     "querySuffixes": {
         "tableViewSuffix": "order by id_procedura desc limit 100"
-    },
-    "translate": "RESOURCES.processi"
+    }
 }

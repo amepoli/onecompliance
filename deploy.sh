@@ -22,6 +22,22 @@ deploy_dynamo_tables() {
     cd ..
 }
 
+# Update local branch based on the target application
+update_local_branch() {
+    if [ $1 == "gorico" ]; then
+        git checkout master
+        git pull origin master
+        echo "Local branch 'master' updated"
+    elif [ $1 == "gorico_stage" ]; then
+        git checkout staging
+        git pull origin staging
+        echo "Local branch 'staging' updated"
+    fi
+}
+
+# Update local branch
+update_local_branch $1
+
 # Deploy for 'gorico' (prod)
 if [ $1 == "gorico" ]; then
     if [ ! -f ${1}_prod.json ]; then

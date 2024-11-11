@@ -169,6 +169,24 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
+  getDomandeRisposte(company: string, entryName: string, keys: object): Observable<any> {
+    this.awsService.auth();
+    const getReq: GetRequest = {
+      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), is_domande_risposte_get_request: 1 }
+    }
+    return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
+  }
+  
+  updateDomandeRisposte(company: string, entryName: string, keys: object, data: any): Observable<any> {
+    this.awsService.auth();    
+    const putPostReq: PostRequest = {
+      body: {data: data},
+      headers: {},
+      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), is_domande_risposte_update_request: 1 }
+    };
+    return from(this.awsService.api().post(this.apiName, this.tablesApiName, putPostReq));
+  }
+
   getAttachList(entryName: string, company: string, keys: any, businessObjectName: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
@@ -421,6 +439,17 @@ export class BackendService {
     };
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
+
+  copyUser(username: string, company: string, associated_user: string, registry: string, tax_code: string, profile: string) {
+    this.awsService.auth();
+    const putPostReq: PostRequest = {
+      body: null,
+      headers: {},
+      queryStringParameters: { copy_user: 1, username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code, profile: profile },
+    };
+    return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
+  }
+
 
   inviteUserAgain(email: string, temporaryPassword: string) {
     this.awsService.auth();
@@ -939,6 +968,17 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.fattureincloudApiName, postReq));
   }
 
+  checkFattureInCloudInvoice(entryName: string, company: any) {
+    this.awsService.auth();
+    const postReq: PostRequest = {
+      queryStringParameters: { company },
+      body: {
+        action: 'checkInvoice',
+        entryName
+      }
+    }
+    return from(this.awsService.api().post(this.apiName, this.fattureincloudApiName, postReq));
+  }
 
   loadHomePage(entryName: string, company: string): Observable<any> {
     this.awsService.auth();

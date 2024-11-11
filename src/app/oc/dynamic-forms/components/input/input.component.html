@@ -1,5 +1,5 @@
 <ng-container *ngIf="field.isVisible">
-    <ng-container *ngIf="field.readonly && field.eventTrigger === 'press'">
+    <ng-container *ngIf="field.readonly && (field.eventTrigger || field.onClick)">
         <mat-form-field 
             class="readOnlyPressable readOnly"
             (click)="onPress()"
@@ -13,12 +13,12 @@
                 [style.padding]="'4px'"
                 [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
                 [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
-                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [ocTooltip]="field.tooltip">
             <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>        
         </mat-form-field>
     </ng-container>
 
-    <ng-container *ngIf="field.readonly && !field.eventTrigger">
+    <ng-container *ngIf="field.readonly && !field.eventTrigger && !field.onClick">
         <mat-form-field 
             class="readOnly"
             style="width: 100%;"
@@ -31,7 +31,7 @@
                 [style.padding]="'4px'"
                 [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
                 [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
-                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [ocTooltip]="field.tooltip">
             <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
             <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
                 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslate}}</mat-error>
@@ -53,7 +53,7 @@
                 (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()" [style.padding]="'4px'"
                 [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
                 [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
-                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [ocTooltip]="field.tooltip">
             <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
             <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
                 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslate}}</mat-error>
@@ -76,7 +76,7 @@
                 (blur)="onBlur()" (focus)="onFocus()" (dateChange)="updateValue()" [style.padding]="'4px'"
                 [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
                 [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
-                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [matTooltip]="field.tooltip">
+                [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [ocTooltip]="field.tooltip">
             <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
             <mat-datepicker matInput [matDatepicker]="datepicker" #datepicker></mat-datepicker>
 
@@ -102,7 +102,7 @@
                 [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (blur)="onBlur()" (focus)="onFocus()"
                 (dateChange)="updateValue()" [style.padding]="'4px'" [style.border-radius]="'4px'"
                 [style.background-color]="field.style.background_color" [style.color]="field.style.font_color"
-                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size" [matTooltip]="field.tooltip">
+                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size" [ocTooltip]="field.tooltip">
             <mat-datepicker-toggle matSuffix [for]="datetimepicker"></mat-datepicker-toggle>
             <ngx-mat-datetime-picker #datetimepicker [showSpinners]="true" [showSeconds]="true" [stepHour]="true"
                 [stepMinute]="true" [stepSecond]="true" [touchUi]="false" [enableMeridian]="true" [disableMinute]="false"
@@ -125,23 +125,23 @@
             (click)="onPress()">
             <mat-label style="font-size: large;">{{field | octranslate}}</mat-label>
             <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
-
             <input [required]="isRequired" matInput [ngxMatTimePicker]="timepicker" [placeholder]="field | octranslate"
                 [formControlName]="field.name" [disabled]="field.readonly || readOnlyPage" (blur)="onBlur()" (focus)="onFocus()"
                 (dateChange)="updateValue()" [style.padding]="'4px'" [style.border-radius]="'4px'"
                 [style.background-color]="field.style.background_color" [style.color]="field.style.font_color"
-                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size" [matTooltip]="field.tooltip">
-            <mat-datepicker-toggle matSuffix [for]="timepicker"></mat-datepicker-toggle>
-            <ngx-mat-timepicker [required]="isRequired" [placeholder]="field | octranslate" [formControlName]="field.name"
-                [disabled]="field.readonly || readOnlyPage" (blur)="onBlur()" (focus)="onFocus()" (timeChange)="updateValue()"
-                [style.padding]="'4px'" [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
-                [style.color]="field.style.font_color">
-            </ngx-mat-timepicker>
-
+                [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size" [ocTooltip]="field.tooltip"
+                readonly (click)="timepicker.open()">
+            <mat-icon matSuffix (click)="timepicker.open()">watch_later</mat-icon>
             <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
             <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
                 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslate}}</mat-error>
             </ng-container>
         </mat-form-field>
+        <ngx-mat-timepicker #timepicker dottedMinutesInGap
+            enableKeyboardInput
+            [defaultTime]="timeValue"
+            (timeSet)="onTimeSet($event)"
+            ></ngx-mat-timepicker>  
+
     </ng-container>
 </ng-container>

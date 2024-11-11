@@ -2,19 +2,22 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
+import { MatCardModule as MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule as MatCheckboxModule } from '@angular/material/checkbox';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatOptionModule as MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule as MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { MatInputModule as MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { NgxMatDatetimePickerModule, NgxMatTimepickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { MatRadioModule as MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule as MatSelectModule } from '@angular/material/select';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTooltipModule as MatTooltipModule } from '@angular/material/tooltip';
+import {NgxMatTimepickerModule} from 'ngx-mat-timepicker';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   imports: [
@@ -52,6 +55,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatCheckboxModule,
     MatRadioModule,
     MatTooltipModule,
+    MatProgressSpinnerModule,
     NgxMatTimepickerModule,
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,

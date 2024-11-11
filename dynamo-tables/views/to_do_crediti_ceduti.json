@@ -1,0 +1,61 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "to_do_crediti_ceduti",
+    "origin": "entrasp.consuntivazioni",
+    "inheritsFrom": "aggiornamenti_sub_of_crediti",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select codice_azienda, id_cons, id_cessione, data_intervento, entrasp.argomenti_descr(id_argomento) as tipo_aggiornamento, entrasp.cessione_descr(id_cessione, codice_azienda) as descr_cessione, substring(note from 1 for 100) as note_restricted, entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa) as esecutore from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cessione is not null"
+        }
+    ],
+    "define": {
+        "is_hidden_fascicolo": "true",
+        "is_hidden_cessione": "false"
+    },
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                               {
+                    "key": "modifica_azioni",
+                    "icon": "edit",
+                    "label": "Modifica Azioni",
+                    "query": "",
+                    "customDialogEntryName": "dialog_azioni",
+                    "customDialogTitle": "Modifica Azioni Selezionate"
+                }
+            ]
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_cessione_s",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "ID Cessione",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "id_cessione=$id_cessione_s$"
+        },
+        {
+            "format": {
+                "comboQuery": "SELECT arg.id_argomento AS id, arg.id_argomento || ' - ' || arg.descrizione AS name FROM entrasp.argomenti arg INNER JOIN entrasp.argomenti_argomenti aa ON arg.id_argomento=aa.id_argomento_son  WHERE id_argomento_father=52927",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "fieldName": "id_argomento_s",
+            "label": "Tipo Aggiornamento",
+            "newLine": false,
+            "size": 3,
+            "queryCond": "id_argomento=$id_argomento_s$"
+        }
+    ]
+}

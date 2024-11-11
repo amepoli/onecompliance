@@ -1,7 +1,6 @@
-import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, Input, Output, EventEmitter, OnChanges, OnInit, OnDestroy, SimpleChanges } from '@angular/core';
 
-import 'rxjs/add/operator/filter';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { AttachDialogComponent } from 'app/oc/dialogs/attach.dialog/attach.dialog.component';
 import { MultiAttachmentsDialogComponent } from 'app/oc/dialogs/multi-attachments.dialog/multi-attachments.dialog.component';
 import { FormGetterComponent } from '../form-getter/form-getter.component';
@@ -10,6 +9,7 @@ import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageV
 import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService, ValidationsService } from 'app/oc/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { exit } from 'process';
+import { memoize } from 'app/oc/decorators/memoize';
 
 type savingStateType = 'save' | 'saving' | 'done';
 
@@ -151,9 +151,9 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
     }
 
-    ngOnChanges() {
+    @memoize()
+    ngOnChanges(changes: SimpleChanges) {
         this.loadData();
-
     }
 
     ngOnDestroy() {
@@ -440,7 +440,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         else {
                             // Check if error occured during pre check
                             if (result.preErrors) {
-                                if(Array.isArray(result.preErrors)) {
+                                if (Array.isArray(result.preErrors)) {
                                     _this._dialogService.showErrorDialog("Warning", result.preErrors.join('\n'));
                                 }
                                 else {
@@ -449,7 +449,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                             }
                             else {
                                 // Show error snackbar
-                                _this.formGetter.showErrorToast(result.reason);
+                                _this._toastService.showErrorToastWithReason(result.reason);
                             }
                             _this.savingState = 'save';
                         }
@@ -512,7 +512,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                         }
                         else {
                             // Show error snackbar
-                            _this.formGetter.showErrorToast(result.reason);
+                            _this._toastService.showErrorToastWithReason(result.reason);
                         }
                     },
                     error => {
@@ -624,7 +624,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                 }
                 else {
                     // Show error snackbar
-                    _this.formGetter.showErrorToast(result.reason);
+                    _this._toastService.showErrorToastWithReason(result.reason);
                 }
             });
         _this.subscriptions.push(subscription);

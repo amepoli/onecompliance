@@ -36,8 +36,8 @@ export class ProjectDashboardService implements Resolve<any>
                 this.getProjects(),
                 this.getWidgets()
             ]).then(
-                () => {
-                    resolve();
+                (x: any) => {
+                    resolve(x);
                 },
                 reject
             );

@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { MFADialogComponent } from 'app/oc/dialogs/mfa.dialog/mfa.dialog.component';
 import { AuthService, DialogService, ToastService } from 'app/oc/services';
 import { Subscription } from 'rxjs';
 
-import 'rxjs/add/operator/filter';
+
 
 @Component({
     selector: 'mfa',

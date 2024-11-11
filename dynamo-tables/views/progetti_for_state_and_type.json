@@ -1,5 +1,8 @@
 {
     "businessObjectName": "transcodifiche",
+    "entryKey": "progetti_for_state_and_type",
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.transcodifiche",
     "predefinedQueries": [
         {
             "queryString": "select ts.tipo_dato, arg.id_argomento, arg.descrizione_breve, ts.codice,ts.transcodifica,count(distinct prg.id_progetto) as num_progetti from entrasp.transcodifiche ts inner join entrasp.progetti prg on ts.codice=prg.stato left join entrasp.attivita att on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita and prg.attivita_vr=att.attivita_vr left join entrasp.argomenti arg on att.id_argomento=arg.id_argomento inner join entrasp.progetti_fasi pf on prg.codice_azienda=pf.codice_azienda and prg.id_progetto=pf.id_progetto inner join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio inner join entrasp.centri_gestionali cg on snd.codice_part=cg.codice_part and snd.id_centro_gest=cg.id_centro_gest inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part inner join entrasp.anagrafiche_id an on glm.id_anagrafica=an.id_anagrafica and glm.codice_part=an.codice_part where ts.tipo_dato='STATO_SONDAGGI' and prg.codice_azienda=('€global_codice_azienda€')",
@@ -25,7 +28,7 @@
                 "viewType": "input"
             },
             "label": "Parola Chiave",
-            "translate": "RESOURCES.parola_chiave"
+            "translate": "RESOURCES.parola_chiave_progetti_for_state_and_type"
         },
         {
             "fieldName": "tipo_dato_s2",
@@ -38,7 +41,7 @@
                 "options": []
             },
             "label": "Tipo Dato",
-            "translate": "RESOURCES.tipo_dato"
+            "translate": "RESOURCES.tipo_dato_progetti_for_state_and_type"
         },
         {
             "fieldName": "flag_progetti_aperti",
@@ -49,7 +52,7 @@
             "label": "In Svolgimento",
             "newLine": false,
             "queryCond": "ts.codice not in ('C', 'N', 'R')",
-            "translate": "RESOURCES.in_svolgimento"
+            "translate": "RESOURCES.in_svolgimento_progetti_for_state_and_type"
         }
     ],
     "hideActions": [
@@ -82,9 +85,9 @@
                 "dataType": "text"
             },
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "key": "codice",
-            "width": "8%"
+            "width": "8%",
+            "translate": "RESOURCES.codice_progetti_for_state_and_type"
         },
         {
             "isPrimary": true,
@@ -94,7 +97,7 @@
             },
             "label": "id_argomento",
             "key": "id_argomento",
-            "translate": "RESOURCES.id_argomento"
+            "translate": "RESOURCES.id_argomento_progetti_for_state_and_type"
         },
         {
             "isPrimary": true,
@@ -103,7 +106,6 @@
                 "dataType": "text"
             },
             "label": "Tipo progetto",
-            "translate": "RESOURCES.project_type",
             "width": "18%",
             "key": "descrizione_breve",
             "style": [
@@ -149,7 +151,8 @@
                     "text_align": "center",
                     "value": "*"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.tipo_progetto_progetti_for_state_and_type"
         },
         {
             "isPrimary": false,
@@ -158,53 +161,46 @@
                 "dataType": "text"
             },
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "width": "20%",
             "style": [
                 {
-                    "background_color": "gainsboro",
-                    "font_weight": "500",
-                    "font_color": "grey",
-                    "text_align": "center",
-                    "value": "Annullato"
-                },
-                {
-                    "background_color": "Green",
-                    "font_weight": "500",
+                    "value": "Chiuso",
                     "font_color": "PaleGreen",
-                    "text_align": "center",
-                    "value": "Chiuso"
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
                 },
                 {
-                    "background_color": "orange",
+                    "value": "In Svolgimento",
+                    "font_color": "white",
                     "font_weight": "500",
-                    "font_color": "DarkRed",
-                    "text_align": "center",
-                    "value": "In Svolgimento"
+                    "background_color": "royalblue",
+                    "text_align": "center"
                 },
                 {
-                    "background_color": "orange",
+                    "value": "Provvisorio",
+                    "font_color": "MistyRose",
                     "font_weight": "500",
-                    "font_color": "DarkRed",
-                    "text_align": "center",
-                    "value": "Attesa Riscontro"
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
                 },
                 {
-                    "background_color": "orange",
-                    "font_weight": "500",
+                    "value": "Pianificato",
                     "font_color": "DarkRed",
-                    "text_align": "center",
-                    "value": "Pianificato"
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
                 },
                 {
-                    "background_color": "orange",
+                    "value": "Annullato",
+                    "font_color": "grey",
                     "font_weight": "500",
-                    "font_color": "DarkRed",
-                    "text_align": "center",
-                    "value": "Provvisorio"
+                    "background_color": "gainsboro",
+                    "text_align": "center"
                 }
             ],
-            "key": "transcodifica"
+            "key": "transcodifica",
+            "translate": "RESOURCES.stato_progetti_for_state_and_type"
         },
         {
             "isPrimary": true,
@@ -214,7 +210,7 @@
             },
             "label": "Tipo Dato",
             "key": "tipo_dato",
-            "translate": "RESOURCES.tipo_dato"
+            "translate": "RESOURCES.tipo_dato_progetti_for_state_and_type"
         },
         {
             "isPrimary": false,
@@ -223,8 +219,8 @@
                 "dataType": "text"
             },
             "label": "Numero progetti",
-            "translate": "RESOURCES.num_progetti",
-            "key": "num_progetti"
+            "key": "num_progetti",
+            "translate": "RESOURCES.numero_progetti_progetti_for_state_and_type"
         }
     ],
     "form_keys": [
@@ -241,7 +237,7 @@
             "label": "Codice Stato",
             "size": 1,
             "key": "codice",
-            "translate": "RESOURCES.codice"
+            "translate": "RESOURCES.codice_stato_progetti_for_state_and_type"
         },
         {
             "autoGenerate": false,
@@ -255,7 +251,7 @@
             },
             "label": "id_argomento",
             "key": "id_argomento",
-            "translate": "RESOURCES.id_argomento"
+            "translate": "RESOURCES.id_argomento_progetti_for_state_and_type"
         },
         {
             "autoGenerate": false,
@@ -268,8 +264,8 @@
                 "dataType": "text"
             },
             "label": "Tipo Dato",
-            "translate": "RESOURCES.tipo_dato",
-            "key": "tipo_dato"
+            "key": "tipo_dato",
+            "translate": "RESOURCES.tipo_dato_progetti_for_state_and_type"
         },
         {
             "autoGenerate": false,
@@ -282,8 +278,8 @@
                 "dataType": "text"
             },
             "label": "Stato",
-            "translate": "RESOURCES.status",
-            "key": "transcodifica"
+            "key": "transcodifica",
+            "translate": "RESOURCES.stato_progetti_for_state_and_type"
         },
         {
             "autoGenerate": false,
@@ -295,9 +291,9 @@
                 "viewType": "input"
             },
             "label": "Tipo processo",
-            "translate": "RESOURCES.id_tipo_processo",
             "key": "tipo_processo",
-            "size": 3
+            "size": 3,
+            "translate": "RESOURCES.tipo_processo_progetti_for_state_and_type"
         }
     ],
     "subTables": [
@@ -314,10 +310,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "translate": "RESOURCES.progetti"
+            "translate": "RESOURCES.progetti_progetti_sub_of_progetti_for_state_and_type"
         }
-    ],
-    "entryKey": "progetti_for_state_and_type",
-    "$schema": "../views.schema.json",
-    "origin": "entrasp.transcodifiche"
+    ]
 }

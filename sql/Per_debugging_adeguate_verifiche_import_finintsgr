@@ -1,0 +1,38 @@
+	--Elimino eventuali dati residui
+	select * FROM imports.verifiche_anagrafiche_finint where cognome ilike 'mengoni';
+	select * FROM imports.verifiche_clienti_finint where cognome ilike 'mengoni';
+	select * FROM imports.verifiche_movimenti_finint where cognome ilike 'mengoni';
+
+	select disable_triggers('entrasp.risposte');
+	delete from entrasp.risposte where codice_azienda='FININTSGR' and id_sondaggio=8351;
+	delete from entrasp.sondaggi_somministrati where codice_azienda='FININTSGR' and id_sondaggio=8351;
+	delete from entrasp.sondaggi where codice_azienda='FININTSGR' and id_sondaggio=8351;
+	select enable_triggers('entrasp.risposte');
+	select entrasp.adeguate_verifiche_import('FININTSGR');
+
+
+			and va.cognome ilike 'mengoni'
+		and vc.cognome ilike 'mengoni'		
+		and vm.cognome ilike 'mengoni'
+
+
+
+select * from entrasp.modelli_test_risultati_righe
+where id_risultato=8 and codice_azienda='FININTSGR'
+
+
+		select 	'FININTSGR',   
+					b.id_domanda, 
+					b.descrizione,
+					a.id_risposta_prev
+			-- il case che segue è riferito alle note
+			from entrasp.risposte_previste a 
+			inner join entrasp.domande b on a.codice_azienda=b.codice_azienda and a.id_domanda = b.id_domanda 
+			and a.id_modello_test=b.id_modello_test AND a.id_modello_test_vr=b.id_modello_test_vr
+			where a.codice_azienda='FININTSGR' and a.id_modello_test=634 and a.id_modello_test_vr = 2
+			and b.id_argomento||'~'||a.cod_ext IN
+			(	
+			/***SEZIONE 1***/
+		
+			43495||'~'||coalesce(null,'N/A') -- DOMANDA CHE MI INTERESSA									
+			)

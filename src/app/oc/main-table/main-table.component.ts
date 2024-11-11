@@ -17,6 +17,8 @@ import { locale as english } from 'app/oc/i18n/en';
 import { locale as italian } from 'app/oc/i18n/it';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 
+import { saveAs } from 'file-saver';
+
 @Component({
     selector: 'main-table',
     templateUrl: './main-table.component.html',
@@ -30,8 +32,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     showTabs = false;
 
     tabellaResource = "";
-    dettaglioResource="";
-    
+    dettaglioResource = "";
+
 
     fullScreenTab = false;
 
@@ -47,7 +49,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         searchKeys: {}
     };
 
-    private formParams: FormViewParams= {
+    private formParams: FormViewParams = {
         entryName: '',
         keys: {},
         index: 0,
@@ -111,8 +113,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         private _console: ConsoleLoggerService,
         private _translateService: TranslateService,
         private _fuseTranslationLoaderService: FuseTranslationLoaderService
-        ) {
-           
+    ) {
+
     }
 
     ngOnInit(): void {
@@ -121,8 +123,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         _this._fuseTranslationLoaderService.loadTranslations(english, italian);
         _this.tabellaResource = _this._translateService.instant('RESOURCES.Tabella');
         _this.dettaglioResource = _this._translateService.instant('RESOURCES.Dettaglio')
-       
-     
+
+
         _this.subscriptions.push(_this.route.params
             .subscribe(params => {
                 _this.navigationHistory.length = 0;       // flush navigation history
@@ -130,13 +132,13 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 _this.resetFormParams();
                 _this.tableName = params.table_name;
                 _this.currentTableLabel = _this.tableName;
-                
+
                 _this.currentTableLabel = _this.tableName;
-                _this.currentDescription = _this.tabellaResource + ' '  + _this.getEntryResource(_this.currentTableLabel);
+                _this.currentDescription = _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel);
                 _this.tableType = 'table';           // only table views from left navigation bar
                 // check if we are coming from dashboard 
                 _this.currentTableKeys = (_this.backendService.dashboardKeys != null) ?
-                _this.backendService.dashboardKeys : {};
+                    _this.backendService.dashboardKeys : {};
                 _this.backendService.dashboardKeys = null; // reset dashboard path
                 _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys };
             }));
@@ -145,7 +147,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.subscriptions.push(HelperService.navigateRequested.subscribe((data) => {
             _this.onEvent(data);
         }));
-        
+
         // _this.syncGoogleS3Files();
 
         // Report related subscriptions
@@ -221,7 +223,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 // } else 
                 if (msg.type === 'add') { // toolbar asking for adding a new element
                     _this.historyPush();
-                    
+
                     _this.currentDescription = 'Nuovo elemento tabellaResource ' + _this.getEntryResource(_this.currentTableLabel);
                     _this.formParams = {
                         entryName: _this.tableName,
@@ -274,8 +276,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                                                 // Show success toast
                                                 _this._toastService.showSuccessToast("", "Excel sheet downloaded successfully!");
                                             });
-                                        
-                                            _this.subscriptions.push(inner_subscription);
+
+                                        _this.subscriptions.push(inner_subscription);
                                     }
                                 }
                                 else {
@@ -288,8 +290,8 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                                 _this._toastService.showErrorToast("An error occured!", error);
 
                             });
-                    
-                        _this.subscriptions.push(subscription);
+
+                    _this.subscriptions.push(subscription);
                 }
                 // else if (msg.type === 'import') {  // import the excel sheet or csv
                 //     _this._importExportService.importCSV(_this.tableName);
@@ -325,7 +327,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
     onEvent(event: any) {
 
         const _this = this;
-          
+
         let newIndex = 0; // only modified if a navigation event is coming from the form-view
         let newTotal = _this.formParams.total;
         if (event.eventType === 'savedForm') { // quick add form view submitted the new record
@@ -342,12 +344,12 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.fullScreenTab = false; // reset in case of fullScreen Tab view
             _this.currentPrimaryKeys = [event.queryParams.keys]; // update
             _this.tableName = event.queryParams.entry.name;
-            
-            _this.historyPush(); 
+
+            _this.historyPush();
             _this.currentDescription = 'Nuovo elemento tabellaResource ' + _this.getEntryResource(_this.currentTableLabel);
-            
+
             newIndex = event.queryParams.index;
-            newTotal = event.queryParams.total;            
+            newTotal = event.queryParams.total;
             _this.formParams = {
                 entryName: _this.tableName,
                 index: 1,
@@ -377,14 +379,14 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.currentPrimaryKeys = event.queryParams.keys; // update
             _this.tableName = event.queryParams.entry.name;
             if (event.queryParams.entry.type === 'table') {
-                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: event.queryParams.searchKeys  };
+                _this.tableParams = { entryName: _this.tableName, keys: _this.currentTableKeys, showHeader: true, showFullScreenButton: false, searchKeys: event.queryParams.searchKeys };
                 _this.tableType = 'table';
-                _this.currentDescription =  event.queryParams.searchKeys? 'Risultati ricerca' : ( _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
+                _this.currentDescription = event.queryParams.searchKeys ? 'Risultati ricerca' : (_this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
             }
             else if (event.queryParams.entry.type === 'explorer') {
-                _this.tableParams = { entryName: _this.tableName, keys: event.queryParams.keys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys  };
+                _this.tableParams = { entryName: _this.tableName, keys: event.queryParams.keys, showHeader: true, showFullScreenButton: false, searchKeys: _this.searchKeys };
                 _this.tableType = 'table';
-                _this.currentDescription =  _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel);
+                _this.currentDescription = _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel);
             } else if (event.queryParams.entry.type === 'form') { // handled later on
                 newIndex = event.queryParams.index;
                 newTotal = event.queryParams.total;
@@ -417,7 +419,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
             _this.currentTableKeys = event.queryParams.keys;
         } else if (event.eventType === 'currentTableLabel') {  // table in subtable view providing its current keys
             _this.currentTableLabel = event.queryParams.label || _this.tableName;
-            _this.currentDescription = _this.searchKeys? 'Risultati ricerca': (_this.tableType === 'table' ? _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel) : _this.dettaglioResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
+            _this.currentDescription = _this.searchKeys ? 'Risultati ricerca' : (_this.tableType === 'table' ? _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel) : _this.dettaglioResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
         } else if (event.eventType === 'deletedForm') {
             _this.historyPop(_this.navigationHistory[_this.level - 1]); // go back
         } else if (event.eventType === 'gotSave') { // user pressed save button on form-view
@@ -450,15 +452,13 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // toggle full view
     }
 
-    getEntryResource(tableName: string) : any{
+    getEntryResource(tableName: string): any {
         let _this = this;
         let resource = _this._translateService.instant('VIEWS.' + tableName.toLowerCase())
-        
-        if(resource && !resource.includes('VIEWS'))
-        {
+
+        if (resource && !resource.includes('VIEWS')) {
             return resource;
-        }else
-        {
+        } else {
             return tableName;
         }
 
@@ -479,12 +479,12 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.currentPrimaryKeys = item.primaryKeys;
         _this.searchKeys = item.searchKeys;
         _this.currentTableLabel = item.label;
-         
-          
+
+
         if (item.type === 'table') {
             _this.tableParams = item.params;
             _this.tableParams.searchKeys = item.searchKeys;
-           _this.currentDescription = item.searchKeys? 'Risultati ricerca': ( _this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
+            _this.currentDescription = item.searchKeys ? 'Risultati ricerca' : (_this.tabellaResource + ' ' + _this.getEntryResource(_this.currentTableLabel));
             _this.tableType = 'table';
         } else {
             _this.formParams = item.params;
@@ -534,10 +534,10 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.backendService.getS3GoogleSyncFilesList(_this.authService.getCurrentCompany(_this.currentTableKeys)).subscribe(
             async getS3GoogleSyncFilesListResponse => {
                 console.table(getS3GoogleSyncFilesListResponse);
-                if(getS3GoogleSyncFilesListResponse.result === 'OK' && getS3GoogleSyncFilesListResponse.response && getS3GoogleSyncFilesListResponse.response.rows && getS3GoogleSyncFilesListResponse.response.rows.length > 0) {
+                if (getS3GoogleSyncFilesListResponse.result === 'OK' && getS3GoogleSyncFilesListResponse.response && getS3GoogleSyncFilesListResponse.response.rows && getS3GoogleSyncFilesListResponse.response.rows.length > 0) {
                     const googleAuth = await _this.authService.loadGoogleAuth('gdrive');
                     console.table(getS3GoogleSyncFilesListResponse.response.rows);
-                    
+
                     const syncData = getS3GoogleSyncFilesListResponse.response.rows.filter(x => (x.s3path && x.s3md5 && x.googledrivepath && x.s3md5 != '396a4266d461f67b75c9d4b3e6f2bb5f')).map(x => {
                         return {
                             s3FilePath: x.s3path, s3md5: x.s3md5, driveFilePath: x.googledrivepath

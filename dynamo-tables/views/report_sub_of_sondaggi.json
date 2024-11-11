@@ -12,9 +12,7 @@
     "addElementSettings": {
         "labelQuickAdd": "Nuovo report",
         "labelAdd": "Nuovo report ",
-        "navigateOnSuccess": false,
-        "translateAdd": "RESOURCES.nuovo_report_",
-        "translateQuickAdd": "RESOURCES.nuovo_report"
+        "navigateOnSuccess": false
     },
     "table_keys": [
         {
@@ -25,7 +23,7 @@
             "isPrimary": true,
             "key": "id_argomento",
             "label": "ID",
-            "translate": "RESOURCES.id_argomento"
+            "translate": "RESOURCES.id_report_sub_of_sondaggi"
         },
         {
             "format": {
@@ -36,7 +34,7 @@
             "key": "id_report",
             "width": "5%",
             "label": "ID",
-            "translate": "RESOURCES.id_report"
+            "translate": "RESOURCES.id_report_sub_of_sondaggi"
         },
         {
             "format": {
@@ -48,7 +46,7 @@
             "queryFunct": "entrasp.report_description(id_report)",
             "label": "Report",
             "width": "15%",
-            "translate": "RESOURCES.report"
+            "translate": "RESOURCES.report_report_sub_of_sondaggi"
         },
         {
             "format": {
@@ -84,7 +82,7 @@
                     }
                 ]
             },
-            "translate": "RESOURCES.download_report"
+            "translate": "RESOURCES.download_report_report_sub_of_sondaggi"
         },
         {
             "format": {
@@ -94,7 +92,7 @@
             "isPrimary": false,
             "key": "id_sondaggio",
             "label": "ID",
-            "translate": "RESOURCES.id_sondaggio"
+            "translate": "RESOURCES.id_report_sub_of_sondaggi"
         },
         {
             "format": {
@@ -104,15 +102,14 @@
             "isPrimary": false,
             "key": "codice_azienda",
             "label": "Azienda",
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES.azienda_report_sub_of_sondaggi"
         }
     ],
     "exportQueries": {
         "formQueries": [
             {
                 "label": "Report",
-                "queryString": "select vi.id_indicatore,ind.descrizione as descrizione_indicatore, vi.data_analisi, vi.valore, vi.id_sondaggio, vi.id_somministrazione, entrasp.anagrafiche_vr_dati_identificativi_nom1(vi.codice_part, vi.id_anagrafica) as anagrafica, ir.id_report,re.descrizione as descrizione_report from entrasp.valori_indicatori vi inner join entrasp.indicatori ind on vi.id_indicatore=ind.id_indicatore inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.report re on ir.id_report=re.id_report where vi.codice_azienda=$codice_azienda$ and vi.id_sondaggio =$id_sondaggio$ order by anagrafica, vi.id_somministrazione, vi.id_indicatore;",
-                "translate": "RESOURCES.report"
+                "queryString": "select vi.id_indicatore,ind.descrizione as descrizione_indicatore, vi.data_analisi, vi.valore, vi.id_sondaggio, vi.id_somministrazione, entrasp.anagrafiche_vr_dati_identificativi_nom1(vi.codice_part, vi.id_anagrafica) as anagrafica, ir.id_report,re.descrizione as descrizione_report from entrasp.valori_indicatori vi inner join entrasp.indicatori ind on vi.id_indicatore=ind.id_indicatore inner join entrasp.indicatori_report ir on ind.id_indicatore=ir.id_indicatore inner join entrasp.report re on ir.id_report=re.id_report where vi.codice_azienda=$codice_azienda$ and vi.id_sondaggio =$id_sondaggio$ order by anagrafica, vi.id_somministrazione, vi.id_indicatore;"
             }
         ]
     }

@@ -16,7 +16,7 @@ import { locale as italian } from 'app/oc/i18n/it';
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
   host: {
-    // '[style.padding-top.px]': 'field.isVisible? "4": "0"',
+    '[style.padding-top.px]': 'field.isVisible? "8": "0"',
     // '[style.padding-bottom.px]': 'field.isVisible? "4": "0"',
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
@@ -31,6 +31,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   isRequired = false; // field is required or not
 
   subscription: Subscription;
+
+  timeValue: string;
 
   // For future use
   // @HostBinding('style.margin-right') marginRight = '0.5%';
@@ -101,12 +103,15 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
         var d = new Date(HelperService.getFormattedDateTime(fieldValue, _this.timezoneService.timezoneInfo.utc_offset)); /* midnight in China on April 13th */
         _this.field.value = d.toLocaleString('en-US', { timeZone: _this.timezoneService.timezoneInfo.timezone });
       }
-      else if (_this.field.inputType === 'time') {
-        _this.field.value = HelperService.getFormattedTime(fieldValue);
-      }
       else {
-        _this.field.value = fieldValue;
+        _this.field.value = fieldValue != null && typeof fieldValue === 'number' ? fieldValue.toString() : fieldValue;
       }
+    }
+
+    if (_this.field.inputType === 'time') {
+      _this.timeValue = HelperService.getFormattedTime(fieldValue);
+      // _this.field.value = fieldValue;
+      // _this.group.get(_this.field.name).setValue(fieldValue);
     }
   }
 
@@ -125,6 +130,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       _this.sendResetByKeyEvent()
     }
+
+    _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
   }
 
   onFocus(): void {
@@ -136,6 +143,10 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onPress(): void {
     const _this = this;
+
+    // Trigger click event
+    _this.field.onClick && _this.field.onClick(_this.field);
+
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'press') {
       // Confirm first if confirmation is true before performing action
       if (_this.field.confirmButtonAction) {
@@ -196,6 +207,16 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
       // Copy as it is
       _this.field.value = _this.group.get(_this.field.name).value;
     }
+
+    _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
+
+  }
+
+  onTimeSet($event: string) {
+    const _this = this;
+    _this.timeValue = $event;
+    _this.field.value = HelperService.getDecodedTime(_this.timeValue);
+    _this.group.get(_this.field.name).setValue(_this.field.value);
   }
 
   formatValue() {

@@ -6,7 +6,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "SELECT av.codice_fiscale AS codice_fiscale,'€global_codice_azienda€' as codice_azienda, '' as associa_user, email_sender as email_to, true as invia_mail, ai.id_anagrafica, ai.nome, ai.cognome, ai.codice_part from entrasp.anagrafiche_id ai inner join entrasp.anagrafiche_vr av using (codice_part,id_anagrafica) where codice_part=$codice_part$ and av.prog_vr=entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) and id_anagrafica=$id_anagrafica$;"
+            "queryString": "SELECT av.codice_fiscale AS codice_fiscale,'€global_codice_azienda€' as codice_azienda, '' as associa_user, dynamo_user, email_sender as email_to, true as invia_mail, ai.id_anagrafica, ai.nome, ai.cognome, ai.codice_part from entrasp.anagrafiche_id ai inner join entrasp.anagrafiche_vr av using (codice_part,id_anagrafica) where codice_part=$codice_part$ and av.prog_vr=entrasp.anagrafiche_vr_max(ai.codice_part, ai.id_anagrafica) and id_anagrafica=$id_anagrafica$;"
         }
     ],
     "form_keys": [
@@ -20,7 +20,6 @@
             "isPrimary": true,
             "key": "id_anagrafica",
             "label": "id_anagrafica",
-            "translate": "RESOURCES.id_personal_data",
             "readOnly": false,
             "newLine": false
         },
@@ -35,8 +34,7 @@
             "key": "codice_part",
             "label": "codice part",
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.codice_part"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -48,7 +46,6 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code",
             "readOnly": false,
             "newLine": false
         },
@@ -63,8 +60,7 @@
             "key": "codice_fiscale",
             "label": "codice_fiscale",
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.codice_fiscale"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -77,8 +73,7 @@
             "key": "nome",
             "label": "nome",
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.nome"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -91,8 +86,21 @@
             "key": "cognome",
             "label": "cognome",
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.cognome"
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dynamo_user",
+            "label": "Dynamo User",
+            "readOnly": true,
+            "insertUpdateFunct": "x select email_sender",
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -103,8 +111,7 @@
                     {
                         "message": "Inserire una mail!",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_una_mail"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -112,10 +119,9 @@
             "isPrimary": false,
             "key": "email_to",
             "label": "Email",
-            "readOnly": false,
+            "readOnly": true,
             "newLine": true,
-            "size": 10,
-            "translate": "RESOURCES.email_to"
+            "size": 10
         },
         {
             "autoGenerate": false,
@@ -128,8 +134,7 @@
                     {
                         "message": "Inserire un profilo!",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_un_profilo"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -139,8 +144,7 @@
             "label": "Profilo da assegnare",
             "readOnly": false,
             "newLine": true,
-            "size": 10,
-            "translate": "RESOURCES.profile"
+            "size": 10
         },
         {
             "autoGenerate": false,
@@ -150,14 +154,13 @@
                 "options": [],
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "associa_user",
             "label": "Utente dal quale copiare le autorizzazioni",
             "readOnly": false,
             "newLine": true,
-            "size": 10,
-            "translate": "RESOURCES.associa_user"
+            "size": 10
         },
         {
             "autoGenerate": false,
@@ -201,8 +204,7 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1,
-            "translate": "RESOURCES.invia_mail"
+            "size": 1
         }
     ]
 }

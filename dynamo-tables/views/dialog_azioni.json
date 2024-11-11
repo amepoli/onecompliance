@@ -1,0 +1,54 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_azioni",
+    "predefinedQueries": [
+        {
+            "operation": "update",
+            "type": "main",
+            "queryString": "update entrasp.consuntivazioni cns1 set stato = COALESCE($stato$, cns2.stato), data_chiusura_ticket = COALESCE ($data_chiusura_ticket$, cns2.data_chiusura_ticket), note = CASE WHEN $note$ IS NOT NULL AND $note$ <> '' THEN CASE WHEN cns2.note IS NULL OR cns2.note = '' THEN $note$ ELSE cns2.note || ' - ' || $note$ END ELSE cns2.note END from entrasp.consuntivazioni cns2 where cns1.codice_azienda = cns2.codice_azienda and cns1.id_cons = cns2.id_cons and cns1.id_cons||'~'||cns1.codice_azienda in ($selected_rows_data$)"
+        }
+    ],
+    "form_keys": [
+        {
+        "autoGenerate": false,
+        "format": {
+            "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_AZIONI_PROPOSTE';",
+            "options": [],
+            "viewType": "combobox",
+            "dataType": "text"
+        },
+        "isHidden": false,
+        "isPrimary": false,
+        "key": "stato",
+        "label": "Stato",
+        "newLine": false,
+        "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_chiusura_ticket",
+            "label": "Data Chiusura",
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"               
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "newLine": true,
+            "readOnly": false,
+            "size": 7
+        }
+    ]
+}

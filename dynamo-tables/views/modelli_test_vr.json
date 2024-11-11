@@ -14,11 +14,6 @@
             "queryString": "SELECT true as create_somministrazione, mt.codice_azienda, mt.id_modello_test, mt.id_tipo_modello_test,entrasp.tipo_modello_test_descr(id_tipo_modello_test) as descr_tipo, mt.id_argomento, mtvr.id_risultato, mt.titolo, entrasp.centri_gestionali_descr(mt.codice_part, mt.id_centro_gest) as centro_gest, codice, mtvr.id_modello_test_vr, (select ss.id_somministrazione from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1), (select snd.id_sondaggio from entrasp.sondaggi snd where snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test limit 1) FROM entrasp.modelli_test mt JOIN entrasp.modelli_test_vr mtvr ON mt.codice_azienda=mtvr.codice_azienda AND mt.id_modello_test=mtvr.id_modello_test WHERE mtvr.id_modello_test_vr=entrasp.grc_max_id_mdt_vr(mt.codice_azienda, mt.id_modello_test) and mt.codice_azienda=$codice_azienda$;"
         },
         {
-            "type": "preProcessing",
-            "operation": "selectForm",
-            "queryString": "update entrasp.modelli_test mt1 set titolo_cartella=coalesce(mt1.titolo_cartella, mt2.titolo_cartella) from entrasp.modelli_test mt2 where mt1.id_argomento=mt2.id_argomento and mt1.titolo_cartella is null and mt2.titolo_cartella is not null;"
-        },
-        {
             "type": "main",
             "operation": "delete",
             "queryString": "select '€global_username€' as user, entrasp.modello_test_delete($codice_azienda$, $id_modello_test$);"
@@ -47,11 +42,6 @@
             "messageNotNull": "Inserimento: il titolo o la descrizione sono già stati utilizzati per un altro modello di test: si prega di controllare o fornire una descrizione più precisa"
         },
         {
-            "operation": "selectTable",
-            "type": "preProcessing",
-            "queryString": "select entrasp.argomenti_create_and_update(codice_azienda, id_modello_test, titolo, descrizione , codice, 45) from entrasp.modelli_test where id_argomento is null and codice_azienda=$codice_azienda$"
-        },
-        {
             "operation": "update",
             "type": "preCheck",
             "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and codice='£codice£' and id_modello_test!=$id_modello_test$",
@@ -70,23 +60,18 @@
         {
             "type": "main",
             "operation": "insert",
-            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=> coalesce($descrizione$,$titolo$), flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar) , id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::character, stopreplanningwhencontractsclosed=>coalesce($stop_replanning_when_contracts_closed$,false),titolocartella=>$titolo_cartella$,flagworkflow=>coalesce($flag_workflow$::bpchar,'0'::bpchar),flagripianificapercliente=>coalesce($flag_ripianifica_per_cliente$::bpchar,'0'::bpchar), prezzo_ => $prezzo$, flagcondivisioneautomatica=>coalesce($flag_condivisione_automatica$::bpchar,'0'::bpchar) );"
+            "queryString": "select id_modello_test, id_modello_test_vr from entrasp.modello_test_insert(codiceazienda=>$codice_azienda$::varchar, titolo=>$titolo$, descrizione=> coalesce($descrizione$,$titolo$), flag_applicazione_singola=>coalesce($flag_applicazione_singola$::bpchar,0::bpchar) , idfiltroselezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>coalesce($flag_sezioni$,0::bpchar), giorni_anticipo_pres_doc=>$giorni_anticipo_pres_doc$, codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, idmodellotestvr=>$id_modello_test_vr$, flag_mostra_punteggi=>coalesce($flag_mostra_punteggi$::bpchar,'0'::bpchar), id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::character, stopreplanningwhencontractsclosed=>coalesce($stop_replanning_when_contracts_closed$,false),titolocartella=>$titolo_cartella$,flagworkflow=>coalesce($flag_workflow$::bpchar,'0'::bpchar),flagripianificapercliente=>coalesce($flag_ripianifica_per_cliente$::bpchar,'0'::bpchar), prezzo_ => $prezzo$, flagcondivisioneautomatica=>coalesce($flag_condivisione_automatica$::bpchar,'0'::bpchar) );"
         },
         {
             "type": "main",
             "operation": "update",
-            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>coalesce($descrizione$,$titolo$), flag_applicazione_singola=>$flag_applicazione_singola$::character, id_filtro_selezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>$flag_sezioni$::character, giorni_anticipo_pres_doc=>coalesce($giorni_anticipo_pres_doc$,15),codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>$flag_mostra_punteggi$::character, id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::character, stopreplanningwhencontractsclosed=>coalesce($stop_replanning_when_contracts_closed$,false),titolocartella=>$titolo_cartella$,flagworkflow=>$flag_workflow$::character,flagripianificapercliente=>$flag_ripianifica_per_cliente$::character, prezzo_ => $prezzo$, flagcondivisioneautomatica=>$flag_condivisione_automatica$::character, docnecessaria=> $documentazione_necessaria$);"
+            "queryString": "select entrasp.modello_test_update(codice_azienda=>$codice_azienda$, id_modello_test=>$id_modello_test$, titolo=>$titolo$, descrizione=>coalesce($descrizione$,$titolo$), flag_applicazione_singola=>$flag_applicazione_singola$::character, idfiltroselezione=>coalesce($id_filtro_selezione$,0), flag_sezioni=>$flag_sezioni$::character, giorni_anticipo_pres_doc=>coalesce($giorni_anticipo_pres_doc$,15),codice_part=>'€global_codice_part€', id_centro_gest=>$id_centro_gest$, codice=>$codice$, id_tipo_modello_test=>$id_tipo_modello_test$, id_argomento=>$id_argomento$, id_modello_test_vr=>$id_modello_test_vr$, flag_mostra_punteggi=>$flag_mostra_punteggi$::character, id_risultato=>$id_risultato$, flagnodomande=>$flag_no_domande$::character, stopreplanningwhencontractsclosed=>coalesce($stop_replanning_when_contracts_closed$,false),titolocartella=>$titolo_cartella$,flagworkflow=>$flag_workflow$::character,flagripianificapercliente=>$flag_ripianifica_per_cliente$::character, prezzo_ => $prezzo$, flagcondivisioneautomatica=>$flag_condivisione_automatica$::character, docnecessaria=> $documentazione_necessaria$);"
         },
         {
             "operation": "insert",
             "type": "preCheck",
             "queryString": "select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_argomento=£id_argomento£ and id_centro_gest=£id_centro_gest£",
             "messageNotNull": "Inserimento: l'argomento è già stato utilizzato per un altro modello di test in questa azienda: prego utilizzare un argomento diverso"
-        },
-        {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "update entrasp.modelli_test set id_argomento=coalesce(id_argomento, 3456) where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
         },
         {
             "operation": "update",
@@ -139,11 +124,11 @@
                         "isPrimary": false,
                         "key": "id_modello_test_nuovo",
                         "label": "Modello test destinazione",
-                        "translate": "RESOURCES.modello_test_merge",
                         "newLine": false,
                         "tooltip": "Modello di test dove spostare la versione corrente",
                         "readOnly": false,
-                        "size": 3
+                        "size": 3,
+                        "translate": "RESOURCES.modello_test_destinazione_modelli_test_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -155,7 +140,6 @@
                         "key": "modello_test_unifica_k",
                         "buttonIcon": "merge_type",
                         "label": "Unifica modello test",
-                        "translate": "RESOURCES.merge_type",
                         "newLine": false,
                         "outputEvent": {
                             "eventName": "modello_test_unifica",
@@ -173,7 +157,8 @@
                         ],
                         "readOnly": false,
                         "sameOrigin": false,
-                        "size": 1
+                        "size": 1,
+                        "translate": "RESOURCES.unifica_modello_test_modelli_test_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -185,7 +170,6 @@
                         "key": "modello_test_unifica_hide_k",
                         "buttonIcon": "close",
                         "label": "Maschera principale",
-                        "translate": "RESOURCES.main_page",
                         "newLine": false,
                         "outputEvent": {
                             "eventName": "modello_test_unifica_hide",
@@ -193,7 +177,8 @@
                         },
                         "readOnly": false,
                         "sameOrigin": false,
-                        "size": 1
+                        "size": 1,
+                        "translate": "RESOURCES.maschera_principale_modelli_test_vr"
                     }
                 ]
             },
@@ -231,7 +216,7 @@
             "readOnly": false,
             "sameOrigin": false,
             "saveWhenHidden": true,
-            "translate": "RESOURCES.modello_test_unifica_sub_form"
+            "translate": "RESOURCES.modello_test_unifica_sub_form_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -243,7 +228,6 @@
             "isPrimary": false,
             "key": "modellodiverifica",
             "label": "Modello di Verifica",
-            "translate": "RESOURCES.check_template",
             "newLine": false,
             "readOnly": true,
             "sameOrigin": false,
@@ -254,7 +238,8 @@
                 "font_style": "normal",
                 "font_weight": "600"
             },
-            "size": 9.4
+            "size": 9.4,
+            "translate": "RESOURCES.modello_di_verifica_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -264,103 +249,103 @@
                     {
                         "icon": "question_answer",
                         "label": "Crea Singola Verifica",
-                        "translate": "RESOURCES.crea_singola_verifica",
-                        "outputEventName": "somministrazione_new"
+                        "outputEventName": "somministrazione_new",
+                        "translate": "RESOURCES.crea_singola_verifica_modelli_test_vr"
                     },
                     {
                         "icon": "question_answer",
                         "label": "Crea Sondaggio Multiplo",
-                        "translate": "RESOURCES.crea_sondaggio_multiplo",
-                        "outputEventName": "sondaggio_new"
+                        "outputEventName": "sondaggio_new",
+                        "translate": "RESOURCES.crea_sondaggio_multiplo_modelli_test_vr"
                     },
                     {
                         "icon": "add_circle_",
                         "label": "Nuova versione",
-                        "translate": "RESOURCES.new_version",
-                        "outputEventName": "modelli_test_button_nuova_versione"
+                        "outputEventName": "modelli_test_button_nuova_versione",
+                        "translate": "RESOURCES.nuova_versione_modelli_test_vr"
                     },
                     {
                         "icon": "content_copy",
                         "label": "Duplica modello",
-                        "translate": "RESOURCES.duplica_modello",
-                        "outputEventName": "modelli_test_button_duplica"
+                        "outputEventName": "modelli_test_button_duplica",
+                        "translate": "RESOURCES.duplica_modello_modelli_test_vr"
                     },
                     {
                         "key": "allineamento_trasversale",
                         "icon": "sync",
                         "label": "Allin.Trasversale Mod. Verifica",
-                        "translate": "RESOURCES.allineamento_trasversale",
-                        "outputEventName": "allinea_codici_esterni"
+                        "outputEventName": "allinea_codici_esterni",
+                        "translate": "RESOURCES.allintrasversale_mod_verifica_modelli_test_vr"
                     },
                     {
                         "icon": "link",
                         "label": "Sposta ver. corrente in altro template",
-                        "translate": "RESOURCES.move_mvr_to_new_mdt",
-                        "outputEventName": "unifica_mdt_show"
+                        "outputEventName": "unifica_mdt_show",
+                        "translate": "RESOURCES.sposta_ver_corrente_in_altro_template_modelli_test_vr"
                     },
                     {
                         "icon": "poll",
                         "label": "Criterio di analisi",
-                        "translate": "RESOURCES.analysis_criterion",
-                        "outputEventName": "navigate_to_criterio_analisi"
+                        "outputEventName": "navigate_to_criterio_analisi",
+                        "translate": "RESOURCES.criterio_di_analisi_modelli_test_vr"
                     },
                     {
                         "icon": "sync",
                         "label": "Ricalcola punteggi",
-                        "translate": "RESOURCES.recalculate_scores",
-                        "outputEventName": "ricalcola_punteggi"
+                        "outputEventName": "ricalcola_punteggi",
+                        "translate": "RESOURCES.ricalcola_punteggi_modelli_test_vr"
                     },
                     {
                         "key": "crea_associa_argomento",
                         "icon": "class",
                         "label": "Crea e associa argomento",
-                        "translate": "RESOURCES.create_and_associate_tag",
-                        "outputEventName": "create_associate_argomento"
+                        "outputEventName": "create_associate_argomento",
+                        "translate": "RESOURCES.crea_e_associa_argomento_modelli_test_vr"
                     },
                     {
                         "icon": "delete",
                         "label": "Elimina versione corrente",
-                        "translate": "RESOURCES.delete_current_version",
-                        "outputEventName": "elimina_ver_corrente_mdt"
+                        "outputEventName": "elimina_ver_corrente_mdt",
+                        "translate": "RESOURCES.elimina_versione_corrente_modelli_test_vr"
                     },
                     {
                         "key": "tagga_tutte_domande",
                         "icon": "label",
                         "label": "Tagga tutte le domande",
-                        "translate": "RESOURCES.tag_all_question",
-                        "outputEventName": "tagga_domande"
+                        "outputEventName": "tagga_domande",
+                        "translate": "RESOURCES.tagga_tutte_le_domande_modelli_test_vr"
                     },
                     {
                         "key": "tagga_risposte",
                         "icon": "label",
                         "label": "Tagga tutte le risposte",
-                        "translate": "RESOURCES.tag_all_answers",
-                        "outputEventName": "tagga_risposte"
+                        "outputEventName": "tagga_risposte",
+                        "translate": "RESOURCES.tagga_tutte_le_risposte_modelli_test_vr"
                     },
                     {
                         "key": "tagga_tutte_risposte",
                         "icon": "label",
                         "label": "Tagga le risposte di ogni versione del mt",
-                        "translate": "RESOURCES.tagga_tutte_risposte_vr",
-                        "outputEventName": "tagga_tutte_risposte"
+                        "outputEventName": "tagga_tutte_risposte",
+                        "translate": "RESOURCES.tagga_le_risposte_di_ogni_versione_del_mt_modelli_test_vr"
                     },
                     {
                         "icon": "tag",
                         "label": "Gestione Tag",
-                        "translate": "RESOURCES.tag_management",
-                        "outputEventName": "navigate_to_tagging"
+                        "outputEventName": "navigate_to_tagging",
+                        "translate": "RESOURCES.gestione_tag_modelli_test_vr"
                     },
                     {
                         "icon": "content_copy",
                         "label": "Rendi Discorsiva",
-                        "translate": "RESOURCES.make_it_discursive",
-                        "outputEventName": "check_disc"
+                        "outputEventName": "check_disc",
+                        "translate": "RESOURCES.rendi_discorsiva_modelli_test_vr"
                     },
                     {
                         "icon": "edit",
                         "label": "Modifica massivamente",
-                        "translate": "RESOURCES.dialog_form_mt",
-                        "outputEventName": "dialog_form_mt"
+                        "outputEventName": "dialog_form_mt",
+                        "translate": "RESOURCES.modifica_massivamente_modelli_test_vr"
                     }
                 ]
             },
@@ -450,7 +435,7 @@
             "isPrimary": false,
             "buttonIcon": "more_vert",
             "key": "modelli_test_vr_actions",
-            "label": " ",
+            "label": "",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
@@ -466,9 +451,9 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
             "newLine": true,
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.codice_azienda_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -513,7 +498,7 @@
             ],
             "readOnly": false,
             "sameOrigin": false,
-            "translate": "RESOURCES.new_id_sondaggio"
+            "translate": "RESOURCES.new_id_sondaggio_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -538,7 +523,7 @@
             ],
             "readOnly": false,
             "sameOrigin": false,
-            "translate": "RESOURCES.new_id_somministrazione"
+            "translate": "RESOURCES.new_id_somministrazione_modelli_test_vr"
         },
         {
             "autoGenerate": true,
@@ -550,7 +535,6 @@
             "isPrimary": true,
             "key": "id_modello_test",
             "label": "#",
-            "translate": "RESOURCES.id_check_template",
             "newLine": false,
             "inputEvents": [
                 {
@@ -563,7 +547,8 @@
                 }
             ],
             "size": 1.67,
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES._modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -581,29 +566,30 @@
             },
             "key": "id_modello_test_vr",
             "label": "Versione",
-            "translate": "RESOURCES.version",
             "newLine": false,
             "size": 1.66,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.versione_modelli_test_vr"
         },
         {
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
                 "viewType": "input",
+                "value": null,
                 "validations": [
                     {
-                        "message": "Breve descrizione necessaria",
+                        "message": "Campo Necessario",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.breve_descrizione_necessaria"
+                        "translate": "RESOURCES.campo_necessario_modelli_test_vr"
                     },
                     {
                         "name": "maxlength",
                         "message": "Maximum length should be 200",
                         "validator": "Validators.maxLength(200)",
                         "value": 200,
-                        "translate": "RESOURCES.maximum_length_should_be_200"
+                        "translate": "RESOURCES.maximum_length_should_be_200_modelli_test_vr"
                     }
                 ]
             },
@@ -612,10 +598,10 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "size": 3.33,
             "newLine": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.titolo_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -627,7 +613,7 @@
                         "message": "Campo Necessario",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_necessario"
+                        "translate": "RESOURCES.campo_necessario_modelli_test_vr"
                     }
                 ]
             },
@@ -635,11 +621,11 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "queryFunct": "SELECT codice from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
             "newLine": false,
             "size": 1.66,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.codice_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -652,9 +638,9 @@
             "isPrimary": false,
             "key": "data_inizio_validita",
             "label": "Data di Creazione",
-            "translate": "RESOURCES.creation_date",
             "newLine": false,
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.data_di_creazione_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -665,13 +651,13 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "data_inizio_validita_descr",
-            "label": "Data di creazione",
-            "translate": "RESOURCES.creation_date",
+            "label": "Data di Creazione",
             "size": 1.67,
             "newLine": true,
             "readOnly": true,
             "queryFunct": "to_char(data_inizio_validita::date, 'DD/MM/YYYY')",
-            "sameOrigin": false
+            "sameOrigin": false,
+            "translate": "RESOURCES.data_di_creazione_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -684,7 +670,7 @@
                         "message": "Necessario specificare l'ufficio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.necessario_specificare_lufficio"
+                        "translate": "RESOURCES.necessario_specificare_lufficio_modelli_test_vr"
                     }
                 ],
                 "value": "0"
@@ -694,10 +680,10 @@
             "isPrimary": false,
             "key": "id_centro_gest",
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "newLine": false,
             "size": 3.33,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.centro_gestionale_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -710,7 +696,7 @@
                         "message": "Selezionare criterio di analisi",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.selezionare_criterio_di_analisi"
+                        "translate": "RESOURCES.selezionare_criterio_di_analisi_modelli_test_vr"
                     }
                 ]
             },
@@ -719,10 +705,10 @@
             "isPrimary": false,
             "key": "id_risultato",
             "label": "Criterio di analisi",
-            "translate": "RESOURCES.analysis_criterion",
             "newLine": false,
             "size": 3.33,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.criterio_di_analisi_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -736,15 +722,15 @@
             "key": "id_argomento",
             "queryFunct": "SELECT id_argomento from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
             "label": "Argomento",
-            "translate": "RESOURCES.tag",
             "readOnly": false,
             "size": 3.33,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.argomento_modelli_test_vr"
         },
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_tipo_modello_test AS id, descrizione AS name  FROM entrasp.tipi_modello_test order by id_tipo_modello_test asc;",
+                "comboQuery": "SELECT id_tipo_modello_test AS id, id_tipo_modello_test||'-'||descrizione AS name  FROM entrasp.tipi_modello_test order by id_tipo_modello_test asc;",
                 "options": [],
                 "viewType": "combobox",
                 "value": "2"
@@ -754,10 +740,10 @@
             "isPrimary": false,
             "key": "id_tipo_modello_test",
             "label": "Tipo modello verifica",
-            "translate": "RESOURCES.check_template_type",
             "newLine": false,
             "size": 3.33,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.tipo_modello_verifica_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -767,16 +753,15 @@
                 "viewType": "combobox",
                 "value": 0
             },
-            "queryFunct": "SELECT id_filtro_selezione from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
             "isHidden": false,
             "isPrimary": false,
             "key": "id_filtro_selezione",
             "label": "Seleziona Popolazione",
-            "translate": "RESOURCES.select_popolation",
             "newLine": false,
             "tooltip": "Individua il gruppo sottostante di oggetti (censiti a programma) all'interno del quale selezionare gli item oggetto di verifica",
             "size": 3.33,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.seleziona_popolazione_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -787,7 +772,6 @@
             "isPrimary": false,
             "key": "tag",
             "label": "#",
-            "translate": "RESOURCES.tag",
             "newLine": false,
             "outputEvent": {
                 "eventName": "navigate_to_tagging",
@@ -798,7 +782,8 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false
+            "sameOrigin": false,
+            "translate": "RESOURCES._modelli_test_vr"
         },
         {
             "format": {
@@ -812,7 +797,7 @@
             "sameOrigin": false,
             "readOnly": true,
             "newLine": false,
-            "translate": "RESOURCES.invisible_2"
+            "translate": "RESOURCES.invisible_2_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -849,8 +834,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "translate": "RESOURCES.activate_detail_k"
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -887,8 +871,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "translate": "RESOURCES.hide_detail_k"
+            "sameOrigin": false
         },
         {
             "format": {
@@ -899,7 +882,6 @@
             "isPrimary": false,
             "key": "maggiori_dettagli",
             "label": "Dettagli",
-            "translate": "RESOURCES.details",
             "style": {
                 "background_color": "transparent",
                 "font_color": "black",
@@ -909,7 +891,8 @@
             "newLine": false,
             "readOnly": true,
             "sameOrigin": false,
-            "size": 2.1
+            "size": 2.1,
+            "translate": "RESOURCES.dettagli_modelli_test_vr"
         },
         {
             "format": {
@@ -923,7 +906,7 @@
             "sameOrigin": false,
             "readOnly": true,
             "newLine": true,
-            "translate": "RESOURCES.invisible_2"
+            "translate": "RESOURCES.invisible_2_modelli_test_vr"
         },
         {
             "format": {
@@ -937,12 +920,12 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "label": "Note revisione",
-                        "translate": "RESOURCES.notes",
                         "key": "note_revisione",
                         "sameOrigin": false,
                         "readOnly": false,
                         "newLine": false,
-                        "size": 2.5
+                        "size": 2.5,
+                        "translate": "RESOURCES.note_revisione_modelli_test_vr"
                     },
                     {
                         "format": {
@@ -954,7 +937,7 @@
                                     "message": "Massimo numero di caratteri: 20",
                                     "validator": "Validators.maxLength(20)",
                                     "value": 20,
-                                    "translate": "RESOURCES.massimo_numero_di_caratteri_20_sc"
+                                    "translate": "RESOURCES.massimo_numero_di_caratteri_20_modelli_test_vr"
                                 }
                             ]
                         },
@@ -962,11 +945,11 @@
                         "isPrimary": false,
                         "key": "titolo_cartella",
                         "label": "Titolo cartella",
-                        "translate": "RESOURCES.folder_title",
                         "newLine": false,
                         "readOnly": false,
                         "size": 2.5,
-                        "queryFunct": "select titolo_cartella from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                        "queryFunct": "select titolo_cartella from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+                        "translate": "RESOURCES.titolo_cartella_modelli_test_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -980,10 +963,10 @@
                         "isPrimary": false,
                         "key": "giorni_anticipo_pres_doc",
                         "label": "Giorni d'anticipo per la documentazione",
-                        "translate": "RESOURCES.giorni_anticipo_pres_doc",
                         "size": 2.5,
                         "newLine": false,
-                        "readOnly": false
+                        "readOnly": false,
+                        "translate": "RESOURCES.giorni_danticipo_per_la_documentazione_modelli_test_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -1006,7 +989,7 @@
                                 "queryString": "SELECT '€global_profile€'!='admin' AS label"
                             }
                         ],
-                        "translate": "RESOURCES.prezzo"
+                        "translate": "RESOURCES.prezzo_modelli_test_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -1029,7 +1012,7 @@
                                 "queryString": "SELECT '€global_profile€'!='admin' AS label"
                             }
                         ],
-                        "translate": "RESOURCES.condivisione_auto"
+                        "translate": "RESOURCES.condivisione_auto_modelli_test_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -1055,11 +1038,11 @@
                         "isPrimary": false,
                         "key": "descrizione",
                         "label": "Descrizione",
-                        "translate": "RESOURCES.description",
                         "textareaHeight": "M",
                         "newLine": true,
                         "readOnly": false,
-                        "size": 3.23
+                        "size": 3.23,
+                        "translate": "RESOURCES.descrizione_modelli_test_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -1074,7 +1057,6 @@
                         "isPrimary": false,
                         "key": "tags",
                         "label": "Tags",
-                        "translate": "RESOURCES.tags",
                         "newLine": true,
                         "readOnly": false,
                         "outputEvent": {
@@ -1091,7 +1073,8 @@
                             }
                         ],
                         "isMultiSelect": true,
-                        "showTagsView": true
+                        "showTagsView": true,
+                        "translate": "RESOURCES.tags_modelli_test_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -1104,10 +1087,10 @@
                         "queryFunct": "SELECT documentazione_necessaria from entrasp.modelli_test WHERE codice_azienda=$codice_azienda$ AND id_modello_test=$id_modello_test$",
                         "key": "documentazione_necessaria",
                         "label": "Documentazione necessaria",
-                        "translate": "RESOURCES.documenti_necessari",
                         "textareaHeight": "M",
                         "newLine": true,
-                        "readOnly": false
+                        "readOnly": false,
+                        "translate": "RESOURCES.documentazione_necessaria_modelli_test_vr"
                     },
                     {
                         "format": {
@@ -1117,8 +1100,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "n_sondaggi_associati",
-                        "label": "N. sondaggi Associati",
-                        "translate": "RESOURCES.n_sondaggi_associati",
+                        "label": "N. Sondaggi Associati",
                         "style": {
                             "background_color": "white"
                         },
@@ -1128,7 +1110,8 @@
                             "eventTrigger": "press"
                         },
                         "readOnly": true,
-                        "queryFunct": "select count(id_sondaggio) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                        "queryFunct": "select count(id_sondaggio) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+                        "translate": "RESOURCES.n_sondaggi_associati_modelli_test_vr"
                     },
                     {
                         "format": {
@@ -1139,7 +1122,6 @@
                         "isPrimary": false,
                         "key": "n_presidi_associati",
                         "label": "N.presidi associati",
-                        "translate": "RESOURCES.presidi_sub_of_procedure",
                         "style": {
                             "background_color": "white"
                         },
@@ -1149,7 +1131,8 @@
                             "eventTrigger": "press"
                         },
                         "readOnly": true,
-                        "queryFunct": "select count(id_presidio) from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$"
+                        "queryFunct": "select count(id_presidio) from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
+                        "translate": "RESOURCES.npresidi_associati_modelli_test_vr"
                     },
                     {
                         "format": {
@@ -1160,7 +1143,6 @@
                         "isPrimary": false,
                         "key": "n_fasi_mod_proge",
                         "label": "N.fasi (mod.progetto) associate",
-                        "translate": "RESOURCES.n_fasi_mod_proge",
                         "style": {
                             "background_color": "white"
                         },
@@ -1170,7 +1152,8 @@
                             "eventTrigger": "press"
                         },
                         "readOnly": true,
-                        "queryFunct": "select count(codice_attivita) from entrasp.attivita where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and data_fine_validita is null"
+                        "queryFunct": "select count(codice_attivita) from entrasp.attivita where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and data_fine_validita is null",
+                        "translate": "RESOURCES.nfasi_modprogetto_associate_modelli_test_vr"
                     },
                     {
                         "format": {
@@ -1181,7 +1164,6 @@
                         "isPrimary": false,
                         "key": "n_procedure_associate",
                         "label": "N.procedure associate",
-                        "translate": "RESOURCES.n_procedure_associate",
                         "newLine": false,
                         "outputEvent": {
                             "eventName": "to_procedure_associate",
@@ -1191,7 +1173,8 @@
                             "background_color": "white"
                         },
                         "readOnly": true,
-                        "queryFunct": "select count(id_procedura) from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                        "queryFunct": "select count(id_procedura) from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+                        "translate": "RESOURCES.nprocedure_associate_modelli_test_vr"
                     }
                 ]
             },
@@ -1213,11 +1196,11 @@
             "isPrimary": false,
             "key": "sezione_detail",
             "label": "Maggiori Dettagli",
-            "translate": "RESOURCES.more_details",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": true,
-            "saveWhenHidden": true
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.maggiori_dettagli_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1230,7 +1213,6 @@
             "isPrimary": false,
             "key": "flag_mostra_punteggi",
             "label": "Mostra punteggi",
-            "translate": "RESOURCES.flag_mostra_punteggi",
             "tooltip": "IL presente flag determina nelle verifiche la sola visualizzazione del giudizio finale e non dei punteggi",
             "outputEvent": {
                 "eventName": "flag_mostra_punteggi",
@@ -1239,7 +1221,8 @@
             "readOnly": false,
             "sameOrigin": false,
             "newLine": false,
-            "size": 1.7
+            "size": 1.7,
+            "translate": "RESOURCES.mostra_punteggi_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1253,7 +1236,6 @@
             "key": "flag_sezioni",
             "size": 1.4,
             "label": "Domande a sezioni",
-            "translate": "RESOURCES.flag_sezioni",
             "inputEvents": [
                 {
                     "eventName": "delete_sezioni_checked",
@@ -1276,7 +1258,8 @@
                 }
             ],
             "readOnly": false,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.domande_a_sezioni_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1291,13 +1274,13 @@
             "size": 1.5,
             "key": "flag_applicazione_singola",
             "label": "Mono verifica",
-            "translate": "RESOURCES.flag_applicazione_singola",
             "outputEvent": {
                 "eventName": "flag_applicazione_singola",
                 "eventTrigger": "change"
             },
             "newLine": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.mono_verifica_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1311,7 +1294,6 @@
             "size": 1.2,
             "key": "flag_no_domande",
             "label": "No domande",
-            "translate": "RESOURCES.flag_no_domande",
             "outputEvent": {
                 "eventName": "flag_no_domande_change",
                 "eventTrigger": "change"
@@ -1326,7 +1308,8 @@
                 }
             ],
             "newLine": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.no_domande_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1340,10 +1323,10 @@
             "size": 1.9,
             "key": "stop_replanning_when_contracts_closed",
             "label": "No ripetizione se contratto chiuso",
-            "translate": "RESOURCES.stop_replanning_when_contracts_closed",
             "newLine": false,
             "tooltip": "Evita la ripianificazione nel caso in cui i contratti associati al contratto siano chiusi",
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.no_ripetizione_se_contratto_chiuso_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1359,8 +1342,8 @@
             "tooltip": "Vale solo per i sondaggi con popolazione di tipo anagrafica! Se flaggato non verrà creato un sondaggio ulteriore qualora già esistente un sondaggio, con medesimo modello ver, associato allo stesso cliente",
             "newLine": false,
             "label": "Ripianifica per cliente",
-            "translate": "RESOURCES.flag_ripianifica_per_cliente",
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.ripianifica_per_cliente_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1376,7 +1359,7 @@
             "label": "Workflow",
             "readOnly": false,
             "newLine": true,
-            "translate": "RESOURCES.flag_workflow"
+            "translate": "RESOURCES.workflow_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1387,7 +1370,6 @@
             "isPrimary": false,
             "key": "activate_oggetti_collegati_k",
             "label": "Oggetti collegati",
-            "translate": "RESOURCES.activate_oggetti_collegati",
             "buttonIcon": "expand_more",
             "newLine": false,
             "size": 0.9,
@@ -1414,7 +1396,8 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false
+            "sameOrigin": false,
+            "translate": "RESOURCES.oggetti_collegati_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1425,7 +1408,6 @@
             "isPrimary": false,
             "key": "hide_oggetti_collegati_k",
             "label": "Nascondi dettagli",
-            "translate": "RESOURCES.hide_valutazione_rischi_k",
             "buttonIcon": "expand_less",
             "newLine": true,
             "size": 1.5,
@@ -1452,7 +1434,8 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false
+            "sameOrigin": false,
+            "translate": "RESOURCES.nascondi_dettagli_modelli_test_vr"
         },
         {
             "format": {
@@ -1467,7 +1450,6 @@
                         "isPrimary": false,
                         "key": "n_sondaggi_associati",
                         "label": "N. Sondaggi Associati",
-                        "translate": "RESOURCES.n_sondaggi_associati",
                         "style": {
                             "background_color": "white"
                         },
@@ -1477,7 +1459,8 @@
                             "eventTrigger": "press"
                         },
                         "readOnly": true,
-                        "queryFunct": "select count(id_sondaggio) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                        "queryFunct": "select count(id_sondaggio) from entrasp.sondaggi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+                        "translate": "RESOURCES.n_sondaggi_associati_modelli_test_vr"
                     },
                     {
                         "format": {
@@ -1498,7 +1481,7 @@
                         },
                         "readOnly": true,
                         "queryFunct": "select count(id_presidio) from entrasp.domande_presidi where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and id_modello_test_vr=$id_modello_test_vr$",
-                        "translate": "RESOURCES.npresidi_associati_sc"
+                        "translate": "RESOURCES.npresidi_associati_modelli_test_vr"
                     },
                     {
                         "format": {
@@ -1509,7 +1492,6 @@
                         "isPrimary": false,
                         "key": "n_fasi_mod_proge",
                         "label": "N.fasi (mod.progetto) associate",
-                        "translate": "RESOURCES.n_fasi_mod_proge",
                         "style": {
                             "background_color": "white"
                         },
@@ -1519,7 +1501,8 @@
                             "eventTrigger": "press"
                         },
                         "readOnly": true,
-                        "queryFunct": "select count(codice_attivita) from entrasp.attivita where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and data_fine_validita is null"
+                        "queryFunct": "select count(codice_attivita) from entrasp.attivita where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$ and data_fine_validita is null",
+                        "translate": "RESOURCES.nfasi_modprogetto_associate_modelli_test_vr"
                     },
                     {
                         "format": {
@@ -1530,7 +1513,6 @@
                         "isPrimary": false,
                         "key": "n_procedure_associate",
                         "label": "N.procedure associate",
-                        "translate": "RESOURCES.n_procedure_associate",
                         "newLine": false,
                         "outputEvent": {
                             "eventName": "to_procedure_associate",
@@ -1540,7 +1522,8 @@
                             "background_color": "white"
                         },
                         "readOnly": true,
-                        "queryFunct": "select count(id_procedura) from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$"
+                        "queryFunct": "select count(id_procedura) from entrasp.procedure_modelli_test where codice_azienda=$codice_azienda$ and id_modello_test=$id_modello_test$",
+                        "translate": "RESOURCES.nprocedure_associate_modelli_test_vr"
                     }
                 ]
             },
@@ -1562,11 +1545,11 @@
             "isPrimary": false,
             "key": "oggetti_collegati",
             "label": "Oggetti collegati",
-            "translate": "RESOURCES.activate_oggetti_collegati",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
-            "saveWhenHidden": true
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.oggetti_collegati_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1578,10 +1561,10 @@
             "isPrimary": false,
             "key": "id_modello_test_new",
             "label": "id_modello_test_new",
-            "translate": "RESOURCES.id_modello_test_new",
             "newLine": false,
             "readOnly": false,
-            "sameOrigin": false
+            "sameOrigin": false,
+            "translate": "RESOURCES.id_modello_test_new_modelli_test_vr"
         },
         {
             "autoGenerate": false,
@@ -1607,7 +1590,7 @@
             "newLine": false,
             "readOnly": false,
             "sameOrigin": false,
-            "translate": "RESOURCES.id_modello_test_vr_new"
+            "translate": "RESOURCES.id_modello_test_vr_new_modelli_test_vr"
         }
     ],
     "search_keys": [
@@ -1618,9 +1601,9 @@
                 "viewType": "input"
             },
             "label": "Lista id modelli verifica",
-            "translate": "RESOURCES.id_check_template_list",
             "newLine": false,
-            "queryCond": "mt.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))"
+            "queryCond": "mt.id_modello_test::varchar=any(string_to_array(replace($id_modello_test_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_id_modelli_verifica_modelli_test_vr"
         },
         {
             "fieldName": "id_argomenti_list",
@@ -1629,9 +1612,9 @@
                 "viewType": "input"
             },
             "label": "Lista id argomenti",
-            "translate": "RESOURCES.id_tag_list",
             "newLine": false,
-            "queryCond": "mt.id_argomento::varchar=any(string_to_array(replace($id_argomenti_list$, ' ', ''), ','))"
+            "queryCond": "mt.id_argomento::varchar=any(string_to_array(replace($id_argomenti_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_id_argomenti_modelli_test_vr"
         },
         {
             "fieldName": "id_centro_gest",
@@ -1641,9 +1624,9 @@
                 "viewType": "combobox"
             },
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "newLine": true,
-            "queryCond": "mt.id_centro_gest= $id_centro_gest$"
+            "queryCond": "mt.id_centro_gest= $id_centro_gest$",
+            "translate": "RESOURCES.centro_gestionale_modelli_test_vr"
         },
         {
             "fieldName": "id_tipo_modello_test",
@@ -1653,9 +1636,9 @@
                 "viewType": "combobox"
             },
             "label": "Tipo modello test",
-            "translate": "RESOURCES.check_template_type",
             "newLine": false,
-            "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$"
+            "queryCond": "mt.id_tipo_modello_test=$id_tipo_modello_test$",
+            "translate": "RESOURCES.tipo_modello_test_modelli_test_vr"
         },
         {
             "fieldName": "id_tipo_modello_test_list",
@@ -1664,9 +1647,9 @@
                 "viewType": "input"
             },
             "label": "Lista ID tipi modello test",
-            "translate": "RESOURCES.id_tipo_modello_test_list",
             "newLine": false,
-            "queryCond": "mt.id_tipo_modello_test::varchar=any(string_to_array(replace($id_tipo_modello_test_list$, ' ', ''), ','))"
+            "queryCond": "mt.id_tipo_modello_test::varchar=any(string_to_array(replace($id_tipo_modello_test_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_id_tipi_modello_test_modelli_test_vr"
         },
         {
             "fieldName": "titolo_search",
@@ -1675,9 +1658,9 @@
                 "viewType": "input"
             },
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "newLine": true,
-            "queryCond": "(upper(mt.titolo) like '%'||upper('€titolo_search€')||'%' or upper(mt.descrizione) like '%'||upper('€titolo_search€')||'%')"
+            "queryCond": "(upper(mt.titolo) like '%'||upper('€titolo_search€')||'%' or upper(mt.descrizione) like '%'||upper('€titolo_search€')||'%')",
+            "translate": "RESOURCES.titolo_modelli_test_vr"
         },
         {
             "fieldName": "cod_att_princ_s",
@@ -1688,9 +1671,9 @@
                 "dataType": "text"
             },
             "label": "Associati al modello progetto",
-            "translate": "RESOURCES.associated_to_project_template",
             "newLine": false,
-            "queryCond": "mt.id_modello_test in (select id_modello_test from entrasp.attivita where entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$ and id_modello_test is not null and codice_azienda='€global_codice_azienda€')"
+            "queryCond": "mt.id_modello_test in (select id_modello_test from entrasp.attivita where entrasp.grc_codice_attivita_parent(codice_azienda, codice_attivita)= $cod_att_princ_s$ and id_modello_test is not null and codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.associati_al_modello_progetto_modelli_test_vr"
         },
         {
             "fieldName": "argomento_s",
@@ -1700,9 +1683,9 @@
                 "viewType": "combobox"
             },
             "label": "Argomento",
-            "translate": "RESOURCES.tag",
             "newLine": false,
-            "queryCond": "array[mt.id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
+            "queryCond": "array[mt.id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))",
+            "translate": "RESOURCES.argomento_modelli_test_vr"
         },
         {
             "format": {
@@ -1712,9 +1695,9 @@
             },
             "fieldName": "id_argomento_tc_s",
             "label": "Tipi controllo",
-            "translate": "RESOURCES.tipi_controllo",
             "newLine": true,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento_tc_s$))"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($id_argomento_tc_s$))",
+            "translate": "RESOURCES.tipi_controllo_modelli_test_vr"
         },
         {
             "fieldName": "no_questions",
@@ -1723,9 +1706,9 @@
                 "viewType": "checkbox"
             },
             "label": "Senza domande",
-            "translate": "RESOURCES.presidi_without_domande",
             "newLine": false,
-            "queryCond": "mt.id_modello_test not in(select distinct dm.id_modello_test from entrasp.domande dm where codice_azienda=$codice_azienda$)"
+            "queryCond": "mt.id_modello_test not in(select distinct dm.id_modello_test from entrasp.domande dm where codice_azienda=$codice_azienda$)",
+            "translate": "RESOURCES.senza_domande_modelli_test_vr"
         },
         {
             "fieldName": "no_sondaggi",
@@ -1736,7 +1719,7 @@
             "label": "Senza verifiche",
             "newLine": false,
             "queryCond": "mt.id_modello_test not in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)",
-            "translate": "RESOURCES.senza_verifiche"
+            "translate": "RESOURCES.senza_verifiche_modelli_test_vr"
         },
         {
             "fieldName": "with_sondaggi",
@@ -1745,9 +1728,9 @@
                 "viewType": "checkbox"
             },
             "label": "Con Verifiche",
-            "translate": "RESOURCES.with_checks",
             "newLine": false,
-            "queryCond": "mt.id_modello_test in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)"
+            "queryCond": "mt.id_modello_test in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$)",
+            "translate": "RESOURCES.con_verifiche_modelli_test_vr"
         },
         {
             "fieldName": "with_closed_sondaggi",
@@ -1756,9 +1739,9 @@
                 "viewType": "checkbox"
             },
             "label": "Con Verifiche Chiuse",
-            "translate": "RESOURCES.with_closed_sondaggi",
             "newLine": false,
-            "queryCond": "mt.id_modello_test in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$ and snd.stato='C')"
+            "queryCond": "mt.id_modello_test in(select distinct snd.id_modello_test from entrasp.sondaggi snd where codice_azienda=$codice_azienda$ and snd.stato='C')",
+            "translate": "RESOURCES.con_verifiche_chiuse_modelli_test_vr"
         },
         {
             "fieldName": "no_procedure",
@@ -1767,9 +1750,9 @@
                 "viewType": "checkbox"
             },
             "label": "Senza Processi",
-            "translate": "RESOURCES.without_process",
             "newLine": false,
-            "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)"
+            "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)",
+            "translate": "RESOURCES.senza_processi_modelli_test_vr"
         },
         {
             "fieldName": "doppio_tag",
@@ -1778,9 +1761,9 @@
                 "viewType": "checkbox"
             },
             "label": "Con TAG doppio",
-            "translate": "RESOURCES.doppio_tag",
             "newLine": true,
-            "queryCond": "mt.codice_azienda||'-'||mt.id_argomento in(select distinct mt2.codice_azienda||'-'||mt2.id_argomento from entrasp.modelli_test mt2 where mt2.codice_azienda=$codice_azienda$ group by mt2.codice_azienda, mt2.id_argomento having count(id_modello_test)>1)"
+            "queryCond": "mt.codice_azienda||'-'||mt.id_argomento in(select distinct mt2.codice_azienda||'-'||mt2.id_argomento from entrasp.modelli_test mt2 where mt2.codice_azienda=$codice_azienda$ group by mt2.codice_azienda, mt2.id_argomento having count(id_modello_test)>1)",
+            "translate": "RESOURCES.con_tag_doppio_modelli_test_vr"
         },
         {
             "fieldName": "no_procedure",
@@ -1789,9 +1772,9 @@
                 "viewType": "checkbox"
             },
             "label": "Con Processi",
-            "translate": "RESOURCES.rischi_with_procedure",
             "newLine": false,
-            "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)"
+            "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.procedure_modelli_test pmt where codice_azienda=$codice_azienda$)",
+            "translate": "RESOURCES.con_processi_modelli_test_vr"
         },
         {
             "fieldName": "with_presidi",
@@ -1800,9 +1783,9 @@
                 "viewType": "checkbox"
             },
             "label": "Con Presidi",
-            "translate": "RESOURCES.with_process",
             "newLine": false,
-            "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=$codice_azienda$)"
+            "queryCond": "mt.id_modello_test in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=$codice_azienda$)",
+            "translate": "RESOURCES.con_presidi_modelli_test_vr"
         },
         {
             "fieldName": "no_presidi",
@@ -1811,9 +1794,9 @@
                 "viewType": "checkbox"
             },
             "label": "Senza Presidi",
-            "translate": "RESOURCES.rischi_without_presidi",
             "newLine": false,
-            "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=$codice_azienda$)"
+            "queryCond": "mt.id_modello_test not in(select distinct pmt.id_modello_test from entrasp.domande_presidi pmt where codice_azienda=$codice_azienda$)",
+            "translate": "RESOURCES.senza_presidi_modelli_test_vr"
         },
         {
             "fieldName": "no_popolazione",
@@ -1824,7 +1807,7 @@
             "label": "Senza Popolazione",
             "newLine": false,
             "queryCond": "mt.id_filtro_selezione is null",
-            "translate": "RESOURCES.senza_popolazione"
+            "translate": "RESOURCES.senza_popolazione_modelli_test_vr"
         },
         {
             "fieldName": "no_argomento",
@@ -1833,9 +1816,9 @@
                 "viewType": "checkbox"
             },
             "label": "Senza argomento",
-            "translate": "RESOURCES.without_id_arg",
             "newLine": false,
-            "queryCond": "mt.id_argomento is null"
+            "queryCond": "mt.id_argomento is null",
+            "translate": "RESOURCES.senza_argomento_modelli_test_vr"
         },
         {
             "fieldName": "centro_gest_no_definito",
@@ -1844,9 +1827,9 @@
                 "viewType": "checkbox"
             },
             "label": "Ufficio non definito",
-            "translate": "RESOURCES.undefined_office",
             "newLine": true,
-            "queryCond": "id_centro_gest=0"
+            "queryCond": "id_centro_gest=0",
+            "translate": "RESOURCES.ufficio_non_definito_modelli_test_vr"
         },
         {
             "fieldName": "no_liv_controllo",
@@ -1855,9 +1838,9 @@
                 "viewType": "checkbox"
             },
             "label": "Senza liv.controllo (6871)",
-            "translate": "RESOURCES.no_liv_controllo",
             "newLine": false,
-            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6871 and ason.id_argomento_son is not null)"
+            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6871 and ason.id_argomento_son is not null)",
+            "translate": "RESOURCES.senza_livcontrollo_6871_modelli_test_vr"
         },
         {
             "fieldName": "no_impianto_funzionamento",
@@ -1866,9 +1849,9 @@
                 "viewType": "checkbox"
             },
             "label": "Senza tipo controllo (43448)",
-            "translate": "RESOURCES.no_impianto_funzionamento",
             "newLine": false,
-            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=43448 and ason.id_argomento_son is not null)"
+            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=43448 and ason.id_argomento_son is not null)",
+            "translate": "RESOURCES.senza_tipo_controllo_43448_modelli_test_vr"
         },
         {
             "fieldName": "no_classificazione_argomenti",
@@ -1877,9 +1860,9 @@
                 "viewType": "checkbox"
             },
             "label": "No class. argomenti (3425)",
-            "translate": "RESOURCES.no_classificazione_argomenti",
             "newLine": false,
-            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=3425 and ason.id_argomento_son is not null)"
+            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=3425 and ason.id_argomento_son is not null)",
+            "translate": "RESOURCES.no_class_argomenti_3425_modelli_test_vr"
         },
         {
             "fieldName": "no_rischio_TUB",
@@ -1888,9 +1871,9 @@
                 "viewType": "checkbox"
             },
             "label": "No rischio TUB (6156)",
-            "translate": "RESOURCES.no_rischio_TUB",
             "newLine": false,
-            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6156 and ason.id_argomento_son is not null)"
+            "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6156 and ason.id_argomento_son is not null)",
+            "translate": "RESOURCES.no_rischio_tub_6156_modelli_test_vr"
         },
         {
             "fieldName": "no_rischio_OICR",
@@ -1901,7 +1884,7 @@
             "label": "No rischio TUF/OICR(6155)",
             "newLine": false,
             "queryCond": "mt.id_argomento not in(select ason.id_argomento_son from entrasp.argomenti_argomenti af inner join entrasp.argomenti_argomenti ason on af.id_argomento_son=ason.id_argomento_father where af.id_argomento_father=6155 and ason.id_argomento_son is not null)",
-            "translate": "RESOURCES.no_rischio_tufoicr6155"
+            "translate": "RESOURCES.no_rischio_tufoicr6155_modelli_test_vr"
         }
     ],
     "subTables": [
@@ -1931,8 +1914,8 @@
                 }
             ],
             "label": "Domande",
-            "translate": "RESOURCES.domandelabel",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.domande_domande_sub_of_modelli_test_vr"
         },
         {
             "entryKey": "domande_sezioni_detail",
@@ -1960,7 +1943,7 @@
                 }
             ],
             "label": "Domande - Sezioni",
-            "translate": "RESOURCES.domande_sezioni"
+            "translate": "RESOURCES.domande__sezioni_domande_sezioni_detail"
         },
         {
             "entryKey": "sondaggi_sub_of_modelli_test",
@@ -1977,8 +1960,8 @@
                 }
             ],
             "label": "Sondaggi Associati",
-            "translate": "RESOURCES.associated_survey",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.sondaggi_associati_sondaggi_sub_of_modelli_test"
         },
         {
             "entryKey": "tipi_allegati_sub_of_modelli_test",
@@ -1999,7 +1982,7 @@
                 }
             ],
             "label": "Documenti necessari per la verifica",
-            "translate": "RESOURCES.documenti_necessari"
+            "translate": "RESOURCES.documenti_necessari_per_la_verifica_tipi_allegati_sub_of_modelli_test"
         },
         {
             "entryKey": "consuntivazioni_sub_of_modelli_test",
@@ -2015,7 +1998,7 @@
                 }
             ],
             "label": "Aggiornamenti e Time Report",
-            "translate": "RESOURCES.update_and_time_report"
+            "translate": "RESOURCES.aggiornamenti_e_time_report_consuntivazioni_sub_of_modelli_test"
         },
         {
             "entryKey": "modelli_test_vr_sub_version",
@@ -2031,7 +2014,7 @@
                 }
             ],
             "label": "Versioni",
-            "translate": "RESOURCES.version"
+            "translate": "RESOURCES.versioni_modelli_test_vr_sub_version"
         },
         {
             "entryKey": "domande_da_copiare",
@@ -2051,8 +2034,8 @@
                 }
             ],
             "label": "Domande da copiare",
-            "translate": "RESOURCES.domande_da_copiare",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.domande_da_copiare_domande_da_copiare"
         },
         {
             "entryKey": "tag_sub_of_modelli_test_vr",
@@ -2064,7 +2047,7 @@
                 }
             ],
             "label": "TAG",
-            "translate": "RESOURCES.tag"
+            "translate": "RESOURCES.tag_tag_sub_of_modelli_test_vr"
         },
         {
             "entryKey": "sintesi_domande_modello_test_vr",
@@ -2084,7 +2067,7 @@
                 }
             ],
             "label": "Riassunto pt. domande",
-            "translate": "RESOURCES.riassunto_pt_domande"
+            "translate": "RESOURCES.riassunto_pt_domande_sintesi_domande_modello_test_vr"
         },
         {
             "entryKey": "argomenti_report",
@@ -2096,7 +2079,7 @@
                 }
             ],
             "label": "Report",
-            "translate": "RESOURCES.report"
+            "translate": "RESOURCES.report_argomenti_report"
         }
     ],
     "table_keys": [
@@ -2108,8 +2091,8 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
-            "width": "5%"
+            "width": "5%",
+            "translate": "RESOURCES.codice_azienda_modelli_test_vr"
         },
         {
             "format": {
@@ -2120,7 +2103,7 @@
             "key": "id_modello_test",
             "width": "7%",
             "label": "#",
-            "translate": "RESOURCES.hash"
+            "translate": "RESOURCES._modelli_test_vr"
         },
         {
             "format": {
@@ -2131,7 +2114,7 @@
             "key": "id_modello_test_vr",
             "width": "6%",
             "label": "Versione",
-            "translate": "RESOURCES.version"
+            "translate": "RESOURCES.versione_modelli_test_vr"
         },
         {
             "format": {
@@ -2142,7 +2125,7 @@
             "width": "6%",
             "key": "id_argomento",
             "label": "Id_argomento",
-            "translate": "RESOURCES.id_tag"
+            "translate": "RESOURCES.id_argomento_modelli_test_vr"
         },
         {
             "format": {
@@ -2152,7 +2135,6 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "width": "6%",
             "queryFunct": "select codice from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
             "style": [
@@ -2162,7 +2144,8 @@
                     "text_align": "center",
                     "font_weight": "599"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.codice_modelli_test_vr"
         },
         {
             "format": {
@@ -2172,7 +2155,6 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "width": "39%",
             "queryFunct": "select titolo from entrasp.modello_test_fields(codice_azienda, id_modello_test)",
             "style": [
@@ -2181,7 +2163,8 @@
                     "font_size": "medium",
                     "font_weight": "599"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.titolo_modelli_test_vr"
         },
         {
             "format": {
@@ -2191,8 +2174,8 @@
             "isPrimary": false,
             "key": "centro_gest",
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
-            "width": "13%"
+            "width": "13%",
+            "translate": "RESOURCES.centro_gestionale_modelli_test_vr"
         },
         {
             "format": {
@@ -2201,8 +2184,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "id_tipo_modello_test",
-            "label": "",
-            "translate": "RESOURCES.id_tipo_modello_test"
+            "label": ""
         },
         {
             "format": {
@@ -2213,7 +2195,7 @@
             "key": "descr_tipo",
             "width": "12%",
             "label": "Tipo",
-            "translate": "RESOURCES.type"
+            "translate": "RESOURCES.tipo_modelli_test_vr"
         },
         {
             "format": {
@@ -2223,7 +2205,7 @@
             "isPrimary": false,
             "key": "id_sondaggio",
             "label": "id_sondaggio",
-            "translate": "RESOURCES.id_survey"
+            "translate": "RESOURCES.id_sondaggio_modelli_test_vr"
         },
         {
             "format": {
@@ -2233,7 +2215,7 @@
             "isPrimary": false,
             "key": "id_somministrazione",
             "label": "id_somministrazione",
-            "translate": "RESOURCES.id_administration"
+            "translate": "RESOURCES.id_somministrazione_modelli_test_vr"
         },
         {
             "format": {
@@ -2245,7 +2227,6 @@
             "queryFunct": "select true",
             "key": "create_somministrazione",
             "label": "Crea Verifica",
-            "translate": "RESOURCES.crea_verifica",
             "style": [
                 {
                     "button_icon": "add",
@@ -2288,7 +2269,8 @@
                         "destination": "id_somministrazione"
                     }
                 ]
-            }
+            },
+            "translate": "RESOURCES.crea_verifica_modelli_test_vr"
         },
         {
             "format": {
@@ -2297,9 +2279,9 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "fake",
-            "label": "-",
+            "label": "#",
             "width": "1%",
-            "translate": "RESOURCES.fake"
+            "translate": "RESOURCES._modelli_test_vr"
         },
         {
             "format": {
@@ -2309,7 +2291,7 @@
             "isPrimary": false,
             "key": "id_risultato",
             "label": "id_risultato",
-            "translate": "RESOURCES.id_risultato"
+            "translate": "RESOURCES.id_risultato_modelli_test_vr"
         },
         {
             "format": {
@@ -2319,7 +2301,7 @@
             "isPrimary": true,
             "key": "id_argomento_son",
             "label": "Id_argomento_son",
-            "translate": "RESOURCES.id_argomento_son"
+            "translate": "RESOURCES.id_argomento_son_modelli_test_vr"
         }
     ],
     "inputEvents": [
@@ -2536,52 +2518,43 @@
         "formQueries": [
             {
                 "label": "Template domande per import",
-                "queryString": "select '1' as ordinamento_domanda, '10' as punteggio_domanda, 'domanda' as domanda, 'note domanda' as note_domanda, '1' as ordinamento_sezione, 'sezione' as descrizione_sezione",
-                "translate": "RESOURCES.template_domande_per_import"
+                "queryString": "select '1' as ordinamento_domanda, '10' as punteggio_domanda, 'domanda' as domanda, 'note domanda' as note_domanda, '1' as ordinamento_sezione, 'sezione' as descrizione_sezione"
             },
             {
                 "label": "Risposte previste modelli test",
-                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, ds.descrizione as sezione, dm.id_domanda, dm.punteggio, dm.descrizione as domanda, dm.id_domanda_rif, dm.id_risposta_prev_rif, rp.id_risposta_prev, rp.peso, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda=ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where mt.id_modello_test = $id_modello_test$ and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, ds.ordinamento, dm.ordinamento",
-                "translate": "RESOURCES.risposte_previste_modelli_test"
+                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, ds.descrizione as sezione, dm.id_domanda, dm.punteggio, dm.descrizione as domanda, dm.id_domanda_rif, dm.id_risposta_prev_rif, rp.id_risposta_prev, rp.peso, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda=ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where mt.id_modello_test = $id_modello_test$ and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, ds.ordinamento, dm.ordinamento"
             },
             {
                 "label": "Conta risposte per anno (no versioni)",
-                "queryString": "select extract(year from snd.data_esecuzione) as anno, case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end as ultimo_si_no, rs.id_modello_test, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda) as sezione, rs.id_domanda, dm.descrizione as domanda, rs.punteggio, entrasp.risposte_previste_risposta1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda, rs.id_risposta_prev) as risposta, rs.peso, count(rs.id_risposta)  from entrasp.risposte rs  inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda  inner join entrasp.domande dm on rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda  left join entrasp.estrazione_profili_aml uca  on rs.id_sondaggio=uca.id_sondaggio and rs.codice_azienda=uca.codice_azienda  where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test = $id_modello_test$  group by extract(year from snd.data_esecuzione),  rs.codice_azienda,  rs.id_modello_test,  rs.id_domanda,  rs.id_risposta_prev,  rs.punteggio,  rs.peso,  dm.descrizione,  case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end  order by extract(year from snd.data_esecuzione),  entrasp.domande_sezioni_ord_da_dm1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda),  id_modello_test,  id_domanda,  id_risposta_prev",
-                "translate": "RESOURCES.conta_risposte_per_anno_no_versioni"
+                "queryString": "select extract(year from snd.data_esecuzione) as anno, case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end as ultimo_si_no, rs.id_modello_test, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda) as sezione, rs.id_domanda, dm.descrizione as domanda, rs.punteggio, entrasp.risposte_previste_risposta1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda, rs.id_risposta_prev) as risposta, rs.peso, count(rs.id_risposta)  from entrasp.risposte rs  inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda  inner join entrasp.domande dm on rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda  left join entrasp.estrazione_profili_aml uca  on rs.id_sondaggio=uca.id_sondaggio and rs.codice_azienda=uca.codice_azienda  where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test = $id_modello_test$  group by extract(year from snd.data_esecuzione),  rs.codice_azienda,  rs.id_modello_test,  rs.id_domanda,  rs.id_risposta_prev,  rs.punteggio,  rs.peso,  dm.descrizione,  case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end  order by extract(year from snd.data_esecuzione),  entrasp.domande_sezioni_ord_da_dm1(rs.codice_azienda, rs.id_modello_test, rs.id_domanda),  id_modello_test,  id_domanda,  id_risposta_prev"
             },
             {
                 "label": "Risultato sintetico per domanda",
                 "queryString": "select extract(year from snd.data_esecuzione) as anno, rs.id_modello_test, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda) as sezione, id_domanda, entrasp.domande_descrizione1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda) as domanda,  rs.punteggio, count(id_risposta) as num_risposte, sum(rs.peso*rs.punteggio/100)/count(rs.id_risposta) as risultato from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test = $id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_domanda, rs.punteggio order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm1(rs.codice_azienda, rs.id_modello_test,  rs.id_domanda), id_modello_test, id_domanda",
-                "key": "testing10",
-                "translate": "RESOURCES.risultato_sintetico_per_domanda"
+                "key": "testing10"
             },
             {
                 "label": "Conta risposte per anno (con versioni)",
-                "queryString": "select extract(year from snd.data_esecuzione) as anno,  case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end as ultimo_si_no, rs.id_modello_test, rs.id_modello_test_vr, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda) as sezione, rs.id_domanda, dm.punteggio, dm.descrizione, entrasp.risposte_previste_risposta(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev) as risposta, count(rs.id_risposta) from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda inner join entrasp.domande dm on rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda left join entrasp.estrazione_profili_aml uca on rs.id_sondaggio=uca.id_sondaggio and rs.codice_azienda=uca.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test=$id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev, dm.punteggio, dm.descrizione, case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda), id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev",
-                "translate": "RESOURCES.conta_risposte_per_anno_con_versioni"
+                "queryString": "select extract(year from snd.data_esecuzione) as anno,  case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end as ultimo_si_no, rs.id_modello_test, rs.id_modello_test_vr, entrasp.modello_test_titolo(rs.codice_azienda, rs.id_modello_test) as modello_test, entrasp.domande_sezione_descrizione(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda) as sezione, rs.id_domanda, dm.punteggio, dm.descrizione, entrasp.risposte_previste_risposta(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev) as risposta, count(rs.id_risposta) from entrasp.risposte rs inner join entrasp.sondaggi snd on rs.id_sondaggio=snd.id_sondaggio and rs.codice_azienda=snd.codice_azienda inner join entrasp.domande dm on rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda left join entrasp.estrazione_profili_aml uca on rs.id_sondaggio=uca.id_sondaggio and rs.codice_azienda=uca.codice_azienda where rs.codice_azienda=$codice_azienda$ and rs.id_modello_test=$id_modello_test$ group by extract(year from snd.data_esecuzione), rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda, rs.id_risposta_prev, dm.punteggio, dm.descrizione, case when uca.id_sondaggio is not null then 'attivo e ultimo' else 'NON attivo/ultimo' end order by extract(year from snd.data_esecuzione), entrasp.domande_sezioni_ord_da_dm(rs.codice_azienda, rs.id_modello_test, rs.id_modello_test_vr, rs.id_domanda), id_modello_test, id_modello_test_vr, id_domanda, id_risposta_prev"
             },
             {
                 "key": "export_risposte_negozi",
                 "label": "Risposte Negozi",
-                "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione, avr.annotazioni_interne, ss.data_esecuzione, ss.ris_percentuale, ss.giudizio, rp.risposta, ri.peso, ds.descrizione, dm.id_domanda from entrasp.risposte ri inner join entrasp.risposte_previste rp on ri.codice_azienda=rp.codice_azienda and ri.id_risposta_prev=rp.id_risposta_prev inner join entrasp.sondaggi_somministrati ss on ri.codice_azienda=ss.codice_azienda and ri.id_somministrazione=ss.id_somministrazione and ri.id_sondaggio=ss.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica AND avr.prog_vr=entrasp.anagrafiche_vr_max(ss.codice_part, split_part(ss.object_key,'|',2)::numeric) inner join entrasp.domande dm on ri.codice_azienda=dm.codice_azienda and ri.id_modello_test=dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda inner join entrasp.domande_sezioni ds on dm.codice_azienda= ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where ri.codice_azienda=$codice_azienda$ and ss.data_esecuzione > current_date - interval '18 months' and ri.id_modello_test=$id_modello_test$ ORDER BY avr.id_anagrafica asc",
-                "translate": "RESOURCES.risposte_negozi"
+                "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione, avr.annotazioni_interne, ss.data_esecuzione, ss.ris_percentuale, ss.giudizio, rp.risposta, ri.peso, ds.descrizione, dm.id_domanda from entrasp.risposte ri inner join entrasp.risposte_previste rp on ri.codice_azienda=rp.codice_azienda and ri.id_risposta_prev=rp.id_risposta_prev inner join entrasp.sondaggi_somministrati ss on ri.codice_azienda=ss.codice_azienda and ri.id_somministrazione=ss.id_somministrazione and ri.id_sondaggio=ss.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica AND avr.prog_vr=entrasp.anagrafiche_vr_max(ss.codice_part, split_part(ss.object_key,'|',2)::numeric) inner join entrasp.domande dm on ri.codice_azienda=dm.codice_azienda and ri.id_modello_test=dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda inner join entrasp.domande_sezioni ds on dm.codice_azienda= ds.codice_azienda and dm.id_modello_test=ds.id_modello_test and dm.id_modello_test_vr=ds.id_modello_test_vr and dm.id_sezione=ds.id_sezione where ri.codice_azienda=$codice_azienda$ and ss.data_esecuzione > current_date - interval '18 months' and ri.id_modello_test=$id_modello_test$ ORDER BY avr.id_anagrafica asc"
             }
         ],
         "tableQueries": [
             {
                 "label": "Risp prev mod test",
-                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda",
-                "translate": "RESOURCES.risp_prev_mod_test"
+                "queryString": "select mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mvr.id_modello_test_vr, mt.titolo, dm.id_domanda"
             },
             {
                 "label": "Risp prev mod test no vers",
-                "queryString": "select distinct mt.id_modello_test, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mt.titolo, dm.id_domanda",
-                "translate": "RESOURCES.risp_prev_mod_test_no_vers"
+                "queryString": "select distinct mt.id_modello_test, mt.titolo, dm.id_domanda, dm.descrizione, rp.id_risposta_prev, rp.risposta from entrasp.modelli_test mt inner join entrasp.modelli_test_vr mvr on mt.codice_azienda=mvr.codice_azienda and mt.id_modello_test=mvr.id_modello_test inner join entrasp.domande dm on mvr.codice_azienda=dm.codice_azienda and mvr.id_modello_test=dm.id_modello_test and mvr.id_modello_test_vr=dm.id_modello_test_vr left join entrasp.risposte_previste rp on dm.codice_azienda=rp.codice_azienda and dm.id_modello_test=rp.id_modello_test and dm.id_modello_test_vr=rp.id_modello_test_vr and dm.id_domanda=rp.id_domanda where mt.id_modello_test in(44, 23, 45, 52, 46, 53, 50, 54, 42,55) and mt.codice_azienda=$codice_azienda$ order by mt.id_modello_test, mt.titolo, dm.id_domanda"
             },
             {
                 "label": "Modelli con domande doppie",
-                "queryString": "select descrizione, entrasp.domande_sezione_descr(codice_azienda, id_modello_test, id_modello_test_vr, id_sezione), id_argomento, id_modello_test, id_modello_test_vr, id_domanda, id_sezione from entrasp.domande where codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr in (select codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr from entrasp.domande where id_argomento is null) and codice_azienda=$codice_azienda$ order by codice_azienda, id_modello_test, id_modello_test_vr, descrizione, id_argomento",
-                "translate": "RESOURCES.modelli_con_domande_doppie"
+                "queryString": "select descrizione, entrasp.domande_sezione_descr(codice_azienda, id_modello_test, id_modello_test_vr, id_sezione), id_argomento, id_modello_test, id_modello_test_vr, id_domanda, id_sezione from entrasp.domande where codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr in (select codice_azienda||'-'||id_modello_test||'-'||id_modello_test_vr from entrasp.domande where id_argomento is null) and codice_azienda=$codice_azienda$ order by codice_azienda, id_modello_test, id_modello_test_vr, descrizione, id_argomento"
             }
         ]
     },
@@ -2589,8 +2562,7 @@
         "formQueries": [
             {
                 "label": "Importa domande",
-                "queryString": "select entrasp.domande_import($codice_azienda$, $id_modello_test$ , $id_modello_test_vr$, $nome_file$)",
-                "translate": "RESOURCES.importa_domande"
+                "queryString": "select entrasp.domande_import($codice_azienda$, $id_modello_test$ , $id_modello_test_vr$, $nome_file$)"
             }
         ]
     },
@@ -2599,8 +2571,7 @@
     },
     "addElementSettings": {
         "labelAdd": "Nuovo Modello di Verifica",
-        "navigateOnSuccess": true,
-        "translateAdd": "RESOURCES.nuovo_modello_di_verifica"
+        "navigateOnSuccess": true
     },
     "hideActions": [
         {
@@ -2615,6 +2586,5 @@
             "viewType": "form",
             "formActionType": "attachments"
         }
-    ],
-    "translate": "RESOURCES.modelli_di_verifica"
+    ]
 }

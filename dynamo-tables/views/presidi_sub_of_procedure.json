@@ -14,9 +14,9 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code",
             "newLine": true,
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.codice_azienda_presidi_sub_of_procedure"
         },
         {
             "autoGenerate": false,
@@ -29,7 +29,7 @@
                         "message": "Inserire presidio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_presidio"
+                        "translate": "RESOURCES.inserire_presidio_presidi_sub_of_procedure"
                     }
                 ]
             },
@@ -38,9 +38,38 @@
             "key": "id_presidio",
             "label": "Presidio",
             "newLine": false,
-            "size": 1.5,
+            "size": 5,
             "readOnly": false,
-            "translate": "RESOURCES.id_presidio"
+            "translate": "RESOURCES.presidio_presidi_sub_of_procedure"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, ordinamento||'-'||transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='GIUDIZI_EFFICACIA' and ordinamento<=5 order by ordinamento;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giudizio_efficacia",
+            "label": "Giudizio efficacia",
+            "newLine": true,
+            "readOnly": false,
+            "outputEvent": {
+                "eventName": "presidio_change_stato",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "presidio_change_stato",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select background_color as stato_attuazione_background_color from entrasp.transcodifiche where tipo_dato='GIUDIZI_EFFICACIA' and codice=$giudizio_efficacia$"
+                }
+            ]
         },
         {
             "autoGenerate": false,
@@ -52,9 +81,9 @@
             "isPrimary": true,
             "key": "id_procedura",
             "label": "Procedura",
-            "translate": "RESOURCES.id_process",
             "newLine": true,
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.procedura_presidi_sub_of_procedure"
         },
         {
             "autoGenerate": false,
@@ -66,9 +95,9 @@
             "isPrimary": false,
             "key": "note",
             "label": "Note",
-            "translate": "RESOURCES.notes",
             "newLine": true,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.note_presidi_sub_of_procedure"
         },
         {
             "autoGenerate": false,
@@ -90,9 +119,14 @@
             },
             "readOnly": false,
             "sameOrigin": false,
-            "translate": "RESOURCES.navigate_to_presidio_k"
+            "translate": "RESOURCES.dettaglio_presidio_presidi_sub_of_procedure"
         }
     ],
+    "addElementSettings": {
+        "labelAdd": "Associa nuovo presidio",
+        "labelQuickAdd": "Associa nuovo presidio",
+        "navigateOnSuccess": false
+    },
     "table_keys": [
         {
             "format": {
@@ -101,8 +135,8 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.codice_azienda_presidi_sub_of_procedure"
         },
         {
             "format": {
@@ -141,8 +175,7 @@
                     }
                 ],
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.delete_presidi_processi"
+            }
         },
         {
             "format": {
@@ -152,7 +185,7 @@
             "isPrimary": true,
             "key": "id_presidio",
             "label": "ID Presidio",
-            "translate": "RESOURCES.id_presidio"
+            "translate": "RESOURCES.id_presidio_presidi_sub_of_procedure"
         },
         {
             "format": {
@@ -160,11 +193,11 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "10%",
+            "width": "7%",
             "key": "codice",
             "queryFunct": "entrasp.presidi_codice(id_presidio,codice_azienda)",
             "label": "Codice",
-            "translate": "RESOURCES.code"
+            "translate": "RESOURCES.codice_presidi_sub_of_procedure"
         },
         {
             "format": {
@@ -172,11 +205,33 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "78%",
+            "width": "30%",
             "key": "descr_presidio",
             "queryFunct": "entrasp.presidi_descr(id_presidio,codice_azienda)",
             "label": "Presidio",
-            "translate": "RESOURCES.descr_presidio"
+            "translate": "RESOURCES.presidio_presidi_sub_of_procedure"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "giudizio_efficacia",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZI_EFFICACIA', giudizio_efficacia)::varchar",
+            "styleQuery": "select transcodifica as giudizio_efficacia, background_color, character_color as font_color, '500' as font_weight, 'center' as text_align from entrasp.transcodifiche where tipo_dato='GIUDIZI_EFFICACIA'",
+            "label": "Efficacia"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "15%",
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note"
         },
         {
             "format": {
@@ -186,7 +241,7 @@
             "isPrimary": true,
             "key": "id_procedura",
             "label": "id_procedura",
-            "translate": "RESOURCES.id_procedura"
+            "translate": "RESOURCES.id_procedura_presidi_sub_of_procedure"
         },
         {
             "format": {
@@ -220,7 +275,7 @@
                     "value": "*"
                 }
             ],
-            "translate": "RESOURCES.visible_button_presidio"
+            "translate": "RESOURCES.presidio_presidi_sub_of_procedure"
         }
     ],
     "inputEvents": [
@@ -247,6 +302,10 @@
         {
             "tableActionType": "add",
             "viewType": "table"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
         }
     ]
 }

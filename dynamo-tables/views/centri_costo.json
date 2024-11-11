@@ -15,9 +15,9 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.codice_azienda",
             "newLine": false,
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.codice_azienda_centri_costo"
         },
         {
             "autoGenerate": true,
@@ -32,7 +32,7 @@
             "label": "ID",
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.id_centro_costo"
+            "translate": "RESOURCES.id_centri_costo"
         },
         {
             "autoGenerate": false,
@@ -43,11 +43,11 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "descrizione",
-            "label": "descrizione",
-            "translate": "RESOURCES.description",
+            "label": "Descrizione",
             "size": 7,
             "newLine": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.descrizione_centri_costo"
         }
     ],
     "table_keys": [
@@ -60,7 +60,7 @@
             "key": "codice_azienda",
             "label": "codice_azienda",
             "width": "5%",
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES.codice_azienda_centri_costo"
         },
         {
             "format": {
@@ -80,7 +80,7 @@
                     "font_size": "medium"
                 }
             ],
-            "translate": "RESOURCES.id_centro_costo"
+            "translate": "RESOURCES.id_centri_costo"
         },
         {
             "format": {
@@ -91,7 +91,7 @@
             "key": "descrizione",
             "label": "Descrizione",
             "width": "25%",
-            "translate": "RESOURCES.description"
+            "translate": "RESOURCES.descrizione_centri_costo"
         }
     ],
     "subTables": [
@@ -108,9 +108,13 @@
                 }
             ],
             "label": "Compiti Associati",
-            "translate": "RESOURCES.compiti_associati"
+            "translate": "RESOURCES.compiti_associati_compiti_sub_of_centri_costo"
         }
     ],
+    "addElementSettings": {
+        "labelAdd": "Nuovo Centro",
+        "navigateOnSuccess": true
+    },
     "hideActions": [
         {
             "viewType": "form",
@@ -125,8 +129,7 @@
         "tableQueries": [
             {
                 "label": "Uffici e componenti",
-                "queryString": "select id_centro_gest, entrasp.anagrafiche_vr_dati_identificativi(cg.codice_part, cg.id_anagrafica_societa) as Società, cg.descrizione, entrasp.anagrafiche_cognnome(glm.codice_part, glm.id_anagrafica) as nome from entrasp.centri_gestionali cg inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part where id_centro_gest>0 and cg.codice_part=$codice_part$ order by cg.descrizione, glm.id_anagrafica",
-                "translate": "RESOURCES.uffici_e_componenti"
+                "queryString": "select id_centro_gest, entrasp.anagrafiche_vr_dati_identificativi(cg.codice_part, cg.id_anagrafica_societa) as Società, cg.descrizione, entrasp.anagrafiche_cognnome(glm.codice_part, glm.id_anagrafica) as nome from entrasp.centri_gestionali cg inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part where id_centro_gest>0 and cg.codice_part=$codice_part$ order by cg.descrizione, glm.id_anagrafica"
             }
         ]
     },
@@ -135,6 +138,5 @@
             "actionType": "reload",
             "eventName": "cg_reload"
         }
-    ],
-    "translate": "RESOURCES.centri_costo"
+    ]
 }

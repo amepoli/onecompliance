@@ -7,16 +7,6 @@
             "operation": "selectTable",
             "queryString": "select * ,entrasp.argomenti_descr_breve_no_num(id_argomento) as tipo_aggiornamento,entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato) as descr_stato, note as note_restricted, entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa) as esecutore from entrasp.consuntivazioni WHERE codice_azienda=$codice_azienda$ and id_asset= $id_asset$",
             "type": "main"
-        },
-        {
-            "operation": "insert",
-            "queryString": "update entrasp.consuntivazioni cn set id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-            "type": "postProcessing"
-        },
-        {
-            "operation": "update",
-            "queryString": "update entrasp.consuntivazioni cn set id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-            "type": "postProcessing"
         }
     ],
     "table_keys": [
@@ -28,7 +18,7 @@
             "isPrimary": false,
             "key": "codice_compito",
             "label": "codice_compito",
-            "translate": "RESOURCES.task_code"
+            "translate": "RESOURCES.codice_compito_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -38,7 +28,7 @@
             "isPrimary": true,
             "key": "id_cons",
             "label": "Codice",
-            "translate": "RESOURCES.code"
+            "translate": "RESOURCES.codice_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -48,8 +38,8 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code",
-            "width": "10%"
+            "width": "10%",
+            "translate": "RESOURCES.codice_azienda_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -91,8 +81,7 @@
                     "text": "Si vuole cancellare l'aggiornamento?"
                 },
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.cancella_consuntivazione"
+            }
         },
         {
             "format": {
@@ -102,8 +91,8 @@
             "isPrimary": false,
             "key": "data_intervento",
             "label": "Data Intervento",
-            "translate": "RESOURCES.data_intervento",
-            "width": "6%"
+            "width": "6%",
+            "translate": "RESOURCES.data_intervento_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -113,8 +102,8 @@
             "isPrimary": false,
             "key": "durata",
             "label": "Durata Intervento (minuti)",
-            "translate": "RESOURCES.durata_intervento_min",
-            "width": "6%"
+            "width": "6%",
+            "translate": "RESOURCES.durata_intervento_minuti_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -125,7 +114,7 @@
             "key": "durata_ft",
             "label": "Durata Fatturabile (minuti)",
             "width": "6%",
-            "translate": "RESOURCES.durata_ft"
+            "translate": "RESOURCES.durata_fatturabile_minuti_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -137,7 +126,7 @@
             "queryFunct": "entrasp.argomenti_descr_breve_no_num(id_argomento)",
             "label": "Tipo Aggiornamento",
             "width": "10%",
-            "translate": "RESOURCES.tipo_aggiornamento"
+            "translate": "RESOURCES.tipo_aggiornamento_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -149,8 +138,8 @@
             "key": "esecutore",
             "queryFunct": "entrasp.anagrafiche_id_codcognnome(codice_part,id_risorsa)",
             "label": "Esecutore",
-            "translate": "RESOURCES.esecutore",
-            "width": "10%"
+            "width": "10%",
+            "translate": "RESOURCES.esecutore_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -161,7 +150,6 @@
             "key": "descr_stato",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_SONDAGGI', stato)",
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "width": "6%",
             "style": [
                 {
@@ -194,7 +182,8 @@
                     "font_color": "grey",
                     "font_weight": "500"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.stato_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -205,7 +194,7 @@
             "key": "thread",
             "label": "Thread",
             "width": "25%",
-            "translate": "RESOURCES.thread"
+            "translate": "RESOURCES.thread_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -216,8 +205,8 @@
             "key": "note_restricted",
             "queryFunct": "substring(note from 1 for 100)",
             "label": "Note",
-            "translate": "RESOURCES.notes",
-            "width": "33%"
+            "width": "33%",
+            "translate": "RESOURCES.note_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -227,7 +216,7 @@
             "isPrimary": false,
             "key": "codice_attivita",
             "label": "codice_attivita",
-            "translate": "RESOURCES.codice_attivita"
+            "translate": "RESOURCES.codice_attivita_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -237,7 +226,7 @@
             "isPrimary": false,
             "key": "id_progetto",
             "label": "id_progetto",
-            "translate": "RESOURCES.id_progetto"
+            "translate": "RESOURCES.id_progetto_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -247,7 +236,7 @@
             "isPrimary": false,
             "key": "id_asset",
             "label": "id_asset",
-            "translate": "RESOURCES.id_asset"
+            "translate": "RESOURCES.id_asset_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -257,7 +246,7 @@
             "isPrimary": false,
             "key": "id_modello_test",
             "label": "id_modello_test",
-            "translate": "RESOURCES.id_check_template"
+            "translate": "RESOURCES.id_modello_test_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -267,7 +256,7 @@
             "isPrimary": false,
             "key": "id_fase",
             "label": "id_fase",
-            "translate": "RESOURCES.id_fase"
+            "translate": "RESOURCES.id_fase_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -277,7 +266,7 @@
             "isPrimary": false,
             "key": "id_sondaggio",
             "label": "id_sondaggio",
-            "translate": "RESOURCES.id_survey"
+            "translate": "RESOURCES.id_sondaggio_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -287,7 +276,7 @@
             "isPrimary": false,
             "key": "id_riunione",
             "label": "id_riunione",
-            "translate": "RESOURCES.id_riunione"
+            "translate": "RESOURCES.id_riunione_consuntivazioni_sub_of_asset"
         },
         {
             "format": {
@@ -297,7 +286,7 @@
             "isPrimary": false,
             "key": "id_argomento",
             "label": "Id_argomento",
-            "translate": "RESOURCES.id_tag"
+            "translate": "RESOURCES.id_argomento_consuntivazioni_sub_of_asset"
         }
     ]
 }

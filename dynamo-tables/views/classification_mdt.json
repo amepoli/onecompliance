@@ -46,7 +46,7 @@
             "label": "ID",
             "newLine": false,
             "queryCond": "arg.id_argomento=$id_argomento_s$",
-            "translate": "RESOURCES.id"
+            "translate": "RESOURCES.id_classification_mdt"
         },
         {
             "fieldName": "codice",
@@ -55,9 +55,9 @@
                 "viewType": "input"
             },
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "newLine": false,
-            "queryCond": "arg.codice=$codice$"
+            "queryCond": "arg.codice=$codice$",
+            "translate": "RESOURCES.codice_classification_mdt"
         },
         {
             "fieldName": "descr_rs",
@@ -66,9 +66,9 @@
                 "viewType": "input"
             },
             "label": "Descrizione",
-            "translate": "RESOURCES.description",
             "newLine": true,
-            "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€descr_rs')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
+            "queryCond": "(UPPER(arg.descrizione) like '%'||UPPER('€descr_rs')||'%' or UPPER(arg.descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')",
+            "translate": "RESOURCES.descrizione_classification_mdt"
         },
         {
             "fieldName": "no_modello_test",
@@ -80,7 +80,7 @@
             "newLine": true,
             "size": 1,
             "queryCond": "arg.id_argomento not in(select mt.id_argomento from entrasp.modelli_test mt)",
-            "translate": "RESOURCES.senza_modelli_di_test"
+            "translate": "RESOURCES.senza_modelli_di_test_classification_mdt"
         },
         {
             "fieldName": "no_modello_test",
@@ -92,7 +92,7 @@
             "newLine": true,
             "size": 1,
             "queryCond": "arg.id_argomento in(select mt.id_argomento from entrasp.modelli_test mt)",
-            "translate": "RESOURCES.con_modelli_di_test"
+            "translate": "RESOURCES.con_modelli_di_test_classification_mdt"
         },
         {
             "fieldName": "categorie_modello_test_s",
@@ -105,7 +105,7 @@
             "label": "Categorie modelli test",
             "newLine": false,
             "queryCond": "array[arg.id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))",
-            "translate": "RESOURCES.categorie_modelli_test"
+            "translate": "RESOURCES.categorie_modelli_test_classification_mdt"
         }
     ],
     "subTables": [
@@ -118,7 +118,7 @@
                 }
             ],
             "label": "Argomenti figli",
-            "translate": "RESOURCES.argomenti_figli"
+            "translate": "RESOURCES.argomenti_figli_argomenti_sub_of_argomenti_son"
         },
         {
             "entryKey": "argomenti_sub_of_argomenti_father",
@@ -129,7 +129,7 @@
                 }
             ],
             "label": "Argomenti padre",
-            "translate": "RESOURCES.argomenti_padre"
+            "translate": "RESOURCES.argomenti_padre_argomenti_sub_of_argomenti_father"
         },
         {
             "entryKey": "modelli_test_vr_sub_of_argomenti",
@@ -140,7 +140,7 @@
                 }
             ],
             "label": "Modelli test associati",
-            "translate": "RESOURCES.modelli_test_associati"
+            "translate": "RESOURCES.modelli_test_associati_modelli_test_vr_sub_of_argomenti"
         },
         {
             "entryKey": "modelli_test_extended_sub_of_argomenti",
@@ -151,7 +151,7 @@
                 }
             ],
             "label": "Modelli test estesi",
-            "translate": "RESOURCES.modelli_test_estesi"
+            "translate": "RESOURCES.modelli_test_estesi_modelli_test_extended_sub_of_argomenti"
         }
     ]
 }

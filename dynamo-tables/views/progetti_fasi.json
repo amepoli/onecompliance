@@ -17,7 +17,7 @@
     "predefinedQueries": [
         {
             "operation": "selectForm",
-            "queryString": "select pf.ordinamento, pf.id_fase, pf.codice, pf.titolo, pf.stato, pf.id_progetto, pf.id_progetto as id_progetto2, pf.id_fase_sup, pf.codice_azienda, pf.id_sondaggio, pf.id_sondaggio as id_sondaggio2, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio limit 1) as id_somministrazione, to_char(snd.data_prevista::date, 'DD/MM/YYYY') as data_prevista, (select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=pf.codice_azienda and id_sondaggio=pf.id_sondaggio limit 1)as idsomministrazione ,entrasp.fase_avg_result(pf.codice_azienda, pf.id_fase) as avg_risultato,  entrasp.fase_avg_result_worst(pf.codice_azienda, pf.id_fase) as avg_risultato_worst,  entrasp.fase_giudizio_avg_result(pf.codice_azienda, pf.id_fase) as avg_giudizio, entrasp.fase_giudizio_avg_result_worst(pf.codice_azienda, pf.id_fase) as avg_giudizio_worst from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where pf.codice_azienda=$codice_azienda$ and pf.id_fase=$id_fase$",
+            "queryString": "select pf.ordinamento, pf.id_fase, pf.codice, pf.tipo_fase, pf.titolo, pf.stato, pf.id_progetto, pf.id_progetto as id_progetto2, pf.id_fase_sup, pf.codice_azienda, pf.id_sondaggio, pf.id_sondaggio as id_sondaggio2, (select id_somministrazione from entrasp.sondaggi_somministrati ss where ss.codice_azienda=pf.codice_azienda and ss.id_sondaggio=pf.id_sondaggio limit 1) as id_somministrazione, to_char(snd.data_prevista::date, 'DD/MM/YYYY') as data_prevista, (select id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda=pf.codice_azienda and id_sondaggio=pf.id_sondaggio limit 1)as idsomministrazione ,entrasp.fase_avg_result(pf.codice_azienda, pf.id_fase) as avg_risultato,  entrasp.fase_avg_result_worst(pf.codice_azienda, pf.id_fase) as avg_risultato_worst,  entrasp.fase_giudizio_avg_result(pf.codice_azienda, pf.id_fase) as avg_giudizio, entrasp.fase_giudizio_avg_result_worst(pf.codice_azienda, pf.id_fase) as avg_giudizio_worst from entrasp.progetti_fasi pf left join entrasp.sondaggi snd on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where pf.codice_azienda=$codice_azienda$ and pf.id_fase=$id_fase$",
             "type": "main"
         },
         {
@@ -34,9 +34,7 @@
     "addElementSettings": {
         "labelQuickAdd": "Nuova Fase",
         "labelAdd": "Nuova Fase",
-        "navigateOnSuccess": false,
-        "translateAdd": "RESOURCES.nuova_fase",
-        "translateQuickAdd": "RESOURCES.nuova_fase"
+        "navigateOnSuccess": false
     },
     "messages": [
         {
@@ -62,8 +60,7 @@
                     "query": "select entrasp.progetto_fase_delete(s.codiceazienda, s.idfase::numeric) from ( SELECT SPLIT_PART(ARR,'~',1) as codiceazienda,SPLIT_PART(ARR,'~',2) as idfase FROM UNNEST(ARRAY[$selected_rows_data$]) ARR) AS s;",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Eliminare la fase, il sondaggio associato e tutte le risposte?",
-                    "translate": "RESOURCES.elimina_fase_e_sondaggi_associati"
+                    "confirmActionMessage": "Eliminare la fase, il sondaggio associato e tutte le risposte?"
                 },
                 {
                     "key": "elimina_solo_fase",
@@ -72,8 +69,7 @@
                     "query": "select entrasp.progetto_solo_fase_delete(s.codiceazienda, s.idfase::numeric) from ( SELECT SPLIT_PART(ARR,'~',1) as codiceazienda,SPLIT_PART(ARR,'~',2) as idfase FROM UNNEST(ARRAY[$selected_rows_data$]) ARR) AS s;",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Eliminare la sola fase (e non il sondaggio associato)?",
-                    "translate": "RESOURCES.elimina_solo_fase"
+                    "confirmActionMessage": "Eliminare la sola fase (e non il sondaggio associato)?"
                 },
                 {
                     "key": "stato_non_previsto",
@@ -82,8 +78,7 @@
                     "query": "update entrasp.sondaggi snd set stato='R' from entrasp.progetti_fasi pf where snd.codice_azienda=pf.codice_azienda and snd.id_sondaggio=pf.id_sondaggio and pf.codice_azienda||'~'||pf.id_fase in ($selected_rows_data$);",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Portare tutti i sondaggi connessi alle fasi selezionate in stato 'Non previsto'?",
-                    "translate": "RESOURCES.porta_a_stato_non_previsto"
+                    "confirmActionMessage": "Portare tutti i sondaggi connessi alle fasi selezionate in stato 'Non previsto'?"
                 }
             ]
         }
@@ -104,8 +99,7 @@
             "label": "",
             "readOnly": false,
             "sameOrigin": true,
-            "insertUpdateFunct": "SELECT '€global_username€'",
-            "translate": "RESOURCES.user_upd"
+            "insertUpdateFunct": "SELECT '€global_username€'"
         },
         {
             "autoGenerate": false,
@@ -128,7 +122,7 @@
                 "font_weight": "600"
             },
             "size": 1.11,
-            "translate": "RESOURCES.faselabel"
+            "translate": "RESOURCES.fase_progetti_fasi"
         },
         {
             "autoGenerate": true,
@@ -170,7 +164,7 @@
             "isPrimary": true,
             "newLine": false,
             "size": 1.11,
-            "translate": "RESOURCES.id_fase"
+            "translate": "RESOURCES._progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -179,7 +173,6 @@
                 "dataType": "text"
             },
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "key": "codice",
             "inputEvents": [
                 {
@@ -195,7 +188,8 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 1.11
+            "size": 1.11,
+            "translate": "RESOURCES.codice_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -204,13 +198,13 @@
                 "dataType": "text"
             },
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "key": "titolo",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 3.33
+            "size": 3.33,
+            "translate": "RESOURCES.titolo_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -219,13 +213,13 @@
                 "dataType": "number"
             },
             "label": "Ordinamento",
-            "translate": "RESOURCES.ordinamento",
             "key": "ordinamento",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 1.67
+            "size": 1.67,
+            "translate": "RESOURCES.ordinamento_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -240,12 +234,11 @@
                         "message": "Inserire stato della fase",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_stato_della_fase"
+                        "translate": "RESOURCES.inserire_stato_della_fase_progetti_fasi"
                     }
                 ]
             },
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "key": "stato",
             "readOnly": false,
             "isHidden": false,
@@ -289,7 +282,8 @@
                     "styleAttribute": "background_color",
                     "queryFunct": "select background_color as stato_background_color from entrasp.transcodifiche where tipo_dato='STATO_SONDAGGI' and codice=$stato$"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.stato_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -298,7 +292,6 @@
                 "dataType": "number"
             },
             "label": "Progetto",
-            "translate": "RESOURCES.id_project",
             "key": "id_progetto",
             "size": 1.11,
             "readOnly": true,
@@ -308,7 +301,8 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.progetto_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -324,7 +318,7 @@
             "isPrimary": false,
             "newLine": false,
             "size": 2.22,
-            "translate": "RESOURCES.id_fase_sup"
+            "translate": "RESOURCES.fase_superiore_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -333,12 +327,12 @@
                 "dataType": "text"
             },
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
             "key": "codice_azienda",
             "readOnly": false,
             "isHidden": true,
             "isPrimary": true,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.codice_azienda_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -366,7 +360,7 @@
             "isPrimary": false,
             "newLine": false,
             "size": 3.33,
-            "translate": "RESOURCES.id_sondaggio"
+            "translate": "RESOURCES.sondaggio_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -379,14 +373,14 @@
             "size": 0.81,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.id_survey",
             "outputEvent": {
                 "eventName": "to_sondaggio_from_progetti_fasi",
                 "eventTrigger": "press"
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.sondaggio_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -406,7 +400,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "translate": "RESOURCES.id_somministrazione"
+            "translate": "RESOURCES.verifica_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -422,12 +416,12 @@
             "isPrimary": false,
             "newLine": false,
             "size": 0.9,
-            "translate": "RESOURCES.data_prevista"
+            "translate": "RESOURCES.scadenza_progetti_fasi"
         },
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "select distinct tipo_fase as id, tipo_fase as name from entrasp.progetti_fasi",
+                "comboQuery": "select distinct tipo_fase::varchar as id, tipo_fase as name from entrasp.progetti_fasi",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text",
@@ -437,18 +431,19 @@
                         "message": "Inserire stato della fase",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_stato_della_fase"
+                        "translate": "RESOURCES.inserire_stato_della_fase_progetti_fasi"
                     }
                 ]
             },
             "label": "Tipo fase",
             "key": "tipo_fase",
+            "insertUpdateFunct": "'£tipo_fase£'",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
             "newLine": true,
             "size": 0.9,
-            "translate": "RESOURCES.tipo_fase"
+            "translate": "RESOURCES.tipo_fase_progetti_fasi"
         },
         {
             "autoGenerate": false,
@@ -459,7 +454,7 @@
             "isPrimary": false,
             "key": "activate_detail_k",
             "label": "",
-            "buttonIcon": "expand_more",
+            "buttonIcon": "expand_less",
             "newLine": false,
             "size": 0.3,
             "outputEvent": {
@@ -485,8 +480,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "translate": "RESOURCES.activate_detail_k"
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -497,7 +491,7 @@
             "isPrimary": false,
             "key": "hide_detail_k",
             "label": "",
-            "buttonIcon": "expand_less",
+            "buttonIcon": "expand_circle_down",
             "newLine": false,
             "size": 0.3,
             "outputEvent": {
@@ -523,8 +517,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "translate": "RESOURCES.hide_detail_k"
+            "sameOrigin": false
         },
         {
             "format": {
@@ -545,7 +538,7 @@
             "readOnly": true,
             "sameOrigin": false,
             "size": 0.66,
-            "translate": "RESOURCES.maggiori_dettagli"
+            "translate": "RESOURCES.risultati_progetti_fasi"
         },
         {
             "format": {
@@ -565,7 +558,7 @@
                         "sameOrigin": false,
                         "newLine": false,
                         "size": 2.5,
-                        "translate": "RESOURCES.risultato_medio_"
+                        "translate": "RESOURCES.risultato_medio__progetti_fasi"
                     },
                     {
                         "autoGenerate": false,
@@ -599,7 +592,7 @@
                                 "queryFunct": "select codice_colore as avg_giudizio_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio£';"
                             }
                         ],
-                        "translate": "RESOURCES.media_giudizio_complessivo"
+                        "translate": "RESOURCES.media_giudizio_complessivo_progetti_fasi"
                     },
                     {
                         "autoGenerate": false,
@@ -616,7 +609,7 @@
                         "sameOrigin": false,
                         "newLine": false,
                         "size": 2.5,
-                        "translate": "RESOURCES.risultato_medio_sulla_verifica_peggiore_"
+                        "translate": "RESOURCES.risultato_medio_sulla_verifica_peggiore__progetti_fasi"
                     },
                     {
                         "autoGenerate": false,
@@ -651,7 +644,7 @@
                                 "queryFunct": "select codice_colore as avg_giudizio_worst_background_color from entrasp.tipi_modelli_test_risultati_righe where descrizione = '£avg_giudizio_worst£';"
                             }
                         ],
-                        "translate": "RESOURCES.giudizio_sulla_media_verifica_peggiore"
+                        "translate": "RESOURCES.giudizio_sulla_media_verifica_peggiore_progetti_fasi"
                     }
                 ]
             },
@@ -673,17 +666,16 @@
             "isPrimary": false,
             "key": "sezione_detail",
             "label": "Maggiori Dettagli",
-            "translate": "RESOURCES.more_details",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": true,
-            "saveWhenHidden": true
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.maggiori_dettagli_progetti_fasi"
         }
     ],
     "search_keys": [
         {
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "format": {
                 "comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
                 "options": [],
@@ -692,7 +684,8 @@
             },
             "fieldName": "stato_s",
             "newLine": false,
-            "queryCond": "snd.stato=$stato_s$"
+            "queryCond": "snd.stato=$stato_s$",
+            "translate": "RESOURCES.stato_progetti_fasi"
         },
         {
             "label": "Fase padre",
@@ -705,7 +698,7 @@
             "fieldName": "id_fase_sup_s",
             "newLine": false,
             "queryCond": "(pf.id_fase=$id_fase_sup_s$ or pf.id_fase_sup=$id_fase_sup_s$)",
-            "translate": "RESOURCES.fase_padre"
+            "translate": "RESOURCES.fase_padre_progetti_fasi"
         },
         {
             "fieldName": "flag_principali",
@@ -714,9 +707,9 @@
                 "viewType": "checkbox"
             },
             "label": "Solo Principali",
-            "translate": "RESOURCES.main_only",
             "newLine": false,
-            "queryCond": "pf.id_fase_sup IS null"
+            "queryCond": "pf.id_fase_sup IS null",
+            "translate": "RESOURCES.solo_principali_progetti_fasi"
         },
         {
             "fieldName": "dt_competenza_da",
@@ -727,7 +720,7 @@
             "label": "Data competenza DA",
             "newLine": false,
             "queryCond": "snd.data_comp >= $dt_competenza_da$",
-            "translate": "RESOURCES.data_competenza_da"
+            "translate": "RESOURCES.data_competenza_da_progetti_fasi"
         },
         {
             "fieldName": "dt_competenza_a",
@@ -738,7 +731,7 @@
             "label": "Data competenza A",
             "newLine": false,
             "queryCond": "snd.data_comp <= $dt_competenza_a$",
-            "translate": "RESOURCES.data_competenza_a"
+            "translate": "RESOURCES.data_competenza_a_progetti_fasi"
         }
     ],
     "table_keys": [
@@ -750,7 +743,7 @@
             "isPrimary": false,
             "key": "id_progetto",
             "label": "id_progetto",
-            "translate": "RESOURCES.id_progetto"
+            "translate": "RESOURCES.id_progetto_progetti_fasi"
         },
         {
             "format": {
@@ -760,7 +753,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+            "translate": "RESOURCES.codice_azienda_progetti_fasi"
         },
         {
             "format": {
@@ -769,8 +762,8 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "tipo_fase",
-            "label": "tipo_fase",
-            "translate": "RESOURCES.tipo_fase"
+            "label": "Tipo fase",
+            "translate": "RESOURCES.tipo_fase_progetti_fasi"
         },
         {
             "format": {
@@ -780,7 +773,7 @@
             "isPrimary": true,
             "key": "id_fase",
             "label": "id_fase",
-            "translate": "RESOURCES.id_fase"
+            "translate": "RESOURCES.id_fase_progetti_fasi"
         },
         {
             "format": {
@@ -790,7 +783,7 @@
             "isPrimary": false,
             "key": "id_contratto",
             "label": "id_contratto",
-            "translate": "RESOURCES.id_contratto"
+            "translate": "RESOURCES.id_contratto_progetti_fasi"
         },
         {
             "format": {
@@ -800,7 +793,7 @@
             "isPrimary": false,
             "key": "id_anagrafica",
             "label": "id_anagrafica",
-            "translate": "RESOURCES.id_anagrafica"
+            "translate": "RESOURCES.id_anagrafica_progetti_fasi"
         },
         {
             "format": {
@@ -810,7 +803,7 @@
             "isPrimary": false,
             "key": "codice_compito",
             "label": "codice_compito",
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES.codice_compito_progetti_fasi"
         },
         {
             "format": {
@@ -851,8 +844,7 @@
                     "text": "Duplicare questa fase e relativo sondaggo?"
                 },
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.duplica_fase"
+            }
         },
         {
             "format": {
@@ -862,7 +854,7 @@
             "isPrimary": false,
             "key": "id_fase_sup",
             "label": "id_fase_sup",
-            "translate": "RESOURCES.id_fase_sup"
+            "translate": "RESOURCES.id_fase_sup_progetti_fasi"
         },
         {
             "format": {
@@ -874,14 +866,14 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "width": "11%",
             "style": [
                 {
                     "value": "*",
                     "font_weight": "500"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.codice_progetti_fasi"
         },
         {
             "format": {
@@ -908,7 +900,7 @@
                 ],
                 "navigationConditions": [
                     {
-                        "ifValue": "1",
+                        "ifValue": ["1", "2", "8", "57"],
                         "keyToCheck": "id_tipo_modello_test",
                         "newTarget": "sondaggi",
                         "newViewType": "form",
@@ -924,23 +916,7 @@
                         ]
                     },
                     {
-                        "ifValue": "2",
-                        "keyToCheck": "id_tipo_modello_test",
-                        "newTarget": "sondaggi",
-                        "newViewType": "form",
-                        "keymap": [
-                            {
-                                "source": "codice_azienda",
-                                "destination": "codice_azienda"
-                            },
-                            {
-                                "source": "id_sondaggio",
-                                "destination": "id_sondaggio"
-                            }
-                        ]
-                    },
-                    {
-                        "ifValue": "5",
+                        "ifValue": ["5", "52"],
                         "keyToCheck": "id_tipo_modello_test",
                         "newTarget": "lessons",
                         "newViewType": "form",
@@ -956,73 +932,9 @@
                         ]
                     },
                     {
-                        "ifValue": "8",
+                        "ifValue": ["50", "51"],
                         "keyToCheck": "id_tipo_modello_test",
-                        "newTarget": "sondaggi",
-                        "newViewType": "form",
-                        "keymap": [
-                            {
-                                "source": "codice_azienda",
-                                "destination": "codice_azienda"
-                            },
-                            {
-                                "source": "id_sondaggio",
-                                "destination": "id_sondaggio"
-                            }
-                        ]
-                    },
-                    {
-                        "ifValue": "50",
-                        "keyToCheck": "id_tipo_modello_test",
-                        "newTarget": "profilazione_aml",
-                        "newViewType": "form",
-                        "keymap": [
-                            {
-                                "source": "codice_azienda",
-                                "destination": "codice_azienda"
-                            },
-                            {
-                                "source": "id_sondaggio",
-                                "destination": "id_sondaggio"
-                            }
-                        ]
-                    },
-                    {
-                        "ifValue": "51",
-                        "keyToCheck": "id_tipo_modello_test",
-                        "newTarget": "profilazione_aml",
-                        "newViewType": "form",
-                        "keymap": [
-                            {
-                                "source": "codice_azienda",
-                                "destination": "codice_azienda"
-                            },
-                            {
-                                "source": "id_sondaggio",
-                                "destination": "id_sondaggio"
-                            }
-                        ]
-                    },
-                    {
-                        "ifValue": "52",
-                        "keyToCheck": "id_tipo_modello_test",
-                        "newTarget": "lessons",
-                        "newViewType": "form",
-                        "keymap": [
-                            {
-                                "source": "codice_azienda",
-                                "destination": "codice_azienda"
-                            },
-                            {
-                                "source": "id_sondaggio",
-                                "destination": "id_sondaggio"
-                            }
-                        ]
-                    },
-                    {
-                        "ifValue": "57",
-                        "keyToCheck": "id_tipo_modello_test",
-                        "newTarget": "sondaggi",
+                        "newTarget": "sondaggio",
                         "newViewType": "form",
                         "keymap": [
                             {
@@ -1069,9 +981,9 @@
                     }
                 ]
             },
-            "translate": "RESOURCES.title",
             "isInputButtonKey": "titolo_isinputbutton",
-            "width": "17%"
+            "width": "17%",
+            "translate": "RESOURCES.titolo_progetti_fasi"
         },
         {
             "format": {
@@ -1081,7 +993,7 @@
             "key": "titolo_isinputbutton",
             "isHidden": true,
             "isPrimary": false,
-            "translate": "RESOURCES.titolo_isinputbutton"
+            "translate": "RESOURCES.titolo_isinputbutton_progetti_fasi"
         },
         {
             "format": {
@@ -1137,8 +1049,7 @@
                         "destination": "id_somministrazione"
                     }
                 ]
-            },
-            "translate": "RESOURCES.check"
+            }
         },
         {
             "format": {
@@ -1148,7 +1059,6 @@
             "isPrimary": false,
             "key": "stato_trans",
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "width": "8%",
             "style": [
                 {
@@ -1180,6 +1090,13 @@
                     "text_align": "center"
                 },
                 {
+                    "value": "Attesa Riscontro",
+                    "font_color": "indianred",
+                    "font_weight": "500",
+                    "background_color": "gold",
+                    "text_align": "center"
+                },
+                {
                     "value": "Annullato",
                     "font_color": "grey",
                     "font_weight": "500",
@@ -1200,7 +1117,8 @@
                     "text_align": "center",
                     "font_weight": "500"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.stato_progetti_fasi"
         },
         {
             "format": {
@@ -1211,7 +1129,7 @@
             "key": "id_sondaggio",
             "hasLevel": true,
             "label": "# Sondaggio",
-            "translate": "RESOURCES.id_survey"
+            "translate": "RESOURCES._sondaggio_progetti_fasi"
         },
         {
             "format": {
@@ -1222,7 +1140,6 @@
             "key": "id_somministrazione",
             "hasLevel": true,
             "label": "# Verifica",
-            "translate": "RESOURCES.id_check",
             "width": "6%",
             "isInputButton": true,
             "buttonAction": {
@@ -1242,8 +1159,91 @@
                         "source": "id_somministrazione",
                         "destination": "id_somministrazione"
                     }
+                ],
+                "navigationConditions": [
+                    {
+                        "ifValue": ["1", "2", "6", "7", "9", "52", "57"],
+                        "keyToCheck": "id_tipo_modello_test",
+                        "newTarget": "sondaggi_somministrati",
+                        "newViewType": "form",
+                        "keymap": [
+                            {
+                                "source": "codice_azienda",
+                                "destination": "codice_azienda"
+                            },
+                            {
+                                "source": "id_sondaggio2",
+                                "destination": "id_sondaggio"
+                            },
+                            {
+                                "source": "id_somministrazione",
+                                "destination": "id_somministrazione"
+                            }
+                        ]
+                    },
+                    {
+                        "ifValue": ["5"],
+                        "keyToCheck": "id_tipo_modello_test",
+                        "newTarget": "lessons",
+                        "newViewType": "form",
+                        "keymap": [
+                            {
+                                "source": "codice_azienda",
+                                "destination": "codice_azienda"
+                            },
+                            {
+                                "source": "id_sondaggio2",
+                                "destination": "id_sondaggio"
+                            },
+                            {
+                                "source": "id_somministrazione",
+                                "destination": "id_somministrazione"
+                            }
+                        ]
+                    },
+                    {
+                        "ifValue": ["11"],
+                        "keyToCheck": "id_tipo_modello_test",
+                        "newTarget": "sondaggi_somministrati_certificazione",
+                        "newViewType": "form",
+                        "keymap": [
+                            {
+                                "source": "codice_azienda",
+                                "destination": "codice_azienda"
+                            },
+                            {
+                                "source": "id_sondaggio2",
+                                "destination": "id_sondaggio"
+                            },
+                            {
+                                "source": "id_somministrazione",
+                                "destination": "id_somministrazione"
+                            }
+                        ]
+                    },
+                    {
+                        "ifValue": ["50", "51"],
+                        "keyToCheck": "id_tipo_modello_test",
+                        "newTarget": "profilazione_aml",
+                        "newViewType": "form",
+                        "keymap": [
+                            {
+                                "source": "codice_azienda",
+                                "destination": "codice_azienda"
+                            },
+                            {
+                                "source": "id_sondaggio2",
+                                "destination": "id_sondaggio"
+                            },
+                            {
+                                "source": "id_somministrazione",
+                                "destination": "id_somministrazione"
+                            }
+                        ]
+                    }
                 ]
-            }
+            },
+            "translate": "RESOURCES._verifica_progetti_fasi"
         },
         {
             "format": {
@@ -1254,7 +1254,6 @@
             "key": "id_modello_test",
             "hasLevel": true,
             "label": "# Mod. Ver.",
-            "translate": "RESOURCES.id_check_template",
             "width": "6%",
             "isInputButton": true,
             "buttonAction": {
@@ -1275,7 +1274,8 @@
                         "destination": "id_modello_test_vr"
                     }
                 ]
-            }
+            },
+            "translate": "RESOURCES._mod_ver_progetti_fasi"
         },
         {
             "format": {
@@ -1284,8 +1284,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "id_tipo_modello_test",
-            "label": "",
-            "translate": "RESOURCES.id_tipo_modello_test"
+            "label": ""
         },
         {
             "format": {
@@ -1296,7 +1295,7 @@
             "key": "competenza",
             "width": "7%",
             "label": "Competenza",
-            "translate": "RESOURCES.competence"
+            "translate": "RESOURCES.competenza_progetti_fasi"
         },
         {
             "format": {
@@ -1307,7 +1306,7 @@
             "key": "data_prevista",
             "width": "8%",
             "label": "Prevista",
-            "translate": "RESOURCES.expected_date"
+            "translate": "RESOURCES.prevista_progetti_fasi"
         },
         {
             "format": {
@@ -1316,9 +1315,9 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "data_esecuzione",
-            "translate": "RESOURCES.execution_date",
             "width": "8%",
-            "label": "Esecuzione"
+            "label": "Esecuzione",
+            "translate": "RESOURCES.esecuzione_progetti_fasi"
         },
         {
             "format": {
@@ -1327,7 +1326,6 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "giudizio",
-            "translate": "RESOURCES.judgment",
             "width": "7%",
             "label": "Giudizio",
             "style": [
@@ -1489,7 +1487,8 @@
                     "font_size": "medium",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.giudizio_progetti_fasi"
         },
         {
             "format": {
@@ -1500,7 +1499,7 @@
             "key": "id_anagrafica_assegnataria",
             "label": "Assegnato a",
             "width": "6%",
-            "translate": "RESOURCES.id_anagrafica_assegnataria"
+            "translate": "RESOURCES.assegnato_a_progetti_fasi"
         },
         {
             "format": {
@@ -1526,8 +1525,7 @@
                     "background_color": "Green",
                     "text_align": "center"
                 }
-            ],
-            "translate": "RESOURCES.void"
+            ]
         },
         {
             "format": {
@@ -1554,7 +1552,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.doc_completa"
+            "translate": "RESOURCES.documentazione_progetti_fasi"
         },
         {
             "format": {
@@ -1593,8 +1591,7 @@
                 ],
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
-            },
-            "translate": "RESOURCES.void"
+            }
         },
         {
             "format": {
@@ -1634,8 +1631,7 @@
                 ],
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
-            },
-            "translate": "RESOURCES.void"
+            }
         },
         {
             "format": {
@@ -1647,7 +1643,7 @@
             "hasLevel": true,
             "label": "id_sondaggio2",
             "isInputButton": true,
-            "translate": "RESOURCES.id_sondaggio2"
+            "translate": "RESOURCES.id_sondaggio2_progetti_fasi"
         },
         {
             "format": {
@@ -1659,7 +1655,7 @@
             "hasLevel": true,
             "label": "user_companies",
             "isInputButton": true,
-            "translate": "RESOURCES.user_companies"
+            "translate": "RESOURCES.user_companies_progetti_fasi"
         }
     ],
     "subTables": [
@@ -1676,7 +1672,7 @@
                 }
             ],
             "label": "Sotto fasi",
-            "translate": "RESOURCES.sotto_fasi"
+            "translate": "RESOURCES.sotto_fasi_progetti_fasi_sub_of_progetti_fasi"
         },
         {
             "entryKey": "consuntivazioni_sub_of_progetti_fasi",
@@ -1691,7 +1687,7 @@
                 }
             ],
             "label": "Time Report/ Aggiornamenti",
-            "translate": "RESOURCES.time_report_aggiornamenti"
+            "translate": "RESOURCES.time_report_aggiornamenti_consuntivazioni_sub_of_progetti_fasi"
         }
     ],
     "inputEvents": [
@@ -1832,15 +1828,12 @@
         "tableQueries": [
             {
                 "label": "Sondaggi per anno di competenza",
-                "queryString": "select extract(year from snd.data_comp) as anno_competenza, count(id_sondaggio) from entrasp.sondaggi snd where snd.codice_azienda=$codice_azienda$ and id_sondaggio in (select pf.id_sondaggio from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$) group by extract(year from snd.data_comp)",
-                "translate": "RESOURCES.sondaggi_per_anno_di_competenza"
+                "queryString": "select extract(year from snd.data_comp) as anno_competenza, count(id_sondaggio) from entrasp.sondaggi snd where snd.codice_azienda=$codice_azienda$ and id_sondaggio in (select pf.id_sondaggio from entrasp.progetti_fasi pf where pf.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$) group by extract(year from snd.data_comp)"
             },
             {
                 "label": "Per relazione annuale",
-                "queryString": "select snd.data_comp, snd.data_esecuzione, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, snd.id_sondaggio, snd.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, entrasp.html_pulisci(cp.risultati_emersi) as risultati_emersi, cp.proposte_formulate, cp.follow_up, entrasp.codici_compito_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as codici_compito, snd.stato from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.progetti_fasi pf on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$",
-                "translate": "RESOURCES.per_relazione_annuale"
+                "queryString": "select snd.data_comp, snd.data_esecuzione, entrasp.centri_gestionali_descr(snd.codice_part, snd.id_centro_gest) as centro_gest, snd.id_sondaggio, snd.titolo, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_automatico, entrasp.html_pulisci(cp.risultati_emersi) as risultati_emersi, cp.proposte_formulate, cp.follow_up, entrasp.codici_compito_from_sondaggio(snd.codice_azienda, snd.id_sondaggio) as codici_compito, snd.stato from entrasp.sondaggi snd left join entrasp.cpl_risultati cp on snd.id_sondaggio=cp.id_sondaggio and snd.codice_azienda=cp.codice_azienda and cp.id_somministrazione is null inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.progetti_fasi pf on pf.codice_azienda=snd.codice_azienda and pf.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and pf.id_progetto=$id_progetto$"
             }
         ]
-    },
-    "translate": "RESOURCES.fasi_del_progetto"
+    }
 }

@@ -66,7 +66,7 @@ export class MailService implements Resolve<any>
                 this.getLabels(),
                 this.getMails()
             ]).then(
-                () => {
+                (x: any) => {
                     if ( this.routeParams.mailId )
                     {
                         this.setCurrentMail(this.routeParams.mailId);
@@ -89,7 +89,7 @@ export class MailService implements Resolve<any>
                         }
                     });
 
-                    resolve();
+                    resolve(x);
                 },
                 reject
             );

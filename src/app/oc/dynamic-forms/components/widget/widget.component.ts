@@ -27,8 +27,12 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
   group: UntypedFormGroup;
   readOnlyPage: boolean = false; // field.readonly overridden by page
   isRequired = false; // field is required or not
+  businessObjectName: string = 'riepilogoRisposte';
 
   subscription: Subscription;
+
+  numberValue?: number = undefined;
+  stringValue?: string = undefined;
 
   // For future use
   // @HostBinding('style.margin-right') marginRight = '0.5%';
@@ -42,6 +46,17 @@ export class WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     let _this = this;
+    if(_this.field.value != null)
+    {
+      if ( _this.field.widgetType === 'multi-attachments' || _this.field.widgetType === 'attachments' ) {
+        _this.numberValue = parseInt(_this.field.value, 0);
+      }
+    }
+
+    if(_this.field.fullValueSet.businessObjectName) {
+      _this.businessObjectName = _this.field.fullValueSet.businessObjectName;
+    }
+    
     _this.fileService.onSave.subscribe(entryName => {
       _this.attachmentOnSave(entryName);
     })

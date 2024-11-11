@@ -6,7 +6,57 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT ac.codice_azienda, ac.id_articolo, ac.id_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom1(cnt.codice_part, cnt.id_cliente) as id_cliente, ac.data_attivazione, entrasp.articoli_titolo(ac.codice_azienda, ac.id_articolo) AS tit_articolo, entrasp.argomenti_descr_breve_no_id(ac.id_argomento_tipo_norma) AS id_argomento_tipo_norma, ROUND(ac.costo * (1 - ac.sconto_importo / 100), 2) AS costo_unitario, entrasp.transcodifiche_transcodifica('STATO_PREVENTIVI', ac.stato) AS descr_stato, ac.giornate_uomo, ROUND(ROUND(ac.giornate_uomo * (1 - ac.sconto / 100) * (1 - (ac.sconto_motivazioni) / 100) * 2) / 2, 2) AS giornate_uomo_scontate, ROUND(ROUND(ac.giornate_uomo * (1 - ac.sconto / 100) * (1 - (ac.sconto_motivazioni) / 100) * 2) / 2 * ac.costo * (1 - ac.sconto_importo / 100), 2) AS costo_totale FROM entrasp.articoli_contratti ac INNER JOIN entrasp.contratti cnt ON ac.codice_azienda = cnt.codice_azienda AND ac.id_contratto = cnt.id_contratto WHERE ac.codice_azienda = '€global_codice_azienda€'"
+            "queryString": "SELECT ac.codice_azienda, ac.id_articolo,(ac.sorveglianza_1 + ac.sorveglianza_2 + ac.costo_totale_scontato)as triennio, ac.id_contratto, entrasp.anagrafiche_vr_dati_identificativi_nom1(cnt.codice_part, cnt.id_cliente) as id_cliente, ac.data_attivazione,ac.giornate_uomo_sorveglianza, sorveglianza_1,  entrasp.articoli_titolo(ac.codice_azienda, ac.id_articolo) AS tit_articolo, entrasp.argomenti_descr_breve_no_num(ac.id_argomento_tipo_norma) AS id_argomento_tipo_norma, entrasp.transcodifiche_transcodifica('STATO_PREVENTIVI', ac.stato) AS descr_stato, ac.giornate_uomo_scontate, ac.costo_totale_scontato AS costo_totale FROM entrasp.articoli_contratti ac INNER JOIN entrasp.contratti cnt ON ac.codice_azienda = cnt.codice_azienda AND ac.id_contratto = cnt.id_contratto WHERE ac.codice_azienda = '€global_codice_azienda€'"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_cliente_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cliente",
+            "newLine": false,
+            "queryCond": "cnt.id_cliente=$id_cliente_s$",
+            "translate": "RESOURCES.cliente_preventivi"
+        },
+        {
+            "fieldName": "servizio_richiesto",
+            "format": {
+                "comboQuery": "SELECT distinct id_articolo AS id, descrizione AS name  FROM entrasp.articoli where codice_azienda='€global_codice_azienda€'",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Servizio Richiesto",
+            "newLine": false,
+            "queryCond": "ac.id_articolo=$servizio_richiesto$",
+            "translate": "RESOURCES.servizio_richiesto_preventivi"
+        },
+        {
+            "fieldName": "certificazione_s",
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, descrizione_breve AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father =52266 order by descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Norma",
+            "newLine": false,
+            "queryCond": "$certificazione_s$ = ac.id_argomento_tipo_norma",
+            "translate": "RESOURCES.norma_preventivi"
+        },
+        {
+            "fieldName": "stato",
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_PREVENTIVI';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Stato",
+            "newLine": false,
+            "queryCond": "ac.stato='€stato€'",
+            "translate": "RESOURCES.stato_preventivi"
         }
     ],
     "define": {

@@ -16,7 +16,7 @@ def load_key_value_pairs(txt_file):
     return key_value_pairs
 
 def clean_json_files(directory, key_value_pairs):
-    any_key_removed = False
+    total_keys_removed = 0
 
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
@@ -26,7 +26,7 @@ def clean_json_files(directory, key_value_pairs):
                     data = json.load(file)
 
                 def remove_invalid_translations(obj):
-                    removed_keys = []
+                    removed_keys = 0
                     if isinstance(obj, dict):
                         keys_to_remove = []
                         for key in ['translate', 'translateAdd', 'translateQuickAdd']:
@@ -37,37 +37,37 @@ def clean_json_files(directory, key_value_pairs):
                                     if key_part not in key_value_pairs:
                                         keys_to_remove.append(key)
                         for key in keys_to_remove:
-                            removed_keys.append(key)
+                            removed_keys += 1
                             obj.pop(key)
                         for key, value in obj.items():
-                            removed_keys.extend(remove_invalid_translations(value))
+                            removed_keys += remove_invalid_translations(value)
                     elif isinstance(obj, list):
                         for item in obj:
-                            removed_keys.extend(remove_invalid_translations(item))
+                            removed_keys += remove_invalid_translations(item)
                     return removed_keys
 
                 removed_keys = remove_invalid_translations(data)
+                total_keys_removed += removed_keys
 
                 # Salva il JSON modificato nel file
                 with open(filepath, 'w', encoding='utf-8') as file:
                     json.dump(data, file, ensure_ascii=False, indent=4)
 
-                # Stampa le chiavi rimosse
-                if removed_keys:
-                    any_key_removed = True
-                    for key in removed_keys:
-                        print(f"Removed key '{key}' from file: {filename}")
-
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
                 print(f"Error processing file {filename}: {e}")
 
-    if not any_key_removed:
-        print("No phantom key removed")
+    if total_keys_removed > 0:
+        print(f"Total keys removed: {total_keys_removed}")
+    else:
+        print("No phantom translation removed")
 
-# Esempio di utilizzo
-directory_path = '/home/gcrozzolin/Development/onecompliance/dynamo-tables/views'  # Sostituisci con il percorso della tua directory di file JSON
-key_value_file_path = '/home/gcrozzolin/Development/onecompliance/python/file_it.txt'  # Sostituisci con il percorso del file di coppie chiave-valore
-ts_file_path = '/home/gcrozzolin/Development/onecompliance/src/app/oc/i18n/it.ts'  # Sostituisci con il percorso del file it.ts
+# Usa la directory home dell'utente per costruire percorsi file
+home_dir = os.path.expanduser('~')
+
+# Definisci i percorsi relativi alla directory home
+directory_path = os.path.join(home_dir, 'Development/onecompliance/dynamo-tables/views')
+ts_file_path = os.path.join(home_dir, 'Development/onecompliance/src/app/oc/i18n/it.ts')
+key_value_file_path = os.path.join(home_dir, 'Development/onecompliance/python/file_it.txt')
 
 # Copia il contenuto di it.ts in file_it.txt
 copy_ts_to_txt(ts_file_path, key_value_file_path)

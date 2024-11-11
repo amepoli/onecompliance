@@ -17,16 +17,6 @@
             "operation": "insert",
             "queryString": "update entrasp.consuntivazioni cn set id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
             "type": "postProcessing"
-        },
-        {
-            "operation": "update",
-            "queryString": "update entrasp.consuntivazioni cn set id_risorsa=coalesce(id_risorsa, entrasp.idutente_from_aziende_utenti((€global_id_anagrafiche€)::text, az.codice_part)::numeric) from entrasp.aziende az where cn.codice_azienda=az.codice_azienda and cn.codice_part is null and cn.codice_azienda=$codice_azienda$",
-            "type": "postProcessing"
-        },
-        {
-            "operation": "update",
-            "queryString": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'cns_snd', $stato$);",
-            "type": "postProcessing"
         }
     ],
     "outputEvents": [

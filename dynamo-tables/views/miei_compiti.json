@@ -23,8 +23,7 @@
                     "icon": "edit",
                     "label": "Associa centri costo",
                     "customDialogEntryName": "dialog_compiti",
-                    "customDialogTitle": "Associa centri costo",
-                    "translate": "RESOURCES.associa_centri_costo"
+                    "customDialogTitle": "Associa centri costo"
                 }
             ]
         }
@@ -51,12 +50,12 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT *,(€global_id_anagrafiche€)::text as user_companies,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,codice_compito,codice_azienda) FROM entrasp.compiti_collaboratori where codice_azienda in (€global_user_companies€) and codice_azienda||'-'||codice_compito in(select csn.codice_azienda||'-'||csn.codice_compito from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user='€global_username€')"
+            "queryString": "SELECT *,'€global_username€' as global_username,entrasp.centri_costo_del_compito(cc.codice_azienda, cc.codice_compito) as centro_costo_aggregato,entrasp.time_report_stop_active_du('€global_username€',cc.codice_compito,cc.codice_azienda) as time_report_stop_active from entrasp.compiti_collaboratori cc inner join entrasp.compiti cmp on cc.codice_azienda=cmp.codice_azienda and cc.codice_compito=cmp.codice_compito where cc.codice_azienda in (€global_user_companies€) and cc.codice_azienda||'-'||cc.codice_compito in(select csn.codice_azienda||'-'||csn.codice_compito from entrasp.consuntivazioni csn inner join entrasp.anagrafiche_id an on csn.codice_part=an.codice_part and csn.id_risorsa=an.id_anagrafica where an.dynamo_user='€global_username€')"
         },
         {
             "operation": "startEvent",
             "type": "main",
-            "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+            "queryString": "select entrasp.time_report_play_du('€global_username€', '$codice_compito$', '$codice_azienda$') as play_time_report"
         },
         {
             "operation": "stopEvent",
@@ -76,8 +75,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "newLine": false,
-            "readOnly": true,
-            "translate": "RESOURCES.codice_azienda"
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -100,7 +98,7 @@
                 "font_weight": "600"
             },
             "size": 0.8,
-            "translate": "RESOURCES.compito"
+            "translate": "RESOURCES.compito_miei_compiti"
         },
         {
             "autoGenerate": true,
@@ -115,7 +113,7 @@
             "newLine": false,
             "readOnly": true,
             "size": 0.6,
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES._miei_compiti"
         },
         {
             "autoGenerate": false,
@@ -127,10 +125,10 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "newLine": false,
             "readOnly": true,
-            "size": 4.19
+            "size": 4.19,
+            "translate": "RESOURCES.titolo_miei_compiti"
         },
         {
             "autoGenerate": false,
@@ -146,7 +144,7 @@
             "readOnly": true,
             "queryFunct": "select descrizione from entrasp.tipi_segnalazioni where id_tipo_segnalazione=compiti.id_tipo_segnalazione",
             "size": 1.67,
-            "translate": "RESOURCES.segnalazione_descr"
+            "translate": "RESOURCES.tipologia_miei_compiti"
         },
         {
             "autoGenerate": false,
@@ -162,7 +160,7 @@
             "readOnly": true,
             "size": 1.37,
             "queryFunct": "INITCAP(codice_azienda)",
-            "translate": "RESOURCES.codice_azienda_s"
+            "translate": "RESOURCES.azienda_miei_compiti"
         },
         {
             "format": {
@@ -176,7 +174,7 @@
             "label": "Minuti Totali",
             "queryFunct": "entrasp.consuntivazioni_time_consumed(compiti.codice_azienda, codicecompito => compiti.codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0)",
             "size": 1.37,
-            "translate": "RESOURCES.minuti_totali"
+            "translate": "RESOURCES.minuti_totali_miei_compiti"
         }
     ],
     "table_keys": [
@@ -189,7 +187,7 @@
             "key": "codice_compito",
             "width": "7%",
             "label": "#",
-            "translate": "RESOURCES.code"
+            "translate": "RESOURCES._miei_compiti"
         },
         {
             "format": {
@@ -207,7 +205,7 @@
                     "font_weight": "590"
                 }
             ],
-            "translate": "RESOURCES.titolo"
+            "translate": "RESOURCES.titolo_compito_miei_compiti"
         },
         {
             "format": {
@@ -218,8 +216,8 @@
             "key": "tipo_segnalazione",
             "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
             "label": "Tipo",
-            "translate": "RESOURCES.type",
-            "width": "16%"
+            "width": "16%",
+            "translate": "RESOURCES.tipo_miei_compiti"
         },
         {
             "format": {
@@ -230,7 +228,7 @@
             "key": "codice_azienda_s",
             "label": "Azienda",
             "width": "9%",
-            "translate": "RESOURCES.codice_azienda_s"
+            "translate": "RESOURCES.azienda_miei_compiti"
         },
         {
             "format": {
@@ -239,8 +237,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "",
-            "translate": "RESOURCES.codice_azienda"
+            "label": ""
         },
         {
             "format": {
@@ -248,9 +245,21 @@
             },
             "isHidden": true,
             "isPrimary": false,
-            "key": "user_companies",
-            "label": "user_companies",
-            "translate": "RESOURCES.user_companies"
+            "key": "global_username",
+            "label": "global_username",
+            "translate": "RESOURCES.global_username_miei_compiti"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "label": "Centri Costo",
+            "sameOrigin": false,
+            "width": "6%",
+            "key": "centro_costo_aggregato",
+            "translate": "RESOURCES.centri_costo_miei_compiti"
         },
         {
             "format": {
@@ -271,7 +280,7 @@
                     "font_weight": "400"
                 }
             ],
-            "translate": "RESOURCES.minuti_mensili"
+            "translate": "RESOURCES.mese_corrente_miei_compiti"
         },
         {
             "format": {
@@ -292,7 +301,7 @@
                     "font_weight": "400"
                 }
             ],
-            "translate": "RESOURCES.minuti_annuali"
+            "translate": "RESOURCES.anno_corrente_miei_compiti"
         },
         {
             "format": {
@@ -313,7 +322,7 @@
                     "font_weight": "400"
                 }
             ],
-            "translate": "RESOURCES.minuti_totali"
+            "translate": "RESOURCES.totali_miei_compiti"
         },
         {
             "format": {
@@ -322,8 +331,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "minuti_totali",
-            "label": "",
-            "translate": "RESOURCES.minuti_totali"
+            "label": ""
         },
         {
             "format": {
@@ -331,8 +339,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "label": "void",
-            "translate": "RESOURCES.void",
+            "label": "",
             "width": "1%",
             "key": "false_field"
         },
@@ -344,6 +351,7 @@
             "isPrimary": false,
             "width": "5%",
             "key": "time_report_play",
+            "queryFunct": "true",
             "label": "",
             "style": [
                 {
@@ -356,7 +364,7 @@
                 "target": "compiti",
                 "viewType": "form",
                 "action": "query",
-                "query": "select entrasp.time_report_play(('£user_companies£')::text, '£codice_compito£', '£codice_azienda£')",
+                "query": "select entrasp.time_report_play_du(('£global_username£')::text, '£codice_compito£', '£codice_azienda£')",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -367,14 +375,13 @@
                         "destination": "codice_compito"
                     },
                     {
-                        "source": "user_companies",
-                        "destination": "user_companies"
+                        "source": "global_username",
+                        "destination": "global_username"
                     }
                 ],
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
-            },
-            "translate": "RESOURCES.time_report_play"
+            }
         },
         {
             "format": {
@@ -397,7 +404,7 @@
                 "target": "compiti",
                 "viewType": "form",
                 "action": "query",
-                "query": "select entrasp.time_report_stop(('£user_companies£')::text)",
+                "query": "select entrasp.time_report_stop_active_du(('£global_username£', '£codice_compito£', '£codice_azienda£')::text)",
                 "keymap": [
                     {
                         "source": "codice_azienda",
@@ -408,14 +415,13 @@
                         "destination": "codice_compito"
                     },
                     {
-                        "source": "user_companies",
-                        "destination": "user_companies"
+                        "source": "global_username",
+                        "destination": "global_username"
                     }
                 ],
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
-            },
-            "translate": "RESOURCES.time_report_stop_active"
+            }
         }
     ],
     "subTables": [
@@ -432,7 +438,7 @@
                 }
             ],
             "label": "Attività",
-            "translate": "RESOURCES.attivit"
+            "translate": "RESOURCES.attivit_miei_aggiornamenti_of_miei_compiti"
         },
         {
             "entryKey": "centri_costo_sub_of_compiti",
@@ -447,7 +453,7 @@
                 }
             ],
             "label": "Centri costo associati",
-            "translate": "RESOURCES.centri_costo_associati"
+            "translate": "RESOURCES.centri_costo_associati_centri_costo_sub_of_compiti"
         }
     ],
     "search_keys": [
@@ -461,7 +467,7 @@
             "newLine": false,
             "queryCond": "codice_compito=$codice_compito$",
             "size": 1.67,
-            "translate": "RESOURCES._identificativo"
+            "translate": "RESOURCES._identificativo_miei_compiti"
         },
         {
             "format": {
@@ -473,9 +479,9 @@
             "queryCond": "codice_azienda='€codice_azienda_s€'",
             "fieldName": "codice_azienda_s",
             "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code",
             "newLine": false,
-            "size": 1.67
+            "size": 1.67,
+            "translate": "RESOURCES.codice_azienda_miei_compiti"
         },
         {
             "fieldName": "parola_search",
@@ -484,10 +490,10 @@
                 "viewType": "input"
             },
             "label": "Parola chiave",
-            "translate": "RESOURCES.key_word",
             "newLine": false,
             "queryCond": "(upper(titolo) like '%'||upper('€parola_search€')||'%' or upper(codice_azienda) like '%'||upper('€parola_search€')||'%')",
-            "size": 3.33
+            "size": 3.33,
+            "translate": "RESOURCES.parola_chiave_miei_compiti"
         },
         {
             "fieldName": "durata_min",
@@ -499,7 +505,7 @@
             "newLine": false,
             "queryCond": "entrasp.consuntivazioni_time_consumed(codice_azienda, codicecompito => codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0) >= $durata_min$",
             "size": 1.67,
-            "translate": "RESOURCES.durata_maggiore_di"
+            "translate": "RESOURCES.durata_maggiore_di_miei_compiti"
         },
         {
             "fieldName": "non_associata_a_centri_costo",
@@ -509,13 +515,25 @@
             "label": "No Centri Costo",
             "newLine": false,
             "tooltip": "Individua tutti i compiti non associati ad alcun centro di costo",
-            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€'))",
+            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€') and ccc.codice_azienda_compiti||'-'||ccc.codice_compito is not null)",
             "size": 1.67,
-            "translate": "RESOURCES.no_centri_costo"
+            "translate": "RESOURCES.no_centri_costo_miei_compiti"
+        },
+        {
+            "fieldName": "non_centri_costo_lista",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "No Centri Costo in Lista",
+            "newLine": false,
+            "tooltip": "Individua tutti i compiti non associati ad alcuno centro dei costo in lista",
+            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€') and ccc.id_centro_costo::varchar=any(string_to_array(replace($non_centri_costo_lista$, ' ', ''), ',')))",
+            "size": 1.67,
+            "translate": "RESOURCES.no_centri_costo_in_lista_miei_compiti"
         }
     ],
     "querySuffixes": {
         "tableViewSuffix": "order by minuti_annuali desc"
-    },
-    "translate": "RESOURCES.compiti"
+    }
 }

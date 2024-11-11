@@ -6,7 +6,7 @@
     "predefinedQueries": [
         {
             "type": "main",
-            "queryString": "select codice_provincia, codice_regione, sigla_provincia, descrizione, CASE WHEN flag_a_rischio = true THEN 'Alto' ELSE 'Basso' END as descr_rischio, CASE WHEN flag_a_rischio_2 = true THEN 'Alto' ELSE 'Basso' END as descr_rischio_2, (select descrizione from entrasp.regioni where codice_regione=p.codice_regione) as descr_regione from entrasp.province p",
+            "queryString": "select codice_provincia,rischio_giudizio, codice_regione, sigla_provincia, descrizione, CASE WHEN flag_a_rischio = true THEN 'Alto' ELSE 'Basso' END as descr_rischio, CASE WHEN flag_a_rischio_2 = true THEN 'Alto' ELSE 'Basso' END as descr_rischio_2, (select descrizione from entrasp.regioni where codice_regione=p.codice_regione) as descr_regione from entrasp.province p",
             "operation": "selectTable"
         }
     ],
@@ -24,8 +24,7 @@
                     "confirmAction": true,
                     "confirmActionMessage": "Modificare il livello di rischio? Alto -> Basso | Basso -> Alto",
                     "query": "select entrasp.modifica_rischio_province(array[$selected_rows_data$])",
-                    "reloadOnSuccess": true,
-                    "translate": "RESOURCES.modifica_il_livello_di_rischio"
+                    "reloadOnSuccess": true
                 }
             ]
         }
@@ -40,7 +39,7 @@
             "key": "codice_provincia",
             "label": "Codice Provincia",
             "width": "10%",
-            "translate": "RESOURCES.codice_provincia"
+            "translate": "RESOURCES.codice_provincia_province"
         },
         {
             "format": {
@@ -50,8 +49,8 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "translate": "RESOURCES.description",
-            "width": "30%"
+            "width": "30%",
+            "translate": "RESOURCES.descrizione_province"
         },
         {
             "format": {
@@ -62,7 +61,7 @@
             "key": "sigla_provincia",
             "label": "Sigla",
             "width": "15%",
-            "translate": "RESOURCES.sigla_provincia"
+            "translate": "RESOURCES.sigla_province"
         },
         {
             "format": {
@@ -73,7 +72,7 @@
             "key": "descr_regione",
             "label": "Regione",
             "width": "20%",
-            "translate": "RESOURCES.descr_regione"
+            "translate": "RESOURCES.regione_province"
         },
         {
             "format": {
@@ -102,7 +101,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.descr_rischio"
+            "translate": "RESOURCES.a_rischio_province"
         },
         {
             "format": {
@@ -131,7 +130,51 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.descr_rischio_2"
+            "translate": "RESOURCES.a_rischio_province"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rischio_giudizio",
+            "label": "Rischio Giudizio",
+            "width": "10%",
+            "style": [
+                {
+                    "value": "Basso",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "ForestGreen",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-Basso",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "font_size": "medium",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Medio-Alto",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "font_size": "medium",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Alto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "Crimson",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ]
         }
     ],
     "querySuffixes": {

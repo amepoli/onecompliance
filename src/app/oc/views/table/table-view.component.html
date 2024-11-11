@@ -31,19 +31,28 @@
                     <!-- <div class="table-view-buttons-separator" *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add') || (tableData.showHeader || (!tableData.showHeader && isFullScreen)) && isTabMode && !hideActions.includes('add') || tableData.showFullScreenButton || showImportDataButton"></div> -->
                     
                     <button mat-button (click)="add()" *ngIf="!hideActions.includes('add')"
-                    class="add-button" [matTooltip]="addElementLabel | octranslate">
+                    class="add-button" [ocTooltip]="addElementLabel | octranslate">
                         <mat-icon>add</mat-icon>
                         <span>{{addElementLabel | octranslate}}</span>
                     </button>
                     
                     <button
                         *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !hideActions.includes('quick-add')"
-                        mat-button (click)="quickAdd()" class="add-button" [matTooltip]="quickAddLabel | octranslate">
+                        mat-button (click)="quickAdd()" class="add-button" [ocTooltip]="quickAddLabel | octranslate">
                         <mat-icon>add</mat-icon>
                         <span >{{quickAddLabel | octranslate}}</span>
                     </button>
 
                     <div class="table-view-buttons-separator"></div>
+
+                    <button
+                        *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && customActions.includes('refresh_status')"
+                        mat-button (click)="checkFattura()" class="add-button" [ocTooltip]="refreshStatusLabel | octranslate">
+                        <mat-icon>refresh</mat-icon>
+                        <span >{{refreshStatusLabel | octranslate}}</span>
+                    </button>
+
+
 
                     <!-- <button
                         *ngIf="(tableData.showHeader || (!tableData.showHeader && isFullScreen)) && !isTabMode && !hideActions.includes('add')"
@@ -68,7 +77,7 @@
                             <div *ngFor="let toggle of searchToggles; let i = index">
                                 <mat-slide-toggle [color]="'primary'" [checked]="toggle.checked"
                                     (change)="updateSearchToggle(i, $event.checked)" style="margin: 6px;"
-                                    [matTooltip]="toggle.tooltip">
+                                    [ocTooltip]="toggle.tooltip">
                                     {{toggle | octranslate}}
                                 </mat-slide-toggle>
                             </div>
@@ -196,7 +205,7 @@
                                         <th mat-header-cell class="mat-header-cell table-column"
                                         [style.white-space]="wrapView ? 'normal' : 'nowrap'" 
                                            *matHeaderCellDef
-                                            mat-sort-header [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
+                                            mat-sort-header [hidden]="entry.isHidden" [ocTooltip]="entry.tooltip">
                                             {{ entry | octranslate }}
                                     </th>
                                     </ng-container>
@@ -205,7 +214,7 @@
                                             <mat-checkbox *ngIf="!readOnly" (change)="$event ? masterToggle() : null"
                                                 [checked]="selection.hasValue() && isAllSelected()"
                                                 [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                                [aria-label]="checkboxLabel()" [matTooltip]="entry.tooltip">
+                                                [aria-label]="checkboxLabel()" [ocTooltip]="entry.tooltip">
                                             </mat-checkbox>
                                         </th>
                                     </ng-container>
@@ -229,12 +238,12 @@
                                                 *ngIf="entry.isButton && doesButtonIconExist(entry.key) && !entry.translate && !entry.label && row[entry.key]"
                                                 style="background-color: #25599c; color: white;" 
                                                 [ngStyle]="getElementStyle(entry.key, row[entry.key], row)" mat-icon-button
-                                                (click)="onButtonClick(entry.key, i, row)" [matTooltip]="entry.tooltip">
+                                                (click)="onButtonClick(entry.key, i, row)" [ocTooltip]="entry.tooltip">
                                                 <mat-icon>{{getButtonIcon(entry.key, row[entry.key])}}</mat-icon>
                                             </button>
                                             <button *ngIf="entry.isButton && (entry.translate || entry.label) && row[entry.key]"
                                                 style="background-color: #25599c; color: white;" mat-raised-button
-                                                (click)="onButtonClick(entry.key, i, row)" [matTooltip]="entry.tooltip">
+                                                (click)="onButtonClick(entry.key, i, row)" [ocTooltip]="entry.tooltip">
                                                 <mat-icon
                                                     *ngIf="doesButtonIconExist(entry.key)">{{getButtonIcon(entry.key)}}
                                                 </mat-icon>
@@ -245,14 +254,14 @@
                                                 [style.padding-left.px]="getLevel(row, entry.key)"
                                                 [ngStyle]="getElementStyle(entry.key, row[entry.key], row)"
                                                 class="input-clickable" (click)="onButtonClick(entry.key, i, row)"
-                                                [matTooltip]="entry.tooltip">
+                                                [ocTooltip]="entry.tooltip">
                                                 {{row[entry.key] | onecompliance: format[entry.key]}}
                                             </p>
                                             <p *ngIf="!entry.isInputButton && !row[entry.isInputButtonKey] && !entry.isButton && !entry.isCheckbox"
                                                 style="width: 100%; text-align: left; border-radius: 10px;"
                                                 [style.padding-left.px]="getLevel(row, entry.key)"
                                                 [ngStyle]="getElementStyle(entry.key, row[entry.key], row)"
-                                                [matTooltip]="entry.tooltip">
+                                                [ocTooltip]="entry.tooltip">
                                                 {{row[entry.key] | onecompliance: format[entry.key]}}
                                             </p>
                                         </td>
@@ -273,7 +282,7 @@
                                             [disabled]="true"
                                             [style.width]="entry.width? entry.width: entry.isButton? '128px': ''"
                                             [style.flex]="entry.width? '0 0 ' + entry.width: '1'" *matFooterCellDef
-                                           [hidden]="entry.isHidden" [matTooltip]="entry.tooltip">
+                                           [hidden]="entry.isHidden" [ocTooltip]="entry.tooltip">
                                             {{totalRow[entry.key]? (totalRow[entry.key] | number : '1.2-2'): ''}}
                                     </td>
                                     </ng-container>

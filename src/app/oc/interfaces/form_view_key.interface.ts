@@ -1,6 +1,7 @@
 import { MenuOption } from "./menu_option.interface";
 import { EventTriggerType, FormDataType, FormViewType, FormWidgetType } from "../types";
-import { FieldInputEvent } from "./field.interface";
+import { FieldInputEvent, Item } from "./field.interface";
+import { AttributePostChecks } from "./attribute_post_checks.interface";
 
 export interface FormViewKey { // as per API specification
     isHidden: boolean;
@@ -21,13 +22,18 @@ export interface FormViewKey { // as per API specification
     isDownloadButton?: boolean;
     size?: number;
     style?: {
-        background_color?: string,
-        font_color?: string
+        background_color?: string;
+        font_color?: string;
+        font_size?: string;
+        font_style?: "italic" | "normal";
+        font_weight?: string;
+        text_decoration?: string;
     };
     key: string;
     label: string;
     translate?: string;    
     tooltip?: string;
+    sameOrigin?: boolean;
     subKeys?: [
         {
             key: string,
@@ -48,12 +54,7 @@ export interface FormViewKey { // as per API specification
         suffix?: string,
         pipe?: "Date" | "DateTime" | "Time" | "UpperCase" | "LowerCase" | "Currency" | "Decimal" | "Percent",
         value?: any,
-        options: [
-            {
-                id: number,
-                name: string
-            }
-        ],
+        options?: Item[],
         menuOptions?: MenuOption[],
         comboQuery?: string,
         validations?: [
@@ -66,4 +67,5 @@ export interface FormViewKey { // as per API specification
         ],
         subform_keys?: FormViewKey[];
     };
+    attributePostChecks?: AttributePostChecks[];
 }

@@ -1,45 +1,30 @@
--- FUNCTION: entrasp.grc_punteggio_risposte_somministrazione(character varying, numeric)
-
---DA VERIFICARE
-
-DROP FUNCTION IF EXISTS entrasp.grc_punteggio_risposte_somministrazione(character varying, numeric);
-
-CREATE OR REPLACE FUNCTION entrasp.grc_punteggio_risposte_somministrazione(
-	codiceaz character varying,
-	idsomministrazione numeric,
-	idsondaggio numeric default null::numeric)
-    RETURNS TABLE(codiceazienda character varying, id_somministrazione numeric, punteggio numeric, punteggiomax numeric) 
-    LANGUAGE 'plpgsql'
-    COST 100
-    immutable PARALLEL SAFE
-    ROWS 1000
-
-AS $BODY$
-declare  idmodellotest numeric(12,0); idmodellotestvr numeric(12,0);somma numeric;  
-punteggio_max numeric; riduz_denominatore_na numeric;
-begin 
-
-if idsondaggio is null then
-	select id_sondaggio
-	from entrasp.sondaggi_somministrati
-	where codice_azienda=codiceaz and id_somministrazione=idsomministrazione
-	into idsondaggio limit 1;
-end if;
-
---raise notice 'idsondaggio: %', idsondaggio;
-
-return query(select codiceaz, idsomministrazione, round(sum(rp.peso*rp.punteggio)/100,2), 
-	round(sum(rp.punteggio)-sum(rp.punteggio*rp.flag_non_applicabile::integer/100),2) 
-	from entrasp.risposte rp where  
-entrasp.domanda_active(rp.codice_azienda, rp.id_modello_test, rp.id_modello_test_vr, 
-	rp.id_domanda, rp.id_somministrazione, rp.id_sondaggio)=1 
-and rp.codice_azienda=codiceaz and rp.id_somministrazione=idsomministrazione 
-	and rp.id_sondaggio=idsondaggio);
-
-end ;
-$BODY$;
-
-ALTER FUNCTION entrasp.grc_punteggio_risposte_somministrazione(character varying, numeric, numeric)
-    OWNER TO postgres;
-
-select * from entrasp.grc_punteggio_risposte_somministrazione('FININTSGR', 7203, 7302)
+select ans.codice_azienda, mt.id_modello_test, ans.id_sondaggio, mt.descrizione, qc.processo, 
+	entrasp.argomenti_descr_breve_no_id(ac.id_argomento_tipo_norma) as norma, 
+	entrasp.anagrafiche_cognnome(cnt.codice_part, cnt.id_cliente) as ragione_sociale, 
+	giornate_uomo_scontate,
+	giornate_uomo_sorveglianza,
+	--cnt.codice,
+	(select string_agg(soc.citta||', '||soc.indirizzo, '; ') from entrasp.sedi_operative_questionari soc where soc.id_questionario=qc.id_questionario and soc.codice_azienda=qc.codice_azienda)as sedi, 
+	(select string_agg(entrasp.argomenti_descr_breve_no_id(unnest), '; ') from unnest(ac.id_argomento_settore))as settore, 
+	string_agg(entrasp.anagrafiche_cognnome(ans.codice_part, ans.id_anagrafica)||' ('||entrasp.argomenti_descr_breve_no_id(id_argomento_liv_competenza)||')', '; ')  
+	from entrasp.anagrafiche_sondaggi ans
+	inner join entrasp.sondaggi snd
+	on ans.codice_azienda=snd.codice_azienda and ans.id_sondaggio=snd.id_sondaggio
+	inner join entrasp.modelli_test mt
+	on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test
+	inner join entrasp.argomenti_argomenti amt
+	on mt.id_argomento=amt.id_argomento_son
+	inner join entrasp.contratti cnt
+	on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto
+	inner join entrasp.articoli_contratti ac
+	on cnt.codice_azienda=ac.codice_azienda and cnt.id_contratto=ac.id_contratto
+	inner join entrasp.questionari_certificazione qc
+	on cnt.codice_azienda=qc.codice_azienda and cnt.id_contratto=qc.id_contratto
+	where ans.codice_azienda='ASACERT' 
+	--and amt.id_argomento_father=ac.id_argomento_tipo_norma 
+	group by sedi, ans.codice_azienda, ans.id_sondaggio, mt.id_modello_test, mt.descrizione, 
+	qc.processo, giornate_uomo_scontate,
+	giornate_uomo_sorveglianza,
+	--cnt.codice, 
+	cnt.codice_part, cnt.id_cliente, ac.id_argomento_settore, ac.id_argomento_tipo_norma
+	order by ans.codice_azienda, cnt.id_cliente, mt.id_modello_test, mt.id_modello_test 

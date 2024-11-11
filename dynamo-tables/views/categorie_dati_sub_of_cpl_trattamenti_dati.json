@@ -12,7 +12,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select cd.codice_azienda, id_argomento_categoria, cd.note, true as delete_trattamenti_dati_categorie, cd.id_trattamento_dati, entrasp.argomenti_descr_breve(cd.id_argomento_categoria) as descr_categoria from entrasp.cpl_trattamenti_dati_categorie cd inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son where cd.id_trattamento_dati=$id_trattamento_dati$ and cd.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$P{id_argomento_categoria} and tipo='$P{categoria_dati}'"
+            "queryString": "select cd.codice_azienda, id_argomento_categoria, cd.note, true as delete_trattamenti_dati_categorie, cd.id_trattamento_dati, entrasp.argomenti_descr_breve(cd.id_argomento_categoria) as descr_categoria from entrasp.cpl_trattamenti_dati_categorie cd inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son where cd.id_trattamento_dati=$id_trattamento_dati$ and cd.codice_azienda=$codice_azienda$ and aa.id_argomento_father in($P{id_argomento_categoria}) and tipo='$P{categoria_dati}'"
         }
     ],
     "form_keys": [
@@ -23,7 +23,6 @@
                 "dataType": "text"
             },
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
             "key": "codice_azienda",
             "readOnly": false,
             "isHidden": true,
@@ -38,7 +37,6 @@
                 "value": "$P{categoria_dati}"
             },
             "label": "Tipo",
-            "translate": "RESOURCES.type",
             "key": "tipo",
             "readOnly": false,
             "isHidden": true,
@@ -51,15 +49,14 @@
                 "viewType": "combobox",
                 "dataType": "number",
                 "options": [],
-                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=$P{id_argomento_categoria} and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€') and (position('€global_codice_azienda€' in arg.codice_aziende_escluse)=0 or position('€global_codice_azienda€' in arg.codice_aziende_escluse) is null) order by arg.descrizione"
+                "comboQuery": "select distinct id_argomento as id, id_argomento||'-'||descrizione_breve as name, arg.descrizione from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in($P{id_argomento_categoria}) order by arg.descrizione"
             },
             "isHidden": false,
             "isPrimary": true,
             "key": "id_argomento_categoria",
-            "label": "$P{Categoria}",
+            "label": "Categoria dati",
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.id_argomento_categoria"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -68,7 +65,6 @@
                 "dataType": "text"
             },
             "label": "Note",
-            "translate": "RESOURCES.notes",
             "key": "note",
             "readOnly": false,
             "isHidden": false,
@@ -86,8 +82,7 @@
             "readOnly": false,
             "isHidden": true,
             "isPrimary": true,
-            "newLine": false,
-            "translate": "RESOURCES.id_trattamento_dati"
+            "newLine": false
         }
     ],
     "table_keys": [
@@ -98,8 +93,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+            "label": "codice_azienda"
         },
         {
             "format": {
@@ -138,8 +132,7 @@
                     }
                 ],
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.delete_trattamenti_dati_categorie"
+            }
         },
         {
             "format": {
@@ -150,8 +143,7 @@
             "key": "descr_categoria",
             "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_categoria)",
             "width": "25%",
-            "label": "$P{Categoria}",
-            "translate": "RESOURCES.descr_categoria"
+            "label": "Categoria dati"
         },
         {
             "format": {
@@ -161,8 +153,7 @@
             "isPrimary": false,
             "key": "note",
             "width": "40%",
-            "label": "Note",
-            "translate": "RESOURCES.notes"
+            "label": "Note"
         },
         {
             "format": {
@@ -171,8 +162,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "id_argomento_categoria",
-            "label": "ID",
-            "translate": "RESOURCES.id_argomento_categoria"
+            "label": "ID"
         },
         {
             "format": {
@@ -181,10 +171,13 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "id_trattamento_dati",
-            "label": "ID",
-            "translate": "RESOURCES.id_trattamento_dati"
+            "label": "ID"
         }
     ],
+    "addElementSettings": {
+        "labelQuickAdd": "Nuova Categoria",
+        "navigateOnSuccess": false
+    },
     "hideActions": [
         {
             "tableActionType": "add",

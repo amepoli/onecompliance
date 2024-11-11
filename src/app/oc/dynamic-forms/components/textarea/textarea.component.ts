@@ -10,11 +10,13 @@ import { AngularEditorConfig } from "@kolkov/angular-editor";
   templateUrl: './textarea.component.html',
   styleUrls: ['./textarea.component.scss'],
   host: {
-    // '[style.padding-top.px]': 'field.isVisible? "16": "0"',
+    '[style.padding-top.px]': 'field.isVisible? "8": "0"',
     // '[style.padding-bottom.px]': 'field.isVisible? "16": "0"',
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
-    '[style.width]': 'field.isVisible? field.width + "%": "0"'
+    '[style.width]': 'field.isVisible? field.width + "%": "0"',
+    '[style.height.px]': 'field.isVisible? "76": "0"',
+
   }
 })
 export class TextAreaComponent implements OnInit, AfterViewInit {
@@ -168,6 +170,9 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
     {
       _this.sendResetByKeyEvent()
     }
+
+    _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
+
   }
 
   onFocus(): void {
@@ -195,6 +200,8 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
         _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'press' });
       }
     }
+
+    this.field.onClick && this.field.onClick(this.field);
   }
   
   updateValue() {

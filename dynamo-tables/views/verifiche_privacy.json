@@ -13,11 +13,6 @@
         },
         {
             "operation": "selectForm",
-            "queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
-            "type": "preProcessing"
-        },
-        {
-            "operation": "selectForm",
             "type": "postProcessing",
             "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.id_anagrafica_assegnataria, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
         },
@@ -28,7 +23,7 @@
         },
         {
             "operation": "selectTable",
-            "queryString": "update entrasp.sondaggi_somministrati ss set codice_part=az.codice_part, data_esecuzione=coalesce(ss.data_esecuzione, snd.data_esecuzione) from entrasp.sondaggi snd, entrasp.aziende az where ss.codice_part=az.codice_part and ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=$codice_azienda$ and (ss.codice_part is null or ss.data_esecuzione is null) and ss.stato='C';",
+            "queryString": "update entrasp.sondaggi_somministrati ss set data_esecuzione=coalesce(ss.data_esecuzione, snd.data_esecuzione) from entrasp.sondaggi snd, entrasp.aziende az where ss.codice_part=az.codice_part and ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio and ss.codice_azienda=$codice_azienda$ and (ss.codice_part is null or ss.data_esecuzione is null) and ss.stato='C';",
             "type": "preProcessing"
         },
         {
@@ -46,7 +41,6 @@
         {
             "entryKey": "domande_risposte",
             "label": "Domande e Risposte",
-            "translate": "RESOURCES.questions_and_answers",
             "type": "tableForm",
             "inputEvents": [
                 {
@@ -80,7 +74,8 @@
                     "parent": "id_somministrazione",
                     "son": "id_somministrazione"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.domande_e_risposte_domande_risposte"
         },
         {
             "entryKey": "domande_sezioni_sub_of_somministrazioni",
@@ -111,7 +106,7 @@
             ],
             "label": "Domande e Risposte - Sezioni",
             "type": "table",
-            "translate": "RESOURCES.domande_e_risposte__sezioni"
+            "translate": "RESOURCES.domande_e_risposte__sezioni_domande_sezioni_sub_of_somministrazioni"
         },
         {
             "entryKey": "sondaggi_somministrati_attachments",
@@ -131,8 +126,8 @@
                 }
             ],
             "label": "Documenti Associati",
-            "translate": "RESOURCES.associated_documents",
-            "type": "table"
+            "type": "table",
+            "translate": "RESOURCES.documenti_associati_sondaggi_somministrati_attachments"
         },
         {
             "entryKey": "sondaggi_somministrati_sub_of_sondaggi_somministrati",
@@ -152,7 +147,7 @@
             ],
             "label": "Profilazioni sul cliente",
             "type": "table",
-            "translate": "RESOURCES.profilazioni_sul_cliente"
+            "translate": "RESOURCES.profilazioni_sul_cliente_sondaggi_somministrati_sub_of_sondaggi_somministrati"
         },
         {
             "entryKey": "penalizzazioni_somministrazione",
@@ -167,7 +162,7 @@
                 }
             ],
             "label": "Penalizzazioni",
-            "translate": "RESOURCES.penalties"
+            "translate": "RESOURCES.penalizzazioni_penalizzazioni_somministrazione"
         },
         {
             "entryKey": "calcolo_punteggi",
@@ -186,7 +181,7 @@
                 }
             ],
             "label": "Calcolo punteggi",
-            "translate": "RESOURCES.penalties"
+            "translate": "RESOURCES.calcolo_punteggi_calcolo_punteggi"
         }
     ],
     "table_keys": [
@@ -198,7 +193,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+            "translate": "RESOURCES.codice_azienda_verifiche_privacy"
         },
         {
             "format": {
@@ -208,7 +203,6 @@
             "isPrimary": true,
             "key": "id_somministrazione",
             "label": "# Verifica",
-            "translate": "RESOURCES.id_check",
             "width": "3.5%",
             "style": [
                 {
@@ -218,7 +212,8 @@
                     "text_align": "center",
                     "font_weight": "599"
                 }
-            ]
+            ],
+            "translate": "RESOURCES._verifica_verifiche_privacy"
         },
         {
             "format": {
@@ -228,7 +223,6 @@
             "isPrimary": true,
             "key": "id_sondaggio",
             "label": "# Sond.",
-            "translate": "RESOURCES.id_survey",
             "width": "3.6%",
             "style": [
                 {
@@ -251,7 +245,8 @@
                         "destination": "id_sondaggio"
                     }
                 ]
-            }
+            },
+            "translate": "RESOURCES._sond_verifiche_privacy"
         },
         {
             "format": {
@@ -262,7 +257,6 @@
             "key": "id_e_vr",
             "hasLevel": true,
             "label": "# Mod. Ver.",
-            "translate": "RESOURCES.id_check_template",
             "width": "3.8%",
             "isInputButton": true,
             "buttonAction": {
@@ -283,7 +277,8 @@
                         "destination": "id_modello_test_vr"
                     }
                 ]
-            }
+            },
+            "translate": "RESOURCES._mod_ver_verifiche_privacy"
         },
         {
             "format": {
@@ -301,7 +296,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.numero_contratto"
+            "translate": "RESOURCES._contratto_verifiche_privacy"
         },
         {
             "format": {
@@ -311,8 +306,8 @@
             "isPrimary": false,
             "key": "data_prevista",
             "label": "Data Prevista",
-            "translate": "RESOURCES.expected_date",
-            "width": "5.5%"
+            "width": "5.5%",
+            "translate": "RESOURCES.data_prevista_verifiche_privacy"
         },
         {
             "format": {
@@ -322,8 +317,8 @@
             "isPrimary": false,
             "key": "data_esecuzione",
             "label": "Data esecuzione",
-            "translate": "RESOURCES.execution_date",
-            "width": "5.5%"
+            "width": "5.5%",
+            "translate": "RESOURCES.data_esecuzione_verifiche_privacy"
         },
         {
             "format": {
@@ -334,7 +329,7 @@
             "key": "data_scadenza",
             "label": "Data Scadenza",
             "width": "5.5%",
-            "translate": "RESOURCES.data_scadenza"
+            "translate": "RESOURCES.data_scadenza_verifiche_privacy"
         },
         {
             "format": {
@@ -344,8 +339,8 @@
             "isPrimary": false,
             "key": "titolo_sondaggio",
             "label": "Titolo",
-            "translate": "RESOURCES.title",
-            "width": "19%"
+            "width": "19%",
+            "translate": "RESOURCES.titolo_verifiche_privacy"
         },
         {
             "format": {
@@ -363,7 +358,7 @@
                     "font_weight": "590"
                 }
             ],
-            "translate": "RESOURCES.object_description"
+            "translate": "RESOURCES.clientecontroparte_verifiche_privacy"
         },
         {
             "format": {
@@ -374,7 +369,7 @@
             "label": "object_key",
             "key": "object_key",
             "width": "9%",
-            "translate": "RESOURCES.object_key"
+            "translate": "RESOURCES.object_key_verifiche_privacy"
         },
         {
             "format": {
@@ -384,7 +379,6 @@
             "isPrimary": false,
             "key": "giudizio",
             "label": "Giudizio",
-            "translate": "RESOURCES.judgment",
             "width": "7%",
             "style": [
                 {
@@ -609,7 +603,8 @@
                     "font_size": "medium",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.giudizio_verifiche_privacy"
         },
         {
             "format": {
@@ -620,7 +615,6 @@
             "key": "stato",
             "width": "7%",
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "style": [
                 {
                     "value": "Chiuso",
@@ -665,7 +659,8 @@
                     "background_color": "gainsboro",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.stato_verifiche_privacy"
         },
         {
             "format": {
@@ -675,7 +670,6 @@
             "isPrimary": false,
             "key": "somministrazione_completata",
             "label": "Risposte",
-            "translate": "RESOURCES.answers",
             "width": "6%",
             "style": [
                 {
@@ -700,7 +694,8 @@
                     "font_size": "medium",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.risposte_verifiche_privacy"
         },
         {
             "format": {
@@ -710,7 +705,6 @@
             "isPrimary": false,
             "key": "giudizio_manuale",
             "label": "Giudizio Manuale",
-            "translate": "RESOURCES.manual_judgment",
             "width": "7%",
             "style": [
                 {
@@ -754,7 +748,8 @@
                     "font_size": "medium",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.giudizio_manuale_verifiche_privacy"
         },
         {
             "format": {
@@ -765,7 +760,7 @@
             "sameOrigin": false,
             "key": "id_anagrafica",
             "label": "id_anagrafica",
-            "translate": "RESOURCES.id_personal_data"
+            "translate": "RESOURCES.id_anagrafica_verifiche_privacy"
         },
         {
             "format": {
@@ -776,7 +771,7 @@
             "sameOrigin": false,
             "key": "id_centro_gest",
             "label": "id_centro_gest",
-            "translate": "RESOURCES.id_office"
+            "translate": "RESOURCES.id_centro_gest_verifiche_privacy"
         },
         {
             "format": {
@@ -787,7 +782,7 @@
             "sameOrigin": false,
             "key": "id_anagrafica_somministrazione",
             "label": "id_anagrafica_somministrazione",
-            "translate": "RESOURCES.id_anagrafica_somministrazione"
+            "translate": "RESOURCES.id_anagrafica_somministrazione_verifiche_privacy"
         },
         {
             "format": {
@@ -797,7 +792,7 @@
             "isPrimary": false,
             "key": "codice_part",
             "label": "codice_part",
-            "translate": "RESOURCES.partition_code"
+            "translate": "RESOURCES.codice_part_verifiche_privacy"
         },
         {
             "format": {
@@ -807,7 +802,7 @@
             "isPrimary": false,
             "key": "codice_compito",
             "label": "codice_compito",
-            "translate": "RESOURCES.task_code"
+            "translate": "RESOURCES.codice_compito_verifiche_privacy"
         },
         {
             "format": {
@@ -817,7 +812,7 @@
             "isPrimary": false,
             "key": "id_modello_test",
             "label": "id_modello_test",
-            "translate": "RESOURCES.id_check_template"
+            "translate": "RESOURCES.id_modello_test_verifiche_privacy"
         },
         {
             "format": {
@@ -827,7 +822,7 @@
             "isPrimary": false,
             "key": "id_modello_test_vr",
             "label": "id_modello_test_vr",
-            "translate": "RESOURCES.version"
+            "translate": "RESOURCES.id_modello_test_vr_verifiche_privacy"
         },
         {
             "format": {
@@ -837,7 +832,6 @@
             "isPrimary": false,
             "key": "scaduto",
             "label": "Scaduto Sì/No",
-            "translate": "RESOURCES.expired",
             "width": "5%",
             "style": [
                 {
@@ -859,7 +853,8 @@
                     "font_size": "medium",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.scaduto_sno_verifiche_privacy"
         },
         {
             "format": {
@@ -892,7 +887,7 @@
                     }
                 ]
             },
-            "translate": "RESOURCES.id_sondaggio_succ"
+            "translate": "RESOURCES._sondsucc_verifiche_privacy"
         },
         {
             "format": {
@@ -902,8 +897,8 @@
             "isPrimary": false,
             "key": "id_sondaggio_parent",
             "label": "Sondaggio Parent",
-            "translate": "RESOURCES.id_relative_survey",
-            "width": "5%"
+            "width": "5%",
+            "translate": "RESOURCES.sondaggio_parent_verifiche_privacy"
         },
         {
             "format": {
@@ -915,7 +910,7 @@
             "queryFunct": "entrasp.id_somministrazione_precedente(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione)",
             "label": "Precedente",
             "width": "5%",
-            "translate": "RESOURCES.id_somministrazione_precedente"
+            "translate": "RESOURCES.precedente_verifiche_privacy"
         },
         {
             "format": {
@@ -927,22 +922,20 @@
             "key": "incaricato_risposta",
             "queryFunct": "entrasp.anagrafiche_id_codcognnome('€global_codice_part€', id_anagrafica)",
             "label": "Incaricato a rispondere",
-            "translate": "RESOURCES.incaricato_risposta"
+            "translate": "RESOURCES.incaricato_a_rispondere_verifiche_privacy"
         }
     ],
     "exportQueries": {
         "tableQueries": [
             {
                 "label": "Estrazione profilazioni AML",
-                "queryString": "SELECT ss.id_somministrazione, snd.id_sondaggio, ss.codice_azienda, ss.data_esecuzione, snd.id_modello_test, snd.id_modello_test_vr, ss.object_description, ss.stato, ss.somministrazione_completata, snd.descrizione, snd.data_prevista,nullif(split_part(ss.object_key,'|',2),'')::numeric as id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=(case when ss.object_name='anagraficheId' then nullif(split_part(ss.object_key,'|',2),'')::numeric else null::numeric end)::numeric and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, ss.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.is_max_modello_test(ss.codice_azienda, ss.id_sondaggio) as ultimo_sond_per_cliente_per_data, entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio) as ultimo_cliente_son_per_cliente_per_data_rett, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mvr.id_risultato)::date as data_scadenza FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mv on snd.codice_azienda=mv.codice_azienda and snd.id_modello_test=mv.id_modello_test where ss.codice_azienda=$codice_azienda$ and mv.id_tipo_modello_test=57",
-                "translate": "RESOURCES.estrazione_profilazioni_aml"
+                "queryString": "SELECT ss.id_somministrazione, snd.id_sondaggio, ss.codice_azienda, ss.data_esecuzione, snd.id_modello_test, snd.id_modello_test_vr, ss.object_description, ss.stato, ss.somministrazione_completata, snd.descrizione, snd.data_prevista,nullif(split_part(ss.object_key,'|',2),'')::numeric as id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=(case when ss.object_name='anagraficheId' then nullif(split_part(ss.object_key,'|',2),'')::numeric else null::numeric end)::numeric and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione, entrasp.modelli_test_risultati_righe_descr(mvr.id_risultato, ss.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.is_max_modello_test(ss.codice_azienda, ss.id_sondaggio) as ultimo_sond_per_cliente_per_data, entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio) as ultimo_cliente_son_per_cliente_per_data_rett, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mvr.id_risultato)::date as data_scadenza FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mvr on snd.codice_azienda=mvr.codice_azienda and snd.id_modello_test=mvr.id_modello_test and snd.id_modello_test_vr=mvr.id_modello_test_vr inner join entrasp.modelli_test mv on snd.codice_azienda=mv.codice_azienda and snd.id_modello_test=mv.id_modello_test where ss.codice_azienda=$codice_azienda$ and mv.id_tipo_modello_test=57"
             }
         ],
         "formQueries": [
             {
                 "label": "Risposte punteggio diverso da 0",
-                "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$ and ri.peso!= 0",
-                "translate": "RESOURCES.risposte_punteggio_diverso_da_0"
+                "queryString": "select ds.descrizione as sezione, dm.ordinamento as n_domanda, ri.id_sondaggio, ri.id_somministrazione, entrasp.domande_descrizione(ri.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda) as domanda, entrasp.risposte_previste_risposta(dm.codice_azienda, dm.id_modello_test, dm.id_modello_test_vr, dm.id_domanda, ri.id_risposta_prev) as risposta, ri.note, ri.peso from entrasp.risposte ri inner join entrasp.domande dm on ri.codice_azienda = dm.codice_azienda and ri.id_modello_test =dm.id_modello_test and ri.id_modello_test_vr=dm.id_modello_test_vr and ri.id_domanda=dm.id_domanda left join entrasp.domande_sezioni ds on dm.codice_azienda = ds.codice_azienda and dm.id_modello_test = ds.id_modello_test and dm.id_modello_test_vr= ds.id_modello_test_vr and dm.id_sezione = ds.id_sezione where ri.codice_azienda = $codice_azienda$ and ri.id_sondaggio = $id_sondaggio$ and ri.id_somministrazione=$id_somministrazione$ and ri.peso!= 0"
             }
         ]
     }

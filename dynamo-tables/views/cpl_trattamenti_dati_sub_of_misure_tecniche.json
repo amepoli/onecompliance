@@ -1,0 +1,198 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "cpl_trattamenti_dati_sub_of_misure_tecniche",
+    "predefinedQueries": [
+        {
+            "queryString": "select td.id_trattamento_dati, td.codice,titolo, td.id_argomento_tipo_trattamento_dato,entrasp.centri_gestionali_descr(td.codice_part,td.id_centro_gest) as centro_gest, td.flag_trattamento_conto_terzi::boolean as boolean_conto_terzi,td.codice_azienda,td.termini_ultimi_cancellazione,cd.id_argomento_categoria from entrasp.cpl_trattamenti_dati td inner join entrasp.cpl_trattamenti_dati_categorie cd on td.codice_azienda=cd.codice_azienda and td.id_trattamento_dati=cd.id_trattamento_dati inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son where aa.id_argomento_father in(3968, 48975, 48976, 52967, 52981) and tipo='misure_tecniche' and cd.id_argomento_categoria=$id_argomento_categoria$",
+            "operation": "selectTable",
+            "type": "main"
+        }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Associa misura tecnica",
+        "labelQuickAdd": "Associa misura tecnica",
+        "navigateOnSuccess": false
+    },
+    "search_keys": [
+        {
+            "fieldName": "id_trattamento_dati",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Id Trattamento Dati",
+            "newLine": true,
+            "queryCond": "id_trattamento_dati=$id_trattamento_dati$",
+            "translate": "RESOURCES.id_trattamento_dati_cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "fieldName": "desccrizione",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Descrizione",
+            "newLine": true,
+            "queryCond": "descrizione=$descrizione$",
+            "translate": "RESOURCES.descrizione_cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "fieldName": "flag_trattamento_conto_terzi",
+            "format": {
+                "dataType": "boolean",
+                "viewType": "input"
+            },
+            "label": "flag_trattamento_conto_terzi",
+            "newLine": true,
+            "queryCond": "flag_trattamento_conto_terzi='€flag_trattamento_conto_terzi€'",
+            "translate": "RESOURCES.flag_trattamento_conto_terzi_cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "fieldName": "id_centro_gest",
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
+            "newLine": true,
+            "queryCond": "(select id_centro_gest from entrasp.modello_test_fields(codice_azienda, id_modello_test))= $id_centro_gest$",
+            "translate": "RESOURCES.centro_gestionale_cpl_trattamenti_dati_sub_of_finalita"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "width": "4%",
+            "label": "#",
+            "translate": "RESOURCES._cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_categoria",
+            "label": "id_argomento_categoria"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "width": "8%",
+            "label": "Codice",
+            "translate": "RESOURCES.codice_cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "titolo",
+            "width": "30%",
+            "label": "Titolo",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "599"
+                }
+            ],
+            "translate": "RESOURCES.titolo_cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_trattamento_dato",
+            "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_tipo_trattamento_dato)",
+            "width": "8%",
+            "label": "# Arg.",
+            "translate": "RESOURCES._arg_cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isCheckbox": true,
+            "isPrimary": false,
+            "key": "boolean_conto_terzi",
+            "queryFunct": "flag_trattamento_conto_terzi::boolean",
+            "width": "5%",
+            "label": "C.terzi",
+            "translate": "RESOURCES.cterzi_cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "8%",
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Azienda",
+            "translate": "RESOURCES.azienda_cpl_trattamenti_dati_sub_of_finalita"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "flag_trattamento_conto_terzi",
+            "label": "flag_trattamento_conto_terzi",
+            "translate": "RESOURCES.flag_trattamento_conto_terzi_cpl_trattamenti_dati_sub_of_finalita"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_trattamento_dati desc"
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "#",
+            "newLine": false,
+            "size": 1.0,
+            "readOnly": true
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}

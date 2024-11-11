@@ -175,3 +175,25 @@ select entrasp.risposte_update_insert(codiceazienda=>'INVESTIRE'::varchar,
 
 select entrasp.risposte_update_insert(codiceazienda=>'INVESTIRE'::varchar, idmodellotest=>336::numeric, idrisposta=>null::numeric, risposta_=>null::text, iddomanda=>1::numeric, idrispostaprev=>(case when 1=7 then null::numeric else entrasp.evaluate_given_field_null('id_risposta_prev_radio', '92975')::numeric end), idsondaggio=>770::numeric, idsomministrazione=>1997::numeric, punteggio_=>90.00::numeric, peso_=>coalesce(entrasp.evaluate_given_field_null('peso_oa', '0')::numeric, entrasp.evaluate_given_field_null('peso_rb', '0.00')::numeric, entrasp.evaluate_given_field_null('peso_mc', 'null')::numeric), note_=>entrasp.note_domanda(1, null, null, null), idmodellotestvr=>1::numeric, punteggiorisposta=>null::numeric, rispostamultipla=>'[]'::varchar);
 
+-- query per trovare domante di tipo diverso da 2 con più risposte
+
+	select entrasp.fetch_id_risposta(codice_azienda,
+	id_modello_test,
+	id_domanda,
+	id_sondaggio,
+	id_modello_test_vr,
+	id_somministrazione,
+	id_risposta_prev,
+	id_risposta ),  dm.id_tipo_domanda, rs.id_risposta, rs.id_sondaggio, rs.id_somministrazione, rs.id_domanda, rs.codice_azienda 
+ from entrasp.risposte rs
+ inner join entrasp.domande dm using (codice_azienda, id_modello_test, id_modello_test_vr, id_domanda)
+	where  entrasp.fetch_id_risposta(codice_azienda,
+	id_modello_test,
+	id_domanda,
+	id_sondaggio,
+	id_modello_test_vr,
+	id_somministrazione,
+	id_risposta_prev,
+	id_risposta ) is not null and dm.id_tipo_domanda!=2
+	and codice_azienda='FINAFARM'
+	order by dm.id_domanda

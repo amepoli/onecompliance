@@ -1,0 +1,32 @@
+{
+  "$schema": "../profiles.schema.json",
+  "name": "just_organization_restricted",
+  "includes": [
+    "just_organization"
+  ],
+  "menu": {
+    "allow": [
+      "gorico",
+      "homepage"
+    ],
+    "deny": [
+    ]
+  },
+  "tables": {
+    "allow": [
+    ],
+    "deny": [
+      "*"
+    ],
+    "form_keys": [],
+    "readOnly": [],
+    "table_keys": [],
+    "queryCond": [
+      {
+        "entry": "centri_gestionali",
+        "viewType": "table",
+        "queryString": "id_centro_gest in(select id_centro_gest from entrasp.centri_gestionali where id_gruppo_lavoro in(select id_gruppo_lavoro from entrasp.gruppi_lavoro_membri where id_anagrafica=€global_userid€ and codice_part='€global_codice_part€') and codice_part='€global_codice_part€')"
+      }
+    ]
+  }
+}

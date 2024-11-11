@@ -8,7 +8,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select distinct roa.id_registrazione_op, op.id_operazione, (select concat(id_contratto, ' - ' ,descrizione) as name from entrasp.contratti where codice_azienda=op.codice_azienda and id_contratto=op.id_contratto) as contratto, op.codice_azienda,op.codice_part,op.data_op, entrasp.causali_codice_descr(id_causale) as causale_analitica, op.importo from entrasp.operazioni op left join entrasp.registrazioni_operazioni_aui roa on op.codice_azienda=roa.codice_azienda and op.id_operazione=roa.id_operazione where op.codice_azienda=$codice_azienda$"
+            "queryString": "select distinct roa.id_registrazione_op, op.id_operazione, entrasp.contratti_descr_completa(op.id_contratto, op.codice_azienda) as contratto, op.codice_azienda,op.codice_part,op.data_op, entrasp.causali_codice_descr(id_causale) as causale_analitica, op.importo from entrasp.operazioni op left join entrasp.registrazioni_operazioni_aui roa on op.codice_azienda=roa.codice_azienda and op.id_operazione=roa.id_operazione where op.codice_azienda=$codice_azienda$"
         },
         {
             "operation": "selectForm",
@@ -24,12 +24,12 @@
                 "dataType": "text"
             },
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
             "key": "codice_azienda",
             "readOnly": false,
             "isHidden": true,
             "isPrimary": true,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.codice_azienda_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -43,7 +43,7 @@
             "isHidden": true,
             "isPrimary": false,
             "newLine": false,
-            "translate": "RESOURCES.id_rapporto"
+            "translate": "RESOURCES.id_rapporto_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -57,7 +57,7 @@
             "isHidden": true,
             "isPrimary": false,
             "newLine": false,
-            "translate": "RESOURCES.id_operazione"
+            "translate": "RESOURCES.id_operazione_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -66,12 +66,12 @@
                 "dataType": "text"
             },
             "label": "id_anagrafica",
-            "translate": "RESOURCES.id_personal_data",
             "key": "id_anagrafica",
             "readOnly": false,
             "isHidden": true,
             "isPrimary": false,
-            "newLine": false
+            "newLine": false,
+            "translate": "RESOURCES.id_anagrafica_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -92,7 +92,7 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.dati_generali"
+            "translate": "RESOURCES.dati_generali_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": true,
@@ -107,7 +107,7 @@
             "isPrimary": true,
             "newLine": false,
             "size": 2,
-            "translate": "RESOURCES.id_registrazione_op"
+            "translate": "RESOURCES.id_registrazione_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -119,9 +119,9 @@
             "isPrimary": false,
             "key": "codice_part",
             "label": "codice_part",
-            "translate": "RESOURCES.partition_code",
             "newLine": false,
-            "readOnly": true
+            "readOnly": true,
+            "translate": "RESOURCES.codice_part_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -133,7 +133,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -144,7 +144,7 @@
             "newLine": false,
             "size": 3.3,
             "readOnly": true,
-            "translate": "RESOURCES.tipo_intermediario"
+            "translate": "RESOURCES.tipo_intermediario_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -156,7 +156,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -167,7 +167,7 @@
             "newLine": false,
             "size": 3.3,
             "readOnly": true,
-            "translate": "RESOURCES.codice_intermediario"
+            "translate": "RESOURCES.codice_intermediario_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -179,7 +179,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -190,7 +190,7 @@
             "newLine": true,
             "size": 3.3,
             "readOnly": true,
-            "translate": "RESOURCES.identificativo_rapporto"
+            "translate": "RESOURCES.identificativo_rapporto_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -211,7 +211,7 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.Filiali"
+            "translate": "RESOURCES.filiale__punto_operativo_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -223,7 +223,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -234,7 +234,7 @@
             "newLine": false,
             "size": 1.66,
             "readOnly": true,
-            "translate": "RESOURCES.codice_filiale"
+            "translate": "RESOURCES.codice_filiale_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -249,7 +249,7 @@
             "size": 1.67,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.cab_filiale"
+            "translate": "RESOURCES.cab_filiale_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -261,7 +261,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -272,7 +272,7 @@
             "size": 3.33,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.comune_filiale"
+            "translate": "RESOURCES.comune_filiale_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -284,7 +284,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -295,7 +295,7 @@
             "size": 1.67,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.cab_comune_filiale"
+            "translate": "RESOURCES.cab_comune_filiale_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -307,7 +307,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -318,7 +318,7 @@
             "size": 1.67,
             "newLine": true,
             "readOnly": true,
-            "translate": "RESOURCES.provincia_filiale"
+            "translate": "RESOURCES.provincia_filiale_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -339,7 +339,7 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.dati_operazione"
+            "translate": "RESOURCES.dati_operazione_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -351,7 +351,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -368,7 +368,7 @@
                     "queryString": "select true"
                 }
             ],
-            "translate": "RESOURCES.data_operazione"
+            "translate": "RESOURCES.data_operazione_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -383,7 +383,7 @@
             "newLine": false,
             "size": 1.67,
             "readOnly": false,
-            "translate": "RESOURCES.identificativo_rapporto_operazioni"
+            "translate": "RESOURCES.identificativo_rapporto_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -395,7 +395,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -406,7 +406,7 @@
             "newLine": false,
             "size": 3.33,
             "readOnly": true,
-            "translate": "RESOURCES.causale_analitica"
+            "translate": "RESOURCES.causale_analitica_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -418,7 +418,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -429,7 +429,7 @@
             "newLine": false,
             "size": 0.8325,
             "readOnly": true,
-            "translate": "RESOURCES.segno"
+            "translate": "RESOURCES.segno_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -441,7 +441,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -452,7 +452,7 @@
             "size": 0.8325,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.codice_valuta"
+            "translate": "RESOURCES.valuta_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -464,7 +464,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -475,7 +475,7 @@
             "size": 0.8325,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.importo_euro"
+            "translate": "RESOURCES.importo_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -487,7 +487,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -498,7 +498,7 @@
             "size": 0.8325,
             "newLine": true,
             "readOnly": true,
-            "translate": "RESOURCES.importo_contanti"
+            "translate": "RESOURCES.contanti_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -519,7 +519,7 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.dati_soggetto"
+            "translate": "RESOURCES.dati_soggetto_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -531,7 +531,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -542,7 +542,7 @@
             "size": 3.3,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.cognome_nome_rag_sociale_soggetto"
+            "translate": "RESOURCES.denominazione_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -556,7 +556,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -581,7 +581,7 @@
                     "successMessage": "Stato di Residenza Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.codice_nazione"
+            "translate": "RESOURCES.stato_di_residenza_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -611,7 +611,7 @@
                     "successMessage": "Codice SAE Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.cod_sae"
+            "translate": "RESOURCES.sae_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -623,7 +623,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -634,7 +634,7 @@
             "size": 3.3,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.tipo_soggetto"
+            "translate": "RESOURCES.tipo_soggetto_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -646,7 +646,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -671,7 +671,7 @@
                     "successMessage": "Indirizzo di Residenza Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.indirizzo"
+            "translate": "RESOURCES.indirizzo_di_residenza_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -702,7 +702,7 @@
                     "successMessage": "Codice Ateco Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.id_ateco"
+            "translate": "RESOURCES.ateco_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -714,7 +714,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -725,7 +725,7 @@
             "size": 3.3,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.codice"
+            "translate": "RESOURCES.ndg_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -739,7 +739,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -764,7 +764,7 @@
                     "successMessage": "Comune di Residenza Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.codice_comune"
+            "translate": "RESOURCES.comune_di_residenza_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -776,7 +776,7 @@
                         "message": "Campo Obbligatorio",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.campo_obbligatorio"
+                        "translate": "RESOURCES.campo_obbligatorio_operazioni_aui_da_registrare"
                     }
                 ]
             },
@@ -801,7 +801,7 @@
                     "successMessage": "CAB Comune di Residenza Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.cab_comune"
+            "translate": "RESOURCES.cab_comune_di_residenza_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -816,13 +816,14 @@
             "size": 3.3,
             "newLine": false,
             "readOnly": true,
-            "translate": "RESOURCES.codice_fiscale"
+            "translate": "RESOURCES.codice_fiscale_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
             "format": {
                 "dataType": "date",
-                "viewType": "input"
+                "viewType": "input",
+                "value": "null"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -845,7 +846,7 @@
                     "successMessage": "Data di Nascita Aggiornata"
                 }
             ],
-            "translate": "RESOURCES.nascita_data"
+            "translate": "RESOURCES.data_di_nascita_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -860,7 +861,7 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.invisible"
+            "translate": "RESOURCES.invisible_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -891,7 +892,7 @@
                     "successMessage": "Sesso Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.sesso"
+            "translate": "RESOURCES.sesso_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -922,7 +923,7 @@
                     "successMessage": "Comune di Nascita Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.nascita_luogo"
+            "translate": "RESOURCES.comune_di_nascita_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -937,7 +938,7 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.invisible"
+            "translate": "RESOURCES.invisible_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -958,7 +959,7 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.dati_esecutore"
+            "translate": "RESOURCES.dati_esecutore_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -972,8 +973,7 @@
             "label": "",
             "newLine": false,
             "size": 0,
-            "readOnly": true,
-            "translate": "RESOURCES.id_anagrafica_esec"
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -988,7 +988,7 @@
             "newLine": false,
             "size": 3.3,
             "readOnly": true,
-            "translate": "RESOURCES.cognome_nome_esecutore"
+            "translate": "RESOURCES.denominazione_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1003,7 +1003,7 @@
             "newLine": false,
             "size": 3.3,
             "readOnly": true,
-            "translate": "RESOURCES.ndg_esecutore"
+            "translate": "RESOURCES.ndg_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1032,7 +1032,7 @@
                     "successMessage": "Comune di Nascita Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.data_nascita_esecutore"
+            "translate": "RESOURCES.data_di_nascita_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1047,7 +1047,7 @@
             "newLine": false,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.invisible"
+            "translate": "RESOURCES.invisible_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1062,7 +1062,7 @@
             "newLine": false,
             "size": 3.3,
             "readOnly": true,
-            "translate": "RESOURCES.cod_fiscale_esecutore"
+            "translate": "RESOURCES.codice_fiscale_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1093,7 +1093,7 @@
                     "successMessage": "Comune di Nascita Aggiornato"
                 }
             ],
-            "translate": "RESOURCES.comune_paese_nascita_esecutore"
+            "translate": "RESOURCES.comune_di_nascita_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1114,7 +1114,7 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "translate": "RESOURCES.dati_controparte"
+            "translate": "RESOURCES.dati_beneficiario__controparte_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1129,7 +1129,7 @@
             "size": 3.3,
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.cognome_nome_rag_sociale_ben"
+            "translate": "RESOURCES.denominazione_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1144,7 +1144,7 @@
             "size": 3.33,
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.comune_ordinante_beneficiario"
+            "translate": "RESOURCES.comune_ordinante_beneficiario_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1159,7 +1159,7 @@
             "size": 1.67,
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.cab_ordinante_beneficiario"
+            "translate": "RESOURCES.cab_ordinante_beneficiario_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1174,7 +1174,7 @@
             "size": 1.66,
             "newLine": true,
             "readOnly": false,
-            "translate": "RESOURCES.paese_ordinante_beneficiario"
+            "translate": "RESOURCES.paese_ordinante_beneficiario_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1189,7 +1189,7 @@
             "size": 0.8325,
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.codice_intermediario_ctp"
+            "translate": "RESOURCES.cod_intermediario_controparte_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1204,7 +1204,7 @@
             "size": 2.4875,
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.denominazione_intermediario_ctp"
+            "translate": "RESOURCES.denominazione_intermediario_controparte_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1219,7 +1219,7 @@
             "size": 1.67,
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.paese_intermediario_ctp"
+            "translate": "RESOURCES.paese_intermediario_controparte_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1234,7 +1234,7 @@
             "size": 1.67,
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.cab_intermediario_ctp"
+            "translate": "RESOURCES.cab_intermediario_controparte_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1249,7 +1249,7 @@
             "size": 3.33,
             "newLine": true,
             "readOnly": false,
-            "translate": "RESOURCES.iban_rapporto_ctp"
+            "translate": "RESOURCES.iban_rapporto_controparte_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1278,7 +1278,7 @@
                     "successMessage": "Note Aggiornate"
                 }
             ],
-            "translate": "RESOURCES.annotazioni_interne"
+            "translate": "RESOURCES.a_disposizione_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1292,7 +1292,7 @@
             "sameOrigin": false,
             "readOnly": true,
             "newLine": false,
-            "translate": "RESOURCES.invisible_7"
+            "translate": "RESOURCES.invisible_7_operazioni_aui_da_registrare"
         },
         {
             "autoGenerate": false,
@@ -1303,7 +1303,7 @@
             "isPrimary": false,
             "key": "registra_operazione",
             "buttonIcon": "ios_share",
-            "label": " Registra operazione in AUI",
+            "label": "Registra operazione in AUI",
             "newLine": false,
             "outputEvent": {
                 "eventName": "register",
@@ -1336,7 +1336,7 @@
                     "successMessage": "Operazione eseguita con successo"
                 }
             ],
-            "translate": "RESOURCES.registra_operazione"
+            "translate": "RESOURCES.registra_operazione_in_aui_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1350,7 +1350,7 @@
             "sameOrigin": false,
             "readOnly": true,
             "newLine": true,
-            "translate": "RESOURCES.invisible_8"
+            "translate": "RESOURCES.invisible_8_operazioni_aui_da_registrare"
         }
     ],
     "table_keys": [
@@ -1363,7 +1363,7 @@
             "key": "id_operazione",
             "label": "# Operazione",
             "width": "7%",
-            "translate": "RESOURCES.id_operazione"
+            "translate": "RESOURCES._operazione_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1373,7 +1373,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+            "translate": "RESOURCES.codice_azienda_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1383,7 +1383,7 @@
             "isPrimary": false,
             "key": "codice_part",
             "label": "codice_part",
-            "translate": "RESOURCES.partition_code"
+            "translate": "RESOURCES.codice_part_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1393,7 +1393,7 @@
             "key": "data_op",
             "isHidden": false,
             "isPrimary": false,
-            "translate": "RESOURCES.data_op"
+            "translate": "RESOURCES.data_oper_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1404,7 +1404,7 @@
             "isHidden": false,
             "isPrimary": false,
             "width": "40%",
-            "translate": "RESOURCES.causale_analitica"
+            "translate": "RESOURCES.causale_analitica_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1415,7 +1415,7 @@
             "isHidden": false,
             "isPrimary": false,
             "width": "10%",
-            "translate": "RESOURCES.importo"
+            "translate": "RESOURCES.importo_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1426,7 +1426,7 @@
             "key": "contratto",
             "label": "Contratto",
             "width": "25%",
-            "translate": "RESOURCES.contratto"
+            "translate": "RESOURCES.contratto_operazioni_aui_da_registrare"
         },
         {
             "format": {
@@ -1459,7 +1459,7 @@
                     }
                 ]
             },
-            "translate": "RESOURCES.id_registrazione_op"
+            "translate": "RESOURCES.operazione_aui_operazioni_aui_da_registrare"
         }
     ],
     "subTables": [
@@ -1477,7 +1477,7 @@
                 }
             ],
             "label": "Anagrafiche connesse",
-            "translate": "RESOURCES.anagrafiche_connesse"
+            "translate": "RESOURCES.anagrafiche_connesse_connessioni_anagrafiche_sub_op_aui_da_registrare"
         }
     ],
     "search_keys": [
@@ -1490,7 +1490,7 @@
             "label": "Nascondi Operazioni Registrate",
             "newLine": false,
             "queryCond": "roa.id_registrazione_op IS NULL",
-            "translate": "RESOURCES.nascondi_operazioni_registrate"
+            "translate": "RESOURCES.nascondi_operazioni_registrate_operazioni_aui_da_registrare"
         }
     ],
     "querySuffixes": {
@@ -1541,6 +1541,5 @@
             "viewType": "form",
             "formActionType": "save"
         }
-    ],
-    "translate": "RESOURCES.operazioni_da_registrare"
+    ]
 }

@@ -17,16 +17,6 @@
             "operation": "stopEvent",
             "type": "main",
             "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
-        },
-        {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0) where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
-        },
-        {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "update entrasp.compiti cmp set trattamento=$trattamento$, analisi_cause=$analisi_cause$, perdita_diretta_effettiva=$perdita_diretta_effettiva$, perdita_indiretta_effettiva=$perdita_indiretta_effettiva$, perdita_diretta_potenziale=$perdita_diretta_potenziale$, perdita_indiretta_potenziale=$perdita_indiretta_potenziale$, flag_causa_legale=coalesce($flag_causa_legale$,0) , flag_reclamo=coalesce($flag_reclamo$,0) , flag_progetto_informatico=coalesce($flag_progetto_informatico$,0)  where cmp.codice_azienda=$codice_azienda$ and cmp.codice_compito = $codice_compito$"
         }
     ],
     "search_keys": [
@@ -38,9 +28,9 @@
                 "viewType": "combobox"
             },
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "newLine": true,
-            "queryCond": "stato='€stato€'"
+            "queryCond": "stato='€stato€'",
+            "translate": "RESOURCES.stato_compiti_chiusi"
         },
         {
             "fieldName": "note_search",
@@ -49,9 +39,9 @@
                 "viewType": "input"
             },
             "label": "Note",
-            "translate": "RESOURCES.notes",
             "newLine": false,
-            "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+            "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'",
+            "translate": "RESOURCES.note_compiti_chiusi"
         },
         {
             "fieldName": "codice_compito",
@@ -62,7 +52,7 @@
             "label": "Codice Compito",
             "newLine": false,
             "queryCond": "codice_compito=$codice_compito$",
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES.codice_compito_compiti_chiusi"
         },
         {
             "fieldName": "titolo",
@@ -71,9 +61,9 @@
                 "viewType": "input"
             },
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "newLine": true,
-            "queryCond": "titolo=$titolo$"
+            "queryCond": "titolo=$titolo$",
+            "translate": "RESOURCES.titolo_compiti_chiusi"
         },
         {
             "fieldName": "id_tipo_segnalazione_s",
@@ -85,7 +75,7 @@
             "label": "ID Tipo Segnal.",
             "newLine": false,
             "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$",
-            "translate": "RESOURCES.id_tipo_segnal"
+            "translate": "RESOURCES.id_tipo_segnal_compiti_chiusi"
         },
         {
             "fieldName": "id_centro_gest",
@@ -95,9 +85,9 @@
                 "viewType": "combobox"
             },
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "newLine": false,
-            "queryCond": "id_centro_gest=$id_centro_gest$"
+            "queryCond": "id_centro_gest=$id_centro_gest$",
+            "translate": "RESOURCES.centro_gestionale_compiti_chiusi"
         },
         {
             "fieldName": "flag_compiti_aperti",
@@ -105,9 +95,9 @@
                 "viewType": "checkbox"
             },
             "label": "Solo Principali",
-            "translate": "RESOURCES.main_only",
             "newLine": false,
-            "queryCond": "codice_compito_parent IS null"
+            "queryCond": "codice_compito_parent IS null",
+            "translate": "RESOURCES.solo_principali_compiti_chiusi"
         }
     ],
     "hideActions": [

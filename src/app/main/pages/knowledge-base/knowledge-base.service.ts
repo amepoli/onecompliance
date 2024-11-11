@@ -35,8 +35,8 @@ export class KnowledgeBaseService implements Resolve<any>
             Promise.all([
                 this.getKnowledgeBase()
             ]).then(
-                () => {
-                    resolve();
+                (x: any) => {
+                    resolve(x);
                 },
                 reject
             );

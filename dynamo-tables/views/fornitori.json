@@ -24,8 +24,7 @@
                     "query": "select entrasp.unifica_anagrafiche_selezionate(array[$selected_rows_data$], '€global_username€', '€global_codice_azienda€')",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "confirmActionMessage": "Unificare le anagrafiche selezionate?",
-                    "translate": "RESOURCES.unifica_anagrafiche"
+                    "confirmActionMessage": "Unificare le anagrafiche selezionate?"
                 }
             ]
         }
@@ -43,7 +42,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT an.codice_part, an.id_anagrafica, coalesce(an.nome||' '||an.cognome, avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and RA.codice_ruolo = 'FOR' and ra.codice_azienda='€global_codice_azienda€';",
+            "queryString": "SELECT an.codice_part, an.id_anagrafica, coalesce(nullif(nome||' '||an.cognome,' '), avr.ragione_sociale) as nmrs, avr.denominazione,an.codice,entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) and RA.codice_ruolo = 'FOR' and ra.codice_azienda='€global_codice_azienda€';",
             "type": "main"
         },
         {
@@ -123,8 +122,7 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Documenti Associati",
-            "translate": "RESOURCES.associated_documents"
+            "label": "Documenti Associati"
         },
         {
             "entryKey": "sondaggi_somministrati_sub_of_anagrafiche",
@@ -139,8 +137,7 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Valutazioni Associate",
-            "translate": "RESOURCES.valutazioni_associate"
+            "label": "Valutazioni Associate"
         },
         {
             "entryKey": "centri_gestionali_sub_of_anagrafiche_vr",
@@ -154,8 +151,7 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Centri Gestionali",
-            "translate": "RESOURCES.centri_gestionali"
+            "label": "Centri Gestionali"
         },
         {
             "entryKey": "progetti_sub_of_anagrafiche_vr",
@@ -166,8 +162,7 @@
                     "son": "id_cliente"
                 }
             ],
-            "label": "Progetti associati",
-            "translate": "RESOURCES.progetti_associati"
+            "label": "Progetti associati"
         },
         {
             "entryKey": "anagrafiche_vr_sub_anagrafiche_vr",
@@ -182,8 +177,7 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Versioni",
-            "translate": "RESOURCES.version"
+            "label": "Versioni"
         },
         {
             "entryKey": "contratti_fornitori_sub_of_fornitori",
@@ -191,7 +185,7 @@
             "keys": [
                 {
                     "parent": "id_anagrafica",
-                    "son": "id_fornitore"
+                    "son": "id_cliente"
                 },
                 {
                     "parent": "codice_part",
@@ -199,8 +193,7 @@
                 }
             ],
             "label": "Contratti gestiti",
-            "type": "table",
-            "translate": "RESOURCES.contratti_gestiti"
+            "type": "table"
         },
         {
             "entryKey": "cpl_trattamenti_dati_responsabili_sub_of_fornitori",
@@ -219,8 +212,7 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Trattamenti Dati/Responsabile",
-            "translate": "RESOURCES.trattamenti_datiresponsabile"
+            "label": "Trattamenti Dati/Responsabile"
         },
         {
             "entryKey": "cpl_trattamenti_dati_titolari_sub_of_fornitori",
@@ -239,8 +231,7 @@
                     "son": "codice_part"
                 }
             ],
-            "label": "Trattamenti Dati/Titolare",
-            "translate": "RESOURCES.trattamenti_datititolare"
+            "label": "Trattamenti Dati/Titolare"
         }
     ],
     "inputEvents": [
@@ -248,6 +239,5 @@
             "actionType": "reload",
             "eventName": "formReload"
         }
-    ],
-    "translate": "RESOURCES.fornitori"
+    ]
 }

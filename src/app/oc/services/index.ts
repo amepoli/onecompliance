@@ -20,3 +20,5 @@ export * from './window.service';
 export * from './google_api.service';
 export * from './timezone.service';
 export * from './aws.service';
+export * from './forms.service';
+export * from './email.service';

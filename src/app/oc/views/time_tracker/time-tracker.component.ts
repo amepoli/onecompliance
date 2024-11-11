@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit, DoCheck, OnChanges, OnDestroy } from '@angular/core';
 
-import 'rxjs/add/operator/filter';
+
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { HelperService, TimeTrackerService } from 'app/oc/services';

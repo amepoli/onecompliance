@@ -8,7 +8,7 @@ select id_anagrafica, codice_part, dynamo_user
 from entrasp.anagrafiche_id
 where codice_part='QUANTYX' and id_anagrafica=298;
 
-select id_anagrafica, codice_part, dynamo_user, data_avvio_collaborazione 
+select id_anagrafica, codice_part, dynamo_user, email_sender,data_avvio_collaborazione 
 from entrasp.anagrafiche_id
 where dynamo_user ilike '%ivaldi%' or email_sender ilike '%ivaldi%'
 	order by codice_part;
@@ -18,8 +18,14 @@ where dynamo_user like '%ivaldi%'
 
 SELECT  *		
 FROM entrasp.users	
-where username like '%ivaldi%'
+where username like '%nmagni%'
 	
+
+	update entrasp.anagrafiche_id an
+	set dynamo_user=us.username, email_sender=us.email
+	from entrasp.users us
+	where an.dynamo_user is null and an.email_sender=us.username and us.username='givaldi@quantyx.com';
+
 
 select * from entrasp.giornate_e_users_da_rendicontare
 where dynamo_user like '%ivaldi%'
@@ -114,11 +120,24 @@ from entrasp.anagrafiche_id an, entrasp.consuntivazioni csn
 	where durata >600 and an.dynamo_user='annarita' order by date_time_begin desc
 
 
-	select codice_azienda, id_cons, date_time_begin, date_time_end, durata from entrasp.consuntivazioni csn
+	select csn.codice_azienda, id_cons, date_time_begin, date_time_end, durata, an.email_sender, an.codice_part, an.dynamo_user from entrasp.consuntivazioni csn
 	inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part
-	where an.dynamo_user like '%benedetti%'  and id_cons=5429
+	where an.dynamo_user is null and an.nome ilike '%ilippo%' and an.cognome ilike '%sganzerla%'
+
+	select distinct an.id_anagrafica, an.email_sender, an.codice_part, an.dynamo_user from entrasp.consuntivazioni csn
+	inner join entrasp.anagrafiche_id an on csn.id_risorsa=an.id_anagrafica and csn.codice_part=an.codice_part
+	--where an.dynamo_user is null and an.nome ilike '%ilippo%' and an.cognome ilike '%sganzerla%'
+	where an.email_sender like '%quantyx.net'
+
+	update entrasp.anagrafiche_id
+	set dynamo_user='fsganzerla', email_sender='fsganzerla@quantyx.com'
+	where 
 	
-	
+	select *
+	from entrasp.users
+	where username ilike '%ganzerla%'
+
+
 	select * from entrasp.ruoli
 	where descrizione ilike '%manager%'
 

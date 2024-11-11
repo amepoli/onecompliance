@@ -14,23 +14,42 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
             "readOnly": true
         },
         {
             "autoGenerate": true,
             "format": {
-                "dataType": "number",
-                "viewType": "input"
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_fascicolo",
+            "label": "# Fascicolo:",
+            "readOnly": true,
+            "size": 7.73
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
             },
             "isHidden": false,
-            "isPrimary": true,
-            "newLine": false,
-            "key": "id_fascicolo",
-            "label": "# Fascicolo",
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "id_fascicolo_descr",
+            "queryFunct": "'Fascicolo '||(id_fascicolo)::text",
+            "label": " ",
             "readOnly": true,
-            "size": 1.5,
-            "translate": "RESOURCES.id_fascicolo"
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.5em",
+                "font_style": "normal",
+                "font_weight": "600"
+            },
+            "size": 7.73
         },
         {
             "autoGenerate": false,
@@ -41,8 +60,7 @@
                     {
                         "message": "Cod.Fascicolo Obbligatorio",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.codfascicolo_obbligatorio"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -52,8 +70,7 @@
             "key": "cod_fascicolo",
             "label": "Cod. Fascicolo",
             "readOnly": false,
-            "size": 1.5,
-            "translate": "RESOURCES.cod_fascicolo"
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -66,9 +83,8 @@
             "key": "data_incarico",
             "label": "Data incarico",
             "newLine": false,
-            "size": 1.5,
-            "readOnly": false,
-            "translate": "RESOURCES.data_incarico"
+            "size": 2,
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -82,8 +98,7 @@
             "key": "capitale_totale",
             "label": "Capitale totale",
             "readOnly": false,
-            "size": 2,
-            "translate": "RESOURCES.capitale_totale"
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -93,12 +108,11 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": true,
+            "newLine": false,
             "key": "interessi_legali_totali",
             "label": "Interessi legali totali",
             "readOnly": false,
-            "size": 2,
-            "translate": "RESOURCES.interessi_legali_totali"
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -110,18 +124,439 @@
                     {
                         "message": "Legale obbligatorio",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.legale_obbligatorio"
+                        "validator": "Validators.required"
                     }
                 ]
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
+            "newLine": true,
             "key": "id_legale",
             "label": "Studio Legale incaricato",
             "readOnly": false,
-            "translate": "RESOURCES.id_legale"
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father = 49571"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "autorita_giudiziaria",
+            "label": "Autorità giudiziaria",
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_deposito_ric",
+            "label": "Data deposito ricorso",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "emissione_decreto_ing",
+            "label": "Emissione D.I.",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rigetto_decreto_ing",
+            "label": "Rigetto D.I.",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "numero_decreto",
+            "label": "Numero decreto",
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "notifica",
+            "label": "Notifica",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "termine_per_opposizione",
+            "label": "Termine per opposizione",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT ID_ARGOMENTO AS ID, DESCRIZIONE_BREVE AS NAME FROM ENTRASP.ARGOMENTI ARG INNER JOIN ENTRASP.ARGOMENTI_ARGOMENTI AA ON ARG.ID_ARGOMENTO = AA.ID_ARGOMENTO_SON WHERE AA.ID_ARGOMENTO_FATHER = 53634"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "tipologia_interessi_liq",
+            "label": "Tipologia interessi liquidati",
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "esecutivita",
+            "label": "Esecutività",
+            "newLine": true,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sentenza_label",
+            "label": "Situazione Sentenza",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "sentenza_numero",
+            "label": "Numero sentenza",
+            "readOnly": false,
+            "size": 3.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "sentenza_data",
+            "label": "Data sentenza",
+            "readOnly": false,
+            "size": 3.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT ID_ARGOMENTO AS ID, DESCRIZIONE_BREVE AS NAME FROM ENTRASP.ARGOMENTI ARG INNER JOIN ENTRASP.ARGOMENTI_ARGOMENTI AA ON ARG.ID_ARGOMENTO = AA.ID_ARGOMENTO_SON WHERE AA.ID_ARGOMENTO_FATHER = 53637"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "sentenza_esito",
+            "label": "Sentenza esito",
+            "readOnly": false,
+            "size": 3
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "activate_detail_k",
+            "label": "",
+            "buttonIcon": "expand_more",
+            "newLine": false,
+            "size": 0.4,
+            "outputEvent": {
+                "eventName": "activate_detail",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "show",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#9FACBD",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "hide_detail_k",
+            "label": "",
+            "buttonIcon": "expand_less",
+            "newLine": false,
+            "size": 0.4,
+            "outputEvent": {
+                "eventName": "hide_detail",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "maggiori_dettagli",
+            "label": "Opposizioni",
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.3em",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "label"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "opposizione_label",
+                        "label": "Opposizione",
+                        "style": {
+                            "background_color": "#03a9f4",
+                            "font_color": "white",
+                            "font_size": "1.3em",
+                            "font_style": "italic",
+                            "font_weight": "400"
+                        },
+                        "newLine": true,
+                        "readOnly": true,
+                        "sameOrigin": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "boolean",
+                            "viewType": "checkbox"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "key": "opposto",
+                        "label": "Opposto",
+                        "readOnly": false,
+                        "size": 5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "checkboxgroup",
+                            "options": [],
+                            "comboQuery": "SELECT ID_ARGOMENTO AS ID, DESCRIZIONE_BREVE AS NAME FROM ENTRASP.ARGOMENTI ARG INNER JOIN ENTRASP.ARGOMENTI_ARGOMENTI AA ON ARG.ID_ARGOMENTO = AA.ID_ARGOMENTO_SON WHERE AA.ID_ARGOMENTO_FATHER = 53646"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "key": "id_argomento_opposizione",
+                        "label": "Motivazione opposizione",
+                        "readOnly": false,
+                        "size": 5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "data_recupero",
+                        "label": "Data stimata di recupero",
+                        "newLine": false,
+                        "size": 2.5,
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "perdite",
+                        "label": "Rischi di perdite da costi legali",
+                        "newLine": false,
+                        "size": 2.5,
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "dataType": "text",
+                            "options": [],
+                            "comboQuery": "SELECT generate_series(1, 8)::numeric AS id, generate_series(1, 8) AS name"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "key": "contestazione_credito",
+                        "label": "Contestazione del Credito",
+                        "readOnly": false,
+                        "size": 2.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "dataType": "text",
+                            "comboQuery": "SELECT generate_series(1, 8)::numeric AS id, generate_series(1, 8) AS name"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "key": "carenza_rifiuto_espresso",
+                        "label": "Carenza di legittimazione attiva in caso di rifiuto espresso della cessione",
+                        "readOnly": false,
+                        "size": 2.5
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "activate_detail",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "hide_detail",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "sezione_detail",
+            "label": "Opposizioni",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": true,
+            "saveWhenHidden": true
         }
     ],
     "table_keys": [
@@ -132,8 +567,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+            "label": "codice_azienda"
         },
         {
             "format": {
@@ -143,8 +577,7 @@
             "isPrimary": true,
             "width": "7%",
             "key": "id_fascicolo",
-            "label": "#",
-            "translate": "RESOURCES.id_fascicolo"
+            "label": "#"
         },
         {
             "format": {
@@ -154,8 +587,7 @@
             "isPrimary": false,
             "width": "4%",
             "key": "cod_fascicolo",
-            "label": "Codice",
-            "translate": "RESOURCES.cod_fascicolo"
+            "label": "Codice"
         },
         {
             "format": {
@@ -165,8 +597,7 @@
             "isPrimary": false,
             "key": "data_incarico",
             "label": "Data fascicolo",
-            "width": "8%",
-            "translate": "RESOURCES.data_incarico"
+            "width": "8%"
         },
         {
             "format": {
@@ -183,8 +614,7 @@
                     "value": "*",
                     "text_align": "end"
                 }
-            ],
-            "translate": "RESOURCES.capitale_totale"
+            ]
         },
         {
             "format": {
@@ -200,8 +630,7 @@
                     "value": "*",
                     "text_align": "end"
                 }
-            ],
-            "translate": "RESOURCES.interessi_legali_totali"
+            ]
         },
         {
             "format": {
@@ -210,8 +639,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "id_legale",
-            "label": "id_legale",
-            "translate": "RESOURCES.id_legale"
+            "label": "id_legale"
         },
         {
             "format": {
@@ -222,8 +650,7 @@
             "key": "legale",
             "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_legale)",
             "label": "Legale",
-            "width": "25%",
-            "translate": "RESOURCES.legale"
+            "width": "25%"
         }
     ],
     "search_keys": [
@@ -235,8 +662,7 @@
             },
             "label": "Id Fascicolo",
             "newLine": false,
-            "queryCond": "id_fascicolo=$id_fascicolo_s$",
-            "translate": "RESOURCES.id_fascicolo"
+            "queryCond": "id_fascicolo=$id_fascicolo_s$"
         },
         {
             "fieldName": "id_legale_s",
@@ -247,8 +673,7 @@
             },
             "label": "Legale",
             "newLine": false,
-            "queryCond": "id_legale=$id_legale_s$",
-            "translate": "RESOURCES.legale"
+            "queryCond": "id_legale=$id_legale_s$"
         },
         {
             "fieldName": "cod_fascicolo_s",
@@ -256,10 +681,9 @@
                 "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Fascicolo",
+            "label": "Codice",
             "newLine": false,
-            "queryCond": "cod_fascicolo like '%'||$cod_fascicolo_s$||'%'",
-            "translate": "RESOURCES.fascicolo"
+            "queryCond": "cod_fascicolo ilike '%'||$cod_fascicolo_s$||'%'"
         },
         {
             "fieldName": "interessi_leg_min",
@@ -269,8 +693,27 @@
             },
             "label": "Interessi maggiori di",
             "newLine": false,
-            "queryCond": "interessi_legali_totali>=$interessi_leg_min$",
-            "translate": "RESOURCES.interessi_maggiori_di"
+            "queryCond": "interessi_legali_totali>=$interessi_leg_min$"
+        },
+        {
+            "fieldName": "con_agg_leg",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Con agg.leg.",
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_fascicolo in(select codice_azienda||'-'||id_fascicolo from entrasp.consuntivazioni csn where codice_azienda=$codice_azienda$)"
+        },
+        {
+            "fieldName": "senza_agg_da_numero_giorni",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "No agg.leg. da n_gg",
+            "tooltip": "Senza aggiornamenti legali da un numero di giorni corrispondenti a quelli scritti nella casella",
+            "newLine": false,
+            "queryCond": "codice_azienda||'-'||id_fascicolo not in(select csn.codice_azienda||'-'||csn.id_fascicolo from entrasp.consuntivazioni csn where codice_azienda=$codice_azienda$ and data_intervento>=(current_date-$senza_agg_da_numero_giorni$) and csn.codice_azienda||'-'||csn.id_fascicolo is not null)"
         },
         {
             "fieldName": "flag_con_pagamenti",
@@ -279,8 +722,7 @@
             },
             "label": "Fascicoli con pagamenti",
             "newLine": false,
-            "queryCond": "codice_azienda||'-'||id_fascicolo in(select codice_azienda||'-'||id_fascicolo from entrasp.pagamenti_fascicoli where codice_azienda=$codice_azienda$)",
-            "translate": "RESOURCES.fascicoli_con_pagamenti"
+            "queryCond": "codice_azienda||'-'||id_fascicolo in(select codice_azienda||'-'||id_fascicolo from entrasp.pagamenti_fascicoli where codice_azienda=$codice_azienda$)"
         }
     ],
     "querySuffixes": {
@@ -300,8 +742,7 @@
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 }
-            ],
-            "translate": "RESOURCES.crediti_del_fascicolo"
+            ]
         },
         {
             "entryKey": "pagamenti_fascicoli_sub_of_fascicoli",
@@ -316,15 +757,26 @@
                     "parent": "codice_azienda",
                     "son": "codice_azienda"
                 }
+            ]
+        },
+        {
+            "entryKey": "aggiornamenti_sub_of_fascicoli",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_fascicolo",
+                    "son": "id_fascicolo"
+                }
             ],
-            "translate": "RESOURCES.pagamenti_fascicolo"
+            "label": "Eventi/Azioni"
         }
     ],
-    "translate": "RESOURCES.fascicoli",
     "addElementSettings": {
         "labelAdd": "Nuovo Fascicolo",
-        "navigateOnSuccess": true,
-        "translateAdd": "RESOURCES.nuovo_fascicolo"
+        "navigateOnSuccess": true
     },
     "hideActions": [
         {

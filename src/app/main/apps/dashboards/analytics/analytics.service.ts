@@ -33,8 +33,8 @@ export class AnalyticsDashboardService implements Resolve<any>
             Promise.all([
                 this.getWidgets()
             ]).then(
-                () => {
-                    resolve();
+                (x: any) => {
+                    resolve(x);
                 },
                 reject
             );

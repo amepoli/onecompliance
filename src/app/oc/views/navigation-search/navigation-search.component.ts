@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
-import 'rxjs/add/operator/filter';
+
 import { AuthService } from 'app/oc/services';
 
 @Component({
@@ -18,6 +18,11 @@ export class NavigationSearchComponent {
     }
 
     filter() {
+        this._authService.filterMenu(this.curValue);
+    }
+
+    clear() {
+        this.curValue = '';
         this._authService.filterMenu(this.curValue);
     }
 }

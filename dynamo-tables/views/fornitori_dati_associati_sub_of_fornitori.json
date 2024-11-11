@@ -1,0 +1,620 @@
+{
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "anagrafiche_vr",
+    "entryKey": "fornitori_dati_associati_sub_of_fornitori",
+    "outputEvents": [
+        {
+            "eventName": "onSaveAnagrafichevr",
+            "eventTrigger": "onSave"
+        },
+        {
+            "eventName": "onLoadAnagrafichevr",
+            "eventTrigger": "onReload"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "value": "E"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "tipo_soggetto_bis",
+            "label": "Tipo soggetto bis",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "tipo_soggetto_load",
+                "eventTrigger": "change"
+            },
+            "queryFunct": "SELECT tipo_soggetto as tipo_soggetto_bis from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "comboQuery": "select codice as id, transcodifica as name from entrasp.transcodifiche where tipo_dato='TIPO_SOGGETTO'",
+                "options": [],
+                "value": "E",
+                "viewType": "combobox",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Tipo soggetto necessario",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_soggetto",
+            "label": "Tipo soggetto",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "combo_tipo_soggetto",
+                "eventTrigger": "select"
+            },
+            "queryFunct": "SELECT tipo_soggetto from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 5
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "ID",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "newLine": false,
+            "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "value": "£CURRENT_DATE£",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_upd",
+            "label": "Data Aggiunta",
+            "newLine": true,
+            "readOnly": true,
+            "size": 2
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "nome",
+                        "label": "Nome",
+                        "newLine": false,
+                        "queryFunct": "SELECT nome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "cognome",
+                        "label": "Cognome",
+                        "newLine": true,
+                        "queryFunct": "SELECT cognome from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "eventName": "combo_tipo_soggetto",
+                    "values": [
+                        "P"
+                    ]
+                },
+                {
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "eventName": "tipo_soggetto_load",
+                    "values": [
+                        "P"
+                    ]
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "persone_fisiche",
+            "label": "Persone Fisiche",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "saveWhenHidden": true
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "ragione_sociale",
+                        "label": "Ragione sociale",
+                        "newLine": true,
+                        "readOnly": false
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "eventName": "combo_tipo_soggetto",
+                    "values": [
+                        "E"
+                    ]
+                },
+                {
+                    "actionType": "show",
+                    "condition": "equalTo",
+                    "eventName": "tipo_soggetto_load",
+                    "values": [
+                        "E"
+                    ]
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "persone_giuridiche",
+            "label": "Persone Giuridiche",
+            "newLine": true,
+            "readOnly": false,
+            "saveWhenHidden": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_fiscale",
+            "label": "Codice fiscale",
+            "newLine": false,
+            "readOnly": false,
+            "size": 5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "partita_iva",
+            "label": "Partita IVA",
+            "newLine": true,
+            "readOnly": false,
+            "size": 5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "indirizzo",
+            "label": "Indirizzo",
+            "newLine": true,
+            "readOnly": false,
+            "size": 10
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cap",
+            "label": "CAP",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "comune",
+            "label": "Località",
+            "newLine": false,
+            "readOnly": false,
+            "size": 8
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "provincia",
+            "label": "Provincia",
+            "newLine": true,
+            "readOnly": false,
+            "size": 1
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "value": 1,
+                "viewType": "input"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "query",
+                    "condition": "none",
+                    "eventName": "clienti_button_nuova_versione",
+                    "queryFunct": "select anagrafiche_vr from entrasp.anagrafica_id_new_version('€global_codice_azienda€',$id_anagrafica$, $prog_vr$)",
+                    "values": []
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "prog_vr",
+            "label": "Versione",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nuova_versione",
+            "label": "Nuova versione",
+            "newLine": true,
+            "outputEvent": {
+                "eventName": "clienti_button_nuova_versione",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "annotazioni_interne",
+            "label": "Note Interne",
+            "newLine": true,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "1",
+                "viewType": "checkbox"
+            },
+            "key": "flag_fornitore",
+            "label": "Fornitore",
+            "newLine": false,
+            "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','FOR',$id_anagrafica$)",
+            "readOnly": false,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when £id_anagrafica£ is null or £id_anagrafica£::varchar ='' then true else false end as label"
+                }
+            ],
+            "sameOrigin": false,
+            "isHidden": true,
+            "isPrimary": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "key": "flag_cliente",
+            "label": "Cliente",
+            "newLine": false,
+            "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','CLI',$id_anagrafica$)",
+            "readOnly": false,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when €id_anagrafica€ is null or €id_anagrafica€::varchar ='' then true else false end as label"
+                }
+            ],
+            "sameOrigin": false,
+            "isPrimary": false,
+            "isHidden": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "key": "flag_dipendente",
+            "newLine": false,
+            "label": "Dip./collab.",
+            "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','RSRSA',$id_anagrafica$)",
+            "readOnly": false,
+            "sameOrigin": false,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when $id_anagrafica$ is null or $id_anagrafica$::varchar ='' then true else false end as label"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "key": "flag_fondo",
+            "label": "Fondo",
+            "queryFunct": "select entrasp.ruolo_anagrafica('€global_codice_azienda€','FONDO',$id_anagrafica$)",
+            "readOnly": false,
+            "sameOrigin": false,
+            "attributeFuncts": [
+                {
+                    "attributeType": "isHidden",
+                    "queryString": "select case when $id_anagrafica$ is null or $id_anagrafica$::varchar ='' then true else false end as label"
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false
+        }
+    ],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "SELECT pr.id_ruolo, pr.descr_ruolo, an.codice_part, an.id_anagrafica, coalesce(nullif(an.nome||' '||an.cognome,' '), avr.ragione_sociale) as nmrs, avr.denominazione,an.codice, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',an.tipo_soggetto)as tipo_soggetto, avr.prog_vr, entrasp.ruoli_of_anagrafiche_vr(an.codice_part, an.id_anagrafica) as ruolo_s, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part=avr.codice_part AND an.id_anagrafica=avr.id_anagrafica join entrasp.ruoli_anagrafiche ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica inner join entrasp.privacy_ruolo(an.codice_part, an.id_anagrafica) pr on an.codice_part=pr.codicepart and an.id_anagrafica=pr.idanagrafica WHERE an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and ra.codice_ruolo = 'FOR' and pr.id_ruolo!=4;",
+            "type": "main"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select $id_anagrafica$ is null as label;",
+            "type": "main"
+        },
+        {
+            "operation": "insert",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceruolo=>'FOR', codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$);",
+            "type": "main"
+        },
+        {
+            "operation": "update",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$);",
+            "type": "main"
+        },
+        {
+            "operation": "delete",
+            "queryString": "SELECT entrasp.anagrafica_id_delete($codice_part$, '€global_codice_azienda€', $id_anagrafica$);",
+            "type": "main"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "anagrafiche_vr_attachments",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_anagrafica"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Documenti Associati",
+            "type": "table"
+        },
+        {
+            "entryKey": "sondaggi_somministrati_sub_of_anagrafiche",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_anagrafica_somministrazione"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Valutazioni Associate"
+        },
+        {
+            "entryKey": "centri_gestionali_sub_of_anagrafiche_vr",
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_anagrafica"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Centri Gestionali"
+        },
+        {
+            "entryKey": "progetti_sub_of_anagrafiche_vr",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_cliente"
+                }
+            ],
+            "label": "Progetti associati"
+        },
+        {
+            "entryKey": "anagrafiche_vr_sub_anagrafiche_vr",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_anagrafica"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Versioni"
+        },
+        {
+            "entryKey": "contratti_fornitori_sub_of_fornitori",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_fornitore"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Contratti gestiti",
+            "type": "table"
+        },
+        {
+            "entryKey": "cpl_trattamenti_dati_responsabili_sub_of_fornitori",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_responsabile"
+                },
+                {
+                    "parent": "id_trattamento_dati",
+                    "son": "id_trattamento_dati"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Trattamenti Dati/Responsabile"
+        },
+        {
+            "entryKey": "cpl_trattamenti_dati_titolari_sub_of_fornitori",
+            "isHidden": false,
+            "keys": [
+                {
+                    "parent": "id_anagrafica",
+                    "son": "id_titolare_esterno"
+                },
+                {
+                    "parent": "id_trattamento_dati",
+                    "son": "id_trattamento_dati"
+                },
+                {
+                    "parent": "codice_part",
+                    "son": "codice_part"
+                }
+            ],
+            "label": "Trattamenti Dati/Titolare"
+        }
+    ],
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Resp., tratt.dati, cat.inter., ...",
+                "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento,entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile) as ragione_sociale,td.id_trattamento_dati id_trattamento,td.titolo as trattamento_dati,td.descrizione,entrasp.finalita_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati) as finalita,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_personali') as categorie_dati_personali,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_interessati') as categorie_interessati,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_destinatari') as categorie_destinatari from entrasp.cpl_trattamenti_dati_responsabili tdr inner join entrasp.cpl_trattamenti_dati td on tdr.codice_azienda=td.codice_azienda and tdr.id_trattamento_dati=td.id_trattamento_dati where td.codice_azienda=$codice_azienda$ order by entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile), tdr.id_trattamento_dati"
+            }
+        ],
+        "formQueries": [
+            {
+                "label": "Resp., tratt.dati, cat.inter., ...",
+                "queryString": "select entrasp.argomenti_descr_breve_no_id(td.id_argomento_conferimento) as tipo_conferimento,entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile) as ragione_sociale,td.id_trattamento_dati id_trattamento,td.titolo as trattamento_dati,td.descrizione,entrasp.finalita_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati) as finalita,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_personali') as categorie_dati_personali,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_dati_interessati') as categorie_interessati,entrasp.categorie_from_trattamento_dati(td.codice_azienda, td.id_trattamento_dati, 'categorie_destinatari') as categorie_destinatari from entrasp.cpl_trattamenti_dati_responsabili tdr inner join entrasp.cpl_trattamenti_dati td on tdr.codice_azienda=td.codice_azienda and tdr.id_trattamento_dati=td.id_trattamento_dati where td.codice_azienda='€global_codice_azienda€' and tdr.id_responsabile=$id_anagrafica$ order by entrasp.anagrafiche_cognnome(tdr.codice_part, tdr.id_responsabile), tdr.id_trattamento_dati"
+            }
+        ]
+    }
+}

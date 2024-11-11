@@ -1,0 +1,160 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "anagrafiche_sub_of_contracts",
+    "origin": "entrasp.contratti_anagrafiche_id",
+    "addElementSettings": {
+        "labelQuickAdd": "Nuovo intestatario",
+        "navigateOnSuccess": true
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, COALESCE(nome || ' ' || cognome, ragione_sociale) AS name FROM entrasp.anagrafiche_id an INNER JOIN entrasp.anagrafiche_vr avr ON an.id_anagrafica = avr.id_anagrafica AND an.codice_part = avr.codice_part WHERE an.codice_part = '€global_codice_part€'",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "Intestatario",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_contratto",
+            "label": "id_contratto",
+            "readOnly": true,
+            "newLine": false
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_anagrafiche_contratto",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "anagrafiche_sub_of_contracts",
+                "viewType": "form",
+                "query": "delete from entrasp.contratti_anagrafiche_id where codice_azienda='£codice_azienda£' AND codice_part='£codice_part£' AND id_contratto=£id_contratto£ AND id_anagrafica=£id_anagrafica£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_contratto",
+                        "destination": "id_contratto"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_contratto",
+            "label": "Contratto"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica)",
+            "key": "anagrafiche_descr",
+            "sameOrigin": false,
+            "label": "Intestatari Contratti"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": " "
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}

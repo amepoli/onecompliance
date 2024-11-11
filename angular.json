@@ -1,7 +1,7 @@
 {
     "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
     "cli": {
-        "analytics": false
+      "analytics": false
     },
     "version": 1,
     "newProjectRoot": "projects",
@@ -58,7 +58,8 @@
                         "buildOptimizer": false,
                         "sourceMap": true,
                         "optimization": false,
-                        "namedChunks": true
+                        "namedChunks": true,
+                        "preserveSymlinks": true
                     },
                     "configurations": {
                         "production": {
@@ -112,12 +113,12 @@
                             ]
                         },
                         "hmr": {
-                            "budgets": [
-                                {
-                                    "type": "anyComponentStyle",
-                                    "maximumWarning": "6kb"
-                                }
-                            ],
+                          "budgets": [
+                            {
+                              "type": "anyComponentStyle",
+                              "maximumWarning": "6kb"
+                            }
+                          ],
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
@@ -171,7 +172,37 @@
                             "src/assets"
                         ]
                     }
-                }
+                },
+                "storybook": {
+                  "builder": "@storybook/angular:start-storybook",
+                  "options": {
+                    "configDir": ".storybook",
+                    "browserTarget": "fuse:build",
+                    "compodoc": true,
+                    "compodocArgs": [
+                      "-e",
+                      "json",
+                      "-d",
+                      "."
+                    ],
+                    "port": 6006
+                  }
+                },
+                "build-storybook": {
+                  "builder": "@storybook/angular:build-storybook",
+                  "options": {
+                    "configDir": ".storybook",
+                    "browserTarget": "fuse:build",
+                    "compodoc": true,
+                    "compodocArgs": [
+                      "-e",
+                      "json",
+                      "-d",
+                      "."
+                    ],
+                    "outputDir": "storybook/dist/fuse"
+                  }
+            }
             }
         },
         "fuse-e2e": {

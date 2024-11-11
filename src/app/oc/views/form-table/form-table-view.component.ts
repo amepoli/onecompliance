@@ -1,8 +1,9 @@
-import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef, ElementRef, AfterViewInit, OnDestroy, SimpleChanges } from '@angular/core';
 import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
 import { FormGetterParams, FormTableViewParams, MessageElement, MessageView } from 'app/oc/interfaces';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, MessagesService, NavigationService, ScrollService, ToastService } from 'app/oc/services';
+import { memoize } from 'app/oc/decorators/memoize';
 
 
 @Component({
@@ -38,7 +39,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   formHeight = 1000;
 
   hideActions: string[] = []; // Hide actions
-  
+
   messages: MessageElement[] = []; // Messages
   @Output() onMessagesUpdated: EventEmitter<MessageView[]> = new EventEmitter();
 
@@ -48,6 +49,12 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   @ViewChild('formTableViewToolbar', { static: true }) formTableViewToolbar: ElementRef;
 
   subscriptions: Subscription[] = [];
+
+  isDomandeRisposte?: boolean = null;
+  domandeRisposteParams: any = {
+    entryName: '',
+    keys: {}
+  };
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -62,18 +69,21 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   ngOnInit() {
     const _this = this;
-    _this.subscriptions.push(_this.formGetter.sendEvent.subscribe(
-      event => {
-        if (event.eventType === 'updateData') {   // child downloaded data
-
-        } else { // just forward the event to parent
-          _this.sendEvent.emit(event);
-        }
-      }));
+    if(_this.formGetter) {
+      _this.subscriptions.push(_this.formGetter.sendEvent.subscribe(
+        event => {
+          if (event.eventType === 'updateData') {   // child downloaded data
+  
+          } else { // just forward the event to parent
+            _this.sendEvent.emit(event);
+          }
+        }));
+    }
     this.calculateFormHeight();
   }
 
-  ngOnChanges(changes) {
+  @memoize()
+  ngOnChanges(changes: SimpleChanges) {
     const _this = this; // useful to debug
     if (changes.tableData) {
       _this.getterParams = {
@@ -95,6 +105,16 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
       _this._console.log("inside form-table-view isCurTab changes!");
     }
 
+    if(_this.tableData.entryName === 'domande_risposte' || _this.tableData.entryName === 'domande_risposte_sezione') {
+      _this.isDomandeRisposte = true;
+      _this.domandeRisposteParams = {
+        entryName: _this.tableData.entryName,
+        keys: _this.tableData.keys
+      }
+    }
+    else {
+      _this.isDomandeRisposte = false;
+    }
   }
 
   ngAfterViewInit() {
@@ -114,20 +134,20 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
       }
     }));
 
-    if(_this.isTabMode){
-        _this.subscriptions.push(_this._navigationService.onBottomTabRefreshRequested.subscribe( (value) => {
-            if(_this.isCurTab) {
-                _this.saveChanges();
-                // _this.formGetter.refreshView();
-            }
-        }));
+    if (_this.isTabMode) {
+      _this.subscriptions.push(_this._navigationService.onBottomTabRefreshRequested.subscribe((value) => {
+        if (_this.isCurTab) {
+          _this.saveChanges();
+          // _this.formGetter.refreshView();
+        }
+      }));
     }
   }
 
   ngOnDestroy() {
-      this.subscriptions.forEach(element => {
-          element.unsubscribe();
-      });
+    this.subscriptions.forEach(element => {
+      element.unsubscribe();
+    });
   }
 
   fullScreen(): void {
@@ -153,24 +173,24 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   isFormValid() {
     let isValid = true;
-    
+
     if (this.formGetter.formArray && this.formGetter.formArray.length) {
       let formArray = this.formGetter.formArray.toArray();
       for (let i = 0; i < formArray.length; i++) {
-          const form = formArray[i];
+        const form = formArray[i];
         // Old method in which we check the whole form at once
         // This is not good because it also checks invisible fields
         // if (!form.form.valid) {
         //     isValid = false;
         // }
         for (let j = 0; j < form.fields.length; j++) {
-            const field = form.fields[j];
-            if (field.isVisible) {
-                if (form.form.get(field.name) && !form.form.get(field.name).valid) {
-                    form.form.get(field.name).markAsTouched({ onlySelf: false });
-                    isValid = false;
-                }
+          const field = form.fields[j];
+          if (field.isVisible) {
+            if (form.form.get(field.name) && !form.form.get(field.name).valid) {
+              form.form.get(field.name).markAsTouched({ onlySelf: false });
+              isValid = false;
             }
+          }
         }
 
         // if (!isValid) {
@@ -238,7 +258,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
           }
           else {
             // Show error snackbar
-            _this.formGetter.showErrorToast(result.reason);
+            _this._toastService.showErrorToastWithReason(result.reason);
           }
         }));
     }
@@ -296,5 +316,9 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
   updateToolbarOffset() {
     let offset = ScrollService.cumulativeOffset(this.formTableViewToolbar.nativeElement);
     this.formTableViewToolbarPosition = offset.top - 150;
+  }
+
+  onEvent(event: any) {
+    this.sendEvent.emit(event);
   }
 }

@@ -24,7 +24,7 @@ import { NavigationService } from 'app/oc/services/navigation.service';
 import { ConsoleLoggerService } from 'app/oc/services/console_logger.service';
 import { ExportItem, ImportItem, MessageElement, UserInfo } from 'app/oc/interfaces';
 import { DialogService, HelperService, TimeTrackerService } from 'app/oc/services';
-import { MatButton } from '@angular/material/button';
+import { MatButton as MatButton } from '@angular/material/button';
 import { MainToolbarDialog } from 'app/oc/interfaces/main_toolbar_dialog.interface';
 
 @Component({
@@ -248,7 +248,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         const _this = this;
         // Unsubscribe from all subscriptions
-        _this._unsubscribeAll.next();
+        _this._unsubscribeAll.next(null);
         _this._unsubscribeAll.complete();
     }
 

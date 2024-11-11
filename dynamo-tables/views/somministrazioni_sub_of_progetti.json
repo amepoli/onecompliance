@@ -10,11 +10,6 @@
         },
         {
             "operation": "selectForm",
-            "queryString": "select entrasp.inizializza_sondaggi_somministrati_risultati_sezioni($codice_azienda$, $id_sondaggio$, $id_somministrazione$)",
-            "type": "preProcessing"
-        },
-        {
-            "operation": "selectForm",
             "type": "postProcessing",
             "queryString": "SELECT mvr.flag_sezioni,  mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
         },
@@ -38,7 +33,7 @@
             "isPrimary": false,
             "key": "id_progetto",
             "label": "id_progetto",
-            "translate": "RESOURCES.id_progetto"
+            "translate": "RESOURCES.id_progetto_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -48,7 +43,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "codice_azienda",
-            "translate": "RESOURCES.company_code"
+            "translate": "RESOURCES.codice_azienda_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -58,7 +53,7 @@
             "isPrimary": false,
             "key": "id_fase",
             "label": "id_fase",
-            "translate": "RESOURCES.id_fase"
+            "translate": "RESOURCES.id_fase_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -70,8 +65,8 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "translate": "RESOURCES.code",
-            "width": "10%"
+            "width": "10%",
+            "translate": "RESOURCES.codice_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -82,8 +77,8 @@
             "key": "titolo",
             "hasLevel": true,
             "label": "Titolo",
-            "translate": "RESOURCES.title",
-            "width": "30%"
+            "width": "30%",
+            "translate": "RESOURCES.titolo_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -93,7 +88,6 @@
             "isPrimary": false,
             "key": "stato_trans",
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "width": "8%",
             "style": [
                 {
@@ -111,7 +105,8 @@
                     "font_color": "red",
                     "font_weight": "500"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.stato_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -121,7 +116,7 @@
             "isPrimary": true,
             "key": "id_sondaggio",
             "label": "ID Sondaggio",
-            "translate": "RESOURCES.id_survey"
+            "translate": "RESOURCES.id_sondaggio_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -131,7 +126,7 @@
             "isPrimary": false,
             "key": "data_esecuzione",
             "label": "Dt esecuzione",
-            "translate": "RESOURCES.data_esecuzione"
+            "translate": "RESOURCES.dt_esecuzione_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -141,7 +136,7 @@
             "isPrimary": true,
             "key": "data_prevista",
             "label": "Dt prevista",
-            "translate": "RESOURCES.data_prevista"
+            "translate": "RESOURCES.dt_prevista_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -151,7 +146,7 @@
             "isPrimary": true,
             "key": "id_somministrazione",
             "label": "Verifica",
-            "translate": "RESOURCES.id_somministrazione"
+            "translate": "RESOURCES.verifica_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -162,7 +157,6 @@
             "key": "giudizio",
             "width": "12%",
             "label": "Giudizio",
-            "translate": "RESOURCES.judgment",
             "style": [
                 {
                     "value": "Favorevole",
@@ -219,7 +213,8 @@
                     "font_color": "red",
                     "font_weight": "500"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.giudizio_somministrazioni_sub_of_progetti"
         },
         {
             "format": {
@@ -242,13 +237,12 @@
                     "font_weight": "500"
                 }
             ],
-            "translate": "RESOURCES.sondaggio_completato"
+            "translate": "RESOURCES.completo_sno_somministrazioni_sub_of_progetti"
         }
     ],
     "search_keys": [
         {
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "format": {
                 "comboQuery": "SELECT codice AS id, transcodifica AS name FROM entrasp.transcodifiche WHERE tipo_dato='STATO_SONDAGGI';",
                 "options": [],
@@ -257,7 +251,8 @@
             },
             "fieldName": "stato_s",
             "newLine": false,
-            "queryCond": "snd.stato=$stato_s$"
+            "queryCond": "snd.stato=$stato_s$",
+            "translate": "RESOURCES.stato_somministrazioni_sub_of_progetti"
         },
         {
             "fieldName": "flag_principali",
@@ -266,9 +261,9 @@
                 "viewType": "checkbox"
             },
             "label": "Solo Principali",
-            "translate": "RESOURCES.main_only",
             "newLine": false,
-            "queryCond": "pf.id_fase_sup IS null"
+            "queryCond": "pf.id_fase_sup IS null",
+            "translate": "RESOURCES.solo_principali_somministrazioni_sub_of_progetti"
         },
         {
             "fieldName": "dt_competenza_da",
@@ -279,7 +274,7 @@
             "label": "Data competenza DA",
             "newLine": false,
             "queryCond": "snd.data_comp >= $dt_competenza_da$",
-            "translate": "RESOURCES.data_competenza_da"
+            "translate": "RESOURCES.data_competenza_da_somministrazioni_sub_of_progetti"
         },
         {
             "fieldName": "dt_competenza_a",
@@ -290,7 +285,7 @@
             "label": "Data competenza A",
             "newLine": false,
             "queryCond": "snd.data_comp <= $dt_competenza_a$",
-            "translate": "RESOURCES.data_competenza_a"
+            "translate": "RESOURCES.data_competenza_a_somministrazioni_sub_of_progetti"
         }
     ]
 }

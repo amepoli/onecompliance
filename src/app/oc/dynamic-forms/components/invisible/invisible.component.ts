@@ -18,7 +18,8 @@ import { FieldConfig } from 'app/oc/interfaces';
     // '[style.padding-bottom.px]': 'field.isVisible? "16": "0"',
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
-    '[style.width]': 'field.isVisible? field.width + "%": "0"'
+    '[style.width]': 'field.isVisible? field.width + "%": "0"',
+    '[style.height]': 'field.isVisible? "36px": "0"'
   }
 })
 export class InvisibleComponent implements OnInit {

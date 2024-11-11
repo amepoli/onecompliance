@@ -9,12 +9,12 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './combobox.component.html',
   styleUrls: ['./combobox.component.scss'],
   host: {
-    // '[style.padding-top.px]': 'field.isVisible? "20": "0"',
+    '[style.padding-top.px]': 'field.isVisible? "8": "0"',
     // '[style.padding-bottom.px]': 'field.isVisible? "20": "0"',
     '[style.margin-right]': 'field.isVisible? "0.5%": "0"',
     '[style.margin-left]': 'field.isVisible? "0.5%": "0"',
     '[style.width]': 'field.isVisible? field.width + "%": "0"',
-    // '[style.height.px]': 'field.isVisible? "76": "0"',
+    '[style.height.px]': 'field.isVisible? "76": "0"',
   }
 })
 export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -139,7 +139,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       this.subscription.unsubscribe();
     }
 
-    this._onDestroy.next();
+    this._onDestroy.next(null);
     this._onDestroy.complete();
   }
 
@@ -266,6 +266,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
       // this.pubSubService.publishEvent(this.field.eventName, { origin: this.field.name, index: this.field.index, valueSet: this.field.fullValueSet, data: this.getFormattedId(event.value.id), type: 'combobox' });
       this.sendEvent();
     }
+
+    // Run the onClick function if provided
+    this.field.onClick && this.field.onClick(event, this.field);
+
   }
 
   onTagsSelection(event : any)
@@ -288,6 +292,10 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     _this.lazyLoad();
     _this.value = null;
+
+    // Run the onClick function if provided
+    _this.field.onClick && _this.field.onClick({value: {id: _this.field.value}}, _this.field);
+
   }
 
   private filterOptionsBasedOnSelectedTags(options : any)

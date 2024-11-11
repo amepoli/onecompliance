@@ -8,7 +8,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select case when cmp.stato !='C' then true else false end as check,codice_compito, (select descrizione_breve as name from entrasp.argomenti where id_argomento=id_argomento_priorita) AS descr_priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies,entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and id_tipo_segnalazione NOT IN (700,701)"
+            "queryString": "select case when (cmp.stato !='C' or cmp.stato is null) then true else false end as check,codice_compito, (select descrizione_breve as name from entrasp.argomenti where id_argomento=id_argomento_priorita) AS descr_priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies,entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and id_tipo_segnalazione NOT IN (700,701)"
         },
         {
             "operation": "startEvent",
@@ -30,8 +30,7 @@
     },
     "addElementSettings": {
         "labelAdd": "Nuovo compito",
-        "navigateOnSuccess": true,
-        "translateAdd": "RESOURCES.nuovo_compito"
+        "navigateOnSuccess": true
     },
     "form_keys": [
         {
@@ -46,7 +45,7 @@
                         "message": "Codice azienda necessario",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.codice_azienda_necessario"
+                        "translate": "RESOURCES.codice_azienda_necessario_tasks"
                     }
                 ]
             },
@@ -61,7 +60,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 2,
-            "translate": "RESOURCES.codice_azienda"
+            "translate": "RESOURCES.azienda_tasks"
         },
         {
             "autoGenerate": false,
@@ -78,7 +77,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 2,
-            "translate": "RESOURCES.codice_azienda_fatturante"
+            "translate": "RESOURCES.azienda_fatturante_tasks"
         },
         {
             "autoGenerate": false,
@@ -93,7 +92,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 1.5,
-            "translate": "RESOURCES.budgeted_time"
+            "translate": "RESOURCES.tempo_preventivato_min_tasks"
         },
         {
             "autoGenerate": false,
@@ -109,7 +108,7 @@
             "newLine": true,
             "readOnly": false,
             "size": 1.5,
-            "translate": "RESOURCES.invested_time"
+            "translate": "RESOURCES.tempo_investito_giorn_tasks"
         },
         {
             "autoGenerate": false,
@@ -132,7 +131,7 @@
                 "font_weight": "600"
             },
             "size": 9.4,
-            "translate": "RESOURCES.compito"
+            "translate": "RESOURCES.compito_tasks"
         },
         {
             "autoGenerate": false,
@@ -143,7 +142,7 @@
                         "icon": "edit",
                         "label": "Inserisci aggiornamento",
                         "outputEventName": "inserisci_aggiornamento",
-                        "translate": "RESOURCES.inserisci_aggiornamento"
+                        "translate": "RESOURCES.inserisci_aggiornamento_tasks"
                     }
                 ]
             },
@@ -161,8 +160,7 @@
             "isPrimary": false,
             "buttonIcon": "more_vert",
             "key": "tasks_actions",
-            "label": "void",
-            "translate": "RESOURCES.void",
+            "label": "",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
@@ -181,7 +179,7 @@
             "newLine": false,
             "readOnly": true,
             "size": 1.66,
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES._tasks"
         },
         {
             "autoGenerate": false,
@@ -197,7 +195,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 1.67,
-            "translate": "RESOURCES.data_segnalazione"
+            "translate": "RESOURCES.aperto_il_tasks"
         },
         {
             "autoGenerate": false,
@@ -209,14 +207,14 @@
                         "message": "Titolo (max 100 caratteri) necessario",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.titolo_max_100_caratteri_necessario"
+                        "translate": "RESOURCES.titolo_max_100_caratteri_necessario_tasks"
                     },
                     {
                         "name": "maxlength",
                         "message": "Massimo numero di caratteri: 100",
                         "validator": "Validators.maxLength(100)",
                         "value": 100,
-                        "translate": "RESOURCES.massimo_numero_di_caratteri_100"
+                        "translate": "RESOURCES.massimo_numero_di_caratteri_100_tasks"
                     }
                 ]
             },
@@ -228,10 +226,10 @@
             "isPrimary": false,
             "key": "titolo",
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "newLine": false,
             "readOnly": false,
-            "size": 3.3
+            "size": 3.3,
+            "translate": "RESOURCES.titolo_tasks"
         },
         {
             "autoGenerate": false,
@@ -264,13 +262,13 @@
                 }
             ],
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "key": "stato",
             "readOnly": true,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 1.67
+            "size": 1.67,
+            "translate": "RESOURCES.stato_tasks"
         },
         {
             "autoGenerate": false,
@@ -284,7 +282,7 @@
                         "message": "Inserire almeno un tipo",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_almeno_un_tipo"
+                        "translate": "RESOURCES.inserire_almeno_un_tipo_tasks"
                     }
                 ]
             },
@@ -305,7 +303,7 @@
                     "values": []
                 }
             ],
-            "translate": "RESOURCES.id_tipo_segnalazione"
+            "translate": "RESOURCES.tipologia_tasks"
         },
         {
             "autoGenerate": false,
@@ -328,10 +326,10 @@
                 }
             ],
             "label": "Descrizione Estesa",
-            "translate": "RESOURCES.description",
             "newLine": false,
             "readOnly": false,
-            "size": 6.66
+            "size": 6.66,
+            "translate": "RESOURCES.descrizione_estesa_tasks"
         },
         {
             "autoGenerate": false,
@@ -348,7 +346,7 @@
             "label": "Priorità",
             "readOnly": false,
             "newLine": false,
-            "translate": "RESOURCES.id_argomento_priorita"
+            "translate": "RESOURCES.priorit_tasks"
         },
         {
             "autoGenerate": false,
@@ -385,8 +383,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "translate": "RESOURCES.activate_detail_k"
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -423,8 +420,7 @@
                 "font_color": "white"
             },
             "readOnly": false,
-            "sameOrigin": false,
-            "translate": "RESOURCES.hide_detail_k"
+            "sameOrigin": false
         },
         {
             "format": {
@@ -435,7 +431,6 @@
             "isPrimary": false,
             "key": "maggiori_dettagli",
             "label": "Dettagli",
-            "translate": "RESOURCES.details",
             "style": {
                 "background_color": "transparent",
                 "font_color": "black",
@@ -445,7 +440,8 @@
             "newLine": true,
             "readOnly": true,
             "sameOrigin": false,
-            "size": 1.2
+            "size": 1.2,
+            "translate": "RESOURCES.dettagli_tasks"
         },
         {
             "autoGenerate": false,
@@ -457,10 +453,10 @@
             "isPrimary": false,
             "key": "data_competenza",
             "label": "Data Competenza",
-            "translate": "RESOURCES.reference_date",
             "insertUpdateFunct": "select date_trunc('year', current_date::date) + interval '12 month' - interval '1 day'",
             "newLine": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.data_competenza_tasks"
         },
         {
             "format": {
@@ -485,7 +481,7 @@
                         "newLine": true,
                         "readOnly": true,
                         "sameOrigin": false,
-                        "translate": "RESOURCES.sezione_ulteriori_dettagli"
+                        "translate": "RESOURCES.sezione_ulteriori_dettagli_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -498,10 +494,10 @@
                         "isPrimary": false,
                         "key": "id_cliente",
                         "label": "Cliente",
-                        "translate": "RESOURCES.customer",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.66
+                        "size": 1.66,
+                        "translate": "RESOURCES.cliente_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -534,7 +530,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.67,
-                        "translate": "RESOURCES.id_responsabile"
+                        "translate": "RESOURCES.id_responsabile_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -550,7 +546,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 3.33,
-                        "translate": "RESOURCES.centro_gestionale_responsabile"
+                        "translate": "RESOURCES.centro_gestionale_responsabile_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -566,7 +562,7 @@
                         "newLine": true,
                         "readOnly": false,
                         "size": 3.34,
-                        "translate": "RESOURCES.centro_gestionale_monitoraggiosegnalante"
+                        "translate": "RESOURCES.centro_gestionale_monitoraggiosegnalante_tasks"
                     },
                     {
                         "autoGenerate": true,
@@ -577,11 +573,11 @@
                         "isHidden": true,
                         "isPrimary": false,
                         "key": "codice",
-                        "label": "$P{label_codice}",
+                        "label": "Codice Segnalazione",
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.5,
-                        "translate": "RESOURCES.plabel_codice"
+                        "translate": "RESOURCES.codice_segnalazione_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -596,7 +592,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.66,
-                        "translate": "RESOURCES.data_scadenza"
+                        "translate": "RESOURCES.data_scadenza_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -611,7 +607,7 @@
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.67,
-                        "translate": "RESOURCES.data_chiusura"
+                        "translate": "RESOURCES.data_chiusura_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -627,7 +623,7 @@
                         "label": "Tipo Articolo",
                         "readOnly": false,
                         "newLine": false,
-                        "translate": "RESOURCES.tipo_articolo"
+                        "translate": "RESOURCES.tipo_articolo_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -643,7 +639,7 @@
                         "label": "Tipo Difformità",
                         "readOnly": false,
                         "newLine": false,
-                        "translate": "RESOURCES.tipo_difformit"
+                        "translate": "RESOURCES.tipo_difformit_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -656,11 +652,11 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "codice_compito_parent",
-                        "label": "$P{label_codice_parent}",
+                        "label": "# Compito padre",
                         "newLine": true,
                         "readOnly": true,
                         "size": 3.34,
-                        "translate": "RESOURCES.plabel_codice_parent"
+                        "translate": "RESOURCES._compito_padre_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -674,7 +670,7 @@
                         "label": "Trattamento -azione intrapresa per risolvere il problema o ridurne gli effetti",
                         "newLine": true,
                         "readOnly": false,
-                        "translate": "RESOURCES.trattamento_azione_intrapresa_per_risolvere_il_problema_o_ridurne_gli_effetti"
+                        "translate": "RESOURCES.trattamento_azione_intrapresa_per_risolvere_il_problema_o_ridurne_gli_effetti_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -688,7 +684,7 @@
                         "label": "Analisi Cause",
                         "newLine": true,
                         "readOnly": false,
-                        "translate": "RESOURCES.analisi_cause"
+                        "translate": "RESOURCES.analisi_cause_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -704,7 +700,7 @@
                         "readOnly": false,
                         "sameOrigin": true,
                         "size": 1.66,
-                        "translate": "RESOURCES.perdita_diretta_potenziale"
+                        "translate": "RESOURCES.perdita_diretta_potenziale_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -720,7 +716,7 @@
                         "readOnly": false,
                         "sameOrigin": true,
                         "size": 1.67,
-                        "translate": "RESOURCES.perdita_diretta_effettiva"
+                        "translate": "RESOURCES.perdita_diretta_effettiva_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -736,7 +732,7 @@
                         "readOnly": false,
                         "sameOrigin": true,
                         "size": 1.66,
-                        "translate": "RESOURCES.perdita_indiretta_potenziale"
+                        "translate": "RESOURCES.perdita_indiretta_potenziale_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -752,7 +748,7 @@
                         "readOnly": false,
                         "sameOrigin": true,
                         "size": 1.67,
-                        "translate": "RESOURCES.perdita_indiretta_effettiva"
+                        "translate": "RESOURCES.perdita_indiretta_effettiva_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -768,7 +764,7 @@
                         "newLine": false,
                         "sameOrigin": true,
                         "size": 1,
-                        "translate": "RESOURCES.reclamo"
+                        "translate": "RESOURCES.reclamo_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -784,7 +780,7 @@
                         "newLine": false,
                         "sameOrigin": true,
                         "size": 1,
-                        "translate": "RESOURCES.causa_legale"
+                        "translate": "RESOURCES.causa_legale_tasks"
                     },
                     {
                         "autoGenerate": false,
@@ -800,7 +796,7 @@
                         "newLine": false,
                         "sameOrigin": true,
                         "size": 1.33,
-                        "translate": "RESOURCES.progetto_informatico"
+                        "translate": "RESOURCES.progetto_informatico_tasks"
                     }
                 ]
             },
@@ -822,11 +818,11 @@
             "isPrimary": false,
             "key": "sezione_detail",
             "label": "Maggiori Dettagli",
-            "translate": "RESOURCES.more_details",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": true,
-            "saveWhenHidden": true
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.maggiori_dettagli_tasks"
         },
         {
             "autoGenerate": false,
@@ -851,7 +847,7 @@
                     "outputEventWhenComplete": "navigate_to_new_cons"
                 }
             ],
-            "translate": "RESOURCES.id_cons"
+            "translate": "RESOURCES.id_cons_tasks"
         },
         {
             "autoGenerate": false,
@@ -866,7 +862,7 @@
             "insertUpdateFunct": "select CURRENT_DATE",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.data_ins"
+            "translate": "RESOURCES.data_inserimento_tasks"
         },
         {
             "autoGenerate": false,
@@ -881,7 +877,7 @@
             "label": "Utente_ins",
             "newLine": false,
             "readOnly": false,
-            "translate": "RESOURCES.ute_ins"
+            "translate": "RESOURCES.utente_ins_tasks"
         }
     ],
     "search_keys": [
@@ -893,9 +889,9 @@
                 "viewType": "combobox"
             },
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "newLine": true,
-            "queryCond": "stato='€stato€'"
+            "queryCond": "stato='€stato€'",
+            "translate": "RESOURCES.stato_tasks"
         },
         {
             "fieldName": "note_search",
@@ -904,9 +900,9 @@
                 "viewType": "input"
             },
             "label": "Note",
-            "translate": "RESOURCES.notes",
             "newLine": false,
-            "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'"
+            "queryCond": "UPPER (note) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'",
+            "translate": "RESOURCES.note_tasks"
         },
         {
             "fieldName": "codice_compito",
@@ -917,7 +913,7 @@
             "label": "Codice Compito",
             "newLine": false,
             "queryCond": "codice_compito=$codice_compito$",
-            "translate": "RESOURCES.codice_compito"
+            "translate": "RESOURCES.codice_compito_tasks"
         },
         {
             "fieldName": "titolo",
@@ -926,9 +922,9 @@
                 "viewType": "input"
             },
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "newLine": true,
-            "queryCond": "titolo=$titolo$"
+            "queryCond": "titolo=$titolo$",
+            "translate": "RESOURCES.titolo_tasks"
         },
         {
             "fieldName": "id_tipo_segnalazione_s",
@@ -940,7 +936,7 @@
             "label": "ID Tipo Segnal.",
             "newLine": false,
             "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$",
-            "translate": "RESOURCES.id_tipo_segnal"
+            "translate": "RESOURCES.id_tipo_segnal_tasks"
         },
         {
             "fieldName": "id_centro_gest",
@@ -950,9 +946,9 @@
                 "viewType": "combobox"
             },
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "newLine": false,
-            "queryCond": "id_centro_gest=$id_centro_gest$"
+            "queryCond": "id_centro_gest=$id_centro_gest$",
+            "translate": "RESOURCES.centro_gestionale_tasks"
         },
         {
             "fieldName": "flag_compiti_aperti",
@@ -960,9 +956,9 @@
                 "viewType": "checkbox"
             },
             "label": "Solo Principali",
-            "translate": "RESOURCES.main_only",
             "newLine": false,
-            "queryCond": "codice_compito_parent IS null"
+            "queryCond": "codice_compito_parent IS null",
+            "translate": "RESOURCES.solo_principali_tasks"
         },
         {
             "fieldName": "toggle_compiti_aperti",
@@ -972,8 +968,19 @@
             },
             "label": "Compiti aperti",
             "newLine": false,
-            "queryCond": "stato!='C'",
-            "translate": "RESOURCES.compiti_aperti"
+            "queryCond": "(stato!='C' or stato is null)",
+            "translate": "RESOURCES.compiti_aperti_tasks"
+        },
+        {
+            "fieldName": "toggle_non_conformità",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Non conformità",
+            "newLine": false,
+            "queryCond": "id_tipo_segnalazione in(1, 5, 50, 200, 300, 751)",
+            "translate": "RESOURCES.non_conformit_tasks"
         }
     ],
     "table_keys": [
@@ -1012,8 +1019,7 @@
                 ],
                 "confirmAction": false,
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.check"
+            }
         },
         {
             "format": {
@@ -1023,7 +1029,7 @@
             "isPrimary": false,
             "key": "codice_codifica_stato",
             "label": "codice_codifica_stato",
-            "translate": "RESOURCES.codice_codifica_stato"
+            "translate": "RESOURCES.codice_codifica_stato_tasks"
         },
         {
             "format": {
@@ -1034,14 +1040,14 @@
             "key": "codice_compito",
             "width": "5%",
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "style": [
                 {
                     "value": "*",
                     "background_color": "lightblue",
                     "text_align": "center"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.codice_tasks"
         },
         {
             "format": {
@@ -1051,7 +1057,7 @@
             "isPrimary": false,
             "key": "user_companies",
             "label": "user_companies",
-            "translate": "RESOURCES.user_companies"
+            "translate": "RESOURCES.user_companies_tasks"
         },
         {
             "format": {
@@ -1062,14 +1068,14 @@
             "key": "titolo",
             "width": "26%",
             "label": "Titolo",
-            "translate": "RESOURCES.title",
             "style": [
                 {
                     "value": "*",
                     "font_size": "medium",
                     "font_weight": "590"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.titolo_tasks"
         },
         {
             "format": {
@@ -1081,7 +1087,7 @@
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
             "label": "Centro Gest.",
             "width": "15%",
-            "translate": "RESOURCES.descr_centro_gest"
+            "translate": "RESOURCES.centro_gest_tasks"
         },
         {
             "format": {
@@ -1093,7 +1099,7 @@
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor)",
             "label": "Centro Gest.Monit.",
             "width": "8%",
-            "translate": "RESOURCES.descr_centro_gest_monitor"
+            "translate": "RESOURCES.centro_gestmonit_tasks"
         },
         {
             "format": {
@@ -1104,8 +1110,8 @@
             "key": "tipo_segnalazione",
             "queryFunct": "entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione)",
             "label": "Tipo",
-            "translate": "RESOURCES.type",
-            "width": "14%"
+            "width": "14%",
+            "translate": "RESOURCES.tipo_tasks"
         },
         {
             "format": {
@@ -1115,7 +1121,7 @@
             "isPrimary": true,
             "key": "codice_azienda",
             "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code"
+            "translate": "RESOURCES.codice_azienda_tasks"
         },
         {
             "format": {
@@ -1125,7 +1131,7 @@
             "isPrimary": false,
             "key": "codice_compito_parent",
             "label": "Codice Compito Parent",
-            "translate": "RESOURCES.codice_compito_parent"
+            "translate": "RESOURCES.codice_compito_parent_tasks"
         },
         {
             "format": {
@@ -1136,7 +1142,7 @@
             "key": "data_segnalazione",
             "width": "6%",
             "label": "Aperto il",
-            "translate": "RESOURCES.data_segnalazione"
+            "translate": "RESOURCES.aperto_il_tasks"
         },
         {
             "format": {
@@ -1147,7 +1153,7 @@
             "key": "data_chiusura",
             "width": "6%",
             "label": "Chiuso il",
-            "translate": "RESOURCES.data_chiusura"
+            "translate": "RESOURCES.chiuso_il_tasks"
         },
         {
             "format": {
@@ -1157,7 +1163,7 @@
             "isPrimary": false,
             "key": "id_cliente",
             "label": "Cliente",
-            "translate": "RESOURCES.customer"
+            "translate": "RESOURCES.cliente_tasks"
         },
         {
             "format": {
@@ -1167,7 +1173,7 @@
             "isPrimary": false,
             "key": "stato",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
-            "label": " ",
+            "label": "",
             "width": "6%",
             "style": [
                 {
@@ -1198,8 +1204,7 @@
                     "background_color": "orange",
                     "text_align": "center"
                 }
-            ],
-            "translate": "RESOURCES.stato"
+            ]
         },
         {
             "format": {
@@ -1241,7 +1246,7 @@
                     "text_align": "center"
                 }
             ],
-            "translate": "RESOURCES.descr_priorita"
+            "translate": "RESOURCES.priorit_tasks"
         },
         {
             "format": {
@@ -1281,8 +1286,7 @@
                 ],
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
-            },
-            "translate": "RESOURCES.time_report_play"
+            }
         },
         {
             "format": {
@@ -1323,8 +1327,7 @@
                 ],
                 "confirmAction": false,
                 "onSuccessAction": "update_time_tracker_and_reload"
-            },
-            "translate": "RESOURCES.time_report_stop_active"
+            }
         }
     ],
     "inputEvents": [
@@ -1351,13 +1354,11 @@
         "tableQueries": [
             {
                 "label": "Registro Conflitti d'Interesse",
-                "queryString": "select entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as centro_gest_monitor, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cmp.data_segnalazione, cmp.data_chiusura, substring(cmp.titolo from 1 for 100) as titolo, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_fondo, string_agg(rsc.codice_rischio::varchar, '; ') as rischi_associati from entrasp.compiti cmp left join entrasp.compiti_rischi cmr on cmp.codice_compito=cmr.codice_compito and cmp.codice_azienda=cmr.codice_azienda left join entrasp.rischi rsc on cmr.codice_rischio=rsc.codice_rischio and cmr.codice_azienda=rsc.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione=2 group by entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) , cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) ,entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) , entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato), cmp.data_segnalazione,cmp.data_chiusura, substring(cmp.titolo from 1 for 100) , entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente)",
-                "translate": "RESOURCES.registro_conflitti_dinteresse"
+                "queryString": "select entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as centro_gest_monitor, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cmp.data_segnalazione, cmp.data_chiusura, substring(cmp.titolo from 1 for 100) as titolo, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_fondo, string_agg(rsc.codice_rischio::varchar, '; ') as rischi_associati from entrasp.compiti cmp left join entrasp.compiti_rischi cmr on cmp.codice_compito=cmr.codice_compito and cmp.codice_azienda=cmr.codice_azienda left join entrasp.rischi rsc on cmr.codice_rischio=rsc.codice_rischio and cmr.codice_azienda=rsc.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione=2 group by entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) , cmp.codice_compito, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) ,entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) , entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato), cmp.data_segnalazione,cmp.data_chiusura, substring(cmp.titolo from 1 for 100) , entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente)"
             },
             {
                 "label": "Segnalazioni",
-                "queryString": "select codice_compito, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, titolo, note, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest,entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=0",
-                "translate": "RESOURCES.segnalazioni"
+                "queryString": "select codice_compito, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, titolo, note, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest,entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione!=0"
             }
         ]
     },

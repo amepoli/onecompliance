@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="accettazione_incarico" pageWidth="565" pageHeight="800" columnWidth="537" columnSpacing="27" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="sondaggi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapterOnecompliance.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="405"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="584"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select ans.codice_azienda, ans.data_accettazione, mt.id_modello_test, ans.id_sondaggio, mt.descrizione, qc.processo, ans.data_accettazione, entrasp.argomenti_descr_breve_no_id(ac.id_argomento_tipo_norma) as norma, entrasp.anagrafiche_cognnome(cnt.codice_part, cnt.id_cliente) as ragione_sociale, giornate_uomo_scontate, giornate_uomo_sorveglianza,cnt.id_contratto, (select string_agg(soc.citta||', '||soc.indirizzo, '; ') from entrasp.sedi_operative_questionari soc  where soc.id_questionario=qc.id_questionario and soc.codice_azienda=qc.codice_azienda)as sedi, (select string_agg(entrasp.argomenti_descr_breve_no_id(unnest), '; ') from unnest(ac.id_argomento_settore))as settore, string_agg(entrasp.anagrafiche_cognnome(ans.codice_part, ans.id_anagrafica)||' ('||entrasp.argomenti_descr_breve_no_id(id_argomento_liv_competenza)||')', '; ') as auditors  from entrasp.anagrafiche_sondaggi ans inner join entrasp.sondaggi snd on ans.codice_azienda=snd.codice_azienda and ans.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.argomenti_argomenti amt on mt.id_argomento=amt.id_argomento_son inner join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto inner join entrasp.articoli_contratti ac on cnt.codice_azienda=ac.codice_azienda and cnt.id_contratto=ac.id_contratto inner join entrasp.questionari_certificazione qc on cnt.codice_azienda=qc.codice_azienda and cnt.id_contratto=qc.id_contratto where amt.id_argomento_father=ac.id_argomento_tipo_norma and ans.codice_azienda='ASACERT' and ans.id_sondaggio=69   group by sedi, ans.codice_azienda, ans.id_sondaggio, mt.id_modello_test, mt.descrizione,  qc.processo, giornate_uomo_scontate, ans.data_accettazione,  giornate_uomo_sorveglianza, cnt.id_contratto,  cnt.codice_part, cnt.id_cliente, ac.id_argomento_settore, ac.id_argomento_tipo_norma order by ans.codice_azienda, cnt.id_cliente, mt.id_modello_test, mt.id_modello_test"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["FININTSGR"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_sondaggio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[920]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="anagrafiche_sondaggi"/>
+	</field>
+	<field name="data_accettazione" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_accettazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_accettazione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="anagrafiche_sondaggi"/>
+	</field>
+	<field name="id_modello_test" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test"/>
+	</field>
+	<field name="id_sondaggio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="anagrafiche_sondaggi"/>
+	</field>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test"/>
+	</field>
+	<field name="processo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="processo"/>
+		<property name="com.jaspersoft.studio.field.label" value="processo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="questionari_certificazione"/>
+	</field>
+	<field name="norma" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="norma"/>
+		<property name="com.jaspersoft.studio.field.label" value="norma"/>
+	</field>
+	<field name="ragione_sociale" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ragione_sociale"/>
+		<property name="com.jaspersoft.studio.field.label" value="ragione_sociale"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="aziende"/>
+	</field>
+	<field name="giornate_uomo_scontate" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="giornate_uomo_scontate"/>
+		<property name="com.jaspersoft.studio.field.label" value="giornate_uomo_scontate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+	</field>
+	<field name="giornate_uomo_sorveglianza" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="giornate_uomo_sorveglianza"/>
+		<property name="com.jaspersoft.studio.field.label" value="giornate_uomo_sorveglianza"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+	</field>
+	<field name="id_contratto" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_contratto"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_contratto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="contratti"/>
+	</field>
+	<field name="sedi" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sedi"/>
+		<property name="com.jaspersoft.studio.field.label" value="sedi"/>
+	</field>
+	<field name="settore" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="settore"/>
+		<property name="com.jaspersoft.studio.field.label" value="settore"/>
+	</field>
+	<field name="auditors" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="auditors"/>
+		<property name="com.jaspersoft.studio.field.label" value="auditors"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="130" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image onErrorType="Blank">
+				<reportElement key="image" positionType="Float" stretchType="RelativeToBandHeight" x="146" y="10" width="245" height="50" uuid="d745ec97-e5ab-4ce9-8d82-125159a2d4dd">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA["./logos/"+ $P{codice_azienda} + ".png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="70" y="0" width="397" height="66" uuid="8e3cfee1-54aa-4997-8af7-f401683a5140">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="-1" y="90" width="537" height="30" backcolor="#97F7D7" uuid="b935707f-115c-4d68-8e60-d4344fbcf3db"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Accettazione Incarico]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="70" width="100" height="14" uuid="f9f1e30d-7052-4454-9d53-86349bf77801"/>
+				<text><![CDATA[Data Incarico:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="70" width="120" height="14" uuid="c3b0fcab-4b3e-475a-9120-2f6ae3e4a4ab"/>
+				<textFieldExpression><![CDATA[$F{data_accettazione}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="650" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<line>
+				<reportElement x="0" y="5" width="537" height="1" uuid="241e8abd-1d66-4d9f-ae61-cd4d4553cd0c"/>
+			</line>
+			<textField pattern="dd-MM-yyyy" isBlankWhenNull="true">
+				<reportElement x="0" y="31" width="131" height="59" uuid="7a78e18c-5054-43b1-a0db-a3ce30a2830c">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="11" width="131" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="c9eb67f8-2ec1-47a6-b4f9-77462b44d692">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo di Verifica]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="270" y="31" width="256" height="59" forecolor="#030200" uuid="5422eea0-7385-4d07-b8ac-5eebd9b364dc">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{auditors}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="270" y="11" width="257" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="2a986482-7143-4fbf-8909-52b4a99dbb44">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Auditor e Ruolo]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="131" y="31" width="139" height="59" uuid="33e9a8bf-86f2-4c6c-aac9-66cdb6ce371b">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{giornate_uomo_scontate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="131" y="11" width="139" height="20" forecolor="#FFFFFF" backcolor="#25599C" uuid="96a8345a-fc06-4995-b962-a8af4c9192cf">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Giornate]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="1" y="295" width="535" height="1" uuid="63050c39-b53e-4e4d-a625-ead867fa513b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_sondaggio">
+					<subreportParameterExpression><![CDATA[$F{id_sondaggio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["rischi_sub_of_avvio_verifica.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" mode="Opaque" x="1" y="110" width="189" height="20" uuid="bc68510c-9bc2-4e91-8cac-044a2b6b8b54"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estremi della società:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="360" y="110" width="100" height="20" uuid="83527df6-72b9-42fa-abb8-64ff713b02ce"/>
+				<text><![CDATA[Codice Commessa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="140" width="131" height="20" uuid="0eccc40f-61d4-4aef-8dfc-be052dc21447"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Ragione Sociale:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="160" width="131" height="20" uuid="98021dd5-1bfa-4928-b1d4-f93a429f3de9"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Descrizione Attività:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="1" y="190" width="100" height="20" uuid="c8693821-17ba-48ee-99cf-a34169bd3287"/>
+				<text><![CDATA[IAF principale:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="230" width="101" height="20" uuid="f769a185-574c-4b26-8311-ace56aa71d3d"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Siti da Valutare:  ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="295" width="130" height="14" uuid="e8ebdc55-f623-4ab7-a42a-3975347d4984"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Norme di riferimento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="2" y="320" width="535" height="320" uuid="04cc6e4b-0527-40d2-b4be-d34100ccd96b"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[L’incarico conferito al Gruppo di Verifica Ispettiva richiede che vengano esaminati struttura, politiche, procedure/prassi, documenti e registrazioni dell'azienda e che venga data conferma che questi soddisfino tutti i requisiti dei documenti di riferimento e che le procedure/prassi che l'azienda si è data siano messe in atto e siano tali da dare fiducia nei prodotti, processi o servizi forniti dall'azienda.
+ 
+Con la firma del presente incarico l’RGVI si impegna a completare l’audit ed emettere il Rapporto  entro 3 gg dalla conclusione.
+
+Dichiarazione di riservatezza
+Accettando il presente incarico, in base ai rapporti contrattuali sottoscritti tra Lei ed RCA, con riferimento al presente incarico Lei si impegna a:
+utilizzare dati e informazioni (di RCA e del Cliente) di cui verrà a conoscenza per lo svolgimento dell’incarico, ai soli fini della prestazione del servizio richiesto da RCA, ed in particolare a non utilizzarli impropriamente, duplicarli, o renderli disponibili a terze parti, salvo espressa autorizzazione scritta di RCA;
+adottare una condotta idonea a proteggere l’integrità fisica e logica di tutti i dati, supporti e documenti contenenti dati, informazioni, documenti e quant’altro messo a disposizione da RCA o dal cliente, garantendo l’utilizzo di idonei strumenti di trattamento e trasmissione dei dati stessi.
+
+
+Dichiarazione di assenza di conflitto di interessi
+Sotto la Sua responsabilità Lei dichiara di non aver svolto – direttamente e/o indirettamente - attività di consulenza al Cliente nei 3 anni precedenti al presente incarico e di non trovarsi in altre situazioni di incompatibilità tali da compromettere la Sua indipendenza ed imparzialità di giudizio. Si impegna inoltre a non accettare incarichi di consulenza da questo stesso cliente per 3 anni successivi alla data di espletamento del presente incarico.
+
+
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="130" y="140" width="407" height="20" uuid="79349268-751d-435d-b37f-a499304121b4"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ragione_sociale}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="131" y="160" width="406" height="20" uuid="205b6759-a48b-4567-a883-0232b1b545cf"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{processo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="460" y="110" width="80" height="20" uuid="e82cb06c-2954-4bb3-9df5-10a88d4a05ba"/>
+				<textFieldExpression><![CDATA[$F{id_contratto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="90" y="190" width="446" height="20" uuid="bc165a69-39d1-4faf-968c-4d1aad66a1d5"/>
+				<textFieldExpression><![CDATA[$F{settore}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="100" y="230" width="436" height="50" uuid="671979b6-9f19-4f9c-91cd-6612deeb18d3"/>
+				<textFieldExpression><![CDATA[$F{sedi}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="130" y="295" width="100" height="14" uuid="f8b00821-2fab-4e55-ab0c-98c09e935e4a"/>
+				<textFieldExpression><![CDATA[$F{norma}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

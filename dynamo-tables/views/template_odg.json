@@ -6,8 +6,7 @@
     "label": "Template ordini del giorno",
     "addElementSettings": {
         "labelQuickAdd": "Nuovo Punto",
-        "navigateOnSuccess": false,
-        "translateQuickAdd": "RESOURCES.nuovo_punto"
+        "navigateOnSuccess": false
     },
     "define": {
         "is_hidden_riunione": "true",
@@ -20,6 +19,25 @@
             "queryString": "select *, true as delete_templ_odg from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€')"
         }
     ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "inserisci_punti",
+                    "icon": "edit",
+                    "label": "Inserisci Punti del Piano",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_inserisci_punti_piano",
+                    "customDialogTitle": "Associa punti del piano a ordine del giorno",
+                    "confirmActionMessage": "Sei sicuro di inserire i punti selezionati nel template di piano selezionato?"
+                }
+            ]
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -30,10 +48,10 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.company_code",
+            "label": "Codice Azienda",
             "newLine": false,
-            "readOnly": false
+            "readOnly": false,
+            "translate": "RESOURCES.codice_azienda_template_odg"
         },
         {
             "autoGenerate": true,
@@ -48,7 +66,7 @@
             "newLine": false,
             "readOnly": true,
             "size": 1,
-            "translate": "RESOURCES.id_odg"
+            "translate": "RESOURCES.id_template_odg_template_odg"
         },
         {
             "autoGenerate": false,
@@ -65,7 +83,7 @@
             "newLine": false,
             "readOnly": false,
             "size": 3,
-            "translate": "RESOURCES.id_argomento"
+            "translate": "RESOURCES.tipo_odg_template_odg"
         },
         {
             "autoGenerate": false,
@@ -76,8 +94,8 @@
                         "key": "crea_associa_argomento",
                         "icon": "class",
                         "label": "Crea e associa argomento",
-                        "translate": "RESOURCES.create_and_associate_tag",
-                        "outputEventName": "create_associate_argomento"
+                        "outputEventName": "create_associate_argomento",
+                        "translate": "RESOURCES.crea_e_associa_argomento_template_odg"
                     }
                 ]
             },
@@ -94,7 +112,7 @@
             "isPrimary": false,
             "buttonIcon": "more_vert",
             "key": "template_odg_actions",
-            "label": " ",
+            "label": "",
             "newLine": true,
             "readOnly": false,
             "sameOrigin": false,
@@ -110,7 +128,7 @@
                         "message": "Titolo dell'ordine del giorno necessaria",
                         "name": "required",
                         "validator": "Validators.required",
-                        "translate": "RESOURCES.titolo_dellordine_del_giorno_necessaria"
+                        "translate": "RESOURCES.titolo_dellordine_del_giorno_necessaria_template_odg"
                     }
                 ]
             },
@@ -120,7 +138,7 @@
             "label": "Punto O.d.G.",
             "newLine": true,
             "readOnly": false,
-            "translate": "RESOURCES.titolo_odg"
+            "translate": "RESOURCES.punto_odg_template_odg"
         },
         {
             "autoGenerate": false,
@@ -132,10 +150,10 @@
             "isPrimary": false,
             "key": "annotazioni",
             "label": "Note",
-            "translate": "RESOURCES.notes",
             "newLine": true,
             "readOnly": false,
-            "size": 10
+            "size": 10,
+            "translate": "RESOURCES.note_template_odg"
         }
     ],
     "search_keys": [
@@ -147,9 +165,9 @@
                 "viewType": "combobox"
             },
             "label": "Stato",
-            "translate": "RESOURCES.status",
             "newLine": true,
-            "queryCond": "stato='€stato€'"
+            "queryCond": "stato='€stato€'",
+            "translate": "RESOURCES.stato_template_odg"
         },
         {
             "fieldName": "note_search",
@@ -160,7 +178,7 @@
             "label": "Parole Chiavi",
             "newLine": false,
             "queryCond": "UPPER (annotazioni) like '%'||UPPER('€note_search€')||'%' or UPPER (titolo) like '%'||UPPER('€note_search€')||'%'",
-            "translate": "RESOURCES.parole_chiavi"
+            "translate": "RESOURCES.parole_chiavi_template_odg"
         },
         {
             "fieldName": "id_tipo_segnalazione_s",
@@ -172,7 +190,7 @@
             "label": "ID Tipo Segnal.",
             "newLine": false,
             "queryCond": "id_tipo_segnalazione=$id_tipo_segnalazione_s$",
-            "translate": "RESOURCES.id_tipo_segnal"
+            "translate": "RESOURCES.id_tipo_segnal_template_odg"
         },
         {
             "fieldName": "no_subject",
@@ -184,7 +202,7 @@
             "newLine": false,
             "size": 1,
             "queryCond": "id_argomento is null",
-            "translate": "RESOURCES.non_classificati"
+            "translate": "RESOURCES.non_classificati_template_odg"
         }
     ],
     "subTables": [
@@ -204,8 +222,8 @@
                 ]
             },
             "label": "TAG",
-            "translate": "RESOURCES.tag",
-            "renderingOrder": 1
+            "renderingOrder": 1,
+            "translate": "RESOURCES.tag_tag_sub_of_template_odg"
         }
     ],
     "table_keys": [
@@ -247,8 +265,7 @@
                     "title": "Cancellazione ordine del giorno"
                 },
                 "onSuccessAction": "reload"
-            },
-            "translate": "RESOURCES.delete_procedure_aziendali"
+            }
         },
         {
             "format": {
@@ -259,7 +276,7 @@
             "key": "id_templ_odg",
             "width": "5%",
             "label": "ID OdG",
-            "translate": "RESOURCES.id_odg"
+            "translate": "RESOURCES.id_odg_template_odg"
         },
         {
             "format": {
@@ -269,7 +286,7 @@
             "isPrimary": false,
             "key": "id_argomento",
             "label": "Argomento",
-            "translate": "RESOURCES.tag"
+            "translate": "RESOURCES.argomento_template_odg"
         },
         {
             "format": {
@@ -279,7 +296,7 @@
             "isPrimary": false,
             "key": "codice_azienda",
             "label": "Codice Azienda",
-            "translate": "RESOURCES.company_code"
+            "translate": "RESOURCES.codice_azienda_template_odg"
         },
         {
             "format": {
@@ -290,7 +307,7 @@
             "key": "titolo",
             "width": "30%",
             "label": "Titolo",
-            "translate": "RESOURCES.title"
+            "translate": "RESOURCES.titolo_template_odg"
         },
         {
             "format": {
@@ -300,8 +317,8 @@
             "isPrimary": false,
             "key": "annotazioni",
             "label": "Note",
-            "translate": "RESOURCES.notes",
-            "width": "45%"
+            "width": "45%",
+            "translate": "RESOURCES.note_template_odg"
         }
     ],
     "querySuffixes": {
@@ -316,6 +333,5 @@
             "viewType": "table",
             "tableActionType": "add"
         }
-    ],
-    "translate": "RESOURCES.template_ordini_del_giorno"
+    ]
 }

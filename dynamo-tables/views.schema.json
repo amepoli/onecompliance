@@ -181,6 +181,54 @@
                 }
             }
         },
+        "customActions": {
+            "type": "array",
+            "description": "?: set of actions (by means of related icons) to show - by default they are hidden",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["viewType"],
+                "anyOf": [
+                    {
+                        "properties": {
+                            "viewType": {
+                                "enum": ["table"]
+                            }
+                        },
+                        "required": ["tableActionType"]
+                    },
+                    {
+                        "properties": {
+                            "viewType": {
+                                "enum": ["form"]
+                            }
+                        },
+                        "required": ["formActionType"]
+                    }
+                ],
+                "properties": {
+                    "viewType": {
+                        "type": "string",
+                        "description": "M: type of view affected",
+                        "enum": ["table", "form", "bulkTableRows"]
+                    },
+                    "tableActionType": {
+                        "type": "string",
+                        "description": "?: actions when viewType='table'",
+                        "enum": [
+                            "refresh_status"
+                        ]
+                    },
+                    "formActionType": {
+                        "type": "string",
+                        "description": "?: actions when viewType='form'",
+                        "enum": [
+                            "empty"
+                        ]
+                    }
+                }
+            }
+        },
         "widgetsConfiguration": {
             "type": "object",
             "description": "?: widgets configuration",
@@ -844,8 +892,12 @@
                                     "required": ["ifValue", "newTarget", "keyToCheck", "keymap" ],
                                     "properties": {
                                         "ifValue": {
-                                            "type": "string",
-                                            "description": "M: Value to check, if equals to keyToCheck then navigate"
+                                            "type": "array",
+                                            "description": "M: Values to check, if equals to keyToCheck then navigate",
+                                            "items": {
+                                                "type": "string",
+                                                "additionalProperties": false
+                                            }
                                         },
                                         "newTarget": {
                                             "type": "string",
@@ -1557,6 +1609,93 @@
                                 "queryString": {
                                     "type": "string",
                                     "description": "M: query string, must return a value NAMED AS 'label' of type coherent with the attribute (e.g. boolean for isHidden)"
+                                },
+                                "styleAttribute": {
+                                    "type": "string",
+                                    "description": "?: type of style attribute, mandatory and only applicable if 'attributeType' = 'style'",
+                                    "enum": [
+                                        "background_color",
+                                        "font_color",
+                                        "font_size",
+                                        "font_style",
+                                        "font_weight"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "attributePostChecks": {
+                        "type": "array",
+                        "description": "?: list of postgresql queries to set various key properties",
+                        "items": {
+                            "type": "object",
+                            "required": ["attributeType"],
+                            "additionalProperties": false,
+                            "anyOf": [
+                                {
+                                    "properties": {
+                                        "attributeType": {
+                                            "enum": ["isHidden", "readOnly"]
+                                        }
+                                    },
+                                    "required": ["resultType"]
+                                },
+                                {
+                                    "properties": {
+                                        "attributeType": {
+                                            "enum": ["style"]
+                                        }
+                                    },
+                                    "required": ["styleAttribute", "key"]
+                                },
+                                {
+                                    "properties": {
+                                        "resultType": {
+                                            "enum": ["condition"]
+                                        }
+                                    },
+                                    "required": ["key", "conditionType", "conditionValue", "resultTrueValue", "resultFalseValue"]
+                                },
+                                {
+                                    "properties": {
+                                        "resultType": {
+                                            "enum": ["value"]
+                                        }
+                                    },
+                                    "required": ["key"]
+                                }
+                            ],
+                            "properties": {
+                                "attributeType": {
+                                    "type": "string",
+                                    "description": "M: affected attribute",
+                                    "enum": ["isHidden", "readOnly", "style"]
+                                },
+                                "resultType": {
+                                    "type": "string",
+                                    "description": "?: whehther to use condition or value as result",
+                                    "enum": ["condition", "value"]
+                                },
+                                "conditionType": {
+                                    "type": "string",
+                                    "description": "?: condition type",
+                                    "enum": ["equalTo", "notEqualTo", "greaterThan", "lessThan", "Includes"]
+                                },
+                                "conditionValue": {
+                                    "type": ["string", "number", "null", "boolean", "integer", "array"],
+                                    "description": "?: condition value to compare with"
+                                },
+                                "resultTrueValue": {
+                                    "type": ["string", "number", "null", "boolean", "integer", "array"],
+                                    "description": "?: value if condition is true"
+                                },
+                                "resultFalseValue": {
+                                    "type": ["string", "number", "null", "boolean", "integer", "array"],
+                                    "description": "?: value if condition is false"
+                                },
+                                "key": {
+                                    "type": "string",
+                                    "description": "?: target element key"
                                 },
                                 "styleAttribute": {
                                     "type": "string",

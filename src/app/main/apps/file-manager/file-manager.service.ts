@@ -202,8 +202,8 @@ export class FileManagerService // implements Resolve<any>
             Promise.all([
                 this.getFiles()
             ]).then(
-                ([files]) => {
-                    resolve();
+                ([x]) => {
+                    resolve(x);
                 },
                 reject
             );

@@ -5,7 +5,7 @@
         {
             "operation": "update",
             "type": "main",
-            "queryString": "update entrasp.crediti_ceduti cc1 set flag_pool=coalesce($flag_pool_combobox$, cc2.flag_pool), id_ricessione = coalesce($id_ricessione$, cc2.id_ricessione), opposto=coalesce($opposto_combobox$,cc2.opposto),azionato=coalesce($azionato_combobox$,cc2.azionato),lavorazione_legale=coalesce($lavorazione_legale_combobox$,cc2.lavorazione_legale), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_scadenza = coalesce($data_scadenza$::date, cc2.data_scadenza), data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), id_tipo_documento = coalesce ($id_tipo_documento$, cc2.id_tipo_documento), cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, id_fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($id_fascicolo$, cc2.id_fascicolo) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
+            "queryString": "update entrasp.crediti_ceduti cc1 set flag_pool=coalesce($flag_pool_combobox$, cc2.flag_pool), id_ricessione = coalesce($id_ricessione$, cc2.id_ricessione), opposto=coalesce($opposto_combobox$,cc2.opposto),azionato=coalesce($azionato_combobox$,cc2.azionato),lavorazione_legale=coalesce($lavorazione_legale_combobox$,cc2.lavorazione_legale), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), id_tipo_documento = coalesce ($id_tipo_documento$, cc2.id_tipo_documento), cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, id_fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($id_fascicolo$, cc2.id_fascicolo) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
         }
     ],
     "form_keys": [
@@ -27,8 +27,7 @@
             },
             "newLine": true,
             "readOnly": true,
-            "sameOrigin": false,
-            "translate": "RESOURCES.anagraf"
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -42,8 +41,7 @@
             "key": "lotto",
             "label": "Lotto",
             "readOnly": false,
-            "size": 2.5,
-            "translate": "RESOURCES.lotto"
+            "size": 2.5
         },
         {
             "format": {
@@ -57,8 +55,7 @@
             "label": "Azzera lotto",
             "readOnly": false,
             "newLine": false,
-            "size": 2.5,
-            "translate": "RESOURCES.lotto_checkbox"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -72,8 +69,7 @@
             "key": "tranche",
             "label": "Tranche",
             "readOnly": false,
-            "size": 2.5,
-            "translate": "RESOURCES.tranche"
+            "size": 2.5
         },
         {
             "format": {
@@ -87,8 +83,7 @@
             "label": "Azzera tranche",
             "readOnly": false,
             "newLine": true,
-            "size": 2.5,
-            "translate": "RESOURCES.tranche_checkbox"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -102,8 +97,7 @@
             "label": "Data Fattura",
             "newLine": false,
             "size": 2.5,
-            "readOnly": false,
-            "translate": "RESOURCES.data_fattura"
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -117,8 +111,7 @@
             "label": "N° Fattura",
             "size": 2.5,
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.n_fattura"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -132,8 +125,7 @@
             "key": "importo",
             "label": "Importo",
             "readOnly": false,
-            "size": 2.5,
-            "translate": "RESOURCES.importo"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -148,8 +140,7 @@
             "label": "Contratto",
             "readOnly": false,
             "newLine": true,
-            "size": 2.5,
-            "translate": "RESOURCES.id_contratto"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -163,8 +154,7 @@
             "newLine": false,
             "key": "id_cedente",
             "label": "Cedente",
-            "readOnly": false,
-            "translate": "RESOURCES.id_cedente"
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -178,8 +168,7 @@
             "newLine": true,
             "key": "id_debitore_ceduto",
             "label": "Debitore Ceduto",
-            "readOnly": false,
-            "translate": "RESOURCES.id_debitore_ceduto"
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -194,23 +183,7 @@
             "label": "Tipo Doc.",
             "readOnly": false,
             "newLine": false,
-            "size": 2,
-            "translate": "RESOURCES.id_tipo_documento"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "data_scadenza",
-            "label": "Data Scadenza",
-            "readOnly": false,
-            "size": 2.5,
-            "translate": "RESOURCES.data_scadenza"
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -224,8 +197,7 @@
             "key": "cig",
             "label": "CIG",
             "readOnly": false,
-            "size": 1.25,
-            "translate": "RESOURCES.cig"
+            "size": 1.25
         },
         {
             "format": {
@@ -239,8 +211,7 @@
             "label": "Azzera cig",
             "readOnly": false,
             "newLine": true,
-            "size": 1.25,
-            "translate": "RESOURCES.cig_checkbox"
+            "size": 1.25
         },
         {
             "autoGenerate": false,
@@ -256,8 +227,7 @@
             "label": "Acquisto in Pool?",
             "size": 1.66,
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.acquisto_in_pool_sc"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -273,8 +243,7 @@
             "key": "id_ricessione",
             "label": "Cessione",
             "readOnly": false,
-            "size": 1.66,
-            "translate": "RESOURCES.id_ricessione"
+            "size": 1.66
         },
         {
             "format": {
@@ -294,8 +263,7 @@
             },
             "newLine": true,
             "readOnly": true,
-            "sameOrigin": false,
-            "translate": "RESOURCES.legale_azionato"
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -310,8 +278,7 @@
             "label": "ID Avvocato",
             "size": 2.5,
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.id_avvocato"
+            "newLine": false
         },
         {
             "format": {
@@ -325,8 +292,7 @@
             "label": "Azzera avvocato",
             "readOnly": false,
             "newLine": false,
-            "size": 2.5,
-            "translate": "RESOURCES.id_avvocato_checkbox"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -342,8 +308,7 @@
             "label": "Autorità Giudiziaria",
             "size": 2.5,
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.autorita_giudiziaria"
+            "newLine": false
         },
         {
             "format": {
@@ -357,8 +322,7 @@
             "label": "Azzera autoritá giudiziaria",
             "readOnly": false,
             "newLine": true,
-            "size": 2.5,
-            "translate": "RESOURCES.autorita_giudiziaria_checkbox"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -373,8 +337,7 @@
             "label": "Fascicolo",
             "size": 2.5,
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.fascicolo"
+            "newLine": false
         },
         {
             "format": {
@@ -388,8 +351,7 @@
             "label": "Azzera fascicolo",
             "readOnly": false,
             "newLine": false,
-            "size": 2.5,
-            "translate": "RESOURCES.fascicolo_checkbox"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -405,8 +367,7 @@
             "label": "Opposto?",
             "size": 1.66,
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.opposto_combobox"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -422,8 +383,7 @@
             "label": "Azionato?",
             "size": 1.66,
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.azionato_combobox"
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -439,8 +399,7 @@
             "label": "Lavorazione Legale?",
             "size": 1.66,
             "readOnly": false,
-            "newLine": true,
-            "translate": "RESOURCES.lavorazione_legale_combobox"
+            "newLine": true
         },
         {
             "format": {
@@ -460,8 +419,7 @@
             },
             "newLine": true,
             "readOnly": true,
-            "sameOrigin": false,
-            "translate": "RESOURCES.situazione_ante_presidi"
+            "sameOrigin": false
         },
         {
             "autoGenerate": false,
@@ -473,7 +431,6 @@
             "isPrimary": false,
             "key": "note",
             "label": "Note",
-            "translate": "RESOURCES.notes",
             "readOnly": false,
             "newLine": true
         }

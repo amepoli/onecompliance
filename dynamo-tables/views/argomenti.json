@@ -66,8 +66,7 @@
             "label": "ID",
             "newLine": false,
             "readOnly": true,
-            "size": 1.25,
-            "translate": "RESOURCES.id_argomento"
+            "size": 1.25
         },
         {
             "autoGenerate": false,
@@ -78,8 +77,7 @@
                     {
                         "message": "Inserire un codice!",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_un_codice"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -87,7 +85,6 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "newLine": false,
             "readOnly": false,
             "size": 1.25
@@ -102,7 +99,6 @@
             "isPrimary": false,
             "key": "codice_esterno",
             "label": "Codice esterno",
-            "translate": "RESOURCES.codice_esterno",
             "newLine": false,
             "readOnly": false,
             "size": 1.25
@@ -116,8 +112,7 @@
                     {
                         "message": "Inserire una descrizione breve!",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_una_descrizione_breve"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -125,7 +120,6 @@
             "isPrimary": false,
             "key": "descrizione_breve",
             "label": "Descrizione Breve",
-            "translate": "RESOURCES.short_description",
             "newLine": false,
             "readOnly": false,
             "size": 5
@@ -142,8 +136,7 @@
             "label": "Nickname",
             "newLine": true,
             "readOnly": false,
-            "size": 2.5,
-            "translate": "RESOURCES.nickname"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -154,8 +147,7 @@
                     {
                         "message": "Inserire una descrizione",
                         "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.inserire_una_descrizione"
+                        "validator": "Validators.required"
                     }
                 ]
             },
@@ -163,7 +155,6 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "translate": "RESOURCES.description",
             "newLine": false,
             "readOnly": false,
             "size": 5.5
@@ -182,8 +173,7 @@
             "insertUpdateFunct": "£flag_classificazione£::boolean",
             "isPrimary": false,
             "isHidden": false,
-            "size": 1.5,
-            "translate": "RESOURCES.flag_classificazione"
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -199,8 +189,7 @@
             "insertUpdateFunct": "£flag_no_delete£::boolean",
             "isPrimary": false,
             "isHidden": false,
-            "size": 1.5,
-            "translate": "RESOURCES.flag_no_delete"
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -216,8 +205,7 @@
             "insertUpdateFunct": "£flag_sterile£::boolean",
             "isPrimary": false,
             "isHidden": false,
-            "size": 1.5,
-            "translate": "RESOURCES.flag_sterile"
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -233,8 +221,7 @@
             "sameOrigin": false,
             "newLine": false,
             "readOnly": false,
-            "size": 8,
-            "translate": "RESOURCES.id_argomento_nuovo"
+            "size": 8
         },
         {
             "autoGenerate": false,
@@ -263,8 +250,7 @@
             ],
             "readOnly": false,
             "sameOrigin": false,
-            "size": 2,
-            "translate": "RESOURCES.argomento_unifica_k"
+            "size": 2
         }
     ],
     "search_keys": [
@@ -275,7 +261,6 @@
                 "viewType": "input"
             },
             "label": "Lista id argomenti",
-            "translate": "RESOURCES.id_tag_list",
             "newLine": false,
             "queryCond": "id_argomento::varchar=any(string_to_array(replace($id_argomento_list$, ' ', ''), ','))"
         },
@@ -287,8 +272,7 @@
             },
             "label": "Maggiore di ID_argomento",
             "newLine": false,
-            "queryCond": "id_argomento>=$id_argomento_magg_s$",
-            "translate": "RESOURCES.maggiore_di_id_argomento"
+            "queryCond": "id_argomento>=$id_argomento_magg_s$"
         },
         {
             "fieldName": "codice_s",
@@ -297,20 +281,18 @@
                 "viewType": "input"
             },
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "newLine": false,
             "queryCond": "upper(codice) like '%'||upper('€codice_s€')||'%'"
         },
         {
-            "fieldName": "id_argomento_father_s",
+            "fieldName": "id_argomenti_father_list",
             "format": {
-                "dataType": "number",
+                "dataType": "text",
                 "viewType": "input"
             },
-            "label": "Con argomento padre pari a",
+            "label": "Con argomenti padre uguale a",
             "newLine": false,
-            "queryCond": "id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=$id_argomento_father_s$)",
-            "translate": "RESOURCES.con_argomento_padre_pari_a"
+            "queryCond": "id_argomento::varchar in(select id_argomento_son::varchar from entrasp.argomenti_argomenti where id_argomento_father::varchar=any(string_to_array(replace($id_argomenti_father_list$, ' ', ''), ',')))"
         },
         {
             "fieldName": "descr_rs",
@@ -319,7 +301,6 @@
                 "viewType": "input"
             },
             "label": "Descrizione",
-            "translate": "RESOURCES.description",
             "newLine": true,
             "queryCond": "(UPPER(descrizione) like '%'||UPPER('€descr_rs€')||'%' or UPPER(descrizione_breve) like '%'||UPPER('€descr_rs€')||'%')"
         },
@@ -333,8 +314,7 @@
             },
             "label": "Categorie modelli test",
             "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))",
-            "translate": "RESOURCES.categorie_modelli_test"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s$))"
         },
         {
             "fieldName": "categorie_modello_test_s2",
@@ -346,8 +326,7 @@
             },
             "label": "Categorie modelli test 2",
             "newLine": true,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s2$))",
-            "translate": "RESOURCES.categorie_modelli_test_2"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($categorie_modello_test_s2$))"
         },
         {
             "fieldName": "centro_gestionale_s",
@@ -358,7 +337,6 @@
                 "dataType": "text"
             },
             "label": "Centro Gestionale",
-            "translate": "RESOURCES.office",
             "newLine": false,
             "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($centro_gestionale_s$))"
         },
@@ -372,8 +350,7 @@
             },
             "label": "Tipo intermediario",
             "newLine": true,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tipo_intermediario_s$))",
-            "translate": "RESOURCES.tipo_intermediario"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($tipo_intermediario_s$))"
         },
         {
             "fieldName": "livello_controllo_s",
@@ -385,8 +362,7 @@
             },
             "label": "Livello controllo",
             "newLine": false,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))",
-            "translate": "RESOURCES.livello_controllo"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($livello_controllo_s$))"
         },
         {
             "fieldName": "attivita_s",
@@ -398,8 +374,7 @@
             },
             "label": "Tipo modello di progetto (attivita)",
             "newLine": true,
-            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))",
-            "translate": "RESOURCES.tipo_modello_di_progetto_attivita"
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($attivita_s$))"
         },
         {
             "fieldName": "categoria_calcolata_s",
@@ -411,8 +386,7 @@
             },
             "label": "Categoria calcolata",
             "newLine": false,
-            "queryCond": "id_argomento in(select entrasp.argomenti_category_of($categoria_calcolata_s$))",
-            "translate": "RESOURCES.categoria_calcolata"
+            "queryCond": "id_argomento in(select entrasp.argomenti_category_of($categoria_calcolata_s$))"
         },
         {
             "fieldName": "associati_to",
@@ -424,8 +398,7 @@
             },
             "label": "Associato a (modelli di verifica, attività, centri_gestionali, etc)",
             "newLine": true,
-            "queryCond": "id_argomento in(select entrasp.argomenti_associated_to($associati_to$))",
-            "translate": "RESOURCES.associato_a_modelli_di_verifica_attivit_centri_gestionali_etc"
+            "queryCond": "id_argomento in(select entrasp.argomenti_associated_to($associati_to$))"
         },
         {
             "fieldName": "flag_classificazione",
@@ -435,8 +408,7 @@
             },
             "label": "Macro categorie",
             "newLine": false,
-            "queryCond": "flag_classificazione=true",
-            "translate": "RESOURCES.macro_categorie"
+            "queryCond": "flag_classificazione=true"
         }
     ],
     "subTables": [
@@ -448,8 +420,7 @@
                     "son": "id_argomento_father"
                 }
             ],
-            "label": "Argomenti figli",
-            "translate": "RESOURCES.argomenti_figli"
+            "label": "Argomenti figli"
         },
         {
             "entryKey": "argomenti_sub_of_argomenti_father",
@@ -459,8 +430,7 @@
                     "son": "id_argomento_son"
                 }
             ],
-            "label": "Argomenti padre",
-            "translate": "RESOURCES.argomenti_padre"
+            "label": "Argomenti padre"
         },
         {
             "entryKey": "compiti_argomenti_sub",
@@ -470,8 +440,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Compiti Argomenti",
-            "translate": "RESOURCES.compiti_argomenti"
+            "label": "Compiti Argomenti"
         },
         {
             "entryKey": "modelli_test_sub_of_argomenti",
@@ -481,8 +450,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Modelli Verifica",
-            "translate": "RESOURCES.modelli_verifica"
+            "label": "Modelli Verifica"
         },
         {
             "entryKey": "rischi_sub_of_argomenti",
@@ -492,8 +460,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Rischi Argomenti",
-            "translate": "RESOURCES.rischi_argomenti"
+            "label": "Rischi Argomenti"
         },
         {
             "entryKey": "contratti_sub_of_argomenti",
@@ -503,8 +470,7 @@
                     "son": "id_argomento_contratto"
                 }
             ],
-            "label": "Contratti",
-            "translate": "RESOURCES.contratti"
+            "label": "Contratti"
         },
         {
             "entryKey": "centri_gestionali_sub_of_argomenti",
@@ -514,8 +480,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Centri Gestionali",
-            "translate": "RESOURCES.centri_gestionali"
+            "label": "Centri Gestionali"
         },
         {
             "entryKey": "domande_sub_of_argomenti",
@@ -525,8 +490,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Domande",
-            "translate": "RESOURCES.domandelabel"
+            "label": "Domande"
         },
         {
             "entryKey": "attivita_sub_of_argomenti",
@@ -536,8 +500,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Attività",
-            "translate": "RESOURCES.attivit"
+            "label": "Attività"
         },
         {
             "entryKey": "aziende_tasks_sub_of_argomenti",
@@ -547,8 +510,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Aziende",
-            "translate": "RESOURCES.aziende"
+            "label": "Aziende"
         },
         {
             "entryKey": "cpl_trattamenti_dati_sub_of_argomenti",
@@ -558,8 +520,7 @@
                     "son": "id_argomento"
                 }
             ],
-            "label": "Trattamenti dati",
-            "translate": "RESOURCES.trattamenti_dati_sub_of_procedure"
+            "label": "Trattamenti dati"
         }
     ],
     "table_multiselection_actions": [
@@ -574,8 +535,7 @@
                     "key": "Unifica argomenti",
                     "icon": "merge_type",
                     "label": "Unifica argomenti",
-                    "query": "SELECT entrasp.unifica_argomenti(array_agg(id_argomento)) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)",
-                    "translate": "RESOURCES.unifica_argomenti"
+                    "query": "SELECT entrasp.unifica_argomenti(array_agg(id_argomento)) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
                 }
             ]
         }
@@ -589,8 +549,7 @@
             "isPrimary": true,
             "key": "id_argomento",
             "label": "ID",
-            "width": "10%",
-            "translate": "RESOURCES.id_argomento"
+            "width": "10%"
         },
         {
             "format": {
@@ -600,7 +559,6 @@
             "isPrimary": false,
             "key": "codice",
             "label": "Codice",
-            "translate": "RESOURCES.code",
             "width": "10%"
         },
         {
@@ -611,7 +569,6 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Descrizione",
-            "translate": "RESOURCES.description",
             "width": "30%"
         },
         {
@@ -622,7 +579,6 @@
             "isPrimary": false,
             "key": "descrizione_breve",
             "label": "Descrizione Breve",
-            "translate": "RESOURCES.short_description",
             "width": "20%"
         },
         {
@@ -634,8 +590,7 @@
             "isPrimary": false,
             "key": "flag_classificazione",
             "label": "Argomento di classificazione",
-            "width": "10%",
-            "translate": "RESOURCES.flag_classificazione"
+            "width": "10%"
         },
         {
             "format": {
@@ -646,12 +601,15 @@
             "isPrimary": false,
             "key": "flag_no_delete",
             "label": "Non cancellare",
-            "width": "10%",
-            "translate": "RESOURCES.flag_no_delete"
+            "width": "10%"
         }
     ],
     "querySuffixes": {
         "tableViewSuffix": "order by id_argomento desc limit 200"
+    },
+    "addElementSettings": {
+        "labelAdd": "Nuovo Argomento",
+        "navigateOnSuccess": true
     },
     "hideActions": [
         {
@@ -669,6 +627,10 @@
         {
             "formActionType": "share",
             "viewType": "form"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
         }
     ]
 }
