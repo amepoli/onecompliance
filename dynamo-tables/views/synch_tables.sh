@@ -72,7 +72,7 @@ while true; do
 
     # Ottieni il LastEvaluatedKey per gestire la paginazione
     LAST_EVALUATED_KEY_JSON=$(echo "$SCAN_OUTPUT" | jq -c ".LastEvaluatedKey")
-    
+
     # Termina il ciclo se non ci sono più pagine
     if [ "$LAST_EVALUATED_KEY_JSON" == "null" ]; then
         break
@@ -133,5 +133,32 @@ else
         echo "$key"
     done
     echo "Totale: ${#dynamo_not_in_local[@]} elementi"
+fi
+echo "========================================"
+
+# ### Nuova Sezione: Prompt per la Cancellazione ###
+if [ ${#dynamo_not_in_local[@]} -gt 0 ]; then
+    echo ""
+    echo "Vuoi cancellare gli elementi presenti in DynamoDB ma non in locale? (y/N)"
+    read -p "Inserisci 'y' per confermare o qualsiasi altro tasto per annullare: " confirm
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Inizio cancellazione degli elementi da DynamoDB..."
+        for key in "${dynamo_not_in_local[@]}"; do
+            # Costruisci il parametro JSON per la chiave
+            # Supponendo che la chiave principale sia di tipo stringa
+            KEY_JSON=$(jq -n --arg key "$key" '{ "'"$MAINKEY"'": { "S": $key } }')
+            
+            # Esegui la cancellazione
+            aws dynamodb delete-item --table-name "$TABLENAME" --key "$KEY_JSON" >/dev/null 2>&1
+            if [ $? -eq 0 ]; then
+                echo "Elemento '$key' cancellato con successo."
+            else
+                echo "Errore nella cancellazione dell'elemento '$key'."
+            fi
+        done
+        echo "Cancellazione completata."
+    else
+        echo "Cancellazione annullata."
+    fi
 fi
 echo "========================================"
