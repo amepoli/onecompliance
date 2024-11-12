@@ -4,9 +4,7 @@
     "businessObjectName": "contratti",
     "origin": "entrasp.contratti",
     "label": "Contratti",
-    "dashboardTables": [
-        "dashboard_contracts_investment"
-    ],
+    "dashboardTables": ["dashboard_contracts_investment"],
     "define": {
         "is_hidden_conflicts": "true",
         "is_hidden_invisible_field": "true",
@@ -17,8 +15,10 @@
         "is_hidden_fornitori": "true",
         "id_argomento_tipo_contratto": "5408",
         "is_hidden_finanziamenti": "false",
+        "is_hidden_strumento": "false",
         "codice_ruolo": "CLI",
         "is_hidden_note": "true",
+        "is_hidden_validita": "true",
         "is_hidden_esternalizzazioni": "true"
     },
     "addElementSettings": {
@@ -646,9 +646,7 @@
                     "eventName": "expiry_date_change",
                     "actionType": "readOnly",
                     "condition": "equalTo",
-                    "values": [
-                        null
-                    ]
+                    "values": [null]
                 }
             ],
             "translate": "RESOURCES.chiudi_contratto_contracts_investment"
@@ -1478,7 +1476,7 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": "$Q{is_hidden_strumento}",
             "isPrimary": false,
             "key": "fondo_gestito",
             "width": "15%",
@@ -1583,6 +1581,39 @@
             "format": {
                 "dataType": "text"
             },
+            "isHidden": "$Q{is_hidden_validita}",
+            "isPrimary": false,
+            "key": "validita_spese_ist",
+            "width": "8%",
+            "label": "Sp. Istrut.",
+            "style": [
+                {
+                    "value": "Valido",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In Scadenza",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "Orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Scaduto",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
             "isHidden": true,
             "isPrimary": false,
             "queryFunct": "entrasp.anagrafica_key(id_cliente, codice_azienda, '|')",
@@ -1615,6 +1646,15 @@
                 }
             ],
             "translate": "RESOURCES.rischio_conflitto_contracts_investment"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_evento",
+            "label": "id_argomento_evento"
         },
         {
             "format": {
