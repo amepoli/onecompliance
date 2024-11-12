@@ -11,7 +11,8 @@
         "is_hidden_contratti_sottoscritti": "true",
         "is_hidden_profilo_aml": "false",
         "is_hidden_dettagli": "false",
-        "is_hidden_validita": "false"
+        "is_hidden_validita": "false",
+        "is_hidden_dynamo": "true"
     },
     "table_multiselection_actions": [
         {
@@ -352,7 +353,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "SELECT distinct an.codice_part, avr.prog_vr, entrasp.n_contratti_cliente('€global_codice_azienda€', an.id_anagrafica, array['A']) AS n_contratti_attivi, an.id_anagrafica, COALESCE(NULLIF(an.nome || ' ' || an.cognome, ' '), avr.ragione_sociale) AS nmrs, entrasp.argomenti_descr_breve_no_num((SELECT entrasp.scadenza_documento_anagrafica(an.codice_part, an.id_anagrafica))) AS validita_durc, avr.denominazione, an.codice, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO', an.tipo_soggetto) AS tipo_soggetto, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part = avr.codice_part AND an.id_anagrafica = avr.id_anagrafica JOIN entrasp.ruoli_anagrafiche ra ON an.codice_part = ra.codice_part AND an.id_anagrafica = ra.id_anagrafica WHERE an.codice_part = $codice_part$ AND avr.prog_vr = entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) AND an.codice_part || '-' || an.id_anagrafica IN (SELECT cc.codice_part || '-' || cc.id_cedente FROM entrasp.crediti_ceduti cc WHERE codice_azienda = '€global_codice_azienda€');",
+            "queryString": "SELECT distinct an.codice_part, avr.prog_vr, entrasp.n_contratti_cliente('€global_codice_azienda€', an.id_anagrafica, array['A']) AS n_contratti_attivi, an.id_anagrafica, COALESCE(NULLIF(an.nome || ' ' || an.cognome, ' '), avr.ragione_sociale) AS nmrs, entrasp.argomenti_descr_breve_no_num((SELECT entrasp.scadenza_documento_anagrafica(an.codice_part, an.id_anagrafica))) AS validita_durc, entrasp.argomenti_descr_breve_no_num((SELECT entrasp.scadenza_documento_anagrafica(an.codice_part, an.id_anagrafica))) AS validita_ader, avr.denominazione, an.codice, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO', an.tipo_soggetto) AS tipo_soggetto, avr.codice_fiscale, avr.partita_iva FROM entrasp.anagrafiche_id an JOIN entrasp.anagrafiche_vr avr ON an.codice_part = avr.codice_part AND an.id_anagrafica = avr.id_anagrafica JOIN entrasp.ruoli_anagrafiche ra ON an.codice_part = ra.codice_part AND an.id_anagrafica = ra.id_anagrafica WHERE an.codice_part = $codice_part$ AND avr.prog_vr = entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) AND an.codice_part || '-' || an.id_anagrafica IN (SELECT cc.codice_part || '-' || cc.id_cedente FROM entrasp.crediti_ceduti cc WHERE codice_azienda = '€global_codice_azienda€');",
             "type": "main"
         },
         {
