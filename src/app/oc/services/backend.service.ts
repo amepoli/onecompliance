@@ -440,17 +440,6 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
 
-  copyUser(username: string, company: string, associated_user: string, registry: string, tax_code: string, profile: string) {
-    this.awsService.auth();
-    const putPostReq: PostRequest = {
-      body: null,
-      headers: {},
-      queryStringParameters: { copy_user: 1, username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code, profile: profile },
-    };
-    return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
-  }
-
-
   inviteUserAgain(email: string, temporaryPassword: string) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
