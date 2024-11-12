@@ -3416,7 +3416,7 @@ export const locale = {
             domande_risposte_onekyc__light: "OneKYC - Light",
             domande_risposte_punteggio: "Punteggio",
             domande_risposte_risposta: "Risposta",
-            domande_risposte_risultato: "Risultato %",
+            domande_risposte_risultato_: "Risultato %",
             domande_risposte_seleziona_note: "Seleziona note",
             domnonappl_calcolo_punteggi: "Dom.non.appl.",
             dopo_quanti_giorni_modelli_test_risultati_righe_sub: "Dopo quanti giorni?",
@@ -8936,6 +8936,8 @@ export const locale = {
             vulnerabilita_rischi_rettificati: "vulnerabilita",
             workflow_modelli_test_vr: "Workflow",
             workflow_modelli_test_vr_prova: "Workflow",
+            domande_risposte_vai_a_segnalazione: "Vai a segnalazione",
+
 },
         VIEWS: {
             sondaggi: "Sondaggi",

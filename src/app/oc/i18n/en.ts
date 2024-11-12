@@ -8933,7 +8933,7 @@ export const locale = {
             domande_risposte_onekyc__light: "OneKYC - Light",
             domande_risposte_punteggio: "Score",
             domande_risposte_risposta: "Answer",
-            domande_risposte_risultato: "Result %",
+            domande_risposte_risultato_: "Result %",
             domande_risposte_seleziona_note: "Select notes",
             void: "",
 },
