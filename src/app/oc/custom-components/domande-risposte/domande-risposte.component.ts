@@ -24,7 +24,7 @@ export class DomandeRisposteComponent implements OnChanges
 
     @Input() domandeRisposteParams: DomandeRisposteParams = {
         keys: {},
-        entryName: "domande_risposte",
+        entryName: "",
     };
 
     @Output() sendEvent = new EventEmitter<any>();
@@ -197,7 +197,7 @@ export class DomandeRisposteComponent implements OnChanges
                     font_color: "black",
                     font_weight: "600"
                 },
-                translate: "RESOURCES.n_domande_risposte"
+                translate: "RESOURCES.domande_risposte_n"
             },
             {
                 format: {
@@ -213,7 +213,7 @@ export class DomandeRisposteComponent implements OnChanges
                 readOnly: result.readonly || true,
                 size: 6.5,
                 textareaHeight: "S",
-                translate: "RESOURCES.domanda_domande_risposte",
+                translate: "RESOURCES.domande_risposte_domanda",
             }
         ];
         if(result.codice_compito) {
@@ -372,7 +372,7 @@ export class DomandeRisposteComponent implements OnChanges
                 },
                 textareaHeight: "S",
                 translate:
-                    "RESOURCES.annotazioni_esplicative_domanda_domande_risposte",
+                    "RESOURCES.domande_risposte_annotazioni_esplicative_domanda",
             },
         ];
 
@@ -398,7 +398,7 @@ export class DomandeRisposteComponent implements OnChanges
                 font_style: "italic",
                 font_weight: "400"
             },
-            translate: "RESOURCES.risposta_domande_risposte"
+            translate: "RESOURCES.domande_risposte_risposta"
         });
 
 
@@ -415,7 +415,7 @@ export class DomandeRisposteComponent implements OnChanges
             readOnly: result.readonly || true,
             sameOrigin: false,
             size: 3,
-            translate: "RESOURCES.no_new_line_domande_risposte"
+            translate: "RESOURCES.domande_risposte_no_new_line"
         });
 
         var addInvisible = false;
@@ -444,7 +444,7 @@ export class DomandeRisposteComponent implements OnChanges
                     font_color: "white"
                 },
                 tooltip: "Controllo OneKYC approfondito",
-                translate: "RESOURCES.onekyc__deep_domande_risposte",
+                translate: "RESOURCES.domande_risposte_onekyc__deep",
             });
             addInvisible = true;
         };
@@ -473,7 +473,7 @@ export class DomandeRisposteComponent implements OnChanges
                     font_color: "white"
                 },
                 tooltip: "Invia mail",
-                translate: "RESOURCES.invia_mail_domande_risposte",   
+                translate: "RESOURCES.domande_risposte_invia_mail",   
             });
             addInvisible = true;
         }
@@ -499,7 +499,7 @@ export class DomandeRisposteComponent implements OnChanges
                     sameOrigin: false,
                     size: 2,
                     tooltip: "Controllo OneKYC limitato alle liste anti-terrorismo",
-                    translate: "RESOURCES.onekyc__light_domande_risposte",
+                    translate: "RESOURCES.domande_risposte_onekyc__light",
                 }
             );
             addInvisible = true;
@@ -529,7 +529,7 @@ export class DomandeRisposteComponent implements OnChanges
                     font_color: "white"
                 },
                 tooltip: "Check provincia",
-                translate: "RESOURCES.check_provincia_domande_risposte",
+                translate: "RESOURCES.domande_risposte_check_provincia",
             });
             addInvisible = true;
         }
@@ -549,7 +549,7 @@ export class DomandeRisposteComponent implements OnChanges
                     readOnly: result.readonly || true,
                     sameOrigin: false,
                     size: 3,
-                    translate: "RESOURCES.new_line_domande_risposte"
+                    translate: "RESOURCES.domande_risposte_new_line"
                 }
             );
         }
@@ -574,7 +574,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || false,
                     size: 8.5,
-                    translate: "RESOURCES.risposta_domande_risposte",
+                    translate: "RESOURCES.domande_risposte_risposta",
                 },
                 {
                     format: {
@@ -589,7 +589,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || true,
                     size: 1,
-                    translate: "RESOURCES.risultato__domande_risposte"
+                    translate: "RESOURCES.domande_risposte_risultato"
                 },
             ];
         }
@@ -613,7 +613,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || false,
                     size: 8.5,
-                    translate: "RESOURCES.risposta_domande_risposte",
+                    translate: "RESOURCES.domande_risposte_risposta",
                 },
                 {
                     format: {
@@ -628,7 +628,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || true,
                     size: 1,
-                    translate: "RESOURCES.risultato__domande_risposte"
+                    translate: "RESOURCES.domande_risposte_risultato"
                 },
             ];
         }
@@ -652,7 +652,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || false,
                     size: 8.5,
-                    translate: "RESOURCES.risposta_domande_risposte",
+                    translate: "RESOURCES.domande_risposte_risposta",
                 },
                 {
                     format: {
@@ -667,7 +667,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || true,
                     size: 1,
-                    translate: "RESOURCES.risultato__domande_risposte"
+                    translate: "RESOURCES.domande_risposte_risultato"
                 },
             ];
         }
@@ -692,7 +692,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || false,
                     size: 1,
-                    translate: "RESOURCES.risposta_domande_risposte",
+                    translate: "RESOURCES.domande_risposte_risposta",
                 },
                 {
                     format: {
@@ -707,7 +707,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || false,
                     size: 1,
-                    translate: "RESOURCES.risultato__domande_risposte"
+                    translate: "RESOURCES.domande_risposte_risultato"
                 },
             ];
         }
@@ -732,7 +732,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || false,
                     size: 1,
-                    translate: "RESOURCES.risposta_domande_risposte",
+                    translate: "RESOURCES.domande_risposte_risposta",
                 },
                 {
                     format: {
@@ -747,7 +747,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || false,
                     size: 1,
-                    translate: "RESOURCES.risultato__domande_risposte"
+                    translate: "RESOURCES.domande_risposte_risultato"
                 },
             ];
         }
@@ -767,7 +767,7 @@ export class DomandeRisposteComponent implements OnChanges
                     newLine: false,
                     readOnly: result.readonly || false,
                     size: 1,
-                    translate: "RESOURCES.risultato__domande_risposte"
+                    translate: "RESOURCES.domande_risposte_risultato"
                 },
             ];
         }
@@ -792,7 +792,7 @@ export class DomandeRisposteComponent implements OnChanges
                     font_weight: "500",
                 },
                 textareaHeight: "S",
-                translate: "RESOURCES.note",
+                translate: "RESOURCES.domande_risposte_note",
             }
         ];
         return viewKeys;
@@ -805,26 +805,26 @@ export class DomandeRisposteComponent implements OnChanges
         //     label: "Crea Segnalazione",
         //     outputEventName: "risposte_update_insert_on_create",
         //     onClick: () => {_this.creaSegnalazione()},
-        //     translate: "RESOURCES.crea_segnalazione_domande_risposte"
+        //     translate: "RESOURCES.domande_risposte_crea_segnalazione"
         // },
         // {
         //     icon: "launch",
         //     label: "Vai a segnalazione",
         //     outputEventName: "segnalazione_navigate",
-        //     translate: "RESOURCES.vai_a_segnalazione_domande_risposte"
+        //     translate: "RESOURCES.domande_risposte_vai_a_segnalazione"
         // },
         // {
         //     icon: "close",
         //     label: "Dissocia Segnalazione",
         //     outputEventName: "dissocia_segnalazione",
-        //     translate: "RESOURCES.dissocia_segnalazione_domande_risposte"
+        //     translate: "RESOURCES.domande_risposte_dissocia_segnalazione"
         // },
         let menuActions: any[] = [
             {
                 icon: "report_problem",
                 label: "Crea segnalazione",
                 onClick: (item: any, field: FieldConfig) => {_this.creaSegnalazione(item, field, index)},
-                translate: "RESOURCES.crea_segnalazione_domande_risposte"
+                translate: "RESOURCES.domande_risposte_crea_segnalazione"
             },
             {
                 icon: "link",
@@ -840,7 +840,7 @@ export class DomandeRisposteComponent implements OnChanges
                     label: "Cancella risposta",
                     outputEventName: "delete_risposta",
                     onClick: (item: any, field: FieldConfig) => {_this.resetRispostaPrevista(item, field, index)},
-                    translate: "RESOURCES.cancella_risposta_domande_risposte"
+                    translate: "RESOURCES._cancella_risposta"
                 },
             ]
         }
@@ -851,14 +851,14 @@ export class DomandeRisposteComponent implements OnChanges
                 label: "Copia questa risp. sulle verifiche (somministrazioni) del sondaggio",
                 outputEventName: "answer_copy",
                 onClick: (item: any, field: FieldConfig) => {_this.answerCopy(item, field, index)},
-                translate: "RESOURCES.copia_questa_risp_sulle_verifiche_somministrazioni_del_sondaggio_domande_risposte"
+                translate: "RESOURCES.domande_risposte_copia_questa_risp_sulle_verifiche_somministrazioni_del_sondaggio"
             },
             {
                 icon: "link",
                 label: "Seleziona note",
                 outputEventName: "associa_note",
                 onClick: (item: any, field: FieldConfig) => {_this.associaNote(item, field, index)},
-                translate: "RESOURCES.seleziona_note_domande_risposte"
+                translate: "RESOURCES.domande_risposte_seleziona_note"
             }
         ];
         return menuActions;
