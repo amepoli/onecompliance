@@ -104,7 +104,17 @@ AND an.id_anagrafica NOT IN (
 							and id_anagrafica is not null
 							) 
 ON CONFLICT DO NOTHING;
-/*
+
+
+INSERT INTO entrasp.contratti_anagrafiche_id(
+	codice_azienda, codice_part, id_anagrafica, id_contratto, codice_ruolo, data_fine_validita)
+	SELECT cnt.codice_azienda, an.codice_part, an.id_anagrafica, cnt.id_contratto, 'COINT', vaf.data_fine_legame
+	FROM imports.verifiche_anagrafiche_finint vaf
+	INNER JOIN entrasp.contratti cnt ON trim(vaf.ambiente) || '-' || trim(vaf.rapporto) || '-' || trim(vaf.fondo) = cnt.numero_contratto
+	INNER JOIN entrasp_anagrafiche_id an ON vaf.cliente = an.codice;
+
+ 
+
 ----
 /*
 for Rec in (select vr.ragione_sociale, vr.codice_fiscale, vr.partita_iva,  vr.indirizzo, vr.cap, vr.nazione, vr.codice, vr.comune, vr.provincia 
@@ -554,7 +564,7 @@ end loop;
 							/*condizione modificata in data 27/02/2024 prendendo l'ipotesi che l'ultimo documento sia esatto, 
 							la modifica interviene per creare una versione per ogni volta che una componente del documento viene modificata
 							 */
-*/
+
 END IF;
 
 END;
@@ -564,3 +574,20 @@ $BODY$;
 
 ALTER FUNCTION entrasp.adeguate_verifiche_import(character varying)
     OWNER TO postgres;
+/*
+select entrasp.adeguate_verifiche_import('FININTSGR');
+
+	-- Disabilita tutti i trigger definiti dall'utente 	
+	SET session_replication_role = replica;
+
+	delete from entrasp.anagrafiche_vr where codice_part='FININT' and id_anagrafica=196;
+	delete from entrasp.anagrafiche_id where codice_part='FININT' and id_anagrafica=196;
+
+	-- Riattiva i trigger 	
+	SET session_replication_role = origin;
+	
+
+--197 versioni
+select codice_part, id_anagrafica, prog_vr from entrasp.anagrafiche_vr where codice_part='FININT' and id_anagrafica=196;
+order by 
+*/
