@@ -6,7 +6,7 @@
     "predefinedQueries": [
         {
             "type": "main",
-            "queryString": "select codice_nazione, descrizione, cod_banca_italia from entrasp.nazioni",
+            "queryString": "SELECT na.codice_nazione,na.descrizione,na.cod_banca_italia,entrasp.cod_ext_nazione_finint(na.cod_banca_italia::text) AS codice_rischio,entrasp.nazioni_rischio(na.cod_banca_italia) AS rischio FROM  entrasp.nazioni na INNER JOIN entrasp.nazioni_rischio nr ON na.codice_nazione = nr.codice_nazione;",
             "operation": "selectTable"
         }
     ],
@@ -30,7 +30,7 @@
             "isPrimary": false,
             "key": "cod_banca_italia",
             "label": "Codice Banca d'Italia",
-            "width": "30%",
+            "width": "10%",
             "translate": "RESOURCES.codice_banca_ditalia_nazioni"
         },
         {
@@ -41,8 +41,28 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Nazione",
-            "width": "60%",
+            "width": "30%",
             "translate": "RESOURCES.nazione_nazioni"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_rischio",
+            "label": "Codice Rischio",
+            "width": "5%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "rischio",
+            "label": "Rischio",
+            "width": "35%"
         }
     ],
     "querySuffixes": {
