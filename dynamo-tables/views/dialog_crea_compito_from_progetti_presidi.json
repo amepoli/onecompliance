@@ -1,0 +1,22 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_crea_compito_from_progetti_presidi",
+    "inheritsFrom": "compiti_sub_of_progetti",
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select current_date as data_segnalazione, $codice_azienda$ as codice_azienda, null as codice_compito, entrasp.last_day_year(current_date) as data_competenza, $id_domanda$ as id_domanda, $id_modello_test$ as id_modello_test, $id_modello_test_vr$ as id_modello_test_vr, $id_sondaggio$ as id_sondaggio, $id_somministrazione$ as id_somministrazione"
+        },
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.compito_insert($codice_azienda$::varchar, null::varchar, '€global_username€', current_date::timestamp without time zone, null::numeric, coalesce ('£data_segnalazione£'::date,current_date), '£titolo£'::varchar, '£note£'::text, £id_centro_gest_monitor£::numeric, coalesce ('£stato£'::character, 'A'), £id_responsabile£::numeric, 1, boolean_rif_bo=>true, nomebo=>'riepilogoRisposte', idsondaggio=>$id_sondaggio$, idsomministrazione=>$id_somministrazione$ , idmodellotest=>$id_modello_test$, idmodellotestvr=>$id_modello_test_vr$, iddomanda=>$id_domanda$)"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select true as label;",
+            "type": "main"
+        }
+    ]
+}
