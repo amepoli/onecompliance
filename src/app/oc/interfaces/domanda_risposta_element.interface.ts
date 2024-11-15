@@ -1,3 +1,4 @@
+import { DomandaRispostaCondition } from "./domanda_risposta_condition.interface";
 import { DomandaRispostaResponse } from "./domanda_risposta_response.interface";
 
 export interface DomandaRispostaElement {
@@ -6,7 +7,7 @@ export interface DomandaRispostaElement {
     punteggio: number;
     descrizione: string;
     note_domanda: string;
-    condition: any,
+    condition?: DomandaRispostaCondition[],
     type: "checkboxgroup" | "radiobutton" | "combobox" | "text" | "number" | "date";
     kycDeepButton?: boolean;
     kycLightButton?: boolean;
@@ -28,4 +29,5 @@ export interface DomandaRispostaElement {
     codice_compito?: string;
     keys?: any;
     readonly: boolean;
+    isHidden: boolean;
 }
