@@ -1,0 +1,52 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "information_flows_sub_of_contratti",
+    "inheritsFrom": "information_flows",
+    "define": {
+        "toggle_miei_uffici": "0",
+        "is_hidden_codice_azienda": "true",
+        "is_hidden_id_anagrafica": "true",
+        "id_argomento_father": "3576",
+        "label_revisioni": "File del flusso informativo",
+        "id_anagrafica_if_clientela": "ro.id_contratto=$id_contratto$"
+    },
+    "addElementSettings": {
+        "labelAdd": "Nuovo flusso",
+        "navigateOnSuccess": true
+    },
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "select distinct rev.codice_azienda, ro.id_contratto, entrasp.argomenti_descr_breve_no_num ((select entrasp.scadenza_documento(crs.codice_azienda, crs.id_risorsa))) as validita,  entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato, case when (select count(prog_revisione) from entrasp.cdms_risorse_revisioni rev where rev.codice_azienda=crs.codice_azienda and rev.id_risorsa=crs.id_risorsa)=0 then true else false end as delete_documents, entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato, crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname, crs.descrizione_breve, crs.descrizione, crs.data_scadenza, crs.descrizione from entrasp.cdms_risorse_revisioni rev inner join entrasp.cdms_risorse crs on rev.codice_azienda=crs.codice_azienda and rev.id_risorsa=crs.id_risorsa inner join entrasp.argomenti arg on crs.id_argomento_tipo_allegato=arg.id_argomento inner join entrasp.cdms_risorse_oggetti ro on rev.codice_azienda=ro.codice_azienda and rev.id_risorsa=ro.id_risorsa and rev.prog_revisione=ro.prog_revisione where id_contratto is not null and crs.codice_azienda=$codice_azienda$ and $P{id_anagrafica_if_clientela}"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "delete",
+                    "icon": "delete",
+                    "label": "Delete",
+                    "query": "select entrasp.cancella_risorse(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Eliminare la cartella e i relativi file?"
+                },
+                {
+                    "key": "unifica",
+                    "icon": "merge_type",
+                    "label": "Unifica cartelle",
+                    "query": "select entrasp.unifica_risorse_selezionate(array[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Unificare le cartelle e i relativi file selezionati?"
+                }
+            ]
+        }
+    ]
+}

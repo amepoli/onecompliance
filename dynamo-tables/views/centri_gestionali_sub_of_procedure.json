@@ -1,0 +1,167 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "centri_gestionali_sub_of_procedure",
+    "origin": "entrasp.procedure_aziendali_centri_gestionali",
+    "addElementSettings": {
+        "labelQuickAdd": "Associa centro gestionale",
+        "navigateOnSuccess": false
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "readOnly": true,
+            "translate": "RESOURCES.codice_part_centri_gestionali_sub"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_procedura",
+            "label": "ID",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_centro_gest as ID, descrizione as NAME from entrasp.centri_gestionali where codice_part=$codice_part$"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "readOnly": false
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_presidi_processi",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "close",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "centri_gestionali_sub_of_procedure",
+                "viewType": "form",
+                "query": "delete from entrasp.procedure_aziendali_centri_gestionali where codice_azienda='£codice_azienda£' AND codice_part='£codice_part£' AND id_procedura=£id_procedura£ AND id_centro_gest=£id_centro_gest£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_centro_gest",
+                        "destination": "id_centro_gest"
+                    },
+                    {
+                        "source": "id_procedura",
+                        "destination": "id_procedura"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "translate": "RESOURCES.codice_part_centri_gestionali_sub"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "width": "8%",
+            "key": "id_procedura",
+            "label": "ID",
+            "translate": "RESOURCES.id_centri_gestionali_sub"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_centro_gest",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "15%",
+            "key": "centro_gest_descr",
+            "queryFunct": "entrasp.centri_gestionali_descr (codice_part, id_centro_gest)",
+            "label": "Centri Gestionali"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}

@@ -54,7 +54,7 @@
             "isPrimary": false,
             "key": "giudizio_efficacia",
             "label": "Giudizio efficacia",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false,
             "outputEvent": {
                 "eventName": "presidio_change_stato",
@@ -69,7 +69,40 @@
                     "styleAttribute": "background_color",
                     "queryFunct": "select background_color as stato_attuazione_background_color from entrasp.transcodifiche where tipo_dato='GIUDIZI_EFFICACIA' and codice=$giudizio_efficacia$"
                 }
-            ]
+            ],
+            "translate": "RESOURCES.giudizio_efficacia_presidi_sub_of_procedure"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "report_problem",
+                        "label": "Crea Gap",
+                        "outputEventName": "crea_segnalazione"
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "eventName": "crea_segnalazione",
+                    "actionType": "dialog",
+                    "customDialogEntryName": "dialog_crea_compito_from_progetti_presidi",
+                    "customDialogTitle": "Crea Gap",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "sondaggi_actions",
+            "label": "",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.4
         },
         {
             "autoGenerate": false,
@@ -221,8 +254,10 @@
             "key": "giudizio_efficacia",
             "queryFunct": "entrasp.transcodifiche_transcodifica('GIUDIZI_EFFICACIA', giudizio_efficacia)::varchar",
             "styleQuery": "select transcodifica as giudizio_efficacia, background_color, character_color as font_color, '500' as font_weight, 'center' as text_align from entrasp.transcodifiche where tipo_dato='GIUDIZI_EFFICACIA'",
-            "label": "Efficacia"
+            "label": "Efficacia",
+            "translate": "RESOURCES.efficacia_presidi_sub_of_procedure"
         },
+
         {
             "format": {
                 "dataType": "text"
@@ -231,7 +266,8 @@
             "width": "15%",
             "isPrimary": false,
             "key": "note",
-            "label": "Note"
+            "label": "Note",
+            "translate": "RESOURCES.note_presidi_sub_of_procedure"
         },
         {
             "format": {
@@ -296,6 +332,28 @@
             },
             "actionType": "navigate",
             "eventName": "navigate_to_presidio"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "compiti_sub_of_procedure_presidi",
+            "type": "table",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_procedura",
+                    "son": "id_procedura"
+                },
+                {
+                    "parent": "id_presidio",
+                    "son": "id_presidio"
+                }
+            ],
+            "label": "Gap Rilevati",
+            "renderingOrder": 1
         }
     ],
     "hideActions": [

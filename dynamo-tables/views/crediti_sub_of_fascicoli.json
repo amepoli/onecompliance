@@ -2,9 +2,114 @@
     "$schema": "../views.schema.json",
     "entryKey": "crediti_sub_of_fascicoli",
     "inheritsFrom": "crediti_ceduti",
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "modifica_crediti",
+                    "icon": "edit",
+                    "label": "Modifica crediti",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_crediti_ceduti_dt_pagamento",
+                    "customDialogTitle": "Modifica crediti selezionati"
+                },
+                {
+                    "key": "inserisci_ricessioni",
+                    "icon": "sync",
+                    "label": "Erogazioni",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_ricessioni",
+                    "customDialogTitle": "Inserisci ricessioni crediti selezionati"
+                },
+                {
+                    "key": "inserisci_pagamenti_totali",
+                    "icon": "attach_money",
+                    "label": "Incassi Totali",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_pag_debi_ced",
+                    "customDialogTitle": "Inserisci incassi integrale dei crediti selezionati"
+                },
+                {
+                    "key": "inserisci_pagamenti_diversi",
+                    "icon": "currency_exchange",
+                    "label": "Incassi Diversi",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_inserisci_movimenti_crediti",
+                    "customDialogTitle": "Inserisci incassi diversi dei crediti selezionati"
+                },
+                {
+                    "key": "cancella_crediti",
+                    "icon": "delete_aggiornamento",
+                    "label": "Cancella",
+                    "query": "delete from entrasp.crediti_ceduti where codice_azienda||'~'||id_cessione in ($selected_rows_data$)",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Cancellare le fatture selezionate?"
+                },
+                {
+                    "key": "flag_lavorazione_legale",
+                    "icon": "date",
+                    "label": "Segnare Lavorazione Legale",
+                    "query": "update entrasp.crediti_ceduti set lavorazione_legale = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag lavorazione_legale alla selezione?"
+                },
+                {
+                    "key": "flag_esecutivo",
+                    "icon": "date",
+                    "label": "Segnare Esecutivo",
+                    "query": "update entrasp.crediti_ceduti set esecutivo = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag esecutivo alla selezione?"
+                },
+                {
+                    "key": "flag_azionati",
+                    "icon": "date",
+                    "label": "Segnare come azionati",
+                    "query": "update entrasp.crediti_ceduti set azionato = '1', lavorazione_legale='0' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag azionati alla selezione?"
+                },
+                {
+                    "key": "flag_opposti",
+                    "icon": "date",
+                    "label": "Segnare come opposti",
+                    "query": "update entrasp.crediti_ceduti set opposto = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag opposti alla selezione?"
+                },
+                {
+                    "key": "flag_fasc_archiviato",
+                    "icon": "date",
+                    "label": "Segnare archiviazione fascicolo",
+                    "query": "update entrasp.crediti_ceduti set fasc_archiviato = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Inserire il flag fascicolo archiviato alla selezione?"
+                },
+                {
+                    "key": "flag_interessi_non_dovuti",
+                    "icon": "date",
+                    "label": "Esclusione Interessi",
+                    "query": "update entrasp.crediti_ceduti set interessi_non_dovuti = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Escludere il calcolo degli interessi alla selezione?"
+                }
+            ]
+        }
+    ],
     "predefinedQueries": [
         {
-            "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, interessi_legali, cc.id_fascicolo, (select pc.data_pagamento from entrasp.pagamenti_crediti pc where pc.codice_azienda=cc.codice_azienda and pc.id_cessione=cc.id_cessione and id_argomento_tipo_pag=51488 ) as data_pagamento, id_ricessione, (case when id_ricessione is not null then '1' else '0' end) as cessionato, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, fa.cod_fascicolo as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc left join entrasp.fascicoli fa on cc.codice_azienda=fa.codice_azienda and cc.id_fascicolo=fa.id_fascicolo where cc.codice_azienda=$codice_azienda$ and fa.id_fascicolo=$id_fascicolo$;",
+            "queryString": "select entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, interessi_legali, cc.id_fascicolo, (select pc.data_pagamento from entrasp.pagamenti_crediti pc where pc.codice_azienda=cc.codice_azienda and pc.id_cessione=cc.id_cessione and id_argomento_tipo_pag=51488) as data_pagamento, id_ricessione, (case when id_ricessione is not null then '1' else '0' end) as cessionato, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, fa.cod_fascicolo as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.data_incasso_parz from entrasp.crediti_ceduti cc left join entrasp.fascicoli fa on cc.codice_azienda=fa.codice_azienda and cc.id_fascicolo=fa.id_fascicolo where cc.codice_azienda=$codice_azienda$ and fa.id_fascicolo=$id_fascicolo$;",
             "operation": "selectTable",
             "type": "main"
         }

@@ -4,9 +4,7 @@
     "inheritsFrom": "contracts_investment",
     "businessObjectName": "contratti",
     "origin": "entrasp.contratti",
-    "dashboardTables": [
-        "dashboard_contracts_investment"
-    ],
+    "dashboardTables": ["dashboard_contracts_investment"],
     "define": {
         "is_hidden_conflicts": "true",
         "is_hidden_invisible_field": "false",
@@ -15,13 +13,14 @@
         "is_hidden_mifid": "true",
         "size_with_or_without_mifid": "3.14",
         "codice_ruolo": "CLI",
+        "is_hidden_validita": "true",
         "is_hidden_note": "false"
     },
     "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_azienda=$codice_azienda$"
+            "queryString": "select entrasp.argomenti_descr_breve_no_num((SELECT entrasp.scadenza_documento_contratto(cnt.codice_azienda, cnt.id_contratto, 53690))) AS validita_spese_ist, cnt.id_contratto, cnt.descrizione, cnt.data_stipulazione, cnt.data_cessazione,cnt.data_contratto_a, cnt.codice_azienda, cnt.numero_contratto, cnt.id_cliente, entrasp.anagrafiche_vr_dati_identificativi(az.codice_part, cnt.id_cliente) as cliente, entrasp.argomenti_descr_breve_no_num(id_argomento_contratto) as id_argomento_contratto, cnt.id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi_nom1(az.codice_part, cnt.id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', cnt.stato) as descr_stato from entrasp.contratti cnt inner join entrasp.aziende az on cnt.codice_azienda=az.codice_azienda where az.codice_part='€global_codice_part€' and cnt.codice_azienda=$codice_azienda$"
         },
         {
             "operation": "update",
@@ -43,7 +42,8 @@
                     "son": "codice_azienda"
                 }
             ],
-            "renderingOrder": 1
+            "renderingOrder": 1,
+            "translate": "RESOURCES.progetti_associati_progetti_sub_of_contratti"
         },
         {
             "label": "Potenziali conflitti",
@@ -58,7 +58,8 @@
                     "son": "codice_azienda"
                 }
             ],
-            "renderingOrder": 2
+            "renderingOrder": 2,
+            "translate": "RESOURCES.potenziali_conflitti_connected_contracts"
         },
         {
             "label": "Moduli/Articoli",
@@ -73,7 +74,8 @@
                     "son": "codice_azienda"
                 }
             ],
-            "renderingOrder": 3
+            "renderingOrder": 3,
+            "translate": "RESOURCES.moduliarticoli_articoli_contratti"
         },
         {
             "label": "Attività/Segnalazioni associate",
@@ -88,7 +90,8 @@
                     "son": "codice_azienda"
                 }
             ],
-            "renderingOrder": 4
+            "renderingOrder": 4,
+            "translate": "RESOURCES.attivitsegnalazioni_associate_compiti_sub_of_contratti"
         },
         {
             "entryKey": "consuntivazioni_sub",
@@ -103,7 +106,8 @@
                 }
             ],
             "renderingOrder": 5,
-            "label": "Aggiornamenti e mail"
+            "label": "Aggiornamenti e mail",
+            "translate": "RESOURCES.aggiornamenti_e_mail_consuntivazioni_sub"
         },
         {
             "label": "Tranche",
@@ -118,7 +122,8 @@
                     "son": "codice_azienda"
                 }
             ],
-            "renderingOrder": 6
+            "renderingOrder": 6,
+            "translate": "RESOURCES.tranche_tranche_sub_of_contratti"
         },
         {
             "label": "Fatture",
@@ -133,7 +138,8 @@
                     "son": "codice_azienda"
                 }
             ],
-            "renderingOrder": 7
+            "renderingOrder": 7,
+            "translate": "RESOURCES.fatture_fatture"
         },
         {
             "label": "Pagamenti",
@@ -148,7 +154,8 @@
                     "son": "codice_azienda"
                 }
             ],
-            "renderingOrder": 8
+            "renderingOrder": 8,
+            "translate": "RESOURCES.pagamenti_pagamenti_tranche_sub_of_contratti"
         },
         {
             "entryKey": "anagrafiche_sub_of_contracts",
@@ -163,7 +170,8 @@
                 }
             ],
             "renderingOrder": 9,
-            "label": "Intestatari Contratti"
+            "label": "Intestatari Contratti",
+            "translate": "RESOURCES.intestatari_contratti_anagrafiche_sub_of_contracts"
         }
     ]
 }
