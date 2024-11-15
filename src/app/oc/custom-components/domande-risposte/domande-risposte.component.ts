@@ -1014,10 +1014,10 @@ export class DomandeRisposteComponent implements OnChanges
                     if(initialCheck) {
                         const destEl = this.data[destElIndex];
                         if(destEl.type === 'radiobutton' || destEl.type === 'combobox') {
-                            id_risposta_prev = destEl.risposte_previste_options.find((x: any) => x.chosen === true).id_risposta_prev;
+                            id_risposta_prev = destEl.risposte_previste_options?.find((x: any) => x.chosen === true)?.id_risposta_prev ?? null;
                         }
                         else if(destEl.type === 'checkboxgroup') {
-                            id_risposta_prev = destEl.risposte_previste_options.filter((x: any) => x.chosen === true)?.map(x => x.id_risposta_prev) ?? null
+                            id_risposta_prev = destEl.risposte_previste_options?.filter((x: any) => x.chosen === true)?.map(x => x.id_risposta_prev) ?? null                                
                         }
                         else if(destEl.type === 'text') {
                             id_risposta_prev = destEl.risposta_text;
