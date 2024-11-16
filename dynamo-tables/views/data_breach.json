@@ -18,7 +18,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select codice_compito,codice, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=50"
+            "queryString": "select entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente) as cliente, codice_compito,codice, entrasp.time_report_stop_active((€global_id_anagrafiche€)::text), true as time_report_play, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(codice_azienda, codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti where codice_azienda=$codice_azienda$ and id_tipo_segnalazione=50"
         }
     ],
     "form_keys": [
@@ -555,9 +555,28 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "codice",
-            "width": "8%",
+            "width": "6%",
             "label": "Codice",
             "translate": "RESOURCES.codice_data_breach"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cliente",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', id_cliente)",
+            "label": "Cliente",
+            "width": "17%",
+            "style": [
+                {
+                    "value": "*",
+                    "font_size": "medium",
+                    "font_weight": "590"
+                }
+            ],
+            "translate": "RESOURCES.cliente_contracts_investment"
         },
         {
             "format": {
@@ -568,7 +587,7 @@
             "key": "descr_centro_gest",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
             "label": "Centro Gest.",
-            "width": "12%",
+            "width": "11%",
             "translate": "RESOURCES.centro_gest_data_breach"
         },
         {
@@ -580,7 +599,7 @@
             "key": "descr_centro_gest_monitor",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest_monitor)",
             "label": "Centro Gest.Monit.",
-            "width": "12%",
+            "width": "11%",
             "translate": "RESOURCES.centro_gestmonit_data_breach"
         },
         {
@@ -592,7 +611,7 @@
             "key": "stato",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato)",
             "label": "Stato",
-            "width": "8%",
+            "width": "7%",
             "style": [
                 {
                     "value": "Chiuso",
@@ -651,7 +670,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "titolo",
-            "width": "32%",
+            "width": "20%",
             "label": "Titolo",
             "translate": "RESOURCES.titolo_data_breach"
         },
