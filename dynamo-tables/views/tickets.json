@@ -480,17 +480,21 @@
     ],
     "exportQueries": {
         "tableQueries": [
-           {
-                "label": "Rendicontazioni settimana in corso",
+            {
+                "label": "Dettaglio TR settimana in corso",
                 "queryString": "select entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, csn.data_intervento, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore,( SELECT EXTRACT(DOW FROM csn.data_intervento) ) as giorno_settimana from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento>=(SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT + 1)  GROUP BY csn.codice_azienda, csn.codice_compito, data_intervento order by csn.codice_azienda, csn.codice_compito, data_intervento asc;"
             },
             {
-                "label": "Rendicontazioni settimana precedente",
+                "label": "Dettaglio TR settimana precedente",
                 "queryString": "select entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, csn.data_intervento, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore,( SELECT EXTRACT(DOW FROM csn.data_intervento) ) as giorno_settimana from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento between (SELECT current_date - EXTRACT(SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT - 6) and (SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT) GROUP BY csn.codice_azienda, csn.codice_compito, data_intervento order by csn.codice_azienda, csn.codice_compito,data_intervento asc;"
             },
             {
-                "label": "Totale mese precedente",
-                "queryString": "select sum(csn.durata) as minuti_totali_mensili, ROUND(sum(csn.durata)/60.00, 2) as ore_totali_mensili from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€' AND ( SELECT DATE_PART('year', data_intervento) ) = (select case when extract(month from current_date)-1 = 0 then extract(year from current_date)-1 else extract(year from current_date) end) and ( SELECT DATE_PART('month', data_intervento)) = (select case when extract(month from current_date)-1 = 0 then 12 else extract(month from current_date)-1 end);"
+                "label": "Totale TR settimana in corso",
+                "queryString": "select entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento>=(SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT + 1)  GROUP BY csn.codice_azienda, csn.codice_compito order by csn.codice_azienda, csn.codice_compito asc;"
+            },
+            {
+                "label": "Totale TR settimana precedente",
+                "queryString": "select entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento between (SELECT current_date - EXTRACT(SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT - 6) and (SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT) GROUP BY csn.codice_azienda, csn.codice_compito order by csn.codice_azienda, csn.codice_compito asc;"
             }
         ]
     }
