@@ -447,6 +447,26 @@
     "querySuffixes": {
         "tableViewSuffix": "order by codice_azienda, data_segnalazione desc limit 100"
     },
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Dettaglio TR settimana in corso",
+                "queryString": "select csn.codice_azienda, entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, csn.data_intervento, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore,( SELECT EXTRACT(DOW FROM csn.data_intervento) ) as giorno_settimana from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE csn.codice_azienda in(€global_user_companies€) and entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento>=(SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT + 1)  GROUP BY rollup(csn.codice_azienda, csn.codice_compito, data_intervento) order by csn.codice_azienda, csn.codice_compito, data_intervento asc;"
+            },
+            {
+                "label": "Dettaglio TR settimana precedente",
+                "queryString": "select csn.codice_azienda, entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, csn.data_intervento, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore,( SELECT EXTRACT(DOW FROM csn.data_intervento) ) as giorno_settimana from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento BETWEEN (CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT - 6) AND (CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT) GROUP BY rollup(csn.codice_azienda, csn.codice_compito, data_intervento) order by csn.codice_azienda, csn.codice_compito,data_intervento asc;"
+            },
+            {
+                "label": "Totale TR settimana in corso",
+                "queryString": "select csn.codice_azienda, entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore, (select sum(cc.minuti_totali) from entrasp.compiti_collaboratori cc where cc.codice_compito=csn.codice_compito and csn.codice_azienda=cc.codice_azienda) as min_totali from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento>=(SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT + 1) GROUP BY rollup(csn.codice_azienda, csn.codice_compito) order by csn.codice_azienda, csn.codice_compito asc;"
+            },
+            {
+                "label": "Totale TR settimana precedente",
+                "queryString": "select csn.codice_azienda, entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore, (select sum(cc.minuti_totali) from entrasp.compiti_collaboratori cc where cc.codice_compito=csn.codice_compito and csn.codice_azienda=cc.codice_azienda) as min_totali from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento BETWEEN (CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT - 6) AND (CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT) GROUP BY rollup(csn.codice_azienda, csn.codice_compito) order by csn.codice_azienda, csn.codice_compito asc;"
+            }
+        ]
+    },
     "hideActions": [
         {
             "viewType": "table",
