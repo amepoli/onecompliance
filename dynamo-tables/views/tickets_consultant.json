@@ -118,7 +118,39 @@
             "label": "Data Apertura",
             "newLine": false,
             "readOnly": false,
+            "size": 1.5,
             "translate": "RESOURCES.data_apertura_tickets_consultant"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "foreseen_date",
+            "insertUpdateFunct": "coalesce((£foreseen_date£)::date, current_date)",
+            "label": "Data prevista",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "tooltip": "Data di previsto completamento dell'attività"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "budgeted_time",
+            "label": "Tempo stimato",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "tooltip": "Tempo stimato realizzazione espresso in ore"
         },
         {
             "autoGenerate": false,
@@ -207,12 +239,26 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_responsabile",
+            "key": "id_segnalante",
             "label": "Segnalante",
+            "insertUpdateFunct": "coalesce(£id_segnalante£, entrasp.idutente_from_dynamouser('€global_username€'::text, entrasp.codice_part_from_azienda($codice_azienda$))::numeric)",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_responsabile",
+            "label": "Responsabile",
             "insertUpdateFunct": "coalesce(£id_responsabile£, entrasp.idutente_from_dynamouser('€global_username€'::text, entrasp.codice_part_from_azienda($codice_azienda$))::numeric)",
             "newLine": false,
-            "readOnly": false,
-            "translate": "RESOURCES.segnalante_tickets_consultant"
+            "readOnly": false
         },
         {
             "autoGenerate": false,
@@ -443,11 +489,11 @@
             },
             {
                 "label": "Totale TR settimana in corso",
-                "queryString": "select csn.codice_azienda, entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore, (select sum(cc.minuti_totali) from entrasp.compiti_collaboratori cc where cc.codice_compito=csn.codice_compito and csn.codice_azienda=cc.codice_azienda) as min_totali from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento>=(SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT + 1) GROUP BY rollup(csn.codice_azienda, csn.codice_compito) order by csn.codice_azienda, csn.codice_compito asc;"
+                "queryString": "select csn.codice_azienda,entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, sum(csn.durata) as minuti, round(sum(csn.durata)/60,2) as ore, cc.minuti_totali, cc.users, cmp.budgeted_time as tempo_stimato_ore, round(cmp.budgeted_time-sum(cc.minuti_totali)/60,2) as tempo_residuo_per_completamento, cmp.foreseen_date as data_scadenza from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda left join entrasp.compiti cmp on csn.codice_azienda=cmp.codice_azienda and csn.codice_compito=cmp.codice_compito left join entrasp.compiti_collaboratori cc on csn.codice_compito=cc.codice_compito and csn.codice_azienda=cc.codice_azienda WHERE entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and (cc.users ~ '€global_username€'::text or cc.users is null) and csn.data_intervento>=(SELECT CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT + 1) GROUP BY csn.codice_azienda, csn.codice_compito, cc.minuti_totali, cc.users, cmp.foreseen_date, cmp.budgeted_time;"
             },
             {
                 "label": "Totale TR settimana precedente",
-                "queryString": "select csn.codice_azienda, entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, sum(csn.durata) as minuti, round(sum(csn.durata)/60 ,2) as ore, (select sum(cc.minuti_totali) from entrasp.compiti_collaboratori cc where cc.codice_compito=csn.codice_compito and csn.codice_azienda=cc.codice_azienda) as min_totali from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda WHERE entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and csn.data_intervento BETWEEN (CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT - 6) AND (CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT) GROUP BY rollup(csn.codice_azienda, csn.codice_compito) order by csn.codice_azienda, csn.codice_compito asc;"
+                "queryString": "select csn.codice_azienda,entrasp.compito_titolo(csn.codice_azienda, csn.codice_compito) as compito, sum(csn.durata) as minuti, round(sum(csn.durata)/60,2) as ore, cc.minuti_totali, cc.users, cmp.budgeted_time as tempo_stimato_ore, round(cmp.budgeted_time-sum(cc.minuti_totali)/60,2) as tempo_residuo_per_completamento, cmp.foreseen_date as data_scadenza from entrasp.consuntivazioni csn inner join entrasp.aziende az on csn.codice_azienda=az.codice_azienda left join entrasp.compiti cmp on csn.codice_azienda=cmp.codice_azienda and csn.codice_compito=cmp.codice_compito left join entrasp.compiti_collaboratori cc on csn.codice_compito=cc.codice_compito and csn.codice_azienda=cc.codice_azienda WHERE entrasp.dynamo_user_from_id_an(csn.codice_part, csn.id_risorsa)='€global_username€'::text and (cc.users ~ '€global_username€'::text or cc.users is null) and csn.data_intervento BETWEEN (CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT - 6) AND (CURRENT_DATE - EXTRACT(DOW FROM CURRENT_DATE)::INT) GROUP BY csn.codice_azienda, csn.codice_compito, cc.minuti_totali, cc.users, cmp.foreseen_date, cmp.budgeted_time;"
             }
         ]
     },
