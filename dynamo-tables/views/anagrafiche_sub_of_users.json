@@ -65,5 +65,241 @@
             "viewType": "table",
             "tableActionType": "import_export"
         }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "id_anagrafica_list",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Lista id_anagrafica",
+            "newLine": false,
+            "size": 2.5,
+            "queryCond": "avr.id_anagrafica::varchar=any(string_to_array(replace($id_anagrafica_list$, ' ', ''), ','))",
+            "translate": "RESOURCES.lista_id_anagrafica_anagrafiche_vr"
+        },
+        {
+            "fieldName": "id_anagrafica_min",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "id_anagrafica > di",
+            "newLine": false,
+            "size": 2,
+            "queryCond": "avr.id_anagrafica>=$id_anagrafica_min$",
+            "translate": "RESOURCES.id_anagrafica__di_anagrafiche_vr"
+        },
+        {
+            "fieldName": "nome_rs",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Nome/Cognome/Ragione Sociale",
+            "newLine": false,
+            "queryCond": "(replace(UPPER(an.nome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(an.cognome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(avr.ragione_sociale), '.', '') like '%'||UPPER('€nome_rs€')||'%')",
+            "translate": "RESOURCES.nomecognomeragione_sociale_anagrafiche_vr"
+        },
+        {
+            "fieldName": "dynamo_user_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Dynamo user",
+            "newLine": true,
+            "queryCond": "an.dynamo_user=$dynamo_user_s$",
+            "translate": "RESOURCES.dynamo_user_anagrafiche_vr"
+        },
+        {
+            "fieldName": "codice_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice",
+            "newLine": false,
+            "queryCond": "(UPPER(avr.codice) like '%'||UPPER('€codice_s€')||'%' or UPPER(an.codice) like '%'||UPPER('€codice_s€')||'%')",
+            "translate": "RESOURCES.codice_anagrafiche_vr"
+        },
+        {
+            "fieldName": "piva_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Partita IVA",
+            "newLine": false,
+            "queryCond": "UPPER(avr.partita_iva) = UPPER($piva_s$)",
+            "translate": "RESOURCES.partita_iva_anagrafiche_vr"
+        },
+        {
+            "fieldName": "codice_fiscale_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice fiscale",
+            "newLine": false,
+            "queryCond": "UPPER(avr.codice_fiscale) = UPPER($codice_fiscale_s$)",
+            "translate": "RESOURCES.codice_fiscale_anagrafiche_vr"
+        },
+        {
+            "fieldName": "ruolo_s",
+            "format": {
+                "comboQuery": "SELECT codice_ruolo AS id, descrizione AS name  FROM entrasp.ruoli order by descrizione;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Ruolo",
+            "newLine": false,
+            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='€ruolo_s€' and ra.codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.ruolo_anagrafiche_vr"
+        },
+        {
+            "fieldName": "tipo_s",
+            "format": {
+                "comboQuery": "select codice as id, transcodifica as name from entrasp.transcodifiche where tipo_dato='TIPO_SOGGETTO'",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Tipo",
+            "newLine": true,
+            "queryCond": "an.tipo_soggetto = $tipo_s$",
+            "translate": "RESOURCES.tipo_anagrafiche_vr"
+        },
+        {
+            "fieldName": "associated_trattamenti_dati",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Con trattamenti dati associati",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "an.id_anagrafica in(select id_responsabile from entrasp.cpl_trattamenti_dati_responsabili where codice_part='€global_codice_part€' and id_responsabile is not null union select id_titolare_esterno from entrasp.cpl_trattamenti_dati_titolari_esterni where codice_part='€global_codice_part€' and id_titolare_esterno is not null)",
+            "translate": "RESOURCES.con_trattamenti_dati_associati_anagrafiche_vr"
+        },
+        {
+            "fieldName": "duplicati_per_partita_iva",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Duplicati per partita iva",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "avr.partita_iva in(select partita_iva from entrasp.conta_anagrafiche_per_partita_iva where conta>1 and partita_iva is not null and partita_iva!='' and codice_part='€global_codice_part€')",
+            "translate": "RESOURCES.duplicati_per_partita_iva_anagrafiche_vr"
+        },
+        {
+            "fieldName": "duplicati_per_codice_fiscale",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Duplicati per codice fiscale",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "avr.codice_fiscale in(select codice_fiscale from entrasp.conta_anagrafiche_per_codice_fiscale where conta>1 and codice_fiscale is not null and codice_fiscale!='' and codice_part='€global_codice_part€')",
+            "translate": "RESOURCES.duplicati_per_codice_fiscale_anagrafiche_vr"
+        },
+        {
+            "fieldName": "documenti_scaduti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Documenti scaduti",
+            "newLine": true,
+            "size": 1,
+            "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)",
+            "translate": "RESOURCES.documenti_scaduti_anagrafiche_vr"
+        },
+        {
+            "fieldName": "anagrafica_max",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Max id anagr.",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "avr.id_anagrafica=(select max(id_anagrafica) from entrasp.anagrafiche_id where codice_part='€global_codice_part€')",
+            "translate": "RESOURCES.max_id_anagr_anagrafiche_vr"
+        },
+        {
+            "fieldName": "soggetti_collegati_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Parte correlata o soggetti collegati",
+            "newLine": false,
+            "size": 1,
+            "tooltip": "Si intendono tutti i soggetti rilevanti (CdA, sindaci), i soggetti rilevanti (e.g. Funzioni di controllo, CFO), e tutti i soggetti agli stessi collegati (e.g. parenti)",
+            "queryCond": "entrasp.soggetti_collegati(avr.codice_part, avr.id_anagrafica) !='Nessun conflitto'",
+            "translate": "RESOURCES.parte_correlata_o_soggetti_collegati_anagrafiche_vr"
+        },
+        {
+            "fieldName": "con_connessioni_anagrafiche",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Presenza anagrafiche connesse",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "avr.id_anagrafica in(select ca2.id_anagrafica from entrasp.connessioni_anagrafiche ca2 where ca2.codice_part=$codice_part$)",
+            "translate": "RESOURCES.presenza_anagrafiche_connesse_anagrafiche_vr"
+        },
+        {
+            "fieldName": "utenti_incompleti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Utenti incompleti",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "an.id_anagrafica in (select an.id_anagrafica from entrasp.anagrafiche_id an join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica inner join entrasp.privacy_ruolo(an.codice_part, an.id_anagrafica) pr on an.codice_part=pr.codicepart and an.id_anagrafica=pr.idanagrafica inner join entrasp.employers em on an.codice_part=em.codice_part and an.dynamo_user=em.dynamo_user where an.codice_part=$codice_part$ and avr.prog_vr=entrasp.anagrafiche_vr_max($codice_part$, an.id_anagrafica) and (em.codice_ruolo not in ('INTSH', 'STF') or em.codice_ruolo is null) and em.data_fine_collaborazione is null and (em.codice_ruolo is null or em.id_centro_gest is null or em.data_avvio_collaborazione is null))",
+            "translate": "RESOURCES.utenti_incompleti_anagrafiche_vr"
+        },
+        {
+            "fieldName": "cliente_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Cliente",
+            "newLine": false,
+            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='CLI' and ra.codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.cliente_anagrafiche_vr"
+        },
+        {
+            "fieldName": "fornitore_s",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Fornitore",
+            "newLine": false,
+            "queryCond": "an.id_anagrafica in(select ra.id_anagrafica from entrasp.ruoli_anagrafiche ra where ra.codice_ruolo='FOR' and ra.codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.fornitore_anagrafiche_vr"
+        },
+        {
+            "fieldName": "attive_s",
+            "format": {
+                "value": "1",
+                "viewType": "toggle"
+            },
+            "label": "Solo aziende attive",
+            "newLine": false,
+            "queryCond": "an.data_fine_tr is null"
+        }
     ]
 }

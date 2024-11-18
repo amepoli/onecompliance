@@ -62,9 +62,13 @@ dynamo_user,
 	and codice_azienda in ('QUANTYX','QUANTYXSRL')
 	
 	
-	SELECT  entrasp.aggiorna_giornate_e_users_da_rendicontare(dynamo_user)		
-	FROM entrasp.users	
+	SELECT  entrasp.aggiorna_giornate_e_users_da_rendicontare('fsganzerla')		
 
+
+	SELECT giorno, dynamo_user  	
+	FROM entrasp.giornate_e_users_da_rendicontare
+	where dynamo_user='fsganzerla'
+	order by giorno asc
 
 	select id_anagrafica, codice_part, dynamo_user, data_fine_collaborazione
 	from entrasp.anagrafiche_id
