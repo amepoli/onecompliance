@@ -43,11 +43,14 @@ import { ExplorerModule } from "./oc/explorer/explorer.module";
 import { CalendarModule } from "./oc/calendar/calendar.module";
 import { ChangePasswordModule } from "./oc/login-page/change-password.module";
 import { DomandeRisposteModule } from "./oc/custom-components/domande-risposte/domande-risposte.module";
+import { PrivacyPolicyComponent } from './oc/privacy-policy/privacy-policy.component';
 
-const appRoutes: Routes = [];
+const appRoutes: Routes = [
+    { path: 'privacy-policy', component: PrivacyPolicyComponent }
+];
 
 @NgModule({
-    declarations: [AppComponent],
+    declarations: [AppComponent, PrivacyPolicyComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
