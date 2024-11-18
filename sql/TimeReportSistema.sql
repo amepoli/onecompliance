@@ -115,6 +115,9 @@ from entrasp.anagrafiche_id an, entrasp.consuntivazioni csn
 	
 	
 
+--trovare tutte le anagrafiche senza dynamo user associato ma con consuntivazioini registrate
+Select codice_part, id_anagrafica, dynamo_user , nome, cognome from entrasp.anagrafiche_id where dynamo_user is null and codice_part || '-' || id_anagrafica in
+(select codice_part || '-' || id_risorsa from entrasp.consuntivazioni where id_risorsa is not null and codice_part is not null)
 
 	
 	
