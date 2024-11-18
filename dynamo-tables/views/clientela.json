@@ -399,6 +399,48 @@
         },
         {
             "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$ and flag_duplicato!='1'",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica  where avr.codice_part=$codice_part$ and UPPER(avr.codice_fiscale)=UPPER($codice_fiscale$) and an.flag_duplicato!='1'",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select avr.partita_iva from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and UPPER(avr.partita_iva)=UPPER($partita_iva$) and an.flag_duplicato!='1'",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con la stessa partita IVA!"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
+            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null and $partita_iva$ is null limit 1",
+            "messageNotNull": "Attenzione: inserire codice fiscale o partita iva per continuare!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$ and id_anagrafica!= $id_anagrafica$ and flag_duplicato!='1'",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.codice_fiscale)=UPPER($codice_fiscale$) and an.flag_duplicato!='1'",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select avr.partita_iva from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.partita_iva)=UPPER($partita_iva$) and an.flag_duplicato!='1'",
+            "messageNotNull": "Attenzione esiste già un'anagrafica con la stessa partita IVA!"
+        },
+        {
+            "operation": "insert",
             "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>nullif($partita_iva$,''), codiceruolo=>'CLI', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$, idateco => $id_ateco$, codsae => $cod_sae$, flagnodelete=>$flag_no_delete$::character, emailsender=>$email_sender$);",
             "type": "main"
         },
