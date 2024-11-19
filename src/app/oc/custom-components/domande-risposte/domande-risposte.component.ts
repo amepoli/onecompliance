@@ -83,6 +83,7 @@ export class DomandeRisposteComponent implements OnChanges
                 const results: DomandaRispostaElement[] = JSON.parse(result.data.crea_json_verifica);
                 _this.data = results.map(x => (
                     {
+                        //  variabili restituite: in caso di modifiche post operazioni, inserire qui (es.: decodifica delle note eseguita dopo le elaborazioni di note)
                         ...x,
                         codice_compito: x.compito? x.compito.codice_compito: null,
                         note_risposta: _this.decodeNotes(x.note_risposta)
@@ -125,7 +126,8 @@ export class DomandeRisposteComponent implements OnChanges
             });
 
             const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [newKeys], _this.attributes, _this.formParams[i], results[i].keys, results[i].readonly)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
-
+            
+            //  Funzioni di update racchiudibili in un'unica funzione con switch per i diversi casi, per migliorare leggibilità
             curFormData.forEach((_, j) => {
                 switch(curFormData[j].name) {
                     case 'descrizione':
@@ -1817,12 +1819,14 @@ export class DomandeRisposteComponent implements OnChanges
         );
     }
 
+    //  Funzione di sanitizzazione note (conversione caratteri vietati con caratteri permessi)
     encodeNotes(notes: string) {
         return notes
             ?.replace(/'/g, "’")
         ?? "";
     }
 
+    //  Funzione di sanitizzazione note (deconversione caratteri alterati con encodeNotes per usabilità utente)
     decodeNotes(notes: string) {
         return notes
             ?.replace(/’/g, "'")
