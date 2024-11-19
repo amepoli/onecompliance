@@ -1835,7 +1835,7 @@ export class DomandeRisposteComponent implements OnChanges
         return notes ? this.trimEndPolyfill(notes.replace(/’/g, "'")) : " ";
 
     }
-    
+
 
     getTargetFormByOrdinamento(ordinamento: number) {
         const _this = this;
