@@ -1819,19 +1819,23 @@ export class DomandeRisposteComponent implements OnChanges
         );
     }
 
+    //  Funzione sostitutiva di trimEnd(), presente in JavaScript ES2019 ed oltre
+    trimEndPolyfill(str: string): string {
+        return str.replace(/\s+$/, '');
+    }
+
     //  Funzione di sanitizzazione note (conversione caratteri vietati con caratteri permessi)
     encodeNotes(notes: string) {
-        return notes
-            ?.replace(/'/g, "’")
+        return (notes?.replace(/'/g, "’") + " ") 
         ?? "";
     }
 
     //  Funzione di sanitizzazione note (deconversione caratteri alterati con encodeNotes per usabilità utente)
     decodeNotes(notes: string) {
-        return notes
-            ?.replace(/’/g, "'")
-        ?? "";
+        return notes ? this.trimEndPolyfill(notes.replace(/’/g, "'")) : " ";
+
     }
+    
 
     getTargetFormByOrdinamento(ordinamento: number) {
         const _this = this;
