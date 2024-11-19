@@ -8,6 +8,7 @@ import { DomandaRispostaComponent } from "./domanda-risposta/domanda-risposta.co
 import { MatDialog } from "@angular/material/dialog";
 import { MenuOptionsCustomDialogComponent } from "app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component";
 import { memoize } from "app/oc/decorators/memoize";
+import { UntypedFormGroup } from "@angular/forms";
 
 @Component({
     selector: "domande-risposte",
@@ -84,6 +85,7 @@ export class DomandeRisposteComponent implements OnChanges
                     {
                         ...x,
                         codice_compito: x.compito? x.compito.codice_compito: null,
+                        note_risposta: _this.decodeNotes(x.note_risposta)
                     }
                 ));
                 _this.processData(_this.data);
@@ -1030,7 +1032,9 @@ export class DomandeRisposteComponent implements OnChanges
                         }
                     }
                     else {
-                        let values = _this._formsService.processFormValues(_this.formArray.toArray()[destElIndex].form.value);
+                        const targetForm: UntypedFormGroup = _this.getTargetFormByOrdinamento(_this.data[destElIndex].ordinamento);
+
+                        let values = _this._formsService.processFormValues(targetForm.value);
                         id_risposta_prev = values.risposte_previste;
                     }
 
@@ -1082,7 +1086,7 @@ export class DomandeRisposteComponent implements OnChanges
         const targetViewField = _this.viewKeys[index].find(
             (viewKey) => viewKey.key === keyListener,
         );
-        const childrenArray = _this.formArray.toArray();
+        const targetForm: UntypedFormGroup = _this.getTargetFormByOrdinamento(_this.data[index].ordinamento);
 
         if (
             event.actionType === "show_message" && event.message
@@ -1129,9 +1133,7 @@ export class DomandeRisposteComponent implements OnChanges
                     //     _this._timeTrackerService.checkStatus();
                     // }
                     else if (actionType === "email") {
-                            const current_line = childrenArray[index];
-
-                            let formValues = current_line.form.value;
+                            let formValues = targetForm.value;
                             _this._emailService.performSendEmail(event, formValues, value, _this.domandaKeys[index]);
 
                         // _this._console.log(JSON.stringify(event));
@@ -1146,9 +1148,8 @@ export class DomandeRisposteComponent implements OnChanges
                             isLightScan: regulatAPIParams.entityParams.is_light_scan,
                         }
 
-                        const current_line = childrenArray[index];
 
-                        let formValues = current_line.form.value;
+                        let formValues = targetForm.value;
 
                         await _this._formsService.runRegulatEvent(
                             event.message.actionOnYes,
@@ -1163,8 +1164,7 @@ export class DomandeRisposteComponent implements OnChanges
                     //     _this.runUserManagementEvent(event, value, keyListener);
                     // }
                     else if (actionType === "query"){
-                            const current_line = childrenArray[index];
-                            chiavi = {...current_line.form.value, ...this.domandaKeys[index], ..._this.externalKeys};
+                            chiavi = {...targetForm.value, ...this.domandaKeys[index], ..._this.externalKeys};
                             // fix problem with changed value that might be not updated yet by getting it directly from event
                             if (value.type === "change") {
                                 chiavi[value.origin] = value.data;
@@ -1485,32 +1485,35 @@ export class DomandeRisposteComponent implements OnChanges
     updateDomandaRisposta(index: number) {
         const _this = this;
         const type = _this.data[index].type;
-        let values = _this._formsService.processFormValues(_this.formArray.toArray()[index].form.value);
+
+        const targetForm: UntypedFormGroup = _this.getTargetFormByOrdinamento(_this.data[index].ordinamento);
+
+        let values = _this._formsService.processFormValues(targetForm.value);
         var data = {
             type: type
         };
 
         if(type === 'radiobutton' || type === 'combobox') {
-            data["id_risposta_prev"] = values.risposte_previste;
-            data["noterispostarisposta"] = values.note_risposta ?? ""
+            data["id_risposta_prev"] = values.risposte_previste ?? null;
+            data["noterispostarisposta"] = _this.encodeNotes(values.note_risposta);
         }
         else if(type === 'checkboxgroup') {
-            data["risposta_multipla"] = values.risposte_previste;
-            data["noterispostarisposta"] = values.note_risposta ?? ""
+            data["risposta_multipla"] = values.risposte_previste ?? null;
+            data["noterispostarisposta"] = _this.encodeNotes(values.note_risposta);
         }
         else if(type === 'text') {
             data["peso_ans"] = values.peso ?? "";
-            data["noterispostarisposta"] = values.note_risposta ?? ""
+            data["noterispostarisposta"] = _this.encodeNotes(values.note_risposta);
         }
         else if(type === 'date') {
-            data["risposta_data"] = values.risposte_previste;
+            data["risposta_data"] = values.risposte_previste ?? null;
             data["peso_ans"] = values.peso ?? "";
-            data["noterispostarisposta"] = values.note_risposta ?? ""
+            data["noterispostarisposta"] = _this.encodeNotes(values.note_risposta);
         }
         else if(type === 'number') {
-            data["risposta_num"] = values.risposte_previste;
+            data["risposta_num"] = values.risposte_previste ?? null;
             data["peso_ans"] = values.peso ?? "";
-            data["noterispostarisposta"] = values.note_risposta ?? ""
+            data["noterispostarisposta"] = _this.encodeNotes(values.note_risposta);
         }
 
 
@@ -1531,14 +1534,18 @@ export class DomandeRisposteComponent implements OnChanges
     }
 
     resetRispostaPrevista(item: any, field: FieldConfig, index: number) {
-        if(this.data[index].type === 'radiobutton' || this.data[index].type === 'combobox') {
-            this.formArray.toArray()[index].form.patchValue({risposte_previste: null});
+        const _this = this;
+        if(_this.data[index].type === 'radiobutton' || _this.data[index].type === 'combobox') {
+            
+            const targetForm: UntypedFormGroup = _this.getTargetFormByOrdinamento(_this.data[index].ordinamento);
+
+            targetForm.patchValue({risposte_previste: null});
             const newPeso = null;
-            this.data[index].peso = newPeso;
-            this.formData[index].forEach((x, i) => {
+            _this.data[index].peso = newPeso;
+            _this.formData[index].forEach((x, i) => {
                 if(x.name === 'peso') {
-                    this.formData[index][i].value = '' + newPeso;
-                    this.formData[index][i].style = {
+                    _this.formData[index][i].value = '' + newPeso;
+                    _this.formData[index][i].style = {
                         background_color: null,
                         font_color: null,
                     };
@@ -1546,7 +1553,7 @@ export class DomandeRisposteComponent implements OnChanges
             });
         }
 
-        this.updateDomandaRisposta(index);
+        _this.updateDomandaRisposta(index);
     }
 
     creaSegnalazione(item: any, field: FieldConfig, index: number) {
@@ -1810,8 +1817,28 @@ export class DomandeRisposteComponent implements OnChanges
         );
     }
 
+    encodeNotes(notes: string) {
+        return notes
+            ?.replace(/'/g, "’")
+        ?? "";
+    }
 
+    decodeNotes(notes: string) {
+        return notes
+            ?.replace(/’/g, "'")
+        ?? "";
+    }
 
+    getTargetFormByOrdinamento(ordinamento: number) {
+        const _this = this;
+        let targetForm: UntypedFormGroup = null;
+        _this.formArray.toArray().forEach(form => {
+            if(form.form.value.ordinamento === '' + ordinamento) {
+                targetForm = form.form;
+            }
+        });
 
+        return targetForm;
+    }
 
 }
