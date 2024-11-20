@@ -1,0 +1,35 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_sharing_procedure_aziendali",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.grc_accoda_procedura_aziendale('€global_codice_azienda€'::varchar,$codice_azienda_dest$::varchar,id_procedura::numeric) FROM entrasp.procedure_aziendali where codice_azienda='€global_codice_azienda€' and codice_azienda||'~'||id_procedura=any(ARRAY[$selected_rows_data$])"
+        },
+        {
+            "operation": "isInsert",
+            "type": "main",
+            "queryString": "select true as label"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_azienda_dest",
+            "label": "Condividi in",
+            "newLine": false,
+            "size": 3,
+            "readOnly": false,
+            "translate": "RESOURCES.condividi_in_dialog_sharing_cpl_trattamenti_dati"
+        }
+    ]
+}
