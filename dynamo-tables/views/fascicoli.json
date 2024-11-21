@@ -3,6 +3,18 @@
     "entryKey": "fascicoli",
     "origin": "entrasp.fascicoli",
     "label": "Fascicoli",
+    "outputEvents": [
+        {
+            "eventName": "onSaveEvent",
+            "eventTrigger": "onSave"
+        }
+    ],
+    "inputEvents": [
+        {
+            "eventName": "onSaveEvent",
+            "actionType": "reload"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -101,10 +113,25 @@
             "isPrimary": false,
             "newLine": false,
             "key": "capitale_totale",
-            "label": "Capitale totale",
-            "readOnly": false,
-            "size": 2,
+            "label": "Capitale Nominale Fascicolo",
+            "insertUpdateFunct": "select sum(importo) from entrasp.crediti_ceduti where codice_azienda=$codice_azienda$ and id_fascicolo=$id_fascicolo$",
+            "readOnly": true,
+            "size": 1.5,
             "translate": "RESOURCES.capitale_totale_fascicoli"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "capitale_residuo",
+            "label": "Capitale Residuo da Incassare",
+            "readOnly": true,
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -118,8 +145,33 @@
             "key": "interessi_legali_totali",
             "label": "Interessi legali totali",
             "readOnly": false,
-            "size": 2,
+            "size": 1.5,
             "translate": "RESOURCES.interessi_legali_totali_fascicoli"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_INVENTARIO';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "value": "A",
+                "validations": [
+                    {
+                        "message": "Stato necessario",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.stato_necessario_progetti"
+                    }
+                ]
+            },
+            "label": "Stato",
+            "key": "stato",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 1.5
         },
         {
             "autoGenerate": false,
@@ -138,7 +190,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": true,
+            "newLine": false,
             "key": "id_legale",
             "label": "Studio Legale incaricato",
             "readOnly": false,
@@ -201,7 +253,7 @@
             "isPrimary": false,
             "key": "rigetto_decreto_ing",
             "label": "Rigetto D.I.",
-            "newLine": false,
+            "newLine": true,
             "size": 2,
             "readOnly": false,
             "translate": "RESOURCES.rigetto_di_fascicoli"
@@ -214,7 +266,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": true,
+            "newLine": false,
             "key": "numero_decreto",
             "label": "Numero decreto",
             "readOnly": false,
@@ -246,6 +298,7 @@
             "isPrimary": false,
             "key": "termine_per_opposizione",
             "label": "Termine per opposizione",
+            "insertUpdateFunct": "(notifica::DATE + INTERVAL '40 days')",
             "newLine": false,
             "size": 2,
             "readOnly": false,
@@ -625,6 +678,33 @@
         },
         {
             "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_INVENTARIO', stato)",
+            "key": "stato",
+            "label": "Stato",
+            "style": [
+                {
+                    "value": "Chiuso",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Aperto",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                }
+            ]
+        },
+        {
+            "format": {
                 "dataType": "date"
             },
             "isHidden": false,
@@ -636,21 +716,37 @@
         },
         {
             "format": {
-                "dataType": "number"
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "capitale_totale",
-            "label": "Capitale totale",
+            "label": "Capitale Nominale Totale",
             "tooltip": "Importo totale delle quote capitali legate al fascicolo affidato",
             "width": "6%",
             "style": [
                 {
                     "value": "*",
-                    "text_align": "end"
+                    "text_align": "center"
                 }
-            ],
-            "translate": "RESOURCES.capitale_totale_fascicoli"
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "capitale_residuo",
+            "label": "Capitale Residuo",
+            "tooltip": "Importo residuo da incassare delle quote capitali legate al fascicolo affidato",
+            "width": "6%",
+            "style": [
+                {
+                    "value": "*",
+                    "text_align": "center"
+                }
+            ]
         },
         {
             "format": {
@@ -693,6 +789,16 @@
         }
     ],
     "search_keys": [
+        {
+            "fieldName": "flag_fascicoli_aperti",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Aperti",
+            "newLine": false,
+            "queryCond": "stato ='A'"
+        },
         {
             "fieldName": "id_fascicolo_s",
             "format": {
@@ -772,7 +878,7 @@
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by data_incarico desc"
+        "tableViewSuffix": "order by id_fascicolo desc limit 200"
     },
     "subTables": [
         {
@@ -827,6 +933,7 @@
         "labelAdd": "Nuovo Fascicolo",
         "navigateOnSuccess": true
     },
+
     "hideActions": [
         {
             "tableActionType": "quick-add",
