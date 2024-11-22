@@ -1013,6 +1013,7 @@ export class DomandeRisposteComponent implements OnChanges
             if(x.condition && x.condition.length > 0) {
                 x.condition.forEach(c => {
                     const destElIndex = _this.data.findIndex(y => y.id_domanda === c.id_domanda);
+                    const destElType = _this.data[destElIndex].type;
 
                     let id_risposta_prev = null;
                     if(initialCheck) {
@@ -1038,16 +1039,34 @@ export class DomandeRisposteComponent implements OnChanges
 
                         let values = _this._formsService.processFormValues(targetForm.value);
                         id_risposta_prev = values.risposte_previste;
+
+                        if(destElType === 'checkboxgroup') {
+                            id_risposta_prev = id_risposta_prev.replace("ARRAY[", "").replace("]", "").split(',').map(x => parseInt(x));
+                        }
                     }
 
                     if(c.condition === "equal") {
-                        if(id_risposta_prev !== c.id_risposta_prev) {
-                            isHidden = true;
+                        if(destElType === 'checkboxgroup') {
+                            if(!id_risposta_prev || !id_risposta_prev.includes(c.id_risposta_prev)) {
+                                isHidden = true;
+                            }
+                        }
+                        else {
+                            if(id_risposta_prev !== c.id_risposta_prev) {
+                                isHidden = true;
+                            }
                         }
                     }
                     else if(c.condition === "notEqual") {
-                        if(id_risposta_prev === c.id_risposta_prev) {
-                            isHidden = true;
+                        if(destElType === 'checkboxgroup') {
+                            if(id_risposta_prev.includes(c.id_risposta_prev)) {
+                                isHidden = true;
+                            }
+                        }
+                        else {
+                            if(id_risposta_prev === c.id_risposta_prev) {
+                                isHidden = true;
+                            }
                         }
                     }
                     else if(c.condition === "greaterThan") {
