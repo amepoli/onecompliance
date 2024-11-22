@@ -1904,12 +1904,16 @@ export class FormGetterComponent
                     // Initialize with No action info
                     var actionType = event.message.actionOnNo.actionType;
                     var queryFunct = event.message.actionOnNo.queryFunct;
+                    var regulatAPIParams: RegulatAPIParams = event.message.actionOnNo.regulatAPIParams;
+                    var eventMessage = event.message.actionOnNo;
                     var action = "actionNo";
 
                     // If user clicked yes, load yes action info
                     if (result.value === true) {
                         actionType = event.message.actionOnYes.actionType;
                         queryFunct = event.message.actionOnYes.queryFunct;
+                        regulatAPIParams = event.message.actionOnYes.regulatAPIParams;
+                        eventMessage = event.message.actionOnYes;
                         action = "actionYes";
                     }
 
@@ -1936,27 +1940,62 @@ export class FormGetterComponent
                         // _this.sendEmail({ templateKey: 'test' });
                     } else if (actionType === "regulat_api") {
                         const formValues = _this.formArray.first.form.value;
-                        const regulatAPIParams: RegulatAPIParams = event.regulatAPIParams;
 
-                        const keys = {
-                            codiceAziendaAML: formValues[
-                                regulatAPIParams.entityParams.codice_azienda
-                            ],
-                            idAnagraficaAML: formValues[
-                                regulatAPIParams.entityParams.id_anagrafica
-                            ],
-                            idSomministrazioneAML: formValues[
-                                regulatAPIParams.entityParams
-                                    .id_somministrazione
-                            ],
-                            dynamoUserAML: formValues[
-                                regulatAPIParams.entityParams.dynamo_user
-                            ],
-                            isLightScan: event.regulatAPIParams.entityParams.is_light_scan,
+                        if (!regulatAPIParams) {
+                            console.error('regulatAPIParams undefined');
+                            return; 
+                        } 
+
+                        let keys={};
+                        if (regulatAPIParams.actionType === "get_aml_scan") {
+                            if(regulatAPIParams.entityParams) {
+                                keys = {
+                                    codiceAziendaAML: formValues[
+                                        regulatAPIParams.entityParams.codice_azienda
+                                    ],
+                                    idAnagraficaAML: formValues[
+                                        regulatAPIParams.entityParams.id_anagrafica
+                                    ],
+                                    idSomministrazioneAML: formValues[
+                                        regulatAPIParams.entityParams
+                                            .id_somministrazione
+                                    ],
+                                    dynamoUserAML: formValues[
+                                        regulatAPIParams.entityParams.dynamo_user
+                                    ],
+                                    isLightScan: regulatAPIParams.entityParams.is_light_scan,
+                                }
+                            } else {
+                                console.error('entityParams undefined:', regulatAPIParams);
+                                return; 
+                            }
+                            
+                        } else if (regulatAPIParams.actionType === "get_aml_scans") {
+                            if(regulatAPIParams.surveyParams) {
+                                keys = {
+                                    codiceAziendaAML: formValues[
+                                        regulatAPIParams.surveyParams.codice_azienda
+                                    ],
+                                    idAnagraficaAML: formValues[
+                                        regulatAPIParams.surveyParams.id_anagrafica
+                                    ],
+                                    idSomministrazioneAML: formValues[
+                                        regulatAPIParams.surveyParams
+                                            .id_somministrazione
+                                    ],
+                                    dynamoUserAML: formValues[
+                                        regulatAPIParams.surveyParams.dynamo_user
+                                    ],
+                                    isLightScan: regulatAPIParams.surveyParams.is_light_scan,
+                                }
+                            } else {
+                                console.error('surveyParams undefined:', regulatAPIParams);
+                                return; 
+                            }
                         }
 
                         _this._formsService.runRegulatEvent(
-                            event.message.actionOnYes,
+                            eventMessage,
                             value,
                             keyListener,
                             formValues,

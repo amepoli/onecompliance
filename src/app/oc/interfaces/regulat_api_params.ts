@@ -9,6 +9,8 @@ export interface RegulatAPIParams {
     },
     surveyParams?: {
         codice_azienda: string,
+        id_anagrafica: number,
+        id_somministrazione: number,
         id_sondaggio: number,
         dynamo_user: string,
         is_light_scan: any
