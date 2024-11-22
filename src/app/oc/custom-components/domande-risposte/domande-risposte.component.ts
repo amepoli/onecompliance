@@ -1826,7 +1826,7 @@ export class DomandeRisposteComponent implements OnChanges
 
     //  Funzione di sanitizzazione note (conversione caratteri vietati con caratteri permessi)
     encodeNotes(notes: string) {
-        return (notes?.replace(/'/g, "’") + " ") 
+        return (notes?.replace(/'/g, "’") ?? "" + " ") 
         ?? "";
     }
 
