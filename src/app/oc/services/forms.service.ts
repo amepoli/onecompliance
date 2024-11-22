@@ -605,24 +605,29 @@ export class FormsService {
                 if (element == null) {
                     continue; // skip null entries
                 }
-                if (Array.isArray(element) && element.length > 0) {
-                    if (element.length === 1 && element[0] === null) {
-                        continue; // skip null entries
-                        // formValues[key] = 'ARRAY[NULL]';
-                    } else if (
-                        typeof element[0] === "object" &&
-                        Object.keys(element[0]).length > 0 &&
-                        element[0]["id"]
-                    ) {
-                        formValues[key] =
-                            "ARRAY[" +
-                            element.map((x) => x.id).join(",") +
-                            "]";
-                    } else {
-                        formValues[key] =
-                            "ARRAY[" +
-                            element.map((x) => x).join(",") +
-                            "]";
+                if (Array.isArray(element)) {
+                    if(element.length > 0) {
+                        if (element.length === 1 && element[0] === null) {
+                            continue; // skip null entries
+                            // formValues[key] = 'ARRAY[NULL]';
+                        } else if (
+                            typeof element[0] === "object" &&
+                            Object.keys(element[0]).length > 0 &&
+                            element[0]["id"]
+                        ) {
+                            formValues[key] =
+                                "ARRAY[" +
+                                element.map((x) => x.id).join(",") +
+                                "]";
+                        } else {
+                            formValues[key] =
+                                "ARRAY[" +
+                                element.map((x) => x).join(",") +
+                                "]";
+                        }
+                    }
+                    else {
+                        formValues[key] = "ARRAY[]";
                     }
                 }
                 // decode combos
