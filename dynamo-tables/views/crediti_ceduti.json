@@ -19,6 +19,14 @@
                     "customDialogTitle": "Modifica crediti selezionati"
                 },
                 {
+                    "key": "crea_opposizione",
+                    "icon": "edit",
+                    "label": "Crea e Associa Opposizione",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_opposizioni_crediti",
+                    "customDialogTitle": "Crea e Associa Opposizione"
+                },
+                {
                     "key": "inserisci_ricessioni",
                     "icon": "sync",
                     "label": "Erogazioni",
@@ -46,7 +54,7 @@
                     "key": "cancella_crediti",
                     "icon": "delete_aggiornamento",
                     "label": "Cancella",
-                    "query": "delete from entrasp.crediti_ceduti where codice_azienda||'~'||id_cessione in ($selected_rows_data$)",
+                    "query": "delete from xentrasp.crediti_ceduti where codice_azienda||'~'||id_cessione in ($selected_rows_data$)",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
                     "confirmActionMessage": "Cancellare le fatture selezionate?"
@@ -1522,33 +1530,25 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_documento",
-                    "values": [
-                        "5342"
-                    ]
+                    "values": ["5342"]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_documento_load",
-                    "values": [
-                        "5342"
-                    ]
+                    "values": ["5342"]
                 },
                 {
                     "actionType": "hide",
                     "eventName": "combo_tipo_documento",
                     "condition": "equalTo",
-                    "values": [
-                        "50664"
-                    ]
+                    "values": ["50664"]
                 },
                 {
                     "actionType": "hide",
                     "eventName": "tipo_documento_load",
                     "condition": "equalTo",
-                    "values": [
-                        "50664"
-                    ]
+                    "values": ["50664"]
                 }
             ],
             "isHidden": true,
@@ -1917,6 +1917,20 @@
             ],
             "label": "Movimenti",
             "translate": "RESOURCES.movimenti_pagamenti_sub_of_crediti"
+        },
+        {
+            "entryKey": "opposizioni_sub_of_crediti",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_cessione",
+                    "son": "id_cessione"
+                }
+            ],
+            "label": "Opposizioni"
         },
         {
             "entryKey": "aggiornamenti_sub_of_crediti",

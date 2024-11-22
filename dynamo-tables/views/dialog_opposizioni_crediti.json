@@ -1,0 +1,163 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_opposizioni_crediti",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.crea_opposizione('€global_codice_azienda€'::varchar, '£numero_opposizione£'::varchar, nullif('£data_opposizione£','null')::date, array£id_argomento_opposizione£, nullif('£data_recupero£','null')::date, £perdite£::numeric, £contestazione_credito£::numeric, £perc_svalutazione£::numeric, £quantum_interessi£::numeric, ($selected_rows_data$)::varchar)"
+        },
+        {
+            "operation": "isInsert",
+            "queryString": "select true as label;",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "readOnly": true,
+            "translate": "RESOURCES.codice_azienda_fascicoli"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_opposizione",
+            "label": "# Opposizione:",
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "numero_opposizione",
+            "label": "Cod. Opposizione",
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_opposizione",
+            "label": "Data Opposizione",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "perc_svalutazione",
+            "label": "Svalutazione Effettiva",
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_recupero",
+            "label": "Data stimata di recupero",
+            "newLine": false,
+            "size": 2,
+            "readOnly": false,
+            "translate": "RESOURCES.data_stimata_di_recupero_fascicoli"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "perdite",
+            "label": "Rischi di perdite da costi legali",
+            "newLine": true,
+            "size": 2,
+            "readOnly": false,
+            "translate": "RESOURCES.rischi_di_perdite_da_costi_legali_fascicoli"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "options": [],
+                "comboQuery": "SELECT ID_ARGOMENTO AS ID, DESCRIZIONE_BREVE AS NAME FROM ENTRASP.ARGOMENTI ARG INNER JOIN ENTRASP.ARGOMENTI_ARGOMENTI AA ON ARG.ID_ARGOMENTO = AA.ID_ARGOMENTO_SON WHERE AA.ID_ARGOMENTO_FATHER = 53646"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_argomento_opposizione",
+            "label": "Motivazione opposizione",
+            "readOnly": false,
+            "size": 5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "text",
+                "options": [],
+                "comboQuery": "SELECT generate_series(0, 8)::numeric AS id, generate_series(0, 8) AS name"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "contestazione_credito",
+            "label": "Contestazione del Credito",
+            "readOnly": false,
+            "size": 5,
+            "translate": "RESOURCES.contestazione_del_credito_fascicoli"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "text",
+                "options": [],
+                "comboQuery": "SELECT generate_series(0, 10)::numeric AS id, generate_series(0, 10) AS name"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "quantum_interessi",
+            "label": "Quantum Interessi",
+            "readOnly": false,
+            "size": 5
+        }
+    ]
+}
