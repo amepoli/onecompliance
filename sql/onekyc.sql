@@ -11,11 +11,15 @@ order by data_esecuzione desc
 
 select * 
 from imports.aml_scans
-where id_scan='7c7b6c26-8a4e-46b7-8703-c7c91b8092f6'
+where 
+--id_scan='7c7b6c26-8a4e-46b7-8703-c7c91b8092f6' and
+id_anagrafica=3460 and codice_azienda='FINAFARM'
+order by date_of_scan desc
 
 select entrasp.onekyc_describe_aml_scan_data(scan_data)
 from imports.aml_scans
-where id_scan='7c7b6c26-8a4e-46b7-8703-c7c91b8092f6'
+where 
+--id_scan='7c7b6c26-8a4e-46b7-8703-c7c91b8092f6'
 
 
 select rs.note, entrasp.onekyc_describe_aml_scan_data(ias.scan_data)
@@ -26,7 +30,7 @@ inner join entrasp.domande dm on
 rs.codice_azienda=dm.codice_azienda and rs.id_modello_test=dm.id_modello_test 
 and rs.id_modello_test_vr=dm.id_modello_test_vr and rs.id_domanda=dm.id_domanda
 where rs.codice_azienda='FINAFARM' and dm.id_argomento=45414 and rs.id_sondaggio=42634
-and rs.note=entrasp.onekyc_describe_aml_scan_data(ias.scan_data)
+and rs.note!=entrasp.onekyc_describe_aml_scan_data(ias.scan_data)
 
 
 
@@ -40,7 +44,9 @@ from information_schema.routines
 where routine_definition ilike '%nessun riscontro%'
 */
 
-/*select snd.data_esecuzione, snd.id_sondaggio, rs.id_somministrazione, length(note), rs.note
+/*
+
+select snd.data_esecuzione, snd.id_sondaggio, rs.id_somministrazione, length(note), rs.note
 from entrasp.risposte rs 
 inner join entrasp.sondaggi snd
 on rs.codice_azienda=snd.codice_azienda and rs.id_sondaggio=snd.id_sondaggio
@@ -57,6 +63,15 @@ select
 from information_schema.routines 
 where routine_definition ilike '%nessun riscontro%'
 */
+
+
+select entrasp.onekyc_confronta_precedenti_aml_scans(
+    scan_data,
+    'FINAFARM',
+    id_somministrazione
+)
+from imports.aml_scans
+where codice_azienda='FINAFARM' and id_somministrazione=54776
 
 
 -- FUNCTION: entrasp.onekyc_process_aml_scans(json, numeric)
@@ -241,3 +256,67 @@ $BODY$;
 
 ALTER FUNCTION entrasp.onekyc_process_aml_scans(json, numeric)
     OWNER TO postgres;
+
+/*select snd.data_esecuzione, snd.id_sondaggio, rs.id_somministrazione, length(note), rs.note
+from entrasp.risposte rs 
+inner join entrasp.sondaggi snd
+on rs.codice_azienda=snd.codice_azienda and rs.id_sondaggio=snd.id_sondaggio
+where rs.codice_azienda='FINAFARM' and rs.id_domanda=1 and rs.id_modello_Test=604 
+and rs.id_sondaggio=42634
+order by data_esecuzione desc
+
+
+select 
+	routine_catalog AS DatabaseName
+	,routine_schema AS SchemaName
+	,routine_name AS FunctionName
+	,routine_type AS ObjectType
+from information_schema.routines 
+where routine_definition ilike '%nessun riscontro%'
+*/
+
+
+select * from 
+imports.aml_scans 
+where id_anagrafica=18800 and codice_azienda='FINAFARM'
+order by date_of_scan desc
+
+
+
+
+
+-- FUNCTION: entrasp.onekyc_process_aml_scans(json, numeric)
+
+-- DROP FUNCTION IF EXISTS entrasp.onekyc_process_aml_scans(json, numeric);
+
+
+
+
+
+	select ss.object_key, snd.data_esecuzione, 
+	entrasp.anagrafiche_cognnome(ss.codice_part, (split_part(ss.object_key, '|', 2)::numeric)), count(ss.id_somministrazione)  
+	from entrasp.sondaggi_somministrati ss
+	inner join entrasp.sondaggi snd
+	using(codice_azienda, id_sondaggio)
+	where ss.codice_azienda='FINAFARM'
+	and snd.id_modello_test=526
+--	and ss.id_somministrazione in(54730, 54716)
+	group by ss.object_key, snd.data_esecuzione, ss.codice_part
+	having count(ss.id_somministrazione)>1 
+
+	select object_key, data_esecuzione, codice_part, object_description
+	from entrasp.sondaggi_somministrati
+	where codice_azienda='FINAFARM'
+	and id_somministrazione in(54730, 54716)
+
+	select ss.object_key, ss.data_esecuzione, snd.data_esecuzione, ss.codice_part,  ss.object_description
+	from entrasp.sondaggi_somministrati ss
+	inner join entrasp.sondaggi snd
+	using (codice_azienda, id_sondaggio)
+	where ss.codice_azienda='FINAFARM'
+	and ss.id_somministrazione in(55287, 55310)
+
+
+	
+
+	
