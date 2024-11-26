@@ -44,13 +44,17 @@ import { CalendarModule } from "./oc/calendar/calendar.module";
 import { ChangePasswordModule } from "./oc/login-page/change-password.module";
 import { DomandeRisposteModule } from "./oc/custom-components/domande-risposte/domande-risposte.module";
 import { PrivacyPolicyComponent } from './oc/privacy-policy/privacy-policy.component';
+import { CookiePolicyComponent } from './oc/cookie-policy/cookie-policy.component';
 
 const appRoutes: Routes = [
-    { path: 'privacy-policy', component: PrivacyPolicyComponent }
+    { path: 'privacy-policy', component: PrivacyPolicyComponent
+    },
+    {path: 'cookie-policy', component: CookiePolicyComponent
+    }
 ];
 
 @NgModule({
-    declarations: [AppComponent, PrivacyPolicyComponent],
+    declarations: [AppComponent, PrivacyPolicyComponent, CookiePolicyComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
