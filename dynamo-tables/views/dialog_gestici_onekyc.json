@@ -1,6 +1,7 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "dialog_gestisci_onekyc",
+    "origin": "imports.aml_scans",
     "predefinedQueries": [
         {
             "operation": "insert",
@@ -11,23 +12,44 @@
             "operation": "isInsert",
             "queryString": "select true as label;",
             "type": "main"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "select null as riscontro, $id_scan$ as id_scan",
+            "type": "main"
         }
     ],
     "form_keys": [
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
+                "comboQuery": "SELECT id_risposta_prev AS id, risposta AS name FROM entrasp.risposte_previste rp inner join entrasp.domande dm using(codice_azienda, id_modello_test, id_modello_test_vr, id_domanda) where dm.id_argomento=45414 and dm.codice_azienda='€global_codice_azienda€';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "riscontro",
+            "label": "Riscontro",
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": true,
-            "isPrimary": false,
-            "key": "id_modello_test",
-            "label": "id_modello_test",
+            "isPrimary": true,
+            "key": "id_scan",
+            "label": "id_scan",
             "newLine": true,
             "sameOrigin": false,
-            "readOnly": true,
-            "translate": "RESOURCES.id_modello_test_dialog_associa_compito_from_domande"
+            "readOnly": true
         }
     ]
 }
