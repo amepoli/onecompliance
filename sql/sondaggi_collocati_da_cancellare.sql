@@ -12,17 +12,24 @@ order by id_sondaggio asc;
 ------
 ------
 
+--        AND ss.object_key = 'FININT|2849' -- TANSINI
+--        AND ss.object_key = 'FININT|3496' -- VITO
+
 WITH base_query AS (
     SELECT  
         snd.codice_azienda, 
-		snd.data_esecuzione,
+        snd.data_esecuzione,
+        entrasp.scadenza_profilazione(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) AS data_scadenza,
         ss.id_sondaggio, 
         ss.id_somministrazione,
         ss.object_key, 
         ss.object_name,
-		entrasp.scadenza_profilazione(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) 
-		as data_scadenza,
-	        entrasp.conta_sondaggi_successivi_entro_scadenza(snd.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) AS conta
+        entrasp.conta_sondaggi_successivi_entro_scadenza(snd.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) AS conta,
+        fn.*, -- Colonne della funzione laterale
+        CASE 
+            WHEN CURRENT_DATE < entrasp.scadenza_profilazione(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) THEN 'Non scaduto' 
+            ELSE 'Scaduto' 
+        END AS scad_non_scad
     FROM 
         entrasp.sondaggi_somministrati ss
     INNER JOIN 
@@ -30,20 +37,16 @@ WITH base_query AS (
     ON 
         ss.codice_azienda = snd.codice_azienda 
         AND ss.id_sondaggio = snd.id_sondaggio
+    LEFT JOIN LATERAL 
+        entrasp.sondaggi_successivi_entro_scadenza(
+            ss.codice_azienda, 
+            ss.id_sondaggio, 
+            ss.id_somministrazione
+        ) AS fn
+    ON TRUE
     WHERE 
         snd.codice_azienda = 'FININTSGR' 
         AND snd.id_modello_test = 634
-				and ss.object_key= 'FININT|2849'
-),
-data_scad_origin AS(
-SELECT 
-        object_key, 
-        object_name, 
-        data_scadenza as dt_scad_orig
-    FROM 
-        base_query
-    WHERE 
-        conta = 0
 ),
 max_conta_query AS (
     SELECT 
@@ -58,43 +61,43 @@ max_conta_query AS (
         object_key, 
         object_name
 ),
-sondaggi_da_cancellare AS (SELECT 
-    bq.codice_azienda, 
-    bq.id_sondaggio, 
-    bq.id_somministrazione, 
-    bq.object_key, 
-    bq.object_name, 
-	bq.data_scadenza,
-	dso.dt_scad_orig,
-    fn.*,
-		CURRENT_DATE<bq.data_scadenza as cond,
-	case when (fn.prog < fn.max_prog) or (fn.prog = fn.max_prog and CURRENT_DATE<dso.dt_scad_orig) then 'Delete' else 'Keep' end as D_K
-FROM 
-    base_query bq
-INNER JOIN 
-    max_conta_query mcq
-ON 
-    bq.object_key = mcq.object_key 
-    AND bq.conta = mcq.max_conta
-		INNER JOIN data_scad_origin dso
-		ON
-		bq.object_key = dso.object_key 
-
-LEFT JOIN LATERAL 
-    entrasp.sondaggi_successivi_entro_scadenza(
+sondaggi_da_cancellare AS (
+    SELECT 
         bq.codice_azienda, 
         bq.id_sondaggio, 
-        bq.id_somministrazione
-    ) AS fn
-ON TRUE
-WHERE 
-bq.conta > 1
-and bq.object_key= 'FININT|2849'
+        bq.data_esecuzione,
+        bq.data_scadenza,
+        entrasp.scadenza_profilazione(bq.codice_azienda, bq.id_sondaggio, bq.id_somministrazione) AS dt_scad_orig,
+        bq.id_somministrazione, 
+        bq.object_key, 
+        bq.object_name,  
+        bq.*, -- Include le colonne derivate da fn nel base_query
+        CASE 
+            WHEN bq.prog = bq.max_prog THEN 'Ultimo' 
+            ELSE 'Non ultimo' 
+        END AS progressivo,
+        bq.scad_non_scad,
+        CASE 
+            WHEN bq.prog < bq.max_prog 
+                OR (bq.prog = bq.max_prog AND CURRENT_DATE < entrasp.scadenza_profilazione(bq.codice_azienda, bq.id_sondaggio, bq.id_somministrazione)) 
+            THEN 'Delete' 
+            ELSE 'Keep' 
+        END AS D_K
+    FROM 
+        base_query bq
+    INNER JOIN 
+        max_conta_query mcq
+    ON 
+        bq.object_key = mcq.object_key 
+        AND bq.conta = mcq.max_conta
+    WHERE 
+        bq.conta > 1
 )
+SELECT DISTINCT *
+FROM sondaggi_da_cancellare
+WHERE D_K = 'Delete';
 
-select distinct *
-from sondaggi_da_cancellare sdc
-where D_K='Delete';
+
 
 
 /*
