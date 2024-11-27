@@ -19,16 +19,43 @@ WITH dominio_base AS (
             SELECT id_sondaggio
             FROM entrasp.progetti_fasi
             WHERE codice_azienda = 'FINAFARM'
-            AND id_sondaggio IS NOT NULL
+              AND id_sondaggio IS NOT NULL
         )
         AND snd.id_sondaggio NOT IN (
             SELECT id_sondaggio
             FROM entrasp.risposte
             WHERE codice_azienda = 'FINAFARM'
-            AND id_sondaggio IS NOT NULL
+              AND id_sondaggio IS NOT NULL
         )
 ),
-object_key
+object_key_con_contratti_chiusi AS (
+    SELECT 
+        CONCAT(codice_part, '|', id_cliente) AS ok_chiusi,
+        COUNT(id_contratto) AS contratto_count
+    FROM 
+        entrasp.contratti 
+    WHERE 
+        codice_part = 'FINAFARM' 
+        AND stato not in('C', 'N')
+        AND id_cliente IS NOT NULL
+    GROUP BY 
+        codice_part, id_cliente
+    HAVING 
+        COUNT(id_contratto) = 0
+)
+SELECT *
+FROM dominio_base
+WHERE object_key IN (
+    SELECT ok_chiusi
+    FROM object_key_con_contratti_chiusi
+);
+
+
+
+
+
+
+
 
 
 
