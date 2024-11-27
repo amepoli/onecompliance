@@ -20,7 +20,9 @@ WITH base_query AS (
         ss.id_somministrazione,
         ss.object_key, 
         ss.object_name,
-        entrasp.conta_sondaggi_successivi_entro_scadenza(snd.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) AS conta
+		entrasp.scadenza_profilazione(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) 
+		as data_scadenza,
+	        entrasp.conta_sondaggi_successivi_entro_scadenza(snd.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) AS conta
     FROM 
         entrasp.sondaggi_somministrati ss
     INNER JOIN 
@@ -51,6 +53,7 @@ sondaggi_da_cancellare AS (SELECT
     bq.id_somministrazione, 
     bq.object_key, 
     bq.object_name, 
+	bq.data_scadenza,
     fn.*,
 	case when (fn.prog < fn.max_prog) or (fn.prog = fn.max_prog and fn.dtesec<current_date) then 'Delete' else 'Keep' end as D_K
 FROM 
