@@ -338,6 +338,3 @@ set risultati_scan=entrasp.onekyc_describe_aml_scan_result(scan_data);
 	
 
 
-
-
-
