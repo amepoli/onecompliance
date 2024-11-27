@@ -47,7 +47,7 @@ where routine_definition ilike '%nessun riscontro%'
 /*
 
 select snd.data_esecuzione, snd.id_sondaggio, rs.id_somministrazione, length(note), rs.note
-from entrasp.risposte rs 
+from entrasp.risposte rs
 inner join entrasp.sondaggi snd
 on rs.codice_azienda=snd.codice_azienda and rs.id_sondaggio=snd.id_sondaggio
 where rs.codice_azienda='FINAFARM' and rs.id_domanda=1 and rs.id_modello_Test=604 
@@ -65,13 +65,24 @@ where routine_definition ilike '%nessun riscontro%'
 */
 
 
-select entrasp.onekyc_confronta_precedenti_aml_scans(
+select id_anagrafica as id_anagrafica_collegata,    
+		entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) as anagrafica_collegata,
+		(select split_part(codice_part, object_key, '|', 2)::numeric) from entrasp.sondaggi_somministrati where codice_azienda='FINAFARM' and id_somministrazione=54776),
+	entrasp.onekyc_confronta_precedenti_aml_scans(
     scan_data,
     'FINAFARM',
-    id_somministrazione
-)
+    id_somministrazione)
 from imports.aml_scans
 where codice_azienda='FINAFARM' and id_somministrazione=54776
+
+
+
+
+select * from imports.aml_scans
+where id_somministrazione=55268
+--codice_azienda='FINAFARM' and 
+id_anagrafica is null
+
 
 
 -- FUNCTION: entrasp.onekyc_process_aml_scans(json, numeric)
@@ -317,6 +328,16 @@ order by date_of_scan desc
 	and ss.id_somministrazione in(55287, 55310)
 
 
+-- FUNCTION: entrasp.onekyc_describe_aml_scan_data(json, date)
+
+-- DROP FUNCTION IF EXISTS entrasp.onekyc_describe_aml_scan_data(json, date);
+
+
+update imports.aml_scans	
+set risultati_scan=entrasp.onekyc_describe_aml_scan_result(scan_data);
 	
 
-	
+
+
+
+

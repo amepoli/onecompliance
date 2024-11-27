@@ -15,14 +15,13 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT ss.id_sondaggio, ams.codice_part, ams.codice_azienda, ams.id_scan, ams.id_anagrafica, ams.id_somministrazione, ams.dynamo_user, ams.date_of_scan, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_azienda€', ams.id_anagrafica) AS descr_anagrafica, entrasp.onekyc_describe_aml_scan_data(ams.scan_data, ams.date_of_scan) AS descr_scan_data, CASE ams.scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END AS scan_type FROM imports.aml_scans ams INNER JOIN (SELECT codice_azienda, id_sondaggio, id_somministrazione FROM entrasp.sondaggi_somministrati WHERE codice_azienda='€global_codice_azienda€') ss ON ams.id_somministrazione = ss.id_somministrazione and ams.codice_azienda=ss.codice_azienda WHERE ams.codice_azienda = '€global_codice_azienda€';"
+            "queryString": "SELECT ams.id_sondaggio, ams.codice_part, ams.codice_azienda, ams.id_scan, ams.id_anagrafica, ams.id_somministrazione, ams.dynamo_user, ams.date_of_scan, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_azienda€', ams.id_anagrafica) AS descr_anagrafica, entrasp.onekyc_describe_aml_scan_data(ams.scan_data, ams.date_of_scan) AS descr_scan_data, CASE ams.scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END AS scan_type FROM imports.aml_scans ams INNER JOIN (SELECT codice_azienda, id_sondaggio, id_somministrazione FROM entrasp.sondaggi_somministrati WHERE codice_azienda='€global_codice_azienda€') ss ON ams.id_somministrazione = ss.id_somministrazione and ams.codice_azienda=ss.codice_azienda WHERE ams.codice_azienda = '€global_codice_azienda€';"
         }
     ],
     "table_keys": [
         {
             "format": {
-                "dataType": "text",
-                "value": ""
+                "dataType": "text"
             },
             "isHidden": true,
             "isPrimary": false,
@@ -40,8 +39,7 @@
         },
         {
             "format": {
-                "dataType": "text",
-                "value": ""
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -52,8 +50,7 @@
         },
         {
             "format": {
-                "dataType": "number",
-                "value": ""
+                "dataType": "number"
             },
             "isHidden": true,
             "isPrimary": false,
@@ -67,14 +64,22 @@
             },
             "isHidden": true,
             "isPrimary": false,
+            "key": "id_anagrafica_principale",
+            "label": "id_anagrafica_principale"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
             "key": "id_sondaggio",
             "label": "id_sondaggio",
             "translate": "RESOURCES.id_sondaggio_onekyc"
         },
         {
             "format": {
-                "dataType": "number",
-                "value": ""
+                "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": false,
