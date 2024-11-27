@@ -341,6 +341,48 @@
             "translate": "RESOURCES._profilazione_aml"
         },
         {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_anagrafica_somministrazione",
+            "label": "id_anagrafica_somministrazione",
+            "queryFunct": "split_part(object_key, '|', 2)::numeric",
+            "sameOrigin": false,
+            "newLine": false,
+            "readOnly": true
+        }, 
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "prog_vr",
+            "label": "prog_vr",
+            "queryFunct": "entrasp.anagrafiche_vr_max(codice_part, split_part(object_key, '|', 2)::numeric)",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
@@ -361,7 +403,34 @@
                 "font_style": "normal",
                 "font_weight": "600"
             },
-            "size": 7.73
+            "size": 3.00
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cliente",
+            "label": "",
+            "queryFunct": "'Cliente: '||object_description",
+            "sameOrigin": false,
+            "outputEvent": {
+                "eventName": "to_anagrafica_from_sondaggi_somministrati",
+                "eventTrigger": "press"
+            },
+            "newLine": false,
+            "readOnly": true,
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.5em",
+                "font_style": "normal",
+                "font_weight": "600"
+            },
+            "size": 4.73
         },
         {
             "autoGenerate": false,
@@ -1636,6 +1705,26 @@
             "label": "Contratti Associati",
             "type": "table",
             "translate": "RESOURCES.contratti_associati_contracts_sub_of_profilazione_aml"
+        },
+        {
+            "entryKey": "oneKYC_sub_of_profilazioni",
+            "renderingOrder": 9,
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_sondaggio",
+                    "son": "id_sondaggio"
+                },
+                {
+                    "parent": "id_somministrazione",
+                    "son": "id_somministrazione"
+                }
+            ],
+            "label": "One KYC",
+            "type": "table"
         }
     ],
     "table_keys": [
@@ -2487,7 +2576,7 @@
                 "value": "0",
                 "viewType": "toggle"
             },
-            "label": "Adeguata Ver. Rafforzata",
+            "label": "Adeg.Ver.Raff.",
             "newLine": false,
             "queryCond": "ss.id_sondaggio in (SELECT ss.id_sondaggio FROM entrasp.sondaggi_somministrati ss  INNER JOIN entrasp.sondaggi snd ON ss.codice_azienda = snd.codice_azienda AND ss.id_sondaggio = snd.id_sondaggio INNER JOIN entrasp.modelli_test mt ON snd.codice_azienda = mt.codice_azienda AND snd.id_modello_test = mt.id_modello_test WHERE mt.id_argomento in(49362, 366, 367) AND ss.codice_azienda = '€global_codice_azienda€')",
             "translate": "RESOURCES.adeguata_ver_rafforzata_profilazione_aml"
@@ -2502,6 +2591,16 @@
             "newLine": false,
             "queryCond": "(nullif(split_part(ss.object_key, '|', 2), '') is not null and split_part(ss.object_key, '|', 2)::numeric in(select cnt.id_cliente from entrasp.contratti cnt where codice_azienda=$codice_azienda$ and stato!='C' and cnt.id_cliente is not null))",
             "translate": "RESOURCES.con_contratti_attivi_profilazione_aml"
+        },
+        {
+            "fieldName": "contratto_attivi_t",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "No progetti",
+            "newLine": false,
+            "queryCond": "entrasp.data_progetto_da_sondaggio (snd.codice_azienda, snd.id_sondaggio) is null"
         },
         {
             "fieldName": "flag_scostamenti",
