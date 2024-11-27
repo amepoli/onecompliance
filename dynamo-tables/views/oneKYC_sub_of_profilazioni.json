@@ -1,12 +1,12 @@
 {
     "$schema": "../views.schema.json",
-    "entryKey": "onecKYC_sub_of_profilazioni",
+    "entryKey": "oneKYC_sub_of_profilazioni",
     "inheritsFrom": "oneKYC",
     "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT ams.id_sondaggio, ams.codice_azienda, ams.codice_part, ams.id_scan, ams.id_anagrafica, ams.id_anagrafica_principale, ams.id_somministrazione, ams.dynamo_user, ams.date_of_scan, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_azienda€', ams.id_anagrafica) AS descr_anagrafica, entrasp.onekyc_describe_aml_scan_data(ams.scan_data, ams.date_of_scan) AS descr_scan_data, CASE ams.scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END AS scan_type FROM imports.aml_scans ams INNER JOIN (SELECT codice_azienda, id_sondaggio, id_somministrazione FROM entrasp.sondaggi_somministrati WHERE codice_azienda='€global_codice_azienda€') ss ON ams.id_somministrazione = ss.id_somministrazione and ams.codice_azienda=ss.codice_azienda WHERE ams.codice_azienda = $codice_azienda$ and ams.id_sondaggio=$id_sondaggio$ and ams.id_somministrazione=id_somministrazione$;"
+            "queryString": "SELECT ams.id_sondaggio, ams.codice_azienda, ams.codice_part, ams.id_scan, ams.id_anagrafica, ams.id_anagrafica_principale, ams.id_somministrazione, ams.dynamo_user, ams.date_of_scan, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', ams.id_anagrafica) AS descr_anagrafica, entrasp.onekyc_describe_aml_scan_data(ams.scan_data, ams.date_of_scan) AS descr_scan_data, CASE ams.scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END AS scan_type FROM imports.aml_scans ams INNER JOIN (SELECT codice_azienda, id_sondaggio, id_somministrazione FROM entrasp.sondaggi_somministrati WHERE codice_azienda='€global_codice_azienda€') ss ON ams.id_somministrazione = ss.id_somministrazione and ams.codice_azienda=ss.codice_azienda WHERE ams.codice_azienda = $codice_azienda$ and ams.id_sondaggio=$id_sondaggio$ and ams.id_somministrazione=$id_somministrazione$;"
         }
     ]
 }
