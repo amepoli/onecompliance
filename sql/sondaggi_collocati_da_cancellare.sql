@@ -94,8 +94,8 @@ sondaggi_da_cancellare AS (
         bq.conta > 1
 )
 SELECT DISTINCT *
-FROM sondaggi_da_cancellare
-WHERE D_K = 'Delete';
+FROM sondaggi_da_cancellare;
+--WHERE D_K = 'Delete';
 
 
 
