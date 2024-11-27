@@ -33,6 +33,17 @@ WITH base_query AS (
     WHERE 
         snd.codice_azienda = 'FININTSGR' 
         AND snd.id_modello_test = 634
+				and ss.object_key= 'FININT|2849'
+),
+data_scad_origin AS(
+SELECT 
+        object_key, 
+        object_name, 
+        data_scadenza as dt_scad_orig
+    FROM 
+        base_query
+    WHERE 
+        conta = 0
 ),
 max_conta_query AS (
     SELECT 
@@ -54,16 +65,21 @@ sondaggi_da_cancellare AS (SELECT
     bq.object_key, 
     bq.object_name, 
 	bq.data_scadenza,
+	dso.dt_scad_orig,
     fn.*,
-	case when (fn.prog < fn.max_prog) or (fn.prog = fn.max_prog and fn.dtesec<current_date) then 'Delete' else 'Keep' end as D_K
+		CURRENT_DATE<bq.data_scadenza as cond,
+	case when (fn.prog < fn.max_prog) or (fn.prog = fn.max_prog and CURRENT_DATE<dso.dt_scad_orig) then 'Delete' else 'Keep' end as D_K
 FROM 
     base_query bq
 INNER JOIN 
     max_conta_query mcq
 ON 
     bq.object_key = mcq.object_key 
-    AND bq.object_name = mcq.object_name
     AND bq.conta = mcq.max_conta
+		INNER JOIN data_scad_origin dso
+		ON
+		bq.object_key = dso.object_key 
+
 LEFT JOIN LATERAL 
     entrasp.sondaggi_successivi_entro_scadenza(
         bq.codice_azienda, 
@@ -72,8 +88,11 @@ LEFT JOIN LATERAL
     ) AS fn
 ON TRUE
 WHERE 
-bq.conta > 1)
-select entrasp.sondaggio_delete(sdc.codice_azienda, sdc.idsond)
+bq.conta > 1
+and bq.object_key= 'FININT|2849'
+)
+
+select distinct *
 from sondaggi_da_cancellare sdc
 where D_K='Delete';
 
@@ -89,5 +108,3 @@ and snd.id_modello_test=634
 and snd.codice_azienda='FININTSGR'
 order by snd.data_esecuzione desc;
 */
-
-
