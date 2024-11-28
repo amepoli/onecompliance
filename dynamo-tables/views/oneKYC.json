@@ -15,7 +15,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT ams.id_sondaggio, ams.codice_part, ams.codice_azienda, ams.id_scan, ams.id_anagrafica, ams.id_somministrazione, ams.dynamo_user, ams.date_of_scan, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_azienda€', ams.id_anagrafica) AS descr_anagrafica, entrasp.onekyc_describe_aml_scan_data(ams.scan_data, ams.date_of_scan) AS descr_scan_data, CASE ams.scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END AS scan_type FROM imports.aml_scans ams INNER JOIN (SELECT codice_azienda, id_sondaggio, id_somministrazione FROM entrasp.sondaggi_somministrati WHERE codice_azienda='€global_codice_azienda€') ss ON ams.id_somministrazione = ss.id_somministrazione and ams.codice_azienda=ss.codice_azienda WHERE ams.codice_azienda = '€global_codice_azienda€';"
+            "queryString": "SELECT ams.id_sondaggio, ams.codice_part, ams.codice_azienda, ams.id_scan, ams.id_anagrafica, ams.id_somministrazione, ams.dynamo_user, ams.date_of_scan, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_azienda€', ams.id_anagrafica) AS descr_anagrafica, entrasp.onekyc_describe_aml_scan_data(ams.scan_data, ams.date_of_scan) AS descr_scan_data, CASE ams.scan_data->>'scanType' WHEN 'LIGHTSCAN' THEN 'Light Scan' ELSE 'Deep Scan' END AS scan_type FROM imports.aml_scans ams INNER JOIN (SELECT codice_azienda, id_sondaggio, id_somministrazione FROM entrasp.sondaggi_somministrati WHERE codice_azienda='€global_codice_azienda€') ss ON ams.id_somministrazione = ss.id_somministrazione and ams.codice_azienda=ss.codice_azienda inner join entrasp.modelli_test mt on dm.codice_azienda=mt.codice_azienda and dm.id_modello_test=mt.id_modello_test and dm.id_modello_test_vr=mt.id_modello_test_vr and dm.id_domanda=mt.id_domanda WHERE ams.codice_azienda = '€global_codice_azienda€' and mt.id_argomento=45421;"
         }
     ],
     "table_multiselection_actions": [
@@ -30,7 +30,7 @@
                     "icon": "edit",
                     "label": "Gestisci risposte",
                     "query": "",
-                    "customDialogEntryName": "dialog_onekyc",
+                    "customDialogEntryName": "dialog_gestisci_onekyc",
                     "customDialogTitle": "Gestisci corrispondenze"
                 }
             ]
