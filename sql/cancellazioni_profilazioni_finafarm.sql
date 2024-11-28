@@ -1,97 +1,96 @@
-WITH dominio_base AS (
-    SELECT
-        ss.object_key,
-        snd.data_prevista,
-        entrasp.anagrafiche_cognnome(ss.codice_part, (split_part(ss.object_key, '|', 2)::numeric)) AS cognome_nome,
-        ss.id_somministrazione,
-        ss.codice_part,
-        snd.id_sondaggio
-    FROM
-        entrasp.sondaggi_somministrati ss
-    INNER JOIN
-        entrasp.sondaggi snd
-    USING
-        (codice_azienda, id_sondaggio)
-    WHERE
-        ss.codice_azienda = 'FINAFARM'
-        AND snd.id_modello_test = 526
-        AND snd.id_sondaggio NOT IN (
-            SELECT id_sondaggio
-            FROM entrasp.progetti_fasi
-            WHERE codice_azienda = 'FINAFARM'
-              AND id_sondaggio IS NOT NULL
-        )
-        AND snd.id_sondaggio NOT IN (
-            SELECT id_sondaggio
-            FROM entrasp.risposte
-            WHERE codice_azienda = 'FINAFARM'
-              AND id_sondaggio IS NOT NULL
-        )
-),
-object_key_con_contratti_chiusi AS (
-    SELECT 
-        CONCAT(codice_part, '|', id_cliente) AS ok_chiusi,
-        COUNT(id_contratto) AS contratto_count
-    FROM 
-        entrasp.contratti 
+WITH base_query AS (
+        SELECT  
+            snd.codice_azienda, 
+            coalesce(snd.data_esecuzione, snd.data_prevista) as data_esecuzione,
+            entrasp.scadenza_profilazione(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) AS data_scadenza,
+            ss.id_sondaggio, 
+            ss.id_somministrazione,
+            ss.object_key, 
+            ss.object_name,
+            entrasp.conta_sondaggi_successivi_entro_scadenza_incl_futuri(snd.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) AS conta,
+            fn.*, -- Colonne della funzione laterale
+            CASE 
+                WHEN CURRENT_DATE < entrasp.scadenza_profilazione(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) THEN 'Non scaduto' 
+                ELSE 'Scaduto' 
+            END AS scad_non_scad
+        FROM 
+            entrasp.sondaggi_somministrati ss
+        INNER JOIN 
+            entrasp.sondaggi snd
+        ON 
+            ss.codice_azienda = snd.codice_azienda 
+            AND ss.id_sondaggio = snd.id_sondaggio
+        LEFT JOIN LATERAL 
+            entrasp.sondaggi_successivi_entro_scadenza_incl_futuri(
+                ss.codice_azienda, 
+                ss.id_sondaggio, 
+                ss.id_somministrazione
+            ) AS fn
+        ON TRUE
+        WHERE 
+            snd.codice_azienda = 'FINAFARM'
+            AND snd.id_modello_test = 526
+						and ss.object_key = 'FINAFARM|14691'
+    ),
+    max_conta_query AS (
+        SELECT 
+            object_key, 
+            object_name, 
+            MAX(conta) AS max_conta
+        FROM 
+            base_query
+        WHERE 
+            conta > 1
+        GROUP BY 
+            object_key, 
+            object_name
+    ),
+    sondaggi_da_cancellare AS (
+        SELECT 
+            
+            bq.data_esecuzione,
+            bq.data_scadenza,
+            entrasp.scadenza_profilazione(bq.codice_azienda, bq.id_sondaggio, bq.id_somministrazione) AS dt_scad_orig,
+            bq.id_somministrazione, 
+            bq.object_key, 
+            bq.object_name,  
+            bq.*, -- Include le colonne derivate da fn nel base_query
+            CASE 
+                WHEN bq.prog = bq.max_prog THEN 'Ultimo' 
+                ELSE 'Non ultimo' 
+            END AS progressivo,
+            bq.scad_non_scad,
+            CASE 
+                WHEN bq.prog < bq.max_prog 
+                THEN 'Delete' 
+                ELSE 'Keep' 
+            END AS D_K
+        FROM 
+            base_query bq
+        INNER JOIN 
+            max_conta_query mcq
+        ON 
+            bq.object_key = mcq.object_key 
+            AND bq.conta = mcq.max_conta
+        WHERE 
+            bq.conta > 1
+    )
+    -- Esegue la cancellazione per i sondaggi contrassegnati come 'Delete'
+    SELECT *   --entrasp.sondaggio_delete(sdc.codice_azienda, sdc.idsond)
+    FROM sondaggi_da_cancellare sdc 
+	
     WHERE 
-        codice_part = 'FINAFARM' 
-        AND stato not in('C', 'N')
-        AND id_cliente IS NOT NULL
-    GROUP BY 
-        codice_part, id_cliente
-    HAVING 
-        COUNT(id_contratto) = 0
-)
-SELECT *
-FROM dominio_base
-WHERE object_key IN (
-    SELECT ok_chiusi
-    FROM object_key_con_contratti_chiusi
-);
-
-
-
-
-
-
-
-
-
-
-sotto_dominio AS (
-    SELECT DISTINCT ON (db.object_key, db.data_prevista)
-        db.object_key,
-        db.data_prevista,
-        db.cognome_nome,
-        db.id_somministrazione,
-        db.codice_part,
-        db.id_sondaggio
-    FROM
-        dominio_base db
-    INNER JOIN (
-        SELECT
-            object_key,
-            MIN(data_prevista) AS data_inizio
-        FROM
-            dominio_base
-        GROUP BY
-            object_key
-    ) t_min
-    ON db.object_key = t_min.object_key
-    WHERE
-        db.data_prevista <= t_min.data_inizio + INTERVAL '40 days'
-    ORDER BY
-        db.object_key,
-        db.data_prevista
-),
-sotto_dominio_con_rn AS (
-    SELECT
-        sd.*,
-        ROW_NUMBER() OVER (PARTITION BY sd.object_key ORDER BY sd.data_prevista) AS row_number
-    FROM
-        sotto_dominio sd
-)
-SELECT *
-FROM sotto_dominio_con_rn
-where row_number>1;
+		D_K = 'Delete'
+     -- AND sdc.idsond NOT IN (
+     --      SELECT sdc2.idsond
+     --      FROM sondaggi_da_cancellare sdc2 
+     --      WHERE sdc2.D_K = 'Keep'
+     --  )
+			-- And 
+			-- sdc.idsond not in (
+			-- 	select id_sondaggio from entrasp.progetti_fasi where codice_azienda='FINAFARM' and id_sondaggio is not null
+			-- )
+			And sdc.idsond not in (
+				select id_sondaggio from entrasp.risposte where codice_azienda='FINAFARM'
+			 )
+				order by idsond desc
