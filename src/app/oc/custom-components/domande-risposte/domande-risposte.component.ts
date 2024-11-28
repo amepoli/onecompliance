@@ -1013,74 +1013,75 @@ export class DomandeRisposteComponent implements OnChanges
             if(x.condition && x.condition.length > 0) {
                 x.condition.forEach(c => {
                     const destElIndex = _this.data.findIndex(y => y.id_domanda === c.id_domanda);
-                    const destElType = _this.data[destElIndex].type;
+                    if(destElIndex > -1) {
+                        const destElType = _this.data[destElIndex].type;
 
-                    let id_risposta_prev = null;
-                    if(initialCheck) {
-                        const destEl = this.data[destElIndex];
-                        if(destEl.type === 'radiobutton' || destEl.type === 'combobox') {
-                            id_risposta_prev = destEl.risposte_previste_options?.find((x: any) => x.chosen === true)?.id_risposta_prev ?? null;
-                        }
-                        else if(destEl.type === 'checkboxgroup') {
-                            id_risposta_prev = destEl.risposte_previste_options?.filter((x: any) => x.chosen === true)?.map(x => x.id_risposta_prev) ?? null                                
-                        }
-                        else if(destEl.type === 'text') {
-                            id_risposta_prev = destEl.risposta_text;
-                        }
-                        else if(destEl.type === 'date') {
-                            id_risposta_prev = destEl.risposta_data;
-                        }
-                        else if(destEl.type === 'number') {
-                            id_risposta_prev = destEl.risposta_num;
-                        }
-                    }
-                    else {
-                        const targetForm: UntypedFormGroup = _this.getTargetFormByOrdinamento(_this.data[destElIndex].ordinamento);
-
-                        let values = _this._formsService.processFormValues(targetForm.value);
-                        id_risposta_prev = values.risposte_previste;
-
-                        if(destElType === 'checkboxgroup') {
-                            id_risposta_prev = id_risposta_prev.replace("ARRAY[", "").replace("]", "").split(',').map(x => parseInt(x));
-                        }
-                    }
-
-                    if(c.condition === "equal") {
-                        if(destElType === 'checkboxgroup') {
-                            if(!id_risposta_prev || !id_risposta_prev.includes(c.id_risposta_prev)) {
-                                isHidden = true;
+                        let id_risposta_prev = null;
+                        if(initialCheck) {
+                            const destEl = this.data[destElIndex];
+                            if(destEl.type === 'radiobutton' || destEl.type === 'combobox') {
+                                id_risposta_prev = destEl.risposte_previste_options?.find((x: any) => x.chosen === true)?.id_risposta_prev ?? null;
+                            }
+                            else if(destEl.type === 'checkboxgroup') {
+                                id_risposta_prev = destEl.risposte_previste_options?.filter((x: any) => x.chosen === true)?.map(x => x.id_risposta_prev) ?? null                                
+                            }
+                            else if(destEl.type === 'text') {
+                                id_risposta_prev = destEl.risposta_text;
+                            }
+                            else if(destEl.type === 'date') {
+                                id_risposta_prev = destEl.risposta_data;
+                            }
+                            else if(destEl.type === 'number') {
+                                id_risposta_prev = destEl.risposta_num;
                             }
                         }
                         else {
-                            if(id_risposta_prev !== c.id_risposta_prev) {
+                            const targetForm: UntypedFormGroup = _this.getTargetFormByOrdinamento(_this.data[destElIndex].ordinamento);
+
+                            let values = _this._formsService.processFormValues(targetForm.value);
+                            id_risposta_prev = values.risposte_previste;
+
+                            if(destElType === 'checkboxgroup') {
+                                id_risposta_prev = id_risposta_prev.replace("ARRAY[", "").replace("]", "").split(',').map(x => parseInt(x));
+                            }
+                        }
+
+                        if(c.condition === "equal") {
+                            if(destElType === 'checkboxgroup') {
+                                if(!id_risposta_prev || !id_risposta_prev.includes(c.id_risposta_prev)) {
+                                    isHidden = true;
+                                }
+                            }
+                            else {
+                                if(id_risposta_prev !== c.id_risposta_prev) {
+                                    isHidden = true;
+                                }
+                            }
+                        }
+                        else if(c.condition === "notEqual") {
+                            if(destElType === 'checkboxgroup') {
+                                if(id_risposta_prev.includes(c.id_risposta_prev)) {
+                                    isHidden = true;
+                                }
+                            }
+                            else {
+                                if(id_risposta_prev === c.id_risposta_prev) {
+                                    isHidden = true;
+                                }
+                            }
+                        }
+                        else if(c.condition === "greaterThan") {
+                            if(id_risposta_prev <= c.id_risposta_prev) {
                                 isHidden = true;
                             }
                         }
-                    }
-                    else if(c.condition === "notEqual") {
-                        if(destElType === 'checkboxgroup') {
-                            if(id_risposta_prev.includes(c.id_risposta_prev)) {
+                        else if(c.condition === "lessThan") {
+                            if(id_risposta_prev >= c.id_risposta_prev) {
                                 isHidden = true;
                             }
-                        }
-                        else {
-                            if(id_risposta_prev === c.id_risposta_prev) {
-                                isHidden = true;
-                            }
-                        }
-                    }
-                    else if(c.condition === "greaterThan") {
-                        if(id_risposta_prev <= c.id_risposta_prev) {
-                            isHidden = true;
-                        }
-                    }
-                    else if(c.condition === "lessThan") {
-                        if(id_risposta_prev >= c.id_risposta_prev) {
-                            isHidden = true;
                         }
                     }
                 });
-
                 _this.data[i].isHidden = isHidden;
             }
             
