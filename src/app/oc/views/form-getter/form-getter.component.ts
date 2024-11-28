@@ -14,6 +14,7 @@ import { MenuOptionsCustomDialogComponent } from "app/oc/dialogs/menu-options-cu
 import { FileManagerService } from "app/main/apps/file-manager/file-manager.service";
 
 import { memoize } from "app/oc/decorators/memoize";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
     selector: "form-getter",
@@ -117,7 +118,8 @@ export class FormGetterComponent
         public cutomDialog: MatDialog,
         private _fileService: FileManagerService,
         private _formsService: FormsService,
-        private _emailService: EmailService
+        private _emailService: EmailService,
+        private _translateService: TranslateService
     ) {}
 
     @memoize()
@@ -1151,6 +1153,56 @@ export class FormGetterComponent
         // _this._console.log(`keyListener: ${keyListener}`);
         _this._console.log(event, value, keyListener);
 
+        // not a ViewProperties event, check the condition if any -- TODO: support other conditions beyond equalTo
+        let conditionMet = true;
+
+        if (event.condition != null) {
+            let msgData: any[];
+            if(event.valueKey) {
+                const formValues = _this.formArray.toArray()[value.index].form.value;
+                console.log(event.valueKey);
+                msgData = Array.isArray(formValues[event.valueKey]) ? 
+                    formValues[event.valueKey]: 
+                    [formValues[event.valueKey]];
+            }
+            else {
+                msgData = Array.isArray(value.data) ? value.data : [value.data];
+            }
+            
+            msgData = msgData.map((m) =>
+                m === true || m === "true" || m === "t"
+                    ? "1"
+                    : m === false || m === "false" || m === "f"
+                      ? "0"
+                      : m,
+            );
+
+            // normalize if boolean conditions
+            let eventValues: any = event.values.map((v) =>
+                v === "true" ? "1" : v === "false" ? "0" : v,
+            );
+
+            // handle jolly chars
+            eventValues = eventValues.map((e) =>
+                e === "*" ? msgData[eventValues.indexOf(e)] : e,
+            );
+            if (event.condition === "equalTo") {
+                // Check each element instead of comparing arrays as string like before
+                msgData.forEach((curValue: any) => {
+                    if (!eventValues.includes(curValue)) {
+                        conditionMet = false;
+                    }
+                });
+            } else if (event.condition === "notEqualTo") {
+                // Check each element instead of comparing arrays as string like before
+                msgData.forEach((curValue: any) => {
+                    if (eventValues.includes(curValue)) {
+                        conditionMet = false;
+                    }
+                });
+            }
+        }
+
         // check  if this is a formRowProperties event
         if (event.actionType === "showRow" && event.condition === "equalTo") {
             // Check if formRowProperties contains keys
@@ -1257,43 +1309,7 @@ export class FormGetterComponent
             }
             return;
         }
-        // not a ViewProperties event, check the condition if any -- TODO: support other conditions beyond equalTo
-        let conditionMet = true;
-
-        if (event.condition != null) {
-            // normalize if boolean conditions
-            let eventValues = event.values.map((v) =>
-                v === "true" ? "1" : v === "false" ? "0" : v,
-            );
-            let msgData = Array.isArray(value.data) ? value.data : [value.data];
-            msgData = msgData.map((m) =>
-                m === true || m === "true" || m === "t"
-                    ? "1"
-                    : m === false || m === "false" || m === "f"
-                      ? "0"
-                      : m,
-            );
-            // handle jolly chars
-            eventValues = eventValues.map((e) =>
-                e === "*" ? msgData[eventValues.indexOf(e)] : e,
-            );
-            if (event.condition === "equalTo") {
-                // Check each element instead of comparing arrays as string like before
-                msgData.forEach((curValue: any) => {
-                    if (!eventValues.includes(curValue)) {
-                        conditionMet = false;
-                    }
-                });
-            } else if (event.condition === "notEqualTo") {
-                // Check each element instead of comparing arrays as string like before
-                msgData.forEach((curValue: any) => {
-                    if (eventValues.includes(curValue)) {
-                        conditionMet = false;
-                    }
-                });
-            }
-        }
-
+        
         if (
             event.actionType === "show" ||
             event.actionType === "hide" ||
@@ -2129,41 +2145,63 @@ export class FormGetterComponent
         } else if (event.actionType === "regulat_api") {
             _this.runRegulatEvent(event, value, keyListener);
         } else if (event.actionType === "user_api") {
-            _this.runUserManagementEvent(event, value, keyListener);
+            if(conditionMet) {
+                _this.runUserManagementEvent(event, value, keyListener);
+            }
+            else {
+                _this.showConditionNotMetMessage(event);
+            }
         } else if (event.actionType === "dialog") {
-            let data = { ...event, keys: {} };
-            _this.viewKeys
-                .filter((x) => x.isPrimary)
-                .forEach((viewKey: FormViewKey) => {
-                    data.keys[viewKey.key] = value.valueSet[viewKey.key];
-                });
-            data.keys = { ...data.keys, ..._this.currentKeys };
-            const dialogRef = _this.cutomDialog.open(
-                MenuOptionsCustomDialogComponent,
-                {
-                    width: "1280px",
-                    height: "auto",
-                    data: data,
-                },
-            );
-
-            const dialogRefSub = dialogRef.afterClosed().subscribe(
-                (response: any) => {
-                    dialogRefSub.unsubscribe();
-                    if (event.outputEventWhenComplete != null) {
-                        _this.pubSubService.publishEvent(
-                            event.outputEventWhenComplete,
-                            value,
-                        );
-                    }
-                },
-                (error: any) => {
-                    dialogRefSub.unsubscribe();
-                },
-            );
+            if(conditionMet) {
+                let data = { ...event, keys: {} };
+                _this.viewKeys
+                    .filter((x) => x.isPrimary)
+                    .forEach((viewKey: FormViewKey) => {
+                        data.keys[viewKey.key] = value.valueSet[viewKey.key];
+                    });
+                data.keys = { ...data.keys, ..._this.currentKeys };
+                const dialogRef = _this.cutomDialog.open(
+                    MenuOptionsCustomDialogComponent,
+                    {
+                        width: "1280px",
+                        height: "auto",
+                        data: data,
+                    },
+                );
+    
+                const dialogRefSub = dialogRef.afterClosed().subscribe(
+                    (response: any) => {
+                        dialogRefSub.unsubscribe();
+                        if (event.outputEventWhenComplete != null) {
+                            _this.pubSubService.publishEvent(
+                                event.outputEventWhenComplete,
+                                value,
+                            );
+                        }
+                    },
+                    (error: any) => {
+                        dialogRefSub.unsubscribe();
+                    },
+                );
+            }
+            else {
+                _this.showConditionNotMetMessage(event);
+            }
         }
+        
     }
 
+    showConditionNotMetMessage(event: any) {
+        const _this = this;
+        let conditionNotMetMessage = "Condition not met";
+        if(event.conditionNotMetMessageTranslate){
+            conditionNotMetMessage = _this._translateService.instant(event.conditionNotMetMessageTranslate);
+        }
+        else if(event.conditionNotMetMessageLabel){
+            conditionNotMetMessage = event.conditionNotMetMessageLabel;
+        }
+        _this._toastService.showErrorToast(conditionNotMetMessage);
+    }
     
     async runGoogleEvent(event, value, keyListener) {
         let _this = this;
