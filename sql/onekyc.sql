@@ -1,3 +1,70 @@
+
+SELECT ENTRASP.ONEKYC_PROCESS_AML_SCANS(
+	codice_azienda,
+	ID_SOMMINISTRAZIONE ,
+	ID_SONDAGGIO)
+FROM ENTRASP.SONDAGGI_SOMMINISTRATI
+WHERE CODICE_AZIENDA='FINAFARM' AND ID_SONDAGGIO=42634;
+
+select id_somministrazione
+from entrasp.sondaggi
+where codice_azienda='FINAFARM' and id_sondaggio=42634
+
+delete from entrasp.risposte
+where codice_azienda='FINAFARM' and id_sondaggio=42634
+
+select id_scan, anti_money_laundering, anti_money_laundering='[]'
+	from imports.aml_scans
+	where codice_azienda='QUANTYX' 
+	and id_sondaggio=42634
+
+	select count(id_scan)
+	from imports.aml_scans
+	where codice_azienda='FINAFARM' 
+	and id_sondaggio=42634
+	and anti_money_laundering='[]'
+
+
+select id_scan, date_of_scan, id_somministrazione, id_sondaggio, id_anagrafica, risultati_scan
+FROM imports.aml_scans
+where id_somministrazione=54849 and codice_azienda='FINAFARM'	 
+
+select codice_azienda
+from  imports.aml_scans
+order by date_of_scan desc
+
+select codice_azienda, max(date_of_scan), count(id_scan),
+from  imports.aml_scans
+group by codice_azienda
+
+
+DROP TRIGGER IF EXISTS trigger_aml_scan_after_insert ON imports.aml_scans;
+
+CREATE OR REPLACE TRIGGER trigger_aml_scan_after_insert
+    AFTER INSERT or UPDATE
+    ON imports.aml_scans
+    FOR EACH ROW
+    EXECUTE FUNCTION imports.aml_scan_aggiorna_dati_tabella();
+
+update imports.aml_scans
+set risposta_estesa='a'
+where codice_azienda='FINAFARM' and date_of_Scan='2024-11-22'
+
+
+CREATE TRIGGER trigger_aml_scan_after_insert
+AFTER INSERT
+ON imports.aml_scans
+FOR EACH ROW
+EXECUTE FUNCTION imports.aml_scan_aggiorna_dati_tabella();
+
+
+
+
+
+select codice_azienda, date_of_scan, id_scan, id_somministrazione, id_sondaggio
+from imports.aml_scans
+where codice_azienda='QUANTYX' and date_of_Scan='2024-11-29'
+
 /* 
 
 select snd.data_esecuzione, snd.id_sondaggio, rs.id_somministrazione, length(note), rs.note

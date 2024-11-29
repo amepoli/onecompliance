@@ -1,4 +1,7 @@
---select count(id_sondaggio) from entrasp.sondaggi where codice_azienda='FINAFARM' --35933
+--select count(id_sondaggio) from entrasp.sondaggi where codice_azienda='FINAFARM' and id_modello_test=526 --35924
+---- individuazione dei sondaggi da cancellare
+
+--select count(id_sondaggio) from entrasp.sondaggi where codice_azienda='FINAFARM' --35933  36147
 ---- individuazione dei sondaggi da cancellare
 
 WITH sondaggi_con_scadenza_nel_futuro AS (
@@ -40,8 +43,10 @@ ORDER BY
     COALESCE(snd.data_esecuzione, snd.data_prevista)
     )	
        select *
-	   from sondaggi_con_scadenza_nel_futuro
+	   from sondaggi_con_scadenza_nel_futuro snf
+	--   where rn>1
 	   where rn>1
+	 --  AND object_key = 'FINAFARM|15472'
 	   and id_sondaggio NOT IN (
         SELECT 
             rs.id_sondaggio 
@@ -53,10 +58,9 @@ ORDER BY
     )
 	   order by object_key;
 
-	
- SET session_replication_role = replica;
 
---- cancellazione sondaggi nel futuro
+	--- cancellazione sondaggi nel futuro
+ SET session_replication_role = replica;
 
 WITH sondaggi_con_scadenza_nel_futuro AS (
    SELECT  
@@ -134,7 +138,7 @@ USING
     (codice_azienda, id_sondaggio)
 WHERE 
     snd.codice_azienda = 'FINAFARM' 
- --   AND ss.object_key = 'FINAFARM|14691'
+    AND ss.object_key = 'FINAFARM|14825'
     AND snd.id_modello_test = 526
     AND entrasp.scadenza_profilazione_estesa(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) > CURRENT_DATE
     and ss.stato != 'C'
@@ -150,51 +154,46 @@ WHERE
 ORDER BY 
     ss.object_key, 
     COALESCE(snd.data_esecuzione, snd.data_prevista)
-    ), aggiorna_ss as	(
-		update entrasp.sondaggi_somministrati ss
-		set id_sondaggio_succ=snf.id_sondaggio,
-		id_somministrazione_succ=snf.id_somministrazione
-		from entrasp.sondaggi snd, sondaggi_con_scadenza_nel_futuro snf
-		where ss.codice_azienda='FINAFARM' 
-		and snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio
-		and ss.object_key=snf.object_key
-		and snd.id_modello_test=526 
-		and snf.rn=1
-		and snf.data_prevista>ss.data_esecuzione
-		and ss.id_somministrazione_succ is null
-		AND entrasp.scadenza_profilazione_estesa(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) > CURRENT_DATE)
+    )
+/*	
+select ss.id_sondaggio, ss.id_somministrazione, snd.data_prevista,ss.data_esecuzione as dt_esec_ss, snd.data_esecuzione as dt_esec_snd, 
+snd.id_sondaggio_succ, ss.id_sondaggio_succ, ss.id_somministrazione_succ 
+from entrasp.sondaggi snd, entrasp.sondaggi_somministrati ss, sondaggi_con_scadenza_nel_futuro snf
+where ss.codice_azienda='FINAFARM' 
+and ss.object_key='FINAFARM|15472'
+and snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio
+and ss.object_key=snf.object_key
+and snd.id_modello_test=526 
+and snf.rn=1
+and snf.data_prevista>ss.data_esecuzione
+and (ss.id_somministrazione_succ is null or ss.id_sondaggio_succ is null)
+AND entrasp.scadenza_profilazione_estesa(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) > CURRENT_DATE;
+*/
 
-		update entrasp.sondaggi snd
-		set id_sondaggio_succ=snf.id_sondaggio
-		from entrasp.sondaggi_somministrati ss, sondaggi_con_scadenza_nel_futuro snf
-		where ss.codice_azienda='FINAFARM' 
-		and snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio
-		and ss.object_key=snf.object_key
-		and snd.id_modello_test=526 
-		and snf.rn=1
-		and snf.data_prevista>ss.data_esecuzione
-		and ss.id_somministrazione_succ is null
-		AND entrasp.scadenza_profilazione_estesa(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) > CURRENT_DATE
-	;
+update entrasp.sondaggi snd
+set id_sondaggio_succ=snf.id_sondaggio
+from entrasp.sondaggi_somministrati ss, sondaggi_con_scadenza_nel_futuro snf
+where ss.codice_azienda='FINAFARM' 
+and ss.object_key='FINAFARM|14825'
+and snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio
+and ss.object_key=snf.object_key
+and snd.id_modello_test=526 
+and snf.rn=1
+and snf.data_prevista>ss.data_esecuzione
+and (ss.id_somministrazione_succ is null or ss.id_sondaggio_succ is null)
+AND entrasp.scadenza_profilazione_estesa(ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione) > CURRENT_DATE;
+
 SET session_replication_role = origin;
+
+
+
+-----
 
 select entrasp.close_somministrazione_sondaggio_insert_following(ss.codice_azienda, ss.id_somministrazione, ss.id_sondaggio, user_update) 
 from entrasp.sondaggi_somministrati ss
 inner join entrasp.sondaggi snd
 on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio_succ=snd.id_sondaggio
 where ss.codice_azienda='FINAFARM' 
-and ss.id_sondaggio=41423
---and ss.object_key='FINAFARM|15472'
-and snd.id_modello_test=526 and snd.stato!='C'
-and ss.stato='C'
-
-
-select entrasp.close_somministrazione_sondaggio_insert_following(ss.codice_azienda, ss.id_somministrazione, ss.id_sondaggio, user_update) 
-from entrasp.sondaggi_somministrati ss
-inner join entrasp.sondaggi snd
-on ss.codice_azienda=snd.codice_azienda and (ss.id_sondaggio_succ=snd.id_sondaggio or ss.id_sondaggio_succ is null)
-where ss.codice_azienda='FINAFARM' 
-and ss.id_sondaggio=41423
 and ss.object_key='FINAFARM|15472'
 and snd.id_modello_test=526 and snd.stato!='C'
 and ss.stato='C'
@@ -226,6 +225,5 @@ update entrasp.sondaggi_somministrati
 set stato='P'
 where codice_azienda='FINAFARM'
 and id_somministrazione=43965
-
 
 
