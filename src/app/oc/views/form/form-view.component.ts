@@ -323,6 +323,13 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     if (element === null) {
                         // continue; // skip null entries
                     }
+                    // To make all checkboxgroup empty arrays as "null"
+                    // else if(Array.isArray(element) && element.length == 0) {
+                    //     const targetKey = _this.formGetter.viewKeys.filter(x => x.key === value)[0];
+                    //     if (targetKey.format.viewType === 'checkboxgroup') {
+                    //         values[value] = "null";
+                    //     }
+                    // }
                     else {
                         // make '' -> null
                         if (element === '') {
