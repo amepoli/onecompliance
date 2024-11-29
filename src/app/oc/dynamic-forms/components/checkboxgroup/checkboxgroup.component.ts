@@ -67,7 +67,7 @@ export class CheckboxGroupComponent implements OnInit {
             _this.field.value = [];
         } else {
             const targetType = typeof _this.field.value[0];
-            _this.field.options.forEach((option) => {
+            _this.field.options.forEach((option, i) => {
                 let id: any = option.id;
                 if (typeof id !== targetType) {
                     if (targetType === "number") {
@@ -75,6 +75,7 @@ export class CheckboxGroupComponent implements OnInit {
                     } else if (targetType === "string") {
                         id = "" + id;
                     }
+                    _this.field.options[i].id = id;
                 }
 
                 const selected =
@@ -101,18 +102,18 @@ export class CheckboxGroupComponent implements OnInit {
         }, 50);
     }
 
-    onCheck(id: number, checked: boolean): void {
+    onCheck(i: number, checked: boolean): void {
         const _this = this;
 
-        this.selection[id] = checked ? 1 : 0;
+        this.selection[i] = checked ? true : false;
         
-        var index = _this.field.value.indexOf(_this.field.options[id].id);
+        var valueIndex = _this.field.value.indexOf(_this.field.options[i].id);
 
-        if (index > -1 && !checked) {
+        if (valueIndex > -1 && !checked) {
             //remove an existing element from value array
-            _this.field.value.splice(index, 1);
-        } else if (checked && index === -1) {
-            _this.field.value.push(_this.field.options[id].id);
+            _this.field.value.splice(valueIndex, 1);
+        } else if (checked && valueIndex === -1) {
+            _this.field.value.push(_this.field.options[i].id);
         }
 
         _this.group.get(_this.field.name).setValue(_this.field.value);
