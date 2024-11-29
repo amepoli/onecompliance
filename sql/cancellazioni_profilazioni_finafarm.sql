@@ -42,6 +42,15 @@ ORDER BY
        select *
 	   from sondaggi_con_scadenza_nel_futuro
 	   where rn>1
+	   and snd.id_sondaggio NOT IN (
+        SELECT 
+            rs.id_sondaggio 
+        FROM 
+            entrasp.risposta rs 
+        WHERE  
+            codice_azienda = 'FINAFARM'
+            AND rs.id_sondaggio IS NOT NULL
+    )
 	   order by object_key;
 
 	
