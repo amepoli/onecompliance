@@ -178,4 +178,54 @@ ORDER BY
 	;
 SET session_replication_role = origin;
 
+select entrasp.close_somministrazione_sondaggio_insert_following(ss.codice_azienda, ss.id_somministrazione, ss.id_sondaggio, user_update) 
+from entrasp.sondaggi_somministrati ss
+inner join entrasp.sondaggi snd
+on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio_succ=snd.id_sondaggio
+where ss.codice_azienda='FINAFARM' 
+and ss.id_sondaggio=41423
+--and ss.object_key='FINAFARM|15472'
+and snd.id_modello_test=526 and snd.stato!='C'
+and ss.stato='C'
+
+
+select entrasp.close_somministrazione_sondaggio_insert_following(ss.codice_azienda, ss.id_somministrazione, ss.id_sondaggio, user_update) 
+from entrasp.sondaggi_somministrati ss
+inner join entrasp.sondaggi snd
+on ss.codice_azienda=snd.codice_azienda and (ss.id_sondaggio_succ=snd.id_sondaggio or ss.id_sondaggio_succ is null)
+where ss.codice_azienda='FINAFARM' 
+and ss.id_sondaggio=41423
+and ss.object_key='FINAFARM|15472'
+and snd.id_modello_test=526 and snd.stato!='C'
+and ss.stato='C'
+
+select ss.codice_azienda, ss.id_somministrazione, ss.id_sondaggio, user_update 
+from entrasp.sondaggi_somministrati ss
+inner join entrasp.sondaggi snd
+on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio_succ=snd.id_sondaggio
+where ss.codice_azienda='FINAFARM' 
+--and ss.id_sondaggio=41423
+and ss.object_key='FINAFARM|15472'
+and snd.id_modello_test=526 and snd.stato!='C'
+and ss.stato='C'
+
+select * from entrasp.sondaggi_somministrati
+where id_sondaggio=41423 and codice_azienda='FINAFARM'
+
+
+update entrasp.sondaggi
+set id_sondaggio_succ=36749
+where id_sondaggio=41423 and codice_azienda='FINAFARM'
+--41423
+select id_sondaggio, id_somministrazione, id_sondaggio_succ, id_somministrazione_succ
+from entrasp.sondaggi_somministrati
+where codice_azienda='FINAFARM' and id_sondaggio=41423
+
+
+update entrasp.sondaggi_somministrati
+set stato='P'
+where codice_azienda='FINAFARM'
+and id_somministrazione=43965
+
+
 
