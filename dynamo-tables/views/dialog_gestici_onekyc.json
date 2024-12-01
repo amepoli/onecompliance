@@ -3,21 +3,27 @@
     "entryKey": "dialog_gestisci_onekyc",
     "predefinedQueries": [
         {
-            "operation": "update",
+            "operation": "insert",
             "type": "main",
-            "queryString": "update entrasp.crediti_ceduti cc1 set flag_pool=coalesce($flag_pool_combobox$, cc2.flag_pool), id_ricessione = coalesce($id_ricessione$, cc2.id_ricessione), opposto=coalesce($opposto_combobox$,cc2.opposto),azionato=coalesce($azionato_combobox$,cc2.azionato),lavorazione_legale=coalesce($lavorazione_legale_combobox$,cc2.lavorazione_legale), lotto = case  when coalesce($lotto_checkbox$::boolean,false) then null else coalesce($lotto$, cc2.lotto) end, id_contratto = coalesce($id_contratto$, cc2.id_contratto), tranche = case  when coalesce($tranche_checkbox$::boolean,false)  then null else coalesce($tranche$, cc2.tranche) end, data_fattura = coalesce($data_fattura$::date, cc2.data_fattura), n_fattura = coalesce($n_fattura$, cc2.n_fattura), importo = coalesce($importo$, cc2.importo), id_cedente = coalesce($id_cedente$, cc2.id_cedente), id_debitore_ceduto = coalesce($id_debitore_ceduto$, cc2.id_debitore_ceduto), id_tipo_documento = coalesce ($id_tipo_documento$, cc2.id_tipo_documento), cig = case  when coalesce($cig_checkbox$::boolean,false)  then null else coalesce($cig$, cc2.cig) end, id_avvocato = case  when coalesce($id_avvocato_checkbox$::boolean,false)  then null else coalesce($id_avvocato$, cc2.id_avvocato) end, autorita_giudiziaria = case  when coalesce($autorita_giudiziaria_checkbox$::boolean,false)  then null else coalesce($autorita_giudiziaria$, cc2.autorita_giudiziaria) end, id_fascicolo = case  when coalesce($fascicolo_checkbox$::boolean,false)  then null else coalesce($id_fascicolo$, cc2.id_fascicolo) end, note = coalesce($note$, cc2.note) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda = cc2.codice_azienda and cc1.id_cessione = cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€';"
+            "queryString": "select entrasp.aggiorna_aml_scan_massivo($$$selected_rows_data$$$, $riscontro$::numeric);"
+        },
+        {
+            "operation": "isInsert",
+            "type": "main",
+            "queryString": "select true as label"
         }
     ],
     "form_keys": [
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT *FROM (VALUES (6765, 'Sì'), (2372, 'No'),(49489, 'Sì da evidenze interne della società'),(2406, 'Non applicabile')) AS tab (id, name);",
+                "comboQuery": "SELECT * FROM (VALUES (6765, 'Reale corrispondenza'), (48623, 'Falso positivo'), (2406, 'Non applicabile')) AS tab (id, name);",
                 "options": [],
-                "viewType": "combobox"
+                "viewType": "combobox",
+                "dataType": "text"
             },
             "isHidden": false,
-            "isPrimary": false,
+            "isPrimary": true,
             "key": "riscontro",
             "label": "Riscontro",
             "newLine": false,
