@@ -1,10 +1,10 @@
-
+delete from entrasp.risposte where codice_azienda='FINAFARM' and id_sondaggio =34529 and id_somministrazione=38157;
 SELECT ENTRASP.ONEKYC_PROCESS_AML_SCANS(
 	codice_azienda,
 	ID_SOMMINISTRAZIONE ,
 	ID_SONDAGGIO)
 FROM ENTRASP.SONDAGGI_SOMMINISTRATI
-WHERE CODICE_AZIENDA='FINAFARM' AND ID_SONDAGGIO=42634;
+WHERE CODICE_AZIENDA='FINAFARM' AND ID_SONDAGGIO=34529 and id_somministrazione=38157;
 
 select id_somministrazione
 from entrasp.sondaggi
@@ -38,24 +38,10 @@ from  imports.aml_scans
 group by codice_azienda
 
 
-DROP TRIGGER IF EXISTS trigger_aml_scan_after_insert ON imports.aml_scans;
-
-CREATE OR REPLACE TRIGGER trigger_aml_scan_after_insert
-    AFTER INSERT or UPDATE
-    ON imports.aml_scans
-    FOR EACH ROW
-    EXECUTE FUNCTION imports.aml_scan_aggiorna_dati_tabella();
 
 update imports.aml_scans
 set risposta_estesa='a'
 where codice_azienda='FINAFARM' and date_of_Scan='2024-11-22'
-
-
-CREATE TRIGGER trigger_aml_scan_after_insert
-AFTER INSERT
-ON imports.aml_scans
-FOR EACH ROW
-EXECUTE FUNCTION imports.aml_scan_aggiorna_dati_tabella();
 
 
 
@@ -152,6 +138,14 @@ select * from imports.aml_scans
 where id_somministrazione=55268
 --codice_azienda='FINAFARM' and 
 id_anagrafica is null
+
+select codice_azienda, id_sondaggio, id_somministrazione, id_anagrafica
+from imports.aml_scans
+where id_argomento_risposta=48623
+and (codice_azienda, id_sondaggio) in(select codice_azienda, id_sondaggio from entrasp.sondaggi_somministrati 
+										group by codice_azienda, id_sondaggio having count(id_somministrazione)>1 )
+order by codice_azienda, id_sondaggio
+
 
 
 
