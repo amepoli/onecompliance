@@ -1,0 +1,35 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_duplica_templ_odg",
+    "predefinedQueries": [
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": "select entrasp.template_odg_riunione_duplica(id_odg_riunione::numeric,$id_templ_odg_duplicato$::numeric) FROM entrasp.template_odg_riunioni where id_odg_riunione::text=any(ARRAY[$selected_rows_data$])"
+        },
+        {
+            "operation": "isInsert",
+            "type": "main",
+            "queryString": "select true as label"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select id_templ_odg as id, id_templ_odg||' - '||titolo as name from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€') "
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_templ_odg_duplicato",
+            "label": "ID template OdG",
+            "newLine": false,
+            "size": 9,
+            "readOnly": false,
+            "translate": "RESOURCES.id_template_odg_template_odg_riunioni"
+        }
+    ]
+}

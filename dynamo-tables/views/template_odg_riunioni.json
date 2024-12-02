@@ -15,7 +15,25 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select id_templ_odg,id_templ_riunione, codice_azienda, id_argomento, n_giorno, ora_inizio, ora_fine,settore, entrasp.argomenti_array(id_argomento_funzione) as id_argomento_funzione,entrasp.argomenti_descr_breve_no_num(id_argomento_controllo) as id_argomento_controllo,entrasp.argomenti_descr_breve_no_num(id_argomento_liv_competenza) as id_argomento_liv_competenza,true as delete_templ_odg,entrasp.template_odg_descr(id_templ_odg) as titolo from entrasp.template_odg_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€') and id_templ_riunione=$id_templ_riunione$"
+            "queryString": "select id_odg_riunione, id_templ_odg,id_templ_riunione, codice_azienda, id_argomento, n_giorno, ora_inizio, ora_fine,settore, entrasp.argomenti_array(id_argomento_funzione) as id_argomento_funzione,entrasp.argomenti_descr_breve_no_num(id_argomento_controllo) as id_argomento_controllo,entrasp.argomenti_descr_breve_no_num(id_argomento_liv_competenza) as id_argomento_liv_competenza,true as delete_templ_odg,entrasp.template_odg_descr(id_templ_odg) as titolo from entrasp.template_odg_riunioni where (codice_azienda is null or codice_azienda='€global_codice_azienda€') and id_templ_riunione=$id_templ_riunione$"
+        }
+    ],
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "duplica_odg",
+                    "icon": "edit",
+                    "label": "Duplica",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_duplica_templ_odg",
+                    "customDialogTitle": "Duplica Ordine del Giorno"
+                }
+            ]
         }
     ],
     "form_keys": [
@@ -117,7 +135,7 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti where id_argomento in (52523, 52515)"
+                "comboQuery": "SELECT id_argomento as id, descrizione_breve as name FROM entrasp.argomenti where id_argomento in (52523, 52515, 53848)"
             },
             "label": "Tipo Verifica",
             "key": "id_argomento_controllo",
@@ -137,7 +155,7 @@
                 "comboQuery": "select id_templ_odg as id, id_templ_odg||' - '||titolo as name from entrasp.template_odg where (codice_azienda is null or codice_azienda='€global_codice_azienda€') "
             },
             "isHidden": false,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_templ_odg",
             "label": "ID template OdG",
             "newLine": false,
@@ -152,7 +170,7 @@
                 "viewType": "input"
             },
             "isHidden": true,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_templ_riunione",
             "label": "ID templ riunione",
             "newLine": false,
@@ -160,15 +178,28 @@
             "translate": "RESOURCES.id_templ_riunione_template_odg_riunioni"
         },
         {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_odg_riunione",
+            "label": "ID odg riunione",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
             "autoGenerate": false,
             "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_argomento",
-            "queryFunct": "select id_argomento from entrasp.template_odg where id_templ_odg=$id_templ_odg$",
+            "queryFunct": "select id_argomento from entrasp.template_odg where id_templ_odg=(select id_templ_odg from entrasp.template_odg_riunioni where id_odg_riunione=$id_odg_riunione$)",
             "label": "ID Argomento",
             "newLine": true,
             "size": 1,
@@ -274,9 +305,7 @@
             "showByFormKeyCondition": {
                 "key": "argomento_not_null",
                 "condition": "notEqualTo",
-                "values": [
-                    "1"
-                ]
+                "values": ["1"]
             },
             "label": "TAG",
             "renderingOrder": 1,
@@ -302,9 +331,9 @@
             ],
             "isButton": true,
             "buttonAction": {
-                "target": "template_odg",
+                "target": "template_odg_riunioni",
                 "viewType": "table",
-                "query": "delete from entrasp.template_odg where id_templ_riunione=£id_template_riunione£ and id_templ_odg=£id_templ_odg£",
+                "query": "delete from entrasp.template_odg_riunioni where id_templ_riunione=£id_templ_riunione£ and id_templ_odg=£id_templ_odg£",
                 "action": "query",
                 "keymap": [
                     {
@@ -330,6 +359,16 @@
             },
             "isHidden": false,
             "isPrimary": true,
+            "key": "id_odg_riunione",
+            "width": "3%",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "id_templ_odg",
             "width": "3%",
             "label": "ODG",
@@ -340,11 +379,10 @@
                 "dataType": "number"
             },
             "isHidden": true,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_templ_riunione",
             "width": "5%",
-            "label": "ID OdG",
-            "translate": "RESOURCES.id_odg_template_odg_riunioni"
+            "label": "ID OdG"
         },
         {
             "format": {
@@ -395,7 +433,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "ora_inizio",
-            "width": "4%",
+            "width": "6%",
             "label": "Dalle",
             "translate": "RESOURCES.dalle_template_odg_riunioni"
         },
@@ -406,7 +444,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "ora_fine",
-            "width": "4%",
+            "width": "6%",
             "label": "Alle",
             "translate": "RESOURCES.alle_template_odg_riunioni"
         },
@@ -417,7 +455,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "settore",
-            "width": "4%",
+            "width": "6%",
             "label": "Settore",
             "translate": "RESOURCES.settore_template_odg_riunioni"
         },
@@ -428,7 +466,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_controllo",
-            "width": "5%",
+            "width": "10%",
             "label": "Tipo Verifica",
             "translate": "RESOURCES.tipo_verifica_template_odg_riunioni"
         },
@@ -451,7 +489,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_liv_competenza",
-            "width": "6%",
+            "width": "15%",
             "label": "Auditor",
             "translate": "RESOURCES.auditor_template_odg_riunioni"
         },
@@ -462,13 +500,13 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_funzione",
-            "width": "10%",
+            "width": "15%",
             "label": "Funzione Auditata",
             "translate": "RESOURCES.funzione_auditata_template_odg_riunioni"
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by id_templ_odg"
+        "tableViewSuffix": "order by n_giorno, ora_inizio, id_templ_odg"
     },
     "hideActions": [
         {
