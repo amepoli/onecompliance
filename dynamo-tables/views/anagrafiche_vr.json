@@ -53,14 +53,8 @@
         {
             "operation": "insert",
             "type": "preCheck",
-            "queryString": "select avr.partita_iva from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and UPPER(avr.partita_iva)=UPPER($partita_iva$) and an.flag_duplicato!='1'",
-            "messageNotNull": "Attenzione esiste già un'anagrafica con la stessa partita IVA!"
-        },
-        {
-            "operation": "insert",
-            "type": "preCheck",
-            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null and $partita_iva$ is null limit 1",
-            "messageNotNull": "Attenzione: inserire codice fiscale o partita iva per continuare!"
+            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null limit 1",
+            "messageNotNull": "Attenzione: inserire codice fiscale per continuare!"
         },
         {
             "operation": "update",
@@ -73,12 +67,6 @@
             "type": "preCheck",
             "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.codice_fiscale)=UPPER($codice_fiscale$) and an.flag_duplicato!='1'",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
-        },
-        {
-            "operation": "update",
-            "type": "preCheck",
-            "queryString": "select avr.partita_iva from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.partita_iva)=UPPER($partita_iva$) and an.flag_duplicato!='1'",
-            "messageNotNull": "Attenzione esiste già un'anagrafica con la stessa partita IVA!"
         },
         {
             "operation": "update",
