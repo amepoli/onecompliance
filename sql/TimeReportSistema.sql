@@ -32,6 +32,13 @@ where dynamo_user like '%ivaldi%'
 order by giorno desc
 
 CALL entrasp.update_tr_quantyx();
+-- rendere i titoli delle fasi uguali a quelle nel modello di progetto
+update entrasp.sondaggi snd
+set titolo=att.descrizione
+from entrasp.progetti_fasi pf,entrasp.attivita att
+where pf.codice_azienda=att.codice_azienda and pf.attivita_vr=att.attivita_vr and pf.codice_attivita=att.codice_attivita
+and pf.id_sondaggio=snd.id_sondaggio and pf.codice_azienda=snd.codice_azienda and pf.codice_attivita is not null and pf.attivita_vr is not null
+and pf.codice_azienda='WISESGR'
 
 	
 select entrasp.aggiorna_giornate_e_users_da_rendicontare('givaldi')
