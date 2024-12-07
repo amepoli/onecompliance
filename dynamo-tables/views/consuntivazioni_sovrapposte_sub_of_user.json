@@ -130,6 +130,17 @@
         },
         {
             "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "minuti_sovrapposti",
+            "label": "Minuti sovrapposti",
+            "showTotal": true,
+            "width": "7%"
+        },
+        {
+            "format": {
                 "dataType": "datetime"
             },
             "isHidden": false,
@@ -198,11 +209,84 @@
             "format": {
                 "dataType": "text"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": false,
             "key": "dynamo_user",
             "label": "dynamo_user",
             "translate": "RESOURCES.dynamo_user_consuntivazioni_sovrapposte_sub_of_user"
+        }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "dynamo_user_s",
+            "format": {
+                "comboQuery": "SELECT username AS id, first_name||' '||last_name AS name FROM entrasp.users WHERE username in(select entrasp.colleghi('€global_username€')) order by first_name, last_name;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Utente",
+            "newLine": false,
+            "queryCond": "dynamo_user='$dynamo_user_s$'"
+        },
+        {
+            "fieldName": "date_time_begin_s",
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "label": "Data inizio",
+            "newLine": false,
+            "queryCond": "date_time_begin>=date_time_begin_s;"
+        },
+        {
+            "fieldName": "date_time_end_s",
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "label": "Data fine",
+            "newLine": true,
+            "queryCond": "date_time_begin<=date_time_end_s;"
+        },
+        {
+            "fieldName": "flag_current_month",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Mese corrente",
+            "newLine": false,
+            "queryCond": "date_time_begin BETWEEN date_trunc('month', CURRENT_DATE) AND (date_trunc('month', CURRENT_DATE)+interval '1 month' - interval '1 day');"
+        },
+        {
+            "fieldName": "flag_previous_month",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Mese precedente",
+            "newLine": false,
+            "queryCond": "date_time_begin BETWEEN date_trunc('month', CURRENT_DATE - interval '1 month') AND (date_trunc('month', CURRENT_DATE) - interval '1 day');"
+        },
+        {
+            "fieldName": "flag_current_year",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Anno corrente",
+            "newLine": false,
+            "queryCond": "date_time_begin BETWEEN date_trunc('year', CURRENT_DATE) AND (date_trunc('year', CURRENT_DATE)+interval '1 year' - interval '1 day');"
+        },
+        {
+            "fieldName": "flag_previous_year",
+            "format": {
+                "viewType": "checkbox",
+                "value": "0"
+            },
+            "label": "Anno precedente",
+            "newLine": false,
+            "queryCond": "date_time_begin BETWEEN date_trunc('year', CURRENT_DATE - interval '1 year) AND (date_trunc('year', CURRENT_DATE) - interval '1 day');"
         }
     ],
     "hideActions": [
