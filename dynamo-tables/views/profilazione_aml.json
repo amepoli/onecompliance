@@ -18,11 +18,6 @@
             "queryString": "SELECT mvr.flag_workflow, mvr.flag_sezioni, '€global_username€' as username, mdt.titolo as titolo_modello_test, snd.id_sondaggio_parent, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
         },
         {
-            "operation": "selectForm",
-            "type": "postProcessing",
-            "queryString": "SELECT mvr.flag_sezioni, mdt.titolo as titolo_modello_test, mdt.flag_applicazione_singola, snd.titolo, snd.id_modello_test, snd.id_modello_test_vr, snd.data_prevista, snd.data_comp from entrasp.sondaggi snd join entrasp.modelli_test mdt on mdt.codice_azienda=snd.codice_azienda and mdt.id_modello_test=snd.id_modello_test join entrasp.modelli_test_vr mvr on mvr.codice_azienda=snd.codice_azienda and mvr.id_modello_test=snd.id_modello_test and mvr.id_modello_test_vr=snd.id_modello_test_vr WHERE snd.codice_azienda=$codice_azienda$ AND id_sondaggio=$id_sondaggio$"
-        },
-        {
             "operation": "delete",
             "type": "main",
             "queryString": "select entrasp.somministrazione_delete($codice_azienda$, $id_somministrazione$)"
@@ -2700,7 +2695,7 @@
         "tableQueries": [
             {
                 "label": "Estrazione profilazioni AML",
-                "queryString": "SELECT ss.id_somministrazione, snd.id_sondaggio, ss.data_esecuzione, snd.id_modello_test, snd.id_modello_test_vr, entrasp.anagrafiche_vr_dati_identificativi (snd.codice_part,NULLIF(SPLIT_PART(ss.object_key, '|', 2), '')::NUMERIC) as object_description, ss.stato, ss.somministrazione_completata, snd.descrizione, snd.data_prevista,nullif(split_part(ss.object_key,'|',2),'')::numeric as id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=(case when ss.object_name='anagraficheId' then nullif(split_part(ss.object_key,'|',2),'')::numeric else null::numeric end)::numeric and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio) as ultimo_cliente_son_per_cliente_per_data_rett, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mtvr.id_risultato)::date as data_scadenza FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mv on snd.codice_azienda=mv.codice_azienda and snd.id_modello_test=mv.id_modello_test where ss.codice_azienda=$codice_azienda$ and mv.id_tipo_modello_test=50"
+                "queryString": "SELECT ss.id_somministrazione, snd.id_sondaggio, ss.data_esecuzione, snd.id_modello_test, snd.id_modello_test_vr, entrasp.anagrafiche_vr_dati_identificativi (snd.codice_part,NULLIF(SPLIT_PART(ss.object_key, '|', 2), '')::NUMERIC) as object_description, ss.stato, ss.somministrazione_completata, snd.descrizione, snd.data_prevista, nullif(split_part(ss.object_key,'|',2),'')::numeric as id_anagrafica_somministrazione, (select codice_fiscale from entrasp.anagrafiche_vr avr where id_anagrafica=(case when ss.object_name='anagraficheId' then nullif(split_part(ss.object_key,'|',2),'')::numeric else null::numeric end)::numeric and codice_part='€global_codice_part€' and prog_vr=entrasp.anagrafiche_vr_max('€global_codice_part€', id_anagrafica)), entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, snd.pct_da, snd.codice_azienda) as giudizio_sondaggio, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da, snd.codice_azienda) as giudizio_somministrazione, entrasp.modelli_test_risultati_righe_descr(mtvr.id_risultato, ss.pct_da_manuale, snd.codice_azienda) as giudizio_manuale, entrasp.is_max_modello_test_rett(ss.codice_azienda, ss.id_sondaggio) as ultimo_cliente_son_per_cliente_per_data_rett, (SELECT ss.data_esecuzione + (interval ' 1 days' * giorni_rischedulazione) FROM entrasp.modelli_test_risultati_righe WHERE codice_azienda=ss.codice_azienda AND pct_da = ss.pct_da AND id_risultato=mtvr.id_risultato)::date as data_scadenza FROM entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test_vr mtvr on snd.codice_azienda=mtvr.codice_azienda and snd.id_modello_test=mtvr.id_modello_test and snd.id_modello_test_vr=mtvr.id_modello_test_vr inner join entrasp.modelli_test mv on snd.codice_azienda=mv.codice_azienda and snd.id_modello_test=mv.id_modello_test where ss.codice_azienda=$codice_azienda$ and mv.id_tipo_modello_test=50"
             },
             {
                 "label": "Anomalie profilazioni AML",
@@ -2724,6 +2719,172 @@
             }
         ]
     },
+    "inputEvents": [
+        {
+            "eventName": "onSaveSomministrazione",
+            "actionType": "reload"
+        },
+        {
+            "eventName": "sondaggi_somministrati_reload",
+            "actionType": "reload"
+        },
+        {
+            "actionTarget": {
+                "name": "compiti",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito_created",
+                        "destination": "codice_compito"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_compito_created"
+        },
+        {
+            "actionTarget": {
+                "name": "sondaggi_ulteriori_elementi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "sondaggi_ulteriori_elementi"
+        },
+        {
+            "actionTarget": {
+                "name": "cpl_risultati_sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_riepilogo_risultati"
+        },
+        {
+            "actionTarget": {
+                "name": "sondaggi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_sondaggi_from_sondaggi_somministrati"
+        },
+        {
+            "actionTarget": {
+                "name": "clientela",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_anagrafica_somministrazione",
+                        "destination": "id_anagrafica"
+                    },
+                    {
+                        "source": "prog_vr",
+                        "destination": "prog_vr"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_anagrafica_from_sondaggi_somministrati"
+        },
+        {
+            "actionTarget": {
+                "name": "modelli_test_vr",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_modello_test",
+                        "destination": "id_modello_test"
+                    },
+                    {
+                        "source": "id_modello_test_vr",
+                        "destination": "id_modello_test_vr"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_modello_test_from_sondaggi_somministrati"
+        },
+        {
+            "actionTarget": {
+                "name": "progetti",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_progetto",
+                        "destination": "id_progetto"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_progetto_from_sondaggi_somministrati"
+        },
+        {
+            "actionTarget": {
+                "name": "progetti_fasi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    },
+                    {
+                        "source": "id_fase_orig",
+                        "destination": "id_fase"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_fase_origine"
+        }
+    ],
     "querySuffixes": {
         "tableViewSuffix": "order by ss.id_somministrazione desc limit 100"
     }
