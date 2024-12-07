@@ -6,7 +6,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "select * from entrasp.consuntivazioni_sovrapposte where dynamo_user=$dynamo_user$ and durata>5 and durata2>5",
+            "queryString": "select *, date_time_begin::date as data, case when date_time_end>date_time_begin2 then true else false end as anticipa_fine, case when date_time_begin2>date_time_end then true else false end as posticipa_inizio from entrasp.consuntivazioni_sovrapposte where dynamo_user=$dynamo_user$ and durata>5 and durata2>5",
             "type": "main"
         }
     ],
@@ -19,11 +19,107 @@
                 "dataType": "number"
             },
             "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "anticipa_fine",
+            "label": "End 1° before",
+            "style": [
+                {
+                    "button_icon": "arrow_back",
+                    "value": "*"
+                }
+            ],
+            "tooltip": "Anticipa la fine della consuntivazione 1 all'inizio della consuntivazione 2",
+            "isButton": true,
+            "buttonAction": {
+                "target": "consuntivazioni_sovrapposte",
+                "viewType": "table",
+                "query": "update entrasp.consuntivazioni csn1 set date_time_end=csn2.date_time_begin from entrasp.consuntivazioni csn2 where csn1.codice_azienda='£codice_azienda£' and csn1.id_cons=£id_cons£ and csn2.codice_azienda='£codice_azienda2£' and csn2.id_cons=£id_cons2£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_cons",
+                        "destination": "id_cons"
+                    },
+                    {
+                        "source": "codice_azienda2",
+                        "destination": "codice_azienda2"
+                    },
+                    {
+                        "source": "id_cons2",
+                        "destination": "id_cons2"
+                    }
+                ],
+                "onSuccessAction": "reload",
+                "confirmMessage": {
+                    "text": "Anticipare la fine della prima consuntivazione all'inizio della seconda? ATTENZIONE! L'effetto della modifica sarà efficace entro massimo 2 ore",
+                    "title": "Anticipo fine 1° consuntivazione"                    
+                }
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "posticipa_inizio",
+            "tooltip": "Posticipa l'inizio della consuntivazione 2 alla fine della consuntivazione 1",
+            "label": "Start 2° later",
+            "style": [
+                {
+                    "button_icon": "arrow_forward",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "consuntivazioni_sovrapposte",
+                "viewType": "table",
+                "query": "update entrasp.consuntivazioni csn2 set date_time_begin=csn1.date_time_end from entrasp.consuntivazioni csn1 where csn1.codice_azienda='£codice_azienda£' and csn1.id_cons=£id_cons£ and csn2.codice_azienda='£codice_azienda2£' and csn2.id_cons=£id_cons2£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_cons",
+                        "destination": "id_cons"
+                    },
+                    {
+                        "source": "codice_azienda2",
+                        "destination": "codice_azienda2"
+                    },
+                    {
+                        "source": "id_cons2",
+                        "destination": "id_cons2"
+                    }
+                ],
+                "onSuccessAction": "reload",
+                "confirmMessage": {
+                    "text": "Posticipare l'inizio fine della seconda consuntivazione alla fine  della prima? ATTENZIONE! L'effetto della modifica sarà efficace entro massimo 2 ore",
+                    "title": "Posticipo inizio 2° consuntivazione"                    
+                }
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
             "isPrimary": true,
             "key": "id_cons",
             "width": "5%",
             "label": "#",
-            "tooltip": "ID progressivo prima consuntivazione",
+            "tooltip": "Identificativo prima consuntivazione",
             "isInputButton": true,
             "buttonAction": {
                 "target": "consuntivazioni_consultant_list",
@@ -51,7 +147,7 @@
             "key": "id_cons2",
             "width": "5%",
             "label": "#2",
-            "tooltip": "ID progressivo seconda consuntivazione",
+            "tooltip": "Identificativo seconda consuntivazione",
             "isInputButton": true,
             "buttonAction": {
                 "target": "consuntivazioni_consultant_list",
@@ -59,7 +155,7 @@
                 "action": "navigate",
                 "keymap": [
                     {
-                        "source": "codice_azienda",
+                        "source": "codice_azienda2",
                         "destination": "codice_azienda"
                     },
                     {
@@ -163,18 +259,18 @@
         },
         {
             "format": {
-                "dataType": "time"
+                "dataType": "datetime"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "date_time_begin2",
-            "label": "Inizio2",
+            "label": "Inizio 2",
             "width": "8%",
             "translate": "RESOURCES.inizio2_consuntivazioni_sovrapposte_sub_of_user"
         },
         {
             "format": {
-                "dataType": "time"
+                "dataType": "datetime"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -211,6 +307,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "width": "10%",
             "key": "dynamo_user",
             "label": "dynamo_user",
             "translate": "RESOURCES.dynamo_user_consuntivazioni_sovrapposte_sub_of_user"
@@ -236,7 +333,7 @@
             },
             "label": "Data inizio",
             "newLine": false,
-            "queryCond": "date_time_begin>=date_time_begin_s;"
+            "queryCond": "date_time_begin>=date_time_begin_s"
         },
         {
             "fieldName": "date_time_end_s",
@@ -246,7 +343,7 @@
             },
             "label": "Data fine",
             "newLine": true,
-            "queryCond": "date_time_begin<=date_time_end_s;"
+            "queryCond": "date_time_begin<=date_time_end_s"
         },
         {
             "fieldName": "flag_current_month",
@@ -256,7 +353,7 @@
             },
             "label": "Mese corrente",
             "newLine": false,
-            "queryCond": "date_time_begin BETWEEN date_trunc('month', CURRENT_DATE) AND (date_trunc('month', CURRENT_DATE)+interval '1 month' - interval '1 day');"
+            "queryCond": "date_time_begin BETWEEN date_trunc('month', CURRENT_DATE) AND (date_trunc('month', CURRENT_DATE)+interval '1 month' - interval '1 day')"
         },
         {
             "fieldName": "flag_previous_month",
@@ -266,7 +363,7 @@
             },
             "label": "Mese precedente",
             "newLine": false,
-            "queryCond": "date_time_begin BETWEEN date_trunc('month', CURRENT_DATE - interval '1 month') AND (date_trunc('month', CURRENT_DATE) - interval '1 day');"
+            "queryCond": "date_time_begin BETWEEN date_trunc('month', CURRENT_DATE - interval '1 month') AND (date_trunc('month', CURRENT_DATE) - interval '1 day')"
         },
         {
             "fieldName": "flag_current_year",
@@ -276,7 +373,7 @@
             },
             "label": "Anno corrente",
             "newLine": false,
-            "queryCond": "date_time_begin BETWEEN date_trunc('year', CURRENT_DATE) AND (date_trunc('year', CURRENT_DATE)+interval '1 year' - interval '1 day');"
+            "queryCond": "date_time_begin BETWEEN date_trunc('year', CURRENT_DATE) AND (date_trunc('year', CURRENT_DATE)+interval '1 year' - interval '1 day')"
         },
         {
             "fieldName": "flag_previous_year",
@@ -286,7 +383,27 @@
             },
             "label": "Anno precedente",
             "newLine": false,
-            "queryCond": "date_time_begin BETWEEN date_trunc('year', CURRENT_DATE - interval '1 year) AND (date_trunc('year', CURRENT_DATE) - interval '1 day');"
+            "queryCond": "date_time_begin BETWEEN date_trunc('year', CURRENT_DATE - interval '1 year) AND (date_trunc('year', CURRENT_DATE) - interval '1 day')"
+        },
+        {
+            "fieldName": "ultimi_trenta_gg_s",
+            "format": {
+                "viewType": "toggle",
+                "value": "1"
+            },
+            "label": "Ultimi 30 gg",
+            "newLine": true,
+            "queryCond": "date_time_begin>=current_date- interval '30 days'"
+        },
+        {
+            "fieldName": "flag_current_year_toggle",
+            "format": {
+                "viewType": "toggle",
+                "value": "0"
+            },
+            "label": "Anno corrente",
+            "newLine": false,
+            "queryCond": "date_time_begin BETWEEN date_trunc('year', CURRENT_DATE) AND (date_trunc('year', CURRENT_DATE)+interval '1 year' - interval '1 day')"
         }
     ],
     "hideActions": [
@@ -328,6 +445,6 @@
         }
     ],
     "querySuffixes": {
-        "tableViewSuffix": "order by date_time_begin desc, codice_azienda desc limit 100"
+        "tableViewSuffix": "order by minuti_sovrapposti desc, date_time_begin desc, codice_azienda desc limit 100"
     }
 }
