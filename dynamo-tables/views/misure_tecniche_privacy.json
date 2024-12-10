@@ -2,223 +2,36 @@
     "$schema": "../views.schema.json",
     "origin": "entrasp.argomenti",
     "entryKey": "misure_tecniche_privacy",
-    "businessObjectName": "argomenti",
-    "predefinedQueries": [
+    "inheritsFrom": "template_argomenti",
+    "table_multiselection_actions": [
         {
-            "type": "main",
-            "operation": "selectTable",
-            "queryString": "select td.id_trattamento_dati, td.codice,titolo, td.id_argomento_tipo_trattamento_dato,entrasp.centri_gestionali_descr(td.codice_part,td.id_centro_gest) as centro_gest, td.flag_trattamento_conto_terzi::boolean as boolean_conto_terzi,td.codice_azienda,td.termini_ultimi_cancellazione,td.id_argomento from entrasp.cpl_trattamenti_dati td inner join entrasp.cpl_trattamenti_dati_categorie cd on td.codice_azienda=cd.codice_azienda and td.id_trattamento_dati=cd.id_trattamento_dati inner join entrasp.argomenti_argomenti aa on cd.id_argomento_categoria=id_argomento_son where aa.id_argomento_father in(3968, 48975, 48976, 52967, 52981) and tipo='misure_tecniche' and cd.id_argomento=$id_argomento$"
-        }
-    ],
-    "form_keys": [
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "codice_azienda",
-            "key": "codice_azienda",
-            "readOnly": false,
-            "isHidden": true,
-            "isPrimary": false,
-            "newLine": true,
-            "translate": "RESOURCES.codice_azienda_misure_tecniche_privacy"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "Codice",
-            "key": "codice",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 1.5,
-            "translate": "RESOURCES.codice_misure_tecniche_privacy"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "number"
-            },
-            "label": "ID",
-            "key": "id_argomento",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": true,
-            "newLine": false,
-            "size": 1.5,
-            "translate": "RESOURCES.id_misure_tecniche_privacy"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "Descrizione Breve",
-            "key": "descrizione_breve",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true,
-            "size": 7,
-            "translate": "RESOURCES.descrizione_breve_misure_tecniche_privacy"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "Descrizione",
-            "key": "descrizione",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true,
-            "translate": "RESOURCES.descrizione_misure_tecniche_privacy"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=3968 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento_nuovo",
-            "label": "Misura tecnica da unire con la presente",
-            "sameOrigin": false,
-            "newLine": false,
-            "readOnly": false,
-            "size": 8,
-            "translate": "RESOURCES.misura_tecnica_da_unire_con_la_presente_misure_tecniche_privacy"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "argomento_unifica_k",
-            "buttonIcon": "merge_type",
-            "label": "Unifica",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "argomento_unifica",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
+            "viewType": "menu",
+            "key": "menutest",
+            "label": "Options",
+            "icon": "more_vert",
+            "reloadOnSuccess": true,
+            "menuOptions": [
                 {
-                    "eventName": "argomento_unifica",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "queryFunct": "select entrasp.unifica_argomento($id_argomento$, $id_argomento_nuovo$)",
-                    "successMessage": "Done!"
+                    "key": "Unifica argomenti",
+                    "icon": "merge_type",
+                    "label": "Unifica argomenti",
+                    "query": "SELECT entrasp.unifica_argomenti(array_agg(id_argomento)) FROM entrasp.argomenti WHERE id_argomento IN ($selected_rows_data$)"
                 }
-            ],
-            "readOnly": false,
-            "sameOrigin": false,
-            "size": 2,
-            "translate": "RESOURCES.unifica_misure_tecniche_privacy"
+            ]
         }
     ],
-    "search_keys": [
-        {
-            "label": "codice_azienda_s",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "fieldName": "codice_azienda",
-            "newLine": true,
-            "queryCond": "codice_azienda=$codice_azienda_s$",
-            "translate": "RESOURCES.codice_azienda_s_misure_tecniche_privacy"
-        },
-        {
-            "label": "ID Documento",
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "fieldName": "id_argomento_s",
-            "newLine": true,
-            "queryCond": "id_argomento=$id_argomento_s$",
-            "translate": "RESOURCES.id_documento_misure_tecniche_privacy"
-        }
-    ],
-    "table_keys": [
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice",
-            "label": "Codice",
-            "width": "10%",
-            "translate": "RESOURCES.codice_misure_tecniche_privacy"
-        },
-        {
-            "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "id_argomento",
-            "label": "ID",
-            "width": "10%",
-            "translate": "RESOURCES.id_misure_tecniche_privacy"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione",
-            "width": "25%",
-            "translate": "RESOURCES.descrizione_misure_tecniche_privacy"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "codice_azienda",
-            "label": "Azienda",
-            "width": "15%",
-            "translate": "RESOURCES.azienda_misure_tecniche_privacy"
-        }
-    ],
-    "querySuffixes": {
-        "tableViewSuffix": "order by arg.codice_azienda, arg.descrizione"
+    "define": {
+        "id_argomento_father": "3968, 48975, 48976, 52967, 52981",
+        "array_argomenti_father_da_aggiungere": "array[3968]",
+        "label_id": "ID Misura tecnica",
+        "campo_id_argomento": "id_argomento",
+        "label_unifica": "Unifica id_misura_tecnica",
+        "is_hidden_unifica_all": "true",
+        "id_argomento_bigger_than": "and true",
+        "id_argomento_father_s2": "3968",
+        "label_argomento_s2": "Livello di controllo",
+         "labeladd": "Nuova misura tecnica"
     },
-    "addElementSettings": {
-        "labelAdd": "Nuova Misura Tecnica",
-        "navigateOnSuccess": true
-    },
-    "hideActions": [
-        {
-            "tableActionType": "quick-add",
-            "viewType": "table"
-        },
-        {
-            "formActionType": "attachments",
-            "viewType": "form"
-        }
-    ],
     "subTables": [
         {
             "entryKey": "cpl_trattamenti_dati_sub_of_misure_tecniche",
