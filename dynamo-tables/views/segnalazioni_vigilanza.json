@@ -1,0 +1,62 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "segnalazioni_vigilanza",
+    "inheritsFrom": "information_flows",
+    "define": {
+        "toggle_miei_uffici": "0",
+        "is_hidden_codice_azienda": "true",
+        "is_hidden_id_anagrafica": "false",
+        "id_argomento_father": "53753",
+        "label_revisioni": "Versioni del regolamento",
+        "label_id_flusso_info": "Id segnalazione",
+        "label_tipo_flusso_info": "Tipo segnalazione di vigilanza"
+    },
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select distinct entrasp.stato_information_flow(crs.codice_azienda, crs.id_risorsa) as stato,arg.codice,case when (select count(prog_revisione) from entrasp.cdms_risorse_revisioni rev where rev.codice_azienda=crs.codice_azienda and rev.id_risorsa=crs.id_risorsa)=0 then true else false end as delete_documents,entrasp.anagrafiche_vr_dati_identificativi_nom(crs.codice_part, crs.id_anagrafica) as anagrafica_descr,entrasp.argomenti_descr_breve(crs.id_argomento_tipo_allegato) as tipo_allegato,crs.codice_azienda,crs.codice_part,crs.id_risorsa,crs.data_rif,crs.nickname,crs.descrizione_breve,crs.descrizione,entrasp.centri_gestionali_descr(crs.codice_part, crs.id_centro_gest) as centro_gest,crs.data_scadenza,crs.descrizione from entrasp.cdms_risorse crs left join entrasp.aziende az on crs.id_anagrafica=az.id_anagrafica and az.codice_azienda=crs.codice_azienda inner join entrasp.argomenti arg on crs.id_argomento_tipo_allegato=arg.id_argomento where crs.codice_azienda=$codice_azienda$ and  crs.id_anagrafica in (select id_anagrafica from entrasp.aziende where codice_azienda=crs.codice_azienda) and id_argomento_tipo_allegato in(select entrasp.descendants_of_argomento($P{id_argomento_father}, 1))",
+            "type": "main"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text);"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.business_object_play((€global_id_anagrafiche€)::text, 'risorse', $id_risorsa$, '$codice_azienda$'::varchar) as play_time_report"
+        },
+        {
+            "type": "preCheck",
+            "operation": "delete",
+            "queryString": "select prog_revisione from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$;",
+            "messageNotNull": "Esiste almeno un file associato al flusso informativo in oggetto! Cancellare prima i singoli file della cartella"
+        },
+        {
+            "type": "main",
+            "operation": "delete",
+            "queryString": "delete from entrasp.cdms_risorse where codice_azienda=$codice_azienda$ and id_risorsa=$id_risorsa$"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "insert",
+            "queryString": "update entrasp.cdms_risorse rs set id_anagrafica=az.id_anagrafica from entrasp.aziende az where rs.codice_azienda=az.codice_azienda and rs.id_anagrafica is null"
+        },
+        {
+            "type": "postProcessing",
+            "operation": "update",
+            "queryString": "update entrasp.cdms_risorse rs set id_anagrafica=az.id_anagrafica from entrasp.aziende az where rs.codice_azienda=az.codice_azienda and rs.id_anagrafica is null"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "update entrasp.argomenti_argomenti set id_argomento_relazione=45069 where id_argomento_father=3511 and id_argomento_relazione is null;",
+            "type": "preProcessing"
+        },
+        {
+            "operation": "selectForm",
+            "queryString": "update entrasp.argomenti set flag_no_delete=true where flag_no_delete=false and id_argomento in(select id_argomento_son from entrasp.argomenti_argomenti where id_argomento_father=3511);",
+            "type": "preProcessing"
+        }
+    ]
+}
