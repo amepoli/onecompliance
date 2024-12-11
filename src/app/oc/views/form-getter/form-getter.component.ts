@@ -83,6 +83,8 @@ export class FormGetterComponent
 
     attributes: any[] = null;
 
+    valueOverrides: any = {};
+
     private addingNew = false; // avoid to trigger a refresh (with related events) when adding a row
 
     private margins = 1; // % of margins, considering left and right
@@ -937,6 +939,8 @@ export class FormGetterComponent
                         // Process results
                         _this.results = results.data;
                         _this.attributes = results.attributes;
+                        _this.valueOverrides = results.valueOverrides;
+                        
                         _this.processResults(_this.results);
                         // _this.loadWidgetsConfiguration = _this.results.widgetsConfiguration;
                         // Stop loading
@@ -968,9 +972,21 @@ export class FormGetterComponent
         _this.generalSubscriptions.push(subscription);
     }
 
-    processResults(results): void {
+    processResults(results: any[]): void {
         const _this = this;
         _this.numRows = results.length;
+
+        // Override values in form_keys input events
+        _this.viewKeys.forEach((_: any, v: number) => {
+            Object.keys(_this.valueOverrides.inputEvents).forEach(key => {
+                _this.valueOverrides.inputEvents[key].forEach((_: any, i: number) => {
+                    if(_this.valueOverrides.inputEvents[key][i].key == _this.viewKeys[v].key) {
+                        const k = _this.viewKeys[v].inputEvents.findIndex(x => x.eventName === _this.valueOverrides.inputEvents[key][i].eventName)
+                        _this.viewKeys[v].inputEvents[k].values = _this.valueOverrides.inputEvents[key][i].values;
+                    }
+                });
+            });
+        });
 
         // prepare the form
         _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this._formsService.getFormData(_this.viewKeys, results, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly)));
