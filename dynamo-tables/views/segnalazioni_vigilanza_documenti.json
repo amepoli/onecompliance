@@ -2,6 +2,7 @@
     "$schema": "../views.schema.json",
     "entryKey": "segnalazioni_vigilanza_documenti",
     "origin": "entrasp.cdms_risorse_revisioni",
+    "businessObjectName": "cdms_risorse_revisioni",
     "form_keys": [
         {
             "autoGenerate": false,
@@ -31,7 +32,7 @@
             "readOnly": true
         },
         {
-            "autoGenerate": false,
+            "autoGenerate": true,
             "format": {
                 "dataType": "number",
                 "viewType": "input"
@@ -42,6 +43,48 @@
             "label": "Prog. Revisione",
             "newLine": false,
             "size": 1.5,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "value": "N/A"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "file_id",
+            "label": "codice_azienda",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "value": "N/A"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "client_file_name",
+            "label": "codice_azienda",
+            "newLine": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "value": "N/A"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "content_type",
+            "label": "codice_azienda",
+            "newLine": true,
             "readOnly": true
         },
         {
@@ -103,16 +146,17 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
-                "viewType": "input"
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=4032;",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_stato",
-            "label": "Id argomento stato",
-            "newLine": false,
             "size": 1.5,
-            "readOnly": false
+            "label": "Stato Caricamento",
+            "readOnly": false,
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -131,7 +175,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "number",
+                "dataType": "text",
                 "viewType": "input"
             },
             "isHidden": false,
@@ -157,7 +201,7 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": true,
             "key": "id_risorsa",
             "label": "ID risorsa"
@@ -211,10 +255,11 @@
             "format": {
                 "dataType": "number"
             },
+            "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_stato)",
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_stato",
-            "label": "ID argomento stato"
+            "label": "Stato"
         },
         {
             "format": {
@@ -222,7 +267,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "Descrizione",
+            "key": "descrizione",
             "label": "Descrizione"
         },
         {
@@ -233,6 +278,41 @@
             "isPrimary": false,
             "key": "note",
             "label": "Note"
+        }
+    ],
+    "subTables": [
+        {
+            "entryKey": "segnalazioni_vigilanza_righe",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_risorsa",
+                    "son": "id_risorsa"
+                },
+                {
+                    "parent": "prog_revisione",
+                    "son": "prog_revisione"
+                }
+            ],
+            "label": "Voci della segnalazione",
+            "renderingOrder": 1
+        }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Nuova segnalazione",
+        "navigateOnSuccess": true
+    },
+    "hideActions": [
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
         }
     ]
 }
