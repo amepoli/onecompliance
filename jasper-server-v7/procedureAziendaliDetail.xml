@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<ViewGroup>
+  <View name="procedureAziendaliDetail" type="detail"
+    businessObjectName="procedureAziendali" title="Procedure Aziendali"
+    wikiLink="procedure">
+    <ViewItem content="proceduraAziendaleParent" size="60"
+      controlType="List" prompt="Procedura principale:" />
+    <ViewItem content="codice" prompt="Codice:" />
+    <ViewItem content="descrizioneBreve" prompt="Descrizione breve:" />
+    <ViewItem content="descrizione" controlType="TextArea"
+      prompt="Descrizione:" />
+
+    <ViewItem content="centroGestionale" controlType="List"
+      isVisible="?$user.esercizioRif.flagCentriGestionali != 'N'"
+      prompt="?$user.esercizioRif.descCentriGestionali" />
+    <ViewItem content="statoAttuazione" size="20"
+      codeTableName="STATO_ATTUAZIONE" prompt="Stato attuazione" />
+
+    <ViewItem content="tipoProcedura" reload="true"
+      codeTableName="TIPO_PROCEDURA" prompt="Tipo procedura:" />
+    <ViewItem content="tipoProcesso" controlType="List"
+      allowTargetInsert="false" prompt="Tipo processo" />
+
+    <!-- ViewItem content="flagPresidio" reload="true" controlType="Boolean"
+      prompt="Presidio?:" / -->
+
+    <ViewItem content="presidio" controlType="EmbeddedView"
+      contentViewName="presidiEmbDetail" />
+
+    <ViewItem tag="tabControl" content="this" controlType="Tab"
+      contentViewName="procedureAziendaliTab" />
+  </View>
+</ViewGroup>
