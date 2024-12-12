@@ -31,6 +31,7 @@ export class BackendService {
   private calendarApiName = appData.lambdas.calendar.apiName;
   private insert_user_to_dynamoApiName = appData.lambdas.insert_user_to_dynamo.apiName;
   private fattureincloudApiName = appData.lambdas.fatture_in_cloud.apiName;
+  private emailSenderApiName = appData.lambdas.email_sender.apiName;
 
   // private myGetInit = { // OPTIONAL
   //   headers: {
@@ -1002,6 +1003,24 @@ export class BackendService {
       queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), isSearchKeyRequest: 1 }
     }
     return from(this.awsService.api().get(this.apiName, this.viewsApiName, getReq));
+  }
+
+  // Notification ticket
+  sendTicketEmail(contesto: string, chiave: string, username: string): Observable<any> {
+    this.awsService.auth();
+
+    const putPostReq: PostRequest = {
+        headers: {},
+        queryStringParameters: {},
+        body: {
+            type: 'ticket',
+            contesto: contesto,
+            chiave: chiave,
+            username: username
+        }
+    };
+
+    return from(this.awsService.api().post(this.apiName, this.emailApiName, putPostReq));
   }
 
 }

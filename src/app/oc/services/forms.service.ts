@@ -598,6 +598,20 @@ export class FormsService {
         }
     }
 
+    public async runNotifyTicketEvent(formValues: any, keys: any) {
+        let _this = this;
+        let connected_registries = await _this.backendService
+                            .sendTicketEmail(
+                                keys.contesto,
+                                keys.chiavi,
+                                keys.username
+                            )
+                            .toPromise();
+        _this._toastService.showSuccessToast(
+            "Test riuscito",
+        ); // show success toast   
+    }
+
     processFormValues(formValues: any) {
         for (const key in formValues) {
             if (formValues.hasOwnProperty(key)) {
