@@ -48,7 +48,7 @@
                     "resultType": "condition",
                     "key": "campo_valore_da_visualizzare",
                     "conditionType": "equalTo",
-                    "conditionValue": "C",
+                    "conditionValue": "A",
                     "resultTrueValue": false,
                     "resultFalseValue": true
                 }
@@ -73,7 +73,7 @@
                     "resultType": "condition",
                     "key": "campo_valore_da_visualizzare",
                     "conditionType": "equalTo",
-                    "conditionValue": "A",
+                    "conditionValue": "N",
                     "resultTrueValue": false,
                     "resultFalseValue": true
                 }
@@ -107,7 +107,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT * entrasp.combobox_from_idargomento((select vs.id_argomento from entrasp.attribuiti vs where vs.attributo=attribuito))",
+                "comboQuery": "select 1",
                 "dataType": "number",
                 "options": [],
                 "viewType": "combobox"
@@ -136,7 +136,7 @@
             "format": {
                 "viewType": "combobox",
                 "dataType": "text",
-                "comboQuery": "select id_voce_segnalazione as id, voce||' - '||nome_sottovoce||' - '||attributo as name from entrasp.voci_segnalazione where id_argomento_segnalazione=(select cdm.id_argomento_tipo_allegato from entrasp.cdms_risorse_revisioni crr inner join entrasp.cdms_risorse cdm on crr.codice_azienda=cdm.codice_azienda and crr.id_risorsa=cdm.id_risorsa left join entrasp.segnalazioni_vigilanza_righe svr on cdm.codice_azienda=svr.codice_azienda and cdm.id_risorsa=svr.id_risorsa where cdm.codice_azienda=$codice_azienda$ and cdm.id_risorsa=$id_risorsa$)",
+                "comboQuery": "SELECT v.id_voce_segnalazione AS id, v.voce || ' - ' || v.nome_sottovoce || ' - ' || a.nome_attributo AS name FROM entrasp.voci_segnalazione v LEFT JOIN entrasp.attributi_segnalazioni a ON v.attributo = a.attributo WHERE v.id_argomento_segnalazione = (SELECT cdm.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni crr INNER JOIN entrasp.cdms_risorse cdm ON crr.codice_azienda = cdm.codice_azienda AND crr.id_risorsa = cdm.id_risorsa LEFT JOIN entrasp.segnalazioni_vigilanza_righe svr ON cdm.codice_azienda = svr.codice_azienda AND cdm.id_risorsa = svr.id_risorsa WHERE cdm.codice_azienda = $codice_azienda$ AND cdm.id_risorsa =$id_risorsa$)",
                 "options": []
             },
             "isHidden": false,
@@ -157,7 +157,7 @@
             "isPrimary": false,
             "key": "sottovoce",
             "sameOrigin": false,
-            "queryFunct": "select sottovoce from entrasp.voci_segnalazione where id_voce_segnalazione=$id_voce_segnalazione$",
+            "queryFunct": "select vs.sottovoce from entrasp.voci_segnalazione vs inner join entrasp.segnalazioni_vigilanza_righe svr on vs.id_voce_segnalazione=svr.id_voce_segnalazione where id_valore=$id_valore$",
             "readOnly": true,
             "newLine": false,
             "label": "Cod. Sottovoce",
@@ -172,7 +172,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "attributo",
-            "queryFunct": "select attributo from entrasp.voci_segnalazione inner join entrasp.segnalazioni_vigilanza_righe where id_voce_segnalazione=id_voce_segnalazione$",
+            "queryFunct": "select vs.attributo from entrasp.voci_segnalazione vs inner join entrasp.segnalazioni_vigilanza_righe svr on vs.id_voce_segnalazione=svr.id_voce_segnalazione where id_valore=$id_valore$",
             "sameOrigin": false,
             "readOnly": true,
             "newLine": true,
@@ -219,7 +219,7 @@
             "readOnly": false,
             "newLine": false,
             "label": "Campo valore da visualizzare",
-            "queryFunct": "Select 'C'",
+            "queryFunct": "select ats.sottotipo_valore from entrasp.voci_segnalazione vs inner join entrasp.attributi_segnalazioni ats on vs.attributo=ats.attributo inner join entrasp.segnalazioni_vigilanza_righe svr on vs.id_voce_segnalazione=svr.id_voce_segnalazione  where id_valore=$id_valore$",
             "size": 3
         }
     ],
