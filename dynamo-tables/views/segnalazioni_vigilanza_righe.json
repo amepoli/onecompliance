@@ -4,6 +4,7 @@
     "origin": "entrasp.segnalazioni_vigilanza_righe",
     "form_keys": [
         {
+            "autoGenerate": true,
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -16,6 +17,20 @@
             "label": "Id Valore"
         },
         {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "readOnly": false,
+            "newLine": false,
+            "label": "Codice Azienda"
+        },
+        {
+            "autoGenerate": false,
             "format": {
                 "viewType": "input",
                 "dataType": "text"
@@ -40,6 +55,7 @@
             ]
         },
         {
+            "autoGenerate": false,
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -64,6 +80,7 @@
             ]
         },
         {
+            "autoGenerate": false,
             "format": {
                 "viewType": "input",
                 "dataType": "date"
@@ -88,6 +105,7 @@
             ]
         },
         {
+            "autoGenerate": false,
             "format": {
                 "comboQuery": "SELECT * entrasp.combobox_from_idargomento((select vs.id_argomento from entrasp.attribuiti vs where vs.attributo=attribuito))",
                 "dataType": "number",
@@ -114,48 +132,55 @@
             ]
         },
         {
+            "autoGenerate": false,
             "format": {
                 "viewType": "combobox",
                 "dataType": "text",
+                "comboQuery": "select id_voce_segnalazione as id, voce||' - '||nome_sottovoce||' - '||attributo as name from entrasp.voci_segnalazione where id_argomento_segnalazione=(select cdm.id_argomento_tipo_allegato from entrasp.cdms_risorse_revisioni crr inner join entrasp.cdms_risorse cdm on crr.codice_azienda=cdm.codice_azienda and crr.id_risorsa=cdm.id_risorsa left join entrasp.segnalazioni_vigilanza_righe svr on cdm.codice_azienda=svr.codice_azienda and cdm.id_risorsa=svr.id_risorsa where cdm.codice_azienda=$codice_azienda$ and cdm.id_risorsa=$id_risorsa$)",
                 "options": []
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "voce",
+            "key": "id_voce_segnalazione",
             "readOnly": false,
-            "newLine": false,
+            "newLine": true,
             "label": "Voce",
-            "size": 2
+            "size": 10
         },
         {
+            "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
-                "dataType": "text",
-                "options": []
+                "viewType": "input",
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "sottovoce",
-            "readOnly": false,
+            "sameOrigin": false,
+            "queryFunct": "select sottovoce from entrasp.voci_segnalazione where id_voce_segnalazione=$id_voce_segnalazione$",
+            "readOnly": true,
             "newLine": false,
-            "label": "Sottovoce",
+            "label": "Cod. Sottovoce",
             "size": 2
         },
         {
+            "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
-                "dataType": "text",
-                "options": []
+                "viewType": "input",
+                "dataType": "text"
             },
             "isHidden": false,
             "isPrimary": false,
             "key": "attributo",
-            "readOnly": false,
+            "queryFunct": "select attributo from entrasp.voci_segnalazione inner join entrasp.segnalazioni_vigilanza_righe where id_voce_segnalazione=id_voce_segnalazione$",
+            "sameOrigin": false,
+            "readOnly": true,
             "newLine": true,
             "label": "Attributo",
             "size": 2
         },
         {
+            "autoGenerate": false,
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -169,18 +194,7 @@
             "size": 1.5
         },
         {
-            "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "readOnly": false,
-            "newLine": false,
-            "label": "Codice Azienda"
-        },
-        {
+            "autoGenerate": false,
             "format": {
                 "viewType": "input",
                 "dataType": "number"
@@ -194,6 +208,7 @@
             "size": 3
         },
         {
+            "autoGenerate": false,
             "format": {
                 "viewType": "input",
                 "dataType": "text"
@@ -204,10 +219,9 @@
             "readOnly": false,
             "newLine": false,
             "label": "Campo valore da visualizzare",
-            "queryFunct": "entrasp.tipo_valore_attributo(voce, sottovoce, attributo)",
+            "queryFunct": "Select 'C'",
             "size": 3
         }
-
     ],
     "table_keys": [
         {
@@ -218,6 +232,15 @@
             "isPrimary": true,
             "key": "id_valore",
             "label": "ID valore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda"
         },
         {
             "format": {
@@ -261,7 +284,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "voce",
+            "key": "id_voce_segnalazione",
             "label": "voce"
         },
         {
@@ -270,6 +293,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "sameOrigin": false,
             "key": "sottovoce",
             "label": "sottovoce"
         },
@@ -279,6 +303,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "sameOrigin": false,
             "key": "attributo",
             "label": "attributo"
         },
@@ -293,15 +318,6 @@
         },
         {
             "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "Codice Azienda"
-        },
-        {
-            "format": {
                 "dataType": "number"
             },
             "isHidden": false,
@@ -309,25 +325,23 @@
             "key": "prog_revisione",
             "label": "Preg Revisione"
         }
-
-        ],
-        "hideActions": [
-            
-            {
-                "tableActionType": "quick-add",
-                "viewType": "table"
-            },
-            {
-                "formActionType": "add",
-                "viewType": "form"
-            },
-            {
-                "formActionType": "attachments",
-                "viewType": "form"
-            }
-        ],
-        "addElementSettings": {
-            "labelAdd": "Aggiungi Segnalazione",
-            "navigateOnSuccess": true
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
         }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Aggiungi Voce",
+        "navigateOnSuccess": true
+    }
 }
