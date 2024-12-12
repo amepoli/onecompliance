@@ -84,6 +84,98 @@
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "contesto",
+            "queryFunct": "'ticket_aperto'",
+            "label": "contesto",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "chiavi",
+            "queryFunct": "codice_azienda||'~'||codice_compito",
+            "label": "chiavi",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "username",
+            "queryFunct": "'€global_username€'",
+            "label": "username",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "invia_mail",
+            "buttonIcon": "email",
+            "label": "Invia_mail",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "send_email",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "send_email",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "message": {
+                        "messageText": "Si intende procedere all'invio dell'email?",
+                        "actionOnYes": {
+                            "actionType": "notify_ticket_status",
+                            "notifyTicketParams": {
+                                "actionType": "open_ticket",
+                                "openTicketParams": {
+                                    "contesto": "contesto",
+                                    "chiavi":  "chiavi",
+                                    "username": "username"                                                                 
+                                }
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.invia_mail_sondaggi_send_email"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "input",
                 "dataType": "number",
                 "value": 752

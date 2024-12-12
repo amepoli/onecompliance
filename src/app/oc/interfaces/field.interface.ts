@@ -21,14 +21,14 @@ export interface Key {
 }
 
 export interface FieldInputEvent {
-    actionType: "hide" | "show" | "readOnly" | "query" | "query_style" | "show_message" | "toggle" | "update" | "update_style" | "update_time_tracker" | "google_api" | "regulat_api" | "user_api" | "dialog";
+    actionType: "hide" | "show" | "readOnly" | "query" | "query_style" | "show_message" | "toggle" | "update" | "update_style" | "update_time_tracker" | "google_api" | "regulat_api" | "user_api" | "dialog" | "send_email";
     eventName: string;
     values: any[];
     condition: "equalTo" | "notEqualTo" | "greatorThan" | "lessThan" | "none";
     queryFunct?: string;
     styleAttribute?: "background_color" | "font_color";
     updateFunct?: string;
-    actionTarget?: {
+    actionTarget?: { 
         name: string;
         type: "table" | " form" | "tableform";
         keymap?: [
@@ -44,10 +44,11 @@ export interface FieldInputEvent {
         messageTitle?: string;
         messageText: string;
         actionOnYes: {
-            actionType: "reload" | "query" | "email" | "create_user_and_email" | "enable_company_to_user" | "dissociates_company" | "multi_enablement_company_to_users" | "regulat_api";
+            actionType: "reload" | "query" | "email" | "create_user_and_email" | "enable_company_to_user" | "dissociates_company" | "multi_enablement_company_to_users" | "regulat_api" | "notify_ticket_status";
             queryFunct?: string;
             emailActionParameters?: EmailActionParameters;
             regulatAPIParams?: any;
+            notifyTicketParams?: any;
         };
         actionOnNo: {
             actionType: "reload" | "query" | "skip";
