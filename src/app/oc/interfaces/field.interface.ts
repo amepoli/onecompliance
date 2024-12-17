@@ -24,6 +24,7 @@ export interface FieldInputEvent {
     actionType: "hide" | "show" | "readOnly" | "query" | "query_style" | "show_message" | "toggle" | "update" | "update_style" | "update_time_tracker" | "google_api" | "regulat_api" | "user_api" | "dialog";
     eventName: string;
     values: any[];
+    customValues?: any[];
     condition: "equalTo" | "notEqualTo" | "greatorThan" | "lessThan" | "none";
     queryFunct?: string;
     styleAttribute?: "background_color" | "font_color";
