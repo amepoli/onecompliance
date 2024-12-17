@@ -634,4 +634,11 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         return {};
     }
 
+    //  To clear the breadcrumb from prefix "RESOURCES."
+    getCleanDescription(description: string): string {
+        const prefix = "RESOURCES.";
+        return description.startsWith(prefix) ? description.slice(prefix.length) : description;
+    }
+    
+
 }
