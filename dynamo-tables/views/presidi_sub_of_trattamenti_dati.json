@@ -11,7 +11,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select tdp.*, true as delete_presidi_td, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda)as descr_presidio, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.cpl_trattamenti_dati_presidi tdp inner join entrasp.presidi pr on tdp.codice_azienda=pr.codice_azienda and tdp.id_presidio=pr.id_presidio where tdp.codice_azienda=$codice_azienda$ and tdp.id_trattamento_dati=$id_trattamento_dati$"
+            "queryString": "select tdp.*, true as delete_presidi_td, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, left(entrasp.presidi_descr_breve(pr.id_presidio, pr.codice_azienda), 120) as descr_breve, left(entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda), 300) as descrizione, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.cpl_trattamenti_dati_presidi tdp inner join entrasp.presidi pr on tdp.codice_azienda=pr.codice_azienda and tdp.id_presidio=pr.id_presidio where tdp.codice_azienda=$codice_azienda$ and tdp.id_trattamento_dati=$id_trattamento_dati$"
         }   
     ],
     "form_keys": [
@@ -104,7 +104,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "4%",
+            "width": "3%",
             "queryFunct": "select true",
             "key": "delete_presidi_td",
             "label": "",
@@ -143,7 +143,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "6%",
+            "width": "5%",
             "key": "codice",
             "label": "Codice"
         },
@@ -153,9 +153,9 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "35%",
-            "key": "descr_presidio",
-            "queryFunct": "entrasp.presidi_descr(id_presidio, codice_azienda)",
+            "width": "30%",
+            "key": "descr_breve",
+            "queryFunct": "entrasp.presidi_descr_breve(id_presidio, codice_azienda)",
             "label": "Presidio (Controllo)",
             "isInputButton": true,
             "buttonAction": {
@@ -178,6 +178,17 @@
             "format": {
                 "dataType": "text"
             },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "40%",
+            "key": "descrizione",
+            "queryFunct": "left(entrasp.presidi_descr(id_presidio, codice_azienda), 120)",
+            "label": "Note"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
             "isHidden": true,
             "isPrimary": true,
             "key": "id_trattamento_dati",
@@ -187,19 +198,8 @@
             "format": {
                 "dataType": "text"
             },
-            "label": "Note",
-            "key": "note",
             "isHidden": false,
-            "queryFunct": "substring(annotazioni, 1, 100)",
-            "width": "20%",
-            "isPrimary": false
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "width": "10%",
+            "width": "7%",
             "isPrimary": false,
             "key": "stato_attuazione",
             "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione)",
@@ -232,7 +232,6 @@
                 "dataType": "number"
             },
             "isHidden": true,
-            "width": "3%",
             "isPrimary": true,
             "key": "id_presidio",
             "isButton": true,
