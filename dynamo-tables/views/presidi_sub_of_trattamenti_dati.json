@@ -18,7 +18,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_presidio AS id, codice||'-'||descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
+                "comboQuery": "SELECT id_presidio AS id, coalesce(codice||'-','')||descrizione_breve AS name FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
                 "options": [],
                 "viewType": "combobox"
             },
@@ -28,8 +28,7 @@
             "isHidden": false,
             "isPrimary": true,
             "newLine": false,
-            "size": 4.5,
-            "translate": "RESOURCES.presidio_presidi_sub_of_td"
+            "size": 4.25
         },
         {
             "format": {
@@ -42,7 +41,7 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
-            "size": 1.5,
+            "size": 4.25,
             "newLine": false
         },
         {
@@ -77,39 +76,16 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "presidio_associato",
-            "label": "Dettaglio",
+            "label": "Dett.",
             "newLine": true,
-            "outputEvent": {
-                "eventName": "to_presidio",
-                "eventTrigger": "press"
-            },
             "style": {
                 "background_color": "#25599C",
                 "font_color": "white"
             },
             "readOnly": false,
             "sameOrigin": false,
-            "size": 1
+            "size": 1.5
 
-        }
-    ],
-    "table_multiselection_actions": [
-        {
-            "viewType": "menu",
-            "key": "menuanag",
-            "label": "Actions",
-            "icon": "more_vert",
-            "menuOptions": [
-                {
-                    "key": "cancella",
-                    "icon": "delete_association",
-                    "label": "Cancella associazione",
-                    "query": "delete from entrasp.cpl_trattamenti_dati_presidi where codice_azienda||'~'||id_presidio||'~'||id_trattamento_dati in($selected_rows_data$)",
-                    "confirmAction": true,
-                    "reloadOnSuccess": true,
-                    "confirmActionMessage": "Cancellare l'associazione tra trattamento dati e presidio?"
-                }
-            ]
         }
     ],
     "table_keys": [
@@ -142,7 +118,7 @@
             "buttonAction": {
                 "target": "presidi_sub_of_trattamenti_dati",
                 "viewType": "form",
-                "query": "delete from entrasp.entrasp.cpl_trattamenti_dati_presidi where codice_azienda='£codice_azienda£' AND id_trattamento_dati='£id_trattamento_dati£' AND id_presidio=£id_presidio£",
+                "query": "delete from entrasp.cpl_trattamenti_dati_presidi where codice_azienda='£codice_azienda£' AND id_trattamento_dati=£id_trattamento_dati£ AND id_presidio=£id_presidio£",
                 "action": "query",
                 "keymap": [
                     {
@@ -160,6 +136,63 @@
                 ],
                 "onSuccessAction": "reload"
             }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "key": "codice",
+            "label": "Codice"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "35%",
+            "key": "descr_presidio",
+            "queryFunct": "entrasp.presidi_descr(id_presidio, codice_azienda)",
+            "label": "Presidio (Controllo)",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "presidi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "id_trattamento_dati"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "label": "Note",
+            "key": "note",
+            "isHidden": false,
+            "queryFunct": "substring(annotazioni, 1, 100)",
+            "width": "20%",
+            "isPrimary": false
         },
         {
             "format": {
@@ -220,63 +253,6 @@
             "key": "tipo_presidio",
             "width": "12%",
             "label": "Tipo Presidio"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "6%",
-            "key": "codice",
-            "label": "Codice"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "30%",
-            "key": "descr_presidio",
-            "queryFunct": "entrasp.presidi_descr(id_presidio, codice_azienda)",
-            "label": "Presidio (Controllo)",
-            "isInputButton": true,
-            "buttonAction": {
-                "target": "presidi",
-                "viewType": "form",
-                "action": "navigate",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "id_presidio",
-                        "destination": "id_presidio"
-                    }
-                ]
-            }
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "id_trattamento_dati",
-            "label": "id_trattamento_dati"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "label": "Note",
-            "key": "note",
-            "isHidden": false,
-            "queryFunct": "substring(annotazioni, 1, 100)",
-            "width": "8%",
-            "isPrimary": false
         }
     ],
     "inputEvents": [
