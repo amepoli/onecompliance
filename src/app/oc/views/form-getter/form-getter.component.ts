@@ -984,6 +984,7 @@ export class FormGetterComponent
                     if(_this.valueOverrides.inputEvents[key][i].key == _this.viewKeys[v].key) {
                         const k = _this.viewKeys[v].inputEvents.findIndex(x => x.eventName === _this.valueOverrides.inputEvents[key][i].eventName)
                         _this.viewKeys[v].inputEvents[k].values = _this.valueOverrides.inputEvents[key][i].values;
+                        _this.viewKeys[v].inputEvents[k].customValues = _this.valueOverrides.inputEvents[key][i].customValues;
                     }
                 });
             });
@@ -1175,9 +1176,13 @@ export class FormGetterComponent
 
         if (event.condition != null) {
             let msgData: any[];
-            if(event.valueKey) {
+            if(event.customValues) {
+                msgData = Array.isArray(event.customValues) ? 
+                    event.customValues: 
+                    [event.customValues];
+            }
+            else if(event.valueKey) {
                 const formValues = _this.formArray.toArray()[value.index].form.value;
-                console.log(event.valueKey);
                 msgData = Array.isArray(formValues[event.valueKey]) ? 
                     formValues[event.valueKey]: 
                     [formValues[event.valueKey]];

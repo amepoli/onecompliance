@@ -1,0 +1,290 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "presidi_sub_of_trattamenti_dati",
+    "origin": "entrasp.cpl_trattamenti_dati_presidi",
+    "businessObjectName": "cpl_trattamenti_dati_presidi",
+    "addElementSettings": {
+        "labelQuickAdd": "Associa Presidio",
+        "navigateOnSuccess": false
+    },
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select tdp.*, true as delete_presidi_td, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, left(entrasp.presidi_descr_breve(pr.id_presidio, pr.codice_azienda), 120) as descr_breve, left(entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda), 300) as descrizione, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.cpl_trattamenti_dati_presidi tdp inner join entrasp.presidi pr on tdp.codice_azienda=pr.codice_azienda and tdp.id_presidio=pr.id_presidio where tdp.codice_azienda=$codice_azienda$ and tdp.id_trattamento_dati=$id_trattamento_dati$"
+        }   
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_presidio AS id, coalesce(codice||'-','')||descrizione_breve AS name FROM entrasp.presidi WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Presidio",
+            "key": "id_presidio",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 4.25
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "value": "-"
+            },
+            "label": "Note",
+            "key": "note",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 4.25,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "id_trattamento_dati",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "presidio_associato",
+            "label": "Dett.",
+            "newLine": true,
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1.5
+
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "3%",
+            "queryFunct": "select true",
+            "key": "delete_presidi_td",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "presidi_sub_of_trattamenti_dati",
+                "viewType": "form",
+                "query": "delete from entrasp.cpl_trattamenti_dati_presidi where codice_azienda='£codice_azienda£' AND id_trattamento_dati=£id_trattamento_dati£ AND id_presidio=£id_presidio£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    },
+                    {
+                        "source": "id_trattamento_dati",
+                        "destination": "id_trattamento_dati"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "key": "codice",
+            "label": "Codice"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "30%",
+            "key": "descr_breve",
+            "queryFunct": "entrasp.presidi_descr_breve(id_presidio, codice_azienda)",
+            "label": "Presidio (Controllo)",
+            "isInputButton": true,
+            "buttonAction": {
+                "target": "presidi",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    }
+                ]
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "40%",
+            "key": "descrizione",
+            "queryFunct": "left(entrasp.presidi_descr(id_presidio, codice_azienda), 120)",
+            "label": "Note"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_trattamento_dati",
+            "label": "id_trattamento_dati"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "7%",
+            "isPrimary": false,
+            "key": "stato_attuazione",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione)",
+            "label": "Stato",
+            "style": [
+                {
+                    "value": "Attivo",
+                    "font_color": "green",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "In Implementazione",
+                    "font_color": "orange",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Auspicabile",
+                    "font_color": "red",
+                    "font_weight": "500"
+                },
+                {
+                    "value": "Non Applicabile",
+                    "font_color": "grey",
+                    "font_weight": "500"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "isButton": true,
+            "label": "Presidio",
+            "style": [
+                {
+                    "button_icon": "",
+                    "value": "*"
+                }
+            ]
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tipo_presidio",
+            "width": "12%",
+            "label": "Tipo Presidio"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionTarget": {
+                "name": "presidi",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_presidio",
+                        "destination": "id_presidio"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_presidio"
+        }
+    ],
+    "outputEvents": [
+        {
+            "eventName": "savedForm",
+            "eventTrigger": "onSave"
+        }
+    ],
+    "search_keys": [],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}
