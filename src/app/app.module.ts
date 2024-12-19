@@ -38,6 +38,8 @@ import { ToastrModule } from "ngx-toastr";
 
 import { HomepageModule } from "./oc/homepage/homepage.module";
 import { HomepageTabModule } from "./oc/homepage-tab/homepage-tab.module";
+import { StartPageModule } from "app/oc/start-page/start-page.module";
+
 import { ToolbarElementsModule } from "./oc/toolbar-elements/toolbar-elements.module";
 import { ExplorerModule } from "./oc/explorer/explorer.module";
 import { CalendarModule } from "./oc/calendar/calendar.module";
@@ -111,7 +113,7 @@ const appRoutes: Routes = [
         CalendarModule,
         ToolbarElementsModule,
         ExplorerModule,
-
+        StartPageModule,
         DomandeRisposteModule,
 
         // Redirect
