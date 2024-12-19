@@ -978,7 +978,7 @@
             "tooltip": "Premere la richiesta una volta completato tutto il questionario e dopo aver inserito le informazioni relative alle sedi posto nella sottotabella in fondo alla pagina",
             "newLine": false,
             "outputEvent": {
-                "eventName": "produci_preventivo",
+                "eventName": "generate_preventivo",
                 "eventTrigger": "press"
             },
             "readOnly": false,
@@ -989,25 +989,16 @@
             },
             "inputEvents": [
                 {
-                    "eventName": "produci_preventivo",
-                    "actionType": "show_message",
-                    "message": {
-                        "messageTitle": "Preventivo",
-                        "messageText": "Sei sicuro di voler procedere alla creazione del contratto, del preventivo e del progetto?",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select 1"
-                        }
-                    },
+                    "eventName": "generate_preventivo",
+                    "actionType": "query",
+                    "values": [],
+                    "customDialogEntryName": "dialog_consenti_richiesta_preventivo",
+                    "customDialogTitle": "Richiedi preventivo",
                     "condition": "none",
-                    "values": []
+                    "queryFunct": "select entrasp.consenti_richiesta_preventivo($codice_azienda$, $id_questionario$) as consenti_richiesta_preventivo",
+                    "outputEventWhenComplete": "consenti_richiesta_preventivo_event"
                 }
-            ],
-            "translate": "RESOURCES.richiedi_preventivo_questionari_certificazione"
+            ]
         },
         {
             "autoGenerate": false,
@@ -1066,6 +1057,44 @@
             "readOnly": true,
             "newLine": false,
             "translate": "RESOURCES.invisible_8_questionari_certificazione"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "consenti_richiesta_preventivo",
+            "label": "consenti_richiesta_preventivo",
+            "readOnly": false,
+            "sameOrigin": false,
+            "inputEvents": [
+                {
+                    "eventName": "consenti_richiesta_preventivo_event",
+                    "actionType": "show_message",
+                    "message": {
+                        "messageTitle": "Preventivo",
+                        "messageText": "Sei sicuro di voler richiedere un preventivo?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    },
+                    "customDialogEntryName": "dialog_consenti_richiesta_preventivo",
+                    "customDialogTitle": "Richiedi preventivo",
+                    "condition": "equalTo",
+                    "valueKey": "consenti_richiesta_preventivo",
+                    "values": ["1"],
+                    "conditionNotMetMessageLabel": "Necessario specificare almeno una sede!",
+                    "conditionNotMetMessageTranslate": "RESOURCES.consenti_richiesta_preventivo_questionari_certificazione"
+                }
+            ]
         }
     ],
     "table_keys": [

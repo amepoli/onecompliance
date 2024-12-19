@@ -1924,275 +1924,279 @@ export class FormGetterComponent
             }
         } else if (
             event.actionType === "show_message" &&
-            conditionMet &&
             event.message
         ) {
-            // Show confirmation dialog
-            _this._dialogService
-                .showConfimationDialog(
-                    event.message.messageTitle != null
-                        ? event.message.messageTitle
-                        : "Confirm",
-                    event.message.messageText,
-                    "Yes",
-                    "No",
-                    "info",
-                )
-                .then((result) => {
-                    // Initialize with No action info
-                    var actionType = event.message.actionOnNo.actionType;
-                    var queryFunct = event.message.actionOnNo.queryFunct;
-                    var regulatAPIParams: RegulatAPIParams = event.message.actionOnNo.regulatAPIParams;
-                    var notifyTicketParams: NotifyTicketParams = event.message.actionOnNo.notifyTicketParams;
-                    var eventMessage = event.message.actionOnNo;
-                    var action = "actionNo";
+            if(conditionMet){
+                // Show confirmation dialog
+                _this._dialogService
+                    .showConfimationDialog(
+                        event.message.messageTitle != null
+                            ? event.message.messageTitle
+                            : "Confirm",
+                        event.message.messageText,
+                        "Yes",
+                        "No",
+                        "info",
+                    )
+                    .then((result) => {
+                        // Initialize with No action info
+                        var actionType = event.message.actionOnNo.actionType;
+                        var queryFunct = event.message.actionOnNo.queryFunct;
+                        var regulatAPIParams: RegulatAPIParams = event.message.actionOnNo.regulatAPIParams;
+                        var notifyTicketParams: NotifyTicketParams = event.message.actionOnNo.notifyTicketParams;
+                        var eventMessage = event.message.actionOnNo;
+                        var action = "actionNo";
 
-                    // If user clicked yes, load yes action info
-                    if (result.value === true) {
-                        actionType = event.message.actionOnYes.actionType;
-                        queryFunct = event.message.actionOnYes.queryFunct;
-                        regulatAPIParams = event.message.actionOnYes.regulatAPIParams;
-                        notifyTicketParams = event.message.actionOnYes.notifyTicketParams;
-                        eventMessage = event.message.actionOnYes;
-                        action = "actionYes";
-                    }
+                        // If user clicked yes, load yes action info
+                        if (result.value === true) {
+                            actionType = event.message.actionOnYes.actionType;
+                            queryFunct = event.message.actionOnYes.queryFunct;
+                            regulatAPIParams = event.message.actionOnYes.regulatAPIParams;
+                            notifyTicketParams = event.message.actionOnYes.notifyTicketParams;
+                            eventMessage = event.message.actionOnYes;
+                            action = "actionYes";
+                        }
 
-                    // Let's perform Yes Action
-                    if (actionType === "reload") {
-                        _this.reload();
-                        // Reload screen
-                        if (event.outputEventWhenComplete != null) {
-                            _this.pubSubService.publishEvent(
-                                event.outputEventWhenComplete,
+                        // Let's perform Yes Action
+                        if (actionType === "reload") {
+                            _this.reload();
+                            // Reload screen
+                            if (event.outputEventWhenComplete != null) {
+                                _this.pubSubService.publishEvent(
+                                    event.outputEventWhenComplete,
+                                    value,
+                                );
+                            }
+                        } else if (action === "update_time_tracker") {
+                            //_this._timeTrackerService.isTrStarted = !_this._timeTrackerService.isTrStarted;
+                            // = true;
+                            _this._timeTrackerService.checkStatus();
+                        } else if (actionType === "email") {
+                            let formValues = _this.formArray.first.form.value;
+
+                            _this._emailService.performSendEmail(event, formValues, value, _this.currentKeys);
+
+                            // _this._console.log(JSON.stringify(event));
+                            // _this.sendEmail({ templateKey: 'test' });
+                        } else if (actionType === "regulat_api") {
+                            const formValues = _this.formArray.first.form.value;
+
+                            if (!regulatAPIParams) {
+                                console.error('regulatAPIParams undefined');
+                                return; 
+                            } 
+
+                            let keys={};
+                            if (regulatAPIParams.actionType === "get_aml_scan") {
+                                if(regulatAPIParams.entityParams) {
+                                    keys = {
+                                        codiceAziendaAML: formValues[
+                                            regulatAPIParams.entityParams.codice_azienda
+                                        ],
+                                        idAnagraficaAML: formValues[
+                                            regulatAPIParams.entityParams.id_anagrafica
+                                        ],
+                                        idSomministrazioneAML: formValues[
+                                            regulatAPIParams.entityParams
+                                                .id_somministrazione
+                                        ],
+                                        dynamoUserAML: formValues[
+                                            regulatAPIParams.entityParams.dynamo_user
+                                        ],
+                                        isLightScan: regulatAPIParams.entityParams.is_light_scan,
+                                    }
+                                } else {
+                                    console.error('entityParams undefined:', regulatAPIParams);
+                                    return; 
+                                }
+                                
+                            } else if (regulatAPIParams.actionType === "get_aml_scans") {
+                                if(regulatAPIParams.surveyParams) {
+                                    keys = {
+                                        codiceAziendaAML: formValues[
+                                            regulatAPIParams.surveyParams.codice_azienda
+                                        ],
+                                        idAnagraficaAML: formValues[
+                                            regulatAPIParams.surveyParams.id_anagrafica
+                                        ],
+                                        idSomministrazioneAML: formValues[
+                                            regulatAPIParams.surveyParams
+                                                .id_somministrazione
+                                        ],
+                                        dynamoUserAML: formValues[
+                                            regulatAPIParams.surveyParams.dynamo_user
+                                        ],
+                                        isLightScan: regulatAPIParams.surveyParams.is_light_scan,
+                                    }
+                                } else {
+                                    console.error('surveyParams undefined:', regulatAPIParams);
+                                    return; 
+                                }
+                            }
+
+                            _this._formsService.runRegulatEvent(
+                                eventMessage,
                                 value,
+                                keyListener,
+                                formValues,
+                                keys
+                            );
+                        } else if (actionType === "user_api") {
+                            _this.runUserManagementEvent(event, value, keyListener);
+                        } else if (actionType === "notify_ticket_status") {
+                            const formValues = _this.formArray.first.form.value;
+                        
+                            if (!notifyTicketParams) {
+                                console.error('openTicketParams undefined');
+                                return;
+                            }
+                        
+                            let keys = {};
+                            if (notifyTicketParams.openTicketParams) {
+                                keys = {
+                                    chiavi: formValues[notifyTicketParams.openTicketParams.chiavi],
+                                    contesto: formValues[notifyTicketParams.openTicketParams.contesto],
+                                    username: formValues[notifyTicketParams.openTicketParams.username]
+                                };
+                            } else {
+                                console.error('ticketParams undefined:', notifyTicketParams.openTicketParams);
+                                return;
+                            }
+                        
+                            _this._formsService.runNotifyTicketEvent(
+                                // eventMessage,
+                                // value,
+                                // keyListener,
+                                formValues,
+                                keys
                             );
                         }
-                    } else if (action === "update_time_tracker") {
-                        //_this._timeTrackerService.isTrStarted = !_this._timeTrackerService.isTrStarted;
-                        // = true;
-                        _this._timeTrackerService.checkStatus();
-                    } else if (actionType === "email") {
-                        let formValues = _this.formArray.first.form.value;
-
-                        _this._emailService.performSendEmail(event, formValues, value, _this.currentKeys);
-
-                        // _this._console.log(JSON.stringify(event));
-                        // _this.sendEmail({ templateKey: 'test' });
-                    } else if (actionType === "regulat_api") {
-                        const formValues = _this.formArray.first.form.value;
-
-                        if (!regulatAPIParams) {
-                            console.error('regulatAPIParams undefined');
-                            return; 
-                        } 
-
-                        let keys={};
-                        if (regulatAPIParams.actionType === "get_aml_scan") {
-                            if(regulatAPIParams.entityParams) {
-                                keys = {
-                                    codiceAziendaAML: formValues[
-                                        regulatAPIParams.entityParams.codice_azienda
-                                    ],
-                                    idAnagraficaAML: formValues[
-                                        regulatAPIParams.entityParams.id_anagrafica
-                                    ],
-                                    idSomministrazioneAML: formValues[
-                                        regulatAPIParams.entityParams
-                                            .id_somministrazione
-                                    ],
-                                    dynamoUserAML: formValues[
-                                        regulatAPIParams.entityParams.dynamo_user
-                                    ],
-                                    isLightScan: regulatAPIParams.entityParams.is_light_scan,
-                                }
-                            } else {
-                                console.error('entityParams undefined:', regulatAPIParams);
-                                return; 
-                            }
-                            
-                        } else if (regulatAPIParams.actionType === "get_aml_scans") {
-                            if(regulatAPIParams.surveyParams) {
-                                keys = {
-                                    codiceAziendaAML: formValues[
-                                        regulatAPIParams.surveyParams.codice_azienda
-                                    ],
-                                    idAnagraficaAML: formValues[
-                                        regulatAPIParams.surveyParams.id_anagrafica
-                                    ],
-                                    idSomministrazioneAML: formValues[
-                                        regulatAPIParams.surveyParams
-                                            .id_somministrazione
-                                    ],
-                                    dynamoUserAML: formValues[
-                                        regulatAPIParams.surveyParams.dynamo_user
-                                    ],
-                                    isLightScan: regulatAPIParams.surveyParams.is_light_scan,
-                                }
-                            } else {
-                                console.error('surveyParams undefined:', regulatAPIParams);
-                                return; 
-                            }
-                        }
-
-                        _this._formsService.runRegulatEvent(
-                            eventMessage,
-                            value,
-                            keyListener,
-                            formValues,
-                            keys
-                        );
-                    } else if (actionType === "user_api") {
-                        _this.runUserManagementEvent(event, value, keyListener);
-                    } else if (actionType === "notify_ticket_status") {
-                        const formValues = _this.formArray.first.form.value;
-                    
-                        if (!notifyTicketParams) {
-                            console.error('openTicketParams undefined');
-                            return;
-                        }
-                    
-                        let keys = {};
-                        if (notifyTicketParams.openTicketParams) {
-                            keys = {
-                                chiavi: formValues[notifyTicketParams.openTicketParams.chiavi],
-                                contesto: formValues[notifyTicketParams.openTicketParams.contesto],
-                                username: formValues[notifyTicketParams.openTicketParams.username]
-                            };
-                         } else {
-                            console.error('ticketParams undefined:', notifyTicketParams.openTicketParams);
-                            return;
-                        }
-                    
-                        _this._formsService.runNotifyTicketEvent(
-                            // eventMessage,
-                            // value,
-                            // keyListener,
-                            formValues,
-                            keys
-                        );
-                    }
-                    
-                    else {
-                        // Run query
-                        let chiavi = {};
-                        const target_index =
-                            value.type !== "page" ? value.index : null; // null means the event comes from the full table
-                        let index =
-                            target_index == null ? _this.formArray.length : 1;
-                        const targetViewField = _this.viewKeys.find(
-                            (viewKey) => viewKey.key === keyListener,
-                        );
-                        const childrenArray = _this.formArray.toArray();
-                        // iterate over all indexes when full table or instead affect the target index only
-                        while (index > 0) {
-                            index--;
-                            const current_index =
-                                target_index != null ? target_index : index;
-                            // some lines might be hidden, search for the right one
-                            const current_line = childrenArray.find(
-                                (c) => c.fields[0].index === current_index,
+                        
+                        else {
+                            // Run query
+                            let chiavi = {};
+                            const target_index =
+                                value.type !== "page" ? value.index : null; // null means the event comes from the full table
+                            let index =
+                                target_index == null ? _this.formArray.length : 1;
+                            const targetViewField = _this.viewKeys.find(
+                                (viewKey) => viewKey.key === keyListener,
                             );
-                            if (current_line == null) {
-                                continue;
-                            }
-                            chiavi = current_line.form.value;
-                            // fix problem with changed value that might be not updated yet by getting it directly from event
-                            if (value.type === "change") {
-                                chiavi[value.origin] = value.data;
-                            }
-                            // process values
-                            for (const key in chiavi) {
-                                if (chiavi.hasOwnProperty(key)) {
-                                    const element = chiavi[key];
-                                    if (element == null) {
-                                        continue; // skip null entries
-                                    }
-                                    // decode combos
-                                    if (element["id"] != null) {
-                                        chiavi[key] = element["id"];
-                                    }
-                                    // encode boolean
-                                    else if (element === true) {
-                                        chiavi[key] = "1";
-                                    } else if (element === false) {
-                                        chiavi[key] = "0";
+                            const childrenArray = _this.formArray.toArray();
+                            // iterate over all indexes when full table or instead affect the target index only
+                            while (index > 0) {
+                                index--;
+                                const current_index =
+                                    target_index != null ? target_index : index;
+                                // some lines might be hidden, search for the right one
+                                const current_line = childrenArray.find(
+                                    (c) => c.fields[0].index === current_index,
+                                );
+                                if (current_line == null) {
+                                    continue;
+                                }
+                                chiavi = current_line.form.value;
+                                // fix problem with changed value that might be not updated yet by getting it directly from event
+                                if (value.type === "change") {
+                                    chiavi[value.origin] = value.data;
+                                }
+                                // process values
+                                for (const key in chiavi) {
+                                    if (chiavi.hasOwnProperty(key)) {
+                                        const element = chiavi[key];
+                                        if (element == null) {
+                                            continue; // skip null entries
+                                        }
+                                        // decode combos
+                                        if (element["id"] != null) {
+                                            chiavi[key] = element["id"];
+                                        }
+                                        // encode boolean
+                                        else if (element === true) {
+                                            chiavi[key] = "1";
+                                        } else if (element === false) {
+                                            chiavi[key] = "0";
+                                        }
                                     }
                                 }
-                            }
-                            const subscription = _this.backendService
-                                .postEvent(
-                                    _this.formParams.entryName,
-                                    _this.authService.getCurrentCompany(
-                                        _this.currentKeys,
-                                    ),
-                                    {
-                                        ..._this.currentKeys,
-                                        ..._this.externalKeys,
-                                    },
-                                    keyListener,
-                                    chiavi,
-                                    event.eventName,
-                                    action,
-                                    true,
-                                )
-                                .subscribe((result) => {
-                                    if (result.result === "OK") {
-                                        _this._console.table(result);
-                                        if (result.data) {
-                                            if (Array.isArray(result.data)) {
-                                                // I am hoping that the result contains keys for the next event
-                                                value.data = {};
-                                                value.data["keys"] =
-                                                    result.data[0];
-                                            } else {
-                                                value.data = result.data;
+                                const subscription = _this.backendService
+                                    .postEvent(
+                                        _this.formParams.entryName,
+                                        _this.authService.getCurrentCompany(
+                                            _this.currentKeys,
+                                        ),
+                                        {
+                                            ..._this.currentKeys,
+                                            ..._this.externalKeys,
+                                        },
+                                        keyListener,
+                                        chiavi,
+                                        event.eventName,
+                                        action,
+                                        true,
+                                    )
+                                    .subscribe((result) => {
+                                        if (result.result === "OK") {
+                                            _this._console.table(result);
+                                            if (result.data) {
+                                                if (Array.isArray(result.data)) {
+                                                    // I am hoping that the result contains keys for the next event
+                                                    value.data = {};
+                                                    value.data["keys"] =
+                                                        result.data[0];
+                                                } else {
+                                                    value.data = result.data;
+                                                }
                                             }
-                                        }
 
-                                        if (event.successMessage) {
-                                            _this._toastService.showSuccessToast(
-                                                event.successMessage,
-                                            );
+                                            if (event.successMessage) {
+                                                _this._toastService.showSuccessToast(
+                                                    event.successMessage,
+                                                );
+                                            } else {
+                                                _this._toastService.showSuccessToast(
+                                                    "Success!",
+                                                );
+                                            }
+                                            if (
+                                                event.outputEventWhenComplete !=
+                                                null
+                                            ) {
+                                                _this.pubSubService.publishEvent(
+                                                    event.outputEventWhenComplete,
+                                                    value,
+                                                );
+                                            }
                                         } else {
-                                            _this._toastService.showSuccessToast(
-                                                "Success!",
+                                            _this._console.table(result);
+                                            _this._toastService.showErrorToast(
+                                                "Error ",
+                                                result.reason.detail == undefined
+                                                    ? ""
+                                                    : JSON.stringify(
+                                                        result.reason.detail,
+                                                    ) +
+                                                        (result.reason.hint ==
+                                                        undefined
+                                                            ? ""
+                                                            : JSON.stringify(
+                                                                    result.reason
+                                                                        .hint,
+                                                                )),
+                                                5000,
+                                                true,
                                             );
                                         }
-                                        if (
-                                            event.outputEventWhenComplete !=
-                                            null
-                                        ) {
-                                            _this.pubSubService.publishEvent(
-                                                event.outputEventWhenComplete,
-                                                value,
-                                            );
-                                        }
-                                    } else {
-                                        _this._console.table(result);
-                                        _this._toastService.showErrorToast(
-                                            "Error ",
-                                            result.reason.detail == undefined
-                                                ? ""
-                                                : JSON.stringify(
-                                                      result.reason.detail,
-                                                  ) +
-                                                      (result.reason.hint ==
-                                                      undefined
-                                                          ? ""
-                                                          : JSON.stringify(
-                                                                result.reason
-                                                                    .hint,
-                                                            )),
-                                            5000,
-                                            true,
-                                        );
-                                    }
-                                });
+                                    });
 
-                            _this.generalSubscriptions.push(subscription);
+                                _this.generalSubscriptions.push(subscription);
+                            }
                         }
-                    }
-                });
+                    });
+            }
+            else {
+                _this.showConditionNotMetMessage(event);
+            }
         } else if (event.actionType === "google_api") {
             _this.runGoogleEvent(event, value, keyListener);
         } else if (event.actionType === "regulat_api") {
