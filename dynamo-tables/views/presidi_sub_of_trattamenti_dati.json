@@ -11,7 +11,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select tdp.*, true as delete_presidi_td, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, left(entrasp.presidi_descr_breve(pr.id_presidio, pr.codice_azienda), 120) as descr_breve, left(entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda), 300) as descrizione, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.cpl_trattamenti_dati_presidi tdp inner join entrasp.presidi pr on tdp.codice_azienda=pr.codice_azienda and tdp.id_presidio=pr.id_presidio where tdp.codice_azienda=$codice_azienda$ and tdp.id_trattamento_dati=$id_trattamento_dati$"
+            "queryString": "select tdp.*, true as delete_presidi_td, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, left(entrasp.presidi_descr_breve(pr.id_presidio, pr.codice_azienda), 120) as descr_breve, left(entrasp.presidi_note(pr.id_presidio, pr.codice_azienda), 300) as descrizione, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice  from entrasp.cpl_trattamenti_dati_presidi tdp inner join entrasp.presidi pr on tdp.codice_azienda=pr.codice_azienda and tdp.id_presidio=pr.id_presidio where tdp.codice_azienda=$codice_azienda$ and tdp.id_trattamento_dati=$id_trattamento_dati$"
         }   
     ],
     "form_keys": [
@@ -182,7 +182,7 @@
             "isPrimary": false,
             "width": "40%",
             "key": "descrizione",
-            "queryFunct": "left(entrasp.presidi_descr(id_presidio, codice_azienda), 120)",
+            "queryFunct": "left(entrasp.presidi_note(id_presidio, codice_azienda), 120)",
             "label": "Note"
         },
         {
