@@ -9,7 +9,7 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Email
 import { DynamicFieldDirective } from "app/oc/directives";
 import { SubFormDynamicFieldDirective } from "app/oc/directives/subform-dynamic-field.directive";
 import { RegulatAPIParams } from "app/oc/interfaces/regulat_api_params";
-import { NotifyTicketParams } from "app/oc/interfaces/notify_ticket_params.interface";
+import { ContextMailParams } from "app/oc/interfaces/context_mail_params.interface";
 import { MatDialog as MatDialog } from "@angular/material/dialog";
 import { MenuOptionsCustomDialogComponent } from "app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component";
 import { FileManagerService } from "app/main/apps/file-manager/file-manager.service";
@@ -1926,37 +1926,35 @@ export class FormGetterComponent
             event.actionType === "show_message" &&
             event.message
         ) {
-            if(conditionMet){
-                // Show confirmation dialog
-                _this._dialogService
-                    .showConfimationDialog(
-                        event.message.messageTitle != null
-                            ? event.message.messageTitle
-                            : "Confirm",
-                        event.message.messageText,
-                        "Yes",
-                        "No",
-                        "info",
-                    )
-                    .then((result) => {
-                        // Initialize with No action info
-                        var actionType = event.message.actionOnNo.actionType;
-                        var queryFunct = event.message.actionOnNo.queryFunct;
-                        var regulatAPIParams: RegulatAPIParams = event.message.actionOnNo.regulatAPIParams;
-                        var notifyTicketParams: NotifyTicketParams = event.message.actionOnNo.notifyTicketParams;
-                        var eventMessage = event.message.actionOnNo;
-                        var action = "actionNo";
+            // Show confirmation dialog
+            _this._dialogService
+                .showConfimationDialog(
+                    event.message.messageTitle != null
+                        ? event.message.messageTitle
+                        : "Confirm",
+                    event.message.messageText,
+                    "Yes",
+                    "No",
+                    "info",
+                )
+                .then((result) => {
+                    // Initialize with No action info
+                    var actionType = event.message.actionOnNo.actionType;
+                    var queryFunct = event.message.actionOnNo.queryFunct;
+                    var regulatAPIParams: RegulatAPIParams = event.message.actionOnNo.regulatAPIParams;
+                    var contextMailParams: ContextMailParams = event.message.actionOnNo.contextMailParams;
+                    var eventMessage = event.message.actionOnNo;
+                    var action = "actionNo";
 
-                        // If user clicked yes, load yes action info
-                        if (result.value === true) {
-                            actionType = event.message.actionOnYes.actionType;
-                            queryFunct = event.message.actionOnYes.queryFunct;
-                            regulatAPIParams = event.message.actionOnYes.regulatAPIParams;
-                            notifyTicketParams = event.message.actionOnYes.notifyTicketParams;
-                            eventMessage = event.message.actionOnYes;
-                            action = "actionYes";
-                        }
-
+                    // If user clicked yes, load yes action info
+                    if (result.value === true) {
+                        actionType = event.message.actionOnYes.actionType;
+                        queryFunct = event.message.actionOnYes.queryFunct;
+                        regulatAPIParams = event.message.actionOnYes.regulatAPIParams;
+                        contextMailParams = event.message.actionOnYes.contextMailParams;
+                        eventMessage = event.message.actionOnYes;
+                        action = "actionYes";
+                    }
                         // Let's perform Yes Action
                         if (actionType === "reload") {
                             _this.reload();
@@ -2071,16 +2069,63 @@ export class FormGetterComponent
                                 keys
                             );
                         }
-                        
-                        else {
-                            // Run query
-                            let chiavi = {};
-                            const target_index =
-                                value.type !== "page" ? value.index : null; // null means the event comes from the full table
-                            let index =
-                                target_index == null ? _this.formArray.length : 1;
-                            const targetViewField = _this.viewKeys.find(
-                                (viewKey) => viewKey.key === keyListener,
+                        _this._formsService.runRegulatEvent(
+                            eventMessage,
+                            value,
+                            keyListener,
+                            formValues,
+                            keys
+                        );
+                    } else if (actionType === "user_api") {
+                        _this.runUserManagementEvent(event, value, keyListener);
+                    } else if (actionType === "context_mail") {
+                        const formValues = _this.formArray.first.form.value;
+                    
+                        if (!contextMailParams) {
+                            console.error('openTicketParams undefined');
+                            return;
+                        }
+                    
+                        let keys = {};
+                        if (contextMailParams) {
+                            keys = {
+                                chiavi: formValues[contextMailParams.chiavi],
+                                contesto: formValues[contextMailParams.contesto],
+                                username: formValues[contextMailParams.username],
+                            };
+                        } else {
+                            console.error('contextMailParams undefined:');
+                            return;
+                        }
+                    
+                        _this._formsService.runContextMailEvent(
+                            // eventMessage,
+                            // value,
+                            // keyListener,
+                            formValues,
+                            keys
+                        );
+                    }
+                    
+                    else {
+                        // Run query
+                        let chiavi = {};
+                        const target_index =
+                            value.type !== "page" ? value.index : null; // null means the event comes from the full table
+                        let index =
+                            target_index == null ? _this.formArray.length : 1;
+                        const targetViewField = _this.viewKeys.find(
+                            (viewKey) => viewKey.key === keyListener,
+                        );
+                        const childrenArray = _this.formArray.toArray();
+                        // iterate over all indexes when full table or instead affect the target index only
+                        while (index > 0) {
+                            index--;
+                            const current_index =
+                                target_index != null ? target_index : index;
+                            // some lines might be hidden, search for the right one
+                            const current_line = childrenArray.find(
+                                (c) => c.fields[0].index === current_index,
                             );
                             const childrenArray = _this.formArray.toArray();
                             // iterate over all indexes when full table or instead affect the target index only
