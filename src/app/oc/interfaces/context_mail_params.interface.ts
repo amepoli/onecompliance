@@ -1,5 +1,5 @@
-export interface ContextMailParams {
-    contesto: string;   
-    chiavi: string;      
+export interface SendMailWithContext {
+    context: string;   
+    keys: string;      
     username: string;  
 }
