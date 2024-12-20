@@ -10,7 +10,7 @@ import { AuthService, BackendService, ConsoleLoggerService, DialogService, Email
 import { DynamicFieldDirective } from "app/oc/directives";
 import { SubFormDynamicFieldDirective } from "app/oc/directives/subform-dynamic-field.directive";
 import { RegulatAPIParams } from "app/oc/interfaces/regulat_api_params";
-import { NotifyTicketParams } from "app/oc/interfaces/notify_ticket_params.interface";
+import { ContextMailParams } from "app/oc/interfaces/context_mail_params.interface";
 import { MatDialog as MatDialog } from "@angular/material/dialog";
 import { MenuOptionsCustomDialogComponent } from "app/oc/dialogs/menu-options-custom.dialog/menu-options-custom.dialog.component";
 import { FileManagerService } from "app/main/apps/file-manager/file-manager.service";
@@ -1944,7 +1944,7 @@ export class FormGetterComponent
                         var actionType = event.message.actionOnNo.actionType;
                         var queryFunct = event.message.actionOnNo.queryFunct;
                         var regulatAPIParams: RegulatAPIParams = event.message.actionOnNo.regulatAPIParams;
-                        var notifyTicketParams: NotifyTicketParams = event.message.actionOnNo.notifyTicketParams;
+                        var contextMailParams: ContextMailParams = event.message.actionOnNo.contextMailParams;
                         var eventMessage = event.message.actionOnNo;
                         var action = "actionNo";
 
@@ -1953,7 +1953,7 @@ export class FormGetterComponent
                             actionType = event.message.actionOnYes.actionType;
                             queryFunct = event.message.actionOnYes.queryFunct;
                             regulatAPIParams = event.message.actionOnYes.regulatAPIParams;
-                            notifyTicketParams = event.message.actionOnYes.notifyTicketParams;
+                            contextMailParams = event.message.actionOnYes.contextMailParams;
                             eventMessage = event.message.actionOnYes;
                             action = "actionYes";
                         }
@@ -2044,27 +2044,27 @@ export class FormGetterComponent
                             );
                         } else if (actionType === "user_api") {
                             _this.runUserManagementEvent(event, value, keyListener);
-                        } else if (actionType === "notify_ticket_status") {
+                        } else if (actionType === "context_mail") {
                             const formValues = _this.formArray.first.form.value;
-                        
-                            if (!notifyTicketParams) {
+
+                            if (!contextMailParams) {
                                 console.error('openTicketParams undefined');
                                 return;
                             }
-                        
+    
                             let keys = {};
-                            if (notifyTicketParams.openTicketParams) {
+                            if (contextMailParams) {
                                 keys = {
-                                    chiavi: formValues[notifyTicketParams.openTicketParams.chiavi],
-                                    contesto: formValues[notifyTicketParams.openTicketParams.contesto],
-                                    username: formValues[notifyTicketParams.openTicketParams.username]
+                                    chiavi: formValues[contextMailParams.chiavi],
+                                    contesto: formValues[contextMailParams.contesto],
+                                    username: formValues[contextMailParams.username],
                                 };
                             } else {
-                                console.error('ticketParams undefined:', notifyTicketParams.openTicketParams);
+                                console.error('contextMailParams undefined:');
                                 return;
                             }
-                        
-                            _this._formsService.runNotifyTicketEvent(
+    
+                            _this._formsService.runContextMailEvent(
                                 // eventMessage,
                                 // value,
                                 // keyListener,
