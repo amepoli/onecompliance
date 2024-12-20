@@ -47,7 +47,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select *, codice_Azienda as nuovo_codice_azienda, 'Ticket '||(codice_compito) as codice_compito_descr from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and id_tipo_segnalazione!=0"
+            "queryString": "select *, 'Ticket '||(codice_compito) as codice_compito_descr from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and id_tipo_segnalazione!=0"
         },
         {
             "operation": "selectTable",
@@ -138,42 +138,16 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "select codice_azienda as id, codice_azienda as name from entrasp.aziende where codice_azienda in(€global_user_companies€)",
-                "options": [],
-                "viewType": "combobox",
-                "dataType": "text"
+                "dataType": "text",
+                "viewType": "input"
             },
             "isHidden": false,
-            "isPrimary": false,
-            "key": "nuovo_codice_azienda",
-            "label": "Nuova azienda",
-            "outputEvent": {
-                "eventName": "cambia_azienda",
-                "eventTrigger": "select"
-            },
-            "inputEvents": [
-                {
-                    "eventName": "cambia_azienda",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageText": "Sei sicuro di voler cambiare azienda a questo compito?",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select 1;"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "compito_change_azienda($codice_azienda$, $codice_compito$, $nuovo_codice_azienda$)"
-                        }
-                    }
-                }
-            ],
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
             "newLine": false,
-            "queryFunct": "codice_azienda",
-            "readOnly": false,
-            "size": 1.5
+            "readOnly": true,
+            "translate": "RESOURCES.codice_azienda_tickets_consultant"
         },
         {
             "autoGenerate": false,
@@ -402,16 +376,42 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "input"
+                "comboQuery": "select codice_azienda as id, codice_azienda as name from entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
             },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nuovo_codice_azienda",
+            "label": "Nuova azienda",
+            "outputEvent": {
+                "eventName": "cambia_azienda",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "cambia_azienda",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler cambiare azienda a questo compito?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1;"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.compito_change_azienda($codice_azienda$, $codice_compito$, $nuovo_codice_azienda$)"
+                        }
+                    }
+                }
+            ],
             "newLine": false,
+            "sameOrigin": false,
             "readOnly": false,
-            "translate": "RESOURCES.codice_azienda_tickets_consultant"
+            "size": 1.5
         },
         {
             "autoGenerate": false,
