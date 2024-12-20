@@ -5,7 +5,7 @@
         {
             "operation": "update",
             "type": "main",
-            "queryString": "update entrasp.procedure_settori pc1 set controllo_certificazione = coalesce(nullif(string_to_array(trim(both '[]' from '$controllo_certificazione$'), ', '),'{}'), pc1.controllo_certificazione), controllo_audit_1 = coalesce(nullif (string_to_array(trim(both '[]' from '$controllo_audit_1$'), ', '),'{}'), pc1.controllo_audit_1), controllo_audit_2 = coalesce(nullif (string_to_array(trim(both '[]' from '$controllo_audit_2$'), ', '),'{}'), pc1.controllo_audit_2), controllo_rinnovo = coalesce(nullif (string_to_array(trim(both '[]' from '$controllo_rinnovo$'), ', '),'{}'), pc1.controllo_rinnovo) where pc1.codice_azienda||'~'||pc1.id_argomento_settore||'~'||pc1.id_questionario||'~'||pc1.id_procedura in (select unnest(ARRAY[$selected_rows_data$]));"
+            "queryString": "UPDATE entrasp.procedure_settori pc1 SET controllo_certificazione = COALESCE(string_to_array(NULLIF(trim(both '[]' from '$controllo_certificazione$'), 'null'), ',')::TEXT[], pc1.controllo_certificazione), controllo_audit_1 = COALESCE(string_to_array(NULLIF(trim(both '[]' from '$controllo_audit_1$'), 'null'), ',')::TEXT[], pc1.controllo_audit_1), controllo_audit_2 = COALESCE(string_to_array(NULLIF(trim(both '[]' from '$controllo_audit_2$'), 'null'), ',')::TEXT[], pc1.controllo_audit_2), controllo_rinnovo = COALESCE(string_to_array(NULLIF(trim(both '[]' from '$controllo_rinnovo$'), 'null'), ',')::TEXT[], pc1.controllo_rinnovo) WHERE pc1.codice_azienda || '~' || pc1.id_argomento_settore || '~' || pc1.id_questionario || '~' || pc1.id_procedura IN (SELECT UNNEST(ARRAY[$selected_rows_data$]));"
         }
     ],
     "form_keys": [

@@ -3,9 +3,7 @@
     "businessObjectName": "centriGestionali",
     "entryKey": "centri_gestionali",
     "label": "Uffici",
-    "dashboardTables": [
-        "dashboard_centri_gestionali"
-    ],
+    "dashboardTables": ["dashboard_centri_gestionali"],
     "addElementSettings": {
         "labelAdd": "Nuovo Centro Gestionale",
         "navigateOnSuccess": true
@@ -757,6 +755,18 @@
             {
                 "label": "Uffici e componenti",
                 "queryString": "select id_centro_gest, entrasp.anagrafiche_vr_dati_identificativi(cg.codice_part, cg.id_anagrafica_societa) as Società, cg.descrizione, entrasp.anagrafiche_cognnome(glm.codice_part, glm.id_anagrafica) as nome from entrasp.centri_gestionali cg inner join entrasp.gruppi_lavoro_membri glm on cg.id_gruppo_lavoro=glm.id_gruppo_lavoro and cg.codice_part=glm.codice_part where id_centro_gest>0 and cg.codice_part=$codice_part$ order by cg.descrizione, glm.id_anagrafica"
+            },
+            {
+                "label": "Template per import uffici",
+                "queryString": "select 'CDA (campo obbligatorio)' as codice, 'Consiglio di Amministrazione (campo obbligatorio)' as descrizione, 'inserire id_anagrafica del responsabile (campo facoltativo)' as id_responsabile, 'Consiglio di Amministrazione (campo obbligatorio)' as descrizione_estesa, 'Codice Azienda della Società erogante il servizio (campo facoltativo)' as codice_azienda_erogante,'consiglio@societa.com (campo facoltativo)' as e_mail,'inserire id anagrafica della Società di appartenenza (campo facoltativo)' as id_anagrafica_societa"
+            }
+        ]
+    },
+    "importQueries": {
+        "tableQueries": [
+            {
+                "label": "Importa Uffici",
+                "queryString": "select entrasp.centri_gest_import($codice_part$, $nome_file$)"
             }
         ]
     },

@@ -1,0 +1,195 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "trattamenti_dati_sub_of_presidi",
+    "origin": "entrasp.fonti_rischio",
+    "predefinedQueries": [
+        {
+            "operation": "selectForm",
+            "queryString": "SELECT * from entrasp.fonti_rischio where codice_azienda=$codice_azienda$ and codice_rischio=$codice_rischio$ and id_argomento_tipo_fonte_rischio=2813;",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cancella_trat",
+            "label": "delete",
+            "buttonIcon": "delete",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "cancella_trattamenti_rischi",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "cancella_trattamenti_rischi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "successMessage": "Done",
+                    "queryFunct": "delete from entrasp.fonti_rischio where codice_azienda = $codice_azienda$ and codice_rischio=$codice_rischio$ and id_fonte_rischio=£id_fonte_rischio£",
+                    "outputEventWhenComplete": "update_rischi_articoli_normativi"
+                }
+            ],
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.delete_trattamenti_dati_sub_of_rischi"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "select  id_trattamento_dati as id, titolo as name from entrasp.cpl_trattamenti_dati where codice_azienda=$codice_azienda$",
+                "options": [],
+                "validations": [
+                    {
+                        "message": "Breve descrizione necessaria",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.breve_descrizione_necessaria_trattamenti_dati_sub_of_rischi"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_trattamento_dati",
+            "label": "Trattamento Dato",
+            "newLine": false,
+            "readOnly": false,
+            "size": 5,
+            "translate": "RESOURCES.trattamento_dato_trattamenti_dati_sub_of_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descrizione",
+            "label": "Descrizione/Note",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3,
+            "translate": "RESOURCES.descrizionenote_trattamenti_dati_sub_of_rischi"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trattamento_associato",
+            "label": "Dettaglio",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "to_trattamento_dato",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 1,
+            "translate": "RESOURCES.dettaglio_trattamenti_dati_sub_of_rischi"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "readOnly": true,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false,
+            "key": "id_fonte_rischio",
+            "label": "ID Fonte Rischio",
+            "translate": "RESOURCES.id_fonte_rischio_trattamenti_dati_sub_of_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "readOnly": true,
+            "key": "codice_rischio",
+            "label": "Codice Rischio",
+            "translate": "RESOURCES.codice_rischio_trattamenti_dati_sub_of_rischi"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "readOnly": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "translate": "RESOURCES.codice_azienda_trattamenti_dati_sub_of_rischi"
+        },
+        {
+            "format": {
+                "dataType": "number",
+                "viewType": "input",
+                "value": "2813"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_fonte_rischio",
+            "label": "Tipo",
+            "readOnly": true,
+            "translate": "RESOURCES.tipo_trattamenti_dati_sub_of_rischi"
+        }
+    ],
+    "inputEvents": [
+        {
+            "eventName": "update_rischi_articoli_normativi",
+            "actionType": "reload"
+        },
+        {
+            "actionTarget": {
+                "name": "cpl_trattamenti_dati",
+                "type": "form",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "id_trattamento_dati",
+                        "destination": "id_trattamento_dati"
+                    }
+                ]
+            },
+            "actionType": "navigate",
+            "eventName": "to_trattamento_dato"
+        }
+    ],
+    "addElementSettings": {
+        "labelQuickAdd": "Nuovo Trattamento Dato",
+        "navigateOnSuccess": false
+    },
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ]
+}

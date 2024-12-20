@@ -1,0 +1,347 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "segnalazioni_vigilanza_righe",
+    "origin": "entrasp.segnalazioni_vigilanza_righe",
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_valore",
+            "readOnly": false,
+            "newLine": false,
+            "label": "Id Valore"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "readOnly": false,
+            "newLine": false,
+            "label": "Codice Azienda"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore_testo",
+            "readOnly": false,
+            "newLine": false,
+            "label": "Valore (testo)",
+            "size": 3,
+            "attributePostChecks": [
+                {
+                    "attributeType": "isHidden",
+                    "resultType": "condition",
+                    "key": "campo_valore_da_visualizzare",
+                    "conditionType": "equalTo",
+                    "conditionValue": "A",
+                    "resultTrueValue": false,
+                    "resultFalseValue": true
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore_num",
+            "readOnly": false,
+            "newLine": false,
+            "label": "Valore (numero)",
+            "size": 1.5,
+            "attributePostChecks": [
+                {
+                    "attributeType": "isHidden",
+                    "resultType": "condition",
+                    "key": "campo_valore_da_visualizzare",
+                    "conditionType": "equalTo",
+                    "conditionValue": "N",
+                    "resultTrueValue": false,
+                    "resultFalseValue": true
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore_data",
+            "readOnly": false,
+            "newLine": false,
+            "label": "Valore (data)",
+            "size": 2,
+            "attributePostChecks": [
+                {
+                    "attributeType": "isHidden",
+                    "resultType": "condition",
+                    "key": "campo_valore_da_visualizzare",
+                    "conditionType": "equalTo",
+                    "conditionValue": "D",
+                    "resultTrueValue": false,
+                    "resultFalseValue": true
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "Select arg.id_argomento as id, arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=(select ats.id_argomento from entrasp.voci_segnalazione vs  inner join entrasp.attributi_segnalazioni ats on vs.attributo=ats.attributo inner join entrasp.segnalazioni_vigilanza_righe svr on vs.id_voce_segnalazione=svr.id_voce_segnalazione  where id_valore=$id_valore$)",
+                "dataType": "number",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore_id_argomento",
+            "readOnly": false,
+            "newLine": true,
+            "label": "Valore ID Argomento",
+            "size": 1.5,
+            "attributePostChecks": [
+                {
+                    "attributeType": "isHidden",
+                    "resultType": "condition",
+                    "key": "campo_valore_da_visualizzare",
+                    "conditionType": "equalTo",
+                    "conditionValue": "C",
+                    "resultTrueValue": false,
+                    "resultFalseValue": true
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "dataType": "text",
+                "comboQuery": "SELECT v.id_voce_segnalazione AS id, v.voce || ' - ' || v.nome_sottovoce || ' - ' || a.nome_attributo AS name FROM entrasp.voci_segnalazione v LEFT JOIN entrasp.attributi_segnalazioni a ON v.attributo = a.attributo WHERE v.id_argomento_segnalazione = (SELECT cdm.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni crr INNER JOIN entrasp.cdms_risorse cdm ON crr.codice_azienda = cdm.codice_azienda AND crr.id_risorsa = cdm.id_risorsa LEFT JOIN entrasp.segnalazioni_vigilanza_righe svr ON cdm.codice_azienda = svr.codice_azienda AND cdm.id_risorsa = svr.id_risorsa WHERE cdm.codice_azienda = $codice_azienda$ AND cdm.id_risorsa =25)",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_voce_segnalazione",
+            "readOnly": false,
+            "newLine": true,
+            "label": "Voce",
+            "size": 10
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sottovoce",
+            "sameOrigin": false,
+            "queryFunct": "select vs.sottovoce from entrasp.voci_segnalazione vs inner join entrasp.segnalazioni_vigilanza_righe svr on vs.id_voce_segnalazione=svr.id_voce_segnalazione where id_valore=$id_valore$",
+            "readOnly": true,
+            "newLine": false,
+            "label": "Cod. Sottovoce",
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "attributo",
+            "queryFunct": "select vs.attributo from entrasp.voci_segnalazione vs inner join entrasp.segnalazioni_vigilanza_righe svr on vs.id_voce_segnalazione=svr.id_voce_segnalazione where id_valore=$id_valore$",
+            "sameOrigin": false,
+            "readOnly": true,
+            "newLine": true,
+            "label": "Attributo",
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_risorsa",
+            "readOnly": true,
+            "newLine": false,
+            "label": "ID Risorsa",
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "prog_revisione",
+            "readOnly": false,
+            "newLine": false,
+            "label": "Prog Revisione",
+            "size": 3
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "campo_valore_da_visualizzare",
+            "readOnly": false,
+            "newLine": false,
+            "label": "Campo valore da visualizzare",
+            "queryFunct": "select ats.sottotipo_valore from entrasp.voci_segnalazione vs inner join entrasp.attributi_segnalazioni ats on vs.attributo=ats.attributo inner join entrasp.segnalazioni_vigilanza_righe svr on vs.id_voce_segnalazione=svr.id_voce_segnalazione  where id_valore=$id_valore$",
+            "size": 3
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_valore",
+            "label": "ID valore"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "Codice Azienda"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore_testo",
+            "label": "Valore formato testo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore_num",
+            "label": "Valore formato numero"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore_data",
+            "label": "Valore formato data"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "valore_id_argomento",
+            "label": "Valore ID Argomento"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_voce_segnalazione",
+            "label": "voce"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "sottovoce",
+            "label": "sottovoce"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "attributo",
+            "label": "attributo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_risorsa",
+            "label": "ID Risorsa"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "prog_revisione",
+            "label": "Preg Revisione"
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Aggiungi Voce",
+        "navigateOnSuccess": true
+    }
+}

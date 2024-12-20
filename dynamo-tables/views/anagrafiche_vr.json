@@ -53,14 +53,8 @@
         {
             "operation": "insert",
             "type": "preCheck",
-            "queryString": "select avr.partita_iva from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and UPPER(avr.partita_iva)=UPPER($partita_iva$) and an.flag_duplicato!='1'",
-            "messageNotNull": "Attenzione esiste già un'anagrafica con la stessa partita IVA!"
-        },
-        {
-            "operation": "insert",
-            "type": "preCheck",
-            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null and $partita_iva$ is null limit 1",
-            "messageNotNull": "Attenzione: inserire codice fiscale o partita iva per continuare!"
+            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null limit 1",
+            "messageNotNull": "Attenzione: inserire codice fiscale per continuare!"
         },
         {
             "operation": "update",
@@ -73,12 +67,6 @@
             "type": "preCheck",
             "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.codice_fiscale)=UPPER($codice_fiscale$) and an.flag_duplicato!='1'",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
-        },
-        {
-            "operation": "update",
-            "type": "preCheck",
-            "queryString": "select avr.partita_iva from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.partita_iva)=UPPER($partita_iva$) and an.flag_duplicato!='1'",
-            "messageNotNull": "Attenzione esiste già un'anagrafica con la stessa partita IVA!"
         },
         {
             "operation": "update",
@@ -163,6 +151,33 @@
             "readOnly": false,
             "sameOrigin": true,
             "insertUpdateFunct": "SELECT '€global_username€'",
+            "translate": "RESOURCES.user_upd_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "consenti_invio",
+            "label": "consenti_invio",
+            "readOnly": false,
+            "sameOrigin": false,
+            "inputEvents": [
+                {
+                    "eventName": "consenti_invio_event",
+                    "actionType": "dialog",
+                    "condition": "equalTo",
+                    "valueKey": "consenti_invio",
+                    "values": ["1"],
+                    "customDialogEntryName": "dialog_anagrafiche_vr_invite_user",
+                    "customDialogTitle": "Add User",
+                    "conditionNotMetMessageLabel": "No email is provided, or user already associated to this register!",
+                    "conditionNotMetMessageTranslate": "RESOURCES.email_necessaria_whistleblowing"
+                }
+            ],
             "translate": "RESOURCES.user_upd_anagrafiche_vr"
         },
         {
@@ -366,6 +381,22 @@
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "boolean",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "consenti_invito_user",
+            "queryFunct": "entrasp.consenti_invito_user(codice_part, id_anagrafica)",
+            "label": "consenti_invito_user",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.25
+            
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "menu",
                 "menuOptions": [
                     {
@@ -532,18 +563,25 @@
                 },
                 {
                     "eventName": "invite_user",
+                    "actionType": "query",
+                    "values": [],
+                    "condition": "none",
+                    "queryFunct": "select entrasp.consenti_invito_user($codice_part$, $id_anagrafica$) as consenti_invio",
+                    "outputEventWhenComplete": "consenti_invio_event"
+                },
+                {
+                    "eventName": "invite_user_dialog",
                     "actionType": "dialog",
                     "customDialogEntryName": "dialog_anagrafiche_vr_invite_user",
                     "customDialogTitle": "Add User",
-                    "condition": "notEqualTo",
-                    "values": [null, ""],
-                    "valueKey": "email_sender",
-                    "conditionNotMetMessageLabel": "No email is provided!",
+                    "values": ["1"],
+                    "condition": "equalTo",
+                    "conditionNotMetMessageLabel": "No email is provided, or user already associated to this register!",
                     "conditionNotMetMessageTranslate": "RESOURCES.email_necessaria_whistleblowing",
                     "customDialogGenericSave": false
                 },
                 {
-                    "eventName": "invite_user_again",
+                    "eventName": "invite_user_api",
                     "actionType": "user_api",
                     "condition": "notEqualTo",
                     "values": [null, ""],
@@ -796,7 +834,8 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "input"
+                            "viewType": "input",
+                            "value": ""
                         },
                         "isHidden": false,
                         "isPrimary": false,
@@ -2979,7 +3018,7 @@
         "tableQueries": [
             {
                 "label": "Template anagrafiche per import",
-                "queryString": "select 'Rossi srl' as ragione_sociale, 'ROSSISRL' as codice_cliente, '061124' as partita_iva, 'RSSMRO' as codice_fiscale, '(CLI/FOR/DIP/RSRSA/FONDO)' as ruolo, '(P/E)' as tipo_soggetto, 'Mario' as nome, 'Rossi' as cognome, '31100' as cap, 'Treviso' as localita, 'Via buranelli 12' as indirizzo, 'mario.rossi@rossini.ro' as email, '165' as sae, '69.2' as ateco "
+                "queryString": "select 'Rossi srl' as ragione_sociale, 'ROSSISRL' as codice_cliente, '061124' as partita_iva, 'RSSMRO' as codice_fiscale, '(CLI/FOR/DIP/RSRSA/FONDO)' as ruolo, '(P/E)' as tipo_soggetto, 'Mario' as nome, 'Rossi' as cognome, '31100' as cap, 'Treviso' as localita, 'Via buranelli 12' as indirizzo, 'mario.rossi@rossini.ro' as email, '165' as sae, '69.2' as ateco, '1970-05-31' as data_rilascio_documento, 'AC35489' as numero_documento, 'COMUNE DI PADOVA' AS rilasciato_da, '2024-08-30' AS data_scadenza_documento, '45398' AS id_argomento_tipo_documento, 'Inserire il codice_azienda nel caso si voglia specificare chi sia il datore di lavoro' as codice_azienda, '2022-12-31 inserire la data di avvio collaborazione (campo facoltatico)' as data_avvio_collaborazione"
             },
             {
                 "label": "Anomalie Clientela",

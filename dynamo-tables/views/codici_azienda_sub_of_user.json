@@ -1,0 +1,143 @@
+{
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.utenti_aziende",
+    "entryKey": "codici_azienda_sub_of_user",
+        "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "queryString": "select username, codice_azienda from entrasp.utenti_aziende utaz where utaz.username = $username$",
+            "type": "main"
+        }
+    ],
+    
+    "search_keys": [
+               {
+            "fieldName": "dynamo_user_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Dynamo user",
+            "newLine": true,
+            "queryCond": "utaz.username = $dynamo_user_s$",
+            "translate": "RESOURCES.dynamo_user_anagrafiche_vr"
+        },
+        {
+            "fieldName": "codice_azienda_s",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice azienda",
+            "newLine": true,
+            "queryCond": "utaz.codice_azienda = $codice_azienda_s$"
+        }
+       
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "username",
+            "label": "username",
+            "readOnly": false,
+            "sameOrigin": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "newLine": true,
+            "readOnly": true,
+            "translate": "RESOURCES.codice_part_anagrafiche_vr"
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "username",
+            "label": "Username"
+            
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "20%",
+            "key": "codice_azienda",
+            "label": "Cliente",
+            "translate": "RESOURCES.cliente_aziende_sub_of_user"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "add",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "save",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "delete",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "documentation"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "multi-attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "startEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "stopEvent"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "import_export"
+        },
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        },
+        {
+            "tableActionType": "quick-add",
+            "viewType": "table"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "import_export"
+        }
+    ]
+}
