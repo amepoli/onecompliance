@@ -1,7 +1,7 @@
 import { GoogleAPIParams, RegulatAPIParams, MenuOption } from ".";
 import { FormWidgetType } from "../types";
 import { EmailActionParameters } from "./email_action_parameters";
-
+import { ContextMailParams } from "./context_mail_params.interface";
 export interface Validator {
     message: string;
     name: string;
@@ -44,11 +44,11 @@ export interface FieldInputEvent {
         messageTitle?: string;
         messageText: string;
         actionOnYes: {
-            actionType: "reload" | "query" | "email" | "create_user_and_email" | "enable_company_to_user" | "dissociates_company" | "multi_enablement_company_to_users" | "regulat_api" | "notify_ticket_status";
+            actionType: "reload" | "query" | "email" | "create_user_and_email" | "enable_company_to_user" | "dissociates_company" | "multi_enablement_company_to_users" | "regulat_api" | "context_mail";
             queryFunct?: string;
             emailActionParameters?: EmailActionParameters;
             regulatAPIParams?: any;
-            notifyTicketParams?: any;
+            contextMailParams?: ContextMailParams;
         };
         actionOnNo: {
             actionType: "reload" | "query" | "skip";
