@@ -32,7 +32,7 @@ import { BackendService } from "./backend.service";
 })
 export class FormsService {
     constructor(
-        private _console: ConsoleLoggerService, 
+        private _console: ConsoleLoggerService,
         private _toastService: ToastService,
         private _dialogService: DialogService,
         private authService: AuthService,
@@ -373,43 +373,43 @@ export class FormsService {
 
     public isFormValid(formGetter: FormGetterComponent) {
         let isValid = true;
-    
-        if (formGetter.formArray && formGetter.formArray.length) {
-          let formArray = formGetter.formArray.toArray();
-          for (let i = 0; i < formArray.length; i++) {
-            const form = formArray[i];
-            // Old method in which we check the whole form at once
-            // This is not good because it also checks invisible fields
-            // if (!form.form.valid) {
-            //     isValid = false;
-            // }
-            for (let j = 0; j < form.fields.length; j++) {
-              const field = form.fields[j];
-              if (field.isVisible) {
-                if (form.form.get(field.name) && !form.form.get(field.name).valid) {
-                  form.form.get(field.name).markAsTouched({ onlySelf: false });
-                  isValid = false;
-                }
-              }
-            }
-    
-            // if (!isValid) {
-            //     // Highlight all empty required fields
-            //     Object.keys(form.form.controls).forEach(field => {
-            //         const control = form.form.get(field);
-            //         control.markAsTouched({ onlySelf: false });
-            //     });
-            // }
-          }
-        }
-    
-        return isValid;
-      }
 
-      public async runRegulatEvent(event, value, keyListener, formValues: any, keys: any) {
+        if (formGetter.formArray && formGetter.formArray.length) {
+            let formArray = formGetter.formArray.toArray();
+            for (let i = 0; i < formArray.length; i++) {
+                const form = formArray[i];
+                // Old method in which we check the whole form at once
+                // This is not good because it also checks invisible fields
+                // if (!form.form.valid) {
+                //     isValid = false;
+                // }
+                for (let j = 0; j < form.fields.length; j++) {
+                    const field = form.fields[j];
+                    if (field.isVisible) {
+                        if (form.form.get(field.name) && !form.form.get(field.name).valid) {
+                            form.form.get(field.name).markAsTouched({ onlySelf: false });
+                            isValid = false;
+                        }
+                    }
+                }
+
+                // if (!isValid) {
+                //     // Highlight all empty required fields
+                //     Object.keys(form.form.controls).forEach(field => {
+                //         const control = form.form.get(field);
+                //         control.markAsTouched({ onlySelf: false });
+                //     });
+                // }
+            }
+        }
+
+        return isValid;
+    }
+
+    public async runRegulatEvent(event, value, keyListener, formValues: any, keys: any) {
         let _this = this;
         const regulatAPIParams: RegulatAPIParams = event.regulatAPIParams;
-        
+
 
         // process the booleans (1/0 instead of true/false)
         for (const value in formValues) {
@@ -497,15 +497,15 @@ export class FormsService {
 
                         const codiceAziendaAML =
                             formValues[
-                                regulatAPIParams.surveyParams.codice_azienda
+                            regulatAPIParams.surveyParams.codice_azienda
                             ];
                         const idSondaggioAML =
                             formValues[
-                                regulatAPIParams.surveyParams.id_sondaggio
+                            regulatAPIParams.surveyParams.id_sondaggio
                             ];
                         const dynamoUserAML =
                             formValues[
-                                regulatAPIParams.surveyParams.dynamo_user
+                            regulatAPIParams.surveyParams.dynamo_user
                             ];
                         const isLightScan =
                             regulatAPIParams.surveyParams.is_light_scan;
@@ -598,19 +598,32 @@ export class FormsService {
         }
     }
 
-    public async runNotifyTicketEvent(formValues: any, keys: any) {
+    public async runContextMailEvent(formValues: any, keys: any) {
         let _this = this;
-        let connected_registries = await _this.backendService
-                            .sendTicketEmail(
-                                keys.contesto,
-                                keys.chiavi,
-                                keys.username
-                            )
-                            .toPromise();
-        _this._toastService.showSuccessToast(
-            "Test riuscito",
-        ); // show success toast   
+
+        try {
+            const responseString = await _this.backendService
+                .sendTicketEmail(keys.contesto, keys.chiavi, keys.username)
+                .toPromise();
+
+            const response = typeof responseString === "string" ? JSON.parse(responseString) : responseString;
+            if (response && response.Success === true) {
+                _this._toastService.showSuccessToast("Mail mandata correttamente!");
+            } else {
+                const errorMessage = response?.Error || "Errore sconosciuto";
+                _this._toastService.showErrorToast(
+                    `Invio fallito: ${errorMessage}`,
+                );
+            }
+        } catch (error) {
+            console.error("Errore durante l'invio dell'email:", error);
+            _this._toastService.showErrorToast(
+                "Si è verificato un errore imprevisto durante l'invio della mail.",
+            );
+        }
     }
+
+
 
     processFormValues(formValues: any) {
         for (const key in formValues) {
@@ -620,7 +633,7 @@ export class FormsService {
                     continue; // skip null entries
                 }
                 if (Array.isArray(element)) {
-                    if(element.length > 0) {
+                    if (element.length > 0) {
                         if (element.length === 1 && element[0] === null) {
                             continue; // skip null entries
                             // formValues[key] = 'ARRAY[NULL]';

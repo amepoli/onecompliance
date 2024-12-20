@@ -334,7 +334,7 @@
                     "values": [],
                     "queryFunct": "update entrasp.compiti set stato='C', data_chiusura=CURRENT_DATE where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$; update entrasp.consuntivazioni set stato='C' where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$;",
                     "outputEventWhenComplete": "send_email"
-                },                
+                },
                 {
                     "eventName": "update_button",
                     "actionType": "readOnly",
@@ -352,14 +352,11 @@
                     "message": {
                         "messageText": "Si intende procedere all'invio dell'email?",
                         "actionOnYes": {
-                            "actionType": "notify_ticket_status",
-                            "notifyTicketParams": {
-                                "actionType": "close_ticket",
-                                "openTicketParams": {
-                                    "contesto": "contesto",
-                                    "chiavi":  "chiavi",
-                                    "username": "username"                                                                 
-                                }
+                            "actionType": "context_mail",
+                            "contextMailParams": {
+                                "contesto": "contesto",
+                                "chiavi": "chiavi",
+                                "username": "username"
                             }
                         },
                         "actionOnNo": {
