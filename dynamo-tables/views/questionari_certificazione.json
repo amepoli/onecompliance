@@ -936,7 +936,7 @@
                 "dataType": "text",
                 "viewType": "label"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "label_salva",
             "label": "Una volta completate le informazioni richieste, cliccare il tasto SALVA, inserire nella sottotabella in basso le sedi aziendali e solo allora cliccare sul tasto 'Richiedi Preventivo'",
@@ -974,7 +974,7 @@
             "isPrimary": false,
             "key": "preventivo_produci",
             "buttonIcon": "arrow_circle_up",
-            "label": "Richiedi Preventivo",
+            "label": "Richiedi Preventivo (Salvare prima di richiedere il preventivo)",
             "tooltip": "Premere la richiesta una volta completato tutto il questionario e dopo aver inserito le informazioni relative alle sedi posto nella sottotabella in fondo alla pagina",
             "newLine": false,
             "outputEvent": {
@@ -1013,7 +1013,7 @@
             "tooltip": "Premere la richiesta una volta completato tutto il questionario e dopo aver inserito le informazioni relative ai settori posto nella sottotabella in fondo alla pagina",
             "newLine": false,
             "outputEvent": {
-                "eventName": "richiedi_preventivo",
+                "eventName": "crea_contratto",
                 "eventTrigger": "press"
             },
             "readOnly": false,
@@ -1024,25 +1024,16 @@
             },
             "inputEvents": [
                 {
-                    "eventName": "richiedi_preventivo",
-                    "actionType": "show_message",
-                    "message": {
-                        "messageTitle": "Avvio Processo di Certificazione",
-                        "messageText": "Vuoi avviare il processo di certificazione? Premendo sì verrà creato il contratto, il preventivo e il progetto relativo a questo questionario",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.crea_contratto_certificazione($codice_azienda$, $id_questionario$)"
-                        }
-                    },
+                    "eventName": "crea_contratto",
+                    "actionType": "query",
+                    "values": [],
+                    "customDialogEntryName": "dialog_consenti_crea_contratto",
+                    "customDialogTitle": "Crea Contratto e Progetto",
                     "condition": "none",
-                    "values": []
+                    "queryFunct": "select entrasp.consenti_crea_contratto($codice_azienda$, $id_questionario$) as consenti_crea_contratto",
+                    "outputEventWhenComplete": "consenti_crea_contratto_event"
                 }
-            ],
-            "translate": "RESOURCES.produci_contratto_e_progetto_questionari_certificazione"
+            ]
         },
         {
             "format": {
@@ -1083,12 +1074,10 @@
                         },
                         "actionOnYes": {
                             "actionType": "context_mail",
-                            "notifyTicketParams": {
-                                "openTicketParams": {
-                                    "contesto": "contesto",
-                                    "chiavi": "chiavi",
-                                    "username": "username"
-                                }
+                            "contextMailParams": {
+                                "contesto": "contesto",
+                                "chiavi": "chiavi",
+                                "username": "username"
                             }
                         }
                     },
@@ -1099,6 +1088,43 @@
                     "values": ["1"],
                     "conditionNotMetMessageLabel": "Necessario specificare almeno una sede!",
                     "conditionNotMetMessageTranslate": "RESOURCES.consenti_richiesta_preventivo_questionari_certificazione"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "consenti_crea_contratto",
+            "label": "consenti_crea_contratto",
+            "readOnly": false,
+            "sameOrigin": false,
+            "inputEvents": [
+                {
+                    "eventName": "consenti_crea_contratto_event",
+                    "actionType": "show_message",
+                    "message": {
+                        "messageTitle": "Contratto e Progetto",
+                        "messageText": "Sei sicuro di voler creare contratto e progetto?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.crea_contratto_certificazione($codice_azienda$, $id_questionario$)"
+                        }
+                    },
+                    "customDialogEntryName": "dialog_consenti_crea_contratto",
+                    "customDialogTitle": "Crea Contratto e Progetto",
+                    "condition": "equalTo",
+                    "valueKey": "consenti_crea_contratto",
+                    "values": ["1"],
+                    "conditionNotMetMessageLabel": "Necessario specificare almeno un settore IAF"
                 }
             ]
         },
@@ -1127,6 +1153,20 @@
             "key": "chiavi",
             "queryFunct": "codice_azienda||'~'||id_questionario",
             "label": "chiavi",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "username",
+            "queryFunct": "'€global_username€'",
+            "label": "username",
             "newLine": false,
             "readOnly": true
         }
