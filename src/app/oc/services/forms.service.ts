@@ -598,32 +598,19 @@ export class FormsService {
         }
     }
 
-    public async runContextMailEvent(formValues: any, keys: any) {
+    public async runNotifyTicketEvent(formValues: any, keys: any) {
         let _this = this;
-    
-        try {
-            const responseString = await _this.backendService
-                .sendTicketEmail(keys.contesto, keys.chiavi, keys.username)
-                .toPromise();
-
-            const response = typeof responseString === "string" ? JSON.parse(responseString) : responseString;
-            if (response && response.Success === true) {
-                _this._toastService.showSuccessToast("Mail mandata correttamente!");
-            } else {
-                const errorMessage = response?.Error || "Errore sconosciuto";
-                _this._toastService.showErrorToast(
-                    `Invio fallito: ${errorMessage}`,
-                );
-            }
-        } catch (error) {
-            console.error("Errore durante l'invio dell'email:", error);
-            _this._toastService.showErrorToast(
-                "Si è verificato un errore imprevisto durante l'invio della mail.",
-            );
-        }
+        let connected_registries = await _this.backendService
+                            .sendTicketEmail(
+                                keys.contesto,
+                                keys.chiavi,
+                                keys.username
+                            )
+                            .toPromise();
+        _this._toastService.showSuccessToast(
+            "Test riuscito",
+        ); // show success toast   
     }
-    
-    
 
     processFormValues(formValues: any) {
         for (const key in formValues) {
