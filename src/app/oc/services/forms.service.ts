@@ -196,6 +196,22 @@ export class FormsService {
         return outputObject;
     }
 
+    public findViewKey(formKeys: FormViewKey[], key: string) {
+        var found = formKeys.find((x) => x.key === key);
+        if(found) {
+            return found;
+        }
+        else {
+            formKeys.filter(x => x.format.subform_keys != null).forEach(subFormKey => {
+                const subFormKeyFound = this.findViewKey(subFormKey.format.subform_keys, key);
+                if(subFormKeyFound) {
+                    found = subFormKeyFound
+                }
+            });
+        }
+        return found;
+    }
+
     private getFieldValue(
         attributes: any,
         formParams: FormGetterParams,

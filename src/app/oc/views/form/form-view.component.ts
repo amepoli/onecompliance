@@ -6,7 +6,7 @@ import { MultiAttachmentsDialogComponent } from 'app/oc/dialogs/multi-attachment
 import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
 import { FormGetterParams, FormViewParams, MessageElement, MessageItem, MessageView, TabType, TabViewKey } from 'app/oc/interfaces';
-import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService, ValidationsService } from 'app/oc/services';
+import { ActionsService, AuthService, BackendService, ConsoleLoggerService, DialogService, DocumentationService, FormsService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimezoneService, ToastService, ValidationsService } from 'app/oc/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { exit } from 'process';
 import { memoize } from 'app/oc/decorators/memoize';
@@ -75,7 +75,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         private _messagesService: MessagesService,
         private _console: ConsoleLoggerService,
         private _actionsService: ActionsService,
-        private _timezoneService: TimezoneService
+        private _timezoneService: TimezoneService,
+        private _formsService: FormsService
     ) {
 
     }
@@ -333,14 +334,14 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                     else {
                         // make '' -> null
                         if (element === '') {
-                            const targetKey = _this.formGetter.viewKeys.filter(x => x.key === value)[0];
-                            if (targetKey.format.dataType === 'text' && targetKey.format.viewType === 'input' && targetKey.format.value !== undefined) {
+                            const targetKey = _this._formsService.findViewKey(_this.formGetter.viewKeys, value);
+                            if (targetKey && targetKey.format.dataType === 'text' && targetKey.format.viewType === 'input' && targetKey.format.value !== undefined) {
                                 values[value] = targetKey.format.value;
                             }
                         }
                         else if (Array.isArray(element) && element.length === 0) {
-                            const targetKey = _this.formGetter.viewKeys.filter(x => x.key === value)[0];
-                            if (targetKey.format.value !== undefined) {
+                            const targetKey = _this._formsService.findViewKey(_this.formGetter.viewKeys, value);
+                            if (targetKey && targetKey.format.value !== undefined) {
                                 values[value] = targetKey.format.value;
                             }
                         }
