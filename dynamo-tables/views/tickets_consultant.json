@@ -47,7 +47,7 @@
         {
             "operation": "selectForm",
             "type": "main",
-            "queryString": "select *, 'Ticket '||(codice_compito) as codice_compito_descr from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and id_tipo_segnalazione!=0"
+            "queryString": "select *, codice_Azienda as nuovo_codice_azienda, 'Ticket '||(codice_compito) as codice_compito_descr from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$ and id_tipo_segnalazione!=0"
         },
         {
             "operation": "selectTable",
@@ -138,6 +138,46 @@
         {
             "autoGenerate": false,
             "format": {
+                "comboQuery": "select codice_azienda as id, codice_azienda as name from entrasp.aziende where codice_azienda in(€global_user_companies€)",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "nuovo_codice_azienda",
+            "label": "Nuova azienda",
+            "outputEvent": {
+                "eventName": "cambia_azienda",
+                "eventTrigger": "select"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "cambia_azienda",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageText": "Sei sicuro di voler cambiare azienda a questo compito?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1;"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "compito_change_azienda($codice_azienda$, $codice_compito$, $nuovo_codice_azienda$)"
+                        }
+                    }
+                }
+            ],
+            "newLine": false,
+            "queryFunct": "codice_azienda",
+            "readOnly": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "text",
                 "viewType": "input"
             },
@@ -161,7 +201,7 @@
             "label": "Tempo stimato",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5,
+            "size": 1.0,
             "tooltip": "Tempo stimato realizzazione espresso in ore"
         },
         {
@@ -185,7 +225,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 3.13,
+            "size": 2.63,
             "translate": "RESOURCES.cliente_contracts_investment"
         },
         {
@@ -239,7 +279,7 @@
             "label": "N. Ticket",
             "newLine": true,
             "readOnly": true,
-            "size": 2.5,
+            "size": 2.0,
             "translate": "RESOURCES.n_ticket_tickets_consultant"
         },
         {
