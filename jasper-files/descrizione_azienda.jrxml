@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final using JasperReports Library version 6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="accettazione_incarico" pageWidth="565" pageHeight="800" columnWidth="537" columnSpacing="27" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="sondaggi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DataAdapterOnecompliance.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="405"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="584"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select ans.codice_azienda, ans.data_accettazione, mt.id_modello_test, ans.id_sondaggio, mt.descrizione, qc.processo, ans.data_accettazione, entrasp.argomenti_descr_breve_no_id(ac.id_argomento_tipo_norma) as norma, entrasp.anagrafiche_cognnome(cnt.codice_part, cnt.id_cliente) as ragione_sociale, giornate_uomo_scontate, giornate_uomo_sorveglianza,cnt.id_contratto, (select string_agg(soc.citta||', '||soc.indirizzo, '; ') from entrasp.sedi_operative_questionari soc  where soc.id_questionario=qc.id_questionario and soc.codice_azienda=qc.codice_azienda)as sedi, (select string_agg(entrasp.argomenti_descr_breve_no_id(unnest), '; ') from unnest(ac.id_argomento_settore))as settore, string_agg(entrasp.anagrafiche_cognnome(ans.codice_part, ans.id_anagrafica)||' ('||entrasp.argomenti_descr_breve_no_id(id_argomento_liv_competenza)||')', '; ') as auditors  from entrasp.anagrafiche_sondaggi ans inner join entrasp.sondaggi snd on ans.codice_azienda=snd.codice_azienda and ans.id_sondaggio=snd.id_sondaggio inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda and snd.id_modello_test=mt.id_modello_test inner join entrasp.argomenti_argomenti amt on mt.id_argomento=amt.id_argomento_son inner join entrasp.contratti cnt on snd.codice_azienda=cnt.codice_azienda and snd.id_contratto=cnt.id_contratto inner join entrasp.articoli_contratti ac on cnt.codice_azienda=ac.codice_azienda and cnt.id_contratto=ac.id_contratto inner join entrasp.questionari_certificazione qc on cnt.codice_azienda=qc.codice_azienda and cnt.id_contratto=qc.id_contratto where amt.id_argomento_father=ac.id_argomento_tipo_norma and ans.codice_azienda='ASACERT' and ans.id_sondaggio=69   group by sedi, ans.codice_azienda, ans.id_sondaggio, mt.id_modello_test, mt.descrizione,  qc.processo, giornate_uomo_scontate, ans.data_accettazione,  giornate_uomo_sorveglianza, cnt.id_contratto,  cnt.codice_part, cnt.id_cliente, ac.id_argomento_settore, ac.id_argomento_tipo_norma order by ans.codice_azienda, cnt.id_cliente, mt.id_modello_test, mt.id_modello_test"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["FININTSGR"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_sondaggio" class="java.lang.String">
+		<defaultValueExpression><![CDATA[920]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="anagrafiche_sondaggi"/>
+	</field>
+	<field name="data_accettazione" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="data_accettazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="data_accettazione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="anagrafiche_sondaggi"/>
+	</field>
+	<field name="id_modello_test" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_modello_test"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test"/>
+	</field>
+	<field name="id_sondaggio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_sondaggio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="anagrafiche_sondaggi"/>
+	</field>
+	<field name="descrizione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="modelli_test"/>
+	</field>
+	<field name="processo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="processo"/>
+		<property name="com.jaspersoft.studio.field.label" value="processo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="questionari_certificazione"/>
+	</field>
+	<field name="norma" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="norma"/>
+		<property name="com.jaspersoft.studio.field.label" value="norma"/>
+	</field>
+	<field name="ragione_sociale" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ragione_sociale"/>
+		<property name="com.jaspersoft.studio.field.label" value="ragione_sociale"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="aziende"/>
+	</field>
+	<field name="giornate_uomo_scontate" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="giornate_uomo_scontate"/>
+		<property name="com.jaspersoft.studio.field.label" value="giornate_uomo_scontate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+	</field>
+	<field name="giornate_uomo_sorveglianza" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="giornate_uomo_sorveglianza"/>
+		<property name="com.jaspersoft.studio.field.label" value="giornate_uomo_sorveglianza"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+	</field>
+	<field name="id_contratto" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_contratto"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_contratto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="contratti"/>
+	</field>
+	<field name="sedi" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="sedi"/>
+		<property name="com.jaspersoft.studio.field.label" value="sedi"/>
+	</field>
+	<field name="settore" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="settore"/>
+		<property name="com.jaspersoft.studio.field.label" value="settore"/>
+	</field>
+	<field name="auditors" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="auditors"/>
+		<property name="com.jaspersoft.studio.field.label" value="auditors"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</title>
+	<detail>
+		<band height="296" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<subreport>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="1" y="295" width="535" height="1" uuid="63050c39-b53e-4e4d-a625-ead867fa513b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<subreportParameter name="codice_azienda">
+					<subreportParameterExpression><![CDATA[$F{codice_azienda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="id_sondaggio">
+					<subreportParameterExpression><![CDATA[$F{id_sondaggio}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["rischi_sub_of_avvio_verifica.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" mode="Opaque" x="0" y="0" width="189" height="20" uuid="bc68510c-9bc2-4e91-8cac-044a2b6b8b54"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Introduzione]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="40" width="536" height="20" uuid="0eccc40f-61d4-4aef-8dfc-be052dc21447"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Ragione Sociale:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="2" y="90" width="208" height="20" uuid="98021dd5-1bfa-4928-b1d4-f93a429f3de9"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Articolazione del documento]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="20" width="407" height="20" uuid="79349268-751d-435d-b37f-a499304121b4"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ragione_sociale}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="110" width="406" height="20" uuid="205b6759-a48b-4567-a883-0232b1b545cf"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{processo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
