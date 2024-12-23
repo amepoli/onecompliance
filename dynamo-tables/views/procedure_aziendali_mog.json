@@ -1,5 +1,32 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "procedure_aziendali_mog",
-    "inheritsFrom": "procedure_aziendali"
+    "inheritsFrom": "procedure_aziendali",
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "share_procedura",
+                    "icon": "share",
+                    "label": "Condividi Processo",
+                    "reloadOnSuccess": true,
+                    "customDialogEntryName": "dialog_sharing_procedure_aziendali",
+                    "customDialogTitle": "Condivisione Processi"
+                },
+                {
+                    "key": "delete_procedura",
+                    "icon": "delete",
+                    "label": "Cancella Processo",
+                    "query": "SELECT entrasp.procedura_aziendale_delete(codice_azienda::text, id_procedura::integer) FROM entrasp.procedure_aziendali where codice_azienda='€global_codice_azienda€' and codice_azienda||'~'||id_procedura=any(ARRAY[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Sei sicuro di cancellare i processi selezionati?"
+                }
+            ]
+        }
+    ]
 }

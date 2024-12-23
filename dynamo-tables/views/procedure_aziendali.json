@@ -30,6 +30,15 @@
                     "reloadOnSuccess": true,
                     "customDialogEntryName": "dialog_sharing_procedure_aziendali",
                     "customDialogTitle": "Condivisione Processi"
+                },
+                {
+                    "key": "delete_procedura",
+                    "icon": "delete",
+                    "label": "Cancella Processo",
+                    "query": "SELECT xentrasp.procedura_aziendale_delete($codice_azienda$::text, $id_procedura$::integer) FROM entrasp.procedure_aziendali where codice_azienda='€global_codice_azienda€' and codice_azienda||'~'||id_procedura=any(ARRAY[$selected_rows_data$])",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Sei sicuro di cancellare i processi selezionati?"
                 }
             ]
         }
@@ -623,7 +632,7 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "width": "4%",
             "queryFunct": "select true",
@@ -711,10 +720,20 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "descrizioni_centro_gestionale",
-            "label": "Centro Gestionale",
+            "label": "Centro Gestionale Responsabile",
             "width": "10%",
-            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
-            "translate": "RESOURCES.centro_gestionale_procedure_aziendali"
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "centri_gestionali_associati",
+            "label": "Centri Gestionali Associati",
+            "width": "10%",
+            "queryFunct": "entrasp.centri_gest_aggr(codice_azienda, id_procedura)"
         },
         {
             "format": {
@@ -733,11 +752,10 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "Descr_procedura_parent",
-            "queryFunct": "substring(id_procedura_parent||'-'||entrasp.procedure_aziendali_descr(id_procedura_parent,codice_azienda), 1, 60)",
+            "key": "descr_procedura_parent",
+            "queryFunct": "entrasp.procedure_aziendali_parent_descr(id_procedura, codice_azienda)",
             "width": "15%",
-            "label": "Procedura Superiore",
-            "translate": "RESOURCES.procedura_superiore_procedure_aziendali"
+            "label": "Processo Superiore"
         },
         {
             "format": {
