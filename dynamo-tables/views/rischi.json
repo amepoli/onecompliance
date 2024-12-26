@@ -239,6 +239,11 @@
                         "label": "Ricalcola singolo rischio",
                         "outputEventName": "ricalcolo_singolo_rischio",
                         "translate": "RESOURCES.ricalcola_singolo_rischio_rischi"
+                    },
+                    {
+                        "icon": "sync",
+                        "label": "Allinea Rischio",
+                        "outputEventName": "allinea_singolo_rischio"
                     }
                 ]
             },
@@ -265,6 +270,14 @@
                     "condition": "none",
                     "values": [],
                     "queryFunct": "select entrasp.aggiorna_rischio($codice_azienda$, $codice_rischio$, false);",
+                    "outputEventWhenComplete": "rischiFormReload"
+                },
+                {
+                    "eventName": "allinea_singolo_rischio",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "select entrasp.rischi_allinea_same_argomento($codice_azienda$, $codice_rischio$, $id_argomento$, true);",
                     "outputEventWhenComplete": "rischiFormReload"
                 }
             ],
