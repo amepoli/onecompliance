@@ -50,5 +50,69 @@
             "label": "Centri costo associati",
             "translate": "RESOURCES.centri_costo_associati_centri_costo_sub_of_compiti"
         }
+    ],
+    "search_keys": [
+        {
+            "fieldName": "codice_compito",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "# Identificativo",
+            "newLine": false,
+            "queryCond": "codice_compito=$codice_compito$",
+            "size": 1.67,
+            "translate": "RESOURCES._identificativo_miei_compiti"
+        },
+        {
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "queryCond": "codice_azienda='€codice_azienda_s€'",
+            "fieldName": "codice_azienda_s",
+            "label": "Codice Azienda",
+            "newLine": false,
+            "size": 1.67,
+            "translate": "RESOURCES.codice_azienda_miei_compiti"
+        },
+        {
+            "fieldName": "parola_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Parola chiave",
+            "newLine": false,
+            "queryCond": "(upper(titolo) like '%'||upper('€parola_search€')||'%' or upper(codice_azienda) like '%'||upper('€parola_search€')||'%')",
+            "size": 3.33,
+            "translate": "RESOURCES.parola_chiave_miei_compiti"
+        },
+        {
+            "fieldName": "durata_min",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "label": "Durata maggiore di",
+            "newLine": false,
+            "queryCond": "entrasp.consuntivazioni_time_consumed(codice_azienda, codicecompito => codice_compito, dynamouser => '€global_username€'::text)::numeric(8,0) >= $durata_min$",
+            "size": 1.67,
+            "translate": "RESOURCES.durata_maggiore_di_miei_compiti"
+        },
+        {
+            "fieldName": "non_associata_a_centri_costo",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "No Centri Costo",
+            "newLine": false,
+            "tooltip": "Individua tutti i compiti non associati ad alcun centro di costo",
+            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€') and ccc.codice_azienda_compiti||'-'||ccc.codice_compito is not null)",
+            "size": 1.67,
+            "translate": "RESOURCES.no_centri_costo_miei_compiti"
+        }
     ]
 }

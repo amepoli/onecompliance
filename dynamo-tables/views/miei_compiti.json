@@ -515,22 +515,9 @@
             "label": "No Centri Costo",
             "newLine": false,
             "tooltip": "Individua tutti i compiti non associati ad alcun centro di costo",
-            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€') and ccc.codice_azienda_compiti||'-'||ccc.codice_compito is not null)",
+            "queryCond": "cmp.codice_azienda||'-'||cmp.codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€') and ccc.codice_azienda_compiti||'-'||ccc.codice_compito is not null)",
             "size": 1.67,
             "translate": "RESOURCES.no_centri_costo_miei_compiti"
-        },
-        {
-            "fieldName": "non_centri_costo_lista",
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "label": "No Centri Costo in Lista",
-            "newLine": false,
-            "tooltip": "Individua tutti i compiti non associati ad alcuno centro dei costo in lista",
-            "queryCond": "codice_azienda||'-'||codice_compito not in(select ccc.codice_azienda_compiti||'-'||ccc.codice_compito from entrasp.compiti_centri_costo ccc inner join entrasp.aziende az on ccc.codice_azienda=az.codice_azienda where az.codice_part=entrasp.codice_part_dynamo_user('€global_username€') and ccc.id_centro_costo::varchar=any(string_to_array(replace($non_centri_costo_lista$, ' ', ''), ',')))",
-            "size": 1.67,
-            "translate": "RESOURCES.no_centri_costo_in_lista_miei_compiti"
         }
     ],
     "querySuffixes": {
