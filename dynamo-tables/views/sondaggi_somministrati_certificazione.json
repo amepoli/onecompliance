@@ -285,6 +285,11 @@
                         "label": "Riapri Verifica",
                         "outputEventName": "sondaggi_reopen",
                         "translate": "RESOURCES.riapri_verifica_sondaggi_somministrati_certificazione"
+                    },
+                    {
+                        "icon": "link",
+                        "label": "Invia incarico",
+                        "outputEventName": "incarico_invia"
                     }
                 ]
             },
@@ -309,9 +314,7 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "hide",
                     "condition": "notEqualTo",
-                    "values": [
-                        "C"
-                    ]
+                    "values": ["C"]
                 },
                 {
                     "eventName": "sondaggi_button_duplica",
@@ -448,6 +451,27 @@
                         }
                     },
                     "successMessage": "Risposte copiate correttamente"
+                },
+                {
+                    "eventName": "incarico_invia",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "message": {
+                        "messageText": "Si intende procedere all'invio dell'incarico via email?",
+                        "actionOnYes": {
+                            "actionType": "context_mail",
+                            "contextMailParams": {
+                                "contesto": "contesto",
+                                "chiavi": "chiavi",
+                                "username": "username"
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
                 }
             ],
             "isHidden": false,
@@ -459,6 +483,48 @@
             "readOnly": false,
             "sameOrigin": false,
             "size": 1.0
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "contesto",
+            "queryFunct": "'incarico'",
+            "label": "contesto",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "chiavi",
+            "queryFunct": "codice_azienda||'~'||id_sondaggio",
+            "label": "chiavi",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "username",
+            "queryFunct": "'€global_username€'",
+            "label": "username",
+            "newLine": false,
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -540,9 +606,7 @@
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "actionType": "query",
                     "condition": "notEqualTo",
-                    "values": [
-                        "C"
-                    ],
+                    "values": ["C"],
                     "queryFunct": "SELECT entrasp.sondaggio_somministrazione_stato_update($codice_azienda$,$id_sondaggio$,'ss', '£stato£', '€global_username€');"
                 }
             ],
@@ -569,9 +633,7 @@
                 {
                     "eventName": "update_bckgrndcol_stato_snd_som",
                     "condition": "equalTo",
-                    "values": [
-                        "C"
-                    ],
+                    "values": ["C"],
                     "actionType": "query",
                     "queryFunct": "select entrasp.close_somministrazione_sondaggio_insert_following($codice_azienda$, $id_somministrazione$, $id_sondaggio$, '€global_username€') as id_somministrazione_succ;",
                     "outputEventWhenComplete": "sondaggi_somministrati_reload"
@@ -1343,9 +1405,7 @@
             "showByFormKeyCondition": {
                 "key": "flag_sezioni",
                 "condition": "equalTo",
-                "values": [
-                    "0"
-                ]
+                "values": ["0"]
             },
             "keys": [
                 {
@@ -1378,9 +1438,7 @@
             "showByFormKeyCondition": {
                 "key": "flag_sezioni",
                 "condition": "equalTo",
-                "values": [
-                    "1"
-                ]
+                "values": ["1"]
             },
             "keys": [
                 {
@@ -1464,9 +1522,7 @@
             "showByFormKeyCondition": {
                 "key": "somministrazioni_flag_workflow",
                 "condition": "equalTo",
-                "values": [
-                    "1"
-                ]
+                "values": ["1"]
             },
             "isHidden": true,
             "keys": [
