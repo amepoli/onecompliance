@@ -3,9 +3,14 @@
     "entryKey": "dialog_compiti",
     "predefinedQueries": [
         {
-            "operation": "update",
+            "operation": "insert",
             "type": "main",
-            "queryString": "INSERT INTO entrasp.compiti_centri_costo(codice_azienda, id_centro_costo, codice_compito, codice_azienda_compiti, percentuale_competenza, data_ins) select $codice_azienda$, $id_centro_costo$, codice_compito, codice_azienda, $percentuale_competenza$, now()::timestamp without time zone from entrasp.compiti cmp where cmp.codice_compito||'~'||cmp.codice_azienda=any(ARRAY[$selected_rows_data$]) on conflict do nothing;"
+            "queryString": "INSERT INTO entrasp.compiti_centri_costo(codice_azienda, id_centro_costo, codice_compito, codice_azienda_compiti, percentuale_competenza, data_ins, dynamo_user) select $codice_azienda$, $id_centro_costo$, codice_compito, codice_azienda, $percentuale_competenza$, now()::timestamp without time zone, '€global_username€' from entrasp.compiti cmp where cmp.codice_compito||'~'||cmp.codice_azienda=any(ARRAY[$selected_rows_data$]) on conflict do nothing;"
+        },
+        {
+            "operation": "isInsert",
+            "type": "main",
+            "queryString": "select true as label;"
         }
     ],
     "form_keys": [
