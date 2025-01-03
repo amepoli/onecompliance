@@ -393,6 +393,11 @@
                         "label": "Inserisci partecipanti al corso",
                         "outputEventName": "participants_insert",
                         "translate": "RESOURCES.inserisci_partecipanti_al_corso_sondaggi"
+                    },
+                    {
+                        "icon": "lock_close",
+                        "label": "Chiudi verifiche complete",
+                        "outputEventName": "verifiche_complete_close"
                     }
                 ]
             },
@@ -427,6 +432,14 @@
                     "eventName": "sondaggi_somministrati_close",
                     "actionType": "query",
                     "queryFunct": "update entrasp.sondaggi_somministrati set stato='C' where codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "verifiche_complete_close",
+                    "actionType": "query",
+                    "queryFunct": "update entrasp.sondaggi_somministrati set stato='C' where somministrazione_completata='Completo' and stato != 'C' and codice_azienda=$codice_azienda$ and id_sondaggio=$id_sondaggio$",
                     "condition": "none",
                     "values": [],
                     "outputEventWhenComplete": "survey_reload"
