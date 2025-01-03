@@ -1,0 +1,819 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="contratto_certificazione" pageWidth="565" pageHeight="800" columnWidth="537" columnSpacing="27" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="sondaggi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="OC_prod"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="405"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="584"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Dataset2" whenResourceMissingType="Empty" uuid="541f21ba-0bce-4153-a427-77a6d11432c1">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="OC_prod"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="136"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="859"/>
+		<parameter name="codice_azienda" class="java.lang.String">
+			<defaultValueExpression><![CDATA[$P{codice_azienda}]]></defaultValueExpression>
+		</parameter>
+		<parameter name="contratto_id" class="java.math.BigDecimal">
+			<defaultValueExpression><![CDATA[$F{id_contratto}]]></defaultValueExpression>
+		</parameter>
+		<queryString language="SQL">
+			<![CDATA[SELECT entrasp.articoli_titolo(codice_azienda, id_articolo) AS servizio_richiesto, entrasp.argomenti_descr_breve_no_num(id_argomento_tipo_norma) AS norma,codice_azienda, id_contratto, n_addetti, giornate_uomo_scontate AS giornate_uomo_offerta, costo_scontato AS costo_gu_offerta, costo_totale_scontato AS totale_certificazione, acconto, certificazione AS saldo, giornate_uomo_sorveglianza, giornate_uomo_rinnovo, sorveglianza_1 AS importo_sorveglianza_1, sorveglianza_2 AS importo_sorveglianza_2, rinnovo AS importo_rinnovo FROM entrasp.articoli_contratti where codice_azienda= $P{codice_azienda}  and id_contratto= $P{contratto_id}  ]]>
+		</queryString>
+		<field name="servizio_richiesto" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="servizio_richiesto"/>
+			<property name="com.jaspersoft.studio.field.label" value="servizio_richiesto"/>
+		</field>
+		<field name="norma" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="norma"/>
+			<property name="com.jaspersoft.studio.field.label" value="norma"/>
+		</field>
+		<field name="codice_azienda" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+			<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="id_contratto" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="id_contratto"/>
+			<property name="com.jaspersoft.studio.field.label" value="id_contratto"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="n_addetti" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="n_addetti"/>
+			<property name="com.jaspersoft.studio.field.label" value="n_addetti"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="giornate_uomo_offerta" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="giornate_uomo_offerta"/>
+			<property name="com.jaspersoft.studio.field.label" value="giornate_uomo_offerta"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="costo_gu_offerta" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="costo_gu_offerta"/>
+			<property name="com.jaspersoft.studio.field.label" value="costo_gu_offerta"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="totale_certificazione" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="totale_certificazione"/>
+			<property name="com.jaspersoft.studio.field.label" value="totale_certificazione"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="acconto" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="acconto"/>
+			<property name="com.jaspersoft.studio.field.label" value="acconto"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="saldo" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="saldo"/>
+			<property name="com.jaspersoft.studio.field.label" value="saldo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="giornate_uomo_sorveglianza" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="giornate_uomo_sorveglianza"/>
+			<property name="com.jaspersoft.studio.field.label" value="giornate_uomo_sorveglianza"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="giornate_uomo_rinnovo" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="giornate_uomo_rinnovo"/>
+			<property name="com.jaspersoft.studio.field.label" value="giornate_uomo_rinnovo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="importo_sorveglianza_1" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="importo_sorveglianza_1"/>
+			<property name="com.jaspersoft.studio.field.label" value="importo_sorveglianza_1"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="importo_sorveglianza_2" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="importo_sorveglianza_2"/>
+			<property name="com.jaspersoft.studio.field.label" value="importo_sorveglianza_2"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<field name="importo_rinnovo" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="importo_rinnovo"/>
+			<property name="com.jaspersoft.studio.field.label" value="importo_rinnovo"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
+		</field>
+		<variable name="Totale_rinn" class="java.math.BigDecimal" resetType="None" calculation="Sum">
+			<variableExpression><![CDATA[$F{importo_rinnovo}]]></variableExpression>
+		</variable>
+	</subDataset>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["select * from entrasp.contratti_estrazione('ASACERT', 13)"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="contratto_id" class="java.lang.String">
+		<defaultValueExpression><![CDATA[$F{contratto_id}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["ASACERT"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[$P!{mainQuery}]]>
+	</queryString>
+	<field name="ragione_sociale" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ragione_sociale"/>
+		<property name="com.jaspersoft.studio.field.label" value="ragione_sociale"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="aziende"/>
+	</field>
+	<field name="abbreviazione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="abbreviazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="abbreviazione"/>
+	</field>
+	<field name="indirizzo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="indirizzo"/>
+		<property name="com.jaspersoft.studio.field.label" value="indirizzo"/>
+	</field>
+	<field name="cap" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cap"/>
+		<property name="com.jaspersoft.studio.field.label" value="cap"/>
+	</field>
+	<field name="comune" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="comune"/>
+		<property name="com.jaspersoft.studio.field.label" value="comune"/>
+	</field>
+	<field name="provincia" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="provincia"/>
+		<property name="com.jaspersoft.studio.field.label" value="provincia"/>
+	</field>
+	<field name="nazione_descr" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nazione_descr"/>
+		<property name="com.jaspersoft.studio.field.label" value="nazione_descr"/>
+	</field>
+	<field name="contratto_id" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="contratto_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="contratto_id"/>
+	</field>
+	<field name="ragione_sociale_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="ragione_sociale_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="ragione_sociale_cliente"/>
+	</field>
+	<field name="indirizzo_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="indirizzo_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="indirizzo_cliente"/>
+	</field>
+	<field name="cap_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="cap_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="cap_cliente"/>
+	</field>
+	<field name="comune_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="comune_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="comune_cliente"/>
+	</field>
+	<field name="provincia_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="provincia_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="provincia_cliente"/>
+	</field>
+	<field name="nazione_cliente" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="nazione_cliente"/>
+		<property name="com.jaspersoft.studio.field.label" value="nazione_cliente"/>
+	</field>
+	<field name="campo_applicazione" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="campo_applicazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="campo_applicazione"/>
+	</field>
+	<field name="prezzo_complessivo" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="prezzo_complessivo"/>
+		<property name="com.jaspersoft.studio.field.label" value="prezzo_complessivo"/>
+	</field>
+	<field name="tot_giornate_uomo" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="tot_giornate_uomo"/>
+		<property name="com.jaspersoft.studio.field.label" value="tot_giornate_uomo"/>
+	</field>
+	<field name="acconto" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="acconto"/>
+		<property name="com.jaspersoft.studio.field.label" value="acconto"/>
+	</field>
+	<field name="saldo_certificazione" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="saldo_certificazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="saldo_certificazione"/>
+	</field>
+	<field name="sorveglianza_1" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="sorveglianza_1"/>
+		<property name="com.jaspersoft.studio.field.label" value="sorveglianza_1"/>
+	</field>
+	<field name="sorveglianza_2" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="sorveglianza_2"/>
+		<property name="com.jaspersoft.studio.field.label" value="sorveglianza_2"/>
+	</field>
+	<field name="rinnovo" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="rinnovo"/>
+		<property name="com.jaspersoft.studio.field.label" value="rinnovo"/>
+	</field>
+	<field name="servizio_richiesto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="servizio_richiesto"/>
+		<property name="com.jaspersoft.studio.field.label" value="servizio_richiesto"/>
+	</field>
+	<field name="normative" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="normative"/>
+		<property name="com.jaspersoft.studio.field.label" value="normative"/>
+	</field>
+	<field name="addetti_equivalenti" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="addetti_equivalenti"/>
+		<property name="com.jaspersoft.studio.field.label" value="addetti_equivalenti"/>
+	</field>
+	<field name="giornate_sorveglianza" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="giornate_sorveglianza"/>
+		<property name="com.jaspersoft.studio.field.label" value="giornate_sorveglianza"/>
+	</field>
+	<field name="giornate_rinnovo" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="giornate_rinnovo"/>
+		<property name="com.jaspersoft.studio.field.label" value="giornate_rinnovo"/>
+	</field>
+	<field name="motivazioni_sconto" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="motivazioni_sconto"/>
+		<property name="com.jaspersoft.studio.field.label" value="motivazioni_sconto"/>
+	</field>
+	<field name="importo_prima_cert" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="importo_prima_cert"/>
+		<property name="com.jaspersoft.studio.field.label" value="importo_prima_cert"/>
+	</field>
+	<field name="anno_corrente" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="anno_corrente"/>
+		<property name="com.jaspersoft.studio.field.label" value="anno_corrente"/>
+	</field>
+	<field name="anno_due" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="anno_due"/>
+		<property name="com.jaspersoft.studio.field.label" value="anno_due"/>
+	</field>
+	<field name="anno_tre" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="anno_tre"/>
+		<property name="com.jaspersoft.studio.field.label" value="anno_tre"/>
+	</field>
+	<field name="giornate_prima_certificazione" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="giornate_prima_certificazione"/>
+		<property name="com.jaspersoft.studio.field.label" value="giornate_prima_certificazione"/>
+	</field>
+	<field name="motivazioni_addetti" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="motivazioni_addetti"/>
+		<property name="com.jaspersoft.studio.field.label" value="motivazioni_addetti"/>
+	</field>
+	<field name="codiceazienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codiceazienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codiceazienda"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="160" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<image onErrorType="Blank">
+				<reportElement key="image" positionType="Float" stretchType="RelativeToBandHeight" x="146" y="10" width="245" height="50" uuid="d745ec97-e5ab-4ce9-8d82-125159a2d4dd">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<imageExpression><![CDATA["./logos/"+ $P{codice_azienda} + ".png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="70" y="0" width="397" height="66" uuid="8e3cfee1-54aa-4997-8af7-f401683a5140">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="110" width="537" height="30" backcolor="#FFFFFF" uuid="b935707f-115c-4d68-8e60-d4344fbcf3db"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Bold_arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Offerta di Certificazione]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="40" y="140" width="460" height="16" uuid="c2637e38-793c-4010-ad10-184de8ac8844"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{normative}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="491" y="100" width="46" height="13" uuid="04560cbd-0213-4818-81f2-867077e610df"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{contratto_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="100" width="47" height="13" uuid="d7b37696-0e25-4285-b720-d2b8639f1808"/>
+				<box>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textFieldExpression><![CDATA["Prot N."]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="550" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="-1" y="0" width="535" height="20" uuid="da9b2ca4-a8fe-4b34-83dc-e1f52195c8b0">
+					<property name="com.jaspersoft.studio.unit.tabStopWidth" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+					<paragraph tabStopWidth="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ragione_sociale}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="-1" y="20" width="535" height="10" uuid="8e5c5458-dabe-4042-9ac9-283ad80e6894"/>
+				<textElement textAlignment="Justified" markup="html"/>
+				<textFieldExpression><![CDATA["con sede legale in " + $F{indirizzo} + " " + $F{cap} + " " + $F{comune} + " (" + $F{provincia} + "), " + $F{nazione_descr} + " in persona del suo legale rappresentante (da qui in poi per brevità “Prestatore”)"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="30" width="50" height="18" uuid="923e74fb-4276-4736-97dd-6cfb9e07b38d">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["e"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="50" width="340" height="10" uuid="22dda6ce-3f8b-4055-b759-1a2a0a926dd0"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ragione_sociale_cliente}]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="60" width="535" height="90" uuid="7c0e1417-0b62-48e5-80c1-7d63eda6b2e7">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Justified" markup="html"/>
+				<textFieldExpression><![CDATA["con sede legale in " + $F{indirizzo_cliente}+ " " + $F{cap_cliente} + " " + $F{comune_cliente} + " (" + $F{provincia_cliente} + "), " + $F{nazione_cliente} + " in persona del suo legale rappresentante (quale Committente) <br/> <br/>stipulano nella data riportata di seguito, secondo le disposizioni dell’Art. 2586 e successive modifiche del Codice Civile, il presente Contratto di opera avente per oggetto la valutazione della documentazione del Sistema di Gestione, l’audit per la certificazione della conformità del sistema di gestione con la norma di riferimento e la successiva sorveglianza per il mantenimento della certificazione."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="2" y="150" width="222" height="18" uuid="d98967e3-75b8-499b-9203-0ff22cf1d494"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[I. Oggetto e costi del Contratto ]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="177" width="538" height="23" uuid="62bb5744-fc76-4168-88cc-191c3dd91eb0"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["1. L’Oggetto del presente contratto è costituito dei servizi di valutazione da eseguire ai fini della certificazione del Sistema di Gestione implementato nell’ambito dell’organizzazione del Committente."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="203" width="538" height="20" uuid="c7860bf9-bc3c-4378-9585-8961554d5efc"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA["2. Il campo di applicazione è determinato dalle attività definite dal Committente nella Richiesta di Offerta, ovvero la verifica del grado di conformità del Sistema di Gestione del Committente ai requisiti della relativa norma."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="231" width="538" height="18" uuid="507669ca-2592-4ebc-8e12-665dd096773d"/>
+				<textElement textAlignment="Justified">
+					<font isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Il campo di applicazione definito dal committente (e per il quale si richiede la certificazione) è il seguente:"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="-1" y="250" width="536" height="20" uuid="70dacca7-c929-49bc-a29a-b01353dfc456"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{campo_applicazione}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="738" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="60" width="539" height="20" uuid="c7ccd249-9bd8-4e3b-bfe5-8dfc67a15140">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Detti pagamenti dovranno essere effettuati a mezzo bonifico bancario, ovvero rimessa diretta vista fattura.\n" +
+"Per ogni giorno di ritardo nel pagamento della somma dovuta, il Committente è tenuto a pagare, su richiesta del Prestatore, la multa contrattuale pari allo 0,05 % della somma dovuta. In caso di ritardato pagamento della somma dovuta, il Prestatore ha altresì diritto di richiedere la sospensione della validità del Certificato e, in caso di persistente morosità, eventualmente di richiedere il ritiro. Con ciò non viene meno il diritto del Prestatore ad ottenere il risarcimento dei danni eventualmente subiti. La fattura-documento fiscale sarà notificata al Committente.\n" +
+"Per espresso accordo tra le parti, il mancato pagamento degli importi di cui sopra e nei termini su indicati consentirà all’Organismo di Certificazione di sospendere i servizi di certificazione, le operazioni di Audit e di verifica con decadenza del committente dal beneficio del termine di dilazione concesso, potendo pretendere l’intero prezzo contrattualmente dovuto. Al fine del calcolo dell’inizio della decorrenza dei 7 gg previsti, farà fede l’invio del programma dell’audit all’indirizzo indicato dal Committente.\n" +
+"Il prospetto economico del presente contratto è riassunto qui di seguito:\n" +
+"Offerta di Certificazione: " + $F{normative}+"\n"]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement positionType="Float" x="20" y="90" width="491" height="60" uuid="3c26dafe-c5ac-4cdd-a7cd-780da4c785b3">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Dataset2" uuid="c2ce8169-8af2-4ee6-9f7f-8e5619acd7f8">
+						<datasetParameter name="codice_azienda">
+							<datasetParameterExpression><![CDATA[$F{codiceazienda}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="contratto_id">
+							<datasetParameterExpression><![CDATA[$F{contratto_id}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="140" uuid="728717bc-6ab0-4c33-ad8e-e080b79d6ee8">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna1"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField textAdjust="StretchHeight">
+								<reportElement positionType="Float" x="0" y="0" width="140" height="30" uuid="f7c7d9ba-bb4f-42b1-bcbd-e13e0a271f90"/>
+								<textElement verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{norma}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="130" uuid="b9b66a87-c664-46ce-8100-e436d5dcf792">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna2"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="130" height="30" uuid="6d6bde9c-e5b0-4f64-a021-35f5a58fb3cc"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA["Audit di certificazione " + java.time.Year.now().getValue()]]></textFieldExpression>
+								<patternExpression><![CDATA["Audit di certificazione " + java.time.Year.now().getValue()]]></patternExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField pattern="¤#,##0.00;¤-#,##0.00">
+								<reportElement x="0" y="0" width="130" height="30" uuid="0c0b62ad-e7fb-4ba1-8f33-2eb2cc24df44"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{totale_certificazione}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="110" uuid="2e9cccfe-0f85-4215-ac4a-4c1cfdee7252">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna2"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="110" height="30" uuid="b10c65e0-aaed-4547-ae8b-2b47a11729fe"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA["Audit di sorveglianza " + (java.time.Year.now().getValue()+1)]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField pattern="¤#,##0.00;¤-#,##0.00">
+								<reportElement x="0" y="0" width="110" height="30" uuid="89fe900b-fe71-4501-afa6-76fa96cae5a9"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{importo_sorveglianza_1}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="110" uuid="d4a6ed69-0056-4d9e-a837-26f4ccd55af0">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna2"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="110" height="30" uuid="61592554-2f97-44c3-ba57-27da3e895307"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA["Audit di sorveglianza " + (java.time.Year.now().getValue()+2)]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField pattern="¤#,##0.00;¤-#,##0.00">
+								<reportElement x="0" y="0" width="110" height="30" uuid="9e7df15f-7b96-4d0c-9113-b4743a86ac19"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{importo_sorveglianza_2}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="0" y="170" width="536" height="20" uuid="1cabe4ed-d0da-4b38-95eb-dca1e788da0f">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["Il costo della certificazione comprende adesivi per il marketing (ad es. adesivi per i veicoli aziendali), loghi della certificazione in oggetto in formato elettronico. Le dimensioni e il numero degli adesivi di certificazione possono essere specificati dopo l'audit di certificazione.\n\n"
++ "<b>I prezzi su indicati comprendono:</b>\n"
++ "• Emissione di un certificato di conformità in lingua italiana e spedizione a mezzi abituali di comunicazione;\n"
++ "• Spedizione dei documenti di certificazione a mezzo posta elettronica al Vostro indirizzo e-mail;\n"
++ "• Iscrizione della Vostra organizzazione nell'elenco delle organizzazioni certificate;\n"
++ "• Licenza per l'uso del marchio dell’Organismo di Certificazione sulla Vostra documentazione.\n\n"
++ "<b>I prezzi non comprendono:</b>\n"
++ "• IVA e ogni altra imposta applicabile."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" mode="Transparent" x="0" y="202" width="536" height="20" uuid="19ec1e97-ea71-46b2-b58f-a34dd58ec105">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["<b>II. Luogo d’adempimento</b>\n"
++ "Il luogo dove si svolgono le attività oggetto del presente contratto è determinato dalla sede legale e/o dalle sedi secondarie del Committente, come specificate nella Richiesta di offerta. Nel caso la sede principale o le sedi secondarie subiscano delle variazioni, il Committente è tenuto ad informarne il Prestatore per iscritto con prova di avvenuta ricezione. Il gruppo di audit sarà scelto di preferenza nel territorio italiano.\n\n"
++ "<b>III. Estensione del campo di certificazione</b>\n"
++ "Ogni modifica della certificazione (ad es. inerente il campo di applicazione della certificazione o il numero o la struttura dei siti soggetti a certificazione) richiesta dal committente, sarà valutata dal Prestatore e potrà essere oggetto di nuova offerta.\n\n"
++ "<b>IV. Diritti ed Obblighi del Prestatore</b>\n"
++ "1. Il Prestatore valuterà la conformità del Sistema di Gestione adottato dal Committente con i requisiti della documentazione di riferimento.\n"
++ "2. Nel momento in cui il Prestatore constata, sulla base delle valutazioni effettuate, che il Sistema di Gestione adottato dal Committente rispetta i requisiti richiesti dagli standard di riferimento, provvede a proporre il rilascio del Certificato.\n"
++ "3. Qualora il Committente non permetta che le attività per la valutazione iniziale o le attività di sorveglianza/mantenimento o addizionali siano poste in essere da parte del Prestatore (ad esempio: mancato accesso ai siti oggetto di certificazione; indisponibilità a fornire informazioni e/o elementi oggettivi; mancata risposta a eventuali tentativi di contatto, ecc.), il Prestatore potrà risolvere il presente contratto con effetto immediato tramite notifica a mezzo raccomandata A.R. ovvero a mezzo PEC, e addebiterà al committente l’intero importo delle attività non ancora fatturate.\n"
++ "4. Il Prestatore verificherà, con cadenza annuale, se il Sistema di Gestione rispetta i requisiti degli standard sulla base dei quali la certificazione è stata conseguita. Al termine di ogni audit, il lead auditor incaricato redigerà appositi verbali di audit controfirmati dal Committente, che costituiranno evidenza delle attività annuali erogate.\n"
++ "5. L’Organismo di Certificazione pubblicherà sul proprio sito lo status di organizzazione certificata del Committente.\n"
++ "6. Il Prestatore ha diritto di:\n"
++ "  • sospendere l’attività di certificazione in caso di mancato rispetto delle disposizioni del presente contratto;\n"
++ "  • incassare i pagamenti per le attività oggetto del presente contratto;\n"
++ "  • adottare misure di tutela dei marchi di certificazione contro il loro uso illegittimo o abuso;\n"
++ "  • proporre il ritiro del Certificato qualora si verifichi il mancato rispetto delle condizioni stabilite;\n"
++ "  • valutare e seguire l’adempimento del Sistema di Gestione durante le attività di certificazione."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" mode="Transparent" x="0" y="233" width="536" height="16" uuid="69fb046e-8c0d-4ef5-be99-89f98116ff8e">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["<b>V. Diritti E Obblighi Del Committente</b>\n"
++ "1. Il Committente nomina un suo referente che lo rappresenti nei confronti degli operatori (Lead Auditor) del Prestatore e renderà possibile a questi ultimi di accedere nelle ore di lavoro a tutti i locali del Committente dove sarà necessario, nonché di prendere visione e atto di tutte le informazioni scritte e/o verbali inerenti ai sistemi di gestione del Committente.\n"
++ "2. Prima che inizino i lavori il Committente può presentare per iscritto obiezioni motivate nei riguardi degli auditor incaricati, qualora sussistano dubbi sulla loro idoneità o imparzialità. In tal caso il Prestatore procederà ai sensi delle rispettive disposizioni dell’Accordo di certificazione.\n"
++ "3. Il Committente deve documentare il Sistema di Gestione come prevedono le disposizioni delle normative di riferimento;\n"
++ "4. Il Committente è tenuto a richiedere la certificazione mediante la presentazione dell’apposita Richiesta di Offerta;\n"
++ "5. Il Committente si obbliga al pagamento delle attività di certificazione secondo l’Allegato n.1 al presente contratto «Listino prezzi delle attività del Prestatore» e secondo quanto riportato al Cap.2 “oggetto e costi del contratto”.\n"
++ "6. Il committente si impegna a creare le condizioni migliori alle quali eseguire le attività di valutazione;\n"
++ "7. Il Committente si impegna a presentare all’ente di certificazione la documentazione inerente al Sistema di Gestione implementato;\n"
++ "8. Il Committente si impegna a porre in essere le azioni correttive in caso di accertamento di non conformità da parte del gruppo di audit;\n"
++ "9. Una volta conseguito il marchio di certificazione, il Committente si impegna a utilizzarlo in conformità alle Norme d’uso del marchio di certificazione e, più in generale, nel rispetto della normativa vigente in materia, con espresso esonero da ogni responsabilità sia per l’ente di certificazione, sia per il prestatore.\n"
++ "10. Il committente si impegna a registrare l’evidenza di tutti i reclami ricevuti e delle eventuali misure intraprese;\n"
++ "11. Il committente si impegna a garantire l’accesso al gruppo di audit sia ai locali richiesti, sia alla documentazione necessaria per poter effettuare la valutazione ai fini di prima certificazione, delle sorveglianze, e del rinnovo della certificazione;\n"
++ "12. Il Committente si impegna a utilizzare la certificazione rilasciata per le sole attività indicate nel certificato ottenuto.\n"
++ "13. Il Committente rende disponibile l’accesso ai propri locali o sedi operative oggetto della certificazione, ai rappresentanti dell’Ente di Accreditamento, i quali potranno essere presenti quali osservatori nel gruppo di audit dell’Ente di Certificazione.\n"
++ "14. Il Committente si impegna a informare per iscritto il Prestatore sulle modifiche verificatesi nel corso della validità del Certificato che potrebbero compromettere l’efficacia del Sistema di Gestione per quanto riguarda il rispetto dei requisiti degli standard di certificazione. Per modifiche si intendono i cambiamenti nell’assetto legale, commerciale, aziendale o di proprietà della società, dell’organizzazione e del management, il cambio dell’indirizzo delle sedi operative, le modifiche riguardanti il campo di applicazione del Sistema di Gestione certificato, oppure modifiche rilevanti presenti nel Sistema di Gestione e nelle relative procedure.\n\n"
++ "<b>NOTA:</b>\n"
++ "Per l’emissione di un nuovo Certificato (oltre a quello emesso su base del controllo eseguito al fine di rilascio del primo certificato che era compreso nel prezzo di cui all’Allegato n.1 al presente contratto «Listino prezzi del Prestatore»), ad esempio per motivi di cambio denominazione sociale, cambio scopo di certificazione, il Committente dovrà pagare la somma di € 150,00 (oltre Iva) contestualmente alla presentazione della rispettiva domanda."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="-1" y="30" width="539" height="19" uuid="79948076-5d23-49a8-b51e-0983b96619ae"/>
+				<textFieldExpression><![CDATA["4. Il prezzo complessivo dei servizi di certificazione oggetto del presente contratto, per l’intera durata triennale, viene concordemente fissato tra le parti in € " 
++ $F{prezzo_complessivo}+ " (oltre Iva). Il pagamento di tale somma sarà dilazionato nei seguenti termini:\n" +
+"• € " + $F{acconto} + " oltre Iva dovranno essere corrisposti contestualmente alla sottoscrizione del presente contratto;\n" +
+"• € " + $F{saldo_certificazione} + " oltre Iva dovranno essere pagati sotto forma di acconto 7 giorni prima della data di inizio delle operazioni di certificazione (a tal proposito farà fede l’invio del programma di audit);\n" +
+"• € " + $F{sorveglianza_1} + " oltre Iva dovranno essere pagati sotto forma di acconto almeno gg. 7 prima della data di inizio del Primo audit di sorveglianza;\n" +
+"• € " + $F{sorveglianza_2} + " oltre Iva dovranno essere pagati sotto forma di acconto almeno gg. 7 prima della data di inizio del Secondo audit di sorveglianza;"]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="-1" y="3" width="538" height="20" uuid="d5216e95-cd9c-4ba3-b239-fdb3090d7915"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["3. Se i requisiti della norma/e sono soddisfatti, verrà emesso e inviato un certificato di conformità del Sistema di Gestione secondo lo standard (validità di 3 anni subordinati al superamento degli audit annuali di controllo). In caso di emissione di non conformità maggiori ai requisiti della norma/delle norme in certificazione, al cliente sarà richiesto per iscritto di eliminare le non conformità che hanno impedito il rilascio della certificazione. Se il cliente non elimina queste non conformità entro 90 giorni dalla richiesta, il certificato non verrà emesso ed il cliente sarà tenuto al pagamento degli audit previsti dal presente contratto. In caso di emissione di non conformità maggiori in sede di audit annuale, al cliente sarà richiesto per iscritto di eliminare le non conformità che hanno impedito il mantenimento del/i certificato/i. Se il cliente non elimina queste non conformità entro 90 giorni dalla richiesta, il certificato verrà cancellato ed il cliente sarà tenuto al pagamento degli audit previsti dal presente contratto."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" mode="Transparent" x="0" y="440" width="536" height="16" uuid="7676c296-3dae-4bf9-8b1f-e0561a9e814c">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["<b>VIII. Regolamenti Finali e Foro Convenzionale Esclusivo</b>\n"
++ "1. Il Prestatore è tenuto a rispettare la segretezza dei dati e delle informazioni riguardanti rispettivamente il Committente e i terzi di cui viene a sapere durante l'esecuzione delle attività di controllo secondo il presente contratto o in altre circostanze. Il Prestatore s'impegna a non utilizzare a proprio favore né a favore di un terzo le informazioni di cui viene in possesso in adempimento del presente contratto.\n\n"
++ "2. Qualora, nel caso delle controversie imputabili all’interpretazione del presente contratto, non sia possibile raggiungere un accordo amichevole tra le parti, ogni parte contraente è libera di adire alle vie legali. Le parti per patto espresso stabiliscono che, relativamente ai rapporti intercorrenti tra il Committente ed il Prestatore, il presente contratto è regolato dal diritto inglese e l’Autorità Giudiziaria competente per territorio a decidere ogni controversia tra loro nascente, non avendo interesse alla scelta di altro e diverso Foro, sarà quella del Foro convenzionale esclusivo di Londra, così liberamente scelto dalle parti perché ritenuto confacente alle loro reciproche esigenze.\n\n"
++ "3. Il presente contratto si stipula per il periodo di efficacia del Certificato, dal giorno della sua sottoscrizione da entrambe le parti contraenti, sino alla sospensione del Certificato da parte dell’Ente di certificazione, a meno che le parti prima della scadenza di detto termine non stabiliscano, sempre per iscritto, diversamente.\n\n"
++ "4. Le parti contraenti dichiarano di aver redatto e letto il presente contratto, di approvarne il suo contenuto e di stipularlo alla data riportata di cui sotto, apponendovi le proprie firme.\n\n"
++ "<b>Conclusioni</b>\n"
++ "Ringraziamo per l'opportunità di collaborazione con la vostra organizzazione."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Master">
+				<reportElement positionType="Float" x="2" y="467" width="524" height="53" uuid="73d552a7-c9ca-45c5-872b-162507b226bc"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{ragione_sociale} + "\n(Rappresentante legale)\n\n"+"……………………………………….."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Master">
+				<reportElement positionType="Float" x="360" y="467" width="510" height="53" uuid="e44e8924-9769-41f4-852d-80ed2842f37c"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{ragione_sociale_cliente} + "\n(Rappresentante legale)\n\n"+"……………………………………….."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="179" y="670" width="170" height="10" uuid="866edcee-3bd3-4764-bd87-b29e4bdc3c5b"/>
+				<textElement textAlignment="Center" markup="styled"/>
+				<textFieldExpression><![CDATA[$F{comune}+" - "+$F{nazione_descr}+", "+ new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="540" width="536" height="60" uuid="e30141e0-8a50-453f-a65d-1bdf41897403"/>
+				<textElement textAlignment="Justified"/>
+				<text><![CDATA[Infine le parti contraenti, dopo attenta rilettura del presente contratto, dichiarano di approvarne il suo contenuto e di accettarlo nella sua interezza, ben edotti delle clausole ivi contenute che sono state oggetto di specifica trattativa tra le parti, approvando espressamente le parti I Oggetto e costi del contratto, V Diritti ed Obblighi del Committente, VI Patteggiamenti economici e condizioni di pagamento, VII Durata del contratto e VIII Regolamenti Finali e Foro convenzionale esclusivo, come innanzi riportati. ]]></text>
+			</staticText>
+			<textField textAdjust="StretchHeight" evaluationTime="Master">
+				<reportElement positionType="Float" x="0" y="610" width="524" height="53" uuid="99c2823e-3775-44a8-882e-57ac2c20728a"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{ragione_sociale} + "\n(Rappresentante legale)\n\n"+"……………………………………….."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Master">
+				<reportElement positionType="Float" x="358" y="610" width="510" height="53" uuid="3cd52222-5b13-4fa9-bc5f-54ab4ef028a1"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{ragione_sociale_cliente} + "\n(Rappresentante legale)\n\n"+"……………………………………….."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="180" y="520" width="170" height="10" uuid="142efded-6cff-4d52-9305-4d2e46199c5a"/>
+				<textElement textAlignment="Center" markup="styled"/>
+				<textFieldExpression><![CDATA[$F{comune}+" - "+$F{nazione_descr}+", "+ new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" mode="Transparent" x="0" y="257" width="536" height="16" uuid="40efe3ec-3e2e-4bde-88ff-f4ee4fec2bc4">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["<b>VI. Patteggiamenti economici e condizioni di pagamento</b>\n"
++ "1. I prezzi per i servizi erogati dal Prestatore sono riportati nell’Allegato n. 1 – Listino prezzi del Prestatore, che costituisce parte integrante del presente contratto (oltre che al Cap. 2 Oggetto e costi del contratto). Tutti i prezzi riportati nel listino prezzi sono sempre intesi oltre Iva, che sarà applicata al momento della fatturazione, conformemente alle disposizioni di legge in vigore.\n\n"
++ "2. L’aggiornamento delle tariffe viene eseguito in conformità alle disposizioni di legge in vigore e non costituisce l’oggetto di accordi secondo il presente contratto.\n\n"
++ "3. Il Committente rinuncia espressamente, e garantisce, di non rivendicare alcun diritto di rimborso, circa le somme pagate in anticipo nel caso di rinuncia, sospensione o disdetta o recesso dal contratto.\n\n"
++ "4. Le tariffe per le attività oggetto del presente contratto sono riportate nell’Allegato n. 1.\n\n"
++ "5. La società RCA S.R.L. fattura e incassa in base alle tariffe riportate nell’Allegato n. 1 del Presente contratto.\n\n"
++ "<b>VII. Durata Del Contratto</b>\n"
++ "1. Il termine per l’adempimento dell’oggetto del contratto è definito nell’articolo II a condizione che il Committente rispetterà tutte le condizioni e le date riportate dell’Accordo di certificazione.\n\n"
++ "2. L'inadempimento da parte del Committente ad uno qualunque dei patti contenuti nel presente contratto, ed in particolare la non rispondenza al vero di quanto da esso dichiarato e garantito, il mancato pagamento dei costi pattuiti nei termini indicati, la mancata comunicazione circa il mutamento di dati dal Prestatore ritenuti essenziali al corretto espletamento del presente incarico, produrranno ciascuno, ipso jure et facto, la risoluzione immediata del contratto, salvo il diritto al risarcimento dei danni cagionati all’ente di certificazione ed al Prestatore.\n\n"
++ "3. Le date di due audit di controllo secondo l’articolo II devono rientrare nel periodo massimo di:\n"
++ "   - 12 mesi dal rilascio del Certificato per il 1° audit di controllo\n"
++ "   - 12 mesi dal 1° audit di controllo per il 2° audit di controllo\n\n"
++ "4. Il presente contratto rimane valido per tutta la durata dei certificati emessi. Per il solo audit di rinnovo (da intendersi quale primo audit al termine di ogni triennio) il costo è fin d'ora concordato in:"
+]]></textFieldExpression>
+			</textField>
+			<componentElement>
+				<reportElement positionType="Float" x="80" y="290" width="360" height="90" uuid="e5a5d602-f5cc-43df-b630-1fbbafc1c7ae">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="Dataset2" uuid="1fc4fd0c-4f4c-46b1-b1e9-88c4b39b4f65">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="160" uuid="e2a4e090-68d0-4dd4-9032-355b3b877aaa">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna1"/>
+						<jr:tableFooter style="Table_TH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement positionType="Float" x="0" y="0" width="160" height="30" uuid="651c0dd0-68a2-4b0c-a8fd-aa207ff22daf">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement verticalAlignment="Middle">
+									<paragraph leftIndent="3"/>
+								</textElement>
+								<text><![CDATA[Totale]]></text>
+							</staticText>
+						</jr:tableFooter>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField textAdjust="StretchHeight">
+								<reportElement positionType="Float" x="0" y="0" width="160" height="30" uuid="9cae8f74-e341-4800-99a8-e9e5fa922339">
+									<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+								</reportElement>
+								<textElement verticalAlignment="Middle">
+									<paragraph leftIndent="3"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{norma}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="200" uuid="1b99088f-5e62-48ce-b38d-70c77789400a">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna2"/>
+						<jr:tableFooter style="Table_TH" height="30" rowSpan="1">
+							<textField textAdjust="StretchHeight" pattern="¤#,##0.00;¤-#,##0.00">
+								<reportElement positionType="Float" x="0" y="0" width="200" height="30" uuid="42b7a437-783c-44cb-bbeb-f5042a0b4f9b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled"/>
+								<textFieldExpression><![CDATA[$V{Totale_rinn}]]></textFieldExpression>
+							</textField>
+						</jr:tableFooter>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="200" height="30" uuid="0e116549-cf96-4ae8-878b-f026657d5019"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA["Audit di rinnovo " + (java.time.Year.now().getValue()+3)]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField pattern="¤#,##0.00;¤-#,##0.00">
+								<reportElement x="0" y="0" width="200" height="30" uuid="0ec5e083-a17e-44a7-8334-6c1d33f5645c"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
+								<textFieldExpression><![CDATA[$F{importo_rinnovo}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="2" y="400" width="534" height="30" uuid="82764598-632f-48f3-8e11-b5a393eb00c8"/>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["Gli importi si intendono iva esclusa \n\n"+"Il Committente può recedere dallo stesso inviando lettera raccomandata A/R ovvero via p.e.c. almeno tre mesi prima della scadenza di ciascun triennio. In caso contrario il contratto si intende tacitamente rinnovato per successivi anni tre, alle medesime condizioni economiche stabilite. Il Prestatore ha espressa facoltà di comunicare, almeno tre mesi prima della scadenza di ciascun triennio, le nuove condizioni economiche regolanti il medesimo contratto, con facoltà del Committente di potervi recedere."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="2" y="690" width="534" height="20" uuid="9995fbee-6ebf-4c5f-a2b4-e50dc574d348"/>
+				<textElement textAlignment="Justified" markup="styled"/>
+				<textFieldExpression><![CDATA["• L’importo per il rilascio del Certificato in lingua diversa dall’italiano (se richiesto) è da intendersi aggiuntivo ed è quantificato fin d’ora in € 150,00 (oltre iva) per ogni versione del Certificato in lingua straniera (di standard sono previsti n. 2 Certificati).\n"
++ "• Per ogni altra copia del Certificato emesso in lingua straniera si applicherà il prezzo di € 100,00 (oltre iva).\n"
++ "I prezzi riportati sono al netto dell’IVA.\n"
++ "• I prezzi riportati nel listino Prezzi del Prestatore valgono sino alla fine dell’anno (s’intende l’anno della stipula del contratto). Qualora nell’anno della stipula del contratto e negli anni successivi l’inflazione superi il 5% annuale (secondo i dati dell’ISTAT), il Prestatore ha diritto, negli anni successivi, di adeguare proporzionalmente i prezzi di cui all’Allegato n.1.\n"
++ "• Al fine del calcolo dei giorni uomo sono stati utilizzati:\n"
++ "  il seguente criterio per gli addetti equivalenti:\n"
++ "     - "+$F{motivazioni_addetti}+"\n"
++ "  i seguenti fattori di incremento / riduzione:\n"
++ "      - " + $F{motivazioni_sconto}
+]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="100">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<textField textAdjust="StretchHeight" evaluationTime="Master">
+				<reportElement positionType="Float" x="-2" y="2" width="524" height="53" uuid="06f1abb3-9216-44f3-a8d2-22cbe8d4c868"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{ragione_sociale} + "\n(Rappresentante legale)\n\n"+"……………………………………….."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight" evaluationTime="Master">
+				<reportElement positionType="Float" x="356" y="2" width="510" height="53" uuid="b0791c6f-0524-41ac-b584-4f39856cc1c8"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{ragione_sociale_cliente} + "\n(Rappresentante legale)\n\n"+"……………………………………….."]]></textFieldExpression>
+			</textField>
+			<textField textAdjust="StretchHeight">
+				<reportElement positionType="Float" x="177" y="62" width="170" height="10" uuid="83fb97de-a205-47ba-8b27-6f252e688db2"/>
+				<textElement textAlignment="Center" markup="styled"/>
+				<textFieldExpression><![CDATA[$F{comune}+" - "+$F{nazione_descr}+", "+ new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="50">
+			<textField>
+				<reportElement x="170" y="10" width="100" height="30" uuid="2387849b-218b-40ee-8d49-40d31994ec52"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Pagina " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="270" y="10" width="100" height="30" uuid="b22e38c6-1f8d-42d1-b848-ab97aa64db9f"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA[" di " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

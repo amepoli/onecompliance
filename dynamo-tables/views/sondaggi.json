@@ -398,6 +398,11 @@
                         "icon": "lock_close",
                         "label": "Chiudi verifiche complete",
                         "outputEventName": "verifiche_complete_close"
+                    },
+                    {
+                        "icon": "email",
+                        "label": "Email Sollecito",
+                        "outputEventName": "sollecito"
                     }
                 ]
             },
@@ -593,6 +598,27 @@
                     "condition": "none",
                     "values": [],
                     "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "sollecito",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "message": {
+                        "messageText": "Si intende procedere all'invio del sollecito via email?",
+                        "actionOnYes": {
+                            "actionType": "context_mail",
+                            "contextMailParams": {
+                                "contesto": "contesto",
+                                "chiavi": "chiavi",
+                                "username": "username"
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
                 }
             ],
             "isHidden": false,
@@ -604,6 +630,48 @@
             "readOnly": false,
             "sameOrigin": false,
             "size": 0.4
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "contesto",
+            "queryFunct": "'sondaggio_sollecito'",
+            "label": "contesto",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "chiavi",
+            "queryFunct": "codice_azienda||'~'||id_sondaggio",
+            "label": "chiavi",
+            "newLine": false,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "username",
+            "queryFunct": "'€global_username€'",
+            "label": "username",
+            "newLine": false,
+            "readOnly": true
         },
         {
             "autoGenerate": false,
