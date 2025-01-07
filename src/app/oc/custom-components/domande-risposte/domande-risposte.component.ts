@@ -243,107 +243,119 @@ export class DomandeRisposteComponent implements OnChanges
             ]
         }
 
+        if(!result.hidePunteggio) {
+            viewKeys = [
+                ...viewKeys,
+                {
+                    format: {
+                        dataType: "number",
+                        viewType: "input"
+                    },
+                    isHidden: false,
+                    isVisible: true,
+                    isPrimary: false,
+                    key: "punteggio",
+                    label: "Punteggio",
+                    translate: "RESOURCES.domande_risposte_punteggio",
+                    newLine: false,
+                    readOnly: result.readonly || true,
+                    size: 0.5,
+                }
+            ]
+        }
+
+        if(!result.hideDomandeActions) {
+            viewKeys = [
+                ...viewKeys,
+                {
+                    autoGenerate: false,
+                    buttonIcon: "more_vert",
+                    format: {
+                        menuOptions: _this.getMenuActions(result, index),
+                        viewType: "menu"
+                    },
+                    inputEvents: [
+                        {
+                            actionType: "show_message",
+                            condition: "none",
+                            eventName: "delete_risposta",
+                            message: {
+                                actionOnNo: {
+                                    actionType: "skip",
+                                    queryFunct: "select 1"
+                                },
+                                actionOnYes: {
+                                    actionType: "query",
+                                    queryFunct: "SELECT entrasp.delete_risposta( $codice_azienda$,$id_domanda$,$id_modello_test$,$id_modello_test_vr$,$id_sondaggio$,$id_somministrazione$, $id_sezione$)"
+                                },
+                                messageText: "Cancellare definitivamente la risposta?"
+                            },
+                            outputEventWhenComplete: "triggerReload",
+                            successMessage: "Risposta cancellata correttamente",
+                            values: []
+                        },
+                        {
+                            actionType: "show_message",
+                            condition: "none",
+                            eventName: "dissocia_segnalazione",
+                            message: {
+                                actionOnNo: {
+                                    actionType: "skip",
+                                    queryFunct: "select 1"
+                                },
+                                actionOnYes: {
+                                    actionType: "query",
+                                    queryFunct: "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£' and id_domanda=£id_domanda£ and object_name='riepilogoRisposte' and id_somministrazione=$id_somministrazione$"
+                                },
+                                messageText: "Dissociare la segnalazione dalla domanda?"
+                            },
+                            outputEventWhenComplete: "triggerReload",
+                            successMessage: "Segnalazione dissociata correttamente",
+                            values: []
+                        },
+                        {
+                            actionType: "show_message",
+                            condition: "none",
+                            eventName: "answer_copy",
+                            message: {
+                                actionOnNo: {
+                                    actionType: "skip",
+                                    queryFunct: "select 1"
+                                },
+                                actionOnYes: {
+                                    actionType: "query",
+                                    queryFunct: "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$, $id_domanda$, false) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
+                                },
+                                messageText: "Copiare questa risposta su tutte le verifiche (somministrazioni) del sondaggio?"
+                            },
+                            successMessage: "Risposte copiate correttamente",
+                            values: []
+                        },
+                        {
+                            actionType: "dialog",
+                            condition: "none",
+                            customDialogEntryName: "dialog_domande_associa_note",
+                            customDialogTitle: "Associa Nota",
+                            eventName: "associa_note",
+                            outputEventWhenComplete: "triggerReload",
+                            values: []
+                        }
+                    ],
+                    isHidden: false,
+                    isVisible: true,
+                    isPrimary: false,
+                    key: "domande_actions",
+                    label: "",
+                    newLine: false,
+                    readOnly: result.readonly || false,
+                    sameOrigin: false,
+                    size: 0.6
+                }
+            ]            
+        }
+
         viewKeys = [
             ...viewKeys,
-            {
-                format: {
-                    dataType: "number",
-                    viewType: "input"
-                },
-                isHidden: false,
-                isVisible: true,
-                isPrimary: false,
-                key: "punteggio",
-                label: "Punteggio",
-                translate: "RESOURCES.domande_risposte_punteggio",
-                newLine: false,
-                readOnly: result.readonly || true,
-                size: 0.5,
-            },
-            {
-                autoGenerate: false,
-                buttonIcon: "more_vert",
-                format: {
-                    menuOptions: _this.getMenuActions(result, index),
-                    viewType: "menu"
-                },
-                inputEvents: [
-                    {
-                        actionType: "show_message",
-                        condition: "none",
-                        eventName: "delete_risposta",
-                        message: {
-                            actionOnNo: {
-                                actionType: "skip",
-                                queryFunct: "select 1"
-                            },
-                            actionOnYes: {
-                                actionType: "query",
-                                queryFunct: "SELECT entrasp.delete_risposta( $codice_azienda$,$id_domanda$,$id_modello_test$,$id_modello_test_vr$,$id_sondaggio$,$id_somministrazione$, $id_sezione$)"
-                            },
-                            messageText: "Cancellare definitivamente la risposta?"
-                        },
-                        outputEventWhenComplete: "triggerReload",
-                        successMessage: "Risposta cancellata correttamente",
-                        values: []
-                    },
-                    {
-                        actionType: "show_message",
-                        condition: "none",
-                        eventName: "dissocia_segnalazione",
-                        message: {
-                            actionOnNo: {
-                                actionType: "skip",
-                                queryFunct: "select 1"
-                            },
-                            actionOnYes: {
-                                actionType: "query",
-                                queryFunct: "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£' and id_domanda=£id_domanda£ and object_name='riepilogoRisposte' and id_somministrazione=$id_somministrazione$"
-                            },
-                            messageText: "Dissociare la segnalazione dalla domanda?"
-                        },
-                        outputEventWhenComplete: "triggerReload",
-                        successMessage: "Segnalazione dissociata correttamente",
-                        values: []
-                    },
-                    {
-                        actionType: "show_message",
-                        condition: "none",
-                        eventName: "answer_copy",
-                        message: {
-                            actionOnNo: {
-                                actionType: "skip",
-                                queryFunct: "select 1"
-                            },
-                            actionOnYes: {
-                                actionType: "query",
-                                queryFunct: "select entrasp.accoda_risposte_somministrazione(snd.codice_azienda, snd.id_modello_test, snd.id_modello_test_vr, ss.id_sondaggio, ss.id_somministrazione, $id_somministrazione$, $id_domanda$, false) from entrasp.sondaggi_somministrati ss inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio where snd.codice_azienda=$codice_azienda$ and snd.id_sondaggio=$id_sondaggio$ and ss.id_somministrazione!=$id_somministrazione$"
-                            },
-                            messageText: "Copiare questa risposta su tutte le verifiche (somministrazioni) del sondaggio?"
-                        },
-                        successMessage: "Risposte copiate correttamente",
-                        values: []
-                    },
-                    {
-                        actionType: "dialog",
-                        condition: "none",
-                        customDialogEntryName: "dialog_domande_associa_note",
-                        customDialogTitle: "Associa Nota",
-                        eventName: "associa_note",
-                        outputEventWhenComplete: "triggerReload",
-                        values: []
-                    }
-                ],
-                isHidden: false,
-                isVisible: true,
-                isPrimary: false,
-                key: "domande_actions",
-                label: "",
-                newLine: false,
-                readOnly: result.readonly || false,
-                sameOrigin: false,
-                size: 0.6
-            },
             {
                 autoGenerate: false,
                 format: {
@@ -583,22 +595,27 @@ export class DomandeRisposteComponent implements OnChanges
                     readOnly: result.readonly || false,
                     size: 8.5,
                 },
-                {
-                    format: {
-                        dataType: "number",
-                        viewType: "input"
+            ]
+            if(!result.hidePeso) {
+                viewKeys = [
+                    ...viewKeys,
+                    {
+                        format: {
+                            dataType: "number",
+                            viewType: "input"
+                        },
+                        isPrimary: false,
+                        isHidden: false,
+                        isVisible: true,
+                        key: "peso",
+                        label: "Risultato %",
+                        translate: "RESOURCES.domande_risposte_risultato_",
+                        newLine: false,
+                        readOnly: result.readonly || true,
+                        size: 1,
                     },
-                    isPrimary: false,
-                    isHidden: false,
-                    isVisible: true,
-                    key: "peso",
-                    label: "Risultato %",
-                    translate: "RESOURCES.domande_risposte_risultato_",
-                    newLine: false,
-                    readOnly: result.readonly || true,
-                    size: 1,
-                },
-            ];
+                ];
+            }
         }
         else if(result.type === "checkboxgroup") {
             let options: Item[] = [];
@@ -622,22 +639,28 @@ export class DomandeRisposteComponent implements OnChanges
                     readOnly: result.readonly || false,
                     size: 8.5,
                 },
-                {
-                    format: {
-                        dataType: "number",
-                        viewType: "input"
+                
+            ]
+            if(!result.hidePeso) {
+                viewKeys = [
+                    ...viewKeys,
+                    {
+                        format: {
+                            dataType: "number",
+                            viewType: "input"
+                        },
+                        isPrimary: false,
+                        isHidden: false,
+                        isVisible: true,
+                        key: "peso",
+                        label: "Risultato %",
+                        translate: "RESOURCES.domande_risposte_risultato_",
+                        newLine: false,
+                        readOnly: result.readonly || true,
+                        size: 1,
                     },
-                    isPrimary: false,
-                    isHidden: false,
-                    isVisible: true,
-                    key: "peso",
-                    label: "Risultato %",
-                    translate: "RESOURCES.domande_risposte_risultato_",
-                    newLine: false,
-                    readOnly: result.readonly || true,
-                    size: 1,
-                },
-            ];
+                ];
+            }
         }
         else if(result.type === "combobox") {
             let options: Item[] = [];
@@ -661,22 +684,27 @@ export class DomandeRisposteComponent implements OnChanges
                     readOnly: result.readonly || false,
                     size: 8.5,
                 },
-                {
-                    format: {
-                        dataType: "number",
-                        viewType: "input"
+            ]
+            if(!result.hidePeso) {
+                viewKeys = [
+                    ...viewKeys,
+                    {
+                        format: {
+                            dataType: "number",
+                            viewType: "input"
+                        },
+                        isPrimary: false,
+                        isHidden: false,
+                        isVisible: true,
+                        key: "peso",
+                        label: "Risultato %",
+                        translate: "RESOURCES.domande_risposte_risultato_",
+                        newLine: false,
+                        readOnly: result.readonly || true,
+                        size: 1,
                     },
-                    isPrimary: false,
-                    isHidden: false,
-                    isVisible: true,
-                    key: "peso",
-                    label: "Risultato %",
-                    translate: "RESOURCES.domande_risposte_risultato_",
-                    newLine: false,
-                    readOnly: result.readonly || true,
-                    size: 1,
-                },
-            ];
+                ];
+            }
         }
         else if(result.type === "date") {
             let options: Item[] = [];
@@ -701,22 +729,27 @@ export class DomandeRisposteComponent implements OnChanges
                     readOnly: result.readonly || false,
                     size: 1,
                 },
-                {
-                    format: {
-                        dataType: "number",
-                        viewType: "input"
+            ]
+            if(!result.hidePeso) {
+                viewKeys = [
+                    ...viewKeys,
+                    {
+                        format: {
+                            dataType: "number",
+                            viewType: "input"
+                        },
+                        isPrimary: false,
+                        isHidden: false,
+                        isVisible: true,
+                        key: "peso",
+                        label: "Risultato %",
+                        translate: "RESOURCES.domande_risposte_risultato_",
+                        newLine: false,
+                        readOnly: result.readonly || false,
+                        size: 1,
                     },
-                    isPrimary: false,
-                    isHidden: false,
-                    isVisible: true,
-                    key: "peso",
-                    label: "Risultato %",
-                    translate: "RESOURCES.domande_risposte_risultato_",
-                    newLine: false,
-                    readOnly: result.readonly || false,
-                    size: 1,
-                },
-            ];
+                ];
+            }
         }
         else if(result.type === "number") {
             let options: Item[] = [];
@@ -741,42 +774,49 @@ export class DomandeRisposteComponent implements OnChanges
                     readOnly: result.readonly || false,
                     size: 1,
                 },
-                {
-                    format: {
-                        dataType: "number",
-                        viewType: "input"
+            ]
+            if(!result.hidePeso) {
+                viewKeys = [
+                    ...viewKeys,
+                    {
+                        format: {
+                            dataType: "number",
+                            viewType: "input"
+                        },
+                        isPrimary: false,
+                        isHidden: false,
+                        isVisible: true,
+                        key: "peso",
+                        label: "Risultato %",
+                        translate: "RESOURCES.domande_risposte_risultato_",
+                        newLine: false,
+                        readOnly: result.readonly || false,
+                        size: 1,
                     },
-                    isPrimary: false,
-                    isHidden: false,
-                    isVisible: true,
-                    key: "peso",
-                    label: "Risultato %",
-                    translate: "RESOURCES.domande_risposte_risultato_",
-                    newLine: false,
-                    readOnly: result.readonly || false,
-                    size: 1,
-                },
-            ];
+                ];
+            }
         }
         else if(result.type === "text") {
-
-            viewKeys = [...viewKeys,
-                {
-                    format: {
-                        dataType: "number",
-                        viewType: "input"
+            if(!result.hidePeso) {
+                viewKeys = [
+                    ...viewKeys,
+                    {
+                        format: {
+                            dataType: "number",
+                            viewType: "input"
+                        },
+                        isPrimary: false,
+                        isHidden: false,
+                        isVisible: true,
+                        key: "peso",
+                        label: "Risultato %",
+                        translate: "RESOURCES.domande_risposte_risultato_",
+                        newLine: false,
+                        readOnly: result.readonly || false,
+                        size: 1,
                     },
-                    isPrimary: false,
-                    isHidden: false,
-                    isVisible: true,
-                    key: "peso",
-                    label: "Risultato %",
-                    translate: "RESOURCES.domande_risposte_risultato_",
-                    newLine: false,
-                    readOnly: result.readonly || false,
-                    size: 1,
-                },
-            ];
+                ];
+            }
         }
 
         viewKeys = [...viewKeys,
