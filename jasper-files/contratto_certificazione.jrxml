@@ -68,7 +68,7 @@
 			<defaultValueExpression><![CDATA[$F{id_contratto}]]></defaultValueExpression>
 		</parameter>
 		<queryString language="SQL">
-			<![CDATA[SELECT entrasp.articoli_titolo(codice_azienda, id_articolo) AS servizio_richiesto, entrasp.argomenti_descr_breve_no_num(id_argomento_tipo_norma) AS norma,codice_azienda, id_contratto, n_addetti, giornate_uomo_scontate AS giornate_uomo_offerta, costo_scontato AS costo_gu_offerta, costo_totale_scontato AS totale_certificazione, acconto, certificazione AS saldo, giornate_uomo_sorveglianza, giornate_uomo_rinnovo, sorveglianza_1 AS importo_sorveglianza_1, sorveglianza_2 AS importo_sorveglianza_2, rinnovo AS importo_rinnovo FROM entrasp.articoli_contratti where codice_azienda= $P{codice_azienda}  and id_contratto= $P{contratto_id}  ]]>
+			<![CDATA[SELECT entrasp.articoli_titolo(codice_azienda, id_articolo) AS servizio_richiesto, entrasp.argomenti_descr_breve_no_num(id_argomento_tipo_norma) AS norma,codice_azienda, id_contratto, n_addetti, giornate_uomo_scontate AS giornate_uomo_offerta, costo_scontato AS costo_gu_offerta, costo_totale_scontato AS totale_certificazione, acconto, certificazione AS saldo, giornate_uomo_sorveglianza, giornate_uomo_rinnovo, sorveglianza_1 AS importo_sorveglianza_1, sorveglianza_2 AS importo_sorveglianza_2, rinnovo AS importo_rinnovo FROM entrasp.articoli_contratti where codice_azienda= $P{codice_azienda}  and id_contratto= $P{contratto_id}]]>
 		</queryString>
 		<field name="servizio_richiesto" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.name" value="servizio_richiesto"/>
@@ -691,8 +691,7 @@
 + "3. Le date di due audit di controllo secondo l’articolo II devono rientrare nel periodo massimo di:\n"
 + "   - 12 mesi dal rilascio del Certificato per il 1° audit di controllo\n"
 + "   - 12 mesi dal 1° audit di controllo per il 2° audit di controllo\n\n"
-+ "4. Il presente contratto rimane valido per tutta la durata dei certificati emessi. Per il solo audit di rinnovo (da intendersi quale primo audit al termine di ogni triennio) il costo è fin d'ora concordato in:"
-]]></textFieldExpression>
++ "4. Il presente contratto rimane valido per tutta la durata dei certificati emessi. Per il solo audit di rinnovo (da intendersi quale primo audit al termine di ogni triennio) il costo è fin d'ora concordato in:"]]></textFieldExpression>
 			</textField>
 			<componentElement>
 				<reportElement positionType="Float" x="80" y="290" width="360" height="90" uuid="e5a5d602-f5cc-43df-b630-1fbbafc1c7ae">
@@ -702,7 +701,13 @@
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
 				</reportElement>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Dataset2" uuid="1fc4fd0c-4f4c-46b1-b1e9-88c4b39b4f65">
+					<datasetRun subDataset="Dataset2" uuid="9b92fc44-aa55-403a-80f6-df31d2b86b7e">
+						<datasetParameter name="codice_azienda">
+							<datasetParameterExpression><![CDATA[$F{codiceazienda}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="contratto_id">
+							<datasetParameterExpression><![CDATA[$F{contratto_id}]]></datasetParameterExpression>
+						</datasetParameter>
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 					</datasetRun>
 					<jr:column width="160" uuid="e2a4e090-68d0-4dd4-9032-355b3b877aaa">
@@ -773,8 +778,7 @@
 + "  il seguente criterio per gli addetti equivalenti:\n"
 + "     - "+$F{motivazioni_addetti}+"\n"
 + "  i seguenti fattori di incremento / riduzione:\n"
-+ "      - " + $F{motivazioni_sconto}
-]]></textFieldExpression>
++ "      - " + $F{motivazioni_sconto}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="100">
