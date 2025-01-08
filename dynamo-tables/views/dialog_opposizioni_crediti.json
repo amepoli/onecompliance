@@ -3,113 +3,25 @@
     "entryKey": "dialog_opposizioni_crediti",
     "predefinedQueries": [
         {
-            "operation": "insert",
+            "operation": "update",
             "type": "main",
-            "queryString": "select entrasp.crea_opposizione('€global_codice_azienda€'::varchar, '£numero_opposizione£'::varchar, nullif('£data_opposizione£','null')::date, array£id_argomento_opposizione£, nullif('£data_recupero£','null')::date, £perdite£::numeric, £contestazione_credito£::numeric, £perc_svalutazione£::numeric, £quantum_interessi£::numeric, ($selected_rows_data$)::varchar)"
-        },
-        {
-            "operation": "isInsert",
-            "queryString": "select true as label;",
-            "type": "main"
+            "queryString": "update entrasp.crediti_ceduti cc1 set perc_svalutazione=coalesce($perc_svalutazione$, cc2.perc_svalutazione), id_argomento_opposizione=coalesce(array $id_argomento_opposizione$, cc2.id_argomento_opposizione), contestazione_credito=coalesce($contestazione_credito$, cc2.contestazione_credito) from entrasp.crediti_ceduti cc2 where cc1.codice_azienda=cc2.codice_azienda and cc1.id_cessione=cc2.id_cessione and cc1.id_cessione in (select split_part(arr,'~',2)::numeric from unnest(ARRAY[$selected_rows_data$]) as arr) and cc1.codice_azienda='€global_codice_azienda€'"
         }
     ],
     "form_keys": [
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
-            "readOnly": true,
-            "translate": "RESOURCES.codice_azienda_fascicoli"
-        },
-        {
-            "autoGenerate": true,
-            "format": {
-                "viewType": "input",
-                "dataType": "number"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "id_opposizione",
-            "label": "# Opposizione:",
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "numero_opposizione",
-            "label": "Cod. Opposizione",
-            "readOnly": false,
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_opposizione",
-            "label": "Data Opposizione",
-            "newLine": false,
-            "size": 2,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
                 "dataType": "number",
                 "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
+            "newLine": true,
             "key": "perc_svalutazione",
             "label": "Svalutazione Effettiva",
             "readOnly": false,
             "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_recupero",
-            "label": "Data stimata di recupero",
-            "newLine": false,
-            "size": 2,
-            "readOnly": false,
-            "translate": "RESOURCES.data_stimata_di_recupero_fascicoli"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "perdite",
-            "label": "Rischi di perdite da costi legali",
-            "newLine": true,
-            "size": 2,
-            "readOnly": false,
-            "translate": "RESOURCES.rischi_di_perdite_da_costi_legali_fascicoli"
         },
         {
             "autoGenerate": false,
@@ -142,22 +54,6 @@
             "readOnly": false,
             "size": 5,
             "translate": "RESOURCES.contestazione_del_credito_fascicoli"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "dataType": "text",
-                "options": [],
-                "comboQuery": "SELECT generate_series(0, 10)::numeric AS id, generate_series(0, 10) AS name"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "quantum_interessi",
-            "label": "Quantum Interessi",
-            "readOnly": false,
-            "size": 5
         }
     ]
 }
