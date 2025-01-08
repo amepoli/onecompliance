@@ -4,11 +4,6 @@
     "entryKey": "compiti_sub_of_procedure_presidi",
     "predefinedQueries": [
         {
-            "operation": "selectForm",
-            "type": "main",
-            "queryString": "select * from entrasp.compiti where codice_azienda=$codice_azienda$ and cmp.codice_compito=$codice_compito$ and cmp.id_tipo_segnalazione!=0"
-        },
-        {
             "operation": "selectTable",
             "type": "main",
             "queryString": "select true as delete_compiti_rif_bo, true as navigate_to_compito, cmp.codice_compito, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, cmp.id_cliente) as cliente_desc, cmp.data_segnalazione, cmp.data_chiusura, cmp.codice_azienda, substring(cmp.titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, cmp.id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(cmp.id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', cmp.stato) as stato, cbo.object_key, cbo.object_name from entrasp.compiti cmp inner join entrasp.compiti_rif_bo cbo on cmp.codice_compito=cbo.codice_compito and cmp.codice_azienda=cbo.codice_azienda where cmp.codice_azienda=$codice_azienda$ and cbo.id_procedura=$id_procedura$ and cbo.id_presidio=$id_presidio$"
@@ -21,10 +16,7 @@
     ],
     "addElementSettings": {
         "labelAdd": "Nuovo Gap",
-        "navigateOnSuccess": false
-    },
-    "restrictions": {
-        "preventNavigationToForm": true
+        "navigateOnSuccess": true
     },
     "form_keys": [
         {
@@ -49,11 +41,10 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "codice_compito",
-            "label": "Codice Compito",
+            "label": "Codice GAP",
             "newLine": false,
             "readOnly": true,
-            "size": 1,
-            "translate": "RESOURCES.codice_compito_compiti"
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -93,7 +84,7 @@
                 "viewType": "input",
                 "validations": [
                     {
-                        "message": "Titolo (max 100 caratteri) necessario",
+                        "message": "Titolo GAP (max 100 caratteri) necessario",
                         "name": "required",
                         "validator": "Validators.required",
                         "translate": "RESOURCES.titolo_max_100_caratteri_necessario_compiti"
@@ -222,11 +213,10 @@
                     "queryFunct": "select coalesce('£note£', '£titolo£')"
                 }
             ],
-            "label": "Descrizione Estesa",
+            "label": "Aspetti di miglioramento",
             "newLine": true,
             "readOnly": false,
-            "size": 10,
-            "translate": "RESOURCES.descrizione_estesa_compiti"
+            "size": 10
         },
         {
             "autoGenerate": false,
@@ -491,11 +481,10 @@
                         "isHidden": true,
                         "isPrimary": false,
                         "key": "codice",
-                        "label": "Codice Segnalazione",
+                        "label": "Codice GAP",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.5,
-                        "translate": "RESOURCES.codice_segnalazione_compiti"
+                        "size": 1.5
                     },
                     {
                         "autoGenerate": false,
@@ -570,11 +559,10 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "codice_compito_parent",
-                        "label": "Codice Segnalazione Parent",
+                        "label": "Codice GAP Parent",
                         "newLine": true,
                         "readOnly": true,
-                        "size": 1.5,
-                        "translate": "RESOURCES.codice_segnalazione_parent_compiti"
+                        "size": 1.5
                     },
                     {
                         "autoGenerate": false,
@@ -894,8 +882,7 @@
             "isPrimary": true,
             "key": "codice_compito",
             "width": "5%",
-            "label": "Codice Compito",
-            "translate": "RESOURCES.codice_compito_compiti_sub_of_somministrazioni1"
+            "label": "Codice Gap"
         },
         {
             "format": {
@@ -965,8 +952,7 @@
             "isHidden": true,
             "isPrimary": false,
             "key": "codice_compito_parent",
-            "label": "Codice Compito Parent",
-            "translate": "RESOURCES.codice_compito_parent_compiti_sub_of_somministrazioni1"
+            "label": "Codice GAP Parent"
         },
         {
             "format": {
@@ -1021,42 +1007,10 @@
         },
         {
             "format": {
-                "dataType": "number"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "width": "6%",
-            "key": "navigate_to_compito",
-            "label": "Dettaglio",
-            "isButton": true,
-            "buttonAction": {
-                "target": "compiti",
-                "viewType": "form",
-                "action": "navigate",
-                "keymap": [
-                    {
-                        "source": "codice_azienda",
-                        "destination": "codice_azienda"
-                    },
-                    {
-                        "source": "codice_compito",
-                        "destination": "codice_compito"
-                    }
-                ]
-            },
-            "style": [
-                {
-                    "button_icon": "",
-                    "value": "*"
-                }
-            ]
-        },
-        {
-            "format": {
                 "dataType": "text"
             },
             "isHidden": true,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "object_name",
             "label": "object_name",
             "width": "8%",
@@ -1067,7 +1021,7 @@
                 "dataType": "text"
             },
             "isHidden": true,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "object_key",
             "label": "object_key",
             "width": "8%",
