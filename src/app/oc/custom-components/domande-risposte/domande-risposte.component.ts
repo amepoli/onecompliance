@@ -26,6 +26,7 @@ export class DomandeRisposteComponent implements OnChanges
     @Input() domandeRisposteParams: DomandeRisposteParams = {
         keys: {},
         entryName: "",
+        hideExtraActions: false
     };
 
     @Output() sendEvent = new EventEmitter<any>();
@@ -243,7 +244,7 @@ export class DomandeRisposteComponent implements OnChanges
             ]
         }
 
-        if(!result.hidePunteggio) {
+        if(!_this.domandeRisposteParams.hideExtraActions && !result.hidePunteggio) {
             viewKeys = [
                 ...viewKeys,
                 {
@@ -264,7 +265,7 @@ export class DomandeRisposteComponent implements OnChanges
             ]
         }
 
-        if(!result.hideDomandeActions) {
+        if(!_this.domandeRisposteParams.hideExtraActions && !result.hideDomandeActions) {
             viewKeys = [
                 ...viewKeys,
                 {
@@ -596,7 +597,7 @@ export class DomandeRisposteComponent implements OnChanges
                     size: 8.5,
                 },
             ]
-            if(!result.hidePeso) {
+            if(!_this.domandeRisposteParams.hideExtraActions && !result.hidePeso) {
                 viewKeys = [
                     ...viewKeys,
                     {
@@ -641,7 +642,7 @@ export class DomandeRisposteComponent implements OnChanges
                 },
                 
             ]
-            if(!result.hidePeso) {
+            if(!_this.domandeRisposteParams.hideExtraActions && !result.hidePeso) {
                 viewKeys = [
                     ...viewKeys,
                     {
@@ -685,7 +686,7 @@ export class DomandeRisposteComponent implements OnChanges
                     size: 8.5,
                 },
             ]
-            if(!result.hidePeso) {
+            if(!_this.domandeRisposteParams.hideExtraActions && !result.hidePeso) {
                 viewKeys = [
                     ...viewKeys,
                     {
@@ -730,7 +731,7 @@ export class DomandeRisposteComponent implements OnChanges
                     size: 1,
                 },
             ]
-            if(!result.hidePeso) {
+            if(!_this.domandeRisposteParams.hideExtraActions && !result.hidePeso) {
                 viewKeys = [
                     ...viewKeys,
                     {
@@ -775,7 +776,7 @@ export class DomandeRisposteComponent implements OnChanges
                     size: 1,
                 },
             ]
-            if(!result.hidePeso) {
+            if(!_this.domandeRisposteParams.hideExtraActions && !result.hidePeso) {
                 viewKeys = [
                     ...viewKeys,
                     {
@@ -797,7 +798,7 @@ export class DomandeRisposteComponent implements OnChanges
             }
         }
         else if(result.type === "text") {
-            if(!result.hidePeso) {
+            if(!_this.domandeRisposteParams.hideExtraActions && !result.hidePeso) {
                 viewKeys = [
                     ...viewKeys,
                     {
