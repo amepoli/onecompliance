@@ -175,26 +175,26 @@
                     <form-view [isQuickAdd]="true" *ngIf="showQuickAdd" class="quick-add"
                         [tableData]="quickAddFormParams" (sendEvent)='onEvent($event)'>
                     </form-view>
+                </ng-container>
 
-                    <div *ngIf="showAdvSearch" class="adv-search">
-                        <dynamic-form class="form-container" [fields]='searchData' (submit)='search_submit($event)'
-                            formName='search_form'>
-                        </dynamic-form>
-                        <div class="buts-search">
-                            <button class="but-search" mat-button (click)="cancel_search()">
-                                <mat-icon>cancel</mat-icon>
-                                Cancel
-                            </button>
-                            <button class="but-search" mat-button type="submit" form="search_form">
-                                <mat-icon>search</mat-icon>
-                                Search
-                            </button>
-                        </div>
-                        <br>
+                <div *ngIf="showAdvSearch" class="adv-search">
+                    <dynamic-form class="form-container" [fields]='searchData' (submit)='search_submit($event)'
+                        formName='search_form'>
+                    </dynamic-form>
+                    <div class="buts-search">
+                        <button class="but-search" mat-button (click)="cancel_search()">
+                            <mat-icon>cancel</mat-icon>
+                            Cancel
+                        </button>
+                        <button class="but-search" mat-button type="submit" form="search_form">
+                            <mat-icon>search</mat-icon>
+                            Search
+                        </button>
                     </div>
-                  
-                   
-
+                    <br>
+                </div>
+                
+                <ng-container *ngIf="hasData && displayedColumns">
                     <section class="table-container mat-elevation-z8" [ngClass]="isTabMode? 'mini-mode': 'full-mode'" tabindex="0">
                         
                             <table class="table-view-content" [hidden]="showExplorer || isLoading" mat-table
@@ -335,8 +335,8 @@
     
                         
                     </section>
-                    
                 </ng-container>
+
                 <ng-container *ngIf="!hasData">
                     <form-view [isQuickAdd]="true" *ngIf="showQuickAdd" class="quick-add"
                         [tableData]="quickAddFormParams" (sendEvent)='onEvent($event)'>

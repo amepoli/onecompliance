@@ -87,15 +87,6 @@
                     "confirmActionMessage": "Inserire il flag azionati alla selezione?"
                 },
                 {
-                    "key": "flag_opposti",
-                    "icon": "date",
-                    "label": "Segnare come opposti",
-                    "query": "update entrasp.crediti_ceduti set opposto = '1' where id_cessione IN (SELECT SPLIT_PART(ARR,'~',2)::numeric FROM UNNEST(ARRAY[$selected_rows_data$]) AS ARR ) AND codice_azienda='€global_codice_azienda€';",
-                    "confirmAction": true,
-                    "reloadOnSuccess": true,
-                    "confirmActionMessage": "Inserire il flag opposti alla selezione?"
-                },
-                {
                     "key": "flag_fasc_archiviato",
                     "icon": "date",
                     "label": "Segnare archiviazione fascicolo",
@@ -118,7 +109,7 @@
     ],
     "predefinedQueries": [
         {
-            "queryString": "select entrasp.credito_riceduto(cc.codice_azienda, cc.id_cessione) as ceduto, entrasp.transcodifiche_transcodifica('STATO_DEBITORE_CEDUTO', (select entrasp.stato_debitore(cc.codice_azienda, cc.id_cessione)))as stato_debitore, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as contratto_descr,  entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, data_pagamento, id_ricessione, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, cc.opposto, entrasp.fascicolo_descr(cc.id_fascicolo, cc.codice_azienda) as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.capitale_residuo_leg from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
+            "queryString": "select entrasp.credito_riceduto(cc.codice_azienda, cc.id_cessione) as ceduto, entrasp.transcodifiche_transcodifica('STATO_DEBITORE_CEDUTO', (select entrasp.stato_debitore(cc.codice_azienda, cc.id_cessione)))as stato_debitore, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as contratto_descr,  entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_cedente) as ced_descr, data_pagamento, id_ricessione, entrasp.campo_valorizzato(cc.note) as note_valorizzate, entrasp.anagrafiche_vr_dati_identificativi(cc.codice_part, cc.id_debitore_ceduto) as deb_descr, cc.codice_azienda, cc.id_cessione, entrasp.contratti_descr(cc.id_contratto, cc.codice_azienda) as descr_contratto, cc.id_contratto, cc.tranche, cc.n_fattura, cc.data_scadenza, cc.data_fattura, cc.importo, cc.data_pagamento, cc.azionato, entrasp.opposto_check(codice_azienda, id_cessione) as opposto, entrasp.fascicolo_descr(cc.id_fascicolo, cc.codice_azienda) as fascicolo, entrasp.calcola_scaduto (cc.data_fattura, cc.data_pagamento) as giorni_scaduto, cc.lavorazione_legale, cc.interessi_legali, cc.capitale_residuo_leg from entrasp.crediti_ceduti cc where codice_azienda='€global_codice_azienda€';",
             "operation": "selectTable",
             "type": "main"
         }
@@ -1473,8 +1464,9 @@
                         "isPrimary": false,
                         "key": "opposto",
                         "label": "Opposto",
+                        "queryFunct": "select fsc.opposto from entrasp.crediti_ceduti cc inner join entrasp.fascicoli fsc on cc.codice_azienda=fsc.codice_azienda and cc.id_fascicolo=fsc.id_fascicolo where cc.codice_azienda=$codice_azienda$ and cc.id_cessione=$id_cessione$",
                         "size": 2,
-                        "readOnly": false,
+                        "readOnly": true,
                         "newLine": false,
                         "translate": "RESOURCES.opposto_crediti_ceduti"
                     },
@@ -1559,6 +1551,244 @@
             "readOnly": false,
             "sameOrigin": true,
             "translate": "RESOURCES.fatture_attive_crediti_ceduti"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "activate_detail_k",
+            "label": "",
+            "buttonIcon": "expand_more",
+            "newLine": false,
+            "size": 0.4,
+            "outputEvent": {
+                "eventName": "activate_detail",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "hide",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "show",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#9FACBD",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "hide_detail_k",
+            "label": "",
+            "buttonIcon": "expand_less",
+            "newLine": false,
+            "size": 0.4,
+            "outputEvent": {
+                "eventName": "hide_detail",
+                "eventTrigger": "press"
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "eventName": "activate_detail",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "eventName": "hide_detail",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "maggiori_dettagli",
+            "label": "Opposizioni",
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.3em",
+                "font_weight": "400"
+            },
+            "newLine": false,
+            "readOnly": true,
+            "sameOrigin": false,
+            "translate": "RESOURCES.opposizioni_fascicoli"
+        },
+        {
+            "format": {
+                "viewType": "subform",
+                "subform_keys": [
+                    {
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "label"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "opposizione_label",
+                        "label": "Opposizione",
+                        "style": {
+                            "background_color": "#03a9f4",
+                            "font_color": "white",
+                            "font_size": "1.3em",
+                            "font_style": "italic",
+                            "font_weight": "400"
+                        },
+                        "newLine": true,
+                        "readOnly": true,
+                        "sameOrigin": false,
+                        "translate": "RESOURCES.opposizione_fascicoli"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "key": "rating",
+                        "insertUpdateFunct": "SELECT LEAST(MIN(arg.punteggio),cc.contestazione_credito) AS punteggio_minimo FROM entrasp.crediti_ceduti cc CROSS JOIN LATERAL unnest(cc.id_argomento_opposizione) AS id_arg INNER JOIN entrasp.argomenti arg ON arg.id_argomento = id_arg WHERE cc.codice_azienda = $codice_azienda$  AND cc.id_cessione = $id_cessione$ group by cc.contestazione_credito",
+                        "label": "Punteggio Minimo",
+                        "readOnly": true,
+                        "size": 3.3
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "insertUpdateFunct": "select case WHEN rating IN (0, 1, 2) THEN 100 WHEN rating = 3 THEN 70 WHEN rating = 4 THEN 60 WHEN rating = 5 THEN 50 WHEN rating = 6 THEN 40 WHEN rating = 7 THEN 30 WHEN rating IN (8, 9, 10) THEN 0 ELSE NULL END from entrasp.crediti_ceduti where codice_azienda = $codice_azienda$  AND id_cessione = $id_cessione$",
+                        "key": "perc_svalutazione_calc",
+                        "label": "Svalutazione Calcolata",
+                        "readOnly": true,
+                        "size": 3.3
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "number",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "key": "perc_svalutazione",
+                        "label": "Svalutazione Effettiva",
+                        "readOnly": false,
+                        "size": 3.3
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "checkboxgroup",
+                            "options": [],
+                            "comboQuery": "SELECT ID_ARGOMENTO AS ID, DESCRIZIONE_BREVE AS NAME FROM ENTRASP.ARGOMENTI ARG INNER JOIN ENTRASP.ARGOMENTI_ARGOMENTI AA ON ARG.ID_ARGOMENTO = AA.ID_ARGOMENTO_SON WHERE AA.ID_ARGOMENTO_FATHER = 53646"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "key": "id_argomento_opposizione",
+                        "label": "Motivazione opposizione",
+                        "readOnly": false,
+                        "size": 5,
+                        "translate": "RESOURCES.motivazione_opposizione_fascicoli"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "dataType": "text",
+                            "options": [],
+                            "comboQuery": "SELECT generate_series(1, 8)::numeric AS id, generate_series(1, 8) AS name"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "key": "contestazione_credito",
+                        "label": "Contestazione del Credito",
+                        "readOnly": false,
+                        "size": 5,
+                        "translate": "RESOURCES.contestazione_del_credito_fascicoli"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "combobox",
+                            "options": [],
+                            "dataType": "text",
+                            "comboQuery": "SELECT generate_series(1, 10)::numeric AS id, generate_series(1, 10) AS name"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": true,
+                        "key": "quantum_interessi",
+                        "label": "Quantum Interessi",
+                        "readOnly": false,
+                        "size": 5
+                    }
+                ]
+            },
+            "inputEvents": [
+                {
+                    "actionType": "show",
+                    "condition": "none",
+                    "eventName": "activate_detail",
+                    "values": []
+                },
+                {
+                    "actionType": "hide",
+                    "condition": "none",
+                    "eventName": "hide_detail",
+                    "values": []
+                }
+            ],
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "sezione_detail",
+            "label": "Opposizioni",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": true,
+            "saveWhenHidden": true,
+            "translate": "RESOURCES.opposizioni_fascicoli"
         }
     ],
     "table_keys": [
@@ -1829,6 +2059,7 @@
             "isPrimary": false,
             "key": "opposto",
             "isCheckbox": true,
+            "queryFunct": "entrasp.opposto_check(codice_azienda, id_cessione)",
             "width": "4%",
             "label": "Opp.",
             "translate": "RESOURCES.opp_crediti_ceduti"
@@ -1917,20 +2148,6 @@
             ],
             "label": "Movimenti",
             "translate": "RESOURCES.movimenti_pagamenti_sub_of_crediti"
-        },
-        {
-            "entryKey": "opposizioni_sub_of_crediti",
-            "keys": [
-                {
-                    "parent": "codice_azienda",
-                    "son": "codice_azienda"
-                },
-                {
-                    "parent": "id_cessione",
-                    "son": "id_cessione"
-                }
-            ],
-            "label": "Opposizioni"
         },
         {
             "entryKey": "aggiornamenti_sub_of_crediti",

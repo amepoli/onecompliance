@@ -30,4 +30,7 @@ export interface DomandaRispostaElement {
     keys?: any;
     readonly: boolean;
     isHidden: boolean;
+    hidePunteggio?: boolean;
+    hideDomandeActions?: boolean;
+    hidePeso?: boolean;
 }

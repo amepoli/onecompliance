@@ -105,11 +105,12 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
       _this._console.log("inside form-table-view isCurTab changes!");
     }
 
-    if(_this.tableData.entryName === 'domande_risposte' || _this.tableData.entryName === 'domande_risposte_sezione') {
+    if(['domande_risposte', 'domande_risposte_sezione', "domande_risposte_no_points"].includes(_this.tableData.entryName)) {
       _this.isDomandeRisposte = true;
       _this.domandeRisposteParams = {
         entryName: _this.tableData.entryName,
-        keys: _this.tableData.keys
+        keys: _this.tableData.keys,
+        hideExtraActions: _this.tableData.entryName === "domande_risposte_no_points"
       }
     }
     else {
