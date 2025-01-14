@@ -2752,7 +2752,7 @@
             },
             "label": "Nome/Cognome/Ragione Sociale",
             "newLine": false,
-            "queryCond": "(replace(UPPER(an.nome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(an.cognome), '.', '') like '%'||UPPER('€nome_rs€')||'%' or replace(UPPER(avr.ragione_sociale), '.', '') like '%'||UPPER('€nome_rs€')||'%')",
+            "queryCond": "((replace(UPPER(an.nome), '.', '') || ' ' || replace(UPPER(an.cognome), '.', '') LIKE '%' || UPPER('€nome_rs€') || '%' OR replace(UPPER(avr.ragione_sociale), '.', '') LIKE '%' || UPPER('€nome_rs€') || '%' OR EXISTS (SELECT 1 FROM regexp_split_to_table(UPPER('€nome_rs€'), '\\s+') AS parola WHERE replace(UPPER(an.nome), '.', '') LIKE '%' || parola || '%' OR replace(UPPER(an.cognome), '.', '') LIKE '%' || parola || '%' OR replace(UPPER(avr.ragione_sociale), '.', '') LIKE '%' || parola || '%'))",
             "translate": "RESOURCES.nomecognomeragione_sociale_anagrafiche_vr"
         },
         {
