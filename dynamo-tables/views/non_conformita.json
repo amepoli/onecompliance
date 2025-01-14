@@ -2,9 +2,7 @@
     "$schema": "../views.schema.json",
     "entryKey": "non_conformita",
     "inheritsFrom": "compiti",
-    "dashboardTables": [
-        "dashboard_compiti"
-    ],
+    "dashboardTables": ["dashboard_compiti"],
     "table_multiselection_actions": [
         {
             "viewType": "menu",
@@ -62,6 +60,11 @@
             "operation": "stopEvent",
             "type": "main",
             "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "update entrasp.compiti set foreseen_date=$foreseen_date$ where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
         }
     ],
     "addElementSettings": {
