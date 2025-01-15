@@ -143,7 +143,7 @@
 			<property name="com.jaspersoft.studio.field.label" value="importo_rinnovo"/>
 			<property name="com.jaspersoft.studio.field.tree.path" value="articoli_contratti"/>
 		</field>
-		<variable name="Totale_rinn" class="java.math.BigDecimal" resetType="None" calculation="Sum">
+		<variable name="Totale_rinn" class="java.math.BigDecimal" calculation="Sum">
 			<variableExpression><![CDATA[$F{importo_rinnovo}]]></variableExpression>
 		</variable>
 	</subDataset>
@@ -221,7 +221,7 @@
 		<property name="com.jaspersoft.studio.field.name" value="campo_applicazione"/>
 		<property name="com.jaspersoft.studio.field.label" value="campo_applicazione"/>
 	</field>
-	<field name="prezzo_complessivo" class="java.math.BigDecimal">
+	<field name="prezzo_complessivo" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.name" value="prezzo_complessivo"/>
 		<property name="com.jaspersoft.studio.field.label" value="prezzo_complessivo"/>
 	</field>
@@ -229,19 +229,19 @@
 		<property name="com.jaspersoft.studio.field.name" value="tot_giornate_uomo"/>
 		<property name="com.jaspersoft.studio.field.label" value="tot_giornate_uomo"/>
 	</field>
-	<field name="acconto" class="java.math.BigDecimal">
+	<field name="acconto" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.name" value="acconto"/>
 		<property name="com.jaspersoft.studio.field.label" value="acconto"/>
 	</field>
-	<field name="saldo_certificazione" class="java.math.BigDecimal">
+	<field name="saldo_certificazione" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.name" value="saldo_certificazione"/>
 		<property name="com.jaspersoft.studio.field.label" value="saldo_certificazione"/>
 	</field>
-	<field name="sorveglianza_1" class="java.math.BigDecimal">
+	<field name="sorveglianza_1" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.name" value="sorveglianza_1"/>
 		<property name="com.jaspersoft.studio.field.label" value="sorveglianza_1"/>
 	</field>
-	<field name="sorveglianza_2" class="java.math.BigDecimal">
+	<field name="sorveglianza_2" class="java.lang.Double">
 		<property name="com.jaspersoft.studio.field.name" value="sorveglianza_2"/>
 		<property name="com.jaspersoft.studio.field.label" value="sorveglianza_2"/>
 	</field>
@@ -603,11 +603,11 @@
 			<textField textAdjust="StretchHeight">
 				<reportElement positionType="Float" stretchType="ContainerHeight" x="-1" y="30" width="539" height="19" uuid="79948076-5d23-49a8-b51e-0983b96619ae"/>
 				<textFieldExpression><![CDATA["4. Il prezzo complessivo dei servizi di certificazione oggetto del presente contratto, per l’intera durata triennale, viene concordemente fissato tra le parti in € " 
-+ $F{prezzo_complessivo}+ " (oltre Iva). Il pagamento di tale somma sarà dilazionato nei seguenti termini:\n" +
-"• € " + $F{acconto} + " oltre Iva dovranno essere corrisposti contestualmente alla sottoscrizione del presente contratto;\n" +
-"• € " + $F{saldo_certificazione} + " oltre Iva dovranno essere pagati sotto forma di acconto 7 giorni prima della data di inizio delle operazioni di certificazione (a tal proposito farà fede l’invio del programma di audit);\n" +
-"• € " + $F{sorveglianza_1} + " oltre Iva dovranno essere pagati sotto forma di acconto almeno gg. 7 prima della data di inizio del Primo audit di sorveglianza;\n" +
-"• € " + $F{sorveglianza_2} + " oltre Iva dovranno essere pagati sotto forma di acconto almeno gg. 7 prima della data di inizio del Secondo audit di sorveglianza;"]]></textFieldExpression>
++ String.format("%,.2f", $F{prezzo_complessivo}.doubleValue())+ " (oltre Iva). Il pagamento di tale somma sarà dilazionato nei seguenti termini:\n" +
+"• € " + String.format("%,.2f", $F{acconto}.doubleValue())+ " oltre Iva dovranno essere corrisposti contestualmente alla sottoscrizione del presente contratto;\n" +
+"• € " +String.format("%,.2f", $F{saldo_certificazione}.doubleValue()) + " oltre Iva dovranno essere pagati sotto forma di acconto 7 giorni prima della data di inizio delle operazioni di certificazione (a tal proposito farà fede l’invio del programma di audit);\n" +
+"• € " + String.format("%,.2f", $F{sorveglianza_1}.doubleValue()) + " oltre Iva dovranno essere pagati sotto forma di acconto almeno gg. 7 prima della data di inizio del Primo audit di sorveglianza;\n" +
+"• € " + String.format("%,.2f", $F{sorveglianza_2}.doubleValue())+ " oltre Iva dovranno essere pagati sotto forma di acconto almeno gg. 7 prima della data di inizio del Secondo audit di sorveglianza;"]]></textFieldExpression>
 			</textField>
 			<textField textAdjust="StretchHeight">
 				<reportElement positionType="Float" stretchType="ContainerHeight" x="-1" y="3" width="538" height="20" uuid="d5216e95-cd9c-4ba3-b239-fdb3090d7915"/>
