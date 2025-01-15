@@ -1361,9 +1361,20 @@
                 "viewType": "combobox"
             },
             "label": "Tipo Rischio (tag)",
-            "newLine": true,
+            "newLine": false,
             "queryCond": "codice_rischio in(select rsk.codice_rischio from entrasp.rischi rsk inner join entrasp.argomenti_argomenti aa on rsk.id_argomento=aa.id_argomento_son where rsk.codice_azienda=$codice_azienda$ and aa.id_argomento_father=$id_tipo_rischio_tag_s$ and rsk.codice_rischio is not null)",
             "translate": "RESOURCES.tipo_rischio_tag_rischi"
+        },
+        {
+            "fieldName": "argomento_s",
+            "format": {
+                "comboQuery": "SELECT id_argomento AS id, id_argomento||'-'||descrizione AS name  FROM entrasp.argomenti arg where arg.id_argomento in(select id_argomento from entrasp.rischi) order by descrizione",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Argomento",
+            "newLine": true,
+            "queryCond": "array[id_argomento]<@any(select entrasp.sotto_argomenti($argomento_s$))"
         },
         {
             "fieldName": "giudizio_mp_s",
