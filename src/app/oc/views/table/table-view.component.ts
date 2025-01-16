@@ -1481,13 +1481,21 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                     }
                     else {
                         _this._dialogService.closeDialog();
-                        _this._toastService.showErrorToast('An error occured!');
+                        _this._toastService.showErrorToast('An error occured!', response.error);
                     }
                 },
                 (error: any) => {
                     alert(error);
                     _this._dialogService.closeDialog();
-                    _this._toastService.showErrorToast('An error occured!');
+                    let errorMessage = 'An error occured!';
+
+                    if (error?.error?.error) {
+                        errorMessage = error.error.error;
+                    } 
+                    else if (typeof error === 'string') {
+                        errorMessage = error;
+                    } 
+                    _this._toastService.showErrorToast(errorMessage);
                 });
         }
         catch (e) {
