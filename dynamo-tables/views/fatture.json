@@ -273,7 +273,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": true,
             "key": "id_cessione",
             "label": "ID Fattura",
@@ -281,6 +281,29 @@
             "newLine": false,
             "size": 1,
             "translate": "RESOURCES.id_fattura_fatture"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "fattura_id_descr",
+            "label": "",
+            "newLine": true,
+            "queryFunct": "select 'Fattura ID'||' '||id_cessione",
+            "readOnly": true,
+            "sameOrigin": false,
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.5em",
+                "font_style": "normal",
+                "font_weight": "600"
+            },
+            "size": 10
         },
         {
             "autoGenerate": false,
@@ -308,8 +331,23 @@
             },
             "readOnly": false,
             "newLine": false,
-            "size": 1.55,
+            "size": 2.5,
             "translate": "RESOURCES.tipo_documento_fatture"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "n_fattura",
+            "label": "N° Documento",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.n_documento_fatture"
         },
         {
             "autoGenerate": false,
@@ -324,8 +362,23 @@
             "label": "Contratto",
             "readOnly": false,
             "newLine": false,
-            "size": 1,
+            "size": 2.5,
             "translate": "RESOURCES.contratto_fatture"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo in ('CLI', 'CED')"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "key": "id_cedente",
+            "label": "Cliente",
+            "size": 2.5,
+            "readOnly": false
         },
         {
             "format": {
@@ -357,7 +410,7 @@
             "key": "data_fattura",
             "label": "Data Documento",
             "newLine": false,
-            "size": 1.5,
+            "size": 2.5,
             "readOnly": false,
             "translate": "RESOURCES.data_documento_fatture"
         },
@@ -374,7 +427,7 @@
             "label": "Data Scadenza",
             "queryFunct": "data_scadenza",
             "readOnly": true,
-            "size": 1.5,
+            "size": 2.5,
             "translate": "RESOURCES.data_scadenza_fatture"
         },
         {
@@ -387,24 +440,9 @@
             "isPrimary": false,
             "newLine": false,
             "key": "data_pagamento",
-            "label": "Data Pag.",
+            "label": "Data Pagamento",
             "readOnly": false,
-            "size": 1.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "n_fattura",
-            "label": "N° Documento",
-            "size": 1.25,
-            "readOnly": false,
-            "newLine": true,
-            "translate": "RESOURCES.n_documento_fatture"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -414,27 +452,19 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
+            "newLine": true,
             "key": "importo",
             "label": "Importo",
             "readOnly": false,
-            "size": 1.25,
-            "translate": "RESOURCES.importo_fatture"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo in ('CLI', 'CED')"
+            "size": 2.5,
+            "style": {
+                "background_color": "transparent",
+                "font_color": "black",
+                "font_size": "1.1em",
+                "font_style": "normal",
+                "font_weight": "600"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "key": "id_cedente",
-            "label": "Cedente",
-            "readOnly": false,
-            "translate": "RESOURCES.cedente_fatture"
+            "translate": "RESOURCES.importo_fatture"
         },
         {
             "autoGenerate": false,
@@ -444,12 +474,12 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "note",
-            "label": "Note",
-            "size": 8.5,
+            "key": "descrizione",
+            "label": "Descrizione",
+            "insertUpdateFunct": "select COALESCE ($descrizione$, (SELECT cnt.note || ' ' || TO_CHAR(cc.data_competenza, 'DD/MM/YYYY') AS formatted_note FROM entrasp.crediti_ceduti cc INNER JOIN entrasp.contratti cnt ON cc.codice_azienda = cnt.codice_azienda AND cc.id_contratto = cnt.id_contratto WHERE cc.codice_azienda = $codice_azienda$ AND cc.id_contratto = $id_contratto$ and cc.id_cessione=$id_cessione$))",
+            "size": 10,
             "readOnly": false,
-            "newLine": true,
-            "translate": "RESOURCES.note_fatture"
+            "newLine": true
         }
     ],
     "table_keys": [
@@ -603,18 +633,6 @@
             "width": "8%",
             "queryFunct": "entrasp.anagrafiche_piva_cf(codice_part, id_cedente)",
             "label": "PIVA-CF"
-            
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "note",
-            "width": "8%",
-            "label": "note"
-            
         },
         {
             "format": {
@@ -625,7 +643,6 @@
             "key": "descrizione",
             "width": "8%",
             "label": "descrizione"
-            
         },
         {
             "format": {
@@ -667,7 +684,6 @@
             },
             "translate": "RESOURCES.crea_bozza_fatture"
         }
-        
     ],
     "subTables": [
         {
