@@ -37,7 +37,7 @@ psql -h $DB_ENDPOINT -U postgres -d onecompliance -c "
 psql -h $DB_ENDPOINT -U postgres -d onecompliance -c "
     CREATE USER MAPPING FOR postgres 
     SERVER $DB_NAME
-    OPTIONS (user 'postgres', password 'run2thehills');
+    OPTIONS (user 'postgres', password 'et2themax');
 "
 
 psql -h $DB_ENDPOINT -U postgres -d onecompliance -c "
