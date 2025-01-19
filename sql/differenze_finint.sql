@@ -13,8 +13,10 @@ inner join entrasp.sondaggi snd
 on ss.codice_azienda=snd.codice_azienda and ss.id_sondaggio=snd.id_sondaggio
 where ssold.codice_azienda='FININTSGR' and ss.codice_azienda='FININTSGR'
 and sndold.id_modello_test=snd.id_modello_test
-and ss.pct_da!=ssold.pct_da and ss.stato='C' and ssold.stato='C' 
+and ss.pct_da!=ssold.pct_da and ss.stato='C' and ssold.stato='C'
+and ss.object_description ~* '(torneria|sace|manurelli|corkscrew|eurofin|ecotek|sace)'
 order by sndold.id_modello_test, sndold.id_modello_test_vr
+
 
 -- SOMMINISTRAZIONI DIFFERENTI RAGGRUPPATE PER ID_MODELLO_TEST
 
@@ -85,7 +87,7 @@ and rpold.id_risposta_prev=rp.id_risposta_prev
 where rpold.codice_azienda='FININTSGR' and rp.codice_azienda='FININTSGR'
 and (rpold.id_risposta_prev is null or rp.id_risposta_prev is null)
 
--- DIFFERENZE TRA PESO RISPOSTE PREVISTE
+-- DIFFERENZE TRA PESO RISPOSTE PREVISTE O FLAG NON APPLICABILE
 select rpold.codice_azienda, rpold.id_domanda, rp.id_domanda, 
 rpold.id_risposta_prev, rp.id_risposta_prev, rpold.risposta, rp.risposta 
 from r20240131.risposte_previste rpold
@@ -98,22 +100,6 @@ and ((rpold.peso!= rp.peso) or (rpold.cod_ext!=rp.cod_ext) or (rpold.flag_non_ap
 
 
 -- DIFFERENZE TRA RISPOSTE DATE
-
-/* vecchia versione */
-select rpold.codice_azienda, rpold.id_domanda,  
-rpold.id_risposta_prev, rp.id_risposta_prev, 
-rpold.id_sondaggio, rp.id_sondaggio,
-rpold.id_somministrazione, rp.id_somministrazione,
-rpold.risposta, rp.risposta 
-from r20240131.risposte rpold
-full outer join entrasp.risposte rp
-on rpold.codice_azienda=rp.codice_azienda and rpold.id_modello_test=rp.id_modello_test 
-and rpold.id_modello_test_vr=rp.id_modello_test_vr and rpold.id_domanda=rp.id_domanda
-and rpold.id_risposta_prev=rp.id_risposta_prev and rpold.id_sondaggio=rp.id_sondaggio and rpold.id_somministrazione=rp.id_somministrazione
-where rpold.codice_azienda='FININTSGR' and rp.codice_azienda='FININTSGR'
-and ((rpold.id_risposta_prev is null or rp.id_risposta_prev is null) 
-or (rpold.id_risposta_prev != rp.id_risposta_prev is null))
-/* fine vecchia versione */
 
 WITH risposte_aggregate AS (
     -- Raggruppiamo tutte le risposte in array per ogni combinazione di chiavi
@@ -180,12 +166,17 @@ WHERE
 
 -- modelli_test_risultati_righe
 SELECT 
-  mtrold.codice_azienda, mtr.id_risultato, mtrold.pct_da, mtr.pct_da
+  mtrold.codice_azienda, mtr.id_risultato, mtrold.pct_da, mtr.pct_da, mtrold.descrizione, mtr.descrizione
 FROM
 	r20240131.modelli_test_risultati_righe mtrold
 	inner join entrasp.modelli_test_risultati_righe mtr
 	on mtrold.codice_azienda=mtr.codice_azienda and mtrold.id_risultato=mtr.id_risultato and mtrold.prog_riga=mtr.prog_riga
 WHERE 
- mtrold.pct_da!=mtr.pct_da
+ ((mtrold.pct_da!=mtr.pct_da) or (mtrold.descrizione!=mtr.descrizione))
  and mtrold.codice_azienda='FININTSGR'
+
+ select id_risultato from entrasp.modelli_test_vr where id_modello_test=634 and id_modello_test_vr=1 and codice_azienda='FININTSGR'
+
+ select id_modello_test, id_modello_test_vr from entrasp.modelli_test_vr where id_risultato=10 and codice_azienda='FININTSGR'
+
  
