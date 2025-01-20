@@ -2081,6 +2081,44 @@
             "sameOrigin": false,
             "size": 9.6,
             "translate": "RESOURCES.dettagli_time_report_dipendenti"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli where codice_ruolo in ('JANL','JP','SM', 'ANL','ANL','ASCMAN', 'SANL','PRLD','MAN','BUM','STF','PRT','AGE','RSRSA','DIP','SOC','AMM','INTSH') order by descrizione;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "key": "codice_ruolo_tr",
+            "label": "Ruolo",
+            "size": 1.5,
+            "readOnly": false,
+            "newLine": false,
+            "sameOrigin": false,
+            "queryFunct": "SELECT codice_ruolo from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "translate": "RESOURCES.ruolo_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€' and id_centro_gest>0;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": "$Q{is_hidden_utente_tr}",
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale/BU",
+            "tooltip": "Centro gestionale di riferimento per il time report (ufficio principale)",
+            "newLine": false,
+            "size": 2.8,
+            "readOnly": false,
+            "sameOrigin": false,
+            "queryFunct": "SELECT id_centro_gest from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "translate": "RESOURCES.centro_gestionalebu_anagrafiche_vr"
         }
     ],
     "subTables": [
