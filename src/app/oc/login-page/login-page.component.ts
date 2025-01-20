@@ -225,7 +225,7 @@ export class LoginPageComponent implements OnInit {
         this._dialogService.showLoadingDialog("Verifying", "Please wait...");
 
         // Sign in
-        this.confirmSignIn = true;
+        // this.confirmSignIn = true; commented out because we are already in the confirmSignIn state, may cause OTP error message BUG
         this.confirmingSignIn = true;
         this.authService.confirmSignIn(challenge);
 
