@@ -1352,17 +1352,18 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         
         _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
             response => {
+                _this._toastService.hideLoadingToast(loadingToast);
                 if (response.result == 'OK') {
                     if (selectedViewKey.buttonAction.onSuccessAction != null) {
                         _this.performOnSuccessAction(selectedViewKey, keys, response.response);
                     }
                 }
                 else {
-                    _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showErrorToast("Error");
                 }
             },
             error => {
+                _this._toastService.hideLoadingToast(loadingToast);
                 console.error(error);
             }
         )
