@@ -284,7 +284,7 @@
             ],
             "translate": "RESOURCES.crea_presidio_associato_procedure_aziendali"
         },
-        {
+       {
             "autoGenerate": false,
             "format": {
                 "dataType": "text",
@@ -294,25 +294,10 @@
             "isPrimary": false,
             "key": "ins_veloce_sotto_processi",
             "label": "Inserimento veloce",
-            "newLine": true,
-            "readOnly": false,
-            "size": 9,
-            "queryFunct": "select string_agg(descrizione_breve, '; ')from entrasp.procedure_aziendali   where id_procedura_parent=$id_procedura% and codice_azienda=$codice_azienda$"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "ins_veloce_sotto_processi",
-            "label": "Inserimento veloce",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false,
             "size": 8,
-            "queryFunct": "select string_agg(descrizione_breve, '; ')from entrasp.procedure_aziendali   where id_procedura_parent=$id_procedura% and codice_azienda=$codice_azienda$"
+            "queryFunct": "select string_agg(descrizione_breve, '; ') from entrasp.procedure_aziendali where id_procedura_parent=$id_procedura$ and codice_azienda=$codice_azienda$"
         },
         {
             "autoGenerate": false,
@@ -338,11 +323,12 @@
             },
             "inputEvents": [
                 {
-                    "eventName": "inserisci_sotto_processi",
+                    "eventName": "inserisci_sottoprocessi",
                     "actionType": "query",
                     "values": [],
                     "condition": "none",
-                    "queryFunct": "select entrasp.inserisci_sotto_processo($codice_azienda$, $id_processo$, $ins_veloce_sotto_processi$);"
+                    "successMessage": "Sotto-processi inseriti con successo!",
+                    "queryFunct": "select entrasp.inserisci_sotto_processi($codice_azienda$, $id_procedura$, $ins_veloce_sotto_processi$);"
                 }
             ]
         }
