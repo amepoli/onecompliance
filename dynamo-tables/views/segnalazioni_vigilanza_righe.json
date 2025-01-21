@@ -136,7 +136,7 @@
             "format": {
                 "viewType": "combobox",
                 "dataType": "text",
-                "comboQuery": "SELECT v.id_voce_segnalazione AS id, v.voce || ' - ' || v.nome_sottovoce || ' - ' || a.nome_attributo AS name FROM entrasp.voci_segnalazione v LEFT JOIN entrasp.attributi_segnalazioni a ON v.attributo = a.attributo WHERE v.id_argomento_segnalazione = (SELECT cdm.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni crr INNER JOIN entrasp.cdms_risorse cdm ON crr.codice_azienda = cdm.codice_azienda AND crr.id_risorsa = cdm.id_risorsa LEFT JOIN entrasp.segnalazioni_vigilanza_righe svr ON cdm.codice_azienda = svr.codice_azienda AND cdm.id_risorsa = svr.id_risorsa WHERE cdm.codice_azienda = $codice_azienda$ AND cdm.id_risorsa =25)",
+                "comboQuery": "SELECT v.id_voce_segnalazione AS id, v.voce || ' - ' || v.nome_sottovoce || ' - ' || a.nome_attributo AS name FROM entrasp.voci_segnalazione v LEFT JOIN entrasp.attributi_segnalazioni a ON v.attributo = a.attributo WHERE v.id_argomento_segnalazione IN (SELECT cdm.id_argomento_tipo_allegato FROM entrasp.cdms_risorse_revisioni crr INNER JOIN entrasp.cdms_risorse cdm ON crr.codice_azienda = cdm.codice_azienda AND crr.id_risorsa = cdm.id_risorsa LEFT JOIN entrasp.segnalazioni_vigilanza_righe svr ON cdm.codice_azienda = svr.codice_azienda AND cdm.id_risorsa = svr.id_risorsa WHERE cdm.codice_azienda = $codice_azienda$ AND cdm.id_risorsa =25)",
                 "options": []
             },
             "isHidden": false,
@@ -186,7 +186,7 @@
                 "dataType": "number"
             },
             "isHidden": false,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_risorsa",
             "readOnly": true,
             "newLine": false,
@@ -202,7 +202,7 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "prog_revisione",
-            "readOnly": false,
+            "readOnly": true,
             "newLine": false,
             "label": "Prog Revisione",
             "size": 3
@@ -213,10 +213,10 @@
                 "viewType": "input",
                 "dataType": "text"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "campo_valore_da_visualizzare",
-            "readOnly": false,
+            "readOnly": true,
             "newLine": false,
             "label": "Campo valore da visualizzare",
             "queryFunct": "select ats.sottotipo_valore from entrasp.voci_segnalazione vs inner join entrasp.attributi_segnalazioni ats on vs.attributo=ats.attributo inner join entrasp.segnalazioni_vigilanza_righe svr on vs.id_voce_segnalazione=svr.id_voce_segnalazione  where id_valore=$id_valore$",
@@ -326,6 +326,14 @@
             "label": "Preg Revisione"
         }
     ],
+    "importQueries": {
+        "tableQueries": [
+            {
+                "label": "Importa voci",
+                "queryString": "select entrasp.import_segnalazioni($codice_azienda$, $nome_file$)"
+            }
+        ]
+    },
     "hideActions": [
         {
             "tableActionType": "quick-add",
