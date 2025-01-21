@@ -1,3 +1,14 @@
+SELECT ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione, snd.id_modello_test
+FROM entrasp.sondaggi_somministrati ss
+INNER JOIN entrasp.sondaggi snd 
+    ON ss.codice_azienda = snd.codice_azienda 
+   AND ss.id_sondaggio = snd.id_sondaggio
+WHERE snd.codice_azienda = 'FININTSGR' 
+  AND snd.stato = 'C' 
+  and snd.id_modello_test in (16, 616, 621, 634);
+
+
+
 select entrasp.aggiorna_punteggi_somministrazioni(
 	'FININTSGR',
 	1609,
@@ -7,6 +18,16 @@ select entrasp.aggiorna_punteggi_somministrazioni(
 select ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione, ss.pct_da, ss.giudizio, ss.object_key, ss.object_description
 from entrasp.sondaggi_somministrati ss
 where ss.codice_azienda='FININTSGR' and ss.id_somministrazione=1433
+
+
+select id_modello_test, id_modello_Test_vr, count(id_sondaggio)
+from entrasp.sondaggi
+where codice_azienda='FININTSGR'
+ AND stato = 'C' 
+  and id_modello_test in (16, 616, 621, 634)
+group by id_modello_test, id_modello_Test_vr
+order by id_modello_test;
+
 
 -- DIFFERENZE TRA SONDAGGI
 select ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione, sndold.id_modello_test, 
@@ -54,9 +75,10 @@ WHERE
     ssold.codice_azienda = 'FININTSGR'
     AND ss.codice_azienda = 'FININTSGR'
     AND sndold.id_modello_test = snd.id_modello_test
-    AND ss.pct_da != ssold.pct_da
+   -- AND ss.pct_da != ssold.pct_da
     AND ss.stato = 'C'
     AND ssold.stato = 'C'
+	  and snd.id_modello_test in (16, 616, 621, 634)
 GROUP BY 
     ss.codice_azienda, 
     sndold.id_modello_test, 
