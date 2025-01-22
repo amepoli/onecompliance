@@ -210,4 +210,187 @@ WHERE
 
  select id_modello_test, id_modello_test_vr from entrasp.modelli_test_vr where id_risultato=10 and codice_azienda='FININTSGR'
 
- 
+ -- DISCORDANZE DATI DI INPUT DOCUMENTI PERSONE FISICHE A PARITA' DI CODICE CLIENTE
+
+SELECT 
+    vaf.cliente,
+    COUNT(DISTINCT vaf.numero_doc) AS distinct_numero_doc,
+    COUNT(DISTINCT TO_DATE(vaf.data_rilascio, 'DD/MM/YYYY')) AS distinct_data_rilascio,
+    COUNT(DISTINCT TO_DATE(vaf.data_scadenza, 'DD/MM/YYYY')) AS distinct_data_scadenza,
+    COUNT(DISTINCT vaf.tipo_doc) AS distinct_tipo_doc,
+    COUNT(DISTINCT vaf.rilasciato_da) AS distinct_rilasciato_da
+FROM 
+    imports.verifiche_anagrafiche_finint vaf
+WHERE 
+    vaf.cliente IN (SELECT codice FROM entrasp.anagrafiche_vr WHERE codice_part = 'FININT') 
+    AND vaf.sesso IS NOT NULL
+GROUP BY 
+    vaf.cliente
+HAVING 
+    COUNT(DISTINCT vaf.numero_doc) > 1
+    OR COUNT(DISTINCT TO_DATE(vaf.data_rilascio, 'DD/MM/YYYY')) > 1
+    OR COUNT(DISTINCT TO_DATE(vaf.data_scadenza, 'DD/MM/YYYY')) > 1
+    OR COUNT(DISTINCT vaf.tipo_doc) > 1
+    OR COUNT(DISTINCT vaf.rilasciato_da) > 1;
+
+
+
+	select * from imports.verifiche_anagrafiche_finint
+where cliente
+in
+(SELECT 
+    vaf.cliente
+FROM 
+    imports.verifiche_anagrafiche_finint vaf
+WHERE 
+    vaf.cliente IN (SELECT codice FROM entrasp.anagrafiche_vr WHERE codice_part = 'FININT') 
+    AND vaf.sesso IS NOT NULL
+GROUP BY 
+    vaf.cliente
+HAVING 
+    COUNT(DISTINCT vaf.numero_doc) > 1
+    OR COUNT(DISTINCT TO_DATE(vaf.data_rilascio, 'DD/MM/YYYY')) > 1
+    OR COUNT(DISTINCT TO_DATE(vaf.data_scadenza, 'DD/MM/YYYY')) > 1
+    OR COUNT(DISTINCT vaf.tipo_doc) > 1
+    OR COUNT(DISTINCT vaf.rilasciato_da) > 1)
+
+-- DISCORDANZE DATI DI INPUT PERSONE GIURIDICHE A PARITA' DI CODICE CLIENTE
+select * from imports.verifiche_anagrafiche_finint
+where cliente
+in(SELECT 
+    vaf.cliente
+FROM 
+    imports.verifiche_anagrafiche_finint vaf
+GROUP BY 
+    vaf.cliente
+HAVING 
+    COUNT(DISTINCT CASE WHEN vaf.sesso IS NULL THEN vaf.cognome ELSE NULL END) > 1
+    OR COUNT(DISTINCT COALESCE(vaf.nome || ' ' || vaf.cognome, vaf.cognome)) > 1
+    OR COUNT(DISTINCT vaf.codice_fiscale) > 1
+    OR COUNT(DISTINCT vaf.partita_iva) > 1
+    OR COUNT(DISTINCT vaf.indirizzo_residenza) > 1
+    OR COUNT(DISTINCT vaf.cap_residenza) > 1
+    OR COUNT(DISTINCT vaf.localita_residenza) > 1
+    OR COUNT(DISTINCT vaf.provincia_residenza) > 1
+)
+
+SELECT 
+    vaf.cliente,
+    COUNT(DISTINCT CASE WHEN vaf.sesso IS NULL THEN vaf.cognome ELSE NULL END) AS distinct_cognome_null_sesso,
+    COUNT(DISTINCT COALESCE(vaf.nome || ' ' || vaf.cognome, vaf.cognome)) AS distinct_nome_cognome,
+    COUNT(DISTINCT vaf.codice_fiscale) AS distinct_codice_fiscale,
+    COUNT(DISTINCT vaf.partita_iva) AS distinct_partita_iva,
+    COUNT(DISTINCT vaf.indirizzo_residenza) AS distinct_indirizzo_residenza,
+    COUNT(DISTINCT vaf.cap_residenza) AS distinct_cap_residenza,
+    COUNT(DISTINCT vaf.localita_residenza) AS distinct_localita_residenza,
+    COUNT(DISTINCT vaf.provincia_residenza) AS distinct_provincia_residenza
+FROM 
+    imports.verifiche_anagrafiche_finint vaf
+GROUP BY 
+    vaf.cliente
+HAVING 
+    COUNT(DISTINCT CASE WHEN vaf.sesso IS NULL THEN vaf.cognome ELSE NULL END) > 1
+    OR COUNT(DISTINCT COALESCE(vaf.nome || ' ' || vaf.cognome, vaf.cognome)) > 1
+    OR COUNT(DISTINCT vaf.codice_fiscale) > 1
+    OR COUNT(DISTINCT vaf.partita_iva) > 1
+    OR COUNT(DISTINCT vaf.indirizzo_residenza) > 1
+    OR COUNT(DISTINCT vaf.cap_residenza) > 1
+    OR COUNT(DISTINCT vaf.localita_residenza) > 1
+    OR COUNT(DISTINCT vaf.provincia_residenza) > 1;
+
+ -- DISCORDANZE SUI DATI SUI DOCUMENTI IDENTIFICATIVI A PARITA' DI CODICE FISCALE
+select * from imports.verifiche_anagrafiche_finint
+where codice_fiscale in
+(SELECT 
+    vaf.codice_fiscale
+FROM 
+    imports.verifiche_anagrafiche_finint vaf
+WHERE 
+    vaf.sesso IS NOT NULL
+GROUP BY 
+    vaf.codice_fiscale
+HAVING 
+    COUNT(DISTINCT vaf.cliente) > 1
+    OR COUNT(DISTINCT vaf.numero_doc) > 1
+    OR COUNT(DISTINCT TO_DATE(vaf.data_rilascio, 'DD/MM/YYYY')) > 1
+    OR COUNT(DISTINCT TO_DATE(vaf.data_scadenza, 'DD/MM/YYYY')) > 1
+    OR COUNT(DISTINCT vaf.tipo_doc) > 1
+    OR COUNT(DISTINCT vaf.rilasciato_da) > 1)
+
+order by codice_fiscale
+
+
+SELECT 
+    vaf.codice_fiscale,
+    COUNT(DISTINCT vaf.cliente) AS distinct_cliente,
+    COUNT(DISTINCT vaf.numero_doc) AS distinct_numero_doc,
+    COUNT(DISTINCT TO_DATE(vaf.data_rilascio, 'DD/MM/YYYY')) AS distinct_data_rilascio,
+    COUNT(DISTINCT TO_DATE(vaf.data_scadenza, 'DD/MM/YYYY')) AS distinct_data_scadenza,
+    COUNT(DISTINCT vaf.tipo_doc) AS distinct_tipo_doc,
+    COUNT(DISTINCT vaf.rilasciato_da) AS distinct_rilasciato_da
+FROM 
+    imports.verifiche_anagrafiche_finint vaf
+WHERE 
+    vaf.sesso IS NOT NULL
+GROUP BY 
+    vaf.codice_fiscale
+HAVING 
+    COUNT(DISTINCT vaf.cliente) > 1
+    OR COUNT(DISTINCT vaf.numero_doc) > 1
+    OR COUNT(DISTINCT TO_DATE(vaf.data_rilascio, 'DD/MM/YYYY')) > 1
+    OR COUNT(DISTINCT TO_DATE(vaf.data_scadenza, 'DD/MM/YYYY')) > 1
+    OR COUNT(DISTINCT vaf.tipo_doc) > 1
+    OR COUNT(DISTINCT vaf.rilasciato_da) > 1
+
+
+-- DATI DISCORDANTI ALTRI DATI A PARITA' DI CODICE FISCALE
+select * from imports.verifiche_anagrafiche_finint
+where codice_fiscale in
+(
+
+SELECT 
+    vaf.codice_fiscale
+FROM 
+    imports.verifiche_anagrafiche_finint vaf
+GROUP BY 
+    vaf.codice_fiscale
+HAVING 
+    COUNT(DISTINCT vaf.cliente) > 1
+    OR COUNT(DISTINCT CASE WHEN vaf.sesso IS NULL THEN vaf.cognome ELSE NULL END) > 1
+    OR COUNT(DISTINCT COALESCE(vaf.nome || ' ' || vaf.cognome, vaf.cognome)) > 1
+    OR COUNT(DISTINCT vaf.partita_iva) > 1
+    OR COUNT(DISTINCT vaf.indirizzo_residenza) > 1
+    OR COUNT(DISTINCT vaf.cap_residenza) > 1
+    OR COUNT(DISTINCT vaf.localita_residenza) > 1
+    OR COUNT(DISTINCT vaf.provincia_residenza) > 1
+)
+
+order by codice_fiscale
+
+
+
+
+
+SELECT 
+    vaf.codice_fiscale,
+    COUNT(DISTINCT vaf.cliente) AS distinct_cliente,
+    COUNT(DISTINCT CASE WHEN vaf.sesso IS NULL THEN vaf.cognome ELSE NULL END) AS distinct_cognome_null_sesso,
+    COUNT(DISTINCT COALESCE(vaf.nome || ' ' || vaf.cognome, vaf.cognome)) AS distinct_nome_cognome,
+    COUNT(DISTINCT vaf.partita_iva) AS distinct_partita_iva,
+    COUNT(DISTINCT vaf.indirizzo_residenza) AS distinct_indirizzo_residenza,
+    COUNT(DISTINCT vaf.cap_residenza) AS distinct_cap_residenza,
+    COUNT(DISTINCT vaf.localita_residenza) AS distinct_localita_residenza,
+    COUNT(DISTINCT vaf.provincia_residenza) AS distinct_provincia_residenza
+FROM 
+    imports.verifiche_anagrafiche_finint vaf
+GROUP BY 
+    vaf.codice_fiscale
+HAVING 
+    COUNT(DISTINCT vaf.cliente) > 1
+    OR COUNT(DISTINCT CASE WHEN vaf.sesso IS NULL THEN vaf.cognome ELSE NULL END) > 1
+    OR COUNT(DISTINCT COALESCE(vaf.nome || ' ' || vaf.cognome, vaf.cognome)) > 1
+    OR COUNT(DISTINCT vaf.partita_iva) > 1
+    OR COUNT(DISTINCT vaf.indirizzo_residenza) > 1
+    OR COUNT(DISTINCT vaf.cap_residenza) > 1
+    OR COUNT(DISTINCT vaf.localita_residenza) > 1
+    OR COUNT(DISTINCT vaf.provincia_residenza) > 1;
