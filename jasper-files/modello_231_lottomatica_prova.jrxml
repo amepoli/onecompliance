@@ -143,7 +143,7 @@
 			<defaultValueExpression><![CDATA[$F{codice_azienda}]]></defaultValueExpression>
 		</parameter>
 		<queryString language="SQL">
-			<![CDATA[SELECT pr.codice_azienda, pr.id_presidio, pr.descrizione_breve, COALESCE(pap.note, '') AS note, pap.id_procedura, COALESCE(STRING_AGG(COALESCE(cmp.note, ''), CHR(10)), '') AS note_compiti, COALESCE(STRING_AGG(COALESCE(cmp.trattamento, ''), CHR(10)), '') AS trattamenti FROM entrasp.presidi AS pr INNER JOIN entrasp.procedure_aziendali_presidi AS pap ON pr.id_presidio = pap.id_presidio AND pr.codice_azienda = pap.codice_azienda LEFT JOIN entrasp.compiti_rif_bo AS cbo ON pap.codice_azienda = cbo.codice_azienda AND pap.id_procedura = cbo.id_procedura AND pap.id_presidio = cbo.id_presidio LEFT JOIN entrasp.compiti AS cmp ON cbo.codice_azienda = cmp.codice_azienda AND cbo.codice_compito = cmp.codice_compito WHERE pap.codice_azienda = $P{codice_azienda} AND pap.id_procedura = $P{id_procedura} GROUP BY pr.codice_azienda, pr.id_presidio, pap.id_procedura, pap.note, pr.descrizione_breve;]]>
+			<![CDATA[SELECT pr.codice_azienda, pr.id_presidio, pr.descrizione_breve, COALESCE(pap.note, '') AS note, pap.id_procedura, COALESCE(STRING_AGG(COALESCE(cmp.note, ''), CHR(10)), '') AS note_compiti, COALESCE(STRING_AGG(COALESCE(cmp.trattamento, ''), CHR(10)), '') AS trattamenti FROM entrasp.presidi AS pr INNER JOIN entrasp.procedure_aziendali_presidi AS pap ON pr.id_presidio = pap.id_presidio AND pr.codice_azienda = pap.codice_azienda LEFT JOIN entrasp.compiti_rif_bo AS cbo ON pap.codice_azienda = cbo.codice_azienda AND pap.id_procedura = cbo.id_procedura AND pap.id_presidio = cbo.id_presidio LEFT JOIN entrasp.compiti AS cmp ON cbo.codice_azienda = cmp.codice_azienda AND cbo.codice_compito = cmp.codice_compito WHERE pap.codice_azienda = 'RICREATIVO' AND pap.id_procedura = 1 GROUP BY pr.codice_azienda, pr.id_presidio, pap.id_procedura, pap.note, pr.descrizione_breve;]]>
 		</queryString>
 		<field name="codice_azienda" class="java.lang.String">
 			<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
@@ -498,9 +498,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descrizione}]]></textFieldExpression>
 			</textField>
-			<frame>
-				<reportElement positionType="Float" x="-2" y="7" width="772" height="44" isPrintInFirstWholeBand="true" printWhenGroupChanges="Processo" uuid="81d300b2-f357-4f9f-91ea-66ec3f5a52db"/>
-			</frame>
 			<staticText>
 				<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="770" height="20" forecolor="#FFFFFF" backcolor="#6D6F70" uuid="cf2ea975-0e4c-41d3-ba38-5fcdf649a024">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
