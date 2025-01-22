@@ -1,8 +1,19 @@
 {
     "$schema": "../views.schema.json",
-    "entryKey": "segnalazioni_vigilanza_documenti",
-    "origin": "entrasp.cdms_risorse_revisioni",
-    "businessObjectName": "cdms_risorse_revisioni",
+    "entryKey": "segnalazioni_vigilanza_invio",
+    "origin": "entrasp.segnalazioni_vigilanza_righe",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select distinct invio, codice_azienda, id_risorsa, prog_revisione from entrasp.segnalazioni_vigilanza_righe where codice_azienda=$codice_azienda$ and id_risorsa = $id_risorsa$ and prog_revisione = $prog_revisione$"
+        },
+        {
+            "operation": "selectForm",
+            "type": "main",
+            "queryString": "select *, $invio$ as invio from entrasp.cdms_risorse_revisioni where codice_azienda=$codice_azienda$ and id_risorsa = $id_risorsa$ and prog_revisione = $prog_revisione$"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -44,54 +55,12 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": true,
             "key": "prog_revisione",
             "label": "N.Segnalazione",
             "newLine": false,
             "size": 1.5,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input",
-                "value": "N/A"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "file_id",
-            "label": "codice_azienda",
-            "newLine": true,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input",
-                "value": "N/A"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "client_file_name",
-            "label": "codice_azienda",
-            "newLine": true,
-            "readOnly": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input",
-                "value": "N/A"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "content_type",
-            "label": "codice_azienda",
-            "newLine": true,
             "readOnly": true
         },
         {
@@ -108,7 +77,7 @@
             "label": "Compilatore",
             "newLine": false,
             "size": 2,
-            "readOnly": false
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -122,7 +91,7 @@
             "label": "Data Segnalazione",
             "newLine": false,
             "size": 1.5,
-            "readOnly": false
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -136,7 +105,7 @@
             "label": "Data Riferimento",
             "newLine": false,
             "size": 1.5,
-            "readOnly": false
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -150,7 +119,7 @@
             "label": "Data Invio",
             "newLine": true,
             "size": 1.5,
-            "readOnly": false
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -164,7 +133,7 @@
             "key": "id_argomento_stato",
             "size": 1.5,
             "label": "Stato",
-            "readOnly": false,
+            "readOnly": true,
             "newLine": false
         },
         {
@@ -179,7 +148,7 @@
             "label": "Descrizione",
             "newLine": false,
             "size": 3,
-            "readOnly": false
+            "readOnly": true
         },
         {
             "autoGenerate": false,
@@ -193,7 +162,21 @@
             "label": "Note",
             "newLine": true,
             "size": 3,
-            "readOnly": false
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "invio",
+            "label": "N. Invio",
+            "newLine": true,
+            "size": 3,
+            "readOnly": true
         }
     ],
     "table_keys": [
@@ -204,7 +187,7 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "codice_azienda",
-            "label": "codice azienda"
+            "label": "Codice Azienda"
         },
         {
             "format": {
@@ -213,85 +196,30 @@
             "isHidden": true,
             "isPrimary": true,
             "key": "id_risorsa",
-            "label": "ID"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "prog_revisione",
-            "label": "N. Segnalazione"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "Revisore",
-            "label": "Compilatore"
-        },
-        {
-            "format": {
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_creazione",
-            "label": "Data Segnalazione"
-        },
-        {
-            "format": {
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_rif",
-            "label": "Data Riferimento"
-        },
-        {
-            "format": {
-                "dataType": "date"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_scadenza",
-            "label": "Data Invio"
+            "label": "ID Risorsa"
         },
         {
             "format": {
                 "dataType": "number"
             },
-            "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_stato)",
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_argomento_stato",
-            "label": "Stato"
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "prog_revisione",
+            "label": "Preg Revisione"
         },
         {
             "format": {
-                "dataType": "text"
+                "dataType": "number"
             },
             "isHidden": false,
-            "isPrimary": false,
-            "key": "descrizione",
-            "label": "Descrizione"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "note",
-            "label": "Note"
+            "isPrimary": true,
+            "key": "invio",
+            "label": "N. Invio"
         }
     ],
     "subTables": [
         {
-            "entryKey": "segnalazioni_vigilanza_invio",
+            "entryKey": "segnalazioni_vigilanza_righe",
             "keys": [
                 {
                     "parent": "codice_azienda",
@@ -304,14 +232,18 @@
                 {
                     "parent": "prog_revisione",
                     "son": "prog_revisione"
+                },
+                {
+                    "parent": "invio",
+                    "son": "invio"
                 }
             ],
-            "label": "Invii della segnalazione",
+            "label": "Voci della segnalazione",
             "renderingOrder": 1
         }
     ],
     "addElementSettings": {
-        "labelAdd": "Nuovo invio",
+        "labelAdd": "Nuova voce",
         "navigateOnSuccess": true
     },
     "hideActions": [

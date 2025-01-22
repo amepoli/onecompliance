@@ -283,6 +283,54 @@
                 }
             ],
             "translate": "RESOURCES.crea_presidio_associato_procedure_aziendali"
+        },
+       {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "ins_veloce_sotto_processi",
+            "label": "Inserimento veloce",
+            "newLine": false,
+            "readOnly": false,
+            "size": 8,
+            "queryFunct": "select string_agg(descrizione_breve, '; ') from entrasp.procedure_aziendali where id_procedura_parent=$id_procedura$ and codice_azienda=$codice_azienda$"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "preventivo_produci",
+            "buttonIcon": "arrow_circle_up",
+            "label": "Inserisci sotto-proc.",
+            "tooltip": "Inserisce sotto processi nella maschera selezionata",
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "inserisci_sottoprocessi",
+                "eventTrigger": "press"
+            },
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 2,
+            "style": {
+                "background_color": "forestGreen"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "inserisci_sottoprocessi",
+                    "actionType": "query",
+                    "values": [],
+                    "condition": "none",
+                    "successMessage": "Sotto-processi inseriti con successo!",
+                    "queryFunct": "select entrasp.inserisci_sotto_processi($codice_azienda$, $id_procedura$, $ins_veloce_sotto_processi$);"
+                }
+            ]
         }
     ],
     "search_keys": [
