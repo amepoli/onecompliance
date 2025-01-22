@@ -958,13 +958,13 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.fattureincloudApiName, postReq));
   }
 
-  checkFattureInCloudInvoice(entryName: string, company: any) {
+  checkFattureInCloudInvoice(company: any, entity: any) {
     this.awsService.auth();
     const postReq: PostRequest = {
       queryStringParameters: { company },
       body: {
-        action: 'checkInvoice',
-        entryName
+        action: 'checkInvoiceStatus',
+        entity
       }
     }
     return from(this.awsService.api().post(this.apiName, this.fattureincloudApiName, postReq));

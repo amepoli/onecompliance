@@ -1537,35 +1537,45 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     checkFattura(selectedViewKey: TableViewKey) {
         const _this = this;
+        let nUpdatedRows = 0;
 
-        // Itera su tutte le righe della tabella
         _this.dataSource.data.forEach(row => {
             let keys = {};
-            if (selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0) {
+            if (selectedViewKey && selectedViewKey.buttonAction.keymap && selectedViewKey.buttonAction.keymap.length > 0) {
                 selectedViewKey.buttonAction.keymap.forEach(map => {
                     keys[map.destination] = row[map.source];
                 });
             } else {
                 keys = row;
             }
+            if (keys['stato_fattura'] !== 'sent' && keys['id_fattura_fic']) {
+                nUpdatedRows++;
+                const currentCompany = _this.authService.getCurrentCompany(_this.currentKeys);
 
-            // Chiamata al backend service per ogni riga
-            _this.backendService.checkFattureInCloudInvoice(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys)).subscribe(
-                (response: any) => {
-                    if (response.result == 'OK') {
-                        // Esegui azioni necessarie su successo
-                        console.log('Check Fattura Success:', response);
-                    } else {
-                        // Gestisci errori
-                        console.error('Check Fattura Error:', response.reason);
+                _this.backendService.checkFattureInCloudInvoice(
+                    currentCompany,
+                    keys 
+                ).subscribe(
+                    (response: any) => {
+                        if (response.result == 'OK') {
+                            console.log('Check Fattura Success:', response);
+                        } else {
+                            // Gestisci errori
+                            console.error('Check Fattura Error:', response.reason);
+                        }
+                    },
+                    error => {
+                        // Gestisci errori di chiamata backend
+                        console.error('Check Fattura Backend Error:', error);
                     }
-                },
-                error => {
-                    // Gestisci errori di chiamata backend
-                    console.error('Check Fattura Backend Error:', error);
-                }
-            );
+                );
+            } else { 
+                console.log('Fattura already sent or no id_fattura_FIC, ');
+            }
         });
+        // Reload table
+        _this.loadData();
+        _this._toastService.showSuccessToast(`Numero di record aggiornati: ${nUpdatedRows}`);
     }
 
     getColumnLabels(viewKeys: TableViewKey[]) {
