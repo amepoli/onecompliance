@@ -2120,6 +2120,13 @@ export class FormGetterComponent
                                         }
                                     }
                                 }
+                                
+                                let loadingToast = _this._toastService.showLoadingToast(
+                                    "Loading",
+                                    "Please wait...",
+                                );
+
+                                try {
                                 const subscription = _this.backendService
                                     .postEvent(
                                         _this.formParams.entryName,
@@ -2188,9 +2195,23 @@ export class FormGetterComponent
                                                 true,
                                             );
                                         }
+
+                                        _this._toastService.hideLoadingToast(loadingToast);
+                                    }, 
+                                    error => {
+                                        _this._toastService.hideLoadingToast(loadingToast);
+                                        _this._console.log(error);
+                                        _this._toastService.showErrorToastWithReason(error);
                                     });
 
-                                _this.generalSubscriptions.push(subscription);
+                                    _this.generalSubscriptions.push(subscription);
+                                }
+                                catch(e) {
+                                    _this._toastService.hideLoadingToast(loadingToast);
+                                    _this._console.log(e);
+                                    _this._toastService.showErrorToastWithReason(e);
+                                }
+
                             }
                         }
                     });
