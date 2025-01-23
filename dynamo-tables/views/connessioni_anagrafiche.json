@@ -4,6 +4,7 @@
     "origin": "entrasp.connessioni_anagrafiche",
     "businessObjectName": "connessioni_anagrafiche",
     "define": {
+        "is_hidden_anagrafica_principale": "true",
         "is_hidden_delete_button": "false",
         "table_is_input_button_anagrafica": "true"
     },
@@ -14,7 +15,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "select entrasp.anagrafiche_verifica_campi_null(ca.codice_part, ca.id_anagrafica) as anomalie, true as delete_connessione, ca.id_anagrafica as id_anagrafica_conn, ca.id_anagrafica_conn as id_anagrafica, ca.codice_ruolo, '<->' as ruolo_invertito, ca.dt_inizio, ca.dt_fine, entrasp.anagrafiche_vr_max(ca.codice_part, ca.id_anagrafica) as prog_vr, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select an.tipo_soggetto from entrasp.anagrafiche_id an where an.codice_part=$codice_part$ and an.id_anagrafica=ca.id_anagrafica_conn)) as tipo_soggetto, entrasp.ruolo_descr(ca.codice_ruolo) as descrizione_ruolo, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica) as anagrafica_connessa from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an on ca.id_anagrafica_conn=an.id_anagrafica and ca.codice_part=an.codice_part where an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$ union select entrasp.anagrafiche_verifica_campi_null (ca.codice_part, ca.id_anagrafica) AS anomalie, true as delete_connessione, ca.id_anagrafica_conn, ca.id_anagrafica, ca.codice_ruolo, '' as ruolo_invertito, ca.dt_inizio, ca.dt_fine, entrasp.anagrafiche_vr_max(ca.codice_part, ca.id_anagrafica_conn) as prog_vr, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select an.tipo_soggetto from entrasp.anagrafiche_id an where an.codice_part=$codice_part$ and an.id_anagrafica=ca.id_anagrafica_conn)) as tipo_soggetto, entrasp.ruolo_descr(ca.codice_ruolo) as descrizione_ruolo, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica_conn) as anagrafica_connessa from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an on ca.id_anagrafica=an.id_anagrafica and ca.codice_part=an.codice_part where an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$",
+            "queryString": "select entrasp.anagrafiche_verifica_campi_null(ca.codice_part, ca.id_anagrafica) as anomalie, true as delete_connessione, ca.id_anagrafica as id_anagrafica_conn, ca.id_anagrafica_conn as id_anagrafica, ca.codice_ruolo, '<->' as ruolo_invertito, ca.dt_inizio, ca.dt_fine, entrasp.anagrafiche_vr_max(ca.codice_part, ca.id_anagrafica) as prog_vr, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select an.tipo_soggetto from entrasp.anagrafiche_id an where an.codice_part=$codice_part$ and an.id_anagrafica=ca.id_anagrafica_conn)) as tipo_soggetto, entrasp.ruolo_descr(ca.codice_ruolo) as descrizione_ruolo, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica_conn) as anagrafica_principale, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica) as anagrafica_connessa from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an on ca.id_anagrafica_conn=an.id_anagrafica and ca.codice_part=an.codice_part where an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$ union select entrasp.anagrafiche_verifica_campi_null (ca.codice_part, ca.id_anagrafica) AS anomalie, true as delete_connessione, ca.id_anagrafica_conn, ca.id_anagrafica, ca.codice_ruolo, '' as ruolo_invertito, ca.dt_inizio, ca.dt_fine, entrasp.anagrafiche_vr_max(ca.codice_part, ca.id_anagrafica_conn) as prog_vr, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select an.tipo_soggetto from entrasp.anagrafiche_id an where an.codice_part=$codice_part$ and an.id_anagrafica=ca.id_anagrafica_conn)) as tipo_soggetto, entrasp.ruolo_descr(ca.codice_ruolo) as descrizione_ruolo, anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica) as anagrafica_principale, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica_conn) as anagrafica_connessa from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an on ca.id_anagrafica=an.id_anagrafica and ca.codice_part=an.codice_part where an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$",
             "type": "main"
         }
     ],
@@ -299,6 +300,36 @@
             "label": "Inv.ruolo",
             "queryFunct": "select ''",
             "translate": "RESOURCES.invruolo_connessioni_anagrafiche"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": "$Q{is_hidden_anagrafica_principale}",
+            "isPrimary": false,
+            "key": "anagrafica_principale",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_conn)",
+            "label": "Anagrafica principale",
+            "isInputButton": "true",
+            "buttonAction": {
+                "target": "anagrafiche_vr",
+                "viewType": "form",
+                "action": "navigate",
+                "keymap": [
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    },
+                    {
+                        "source": "prog_vr",
+                        "destination": "prog_vr"
+                    }
+                ]
+            }
         },
         {
             "format": {

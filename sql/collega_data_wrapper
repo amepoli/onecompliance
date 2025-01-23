@@ -1,0 +1,33 @@
+CREATE SERVER IF NOT EXISTS r20240215
+    FOREIGN DATA WRAPPER postgres_fdw
+    OPTIONS (host 'localhost', port '5432', dbname 'r20240215');
+
+
+
+
+
+	# Imposta il proprietario del server a postgres
+psql -h $DB_ENDPOINT -U postgres -d onecompliance -c "
+    ALTER SERVER $DB_NAME 
+    OWNER TO postgres;
+"
+
+psql -h $DB_ENDPOINT -U postgres -d onecompliance -c "
+    GRANT USAGE ON FOREIGN SERVER $DB_NAME TO postgres;
+"
+
+psql -h $DB_ENDPOINT -U postgres -d onecompliance -c "
+    DROP USER MAPPING FOR postgres SERVER $DB_NAME;
+"
+
+psql -h $DB_ENDPOINT -U postgres -d onecompliance -c "
+    CREATE USER MAPPING FOR postgres 
+    SERVER $DB_NAME
+    OPTIONS (user 'postgres', password 'et2themax');
+"
+
+psql -h $DB_ENDPOINT -U postgres -d onecompliance -c "
+    IMPORT FOREIGN SCHEMA entrasp 
+    FROM SERVER $DB_NAME
+    INTO $DB_NAME;
+"

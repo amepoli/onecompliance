@@ -31,7 +31,7 @@ order by id_modello_test;
 
 -- DIFFERENZE TRA SONDAGGI
 select ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione, sndold.id_modello_test, 
-sndold.id_modello_test_vr, snd.id_modello_test_vr, ssold.pct_da, ss.pct_da, ssold.giudizio, ss.giudizio, ss.object_key, ss.object_description
+sndold.id_modello_test_vr, snd.id_modello_test_vr, ssold.pct_da as pct_da_cfr, ss.pct_da as pct_da_attuale, ssold.giudizio_da_cfr, ss.giudizio_attuale, ss.object_key, ss.object_description
 from ripristino_per_test.sondaggi_somministrati ssold
 inner join entrasp.sondaggi_somministrati ss
 on ssold.codice_azienda=ss.codice_azienda 
