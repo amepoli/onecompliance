@@ -127,6 +127,49 @@
         {
             "autoGenerate": false,
             "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "consenti_invio",
+            "label": "consenti_invio",
+            "readOnly": false,
+            "sameOrigin": false,
+            "inputEvents": [
+                {
+                    "eventName": "consenti_invio_event",
+                    "actionType": "dialog",
+                    "condition": "equalTo",
+                    "valueKey": "consenti_invio",
+                    "values": ["1"],
+                    "customDialogEntryName": "dialog_anagrafiche_vr_invite_user",
+                    "customDialogTitle": "Add User",
+                    "conditionNotMetMessageLabel": "No email is provided, or user already associated to this register!",
+                    "conditionNotMetMessageTranslate": "RESOURCES.email_necessaria_whistleblowing"
+                }
+            ],
+            "translate": "RESOURCES.user_upd_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "boolean",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "consenti_invito_user",
+            "queryFunct": "entrasp.consenti_invito_user(codice_part, id_anagrafica)",
+            "label": "consenti_invito_user",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1.25
+            
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "dataType": "text",
                 "viewType": "input"
             },
@@ -253,6 +296,14 @@
                     "condition": "none",
                     "values": [],
                     "outputEventWhenComplete": "navigate_to_new_vr"
+                },
+                 {
+                    "eventName": "invite_user",
+                    "actionType": "query",
+                    "values": [],
+                    "condition": "none",
+                    "queryFunct": "select entrasp.consenti_invito_user($codice_part$, $id_anagrafica$) as consenti_invio",
+                    "outputEventWhenComplete": "consenti_invio_event"
                 },
                 {
                     "eventName": "cancella_tipo_documento",

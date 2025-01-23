@@ -15,7 +15,7 @@
     "predefinedQueries": [
         {
             "operation": "selectTable",
-            "queryString": "select entrasp.anagrafiche_verifica_campi_null(ca.codice_part, ca.id_anagrafica) as anomalie, true as delete_connessione, ca.id_anagrafica as id_anagrafica_conn, ca.id_anagrafica_conn as id_anagrafica, ca.codice_ruolo, '<->' as ruolo_invertito, ca.dt_inizio, ca.dt_fine, entrasp.anagrafiche_vr_max(ca.codice_part, ca.id_anagrafica) as prog_vr, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select an.tipo_soggetto from entrasp.anagrafiche_id an where an.codice_part=$codice_part$ and an.id_anagrafica=ca.id_anagrafica_conn)) as tipo_soggetto, entrasp.ruolo_descr(ca.codice_ruolo) as descrizione_ruolo, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica_conn) as anagrafica_principale, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica) as anagrafica_connessa from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an on ca.id_anagrafica_conn=an.id_anagrafica and ca.codice_part=an.codice_part where an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$ union select entrasp.anagrafiche_verifica_campi_null (ca.codice_part, ca.id_anagrafica) AS anomalie, true as delete_connessione, ca.id_anagrafica_conn, ca.id_anagrafica, ca.codice_ruolo, '' as ruolo_invertito, ca.dt_inizio, ca.dt_fine, entrasp.anagrafiche_vr_max(ca.codice_part, ca.id_anagrafica_conn) as prog_vr, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select an.tipo_soggetto from entrasp.anagrafiche_id an where an.codice_part=$codice_part$ and an.id_anagrafica=ca.id_anagrafica_conn)) as tipo_soggetto, entrasp.ruolo_descr(ca.codice_ruolo) as descrizione_ruolo, anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica) as anagrafica_principale, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica_conn) as anagrafica_connessa from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an on ca.id_anagrafica=an.id_anagrafica and ca.codice_part=an.codice_part where an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$",
+            "queryString": "select entrasp.anagrafiche_verifica_campi_null(ca.codice_part, ca.id_anagrafica) as anomalie, true as delete_connessione, ca.id_anagrafica as id_anagrafica_conn, ca.id_anagrafica_conn as id_anagrafica, ca.codice_ruolo, '<->' as ruolo_invertito, ca.dt_inizio, ca.dt_fine, entrasp.anagrafiche_vr_max(ca.codice_part, ca.id_anagrafica) as prog_vr, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select an.tipo_soggetto from entrasp.anagrafiche_id an where an.codice_part=$codice_part$ and an.id_anagrafica=ca.id_anagrafica_conn)) as tipo_soggetto, entrasp.ruolo_descr(ca.codice_ruolo) as descrizione_ruolo, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica_conn) as anagrafica_principale, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica) as anagrafica_connessa from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an on ca.id_anagrafica_conn=an.id_anagrafica and ca.codice_part=an.codice_part where an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$ union select entrasp.anagrafiche_verifica_campi_null (ca.codice_part, ca.id_anagrafica) AS anomalie, true as delete_connessione, ca.id_anagrafica_conn, ca.id_anagrafica, ca.codice_ruolo, '' as ruolo_invertito, ca.dt_inizio, ca.dt_fine, entrasp.anagrafiche_vr_max(ca.codice_part, ca.id_anagrafica_conn) as prog_vr, entrasp.transcodifiche_transcodifica('TIPO_SOGGETTO',(select an.tipo_soggetto from entrasp.anagrafiche_id an where an.codice_part=$codice_part$ and an.id_anagrafica=ca.id_anagrafica_conn)) as tipo_soggetto, entrasp.ruolo_descr(ca.codice_ruolo) as descrizione_ruolo, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica) as anagrafica_principale, entrasp.anagrafiche_vr_dati_identificativi(ca.codice_part, ca.id_anagrafica_conn) as anagrafica_connessa from entrasp.connessioni_anagrafiche ca inner join entrasp.anagrafiche_id an on ca.id_anagrafica=an.id_anagrafica and ca.codice_part=an.codice_part where an.codice_part=$codice_part$ and an.id_anagrafica=$id_anagrafica$",
             "type": "main"
         }
     ],
@@ -97,9 +97,29 @@
             "key": "id_anagrafica_conn",
             "size": 3,
             "label": "Anagrafica connessa",
-            "newLine": false,
+            "newLine": true,
             "readOnly": false,
             "translate": "RESOURCES.anagrafica_connessa_connessioni_anagrafiche"
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isPrimary": false,
+            "key": "date_connessione",
+            "label": "Date Connessione",
+            "style": {
+                "background_color": "#2B679D",
+                "font_color": "white",
+                "font_size": "1.1em",
+                "font_style": "italic",
+                "font_weight": "300"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "size": 9
         },
         {
             "autoGenerate": false,
@@ -119,7 +139,7 @@
             "isPrimary": true,
             "key": "dt_inizio",
             "label": "Data inizio legame",
-            "size": 1.5,
+            "size": 3,
             "readOnly": false,
             "newLine": false,
             "translate": "RESOURCES.data_inizio_legame_connessioni_anagrafiche"
@@ -134,7 +154,7 @@
             "isPrimary": false,
             "key": "dt_fine",
             "label": "Data Fine legame",
-            "size": 1.5,
+            "size": 3,
             "readOnly": false,
             "newLine": false,
             "translate": "RESOURCES.data_fine_legame_connessioni_anagrafiche"
@@ -149,9 +169,28 @@
             "isPrimary": false,
             "key": "dt_rilevazione",
             "label": "Data rilevazione",
-            "size": 1.5,
+            "size": 3,
             "readOnly": false,
             "newLine": true
+        },{
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isPrimary": false,
+            "key": "maggiori_dettagli",
+            "label": "Maggiori Dettagli",
+            "style": {
+                "background_color": "#2B679D",
+                "font_color": "white",
+                "font_size": "1.1em",
+                "font_style": "italic",
+                "font_weight": "300"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false,
+            "size": 9
         },
         {
             "autoGenerate": false,
