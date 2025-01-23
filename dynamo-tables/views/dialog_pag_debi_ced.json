@@ -5,7 +5,7 @@
         {
             "operation": "insert",
             "type": "main",
-            "queryString": "select entrasp.insert_ricessioni(($selected_rows_data$)::varchar, $data_pagamento$::date, $note$, 100::numeric, null::numeric, entrasp.debitore_ceduto_da_chiave(($selected_rows_data$)::varchar), $id_conto_corrente$,51488, $id_mandato$)"
+            "queryString": "select entrasp.insert_ricessioni(($selected_rows_data$)::varchar, $data_pagamento$::date, $note$, 100::numeric, null::numeric, entrasp.debitore_ceduto_da_chiave(($selected_rows_data$)::varchar), $id_conto_corrente$,$id_argomento_tipo_pag$, $id_mandato$)"
         },
         {
             "operation": "isInsert",
@@ -52,6 +52,30 @@
             "size": 2.5,
             "newLine": false,
             "translate": "RESOURCES.n_mandato_dialog_pag_debi_ced"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "select id_argomento as id, id_argomento||'-'||descrizione as name from entrasp.argomenti where id_argomento in (51488,51489,50664)",
+                "options": [],
+                "validations": [
+                    {
+                        "message": "Causale necessaria!",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.causale_necessaria_dialog_inserisci_movimenti_crediti"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "key": "id_argomento_tipo_pag",
+            "label": "Causale",
+            "size": 2.5,
+            "readOnly": false,
+            "translate": "RESOURCES.causale_dialog_inserisci_movimenti_crediti"
         },
         {
             "autoGenerate": false,
