@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" 
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports 
+              http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" 
+              name="modello_231" 
+              pageWidth="800" 
+              pageHeight="542" 
+              columnWidth="772" 
+              leftMargin="14" 
+              rightMargin="14" 
+              topMargin="6" 
+              bottomMargin="6" 
+              uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+    
+    <!-- Parametri -->
+    <parameter name="codice_azienda" class="java.lang.String" isForPrompting="true">
+        <defaultValueExpression><![CDATA["RICREATIVO"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="id_procedura" class="java.math.BigDecimal" isForPrompting="true">
+        <defaultValueExpression><![CDATA[null]]></defaultValueExpression>
+    </parameter>
+    <parameter name="REPORT_CONNECTION" class="java.sql.Connection" isForPrompting="false"/>
+
+    <!-- Query principale -->
+    <queryString>
+        <![CDATA[
+        SELECT 
+            codice_azienda, 
+            id_procedura, 
+            entrasp.attivita_a_rischio(id_procedura, codice_azienda) AS attivita,  
+            entrasp.tipologie_reato_processo(id_procedura, codice_azienda) AS reato,  
+            entrasp.centri_gestionali_coinvolti_processo(id_procedura, codice_azienda) AS centri_gest, 
+            entrasp.descrizione_attivita_a_rischio(id_procedura, codice_azienda) AS descrizione, 
+            descrizione_breve 
+        FROM 
+            entrasp.procedure_aziendali 
+        WHERE 
+            codice_azienda = $P{codice_azienda} 
+            AND id_procedura_parent IS NULL
+        ]]>
+    </queryString>
+
+    <!-- Campi della query -->
+    <field name="codice_azienda" class="java.lang.String"/>
+    <field name="id_procedura" class="java.math.BigDecimal"/>
+    <field name="attivita" class="java.lang.String"/>
+    <field name="reato" class="java.lang.String"/>
+    <field name="centri_gest" class="java.lang.String"/>
+    <field name="descrizione" class="java.lang.String"/>
+    <field name="descrizione_breve" class="java.lang.String"/>
+
+    <!-- Titolo -->
+    <title>
+        <band height="50">
+            <staticText>
+                <reportElement x="0" y="0" width="770" height="50" uuid="title1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Modello 231 - Risk Assessment]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <!-- Dettagli -->
+    <detail>
+        <band height="400">
+            <staticText>
+                <reportElement x="0" y="0" width="770" height="20" uuid="label1"/>
+                <textElement textAlignment="Left">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Area a Rischio:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="20" width="770" height="20" uuid="field1"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression><![CDATA[$F{descrizione_breve}]]></textFieldExpression>
+            </textField>
+
+            <staticText>
+                <reportElement x="0" y="50" width="770" height="20" uuid="label2"/>
+                <textElement textAlignment="Left">
+                    <font size="12" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Tipologie di Reato:]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="0" y="70" width="770" height
