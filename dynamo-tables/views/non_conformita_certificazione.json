@@ -67,6 +67,15 @@
             "queryString": "update entrasp.compiti set foreseen_date=$foreseen_date$ where codice_compito=$codice_compito$ and codice_azienda=$codice_azienda$"
         }
     ],
+    "define": {
+        "is_hidden_compiti": "false",
+        "is_hidden_compiti_consultant": "true",
+        "label_data": "Data Segnalazione",
+        "label_codice_compito": "Codice",
+        "label_codice": "Codice Segnalazione",
+        "label_codice_parent": "Codice Segnalazione Parent",
+        "value_id_tipo_compito": "0"
+    },
     "form_keys": [
         {
             "autoGenerate": false,
@@ -154,11 +163,10 @@
             "isHidden": false,
             "isPrimary": true,
             "key": "codice_compito",
-            "label": "Codice Compito",
+            "label": "Codice Rilievo",
             "newLine": false,
             "readOnly": true,
-            "size": 1,
-            "translate": "RESOURCES.codice_compito_compiti"
+            "size": 1
         },
         {
             "autoGenerate": false,
@@ -327,11 +335,10 @@
                     "queryFunct": "select coalesce('£note£', '£titolo£')"
                 }
             ],
-            "label": "Descrizione Estesa",
+            "label": "Descrizione Commento",
             "newLine": true,
             "readOnly": false,
-            "size": 10,
-            "translate": "RESOURCES.descrizione_estesa_compiti"
+            "size": 10
         },
         {
             "autoGenerate": false,
@@ -398,11 +405,10 @@
                     "values": []
                 }
             ],
-            "label": "Responsabile",
+            "label": "Auditor",
             "newLine": false,
             "readOnly": false,
-            "size": 2.5,
-            "translate": "RESOURCES.responsabile_compiti"
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -414,11 +420,10 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_centro_gest",
-            "label": "Centro Gestionale Responsabile",
+            "label": "Centro Gestionale Auditor",
             "newLine": false,
             "readOnly": false,
-            "size": 2.75,
-            "translate": "RESOURCES.centro_gestionale_responsabile_compiti"
+            "size": 2.75
         },
         {
             "autoGenerate": false,
@@ -427,7 +432,7 @@
                 "options": [],
                 "viewType": "combobox"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_centro_gest_monitor",
             "label": "Centro Gestionale Monitoraggio/Segnalante",
@@ -441,7 +446,7 @@
             "format": {
                 "viewType": "button"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "inserisci_aggiornamento_k",
             "buttonIcon": "edit",
@@ -460,390 +465,128 @@
             },
             "translate": "RESOURCES.inserisci_aggiornamento_compiti"
         },
-        {
-            "format": {
-                "viewType": "invisible"
-            },
-            "size": 6,
-            "isHidden": false,
-            "isPrimary": false,
-            "label": "invisible_2",
-            "key": "invisible_2",
-            "sameOrigin": false,
-            "readOnly": true,
-            "newLine": false,
-            "translate": "RESOURCES.invisible_2_compiti"
-        },
+
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "button"
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "activate_detail_k",
-            "label": "",
-            "buttonIcon": "expand_more",
+            "key": "id_cliente",
+            "label": "Cliente",
             "newLine": false,
-            "size": 0.4,
-            "outputEvent": {
-                "eventName": "activate_detail",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "actionType": "hide",
-                    "eventName": "activate_detail",
-                    "condition": "none",
-                    "values": []
-                },
-                {
-                    "actionType": "show",
-                    "eventName": "hide_detail",
-                    "condition": "none",
-                    "values": []
-                }
-            ],
-            "style": {
-                "background_color": "#9FACBD",
-                "font_color": "white"
-            },
             "readOnly": false,
-            "sameOrigin": false
+            "size": 3.25
         },
         {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "hide_detail_k",
-            "label": "",
-            "buttonIcon": "expand_less",
-            "newLine": false,
-            "size": 0.4,
-            "outputEvent": {
-                "eventName": "hide_detail",
-                "eventTrigger": "press"
-            },
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "eventName": "activate_detail",
-                    "condition": "none",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "eventName": "hide_detail",
-                    "condition": "none",
-                    "values": []
-                }
-            ],
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false
-        },
-        {
+            "autoGenerate": true,
             "format": {
                 "dataType": "text",
-                "viewType": "label"
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice Segnalazione",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5,
+            "translate": "RESOURCES.codice_segnalazione_compiti"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "maggiori_dettagli",
-            "label": "Dettagli",
-            "style": {
-                "background_color": "transparent",
-                "font_color": "black",
-                "font_size": "1.3em",
-                "font_weight": "400"
-            },
+            "key": "foreseen_date",
+            "label": "Data Scadenza",
             "newLine": false,
-            "readOnly": true,
-            "sameOrigin": false,
-            "size": 2.1,
-            "translate": "RESOURCES.dettagli_compiti"
+            "readOnly": false,
+            "size": 1.25,
+            "translate": "RESOURCES.data_scadenza_compiti"
         },
         {
+            "autoGenerate": false,
             "format": {
-                "viewType": "subform",
-                "subform_keys": [
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
-                            "options": [],
-                            "viewType": "combobox"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "id_cliente",
-                        "label": "Controp.(Cliente, Fornitore, Dipendente)",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3.25,
-                        "translate": "RESOURCES.contropcliente_fornitore_dipendente_compiti"
-                    },
-                    {
-                        "autoGenerate": true,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": true,
-                        "isPrimary": false,
-                        "key": "codice",
-                        "label": "Codice Segnalazione",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 1.5,
-                        "translate": "RESOURCES.codice_segnalazione_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "date",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "foreseen_date",
-                        "label": "Data Scadenza",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 1.25,
-                        "translate": "RESOURCES.data_scadenza_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "date",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "data_chiusura",
-                        "label": "Data Chiusura",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 1.25,
-                        "translate": "RESOURCES.data_chiusura_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6734;",
-                            "options": [],
-                            "viewType": "combobox"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "id_argomento_tipo_articolo",
-                        "size": 1.2,
-                        "label": "Tipo Articolo",
-                        "readOnly": false,
-                        "newLine": false,
-                        "translate": "RESOURCES.tipo_articolo_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6735;",
-                            "options": [],
-                            "viewType": "combobox"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "id_argomento_tipo_difformita",
-                        "size": 1.8,
-                        "label": "Tipo Difformità",
-                        "readOnly": false,
-                        "newLine": false,
-                        "translate": "RESOURCES.tipo_difformit_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "comboQuery": "SELECT codice_compito AS id, codice_compito||' - '||titolo AS name FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$ and codice_compito!='£codice_compito£';",
-                            "options": [],
-                            "viewType": "combobox",
-                            "dataType": "text"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "codice_compito_parent",
-                        "label": "Codice Segnalazione Parent",
-                        "newLine": true,
-                        "readOnly": true,
-                        "size": 1.5,
-                        "translate": "RESOURCES.codice_segnalazione_parent_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "textarea"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "trattamento",
-                        "label": "Trattamento -azione intrapresa per risolvere il problema o ridurne gli effetti",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 5,
-                        "translate": "RESOURCES.trattamento_azione_intrapresa_per_risolvere_il_problema_o_ridurne_gli_effetti_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "textarea",
-                            "value": null
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "analisi_cause",
-                        "label": "Analisi Cause",
-                        "newLine": true,
-                        "readOnly": false,
-                        "size": 5,
-                        "translate": "RESOURCES.analisi_cause_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "input",
-                            "dataType": "number"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "perdita_diretta_potenziale",
-                        "label": "Perdita Diretta Potenziale",
-                        "newLine": false,
-                        "readOnly": false,
-                        "sameOrigin": true,
-                        "translate": "RESOURCES.perdita_diretta_potenziale_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "input",
-                            "dataType": "number"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "perdita_diretta_effettiva",
-                        "label": "Perdita Diretta Effettiva",
-                        "newLine": false,
-                        "readOnly": false,
-                        "sameOrigin": true,
-                        "translate": "RESOURCES.perdita_diretta_effettiva_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "input",
-                            "dataType": "number"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "perdita_indiretta_potenziale",
-                        "label": "Perdita Indiretta Potenziale",
-                        "newLine": false,
-                        "readOnly": false,
-                        "sameOrigin": true,
-                        "translate": "RESOURCES.perdita_indiretta_potenziale_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "viewType": "input",
-                            "dataType": "number"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "perdita_indiretta_effettiva",
-                        "label": "Perdita Indiretta Effettiva",
-                        "newLine": false,
-                        "readOnly": false,
-                        "sameOrigin": true,
-                        "translate": "RESOURCES.perdita_indiretta_effettiva_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "value": "0",
-                            "viewType": "checkbox"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "flag_reclamo",
-                        "label": "Reclamo",
-                        "readOnly": false,
-                        "newLine": false,
-                        "sameOrigin": true,
-                        "translate": "RESOURCES.reclamo_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "value": "0",
-                            "viewType": "checkbox"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "flag_causa_legale",
-                        "label": "Causa Legale",
-                        "readOnly": false,
-                        "newLine": false,
-                        "sameOrigin": true,
-                        "translate": "RESOURCES.causa_legale_compiti"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "value": "0",
-                            "viewType": "checkbox"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "flag_progetto_informatico",
-                        "label": "Progetto Informatico",
-                        "readOnly": false,
-                        "newLine": false,
-                        "sameOrigin": true,
-                        "translate": "RESOURCES.progetto_informatico_compiti"
-                    }
-                ]
+                "dataType": "date",
+                "viewType": "input"
             },
-            "inputEvents": [
-                {
-                    "actionType": "show",
-                    "condition": "none",
-                    "eventName": "activate_detail",
-                    "values": []
-                },
-                {
-                    "actionType": "hide",
-                    "condition": "none",
-                    "eventName": "hide_detail",
-                    "values": []
-                }
-            ],
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_chiusura",
+            "label": "Data Chiusura",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.25,
+            "translate": "RESOURCES.data_chiusura_compiti"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6734;",
+                "options": [],
+                "viewType": "combobox"
+            },
             "isHidden": true,
             "isPrimary": false,
-            "key": "sezione_detail",
-            "label": "Maggiori Dettagli",
+            "key": "id_argomento_tipo_articolo",
+            "size": 1.2,
+            "label": "Tipo Articolo",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.tipo_articolo_compiti"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52266;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_difformita",
+            "size": 1.8,
+            "label": "Norma",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trattamento",
+            "label": "Trattamento -azione intrapresa per risolvere il problema o ridurne gli effetti",
+            "newLine": false,
+            "readOnly": false,
+            "size": 5,
+            "translate": "RESOURCES.trattamento_azione_intrapresa_per_risolvere_il_problema_o_ridurne_gli_effetti_compiti"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea",
+                "value": null
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "analisi_cause",
+            "label": "Analisi Cause",
             "newLine": true,
             "readOnly": false,
-            "sameOrigin": true,
-            "saveWhenHidden": true,
-            "translate": "RESOURCES.maggiori_dettagli_compiti"
+            "size": 5,
+            "translate": "RESOURCES.analisi_cause_compiti"
         },
         {
             "autoGenerate": false,
