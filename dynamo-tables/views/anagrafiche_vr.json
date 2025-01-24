@@ -65,12 +65,12 @@
         {
             "operation": "update",
             "type": "preCheck",
-            "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.codice_fiscale)=UPPER($codice_fiscale$) and an.flag_duplicato!='1'",
+            "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.codice_fiscale)=UPPER(coalesce($codice_fiscale_pf$,$codice_fiscale_en$,$codice_fiscale_coin$)) and an.flag_duplicato!='1'",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>nullif($partita_iva$,''), flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€',flagemittente=>'€flag_emittente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$,idateco => $id_ateco$, codsae => $cod_sae$,tiposoggetto=>$tipo_soggetto$, flagnodelete=>$flag_no_delete$::character, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$);",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, abbrev=>$abbreviazione$::varchar, codicefiscale=>coalesce($codice_fiscale_pf$,$codice_fiscale_en$,$codice_fiscale_coin$), partitaiva=>nullif($partita_iva$,''), flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', flagemittente=>'€flag_emittente€', indirizzo_=>coalesce($indirizzo_pf$,$indirizzo_en$,$indirizzo_coin$), cap_=>coalesce($cap_pf$,$cap_en$,$cap_coin$), comune_=>coalesce($comune_pf$,$comune_en$,$comune_coin$), provincia_=>coalesce($provincia_pf$,$provincia_en$,$provincia_coin$), annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata=>$nascita_data$::date, nascitaluogo=>$nascita_luogo$::varchar, sesso_=>$sesso$, codicenazione=>$codice_nazione$, idateco=>$id_ateco$, codsae=>$cod_sae$, tiposoggetto=>$tipo_soggetto$, flagnodelete=>$flag_no_delete$::character, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$);",
             "type": "postProcessing"
         },
         {
@@ -747,8 +747,9 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "indirizzo",
+                        "key": "indirizzo_pf",
                         "label": "Indirizzo",
+                        "queryFunct": "indirizzo",
                         "newLine": false,
                         "readOnly": false,
                         "size": 3.33,
@@ -816,7 +817,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "comune",
+                        "key": "comune_pf",
+                        "queryFunct": "comune",
                         "label": "Comune residenza",
                         "newLine": false,
                         "readOnly": false,
@@ -912,7 +914,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "codice_fiscale",
+                        "key": "codice_fiscale_pf",
+                        "queryFunct": "codice_fiscale",
                         "label": "Codice fiscale",
                         "newLine": false,
                         "readOnly": false,
@@ -927,8 +930,9 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "cap",
+                        "key": "cap_pf",
                         "label": "CAP",
+                        "queryFunct": "cap",
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.66,
@@ -966,7 +970,8 @@
                         },
                         "isHidden": "$Q{is_hidden_provincia}",
                         "isPrimary": false,
-                        "key": "provincia",
+                        "key": "provincia_pf",
+                        "queryFunct": "provincia",
                         "label": "Provincia",
                         "newLine": false,
                         "readOnly": false,
@@ -1258,8 +1263,9 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "indirizzo",
+                        "key": "indirizzo_en",
                         "label": "Indirizzo",
+                        "queryFunct": "indirizzo",
                         "newLine": false,
                         "readOnly": false,
                         "size": 3.33,
@@ -1285,6 +1291,37 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
+                            "viewType": "input",
+                            "validations": [
+                                {
+                                    "message": "Lunghezza massima 16 caratteri",
+                                    "name": "maxlength",
+                                    "validator": "Validators.maxLength(16)",
+                                    "value": 16,
+                                    "translate": "RESOURCES.lunghezza_massima_16_caratteri_anagrafiche_vr"
+                                },
+                                {
+                                    "message": "Codice fiscale o identificativo univoco analogo obbligatorio",
+                                    "name": "required",
+                                    "validator": "Validators.required",
+                                    "translate": "RESOURCES.codice_fiscale_o_identificativo_univoco_analogo_obbligatorio_anagrafiche_vr"
+                                }
+                            ]
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "codice_fiscale_en",
+                        "queryFunct": "codice_fiscale",
+                        "label": "Codice fiscale",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 2,
+                        "translate": "RESOURCES.codice_fiscale_anagrafiche_vr"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
                             "viewType": "input"
                         },
                         "isHidden": false,
@@ -1304,8 +1341,9 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "comune",
-                        "label": "Comune residenza",
+                        "key": "comune_en",
+                        "queryFunct": "comune",
+                        "label": "Comune",
                         "newLine": false,
                         "readOnly": false,
                         "size": 3.33
@@ -1336,8 +1374,9 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "cap",
+                        "key": "cap_en",
                         "label": "CAP",
+                        "queryFunct": "cap",
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.6,
@@ -1377,7 +1416,8 @@
                         },
                         "isHidden": "$Q{is_hidden_provincia}",
                         "isPrimary": false,
-                        "key": "provincia",
+                        "key": "provincia_en",
+                        "queryFunct": "provincia",
                         "label": "Provincia",
                         "newLine": false,
                         "readOnly": false,
@@ -1519,7 +1559,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "indirizzo",
+                        "key": "indirizzo_coin",
+                        "queryFunct": "indirizzo",
                         "label": "Indirizzo",
                         "newLine": false,
                         "readOnly": false,
@@ -1541,6 +1582,36 @@
                         "queryFunct": "SELECT nascita_data from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false,
                         "translate": "RESOURCES.data_di_inizio_attivit_anagrafiche_vr"
+                    },{
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input",
+                            "validations": [
+                                {
+                                    "message": "Lunghezza massima 16 caratteri",
+                                    "name": "maxlength",
+                                    "validator": "Validators.maxLength(16)",
+                                    "value": 16,
+                                    "translate": "RESOURCES.lunghezza_massima_16_caratteri_anagrafiche_vr"
+                                },
+                                {
+                                    "message": "Codice fiscale o identificativo univoco analogo obbligatorio",
+                                    "name": "required",
+                                    "validator": "Validators.required",
+                                    "translate": "RESOURCES.codice_fiscale_o_identificativo_univoco_analogo_obbligatorio_anagrafiche_vr"
+                                }
+                            ]
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "codice_fiscale_coin",
+                        "queryFunct": "codice_fiscale",
+                        "label": "Codice fiscale",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 2,
+                        "translate": "RESOURCES.codice_fiscale_anagrafiche_vr"
                     },
                     {
                         "autoGenerate": false,
@@ -1565,7 +1636,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "comune",
+                        "key": "comune_coin",
+                        "queryFunct": "comune",
                         "label": "Località",
                         "newLine": false,
                         "readOnly": false,
@@ -1598,8 +1670,9 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "cap",
-                        "label": "CAP",
+                        "key": "cap_coin",
+                        "label": "CAP",                        
+                        "queryFunct": "cap",
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.6,
@@ -1622,7 +1695,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "provincia",
+                        "key": "provincia_coin",
+                        "queryFunct": "provincia",
                         "label": "Provincia",
                         "newLine": false,
                         "readOnly": false,
