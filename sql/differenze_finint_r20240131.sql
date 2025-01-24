@@ -1,8 +1,8 @@
 
 -- DIFFERENZE TRA SONDAGGI
 select ss.codice_azienda, ss.id_sondaggio, ss.id_somministrazione, sndold.id_modello_test, 
-sndold.id_modello_test_vr, snd.id_modello_test_vr, ssold.pct_da, ss.pct_da, ssold.giudizio, ss.giudizio, ss.object_key, ss.object_description
-from r20240131.sondaggi_somministrati ssold
+sndold.id_modello_test_vr, snd.id_modello_test_vr, ssold.pct_da as pct_da_cfr, ss.pct_da as pct_da_attuale, ssold.giudizio as giudizio_cfr, ss.giudizio as giudizio_attuale, ss.object_key, ss.object_description
+from r20241031.sondaggi_somministrati ssold
 inner join entrasp.sondaggi_somministrati ss
 on ssold.codice_azienda=ss.codice_azienda 
 and ssold.id_sondaggio=ss.id_sondaggio
