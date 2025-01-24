@@ -30,7 +30,7 @@
         },
         {
             "operation": "insert",
-            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>nullif($partita_iva$,''), flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', flagemittente=>'€flag_emittente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$, idateco => $id_ateco$, codsae => $cod_sae$, flagnodelete=>$flag_no_delete$::character, emailsender=>$email_sender$, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$);",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>coalesce($ragione_sociale_en$, $ragione_sociale_coin$), abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>coalesce($partita_iva_pf$, $partita_iva_en$, $partita_iva_coin$), flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', flagemittente=>'€flag_emittente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$, idateco => $id_ateco$, codsae => $cod_sae$, flagnodelete=>$flag_no_delete$::character, emailsender=>$email_sender$, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$, codnazionenascita=>$codice_nazione_nascita$::varchar);",
             "type": "main"
         },
         {
@@ -70,7 +70,7 @@
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, abbrev=>$abbreviazione$::varchar, codicefiscale=>coalesce($codice_fiscale_pf$,$codice_fiscale_en$,$codice_fiscale_coin$), partitaiva=>nullif($partita_iva$,''), flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', flagemittente=>'€flag_emittente€', indirizzo_=>coalesce($indirizzo_pf$,$indirizzo_en$,$indirizzo_coin$), cap_=>coalesce($cap_pf$,$cap_en$,$cap_coin$), comune_=>coalesce($comune_pf$,$comune_en$,$comune_coin$), provincia_=>coalesce($provincia_pf$,$provincia_en$,$provincia_coin$), annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata=>$nascita_data$::date, nascitaluogo=>$nascita_luogo$::varchar, sesso_=>$sesso$, codicenazione=>$codice_nazione$, idateco=>$id_ateco$, codsae=>$cod_sae$, tiposoggetto=>$tipo_soggetto$, flagnodelete=>$flag_no_delete$::character, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$);",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>coalesce($ragione_sociale_en$, $ragione_sociale_coin$), abbrev=>$abbreviazione$::varchar, codicefiscale=>coalesce($codice_fiscale_pf$,$codice_fiscale_en$,$codice_fiscale_coin$), partitaiva=>coalesce($partita_iva_pf$, $partita_iva_en$, $partita_iva_coin$), flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', flagemittente=>'€flag_emittente€', indirizzo_=>coalesce($indirizzo_pf$,$indirizzo_en$,$indirizzo_coin$), cap_=>coalesce($cap_pf$,$cap_en$,$cap_coin$), comune_=>coalesce($comune_pf$,$comune_en$,$comune_coin$), provincia_=>coalesce($provincia_pf$,$provincia_en$,$provincia_coin$), annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata=>$nascita_data$::date, nascitaluogo=>$nascita_luogo$::varchar, sesso_=>$sesso$, codicenazione=>$codice_nazione$, idateco=>$id_ateco$, codsae=>$cod_sae$, tiposoggetto=>$tipo_soggetto$, flagnodelete=>$flag_no_delete$::character, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$, codnazionenascita=>$codice_nazione_nascita$::varchar);",
             "type": "postProcessing"
         },
         {
@@ -171,7 +171,9 @@
                     "actionType": "dialog",
                     "condition": "equalTo",
                     "valueKey": "consenti_invio",
-                    "values": ["1"],
+                    "values": [
+                        "1"
+                    ],
                     "customDialogEntryName": "dialog_anagrafiche_vr_invite_user",
                     "customDialogTitle": "Add User",
                     "conditionNotMetMessageLabel": "No email is provided, or user already associated to this register!"
@@ -179,9 +181,6 @@
             ],
             "translate": "RESOURCES.user_upd_anagrafiche_vr"
         },
-        
-        
-      
         {
             "autoGenerate": false,
             "format": {
@@ -394,7 +393,6 @@
             "newLine": false,
             "readOnly": true,
             "size": 1.25
-            
         },
         {
             "autoGenerate": false,
@@ -413,12 +411,10 @@
                         "outputEventName": "elimina_ver_corrente_an",
                         "translate": "RESOURCES.elimina_versione_corrente_anagrafiche_vr"
                     },
-                     {
+                    {
                         "icon": "person",
                         "label": "Anonimizza Anagrafica",
                         "outputEventName": "anonymize_user"
-                        
-                        
                     },
                     {
                         "icon": "stacked_line_chart",
@@ -511,7 +507,6 @@
                         }
                     }
                 },
-                
                 {
                     "eventName": "get_emails_by_codice_azienda",
                     "actionType": "google_api",
@@ -586,15 +581,15 @@
                     "values": [],
                     "customDialogEntryName": "dialog_anonimizza_tr",
                     "customDialogTitle": "Inserisci la Data per Anonimizzazione"
-                 
-                  
                 },
-                
                 {
                     "eventName": "invite_user_api",
                     "actionType": "user_api",
                     "condition": "notEqualTo",
-                    "values": [null, ""],
+                    "values": [
+                        null,
+                        ""
+                    ],
                     "valueKey": "email_sender",
                     "conditionNotMetMessageTranslate": "RESOURCES.email_necessaria_whistleblowing",
                     "userAPIParams": {
@@ -674,12 +669,13 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "codice_nazione",
-                        "label": "Nazione",
+                        "key": "codice_nazione_nascita",
+                        "queryFunct": "SELECT codice_nazionalita from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "label": "Nazione di nascita",
+                        "tooltip": "Nazione di nascita",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.nazione_anagrafiche_vr"
+                        "size": 3.33
                     },
                     {
                         "autoGenerate": false,
@@ -788,26 +784,14 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "partita_iva",
+                        "key": "partita_iva_pf",
+                        "queryFunct": "partita_iva",
                         "label": "Partita IVA",
+                        "tooltip": "Partita IVA persone fisiche",
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.5,
                         "translate": "RESOURCES.partita_iva_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "codice_nazione",
-                        "label": "Cod.nazione",
-                        "newLine": true,
-                        "readOnly": false,
-                        "size": 3
                     },
                     {
                         "autoGenerate": false,
@@ -1149,13 +1133,17 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["P"]
+                    "values": [
+                        "P"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["P"]
+                    "values": [
+                        "P"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1200,7 +1188,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "ragione_sociale",
+                        "key": "ragione_sociale_en",
+                        "queryFunct": "ragione_sociale",
                         "label": "Ragione sociale",
                         "size": 3.33,
                         "newLine": false,
@@ -1326,8 +1315,10 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "partita_iva",
+                        "key": "partita_iva_en",
                         "label": "Partita IVA",
+                        "queryFunct": "partita_iva",
+                        "tooltip": "Partita IVA enti",
                         "newLine": false,
                         "readOnly": false,
                         "size": 3.33,
@@ -1365,7 +1356,6 @@
                         "size": 3.34,
                         "translate": "RESOURCES.email_anagrafiche_vr"
                     },
-                    
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1446,13 +1436,17 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["E"]
+                    "values": [
+                        "E"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["E"]
+                    "values": [
+                        "E"
+                    ]
                 }
             ],
             "isHidden": false,
@@ -1496,7 +1490,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "ragione_sociale",
+                        "key": "ragione_sociale_coin",
+                        "queryFunct": "ragione_sociale",
                         "label": "Cointestatari",
                         "size": 3.33,
                         "newLine": false,
@@ -1582,7 +1577,8 @@
                         "queryFunct": "SELECT nascita_data from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false,
                         "translate": "RESOURCES.data_di_inizio_attivit_anagrafiche_vr"
-                    },{
+                    },
+                    {
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
@@ -1621,7 +1617,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "partita_iva",
+                        "key": "partita_iva_coin",
+                        "queryFunct": "partita_iva",
                         "label": "Partita IVA",
                         "newLine": false,
                         "readOnly": false,
@@ -1661,7 +1658,6 @@
                         "size": 3.34,
                         "translate": "RESOURCES.email_anagrafiche_vr"
                     },
-                    
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1671,7 +1667,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "cap_coin",
-                        "label": "CAP",                        
+                        "label": "CAP",
                         "queryFunct": "cap",
                         "newLine": false,
                         "readOnly": false,
@@ -1725,13 +1721,17 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1958,11 +1958,15 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "input"
+                            "viewType": "combobox",
+                            "options": [],
+                            "comboQuery": "SELECT cod_banca_italia AS id, concat(coalesce(cod_banca_italia::varchar,codice_nazione), ' - ' ,descrizione) AS name FROM entrasp.nazioni where cod_banca_italia is not null order by descrizione asc"
                         },
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "codice_nazione",
+                        "queryFunct": "codice_nazione",
+                        "tooltip": "Nazione di residenza dell'ente/persona fisica",
                         "label": "Cod.nazione",
                         "newLine": true,
                         "readOnly": false,
@@ -1989,13 +1993,17 @@
                                 "actionType": "hide",
                                 "eventName": "combo_tipo_soggetto",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             },
                             {
                                 "actionType": "hide",
                                 "eventName": "tipo_soggetto_load",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             }
                         ],
                         "translate": "RESOURCES.azienda_fatturante_di_default_anagrafiche_vr"
@@ -2019,13 +2027,17 @@
                                 "actionType": "hide",
                                 "eventName": "combo_tipo_soggetto",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             },
                             {
                                 "actionType": "hide",
                                 "eventName": "tipo_soggetto_load",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             }
                         ],
                         "translate": "RESOURCES.profilo_di_rischio_aml_anagrafiche_vr"
@@ -2404,7 +2416,9 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "partita_iva",
+            "key": "partita_iva_coin",
+            "queryFunct": "partita_iva",
+            "tooltip": "Partita IVA cointestari",
             "width": "10%",
             "label": "P.IVA",
             "translate": "RESOURCES.piva_anagrafiche_vr"
@@ -2612,7 +2626,7 @@
             "label": "Flussi Informativi Associati",
             "renderingOrder": 1,
             "translate": "RESOURCES.flussi_informativi_associati_information_flows_sub_of_clientela"
-        },       
+        },
         {
             "entryKey": "anagrafiche_vr_attachments",
             "isHidden": false,
@@ -3073,7 +3087,7 @@
             },
             {
                 "label": "Doumenti Identificativi Persone fisiche",
-                "queryString":"SELECT DISTINCT avr.codice_part, avr.id_anagrafica,  (ai.nome || ' ' || ai.cognome) AS soggetto, (SELECT descrizione FROM entrasp.argomenti WHERE argomenti.id_argomento = avr.id_argomento_tipo_documento) AS tipo_documento, avr.numero_documento, avr.rilasciato_da, avr.data_rilascio_documento, avr.data_scadenza_documento FROM entrasp.anagrafiche_id ai INNER JOIN entrasp.anagrafiche_vr avr USING (codice_part, id_anagrafica) WHERE avr.codice_part = $codice_part$ AND tipo_soggetto = 'P' and avr.prog_vr=entrasp.anagrafiche_vr_max(avr.codice_part, avr.id_anagrafica)" 
+                "queryString": "SELECT DISTINCT avr.codice_part, avr.id_anagrafica,  (ai.nome || ' ' || ai.cognome) AS soggetto, (SELECT descrizione FROM entrasp.argomenti WHERE argomenti.id_argomento = avr.id_argomento_tipo_documento) AS tipo_documento, avr.numero_documento, avr.rilasciato_da, avr.data_rilascio_documento, avr.data_scadenza_documento FROM entrasp.anagrafiche_id ai INNER JOIN entrasp.anagrafiche_vr avr USING (codice_part, id_anagrafica) WHERE avr.codice_part = $codice_part$ AND tipo_soggetto = 'P' and avr.prog_vr=entrasp.anagrafiche_vr_max(avr.codice_part, avr.id_anagrafica)"
             }
         ],
         "formQueries": [
