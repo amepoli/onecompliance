@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.14.0.final utlizzo versione della libreria JasperReports6.14.0-2ab0d8625be255bf609c78e1181801213e51db8f  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="analisi_sistema_controllo_231" pageWidth="800" pageHeight="565" columnWidth="772" leftMargin="14" rightMargin="14" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="sondaggi"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="OC_prod"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="132"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="863"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#D2FCFC">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Presidi" uuid="a29e5bc9-211b-4bed-9519-e46ba587ae0f">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="OC_prod"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="0"/>
+		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="1000"/>
+		<parameter name="id_presidio" class="java.math.BigDecimal"/>
+		<parameter name="codice_azienda" class="java.lang.String"/>
+		<parameter name="id_procedura" class="java.math.BigDecimal"/>
+		<queryString language="SQL">
+			<![CDATA[SELECT 
+    pr.codice_azienda,
+    pr.id_presidio,
+    pr.descrizione_breve,
+		pap.note,
+		pap.id_procedura,
+    STRING_AGG(cmp.note, CHR(10)) AS note_compiti,
+    STRING_AGG(cmp.trattamento, CHR(10)) AS trattamenti
+FROM 
+    entrasp.presidi AS pr
+INNER JOIN 
+    entrasp.procedure_aziendali_presidi AS pap 
+    ON pr.id_presidio = pap.id_presidio AND pr.codice_azienda = pap.codice_azienda
+left JOIN 
+    entrasp.compiti_rif_bo AS cbo 
+    ON pap.codice_azienda = cbo.codice_azienda 
+    AND pap.id_procedura = cbo.id_procedura 
+    AND pap.id_presidio = cbo.id_presidio
+left JOIN 
+    entrasp.compiti AS cmp 
+    ON cbo.codice_azienda = cmp.codice_azienda 
+    AND cbo.codice_compito = cmp.codice_compito
+WHERE 
+    pap.codice_azienda =  $P{codice_azienda} 
+    AND pap.id_procedura =  $P{id_procedura} 
+GROUP BY 
+    pr.codice_azienda, 
+    pr.id_presidio, 
+		pap.id_procedura,
+		pap.note,
+    pr.descrizione_breve;]]>
+		</queryString>
+		<field name="codice_azienda" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+			<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+		</field>
+		<field name="id_presidio" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="id_presidio"/>
+			<property name="com.jaspersoft.studio.field.label" value="id_presidio"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+		</field>
+		<field name="descrizione_breve" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="descrizione_breve"/>
+			<property name="com.jaspersoft.studio.field.label" value="descrizione_breve"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+		</field>
+		<field name="note" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="note"/>
+			<property name="com.jaspersoft.studio.field.label" value="note"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali_presidi"/>
+		</field>
+		<field name="id_procedura" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="id_procedura"/>
+			<property name="com.jaspersoft.studio.field.label" value="id_procedura"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali_presidi"/>
+		</field>
+		<field name="note_compiti" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="note_compiti"/>
+			<property name="com.jaspersoft.studio.field.label" value="note_compiti"/>
+		</field>
+		<field name="trattamenti" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="trattamenti"/>
+			<property name="com.jaspersoft.studio.field.label" value="trattamenti"/>
+		</field>
+	</subDataset>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="mainQuery" class="java.lang.String">
+		<defaultValueExpression><![CDATA["SELECT pr.descrizione_breve, pAzPr .note, pAzPr .id_procedura FROM entrasp.presidi as pr INNER JOIN entrasp.procedure_aziendali_presidi as pAzPr ON pr.id_presidio = pAzPr.id_presidio AND pr.codice_azienda = pAzPr.codice_azienda where pAzPr.codice_azienda='LOTTOMATICA' and pAzPr.id_procedura=7"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_procedura" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[$F{id_procedura}]]></defaultValueExpression>
+	</parameter>
+	<parameter name="codice_azienda" class="java.lang.String">
+		<defaultValueExpression><![CDATA["LOTTOMATICA"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT distinct pr.codice_azienda,pr.id_presidio, pr.descrizione_breve, pAzPr .note, pAzPr .id_procedura FROM entrasp.presidi as pr INNER JOIN entrasp.procedure_aziendali_presidi as pAzPr ON pr.id_presidio = pAzPr.id_presidio AND pr.codice_azienda = pAzPr.codice_azienda where pAzPr.codice_azienda= $P{codice_azienda} and pAzPr.id_procedura= $P{id_procedura}]]>
+	</queryString>
+	<field name="codice_azienda" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.label" value="codice_azienda"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+	</field>
+	<field name="id_presidio" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_presidio"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_presidio"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+	</field>
+	<field name="descrizione_breve" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="descrizione_breve"/>
+		<property name="com.jaspersoft.studio.field.label" value="descrizione_breve"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="presidi"/>
+	</field>
+	<field name="note" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="note"/>
+		<property name="com.jaspersoft.studio.field.label" value="note"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali_presidi"/>
+	</field>
+	<field name="id_procedura" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="id_procedura"/>
+		<property name="com.jaspersoft.studio.field.label" value="id_procedura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="procedure_aziendali_presidi"/>
+	</field>
+	<group name="gr_presidi">
+		<groupExpression><![CDATA[$F{id_procedura}]]></groupExpression>
+		<groupHeader>
+			<band height="80">
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<staticText>
+					<reportElement positionType="Float" mode="Opaque" x="0" y="3" width="750" height="16" forecolor="#FFFFFF" backcolor="#E31919" uuid="a070adf3-4090-435e-bdc8-3c8118a9c56c"/>
+					<box>
+						<pen lineColor="#030303"/>
+						<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+						<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+						<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+						<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#030303"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Analisi del Sistema di controllo a presidio dei rischi ex D.Lgs. 231/01]]></text>
+				</staticText>
+				<componentElement>
+					<reportElement style="Table_TH" positionType="Float" mode="Transparent" x="0" y="20" width="750" height="60" uuid="438bf8b8-9bb5-4e5c-b4fd-bdecc0ab8ff3">
+						<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+						<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+						<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+						<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+						<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Presidi" uuid="6f700d59-2486-4da3-b6dd-20570d2c416c">
+							<datasetParameter name="codice_azienda">
+								<datasetParameterExpression><![CDATA[$F{codice_azienda}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="id_procedura">
+								<datasetParameterExpression><![CDATA[$F{id_procedura}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:columnGroup width="750" uuid="ddf3d23f-3112-42a8-bc51-f2602580c0a5">
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonne [4]"/>
+							<jr:column width="180" uuid="461c9405-ed35-498d-a762-aaa7a9d037b4">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna1"/>
+								<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+									<staticText>
+										<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="180" height="30" backcolor="#C9C9C9" uuid="ede91888-beaf-4025-a316-9a2ad69e4865">
+											<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+										</reportElement>
+										<box>
+											<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+										</box>
+										<textElement verticalAlignment="Middle" markup="none">
+											<font isBold="true"/>
+											<paragraph leftIndent="4"/>
+										</textElement>
+										<text><![CDATA[Standard di controllo 231]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="30">
+									<textField textAdjust="StretchHeight">
+										<reportElement positionType="Float" x="0" y="0" width="180" height="30" uuid="77218e80-6a32-4e59-bd00-c46688e4d687">
+											<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+											<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+										</reportElement>
+										<textElement verticalAlignment="Middle" markup="none">
+											<paragraph firstLineIndent="0" leftIndent="4"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{descrizione_breve}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="230" uuid="19c4857a-e19f-46aa-9e9f-62b78596cb37">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna2"/>
+								<jr:columnHeader style="Table 1_CH" height="30" rowSpan="1">
+									<staticText>
+										<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="230" height="30" backcolor="#C9C9C9" uuid="f02e7e0e-b380-40f5-b6a4-5b743de8f64d"/>
+										<box>
+											<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+										</box>
+										<textElement verticalAlignment="Middle" markup="none">
+											<font isBold="true"/>
+											<paragraph leftIndent="4"/>
+										</textElement>
+										<text><![CDATA[Standard di controllo 231 esistenti]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="30">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement positionType="Float" x="0" y="0" width="230" height="30" uuid="47765e0f-65b7-4979-8867-2ed8e3e51983">
+											<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+										</reportElement>
+										<textElement verticalAlignment="Middle" markup="none">
+											<paragraph leftIndent="4"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{note}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="160" uuid="cd2828e1-d334-4f11-914e-070de48ee414">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna3"/>
+								<jr:columnHeader style="Table 1_CH" height="30">
+									<staticText>
+										<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="160" height="30" backcolor="#C9C9C9" uuid="374e90fa-afe0-45a4-b10c-2fd834d6fd8c"/>
+										<box>
+											<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+										</box>
+										<textElement verticalAlignment="Middle" markup="none">
+											<font isBold="true"/>
+											<paragraph leftIndent="4"/>
+										</textElement>
+										<text><![CDATA[Gap Rilevati]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="30">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="160" height="30" uuid="0e704f15-9085-4637-a9d9-e48788282ff8">
+											<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+										</reportElement>
+										<textElement verticalAlignment="Middle">
+											<paragraph leftIndent="3"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{note_compiti}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+							<jr:column width="180" uuid="90fd130e-c445-45c2-9e44-fa006b397f95">
+								<property name="com.jaspersoft.studio.components.table.model.column.name" value="Colonna4"/>
+								<jr:columnHeader style="Table 1_CH" height="30">
+									<staticText>
+										<reportElement positionType="Float" mode="Opaque" x="0" y="0" width="180" height="30" backcolor="#C9C9C9" uuid="e1fbb129-0a2d-4fe8-9d52-190c5d706de6">
+											<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+										</reportElement>
+										<box>
+											<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+											<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+										</box>
+										<textElement verticalAlignment="Middle" markup="none">
+											<font isBold="true"/>
+											<paragraph leftIndent="4"/>
+										</textElement>
+										<text><![CDATA[Aspetti di miglioramento]]></text>
+									</staticText>
+								</jr:columnHeader>
+								<jr:detailCell style="Table 1_TD" height="30">
+									<textField textAdjust="StretchHeight" isBlankWhenNull="true">
+										<reportElement x="0" y="0" width="180" height="30" uuid="bf9d9393-3b66-43f9-b223-8af2a229edde">
+											<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+										</reportElement>
+										<textElement verticalAlignment="Middle">
+											<paragraph leftIndent="3"/>
+										</textElement>
+										<textFieldExpression><![CDATA[$F{trattamenti}]]></textFieldExpression>
+									</textField>
+								</jr:detailCell>
+							</jr:column>
+						</jr:columnGroup>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+	</group>
+	<detail>
+		<band height="2">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
