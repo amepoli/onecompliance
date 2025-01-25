@@ -30,7 +30,7 @@
         },
         {
             "operation": "insert",
-            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>$ragione_sociale$::varchar, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>nullif($partita_iva$,''), flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', flagemittente=>'€flag_emittente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$, idateco => $id_ateco$, codsae => $cod_sae$, flagnodelete=>$flag_no_delete$::character, emailsender=>$email_sender$, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$);",
+            "queryString": "SELECT idnew as id_anagrafica, progvr as prog_vr from entrasp.anagrafica_id_insert(codiceazienda=>'€global_codice_azienda€', tiposoggetto=>$tipo_soggetto$, codiceanagrafica=>$codice$, nome=>$nome$::varchar,surname=>$cognome$::varchar, ragionesociale=>coalesce($ragione_sociale_en$, $ragione_sociale_coin$), abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', flagemittente=>'€flag_emittente€', indirizzo_=>coalesce($indirizzo_pf$,$indirizzo_en$,$indirizzo_coin$), cap_=>coalesce($cap_pf$,$cap_en$,$cap_coin$), comune_=>coalesce($comune_pf$,$comune_en$,$comune_coin$), provincia_=>coalesce($provincia_pf$,$provincia_en$,$provincia_coin$), annotazioniinterne=>$annotazioni_interne$, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$, idateco => $id_ateco$, codsae => $cod_sae$, flagnodelete=>$flag_no_delete$::character, emailsender=>$email_sender$, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$, codicenazionenascita=>$codice_nazione_nascita$::varchar);",
             "type": "main"
         },
         {
@@ -47,14 +47,8 @@
         {
             "operation": "insert",
             "type": "preCheck",
-            "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica  where avr.codice_part=$codice_part$ and UPPER(avr.codice_fiscale)=UPPER($codice_fiscale$) and an.flag_duplicato!='1'",
+            "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica  where avr.codice_part=$codice_part$  and avr.codice_fiscale=$codice_fiscale$ and an.flag_duplicato!='1'",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
-        },
-        {
-            "operation": "insert",
-            "type": "preCheck",
-            "queryString": "select 1 from entrasp.anagrafiche_vr where $codice_fiscale$ is null limit 1",
-            "messageNotNull": "Attenzione: inserire codice fiscale per continuare!"
         },
         {
             "operation": "update",
@@ -65,12 +59,12 @@
         {
             "operation": "update",
             "type": "preCheck",
-            "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and UPPER(avr.codice_fiscale)=UPPER($codice_fiscale$) and an.flag_duplicato!='1'",
+            "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica where avr.codice_part=$codice_part$ and avr.id_anagrafica!= $id_anagrafica$ and avr.codice_fiscale=$codice_fiscale$ and an.flag_duplicato!='1'",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
         },
         {
             "operation": "update",
-            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>$ragione_sociale$, abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>nullif($partita_iva$,''), flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€',flagemittente=>'€flag_emittente€', indirizzo_=>$indirizzo$, cap_=>$cap$, comune_=>$comune$, provincia_=>$provincia$, annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata => $nascita_data$::date, nascitaluogo => $nascita_luogo$::varchar, sesso_ => $sesso$, codicenazione => $codice_nazione$,idateco => $id_ateco$, codsae => $cod_sae$,tiposoggetto=>$tipo_soggetto$, flagnodelete=>$flag_no_delete$::character, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$);",
+            "queryString": "SELECT entrasp.anagrafica_id_update(codicepart=>$codice_part$, anagraficaid=>$id_anagrafica$, emailsender=>$email_sender$, progvr=>$prog_vr$, codiceazienda=>'€global_codice_azienda€', codiceanagrafica=>$codice$, name=>$nome$, surname=>$cognome$, ragionesociale=>coalesce($ragione_sociale_en$, $ragione_sociale_coin$), abbrev=>$abbreviazione$::varchar, codicefiscale=>$codice_fiscale$, partitaiva=>$partita_iva$, flagcliente=>'€flag_cliente€', flagfornitore=>'€flag_fornitore€', flagdipendente=>'€flag_dipendente€', flagfondo=>'€flag_fondo€', flagemittente=>'€flag_emittente€', indirizzo_=>coalesce($indirizzo_pf$,$indirizzo_en$,$indirizzo_coin$), cap_=>coalesce($cap_pf$,$cap_en$,$cap_coin$), comune_=>coalesce($comune_pf$,$comune_en$,$comune_coin$), provincia_=>coalesce($provincia_pf$,$provincia_en$,$provincia_coin$), annotazioniinterne=>$annotazioni_interne$, defaultinvoicingcodiceazienda=>$default_invoicing_codice_azienda$, idargomentotipodocumento=>$id_argomento_tipo_documento$, datascadenzadocumento=>($data_scadenza_documento$)::date, numerodocumento=>$numero_documento$, rilasciatoda=>$rilasciato_da$, datarilasciodocumento=>$data_rilascio_documento$, nascitadata=>$nascita_data$::date, nascitaluogo=>$nascita_luogo$::varchar, sesso_=>$sesso$, codicenazione=>$codice_nazione$, idateco=>$id_ateco$, codsae=>$cod_sae$, tiposoggetto=>$tipo_soggetto$, flagnodelete=>$flag_no_delete$::character, codicecomune=>$codice_comune$, cabcomune=>$cab_comune$, codicenazionenascita=>$codice_nazione_nascita$::varchar);",
             "type": "postProcessing"
         },
         {
@@ -171,7 +165,9 @@
                     "actionType": "dialog",
                     "condition": "equalTo",
                     "valueKey": "consenti_invio",
-                    "values": ["1"],
+                    "values": [
+                        "1"
+                    ],
                     "customDialogEntryName": "dialog_anagrafiche_vr_invite_user",
                     "customDialogTitle": "Add User",
                     "conditionNotMetMessageLabel": "No email is provided, or user already associated to this register!"
@@ -179,9 +175,6 @@
             ],
             "translate": "RESOURCES.user_upd_anagrafiche_vr"
         },
-        
-        
-      
         {
             "autoGenerate": false,
             "format": {
@@ -394,7 +387,6 @@
             "newLine": false,
             "readOnly": true,
             "size": 1.25
-            
         },
         {
             "autoGenerate": false,
@@ -413,12 +405,10 @@
                         "outputEventName": "elimina_ver_corrente_an",
                         "translate": "RESOURCES.elimina_versione_corrente_anagrafiche_vr"
                     },
-                     {
+                    {
                         "icon": "person",
                         "label": "Anonimizza Anagrafica",
                         "outputEventName": "anonymize_user"
-                        
-                        
                     },
                     {
                         "icon": "stacked_line_chart",
@@ -511,7 +501,6 @@
                         }
                     }
                 },
-                
                 {
                     "eventName": "get_emails_by_codice_azienda",
                     "actionType": "google_api",
@@ -586,15 +575,15 @@
                     "values": [],
                     "customDialogEntryName": "dialog_anonimizza_tr",
                     "customDialogTitle": "Inserisci la Data per Anonimizzazione"
-                 
-                  
                 },
-                
                 {
                     "eventName": "invite_user_api",
                     "actionType": "user_api",
                     "condition": "notEqualTo",
-                    "values": [null, ""],
+                    "values": [
+                        null,
+                        ""
+                    ],
                     "valueKey": "email_sender",
                     "conditionNotMetMessageTranslate": "RESOURCES.email_necessaria_whistleblowing",
                     "userAPIParams": {
@@ -605,6 +594,147 @@
                     }
                 }
             ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Codice obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.codice_obbligatorio_anagrafiche_vr"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice",
+            "label": "Codice",
+            "newLine": false,
+            "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": false,
+            "size": 1.5,
+            "translate": "RESOURCES.codice_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Lunghezza massima 15 caratteri",
+                        "name": "maxlength",
+                        "validator": "Validators.maxLength(15)",
+                        "value": 15,
+                        "translate": "RESOURCES.lunghezza_massima_15_caratteri_anagrafiche_vr"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "partita_iva",
+            "label": "Partita IVA",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Lunghezza massima 16 caratteri",
+                        "name": "maxlength",
+                        "validator": "Validators.maxLength(16)",
+                        "value": 16,
+                        "translate": "RESOURCES.lunghezza_massima_16_caratteri_anagrafiche_vr"
+                    },
+                    {
+                        "message": "Codice fiscale o identificativo univoco analogo obbligatorio",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.codice_fiscale_o_identificativo_univoco_analogo_obbligatorio_anagrafiche_vr"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_fiscale",
+            "label": "Codice fiscale",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.codice_fiscale_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "value": null
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_sender",
+            "label": "Email",
+            "newLine": false,
+            "queryFunct": "SELECT email_sender from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.email_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "user",
+            "label": "user",
+            "size": 2,
+            "newLine": false,
+            "queryFunct": "SELECT coalesce(dynamo_user, email_sender) as user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": false,
+            "translate": "RESOURCES.user_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dynamo_user",
+            "label": "Dynamo user",
+            "newLine": true,
+            "queryFunct": "SELECT dynamo_user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": true,
+            "size": 2,
+            "translate": "RESOURCES.dynamo_user_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "annotazioni_interne",
+            "label": "Note Interne",
+            "newLine": true,
+            "size": 5.5,
+            "readOnly": false,
+            "translate": "RESOURCES.note_interne_anagrafiche_vr"
         },
         {
             "format": {
@@ -618,7 +748,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "dati_generali",
-                        "label": "Dati Generali",
+                        "label": "Dati Anagrafici",
                         "style": {
                             "background_color": "#2B679D",
                             "font_color": "white",
@@ -629,8 +759,7 @@
                         "newLine": true,
                         "readOnly": true,
                         "sameOrigin": false,
-                        "size": 10,
-                        "translate": "RESOURCES.dati_generali_anagrafiche_vr"
+                        "size": 10
                     },
                     {
                         "autoGenerate": false,
@@ -674,12 +803,13 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "codice_nazione",
-                        "label": "Nazione",
+                        "key": "codice_nazione_nascita",
+                        "queryFunct": "SELECT codice_nazionalita from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "label": "Nazione di nascita",
+                        "tooltip": "Nazione di nascita",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.nazione_anagrafiche_vr"
+                        "size": 3.33
                     },
                     {
                         "autoGenerate": false,
@@ -719,52 +849,13 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "input",
-                            "validations": [
-                                {
-                                    "message": "Codice obbligatorio",
-                                    "name": "required",
-                                    "validator": "Validators.required",
-                                    "translate": "RESOURCES.codice_obbligatorio_anagrafiche_vr"
-                                }
-                            ]
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "codice",
-                        "label": "Codice",
-                        "newLine": false,
-                        "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.codice_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "indirizzo",
-                        "label": "Indirizzo",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.indirizzo_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
                             "viewType": "input"
                         },
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "nascita_luogo",
                         "label": "Luogo di Nascita",
-                        "newLine": true,
+                        "newLine": false,
                         "size": 3.34,
                         "queryFunct": "SELECT nascita_luogo from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "readOnly": false,
@@ -774,25 +865,16 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "input",
-                            "validations": [
-                                {
-                                    "message": "Lunghezza massima 15 caratteri",
-                                    "name": "maxlength",
-                                    "validator": "Validators.maxLength(15)",
-                                    "value": 15,
-                                    "translate": "RESOURCES.lunghezza_massima_15_caratteri_anagrafiche_vr"
-                                }
-                            ]
+                            "viewType": "input"
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "partita_iva",
-                        "label": "Partita IVA",
+                        "key": "indirizzo_pf",
+                        "label": "Indirizzo residenza",
+                        "queryFunct": "indirizzo",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.5,
-                        "translate": "RESOURCES.partita_iva_anagrafiche_vr"
+                        "size": 3.33
                     },
                     {
                         "autoGenerate": false,
@@ -802,134 +884,10 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "codice_nazione",
-                        "label": "Cod.nazione",
-                        "newLine": true,
-                        "readOnly": false,
-                        "size": 3
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "comune",
-                        "label": "Comune residenza",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "comboQuery": "select codice_azienda as id, codice_azienda as name from entrasp.aziende where codice_azienda in(€global_user_companies€)",
-                            "options": [],
-                            "viewType": "combobox",
-                            "dataType": "text"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "codice_azienda_corrispondente",
-                        "label": "Azienda corrispondente",
-                        "queryFunct": "SELECT codice_azienda_corrispondente from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "newLine": false,
-                        "readOnly": true,
-                        "size": 1.33,
-                        "translate": "RESOURCES.azienda_corrispondente_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input",
-                            "value": null
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "email_sender",
-                        "label": "Email",
-                        "newLine": false,
-                        "queryFunct": "SELECT email_sender from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "size": 1.5,
-                        "translate": "RESOURCES.email_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": true,
-                        "isPrimary": false,
-                        "key": "user",
-                        "label": "user",
-                        "size": 1.5,
-                        "newLine": false,
-                        "queryFunct": "SELECT coalesce(dynamo_user, email_sender) as user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "translate": "RESOURCES.user_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "dynamo_user",
-                        "label": "Dynamo user",
-                        "newLine": true,
-                        "queryFunct": "SELECT dynamo_user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": true,
-                        "size": 1.5,
-                        "translate": "RESOURCES.dynamo_user_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input",
-                            "validations": [
-                                {
-                                    "message": "Lunghezza massima 16 caratteri",
-                                    "name": "maxlength",
-                                    "validator": "Validators.maxLength(16)",
-                                    "value": 16,
-                                    "translate": "RESOURCES.lunghezza_massima_16_caratteri_anagrafiche_vr"
-                                },
-                                {
-                                    "message": "Codice fiscale o identificativo univoco analogo obbligatorio",
-                                    "name": "required",
-                                    "validator": "Validators.required",
-                                    "translate": "RESOURCES.codice_fiscale_o_identificativo_univoco_analogo_obbligatorio_anagrafiche_vr"
-                                }
-                            ]
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "codice_fiscale",
-                        "label": "Codice fiscale",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 2,
-                        "translate": "RESOURCES.codice_fiscale_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "cap",
+                        "key": "cap_pf",
                         "label": "CAP",
-                        "newLine": false,
+                        "queryFunct": "cap",
+                        "newLine": true,
                         "readOnly": false,
                         "size": 1.66,
                         "translate": "RESOURCES.cap_anagrafiche_vr"
@@ -953,6 +911,21 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "comune_pf",
+                        "queryFunct": "comune",
+                        "label": "Comune residenza",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 3
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
                             "viewType": "input",
                             "validations": [
                                 {
@@ -966,27 +939,31 @@
                         },
                         "isHidden": "$Q{is_hidden_provincia}",
                         "isPrimary": false,
-                        "key": "provincia",
+                        "key": "provincia_pf",
+                        "queryFunct": "provincia",
                         "label": "Provincia",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.67,
+                        "size": 1.27,
                         "translate": "RESOURCES.provincia_anagrafiche_vr"
                     },
                     {
                         "autoGenerate": false,
                         "format": {
-                            "dataType": "text",
-                            "viewType": "input"
+                            "comboQuery": "select codice_azienda as id, codice_azienda as name from entrasp.aziende where codice_azienda in(€global_user_companies€)",
+                            "options": [],
+                            "viewType": "combobox",
+                            "dataType": "text"
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "annotazioni_interne",
-                        "label": "Note Interne",
+                        "key": "codice_azienda_corrispondente",
+                        "label": "Azienda corrispondente",
+                        "queryFunct": "SELECT codice_azienda_corrispondente from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "newLine": true,
-                        "size": 4.67,
-                        "readOnly": false,
-                        "translate": "RESOURCES.note_interne_anagrafiche_vr"
+                        "readOnly": true,
+                        "size": 1.33,
+                        "translate": "RESOURCES.azienda_corrispondente_anagrafiche_vr"
                     },
                     {
                         "format": {
@@ -1144,13 +1121,17 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["P"]
+                    "values": [
+                        "P"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["P"]
+                    "values": [
+                        "P"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1174,7 +1155,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "dati_generali",
-                        "label": "Dati Generali",
+                        "label": "Dati Anagrafici",
                         "style": {
                             "background_color": "#2B679D",
                             "font_color": "white",
@@ -1184,8 +1165,7 @@
                         },
                         "newLine": true,
                         "readOnly": true,
-                        "sameOrigin": false,
-                        "translate": "RESOURCES.dati_generali_anagrafiche_vr"
+                        "sameOrigin": false
                     },
                     {
                         "autoGenerate": false,
@@ -1195,7 +1175,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "ragione_sociale",
+                        "key": "ragione_sociale_en",
+                        "queryFunct": "ragione_sociale",
                         "label": "Ragione sociale",
                         "size": 3.33,
                         "newLine": false,
@@ -1230,36 +1211,13 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "input",
-                            "validations": [
-                                {
-                                    "message": "Codice obbligatorio",
-                                    "name": "required",
-                                    "validator": "Validators.required",
-                                    "translate": "RESOURCES.codice_obbligatorio_anagrafiche_vr"
-                                }
-                            ]
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "codice",
-                        "label": "Codice",
-                        "newLine": false,
-                        "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.codice_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
                             "viewType": "input"
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "indirizzo",
+                        "key": "indirizzo_en",
                         "label": "Indirizzo",
+                        "queryFunct": "indirizzo",
                         "newLine": false,
                         "readOnly": false,
                         "size": 3.33,
@@ -1268,79 +1226,17 @@
                     {
                         "autoGenerate": false,
                         "format": {
-                            "dataType": "date",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "nascita_data",
-                        "label": "Data di inizio attività",
-                        "newLine": true,
-                        "size": 3.34,
-                        "queryFunct": "SELECT nascita_data from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "translate": "RESOURCES.data_di_inizio_attivit_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
                             "dataType": "text",
                             "viewType": "input"
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "partita_iva",
-                        "label": "Partita IVA",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.partita_iva_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "comune",
-                        "label": "Comune residenza",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3.33
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input",
-                            "value": null
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "email_sender",
-                        "label": "Email",
-                        "newLine": true,
-                        "queryFunct": "SELECT email_sender from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "size": 3.34,
-                        "translate": "RESOURCES.email_anagrafiche_vr"
-                    },
-                    
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "cap",
+                        "key": "cap_en",
                         "label": "CAP",
+                        "queryFunct": "cap",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.6,
+                        "size": 1.0,
                         "translate": "RESOURCES.cap_anagrafiche_vr"
                     },
                     {
@@ -1357,8 +1253,23 @@
                         "label": "Cod. Prov.",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.67,
+                        "size": 1,
                         "translate": "RESOURCES.cod_prov_anagrafiche_vr"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "comune_en",
+                        "queryFunct": "comune",
+                        "label": "Comune",
+                        "newLine": false,
+                        "readOnly": false,
+                        "size": 2.5
                     },
                     {
                         "autoGenerate": false,
@@ -1377,27 +1288,13 @@
                         },
                         "isHidden": "$Q{is_hidden_provincia}",
                         "isPrimary": false,
-                        "key": "provincia",
+                        "key": "provincia_en",
+                        "queryFunct": "provincia",
                         "label": "Provincia",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.67,
+                        "size": 1,
                         "translate": "RESOURCES.provincia_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "annotazioni_interne",
-                        "label": "Note Interne",
-                        "newLine": true,
-                        "size": 3.34,
-                        "readOnly": false,
-                        "translate": "RESOURCES.note_interne_anagrafiche_vr"
                     }
                 ]
             },
@@ -1406,13 +1303,17 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["E"]
+                    "values": [
+                        "E"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["E"]
+                    "values": [
+                        "E"
+                    ]
                 }
             ],
             "isHidden": false,
@@ -1456,7 +1357,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "ragione_sociale",
+                        "key": "ragione_sociale_coin",
+                        "queryFunct": "ragione_sociale",
                         "label": "Cointestatari",
                         "size": 3.33,
                         "newLine": false,
@@ -1482,11 +1384,27 @@
                         "isPrimary": false,
                         "key": "abbreviazione",
                         "label": "Abbreviazione",
-                        "size": 3.33,
-                        "newLine": true,
+                        "size": 2,
+                        "newLine": false,
                         "readOnly": false,
                         "translate": "RESOURCES.abbreviazione_anagrafiche_vr"
                     },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "nascita_data",
+                        "label": "Data di inizio attività",
+                        "newLine": true,
+                        "size": 3.34,
+                        "queryFunct": "SELECT nascita_data from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false,
+                        "translate": "RESOURCES.data_di_inizio_attivit_anagrafiche_vr"
+                    },             
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1519,7 +1437,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "indirizzo",
+                        "key": "indirizzo_coin",
+                        "queryFunct": "indirizzo",
                         "label": "Indirizzo",
                         "newLine": false,
                         "readOnly": false,
@@ -1550,56 +1469,9 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "partita_iva",
-                        "label": "Partita IVA",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.partita_iva_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "comune",
-                        "label": "Località",
-                        "newLine": false,
-                        "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.localit_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input",
-                            "value": null
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "email_sender",
-                        "label": "Email",
-                        "newLine": true,
-                        "queryFunct": "SELECT email_sender from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "size": 3.34,
-                        "translate": "RESOURCES.email_anagrafiche_vr"
-                    },
-                    
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "cap",
+                        "key": "cap_coin",
                         "label": "CAP",
+                        "queryFunct": "cap",
                         "newLine": false,
                         "readOnly": false,
                         "size": 1.6,
@@ -1622,7 +1494,8 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "provincia",
+                        "key": "provincia_coin",
+                        "queryFunct": "provincia",
                         "label": "Provincia",
                         "newLine": false,
                         "readOnly": false,
@@ -1637,12 +1510,30 @@
                         },
                         "isHidden": false,
                         "isPrimary": false,
-                        "key": "annotazioni_interne",
-                        "label": "Note Interne",
-                        "newLine": true,
-                        "size": 3.34,
+                        "key": "comune_coin",
+                        "queryFunct": "comune",
+                        "label": "Località",
+                        "newLine": false,
                         "readOnly": false,
-                        "translate": "RESOURCES.note_interne_anagrafiche_vr"
+                        "size": 3.33,
+                        "translate": "RESOURCES.localit_anagrafiche_vr"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input",
+                            "value": null
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "email_sender",
+                        "label": "Email",
+                        "newLine": true,
+                        "queryFunct": "SELECT email_sender from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false,
+                        "size": 3.34,
+                        "translate": "RESOURCES.email_anagrafiche_vr"
                     }
                 ]
             },
@@ -1651,13 +1542,17 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1848,6 +1743,7 @@
                         "label": "Codice LEI",
                         "queryFunct": "SELECT codice_lei from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
                         "newLine": false,
+                        "size": 1,
                         "readOnly": false,
                         "translate": "RESOURCES.codice_lei_anagrafiche_vr"
                     },
@@ -1863,7 +1759,7 @@
                         "label": "Cod.com.resid",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 0.8
+                        "size": 1
                     },
                     {
                         "autoGenerate": false,
@@ -1884,11 +1780,15 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "input"
+                            "viewType": "combobox",
+                            "options": [],
+                            "comboQuery": "SELECT cod_banca_italia AS id, concat(coalesce(cod_banca_italia::varchar,codice_nazione), ' - ' ,descrizione) AS name FROM entrasp.nazioni where cod_banca_italia is not null order by descrizione asc"
                         },
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "codice_nazione",
+                        "queryFunct": "codice_nazione",
+                        "tooltip": "Nazione di residenza dell'ente/persona fisica",
                         "label": "Cod.nazione",
                         "newLine": true,
                         "readOnly": false,
@@ -1915,13 +1815,17 @@
                                 "actionType": "hide",
                                 "eventName": "combo_tipo_soggetto",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             },
                             {
                                 "actionType": "hide",
                                 "eventName": "tipo_soggetto_load",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             }
                         ],
                         "translate": "RESOURCES.azienda_fatturante_di_default_anagrafiche_vr"
@@ -1945,13 +1849,17 @@
                                 "actionType": "hide",
                                 "eventName": "combo_tipo_soggetto",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             },
                             {
                                 "actionType": "hide",
                                 "eventName": "tipo_soggetto_load",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             }
                         ],
                         "translate": "RESOURCES.profilo_di_rischio_aml_anagrafiche_vr"
@@ -2330,17 +2238,6 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "partita_iva",
-            "width": "10%",
-            "label": "P.IVA",
-            "translate": "RESOURCES.piva_anagrafiche_vr"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
             "key": "codice_fiscale",
             "width": "10%",
             "label": "Cod. Fiscale",
@@ -2538,7 +2435,7 @@
             "label": "Flussi Informativi Associati",
             "renderingOrder": 1,
             "translate": "RESOURCES.flussi_informativi_associati_information_flows_sub_of_clientela"
-        },       
+        },
         {
             "entryKey": "anagrafiche_vr_attachments",
             "isHidden": false,
@@ -2996,6 +2893,10 @@
             {
                 "label": "Elenco parti correlate",
                 "queryString": "SELECT DISTINCT t1.* from (select ENTRASP.ANAGRAFICHE_COGNNOME(AN.CODICE_PART, AN.ID_ANAGRAFICA) AS SOGGETTO, ENTRASP.ANAGRAFICHE_VR_CF(AN.CODICE_PART, AN.ID_ANAGRAFICA) AS CF, ENTRASP.ANAGRAFICHE_VR_PIVA(AN.CODICE_PART, AN.ID_ANAGRAFICA) AS PIVA, ENTRASP.ANAGRAFICHE_COGNNOME(AN2.CODICE_PART, AN2.ID_ANAGRAFICA) AS SOGGETTO_COLLEGATO, ENTRASP.ANAGRAFICHE_VR_CF(AN2.CODICE_PART, AN2.ID_ANAGRAFICA) AS CF2, ENTRASP.ANAGRAFICHE_VR_PIVA(AN2.CODICE_PART, AN2.ID_ANAGRAFICA) AS PIVA2, RL.DESCRIZIONE AS RUOLO FROM ENTRASP.ANAGRAFICHE_ID AN inner JOIN ENTRASP.CONNESSIONI_ANAGRAFICHE CA ON AN.CODICE_PART = CA.CODICE_PART AND AN.ID_ANAGRAFICA = CA.ID_ANAGRAFICA inner JOIN ENTRASP.ANAGRAFICHE_ID AN2 ON CA.CODICE_PART = AN2.CODICE_PART AND CA.ID_ANAGRAFICA_CONN = AN2.ID_ANAGRAFICA INNER JOIN ENTRASP.RUOLI RL ON CA.CODICE_RUOLO = RL.CODICE_RUOLO WHERE CA.CODICE_AZIENDA = $codice_azienda$ AND (ENTRASP.SOGGETTI_COLLEGATI(AN.CODICE_PART, AN.ID_ANAGRAFICA) != 'Nessun conflitto' or ENTRASP.SOGGETTI_COLLEGATI(AN2.CODICE_PART, AN2.ID_ANAGRAFICA) != 'Nessun conflitto') union select ENTRASP.ANAGRAFICHE_COGNNOME(AN3.CODICE_PART, AN3.ID_ANAGRAFICA) AS SOGGETTO, ENTRASP.ANAGRAFICHE_VR_CF(AN3.CODICE_PART, AN3.ID_ANAGRAFICA) AS CF, ENTRASP.ANAGRAFICHE_VR_PIVA(AN3.CODICE_PART, AN3.ID_ANAGRAFICA) AS PIVA, ENTRASP.SOGGETTI_COLLEGATI(AN3.CODICE_PART, AN3.ID_ANAGRAFICA) AS SOGGETTO_COLLEGATO, '' AS CF2, '' AS PIVA2, ENTRASP.SOGGETTI_COLLEGATI(AN3.CODICE_PART, AN3.ID_ANAGRAFICA) AS RUOLO from entrasp.anagrafiche_id an3 where ENTRASP.SOGGETTI_COLLEGATI(AN3.CODICE_PART, AN3.ID_ANAGRAFICA) not ilike 'Nessun conflitto%' and an3.codice_part=$codice_part$ ) t1 order by soggetto"
+            },
+            {
+                "label": "Doumenti Identificativi Persone fisiche",
+                "queryString": "SELECT DISTINCT avr.codice_part, avr.id_anagrafica,  (ai.nome || ' ' || ai.cognome) AS soggetto, (SELECT descrizione FROM entrasp.argomenti WHERE argomenti.id_argomento = avr.id_argomento_tipo_documento) AS tipo_documento, avr.numero_documento, avr.rilasciato_da, avr.data_rilascio_documento, avr.data_scadenza_documento FROM entrasp.anagrafiche_id ai INNER JOIN entrasp.anagrafiche_vr avr USING (codice_part, id_anagrafica) WHERE avr.codice_part = $codice_part$ AND tipo_soggetto = 'P' and avr.prog_vr=entrasp.anagrafiche_vr_max(avr.codice_part, avr.id_anagrafica)"
             }
         ],
         "formQueries": [
