@@ -640,7 +640,7 @@
             "label": "Partita IVA",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -669,8 +669,57 @@
             "label": "Codice fiscale",
             "newLine": false,
             "readOnly": false,
-            "size": 1.5,
+            "size": 2,
             "translate": "RESOURCES.codice_fiscale_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input",
+                "value": null
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "email_sender",
+            "label": "Email",
+            "newLine": false,
+            "queryFunct": "SELECT email_sender from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.email_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "user",
+            "label": "user",
+            "size": 2,
+            "newLine": false,
+            "queryFunct": "SELECT coalesce(dynamo_user, email_sender) as user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": false,
+            "translate": "RESOURCES.user_anagrafiche_vr"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "dynamo_user",
+            "label": "Dynamo user",
+            "newLine": true,
+            "queryFunct": "SELECT dynamo_user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+            "readOnly": true,
+            "size": 2,
+            "translate": "RESOURCES.dynamo_user_anagrafiche_vr"
         },
         {
             "autoGenerate": false,
@@ -699,7 +748,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "dati_generali",
-                        "label": "Dati Generali",
+                        "label": "Dati Anagrafici",
                         "style": {
                             "background_color": "#2B679D",
                             "font_color": "white",
@@ -710,8 +759,7 @@
                         "newLine": true,
                         "readOnly": true,
                         "sameOrigin": false,
-                        "size": 10,
-                        "translate": "RESOURCES.dati_generali_anagrafiche_vr"
+                        "size": 10
                     },
                     {
                         "autoGenerate": false,
@@ -912,59 +960,10 @@
                         "key": "codice_azienda_corrispondente",
                         "label": "Azienda corrispondente",
                         "queryFunct": "SELECT codice_azienda_corrispondente from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "newLine": false,
+                        "newLine": true,
                         "readOnly": true,
                         "size": 1.33,
                         "translate": "RESOURCES.azienda_corrispondente_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input",
-                            "value": null
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "email_sender",
-                        "label": "Email",
-                        "newLine": false,
-                        "queryFunct": "SELECT email_sender from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "size": 1.9,
-                        "translate": "RESOURCES.email_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": true,
-                        "isPrimary": false,
-                        "key": "user",
-                        "label": "user",
-                        "size": 1.5,
-                        "newLine": false,
-                        "queryFunct": "SELECT coalesce(dynamo_user, email_sender) as user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "translate": "RESOURCES.user_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "dynamo_user",
-                        "label": "Dynamo user",
-                        "newLine": true,
-                        "queryFunct": "SELECT dynamo_user from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": true,
-                        "size": 1.5,
-                        "translate": "RESOURCES.dynamo_user_anagrafiche_vr"
                     },
                     {
                         "format": {
@@ -1156,7 +1155,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "dati_generali",
-                        "label": "Dati Generali",
+                        "label": "Dati Anagrafici",
                         "style": {
                             "background_color": "#2B679D",
                             "font_color": "white",
@@ -1166,8 +1165,7 @@
                         },
                         "newLine": true,
                         "readOnly": true,
-                        "sameOrigin": false,
-                        "translate": "RESOURCES.dati_generali_anagrafiche_vr"
+                        "sameOrigin": false
                     },
                     {
                         "autoGenerate": false,
@@ -1213,30 +1211,6 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "input",
-                            "validations": [
-                                {
-                                    "message": "Codice obbligatorio",
-                                    "name": "required",
-                                    "validator": "Validators.required",
-                                    "translate": "RESOURCES.codice_obbligatorio_anagrafiche_vr"
-                                }
-                            ]
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "codice",
-                        "label": "Codice",
-                        "newLine": false,
-                        "queryFunct": "SELECT codice from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "size": 3.33,
-                        "translate": "RESOURCES.codice_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
                             "viewType": "input"
                         },
                         "isHidden": false,
@@ -1252,22 +1226,6 @@
                     {
                         "autoGenerate": false,
                         "format": {
-                            "dataType": "date",
-                            "viewType": "input"
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "nascita_data",
-                        "label": "Data di inizio attività",
-                        "newLine": true,
-                        "size": 3.34,
-                        "queryFunct": "SELECT nascita_data from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "translate": "RESOURCES.data_di_inizio_attivit_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
                             "dataType": "text",
                             "viewType": "input"
                         },
@@ -1278,7 +1236,7 @@
                         "queryFunct": "cap",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.6,
+                        "size": 1.0,
                         "translate": "RESOURCES.cap_anagrafiche_vr"
                     },
                     {
@@ -1295,7 +1253,7 @@
                         "label": "Cod. Prov.",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.67,
+                        "size": 1,
                         "translate": "RESOURCES.cod_prov_anagrafiche_vr"
                     },
                     {
@@ -1311,7 +1269,7 @@
                         "label": "Comune",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 3.33
+                        "size": 2.5
                     },
                     {
                         "autoGenerate": false,
@@ -1335,25 +1293,8 @@
                         "label": "Provincia",
                         "newLine": false,
                         "readOnly": false,
-                        "size": 1.27,
+                        "size": 1,
                         "translate": "RESOURCES.provincia_anagrafiche_vr"
-                    },
-                    {
-                        "autoGenerate": false,
-                        "format": {
-                            "dataType": "text",
-                            "viewType": "input",
-                            "value": null
-                        },
-                        "isHidden": false,
-                        "isPrimary": false,
-                        "key": "email_sender",
-                        "label": "Email",
-                        "newLine": true,
-                        "queryFunct": "SELECT email_sender from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
-                        "readOnly": false,
-                        "size": 3.34,
-                        "translate": "RESOURCES.email_anagrafiche_vr"
                     }
                 ]
             },
@@ -1443,11 +1384,27 @@
                         "isPrimary": false,
                         "key": "abbreviazione",
                         "label": "Abbreviazione",
-                        "size": 3.33,
-                        "newLine": true,
+                        "size": 2,
+                        "newLine": false,
                         "readOnly": false,
                         "translate": "RESOURCES.abbreviazione_anagrafiche_vr"
                     },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "date",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "nascita_data",
+                        "label": "Data di inizio attività",
+                        "newLine": true,
+                        "size": 3.34,
+                        "queryFunct": "SELECT nascita_data from entrasp.anagrafiche_id WHERE codice_part=$codice_part$ AND id_anagrafica=$id_anagrafica$",
+                        "readOnly": false,
+                        "translate": "RESOURCES.data_di_inizio_attivit_anagrafiche_vr"
+                    },             
                     {
                         "autoGenerate": false,
                         "format": {
