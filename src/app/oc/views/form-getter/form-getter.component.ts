@@ -2144,59 +2144,66 @@ export class FormGetterComponent
                                         true,
                                     )
                                     .subscribe((result) => {
-                                        if (result.result === "OK") {
-                                            _this._console.table(result);
-                                            if (result.data) {
-                                                if (Array.isArray(result.data)) {
-                                                    // I am hoping that the result contains keys for the next event
-                                                    value.data = {};
-                                                    value.data["keys"] =
-                                                        result.data[0];
-                                                } else {
-                                                    value.data = result.data;
+                                        if(result)
+                                        {
+                                            _this._toastService.hideLoadingToast(loadingToast);
+                                            if (result.result === "OK") {
+                                                _this._console.table(result);
+                                                if (result.data) {
+                                                    if (Array.isArray(result.data)) {
+                                                        // I am hoping that the result contains keys for the next event
+                                                        value.data = {};
+                                                        value.data["keys"] =
+                                                            result.data[0];
+                                                    } else {
+                                                        value.data = result.data;
+                                                    }
                                                 }
-                                            }
 
-                                            if (event.successMessage) {
-                                                _this._toastService.showSuccessToast(
-                                                    event.successMessage,
-                                                );
+                                                if (event.successMessage) {
+                                                    _this._toastService.showSuccessToast(
+                                                        event.successMessage,
+                                                    );
+                                                } else {
+                                                    _this._toastService.showSuccessToast(
+                                                        "Success!",
+                                                    );
+                                                }
+                                                if (
+                                                    event.outputEventWhenComplete !=
+                                                    null
+                                                ) {
+                                                    _this.pubSubService.publishEvent(
+                                                        event.outputEventWhenComplete,
+                                                        value,
+                                                    );
+                                                }
                                             } else {
-                                                _this._toastService.showSuccessToast(
-                                                    "Success!",
+                                                _this._console.table(result);
+                                                _this._toastService.showErrorToast(
+                                                    "Error ",
+                                                    result.reason.detail == undefined
+                                                        ? ""
+                                                        : JSON.stringify(
+                                                            result.reason.detail,
+                                                        ) +
+                                                            (result.reason.hint ==
+                                                            undefined
+                                                                ? ""
+                                                                : JSON.stringify(
+                                                                        result.reason
+                                                                            .hint,
+                                                                    )),
+                                                    5000,
+                                                    true,
                                                 );
                                             }
-                                            if (
-                                                event.outputEventWhenComplete !=
-                                                null
-                                            ) {
-                                                _this.pubSubService.publishEvent(
-                                                    event.outputEventWhenComplete,
-                                                    value,
-                                                );
-                                            }
-                                        } else {
-                                            _this._console.table(result);
-                                            _this._toastService.showErrorToast(
-                                                "Error ",
-                                                result.reason.detail == undefined
-                                                    ? ""
-                                                    : JSON.stringify(
-                                                        result.reason.detail,
-                                                    ) +
-                                                        (result.reason.hint ==
-                                                        undefined
-                                                            ? ""
-                                                            : JSON.stringify(
-                                                                    result.reason
-                                                                        .hint,
-                                                                )),
-                                                5000,
-                                                true,
-                                            );
+                                        } else
+                                        {
+                                            _this._toastService.hideLoadingToast(loadingToast);
+                                            _this._toastService.showErrorToast("Error");
                                         }
-
-                                        _this._toastService.hideLoadingToast(loadingToast);
+                                    
                                     }, 
                                     error => {
                                         _this._toastService.hideLoadingToast(loadingToast);
