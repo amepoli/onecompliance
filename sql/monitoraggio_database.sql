@@ -13,9 +13,6 @@ ORDER BY table_schema, table_name, ordinal_position;
 -- Query 3: Estrae statistiche sulle tabelle utente negli schemi 'entrasp' e 'imports'.
 SELECT 
 		current_date AS data_estrazione,
-		pg_size_pretty(pg_total_relation_size(relid)) AS total_size,
-    pg_size_pretty(pg_table_size(relid)) AS table_size,
-    pg_size_pretty(pg_indexes_size(relid)) AS indexes_size,
 		* 
 FROM 
     pg_stat_user_tables
@@ -58,23 +55,18 @@ ORDER BY pg_total_relation_size(relid) DESC;
 SELECT 
     *
 FROM pg_stat_user_functions
+WHERE schemaname in ('entrasp','imports') 
 ORDER BY total_time DESC;
 
 -- Query 8: Estrae statistiche sulle transazioni
 SELECT 
-    pid,
-    usename,
-    state,
     now() - xact_start AS transaction_age,
-    query,
 		*
 FROM pg_stat_activity
 ORDER BY transaction_age DESC;
 
 -- Query 9: Estrae statistiche sulle connessioni
 SELECT 
-    datname,
-    numbackends AS active_connections,
     max_conn,
     (numbackends * 100.0 / max_conn) AS utilization_percent,
 		*
