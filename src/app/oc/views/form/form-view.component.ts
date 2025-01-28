@@ -192,7 +192,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
                 inputEvents: tabKey.inputEvents,
                 hidden: (tabKey.isHidden != null) ? tabKey.isHidden : false,
                 showByFormKeyCondition: (tabKey.showByFormKeyCondition != null) ? tabKey.showByFormKeyCondition : undefined,
-                renderingOrder: tabKey.renderingOrder ?? 0
+                renderingOrder: tabKey.renderingOrder ?? 0,
+                topViewFullValueSet: keys
             };
             tabKey.keys.forEach(key => {
                 if (keys[key.parent]) {

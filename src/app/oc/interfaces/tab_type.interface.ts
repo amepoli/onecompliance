@@ -12,4 +12,5 @@ export interface TabType {
     inputEvents: { eventName: string, actionType: string, condition: string, values: string[] }[];
     keys: {};
     renderingOrder: number;
+    topViewFullValueSet: object;
 }

@@ -1,8 +1,8 @@
 import { Component, QueryList, ViewChildren, Input, OnChanges, SimpleChanges, Output, EventEmitter } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { Location } from "@angular/common";
-import { DomandaRispostaElement, DomandeRisposteParams, FieldConfig, FormViewKey, Item } from "../../interfaces";
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, EmailService, FormsService, HelperService, ToastService } from "../../services";
+import { DomandaRispostaElement, DomandeRisposteParams, FieldConfig, FormViewKey, Item, TabType } from "../../interfaces";
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, EmailService, FormsService, HelperService, PubSubService, ToastService } from "../../services";
 import { ComboboxComponent } from "app/oc/dynamic-forms/components/combobox/combobox.component";
 import { DomandaRispostaComponent } from "./domanda-risposta/domanda-risposta.component";
 import { MatDialog } from "@angular/material/dialog";
@@ -22,7 +22,7 @@ export class DomandeRisposteComponent implements OnChanges
 {
     @ViewChildren(DomandaRispostaComponent)
     formArray: QueryList<DomandaRispostaComponent>;
-
+    @Input() tab: TabType;
     @Input() domandeRisposteParams: DomandeRisposteParams = {
         keys: {},
         entryName: "",
@@ -65,7 +65,8 @@ export class DomandeRisposteComponent implements OnChanges
         private authService: AuthService,
         private _toastService: ToastService,
         private cutomDialog: MatDialog,
-        private _emailService: EmailService
+        private _emailService: EmailService,
+        private pubSubService: PubSubService,
     ) {
     }
 
@@ -87,7 +88,9 @@ export class DomandeRisposteComponent implements OnChanges
                         //  variabili restituite: in caso di modifiche post operazioni, inserire qui (es.: decodifica delle note eseguita dopo le elaborazioni di note)
                         ...x,
                         codice_compito: x.compito? x.compito.codice_compito: null,
-                        note_risposta: _this.decodeNotes(x.note_risposta)
+                        note_risposta: _this.decodeNotes(x.note_risposta),
+                        // Sample Event
+                        // eventsOnSave: ['risp_non_applicabile']
                     }
                 ));
                 _this.processData(_this.data);
@@ -1078,12 +1081,14 @@ export class DomandeRisposteComponent implements OnChanges
                         }
                         else {
                             const targetForm: UntypedFormGroup = _this.getTargetFormByOrdinamento(_this.data[destElIndex].ordinamento);
-
-                            let values = _this._formsService.processFormValues(targetForm.value);
-                            id_risposta_prev = values.risposte_previste;
-
-                            if(destElType === 'checkboxgroup') {
-                                id_risposta_prev = id_risposta_prev.replace("ARRAY[", "").replace("]", "").split(',').map(x => parseInt(x));
+                            if(targetForm && targetForm.value)
+                            {
+                                let values = _this._formsService.processFormValues(targetForm.value);
+                                id_risposta_prev = values.risposte_previste;
+    
+                                if(destElType === 'checkboxgroup') {
+                                    id_risposta_prev = id_risposta_prev.replace("ARRAY[", "").replace("]", "").split(',').map(x => parseInt(x));
+                                }
                             }
                         }
 
@@ -1508,6 +1513,22 @@ export class DomandeRisposteComponent implements OnChanges
         });
     }
 
+    performEvents () {
+        const _this = this;
+        if(_this.data && _this.data.length > 0 && _this.data[0]["eventsOnSave"]){
+            _this.data[0]["eventsOnSave"].forEach((event: string) => {
+                _this.pubSubService.publishEvent(event, {
+                    showEventProcessing: true,
+                    origin: "",
+                    index: 0,
+                    valueSet: _this.tab.topViewFullValueSet,
+                    data: "", 
+                    type: "domande-risposte",
+                });
+            });
+        }
+    }
+
     reload() {
         this.loadData();
     }
@@ -1584,6 +1605,7 @@ export class DomandeRisposteComponent implements OnChanges
             result => {
                 if(result.result == "OK") {
                     _this._toastService.showInfoToast('Saved!');
+                    _this.performEvents();
                     _this.processConditions(false);
                 }
                 else {
