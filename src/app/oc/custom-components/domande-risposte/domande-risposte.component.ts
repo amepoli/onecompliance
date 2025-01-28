@@ -1078,12 +1078,14 @@ export class DomandeRisposteComponent implements OnChanges
                         }
                         else {
                             const targetForm: UntypedFormGroup = _this.getTargetFormByOrdinamento(_this.data[destElIndex].ordinamento);
-
-                            let values = _this._formsService.processFormValues(targetForm.value);
-                            id_risposta_prev = values.risposte_previste;
-
-                            if(destElType === 'checkboxgroup') {
-                                id_risposta_prev = id_risposta_prev.replace("ARRAY[", "").replace("]", "").split(',').map(x => parseInt(x));
+                            if(targetForm && targetForm.value)
+                            {
+                                let values = _this._formsService.processFormValues(targetForm.value);
+                                id_risposta_prev = values.risposte_previste;
+    
+                                if(destElType === 'checkboxgroup') {
+                                    id_risposta_prev = id_risposta_prev.replace("ARRAY[", "").replace("]", "").split(',').map(x => parseInt(x));
+                                }
                             }
                         }
 
