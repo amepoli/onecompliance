@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnChanges, Input, Output, EventEmitter, OnInit, HostListener, ChangeDetectorRef, ElementRef, AfterViewInit, OnDestroy, SimpleChanges } from '@angular/core';
 import { FormGetterComponent } from '../form-getter/form-getter.component';
 import { Subscription } from 'rxjs';
-import { FormGetterParams, FormTableViewParams, MessageElement, MessageView } from 'app/oc/interfaces';
+import { FormGetterParams, FormTableViewParams, MessageElement, MessageView, TabType } from 'app/oc/interfaces';
 import { AuthService, BackendService, ConsoleLoggerService, DialogService, MessagesService, NavigationService, ScrollService, ToastService } from 'app/oc/services';
 import { memoize } from 'app/oc/decorators/memoize';
 
@@ -22,6 +22,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   @Input() tableData: FormTableViewParams;
   @Input() SaveData: boolean;
+  @Input() tab: TabType;
   @Output() sendEvent = new EventEmitter<any>();
   @Output() onReload = new EventEmitter<any>();
 
