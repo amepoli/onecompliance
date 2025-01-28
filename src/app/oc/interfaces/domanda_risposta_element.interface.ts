@@ -33,4 +33,5 @@ export interface DomandaRispostaElement {
     hidePunteggio?: boolean;
     hideDomandeActions?: boolean;
     hidePeso?: boolean;
+    eventsOnSave?: string[];
 }

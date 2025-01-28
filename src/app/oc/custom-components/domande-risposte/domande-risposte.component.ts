@@ -1518,7 +1518,7 @@ export class DomandeRisposteComponent implements OnChanges
         if(_this.data && _this.data.length > 0 && _this.data[0]["eventsOnSave"]){
             _this.data[0]["eventsOnSave"].forEach((event: string) => {
                 _this.pubSubService.publishEvent(event, {
-                    showEventProcessing: true,
+                    showEventProcessing: false,
                     origin: "",
                     index: 0,
                     valueSet: _this.tab.topViewFullValueSet,
