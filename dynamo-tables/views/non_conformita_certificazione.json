@@ -350,7 +350,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "id_argomento_priorita",
-            "size": 2,
+            "size": 3.3,
             "label": "Priorità",
             "readOnly": false,
             "newLine": false,
@@ -408,7 +408,7 @@
             "label": "Auditor",
             "newLine": false,
             "readOnly": false,
-            "size": 2.5
+            "size": 3.3
         },
         {
             "autoGenerate": false,
@@ -423,7 +423,7 @@
             "label": "Centro Gestionale Auditor",
             "newLine": false,
             "readOnly": false,
-            "size": 2.75
+            "size": 3.3
         },
         {
             "autoGenerate": false,
@@ -479,10 +479,10 @@
             "label": "Cliente",
             "newLine": false,
             "readOnly": false,
-            "size": 3.25
+            "size": 3.3
         },
         {
-            "autoGenerate": true,
+            "autoGenerate": false,
             "format": {
                 "dataType": "text",
                 "viewType": "input"
@@ -508,8 +508,73 @@
             "label": "Data Scadenza",
             "newLine": false,
             "readOnly": false,
-            "size": 1.25,
+            "size": 2.2,
             "translate": "RESOURCES.data_scadenza_compiti"
+        },
+
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52522;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_articolo",
+            "size": 2.2,
+            "label": "Punto Norma",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52266;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_tipo_difformita",
+            "size": 2.2,
+            "label": "Norma",
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "format": {
+                "dataType": "text",
+                "viewType": "label"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "risoluzione_rilievo",
+            "label": "Risoluzione Rilievo",
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white",
+                "font_size": "1.3em",
+                "font_style": "italic",
+                "font_weight": "400"
+            },
+            "newLine": true,
+            "readOnly": true,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trattamento",
+            "label": "Modalità verifica ed efficacia dell'azione intrapresa",
+            "newLine": false,
+            "readOnly": false,
+            "size": 3.3
         },
         {
             "autoGenerate": false,
@@ -523,70 +588,23 @@
             "label": "Data Chiusura",
             "newLine": false,
             "readOnly": false,
-            "size": 1.25,
+            "size": 3.3,
             "translate": "RESOURCES.data_chiusura_compiti"
         },
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6734;",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "id_argomento_tipo_articolo",
-            "size": 1.2,
-            "label": "Tipo Articolo",
-            "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.tipo_articolo_compiti"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52266;",
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$);",
                 "options": [],
                 "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_argomento_tipo_difformita",
-            "size": 1.8,
-            "label": "Norma",
-            "readOnly": false,
-            "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "textarea"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "trattamento",
-            "label": "Trattamento -azione intrapresa per risolvere il problema o ridurne gli effetti",
+            "key": "id_risorsa_assegnata",
+            "label": "Valutatore",
             "newLine": false,
             "readOnly": false,
-            "size": 5,
-            "translate": "RESOURCES.trattamento_azione_intrapresa_per_risolvere_il_problema_o_ridurne_gli_effetti_compiti"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "textarea",
-                "value": null
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "analisi_cause",
-            "label": "Analisi Cause",
-            "newLine": true,
-            "readOnly": false,
-            "size": 5,
-            "translate": "RESOURCES.analisi_cause_compiti"
+            "size": 3.3
         },
         {
             "autoGenerate": false,
