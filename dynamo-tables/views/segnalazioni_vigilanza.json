@@ -14,6 +14,14 @@
         "label_tipo_cartella_table": "Tipo Segnalazione",
         "label_descrizione_cartella_table": "Descrizione Segnalazione"
     },
+    "exportQueries": {
+        "formQueries": [
+            {
+                "label": "Voci combobox",
+                "queryString": "SELECT DISTINCT ATS.ATTRIBUTO, ATS.NOME_ATTRIBUTO, ATS.ID_ARGOMENTO, AR.DESCRIZIONE, AR.DESCRIZIONE_BREVE, ARAR.ID_ARGOMENTO_FATHER FROM ENTRASP.ARGOMENTI AR INNER JOIN ENTRASP.ARGOMENTI_ARGOMENTI ARAR ON AR.ID_ARGOMENTO = ARAR.ID_ARGOMENTO_SON INNER JOIN ENTRASP.ATTRIBUTI_SEGNALAZIONI ATS ON ARAR.ID_ARGOMENTO_FATHER = ATS.ID_ARGOMENTO INNER JOIN ENTRASP.VOCI_SEGNALAZIONE VS ON ATS.ATTRIBUTO = VS.ATTRIBUTO WHERE ATS.SOTTOTIPO_VALORE = 'C' AND VS.ID_ARGOMENTO_SEGNALAZIONE = $id_argomento_tipo_allegato$ ORDER BY ARAR.ID_ARGOMENTO_FATHER"
+            }
+        ]
+    },
     "predefinedQueries": [
         {
             "operation": "selectTable",
