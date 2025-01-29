@@ -1352,18 +1352,17 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         
         _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
             response => {
-                _this._toastService.hideLoadingToast(loadingToast);
                 if (response.result == 'OK') {
                     if (selectedViewKey.buttonAction.onSuccessAction != null) {
                         _this.performOnSuccessAction(selectedViewKey, keys, response.response);
                     }
                 }
                 else {
+                    _this._toastService.hideLoadingToast(loadingToast);
                     _this._toastService.showErrorToast("Error");
                 }
             },
             error => {
-                _this._toastService.hideLoadingToast(loadingToast);
                 console.error(error);
             }
         )
@@ -1537,7 +1536,6 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     checkFattura(selectedViewKey: TableViewKey) {
         const _this = this;
-        let nUpdatedRows = 0;
 
         _this.dataSource.data.forEach(row => {
             let keys = {};
@@ -1548,8 +1546,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             } else {
                 keys = row;
             }
-            if (keys['stato_fattura'] !== 'sent' && keys['id_fattura_fic']) {
-                nUpdatedRows++;
+            if (//keys['stato_fattura'] !== 'sent' && 
+                keys['id_fattura_FIC'] !== null) {
                 const currentCompany = _this.authService.getCurrentCompany(_this.currentKeys);
 
                 _this.backendService.checkFattureInCloudInvoice(
@@ -1569,13 +1567,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                         console.error('Check Fattura Backend Error:', error);
                     }
                 );
-            } else { 
-                console.log('Fattura already sent or no id_fattura_FIC, ');
             }
         });
         // Reload table
         _this.loadData();
-        _this._toastService.showSuccessToast(`Numero di record aggiornati: ${nUpdatedRows}`);
     }
 
     getColumnLabels(viewKeys: TableViewKey[]) {
