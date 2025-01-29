@@ -1,0 +1,48 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "dialog_associa_tag_mdt",
+    "predefinedQueries": [
+        {
+            "operation": "isInsert",
+            "type": "main",
+            "queryString": "SELECT true as label"
+        },
+        {
+            "operation": "insert",
+            "queryString": "select entrasp.modelli_test_associa_tag_padre(codice_azienda, id_modello_test, $id_argomento_father$, $flag_cancella_tag$::boolean)  from entrasp.modelli_test_vr where codice_azienda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)",
+            "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(133, 349, 3425, 5328,5497,6154,6155,6156, 6157,6158,6721,6871,43448, 6837, 48418,4016,43670,49500,49507,49511, 48662,49061, 48976, 51499, 52266, 52481,52981,52967,3511 ) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father",
+            "label": "TAG Modelli",
+            "readOnly": false,
+            "newLine": false,
+            "size": 6.66
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "key": "flag_cancella_tag",
+            "label": "Cancella tag",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "translate": "RESOURCES.cancella_tag_dialog_domande"
+        }
+    ]
+}
