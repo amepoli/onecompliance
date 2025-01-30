@@ -304,9 +304,14 @@
                     },
                     {
                         "icon": "speaker_notes_off",
-                        "label": "Rispondi non applicabile",
+                        "label": "Rispondi non applicabile a tutto",
                         "outputEventName": "risp_non_applicabile",
                         "translate": "RESOURCES.rispondi_non_applicabile_sondaggi_somministrati"
+                    },
+                    {
+                        "icon": "thumb_up",
+                        "label": "Rispondi favorevole a tutto",
+                        "outputEventName": "risp_favorevole"
                     },
                     {
                         "icon": "sync",
@@ -409,17 +414,36 @@
                     "successMessage": "Inserite risposte non applicabili",
                     "values": [],
                     "message": {
-                        "messageText": "Rispondere 'Non Applicicabile' a tutte le domande che lo prevedono?",
+                        "messageText": "Rispondere 'Non Applicabile' a tutte le domande del questionario che lo prevedono?",
                         "actionOnNo": {
                             "actionType": "query",
                             "queryFunct": "select 1"
                         },
                         "actionOnYes": {
                             "actionType": "query",
-                            "queryFunct": "SELECT entrasp.verifica_non_applicabile($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$)"
+                            "queryFunct": "SELECT entrasp.controlli_unico_esito($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, giudiziounico=> array['Non Applicabile', 'Non applicabile'])"
                         }
                     },
-                    "outputEventWhenComplete": "sondaggi_somministrati_reload"
+                    "outputEventWhenComplete": "sezioni_reload"
+                },
+                {
+                    "eventName": "risp_favorevole",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "successMessage": "Inserite risposte favorevoli",
+                    "values": [],
+                    "message": {
+                        "messageText": "Rispondere 'Conforme/Favorevole' a tutte le domande del questionario?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "SELECT entrasp.controlli_unico_esito($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, giudiziounico=>array['Favorevole', 'Conforme'])"
+                        }
+                    },
+                    "outputEventWhenComplete": "sezioni_reload"
                 },
                 {
                     "eventName": "calc_val_indicatori",
