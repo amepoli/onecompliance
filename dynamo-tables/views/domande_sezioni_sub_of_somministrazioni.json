@@ -221,9 +221,13 @@
                 "menuOptions": [
                     {
                         "icon": "speaker_notes_off",
-                        "label": "Rispondi non applicabile",
-                        "outputEventName": "risp_non_applicabile",
-                        "translate": "RESOURCES.rispondi_non_applicabile_domande_sezioni_sub_of_somministrazioni"
+                        "label": "Rispondi non applicabile a tutto",
+                        "outputEventName": "risp_non_applicabile"
+                    },
+                    {
+                        "icon": "thumb_up",
+                        "label": "Rispondi favore/conforme a tutto",
+                        "outputEventName": "risp_favorevole"
                     }
                 ]
             },
@@ -242,7 +246,26 @@
                         },
                         "actionOnYes": {
                             "actionType": "query",
-                            "queryFunct": "SELECT entrasp.verifica_non_applicabile($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_sezione$)"
+                            "queryFunct": "SELECT entrasp.controlli_unico_esito($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_sezione$, array['Non Applicabile', 'Non applicabile'])"
+                        }
+                    },
+                    "outputEventWhenComplete": "sezioni_reload"
+                },
+                {
+                    "eventName": "risp_favorevole",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "successMessage": "Inserite risposte favorevoli",
+                    "values": [],
+                    "message": {
+                        "messageText": "Rispondere 'Conforme/Favorevole' a tutte le domande?",
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        },
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "SELECT entrasp.controlli_unico_esito($codice_azienda$, $id_modello_test$, $id_modello_test_vr$, $id_sondaggio$, $id_somministrazione$, $id_sezione$, array['Favorevole', 'Conforme'])"
                         }
                     },
                     "outputEventWhenComplete": "sezioni_reload"
