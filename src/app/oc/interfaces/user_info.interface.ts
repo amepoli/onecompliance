@@ -9,4 +9,5 @@ export interface UserInfo {
   onekyc: boolean;
   allowedToInvite: boolean;
   timereport: boolean;
+  formAutoSave?: boolean;
 }

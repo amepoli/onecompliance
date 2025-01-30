@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { UntypedFormGroup } from "@angular/forms";
 import { FieldConfig } from "app/oc/interfaces";
-import { PubSubService } from "app/oc/services";
+import { FormsService, PubSubService } from "app/oc/services";
 
 @Component({
     selector: "app-checkbox",
@@ -39,7 +39,8 @@ export class CheckboxComponent implements OnInit {
     group: UntypedFormGroup;
     readOnlyPage: boolean; // field.readonly overridden by page
 
-    constructor(private pubSubService: PubSubService) {}
+    constructor(private pubSubService: PubSubService,
+                private _formsService: FormsService) {}
     ngOnInit() {
         const _this = this;
 
@@ -88,5 +89,7 @@ export class CheckboxComponent implements OnInit {
                 });
             }
         }
+        
+        _this._formsService.performAutoSave();
     }
 }

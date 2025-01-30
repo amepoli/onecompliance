@@ -26,6 +26,7 @@ import { ToastService } from "./toast.service";
 import { DialogService } from "./dialog.service";
 import { AuthService } from "./auth.service";
 import { BackendService } from "./backend.service";
+import { PubSubService } from "./pubsub.service";
 
 @Injectable({
     providedIn: "root",
@@ -36,7 +37,9 @@ export class FormsService {
         private _toastService: ToastService,
         private _dialogService: DialogService,
         private authService: AuthService,
-        private backendService: BackendService
+        private backendService: BackendService,
+        private _pubSubService: PubSubService,
+        private _authService: AuthService,
     ) { }
 
     private componentsMapper = {
@@ -640,7 +643,6 @@ export class FormsService {
     }
 
 
-
     processFormValues(formValues: any) {
         for (const key in formValues) {
             if (formValues.hasOwnProperty(key)) {
@@ -686,5 +688,13 @@ export class FormsService {
             }
         }
         return formValues;
+    }
+
+    performAutoSave(){
+        const _this = this;
+        const formAutoSave = _this._authService.userinfo?.value?.formAutoSave ?? false;
+        if(formAutoSave){
+            _this._pubSubService.publishEvent("perform_form_auto_save", null)
+        }
     }
 }

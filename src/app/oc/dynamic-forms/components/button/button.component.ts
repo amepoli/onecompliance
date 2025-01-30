@@ -13,6 +13,7 @@ import {
     AuthService,
     BackendService,
     DialogService,
+    FormsService,
     PubSubService,
 } from "app/oc/services";
 import { saveAs } from "file-saver";
@@ -121,6 +122,7 @@ export class ButtonComponent implements OnInit, OnDestroy {
         private backendService: BackendService,
         private authService: AuthService,
         private httpClient: HttpClient,
+        private _formsService: FormsService
     ) {}
 
     onClickButton() {
@@ -198,6 +200,8 @@ export class ButtonComponent implements OnInit, OnDestroy {
                 }); // provide index in case of multiple instances of the button
             }
         }
+
+        _this._formsService.performAutoSave();
     }
 
     ngOnInit() {

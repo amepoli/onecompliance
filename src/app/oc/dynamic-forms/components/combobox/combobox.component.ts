@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef, OnChanges, SimpleChanges, HostBinding } from '@angular/core';
 import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { FieldConfig, Item } from 'app/oc/interfaces';
-import { ConsoleLoggerService, PubSubService, ValidationsService } from 'app/oc/services';
+import { ConsoleLoggerService, FormsService, PubSubService, ValidationsService } from 'app/oc/services';
 import { ReplaySubject, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 @Component({
@@ -50,7 +50,8 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(private pubSubService: PubSubService, 
                 private cdr: ChangeDetectorRef,
-                private _console: ConsoleLoggerService) { }
+                private _console: ConsoleLoggerService,
+                private _formsService: FormsService) { }
 
   private skipNextEvent = false;
 
@@ -269,7 +270,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Run the onClick function if provided
     this.field.onClick && this.field.onClick(event, this.field);
-
+    this._formsService.performAutoSave();
   }
 
   onTagsSelection(event : any)

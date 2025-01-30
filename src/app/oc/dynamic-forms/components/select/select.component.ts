@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { UntypedFormGroup } from "@angular/forms";
 import { FieldConfig } from "app/oc/interfaces";
+import { FormsService } from "app/oc/services";
 @Component({
     selector: "app-select",
     template: `
@@ -9,6 +10,7 @@ import { FieldConfig } from "app/oc/interfaces";
                 [placeholder]="field | octranslate"
                 [formControlName]="field.name"
                 [ocTooltip]="field.tooltip"
+                (selectionChange)="onSelectionChange($event)"
             >
                 <mat-option *ngFor="let item of field.options" [value]="item">{{
                     item
@@ -28,6 +30,11 @@ import { FieldConfig } from "app/oc/interfaces";
 export class SelectComponent implements OnInit {
     field: FieldConfig;
     group: UntypedFormGroup;
-    constructor() {}
+    constructor(private _formsService: FormsService) {}
     ngOnInit() {}
+
+    onSelectionChange(event: any) {
+        const _this = this;
+        _this._formsService.performAutoSave();
+    }
 }

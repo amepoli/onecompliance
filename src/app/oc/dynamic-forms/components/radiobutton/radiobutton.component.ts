@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { UntypedFormGroup } from "@angular/forms";
 import { FieldConfig } from "app/oc/interfaces";
-import { ConsoleLoggerService, PubSubService } from "app/oc/services";
+import { ConsoleLoggerService, FormsService, PubSubService } from "app/oc/services";
 
 @Component({
     selector: "app-radiobutton",
@@ -56,6 +56,7 @@ export class RadiobuttonComponent implements OnInit {
     constructor(
         private pubSubService: PubSubService,
         private _console: ConsoleLoggerService,
+        private _formsService: FormsService
     ) {}
     ngOnInit() {
         const _this = this;
@@ -102,6 +103,8 @@ export class RadiobuttonComponent implements OnInit {
         if (_this.field.onChangeResetKey) {
             _this.sendResetByKeyEvent();
         }
+
+        _this._formsService.performAutoSave();
     }
 
     /*

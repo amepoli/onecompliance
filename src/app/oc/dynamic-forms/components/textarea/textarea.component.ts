@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostBinding, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
 import { UntypedFormGroup } from "@angular/forms";
-import { ConsoleLoggerService, DialogService, HelperService, PubSubService, TimezoneService, ValidationsService } from "app/oc/services";
+import { ConsoleLoggerService, DialogService, FormsService, HelperService, PubSubService, TimezoneService, ValidationsService } from "app/oc/services";
 import { FieldConfig } from 'app/oc/interfaces';
 import { Subscription } from 'rxjs';
 import { AngularEditorConfig } from "@kolkov/angular-editor";
@@ -78,7 +78,8 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
   constructor(private timezoneService: TimezoneService,
     private pubSubService: PubSubService,
     private _console: ConsoleLoggerService,
-    private _dialogService: DialogService) { }
+    private _dialogService: DialogService,
+    private _formsService: FormsService) { }
   
   ngOnInit() {
     const _this = this;
@@ -173,6 +174,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
 
     _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
 
+    _this._formsService.performAutoSave();
   }
 
   onFocus(): void {
