@@ -1,0 +1,20 @@
+{
+    "$schema": "../views.schema.json",
+    "inheritsFrom": "contr_investment_sub_of_mifid",
+    "entryKey": "val_mifid_fin_instruments",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select id_contratto, data_stipulazione, data_cessazione, entrasp.anagrafica_key(id_cliente, codice_azienda, '|') as object_key, entrasp.transcodifiche_transcodifica('GIUDIZIO_MIFID', entrasp.giudizio_mifid_appropriatezza(codice_azienda, id_contratto)) as giudizio, codice_azienda, numero_contratto, id_cliente, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_cliente) as cliente, entrasp.tipi_contratto_descr(codice_azienda, id_tipo_contratto) as tipo_contratto, id_strumento_finanziario, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario) as fondo_gestito, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', stato) as descr_stato, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_strumento_finanziario), id_argomento_contratto from entrasp.contratti cnt where cnt.codice_azienda=$codice_azienda$;"
+        },
+        {
+            "operation": "update",
+            "type": "postProcessing",
+            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by id_contratto desc limit 100"
+    }
+}
