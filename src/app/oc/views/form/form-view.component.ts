@@ -76,7 +76,8 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         private _console: ConsoleLoggerService,
         private _actionsService: ActionsService,
         private _timezoneService: TimezoneService,
-        private _formsService: FormsService
+        private _formsService: FormsService,
+        private _authService: AuthService,
     ) {
 
     }
@@ -149,7 +150,17 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         );
 
         _this.subscriptions.push(subscription);
-
+        
+        const formAutoSave = _this._authService.userinfo?.value?.formAutoSave ?? false;
+        if(formAutoSave){
+            const autoSaveSubscription = _this.pubSubService.subscribe(
+                "perform_form_auto_save",
+                (value) => {
+                    _this.onSave();
+                },
+            );
+            _this.subscriptions.push(autoSaveSubscription);
+        }
     }
 
     @memoize()

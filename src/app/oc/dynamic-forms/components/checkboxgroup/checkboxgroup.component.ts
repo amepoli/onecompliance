@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { UntypedFormGroup } from "@angular/forms";
 import { FieldConfig } from "app/oc/interfaces";
-import { PubSubService } from "app/oc/services";
+import { FormsService, PubSubService } from "app/oc/services";
 
 @Component({
     selector: "app-checkboxgroup",
@@ -59,7 +59,8 @@ export class CheckboxGroupComponent implements OnInit {
         }
     }
 
-    constructor(private pubSubService: PubSubService) {}
+    constructor(private pubSubService: PubSubService,
+                private _formsService: FormsService) {}
     ngOnInit() {
         const _this = this;
 
@@ -139,6 +140,7 @@ export class CheckboxGroupComponent implements OnInit {
         // Run the onClick function if provided
         _this.field.onClick && _this.field.onClick({value: {id: _this.field.value}}, _this.field);
 
+        _this._formsService.performAutoSave();
     }
 
     sendResetByKeyEvent() {

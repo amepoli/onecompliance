@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { FuseTranslationLoaderService } from '@fuse/services/translation-loader.service';
 import { FieldConfig } from 'app/oc/interfaces';
-import { ConsoleLoggerService, DialogService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
+import { ConsoleLoggerService, DialogService, FormsService, HelperService, PubSubService, ValidationsService } from 'app/oc/services';
 import { TimezoneService } from 'app/oc/services/timezone.service';
 import * as moment from 'moment';
 import { Moment } from 'moment';
@@ -41,7 +41,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
               private pubSubService: PubSubService,
               private _console: ConsoleLoggerService,
               private _dialogService: DialogService,
-              private _fuseTranslationLoaderService: FuseTranslationLoaderService) { }
+              private _fuseTranslationLoaderService: FuseTranslationLoaderService,
+              private _formsService: FormsService) { }
   ngOnInit(): void {
     const _this = this;
     _this.field.style = _this.field.style == null ? { background_color: 'transparent', font_color: 'black' } : _this.field.style;
@@ -122,7 +123,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onBlur(): void {
-    const _this = this;
+    const _this = this;  
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'blur') {
       _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'blur' });
     }
@@ -130,8 +131,9 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       _this.sendResetByKeyEvent()
     }
-
     _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
+      
+    _this._formsService.performAutoSave();
   }
 
   onFocus(): void {

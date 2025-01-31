@@ -50,7 +50,8 @@ export class AuthService {
     allowedToInvite: false,
     onekyc: false,
     sync: null,
-    timereport: false
+    timereport: false,
+    formAutoSave: false
   });
 
   // Error Information Event Emitter for catching and emitting
@@ -62,6 +63,7 @@ export class AuthService {
   private confirmUser: any;
   private sync: any;
   private timereport: boolean;
+  private formAutoSave: boolean;
   private tables: any;
   private onekyc: boolean;
   private allowedToInvite: boolean;
@@ -250,7 +252,8 @@ export class AuthService {
       allowedToInvite: false,
       onekyc: false,
       sync: null,
-      timereport: false
+      timereport: false,
+      formAutoSave: false,
     }); // user data nulled
     // reset the left menu
     this.navigationService.setCurrentNavigation("main");
@@ -398,6 +401,8 @@ export class AuthService {
         _this.onekyc = ud.userdata.onekyc;
 
         _this.timereport = ud.userdata.timereport;
+
+        _this.formAutoSave = ud.userdata.formAutoSave;
 
         _this.tables = ud.userdata.tables;
 
@@ -579,6 +584,10 @@ export class AuthService {
   
   public getTimeReport(): boolean {
     return this.timereport;
+  }
+
+  public getFormAutoSave(): boolean {
+    return this.formAutoSave;
   }
 
   public getAllowedToManage(): boolean {
