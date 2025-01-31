@@ -1901,6 +1901,11 @@
             {
                 "label": "Verifiche Negozi",
                 "queryString": "select ss.flag_prima_visita, avr.codice, avr.denominazione,avr.annotazioni_interne as marchio,ss.data_esecuzione, ss.ris_percentuale, ss.giudizio from entrasp.sondaggi snd inner join entrasp.sondaggi_somministrati ss on snd.codice_azienda=ss.codice_azienda and snd.id_sondaggio=ss.id_sondaggio inner join entrasp.anagrafiche_vr avr on ss.codice_part=avr.codice_part and split_part (ss.object_key,'|',2)::numeric=avr.id_anagrafica where ss.codice_azienda=$codice_azienda$"
+            },
+            {
+                "label": "Report Stage 2",
+                "queryString": "select * from entrasp.report_data_sondaggi('€global_codice_azienda€',63, $id_sondaggio$);",
+                "isReport": true
             }
         ],
         "formQueries": [
