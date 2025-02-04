@@ -16,7 +16,7 @@ export class ToastService {
     private _toastrTheme: Partial<IndividualConfig> = {
         tapToDismiss: true,
         closeButton: false,
-        timeOut: 2000,
+        timeOut: 4000,
         extendedTimeOut: 2000,
         easing: 'ease-in',
         easeTime: 300,
