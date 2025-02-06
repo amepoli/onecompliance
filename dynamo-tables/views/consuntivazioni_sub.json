@@ -167,7 +167,30 @@
                         "0"
                     ],
                     "outputEventWhenComplete": "consuntivazioni_reload"
-                }
+                },
+                {
+                    "eventName": "send_email",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "show_message",
+                    "outputEventWhenComplete": "update_button",
+                    "message": {
+                        "messageText": "Si intende procedere all'invio dell'email?",
+                        "actionOnYes": {
+                            "actionType": "context_mail",
+                            "commento": "La mail concretamente inviata è gestita tramite la funzione postgres entrasp.email_dati",
+                            "contextMailParams": {
+                                "contesto": "contesto",
+                                "chiavi": "chiavi",
+                                "username": "username"
+                            }
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select 1"
+                        }
+                    }
+                }               
             ],
             "translate": "RESOURCES.codice_consuntivazioni_sub"
         },
@@ -185,6 +208,7 @@
             "key": "stato",
             "label": "Stato",
             "newLine": false,
+            "size": 1,
             "readOnly": false,
             "outputEvent": {
                 "eventName": "consuntivazione_change_stato",
@@ -235,6 +259,7 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "size": 1,
             "key": "data_intervento",
             "label": "Data Intervento",
             "newLine": false,
@@ -316,8 +341,9 @@
             "isPrimary": false,
             "key": "chiudi_compito",
             "label": "Chiudi Segnalazione",
+            "buttonIcon": "lock",
             "newLine": false,
-            "size": 1.2,
+            "size": 1,
             "outputEvent": {
                 "eventName": "chiudi_segnalazione",
                 "eventTrigger": "press"
@@ -350,28 +376,6 @@
                     "values": [],
                     "queryFunct": "select case when stato='C' then true else false end from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$",
                     "outputEventWhenComplete": "compiti_consultant_reload"
-                },
-                {
-                    "eventName": "send_email",
-                    "condition": "none",
-                    "values": [],
-                    "actionType": "show_message",
-                    "outputEventWhenComplete": "update_button",
-                    "message": {
-                        "messageText": "Si intende procedere all'invio dell'email?",
-                        "actionOnYes": {
-                            "actionType": "context_mail",
-                            "contextMailParams": {
-                                "contesto": "contesto",
-                                "chiavi": "chiavi",
-                                "username": "username"
-                            }
-                        },
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select 1"
-                        }
-                    }
                 },
                 {
                     "eventName": "update_button",
@@ -424,10 +428,34 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "invia_mail",
+            "buttonIcon": "email",
+            "label": "Invia mail",
+            "newLine": false,
+            "size": 1,
+            "outputEvent": {
+                "eventName": "send_email",
+                "eventTrigger": "press"
+            },
+            "style": {
+                "background_color": "#25599C",
+                "font_color": "white"
+            },
+            "readOnly": false,
+            "sameOrigin": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "button"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "lock_open",
             "key": "riapri_compito",
             "label": "Riapri Segnalazione",
             "newLine": true,
-            "size": 1.2,
+            "size": 1,
             "outputEvent": {
                 "eventName": "riapri_segnalazione",
                 "eventTrigger": "press"

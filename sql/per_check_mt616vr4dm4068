@@ -1,0 +1,123 @@
+select * from entrasp.risposte where codice_azienda='FININTSGR' and id_domanda=4068 
+and id_modello_test=16 and id_modello_test_vr=6
+
+
+--and id_sondaggio=1017
+
+
+select *
+from entrasp.risposte_previste
+where codice_azienda='FININTSGR' and id_modello_test=16 
+and id_modello_test_vr=4 
+and id_domanda=4068
+
+select *
+from entrasp.risposte_previste
+where codice_azienda='FININTSGR' and id_modello_test=16 
+and id_modello_test_vr=4 
+and id_domanda=4068
+
+
+select *
+from entrasp.domande
+where codice_azienda='FININTSGR' and id_modello_test=16 and id_modello_test_vr=4 
+and id_domanda=4068
+
+select entrasp.crea_json_verifica('FININTSGR', 16, 4, 1071, 841, 164)
+
+
+
+select id_sondaggio, data_esecuzione
+from entrasp.sondaggi snd where codice_azienda='FININTSGR' and snd.id_modello_test=16 and snd.id_modello_test_vr=4
+and snd.stato='C' and snd.sondaggio_completato='Completo' and snd.id_sondaggio not in(
+																						select id_sondaggio
+																						from entrasp.risposte 
+																						where codice_azienda='FININTSGR'
+																						and id_modello_test=16 and id_modello_test_vr=4
+																						and id_domanda=4068 and stato='C'
+																						and snd.sondaggio_completato='Completo'
+																						order by id_sondaggio
+																						)
+order by data_esecuzione, id_sondaggio
+
+
+select array_agg(id_sondaggio)
+from entrasp.sondaggi snd where codice_azienda='FININTSGR' and snd.id_modello_test=16 and snd.id_modello_test_vr=4
+and snd.stato='C' and snd.sondaggio_completato='Completo' and snd.id_sondaggio not in(
+																						select id_sondaggio
+																						from entrasp.risposte 
+																						where codice_azienda='FININTSGR'
+																						and id_modello_test=16 and id_modello_test_vr=4
+																						and id_domanda=4068 and stato='C'
+																						and snd.sondaggio_completato='Completo'
+																						order by id_sondaggio
+																						)
+
+
+
+
+
+ne mancano 57
+
+
+																						select *
+from entrasp.modelli_test_vr
+where codice_azienda='FININTSGR' and id_modello_test=16
+
+select entrasp.setup_foreign_datawrapper(
+	'r20230228',
+	'amedeo',
+	'MapazzoneFin2511!');
+
+
+
+select id_sondaggio, id_modello_Test_vr
+from r20230228.risposte 
+where codice_azienda='FININTSGR'
+and id_modello_test=16 and id_domanda=4068 and id_modello_test_vr=4
+and (codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, id_sondaggio, id_somministrazione)
+not in(
+	select codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, id_sondaggio, id_somministrazione
+	from entrasp.risposte 
+	where codice_azienda='FININTSGR'
+	and id_modello_test=16 and id_domanda=4068 and id_modello_test_vr=4
+)
+
+
+-- di seguito la query di recupero
+select count(id_risposta) from entrasp.risposte
+
+select disable_triggers('entrasp.risposte');
+INSERT INTO entrasp.risposte(
+	codice_azienda, id_modello_test, id_risposta, risposta, id_domanda, id_risposta_prev, object_name, object_key, id_sondaggio, id_somministrazione, punteggio, peso, note, id_modello_test_vr, punteggio_risposta, flag_non_applicabile, numero_allegati, md5, penalizzazione)
+select rs.codice_azienda, rs.id_modello_test, rs.id_risposta, rs.risposta, rs.id_domanda, rs.id_risposta_prev, rs.object_name, object_key, id_sondaggio, id_somministrazione, punteggio, peso, note, id_modello_test_vr, punteggio_risposta, flag_non_applicabile, numero_allegati, md5, penalizzazione
+from r20230228.risposte rs
+where codice_azienda='FININTSGR'
+and id_modello_test=16 and id_domanda=4068 and id_modello_test_vr=4
+and (codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, id_sondaggio, id_somministrazione)
+not in(
+	select codice_azienda, id_modello_test, id_modello_test_vr, id_domanda, id_sondaggio, id_somministrazione
+	from entrasp.risposte 
+	where codice_azienda='FININTSGR'
+	and id_modello_test=16 and id_domanda=4068 and id_modello_test_vr=4
+)
+and (codice_azienda, id_sondaggio, id_somministrazione) in (select codice_azienda, id_sondaggio, id_somministrazione from entrasp.sondaggi_somministrati where codice_azienda='FININTSGR')
+
+on conflict do nothing;
+select enable_triggers('entrasp.risposte');
+
+
+select *
+from entrasp.query_utili
+
+select codice_azienda, id_sondaggio, id_modello_test, id_modello_test_vr, data_esecuzione
+from entrasp.sondaggi
+where codice_azienda='FININTSGR'
+and id_sondaggio=any(array[4383,4333,4337,4347,4290,4345,4343,4353,4360,4388,4328,4372,4394,4397,4405,4399,4402,4408,4286,4288,4445,4292,4281,4335,4341,4369,4370,4391,1167])
+order by data_esecuzione asc
+
+select codice_azienda, id_sondaggio, id_modello_test, id_modello_test_vr
+from entrasp.risposte
+where codice_azienda='FININTSGR'
+and id_domanda=4068
+and id_sondaggio=any(array[4383,4333,4337,4347,4290,4345,4343,4353,4360,4388,4328,4372,4394,4397,4405,4399,4402,4408,4286,4288,4445,4292,4281,4335,4341,4369,4370,4391,1167])

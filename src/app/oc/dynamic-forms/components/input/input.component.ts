@@ -211,7 +211,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
-
+    _this._formsService.performAutoSave();
   }
 
   onTimeSet($event: string) {
