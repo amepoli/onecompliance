@@ -18,7 +18,8 @@ psql -h "$DB_ENDPOINT" -U "$DB_USER" -d "$DB_NAME" -At -c "
 SELECT p.proname || '▲' || pg_get_functiondef(p.oid) || 'Ç'
 FROM pg_proc p
 JOIN pg_namespace n ON n.oid = p.pronamespace
-WHERE n.nspname = '$SCHEMA_NAME';
+WHERE n.nspname = '$SCHEMA_NAME'
+AND p.prorettype NOT IN (SELECT oid FROM pg_type WHERE typname = 'trigger');
 " | {
 
     current_function_name=""
