@@ -120,4 +120,5 @@ export interface FieldConfig {
     widgetType?: FormWidgetType;
     onClick?: Function;
     onBlur?: Function;
+    isTabMode: boolean;
 }

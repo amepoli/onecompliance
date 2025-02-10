@@ -201,7 +201,7 @@ export class ButtonComponent implements OnInit, OnDestroy {
             }
         }
 
-        _this._formsService.performAutoSave();
+        _this._formsService.performAutoSave(_this.field);
     }
 
     ngOnInit() {

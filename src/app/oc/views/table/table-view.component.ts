@@ -864,6 +864,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 isSelectCheckbox: true,
                 key: 'selectCheckbox',
                 label: 'Select Checkbox',
+                isTabMode: this.isTabMode
             };
             this.viewKeys = [selectTableKey].concat(table_keys);
         }
@@ -900,6 +901,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 validations: [],
                 isVisible: true,
                 width: (field.size != null) ? (field.size * 10) : null, // leave a 0.5% margin left and right   
+                isTabMode: _this.isTabMode
             };
             fieldValues.push(fieldValue);
         });
@@ -1044,7 +1046,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             const dialogRef = _this.matDialog.open(QuickAddDialogComponent, {
                 width: '1280px',
                 height: 'auto',
-                data: { title: _this.addElementLabel, quickAddFormParams: _this.quickAddFormParams, onEvent: this.onEvent }
+                data: { title: _this.addElementLabel, quickAddFormParams: _this.quickAddFormParams, onEvent: _this.onEvent, isTabMode: _this.isTabMode }
             });
 
             _this.subscriptions.push(dialogRef.afterClosed().subscribe(result => {

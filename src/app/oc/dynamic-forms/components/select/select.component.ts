@@ -35,6 +35,6 @@ export class SelectComponent implements OnInit {
 
     onSelectionChange(event: any) {
         const _this = this;
-        _this._formsService.performAutoSave();
+        _this._formsService.performAutoSave(_this.field);
     }
 }

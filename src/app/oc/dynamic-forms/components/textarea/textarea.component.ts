@@ -174,7 +174,7 @@ export class TextAreaComponent implements OnInit, AfterViewInit {
 
     _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
 
-    _this._formsService.performAutoSave();
+    _this._formsService.performAutoSave(_this.field);
   }
 
   onFocus(): void {

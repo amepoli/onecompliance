@@ -270,7 +270,7 @@ export class ComboboxComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Run the onClick function if provided
     this.field.onClick && this.field.onClick(event, this.field);
-    this._formsService.performAutoSave();
+    this._formsService.performAutoSave(this.field);
   }
 
   onTagsSelection(event : any)

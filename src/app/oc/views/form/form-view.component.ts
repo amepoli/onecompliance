@@ -27,6 +27,9 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     @Input() isDialog: boolean = false;
     @Input() showSaveButton: boolean = true;
 
+    // Is form-getter inside a tab
+    @Input() isTabMode: boolean = false;
+
     // Keys that are provided by external source and are passed to the values in onSave function
     @Input() externalKeys: object = {};
 
@@ -151,15 +154,17 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
         _this.subscriptions.push(subscription);
         
-        const formAutoSave = _this._authService.userinfo?.value?.formAutoSave ?? false;
-        if(formAutoSave){
-            const autoSaveSubscription = _this.pubSubService.subscribe(
-                "perform_form_auto_save",
-                (value) => {
-                    _this.onSave();
-                },
-            );
-            _this.subscriptions.push(autoSaveSubscription);
+        if(!_this.isTabMode) {
+            const formAutoSave = _this._authService.userinfo?.value?.formAutoSave ?? false;
+            if(formAutoSave){
+                const autoSaveSubscription = _this.pubSubService.subscribe(
+                    "perform_form_auto_save",
+                    (value) => {
+                        _this.onSave();
+                    },
+                );
+                _this.subscriptions.push(autoSaveSubscription);
+            }
         }
     }
 

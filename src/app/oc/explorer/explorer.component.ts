@@ -782,6 +782,7 @@ export class ExplorerComponent
                 isSelectCheckbox: true,
                 key: "selectCheckbox",
                 label: "Select Checkbox",
+                isTabMode: this.isTabMode
             };
             this.viewKeys = [selectTableKey].concat(table_keys);
         } else {
@@ -820,6 +821,7 @@ export class ExplorerComponent
                 validations: [],
                 isVisible: true,
                 width: null,
+                isTabMode: _this.isTabMode
             };
             fieldValues.push(fieldValue);
         });

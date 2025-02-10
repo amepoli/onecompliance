@@ -140,7 +140,7 @@ export class CheckboxGroupComponent implements OnInit {
         // Run the onClick function if provided
         _this.field.onClick && _this.field.onClick({value: {id: _this.field.value}}, _this.field);
 
-        _this._formsService.performAutoSave();
+        _this._formsService.performAutoSave(_this.field);
     }
 
     sendResetByKeyEvent() {

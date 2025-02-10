@@ -133,7 +133,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
       
-    _this._formsService.performAutoSave();
+    _this._formsService.performAutoSave(_this.field);
   }
 
   onFocus(): void {
@@ -215,7 +215,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateDateTimeValue() {
     this.updateValue();
-    this._formsService.performAutoSave();
+    this._formsService.performAutoSave(this.field);
   }
   
   onTimeSet($event: string) {

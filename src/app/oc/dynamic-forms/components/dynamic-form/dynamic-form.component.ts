@@ -31,6 +31,9 @@ export class DynamicFormComponent implements OnInit, OnChanges {
 
     @Output() submit: EventEmitter<any> = new EventEmitter<any>();
 
+    // Is form-getter inside a tab
+    @Input() isTabMode: boolean = false;
+
     @ViewChildren(DynamicFieldDirective)
     dynamicFields: QueryList<DynamicFieldDirective>;
 
@@ -65,9 +68,10 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     }
 
     createControl() {
-        this.visibleFields = this.fields;
+        const _this = this;
+        this.visibleFields = _this.fields.map(x => ({ ...x, isTabMode: _this.isTabMode }));
             // .filter(x => x.isVisible);
             // .filter((x) => !(!x.isVisible && x.subform));
-        return this.formsService.createControl(this.fb, this.visibleFields);
+        return _this.formsService.createControl(_this.fb, _this.visibleFields);
     }
 }

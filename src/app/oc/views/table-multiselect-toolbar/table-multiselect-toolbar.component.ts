@@ -124,6 +124,8 @@ export class TableMultiselectToolbarComponent implements DoCheck {
             menu["formKeys"] = {};
         }
 
+        menu["isTabMode"] = false;
+        
         // Pop-up example
         const dialogRef = _this.cutomDialog.open(MenuOptionsCustomDialogComponent, {
             width: '1280px',
