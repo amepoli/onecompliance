@@ -2208,6 +2208,10 @@
             {
                 "label": "Az.programmate cred.scad.oltre 5 anni",
                 "queryString": "SELECT entrasp.descr_aggiornamenti_crediti_ceduti(cc.codice_azienda, cc.id_cessione) AS descrizione_aggiornamenti, count(cc.id_cessione) AS num_cred, SUM(cc.capitale_residuo_leg), case when cc.fascicolo is null then 'Assente' else 'Presente' end AS fascicolo FROM entrasp.crediti_ceduti cc WHERE entrasp.calcola_scaduto(cc.data_fattura, cc.data_pagamento) >= 1825 AND capitale_residuo_leg > 0 AND (esecutivo = '0' OR esecutivo IS NULL) AND codice_azienda = $codice_azienda$ GROUP BY entrasp.descr_aggiornamenti_crediti_ceduti(cc.codice_azienda, cc.id_cessione), case when cc.fascicolo is null then 'Assente' else 'Presente' end ORDER BY SUM(cc.capitale_residuo_leg) DESC"
+            },
+            {
+                "label": "Conta cred.esec. con/senza fasc.",
+                "queryString": "SELECT CASE WHEN fascicolo IS NOT NULL THEN 'Presente' ELSE 'Assente' END AS fascicolo, CASE WHEN esecutivo = '1' THEN 'Sì' ELSE 'No' END AS esecutivo, COUNT(id_cessione) AS num_crediti, SUM(capitale_residuo_leg) AS importo_crediti FROM entrasp.crediti_ceduti WHERE entrasp.calcola_scaduto(data_fattura, data_pagamento) >= 1825 AND codice_azienda = $codice_azienda$ AND capitale_residuo_leg > 0 GROUP BY CASE WHEN fascicolo IS NOT NULL THEN 'Presente' ELSE 'Assente' END, CASE WHEN esecutivo = '1' THEN 'Sì' ELSE 'No' END;"
             }
         ]
     },
