@@ -90,6 +90,6 @@ export class CheckboxComponent implements OnInit {
             }
         }
         
-        _this._formsService.performAutoSave();
+        _this._formsService.performAutoSave(_this.field);
     }
 }

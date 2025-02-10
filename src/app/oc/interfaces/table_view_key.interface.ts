@@ -56,4 +56,5 @@ export interface TableViewKey { // as per API specification
     };
     width?: string;
     showTotal?: boolean;
+    isTabMode: boolean;
 }

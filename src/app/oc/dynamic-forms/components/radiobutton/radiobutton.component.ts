@@ -104,7 +104,7 @@ export class RadiobuttonComponent implements OnInit {
             _this.sendResetByKeyEvent();
         }
 
-        _this._formsService.performAutoSave();
+        _this._formsService.performAutoSave(_this.field);
     }
 
     /*

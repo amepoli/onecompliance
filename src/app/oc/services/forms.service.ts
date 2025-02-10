@@ -100,7 +100,8 @@ export class FormsService {
         formParams: FormGetterParams,
         currentKeys: any,
         isReadOnly: boolean,
-        startingIndex = 0
+        startingIndex: number,
+        isTabMode: boolean
     ): FieldConfig[][] {
         const fieldValuesArray: FieldConfig[][] = [[]];
 
@@ -113,6 +114,7 @@ export class FormsService {
                 currentKeys,
                 values,
                 index + startingIndex,
+                isTabMode
             );
         }
         return fieldValuesArray;
@@ -126,6 +128,7 @@ export class FormsService {
         currentKeys: any,
         values: any,
         index: number,
+        isTabMode: boolean
     ): FieldConfig[] {
         const _this = this;
         const fieldValues = new Array();
@@ -164,6 +167,7 @@ export class FormsService {
                         element,
                         values,
                         index,
+                        isTabMode
                     );
                     fieldValues.push(fieldValue);
                 }
@@ -224,6 +228,7 @@ export class FormsService {
         element: any,
         values: any,
         index: number,
+        isTabMode: boolean
     ): FieldConfig {
         const _this = this;
         let fieldValue: FieldConfig;
@@ -346,6 +351,7 @@ export class FormsService {
                             currentKeys,
                             values,
                             index,
+                            isTabMode
                         )
                         : null,
                 isMultiSelect:
@@ -353,6 +359,7 @@ export class FormsService {
                 showTagsView:
                     field.showTagsView != null ? field.showTagsView : false,
                 onChangeResetKey: field.onChangeResetKey ?? [],
+                isTabMode
             };
         }
         /*
@@ -690,11 +697,13 @@ export class FormsService {
         return formValues;
     }
 
-    performAutoSave(){
+    performAutoSave(field: FieldConfig){
         const _this = this;
-        const formAutoSave = _this._authService.userinfo?.value?.formAutoSave ?? false;
-        if(formAutoSave){
-            _this._pubSubService.publishEvent("perform_form_auto_save", null)
+        if(!field.isTabMode) {
+            const formAutoSave = _this._authService.userinfo?.value?.formAutoSave ?? false;
+            if(formAutoSave){
+                _this._pubSubService.publishEvent("perform_form_auto_save", null)
+            }
         }
     }
 }

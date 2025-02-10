@@ -29,6 +29,9 @@ export class DomandeRisposteComponent implements OnChanges
         hideExtraActions: false
     };
 
+    // Is form-getter inside a tab
+    @Input() isTabMode: boolean = false;
+
     @Output() sendEvent = new EventEmitter<any>();
 
     tabs: any = null;
@@ -129,7 +132,7 @@ export class DomandeRisposteComponent implements OnChanges
                 }
             });
 
-            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [newKeys], _this.attributes, _this.formParams[i], results[i].keys, results[i].readonly)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
+            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [newKeys], _this.attributes, _this.formParams[i], results[i].keys, results[i].readonly, 0, _this.isTabMode)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
             
             //  Funzioni di update racchiudibili in un'unica funzione con switch per i diversi casi, per migliorare leggibilità
             curFormData.forEach((_, j) => {
@@ -1477,7 +1480,7 @@ export class DomandeRisposteComponent implements OnChanges
             // const target_index = value.type !== "page" ? value.index : null; // null means the event comes from the full table
             // let index = target_index == null ? _this.formArray.length : 1;
             // index--;
-            let data = { ...event, keys: {} };
+            let data = { ...event, keys: {}, isTabMode: _this.isTabMode };
             _this.viewKeys[index].filter((x) => x.isPrimary).forEach((viewKey: FormViewKey) => {
                 data.keys[viewKey.key] = value.valueSet[viewKey.key];
             });
