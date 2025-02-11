@@ -349,7 +349,8 @@
             "isPrimary": false,
             "size": 1.67,
             "key": "durata",
-            "label": "Durata (minuti)",
+            "queryFunct": "durata",
+            "commento": "l'obiettivo della queryFunct è che la durata venga caricata ma non venga mai modificata in questa maschera",
             "inputEvents": [
                 {
                     "eventName": "date_time_begin_edit",
@@ -368,8 +369,8 @@
                 {
                     "eventName": "onLoadConsuntivazione",
                     "actionType": "query",
-                   "queryFunct": "select EXTRACT(EPOCH FROM (coalesce(nullif('£date_time_end£','null')::timestamp,now())::timestamp - '£date_time_begin£'::timestamp)) / 60 as durata",
-                     "condition": "none",
+                    "queryFunct": "select EXTRACT(EPOCH FROM (coalesce(nullif('£date_time_end£','null')::timestamp,now())::timestamp - '£date_time_begin£'::timestamp)) / 60 as durata",
+                    "condition": "none",
                     "values": []
                 }
             ],
@@ -891,7 +892,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "id_risorsa",
-                        "insertUpdateFunct": "coalesce(£id_risorsa£, id_risorsa, entrasp.idutente_from_dynamouser('€global_username€'::text, codice_part)::numeric)",   
+                        "insertUpdateFunct": "coalesce(£id_risorsa£, id_risorsa, entrasp.idutente_from_dynamouser('€global_username€'::text, codice_part)::numeric)",
                         "label": "Esecutore",
                         "readOnly": false,
                         "newLine": false,
