@@ -315,16 +315,6 @@
                 "eventName": "date_time_begin_edit",
                 "eventTrigger": "change"
             },
-            "inputEvents": [
-                {
-                    "eventName": "date_time_begin_edit",
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp with time zone, entrasp.evaluate_given_field_date_null('date_time_end','£date_time_end£', '£')::timestamp with time zone);",
-                    "outputEventWhenComplete": "reload_durata",
-                    "condition": "none",
-                    "values": []
-                }
-            ],
             "newLine": false,
             "size": 1.67,
             "translate": "RESOURCES.inizio_insert_sub_of_mie_ore_per_data"
@@ -345,16 +335,6 @@
                 "eventName": "date_time_end_edit",
                 "eventTrigger": "change"
             },
-            "inputEvents": [
-                {
-                    "eventName": "date_time_end_edit",
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp with time zone, entrasp.evaluate_given_field_date_null('date_time_end','£date_time_end£', '£')::timestamp with time zone);",
-                    "outputEventWhenComplete": "reload_durata",
-                    "condition": "none",
-                    "values": []
-                }
-            ],
             "size": 1.6,
             "translate": "RESOURCES.fine_insert_sub_of_mie_ore_per_data"
         },
@@ -372,18 +352,24 @@
             "label": "Durata (minuti)",
             "inputEvents": [
                 {
-                    "eventName": "reload_durata",
-                    "queryFunct": "select durata from entrasp.consuntivazioni where codice_azienda=$codice_azienda$ and id_cons=$id_cons$",
+                    "eventName": "date_time_begin_edit",
                     "actionType": "query",
+                    "queryFunct": "select EXTRACT(EPOCH FROM (coalesce(nullif('£date_time_end£','null')::timestamp,now())::timestamp - '£date_time_begin£'::timestamp)) / 60 as durata",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "eventName": "date_time_end_edit",
+                    "actionType": "query",
+                    "queryFunct": "select EXTRACT(EPOCH FROM (coalesce(nullif('£date_time_end£','null')::timestamp,now())::timestamp - '£date_time_begin£'::timestamp)) / 60 as durata",
                     "condition": "none",
                     "values": []
                 },
                 {
                     "eventName": "onLoadConsuntivazione",
                     "actionType": "query",
-                    "outputEventWhenComplete": "reload_durata",
-                    "queryFunct": "select entrasp.consuntivazione_time_stop($codice_azienda$, $id_cons$, entrasp.evaluate_given_field_date_null('date_time_begin','£date_time_begin£', '£')::timestamp with time zone, entrasp.evaluate_given_field_date_null('date_time_end','£date_time_end£', '£')::timestamp with time zone);",
-                    "condition": "none",
+                   "queryFunct": "select EXTRACT(EPOCH FROM (coalesce(nullif('£date_time_end£','null')::timestamp,now())::timestamp - '£date_time_begin£'::timestamp)) / 60 as durata",
+                     "condition": "none",
                     "values": []
                 }
             ],
@@ -905,7 +891,7 @@
                         "isHidden": false,
                         "isPrimary": false,
                         "key": "id_risorsa",
-                        "insertUpdateFunct": "coalesce(£id_risorsa£, id_risorsa)",
+                        "insertUpdateFunct": "coalesce(£id_risorsa£, id_risorsa, entrasp.idutente_from_dynamouser('€global_username€'::text, codice_part)::numeric)",   
                         "label": "Esecutore",
                         "readOnly": false,
                         "newLine": false,
