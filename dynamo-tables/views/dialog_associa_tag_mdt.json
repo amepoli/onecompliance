@@ -7,9 +7,9 @@
             "type": "main",
             "queryString": "SELECT true as label"
         },
-        {
+        { 
             "operation": "insert",
-            "queryString": "select entrasp.modelli_test_associa_tag_padre(codice_azienda, id_modello_test, $id_argomento_father$, $flag_cancella_tag$::boolean)  from entrasp.modelli_test_vr where codice_azienda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)",
+            "queryString": "select entrasp.modelli_test_associa_tag_padre(codice_azienda, id_modello_test,  array[$id_argomento_father_liv_ctrl$,$id_argomento_father_tipo_ctrl$,$id_argomento_father_class_arg$,$id_argomento_father_rischio_tub$, $id_argomento_father_rischio_tuf$, $id_argomento_father_aml$, $id_argomento_father_iso_27001$, $id_argomento_father_tag_extra$]::numeric[], $flag_cancella_tag$::boolean)  from entrasp.modelli_test_vr where codice_azienda||'~'||id_modello_test||'~'||id_modello_test_vr in($selected_rows_data$)",
             "type": "main"
         }
     ],
@@ -17,18 +17,124 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(133, 349, 3425, 5328,5497,6154,6155,6156, 6157,6158,6721,6871,43448, 6837, 48418,4016,43670,49500,49507,49511, 48662,49061, 48976, 51499, 52266, 52481,52981,52967,3511 ) order by id_argomento||'-'||descrizione_breve",
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in( 6871 ) order by id_argomento||'-'||descrizione_breve",
                 "options": [],
                 "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": true,
-            "key": "id_argomento_father",
-            "label": "TAG Modelli",
+            "key": "id_argomento_father_liv_ctrl",
+            "label": "liv. controllo",
             "readOnly": false,
             "newLine": false,
-            "size": 6.66
+            "size": 2
         },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(43448 ) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father_tipo_ctrl",
+            "label": "Tipo Controllo",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in( 3425) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father_class_arg",
+            "label": "Class. Argomenti ",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(6156 ) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father_rischio_tub",
+            "label": "Rischio TUB",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(6155) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father_rischio_tuf",
+            "label": "Rischio TUF/OICR",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(6157) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father_aml",
+            "label": "AML",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(48976) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father_iso_27001",
+            "label": "ISO 27001",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(133, 349, 5328,5497,6154,6158,6721, 6837, 48418,4016,43670,49500,49507,49511, 48662,49061, 51499, 52266, 52481,52981,52967,3511 ) order by id_argomento||'-'||descrizione_breve",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_argomento_father_tag_extra",
+            "label": "Tag aggiuntivi",
+            "readOnly": false,
+            "newLine": false,
+            "size": 2
+        },
+        
         {
             "autoGenerate": false,
             "format": {
