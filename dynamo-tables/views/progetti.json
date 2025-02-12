@@ -347,6 +347,12 @@
                     },
                     {
                         "icon": "sync",
+                        "label": "Allinea Titoli Fasi",
+                        "outputEventName": "allinea_fasi_sondaggi",
+                        "key": "allinea_fasi_sondaggi"
+                    },
+                    {
+                        "icon": "sync",
                         "label": "Sync.doc.controparte",
                         "outputEventName": "get_drive_folder_contents",
                         "key": "get_drive_folder_contents",
@@ -411,6 +417,14 @@
                     "successMessage": "Done!",
                     "values": [],
                     "queryFunct": "select entrasp.attivita_update_from_progetti(codice_azienda, id_progetto) from entrasp.progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
+                },
+                {
+                    "eventName": "allinea_fasi_sondaggi",
+                    "actionType": "query",
+                    "condition": "none",
+                    "successMessage": "Allineati!",
+                    "values": [],
+                    "queryFunct": "select entrasp.allinea_fasi_sondaggi($codice_azienda$, $id_progetto$);"
                 },
                 {
                     "eventName": "progetto_duplica",
@@ -910,7 +924,7 @@
         {
             "fieldName": "codice_attivita_s",
             "format": {
-                "comboQuery": "SELECT codice_attivita AS id, codice_attivita||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda='€global_codice_azienda€' and codice_attivita_parent is null;",
+                "comboQuery": "SELECT codice_attivita AS id, codice||'-'||descrizione AS name  FROM entrasp.attivita WHERE codice_azienda='€global_codice_azienda€' and codice_attivita_parent is null order by codice asc;",
                 "options": [],
                 "viewType": "combobox",
                 "dataType": "text"
