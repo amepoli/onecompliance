@@ -336,6 +336,24 @@ export class HelperService {
         return element;
     }
 
+    /**
+     * Merge element by recursively checking subforms
+     * @param form form to check element
+     * @param name name of the field to find
+     * @param newElement new field to merge
+     * @returns element
+     */
+    public static mergeElement(form: FieldConfig[], name: string, newElement: FieldConfig) {
+        form.forEach((field, i) => {
+            if (field.name === name) {
+                form[i] = newElement;
+            }
+            else if (form[i].subform) {
+                form[i].subform = this.mergeElement(form[i].subform, name, newElement); 
+            }
+        });
+        return form;
+    }
 
     /**
      * Request Navigate

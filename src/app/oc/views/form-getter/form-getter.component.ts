@@ -1341,11 +1341,11 @@ export class FormGetterComponent
             // get the listener element if not full table
             let listener: FieldConfig = null;
             // if (keyListener != null && value.type !== 'page') {
+            const newFormData = JSON.parse(JSON.stringify(_this.filteredFormData)); // recover the form "line"
             if (keyListener != null) {
-                const targetLine = _this.filteredFormData[value.index]; // recover the form "line"
-                if (targetLine != null) {
+                if (newFormData[value.index] != null) {
                     listener = HelperService.findElement(
-                        targetLine,
+                        newFormData[value.index],
                         keyListener,
                     );
                     // listener = targetLine.find(field => field.name === keyListener);
@@ -1385,6 +1385,8 @@ export class FormGetterComponent
                               ? true
                               : listener.isVisible;
                 }
+                HelperService.mergeElement(newFormData[value.index], keyListener, listener);
+                _this.filteredFormData = [...newFormData];
             }
             if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(
@@ -1395,11 +1397,11 @@ export class FormGetterComponent
         } else if (event.actionType === "readOnly") {
             // get the listener element if not full table
             let listener: FieldConfig = null;
+            const newFormData = JSON.parse(JSON.stringify(_this.filteredFormData)); // recover the form "line"
             if (keyListener != null && value.type !== "page") {
-                const targetLine = _this.filteredFormData[value.index]; // recover the form "line"
-                if (targetLine != null) {
+                if (newFormData[value.index] != null) {
                     listener = HelperService.findElement(
-                        targetLine,
+                        newFormData[value.index],
                         keyListener,
                     );
                     // listener = targetLine.find(field => field.name === keyListener);
@@ -1412,6 +1414,8 @@ export class FormGetterComponent
             } else if (listener != null) {
                 // act on the listening element
                 listener.readonly = conditionMet;
+                HelperService.mergeElement(newFormData[value.index], keyListener, listener);
+                _this.filteredFormData = [...newFormData];
             }
             if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(
