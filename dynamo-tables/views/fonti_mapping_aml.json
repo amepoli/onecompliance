@@ -1,0 +1,248 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "fonti_mapping_aml",
+    "origin": "entrasp.indicatori",
+    "predefinedQueries": [
+        {
+                "operation": "selectTable",
+                "queryString":"select * from entrasp.indicatori where codice_azienda = '€global_codice_azienda€'",
+                "type": "main"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "ID Indicatore",
+            "key": "id_indicatore",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 1.5,
+            "translate": "RESOURCES.id_indicatore_indicators"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Titolo",
+            "key": "titolo",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Titolo",
+            "key": "titolo",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "textarea",
+                "dataType": "text"
+            },
+            "label": "Indicatore",
+            "key": "descrizione",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "size": 5,
+            "newLine": true,
+            "translate": "RESOURCES.indicatore_indicators"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test_vr",
+            "label": "Versione",
+            "readOnly": true,
+            "translate": "RESOURCES.versione_domande"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "insertUpdateFunct": "'€global_codice_azienda€'",
+            "readOnly": true,
+            "translate": "RESOURCES.codice_azienda_domande"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_modello_test",
+            "label": "# Modello di test",
+            "readOnly": true,
+            "translate": "RESOURCES._modello_di_test_domande"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select id_domanda as id, id_domanda||'-'||descrizione as name from entrasp.domande where codice_azienda='£codice_azienda£' and id_modello_test = £id_modello_test£ and id_modello_test_vr = £id_modello_test_vr£",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_domanda",
+            "label": "Attiva se alla domanda",
+            "outputEvent": {
+                "eventName": "id_domanda_rif_change",
+                "eventTrigger": "select"
+            },
+            "newLine": false,
+            "size": 3.33,
+            "readOnly": false,
+            "translate": "RESOURCES.attiva_se_alla_domanda_domande"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_risposta_prev AS id, id_risposta_prev||'-'||risposta AS name from entrasp.risposte_previste WHERE codice_azienda='£codice_azienda£' and id_modello_test= £id_modello_test£ and id_modello_test_vr = £id_modello_test_vr£ and id_domanda=£id_domanda£;",
+                "viewType": "combobox",
+                "options": []
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_risposta_prev",
+            "label": "Viene Risposto",
+            "inputEvents": [
+                {
+                    "eventName": "id_domanda_rif_change",
+                    "actionType": "query",
+                    "queryFunct": "select coalesce(£id_risposta_prev_rif£, 0) as id_risposta_prev_rif",
+                    "condition": "none",
+                    "values": []
+                }
+            ],
+            "newLine": true,
+            "size": 3.33,
+            "readOnly": false,
+            "translate": "RESOURCES.viene_risposto_domande"
+        }
+    ],
+    
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": true,
+            "key": "id_indicatore",
+            "label": "ID Indicatore",
+            "translate": "RESOURCES.id_indicatore_indicators"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "id_indicatore_parent",
+            "label": "ID Indicatore parent",
+            "translate": "RESOURCES.id_indicatore_parent_indicators"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "codice_azienda",
+            "label": "Azienda",
+            "translate": "RESOURCES.azienda_indicators"
+        },
+        
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "codice_part",
+            "label": "Partizione",
+            "translate": "RESOURCES.partizione_indicators"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "40%",
+            "isPrimary": false,
+            "key": "titolo",
+            "label": "Indicatore",
+            "translate": "RESOURCES.indicatore_indicators"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento",
+            "label": "ID Argomento",
+            "translate": "RESOURCES.id_argomento_indicators"
+        }
+    ],
+    "hideActions": [
+        {
+            "formActionType": "attachments",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "share",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "startEvent",
+            "viewType": "form"
+        },
+        {
+            "formActionType": "stopEvent",
+            "viewType": "form"
+        },
+        
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+
+}
