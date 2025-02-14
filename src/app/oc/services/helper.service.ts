@@ -2,6 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { FieldConfig, MarkerReplacer } from 'app/oc/interfaces';
 import * as moment from 'moment';
+import { DynamicFormComponent } from '../dynamic-forms/components/dynamic-form/dynamic-form.component';
 interface TableStyleElement {
     value: string;
     valueKey?: string;
@@ -335,6 +336,23 @@ export class HelperService {
         });
         return element;
     }
+
+    /**
+     * Find element by recursively checking subforms
+     * @param form form to check element
+     * @param name name of the field to find
+     * @returns element
+     */
+    public static findDynamicComponent(dynamicForm: DynamicFormComponent, name: string) {
+        let element = null;
+        dynamicForm.dynamicFields.forEach(component => {
+            if (component.field.name === name) {
+                element = component;
+            }
+        });
+        return element;
+    }
+
 
     /**
      * Merge element by recursively checking subforms
