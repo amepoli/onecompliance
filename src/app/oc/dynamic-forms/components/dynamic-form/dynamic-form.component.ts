@@ -35,7 +35,7 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     @Input() isTabMode: boolean = false;
 
     @ViewChildren(DynamicFieldDirective)
-    dynamicFields: QueryList<DynamicFieldDirective>;
+    public dynamicFields: QueryList<DynamicFieldDirective>;
 
     form: UntypedFormGroup;
 
@@ -73,5 +73,9 @@ export class DynamicFormComponent implements OnInit, OnChanges {
             // .filter(x => x.isVisible);
             // .filter((x) => !(!x.isVisible && x.subform));
         return _this.formsService.createControl(_this.fb, _this.visibleFields);
+    }
+
+    trackItems(index: number, item: any) {
+        return index;
     }
 }

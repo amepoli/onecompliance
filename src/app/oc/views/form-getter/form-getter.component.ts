@@ -1339,15 +1339,21 @@ export class FormGetterComponent
             event.actionType === "toggle"
         ) {
             // get the listener element if not full table
-            let listener: FieldConfig = null;
+            let listenerField: FieldConfig = null;
+            let listenerComponent: DynamicFieldDirective = null;
             // if (keyListener != null && value.type !== 'page') {
+            const newFormData = JSON.parse(JSON.stringify(_this.filteredFormData)); // recover the form "line"
             if (keyListener != null) {
-                const targetLine = _this.filteredFormData[value.index]; // recover the form "line"
-                if (targetLine != null) {
-                    listener = HelperService.findElement(
-                        targetLine,
+                if (newFormData[value.index] != null) {
+                    listenerField = HelperService.findElement(
+                        newFormData[value.index],
                         keyListener,
                     );
+                    listenerComponent = HelperService.findDynamicComponent(
+                        _this.formArray.toArray()[value.index],
+                        keyListener,
+                    );
+                    
                     // listener = targetLine.find(field => field.name === keyListener);
                 }
             }
@@ -1368,23 +1374,29 @@ export class FormGetterComponent
                               ? true
                               : _this.formParams.isVisible;
                 }
-            } else if (listener != null) {
+            } else if (listenerField != null) {
                 // act on the listening element
                 if (conditionMet) {
-                    listener.isVisible =
+                    listenerField.isVisible =
                         event.actionType === "show"
                             ? true
                             : event.actionType === "hide"
                               ? false
-                              : !listener.isVisible;
+                              : !listenerField.isVisible;
                 } else {
-                    listener.isVisible =
+                    listenerField.isVisible =
                         event.actionType === "show"
                             ? false
                             : event.actionType === "hide"
                               ? true
-                              : listener.isVisible;
+                              : listenerField.isVisible;
                 }
+                listenerComponent.field.isVisible = listenerField.isVisible;
+        
+                // newFormData[value.index] = HelperService.mergeElement(newFormData[value.index], keyListener, listenerField);
+                // _this.filteredFormData[value.index] = [...newFormData[value.index]];
+                // _this.filteredFormData[value.index].splice(0, _this.filteredFormData[value.index].length, ...newFormData[value.index]);
+        
             }
             if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(
@@ -1394,12 +1406,17 @@ export class FormGetterComponent
             }
         } else if (event.actionType === "readOnly") {
             // get the listener element if not full table
-            let listener: FieldConfig = null;
+            let listenerField: FieldConfig = null;
+            let listenerComponent: DynamicFieldDirective = null;
+            const newFormData = JSON.parse(JSON.stringify(_this.filteredFormData)); // recover the form "line"
             if (keyListener != null && value.type !== "page") {
-                const targetLine = _this.filteredFormData[value.index]; // recover the form "line"
-                if (targetLine != null) {
-                    listener = HelperService.findElement(
-                        targetLine,
+                if (newFormData[value.index] != null) {
+                    listenerField = HelperService.findElement(
+                        newFormData[value.index],
+                        keyListener,
+                    );
+                    listenerComponent = HelperService.findDynamicComponent(
+                        _this.formArray.toArray()[value.index],
                         keyListener,
                     );
                     // listener = targetLine.find(field => field.name === keyListener);
@@ -1409,9 +1426,14 @@ export class FormGetterComponent
                 // act on the full table --> NO! formRowProperties must be used in this case!!!
                 // _this.isReadOnly = conditionMet;
                 // _this.sendEvent.emit({ eventType: 'readOnly', value: _this.isReadOnly }); // signal to the parent to show/hide save button
-            } else if (listener != null) {
+            } else if (listenerField != null) {
                 // act on the listening element
-                listener.readonly = conditionMet;
+                listenerField.readonly = conditionMet;
+                listenerComponent.field.isVisible = listenerField.isVisible;
+        
+                // HelperService.mergeElement(newFormData[value.index], keyListener, listenerField);
+                // _this.filteredFormData[value.index] = [...newFormData[value.index]];
+                // _this.filteredFormData = [...newFormData];
             }
             if (event.outputEventWhenComplete != null) {
                 _this.pubSubService.publishEvent(
