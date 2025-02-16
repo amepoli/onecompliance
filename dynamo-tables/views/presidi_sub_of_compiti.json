@@ -1,17 +1,85 @@
 {
     "$schema": "../views.schema.json",
     "entryKey": "presidi_sub_of_compiti",
+    "origin": "entrasp.compiti_rif_bo",
     "inheritsFrom": "presidi",
     "predefinedQueries": [
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select distinct pr.codice_azienda, pr.codice, crb.codice_compito, case when crb.object_name='presidi' then true else false end as disassocia_segnalazione, pr.id_presidio, pr.descrizione, pr.note from entrasp.presidi pr join entrasp.compiti_rif_bo crb on pr.id_presidio=crb.id_presidio and pr.codice_azienda=crb.codice_azienda where pr.codice_azienda=$codice_azienda$ and crb.codice_compito=$codice_compito$"
+            "queryString": "select true as dissocia_segnalazione, pr.descrizione_breve, entrasp.centri_gestionali_descr(pr.codice_part,pr.id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda)as descr_presidio, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice from entrasp.presidi pr join entrasp.compiti_rif_bo crb on pr.id_presidio=crb.id_presidio and pr.codice_azienda=crb.codice_azienda where pr.codice_azienda=$codice_azienda$ and crb.codice_compito=$codice_compito$ and crb.id_presidio is not null"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_presidio AS id, codice||'-'||descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda='€global_codice_azienda€' order by codice;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Presidio",
+            "key": "id_presidio",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 4.5,
+            "translate": "RESOURCES.presidio_presidi_sub_of_rischi"
         },
         {
-            "operation": "selectForm",
-            "type": "postProcessing",
-            "queryString": "SELECT pr.codice_azienda, pr.id_presidio, pr.id_presidio_parent, pr.codice, pr.id_tipo_presidio, pr.id_argomento_stato_automazione, pr.id_argomento_frequenza, pr.stato_attuazione, pr.rettifica_verifiche, pr.rettifica_indicatori, pr.rettifica_stato, pr.rettifica_complessiva, pr.id_argomento, pr.descrizione_breve, pr.id_centro_gest, pr.descrizione, pr.guida_attuativa, pr.note WHERE pr.codice_azienda=$codice_azienda$ AND id_presidio=$id_presidio$"
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_compito",
+            "key": "codice_compito",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "insertUpdateFunct": "'£codice_azienda£'||'#'||£id_presidio£",
+            "isPrimary": false,
+            "key": "object_key",
+            "label": "Codice GAP",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "insertUpdateFunct": "'presidi'",
+            "isPrimary": false,
+            "key": "object_name",
+            "label": "object_name",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
         }
     ],
     "table_keys": [
@@ -22,7 +90,7 @@
             "isHidden": false,
             "isPrimary": false,
             "width": "3%",
-            "key": "disassocia_segnalazione",
+            "key": "dissocia_segnalazione",
             "label": "",
             "style": [
                 {
@@ -74,10 +142,19 @@
         },
         {
             "format": {
-                "dataType": "text"
+                "dataType": "number"
             },
             "isHidden": true,
             "isPrimary": true,
+            "key": "id_presidio",
+            "label": "id_presidio"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
             "key": "codice_compito",
             "label": "codice_compito"
         },
@@ -163,7 +240,7 @@
             "isHidden": false,
             "isPrimary": false,
             "width": "18%",
-            "key": "descrizioni_centro_gestionale",
+            "key": "centro_gest",
             "label": "Centro Gestionale",
             "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
             "translate": "RESOURCES.centro_gestionale_presidi"
