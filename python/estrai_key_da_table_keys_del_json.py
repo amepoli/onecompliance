@@ -30,6 +30,6 @@ def estrai_chiavi_da_json(file_input):
 
 
 # Esempio di utilizzo della funzione
-file_input = '/home/apoli/Development/onecompliance/dynamo-tables/views/rischi.json'
+file_input = '/home/apoli/Development/onecompliance/dynamo-tables/views/presidi.json'
 risultato = estrai_chiavi_da_json(file_input)
 print(risultato)
