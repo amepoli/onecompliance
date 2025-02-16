@@ -2,40 +2,26 @@
     "$schema": "../views.schema.json",
     "origin": "entrasp.presidi",
     "entryKey": "piano_azione",
-    "inheritsFrom": "presidi",
+    "inheritsFrom": "compiti",
     "label": "presidi",
     "predefinedQueries": [
         {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "select entrasp.aggiorna_efficacia_presidi($codice_azienda$, $id_presidio$);"
-        },
-        {
-            "operation": "insert",
-            "type": "postProcessing",
-            "queryString": "update entrasp.rischi_presidi rp set pct_mitigazione_probabilita=pctmitigazioneprobabilita, pct_mitigazione_intensita_singola=pctmitigazioneintensitasingola, pct_mitigazione_probabilita_rettificata=pctmitigazioneprobabilita_rett, pct_mitigazione_intensita_singola_rettificata=pctmitigazioneintensitasingola_rett  from entrasp.rischio_presidi_value_input_id_presidio($codice_azienda$, $id_presidio$) rpv where rp.codice_azienda=rpv.azienda and rp.id_presidio=rpv.id_presidio and rp.id_presidio=$id_presidio$ and rp.codice_azienda=$codice_azienda$;"
-        },
-        {
-            "operation": "insert",
-            "type": "preCheck",
-            "queryString": "select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and codice='£codice£'",
-            "messageNotNull": "Inserimento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
-        },
-        {
-            "operation": "update",
-            "type": "preCheck",
-            "queryString": "select id_presidio from entrasp.presidi where codice_azienda=$codice_azienda$ and codice='£codice£' and id_presidio!=$id_presidio$",
-            "messageNotNull": "Aggiornamento: Il codice inserito è già stato utilizzato per un altro modello di test: prego utilizzarne un codice diverso"
-        },
-        {
-            "operation": "share",
-            "type": "main",
-            "queryString": "select entrasp.grc_accoda_presidio('$codice_azienda$', '$chosen_azienda$', $id_presidio$)"
-        },
-        {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select pr.codice_azienda,pr.id_presidio,entrasp.anagrafiche_vr_dati_identificativi(pr.codice_part, pr.id_anagrafica_societa) as cliente,codice,pr.id_presidio_parent, pr.descrizione_breve, pr.id_tipo_presidio,entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda) as tipo_presidio,entrasp.centri_gestionali_descr(pr.codice_part, pr.id_centro_gest) as descrizioni_centro_gestionale,entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione,entrasp.argomenti_descr_breve(pr.id_argomento_stato_automazione) as id_argomento_stato_automazione from entrasp.presidi pr inner join entrasp.compiti_rif_bo crb on pr.codice_azienda=crb.codice_azienda and pr.id_presidio=crb.id_presidio and pr.codice_azienda=$codice_azienda$ and pr.stato not in ('C', 'N')"
+            "queryString": "select case when cmp.stato !='C' then true else false end as check,cmp.codice_compito,entrasp.argomenti_descr_breve_no_num(id_argomento_priorita) as priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, cmp.codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione!=700 AND EXISTS (SELECT 1 FROM entrasp.compiti_rif_bo crb WHERE cmp.codice_azienda = crb.codice_azienda AND cmp.codice_compito = crb.codice_compito AND crb.id_presidio IS NOT NULL)"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
         }
-    ]    
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by cmp.stato limit 100"
+    }   
 }
