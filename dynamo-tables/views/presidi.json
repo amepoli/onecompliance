@@ -1202,6 +1202,17 @@
             "size": 1,
             "queryCond": "stato_attuazione!='A'",
             "translate": "RESOURCES.diverso_da_attivo_presidi"
+        },
+        {
+            "fieldName": "diverso_attivo_e_no_compiti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Non attivo e senza compiti associati",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "(stato_attuazione not in('A', 'N') and id_presidio not in (select crb.id_presidio from entrasp.compiti_rif_bo crb where crb.id_presidio is not null and crb.codice_azienda=$codice_azienda$))"
         }
     ],
     "inputEvents": [
