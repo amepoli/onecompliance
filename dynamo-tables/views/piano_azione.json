@@ -1,0 +1,27 @@
+{
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.compiti",
+    "entryKey": "piano_azione",
+    "inheritsFrom": "compiti",
+    "label": "presidi",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select case when cmp.stato !='C' then true else false end as check,cmp.codice_compito,entrasp.argomenti_descr_breve_no_num(id_argomento_priorita) as priorita,entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) as time_report_stop_active, case when entrasp.time_report_stop_active((€global_id_anagrafiche€)::text,cmp.codice_compito,cmp.codice_azienda) then false else true end as time_report_play, (€global_id_anagrafiche€)::text as user_companies, entrasp.anagrafiche_vr_dati_identificativi(cmp.codice_part, id_cliente) as cliente_desc, data_segnalazione, data_chiusura, cmp.codice_azienda, substring(titolo from 1 for 100) as titolo, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest) as descr_centro_gest, entrasp.centri_gestionali_descr(cmp.codice_part, id_centro_gest_monitor) as descr_centro_gest_monitor, entrasp.compiti_count_open_compiti_sub(cmp.codice_azienda, cmp.codice_compito) as conta_aperti, entrasp.tipo_segnalazione_descr_new(id_tipo_segnalazione) as tipo_segnalazione, entrasp.transcodifiche_transcodifica('STATO_COMPITI', stato) as stato from entrasp.compiti cmp where cmp.codice_azienda=$codice_azienda$ and cmp.id_tipo_segnalazione!=700 AND EXISTS (SELECT 1 FROM entrasp.compiti_rif_bo crb WHERE cmp.codice_azienda = crb.codice_azienda AND cmp.codice_compito = crb.codice_compito AND crb.id_presidio IS NOT NULL)"
+        },
+        {
+            "operation": "startEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_play((€global_id_anagrafiche€)::text, '$codice_compito$', '$codice_azienda$') as play_time_report"
+        },
+        {
+            "operation": "stopEvent",
+            "type": "main",
+            "queryString": "select entrasp.time_report_stop((€global_id_anagrafiche€)::text)"
+        }
+    ],
+    "querySuffixes": {
+        "tableViewSuffix": "order by cmp.stato limit 100"
+    }   
+}

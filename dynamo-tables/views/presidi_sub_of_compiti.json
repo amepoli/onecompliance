@@ -1,0 +1,341 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "presidi_sub_of_compiti",
+    "origin": "entrasp.compiti_rif_bo",
+    "inheritsFrom": "presidi",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "select true as dissocia_segnalazione, pr.descrizione_breve, entrasp.centri_gestionali_descr(pr.codice_part,pr.id_centro_gest) as centro_gest, entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', pr.stato_attuazione) as stato_attuazione ,true as visible_button_presidio, entrasp.presidi_descr(pr.id_presidio, pr.codice_azienda)as descr_presidio, entrasp.tipo_processo_descr(pr.id_tipo_presidio, pr.codice_azienda)as tipo_presidio, pr.codice from entrasp.presidi pr join entrasp.compiti_rif_bo crb on pr.id_presidio=crb.id_presidio and pr.codice_azienda=crb.codice_azienda where pr.codice_azienda=$codice_azienda$ and crb.codice_compito=$codice_compito$ and crb.id_presidio is not null"
+        }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Nuovo Presidio",
+        "navigateOnSuccess": false
+    },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_presidio AS id, codice||'-'||descrizione_breve AS name  FROM entrasp.presidi WHERE codice_azienda='€global_codice_azienda€' order by codice;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Presidio",
+            "key": "id_presidio",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 4.5,
+            "translate": "RESOURCES.presidio_presidi_sub_of_rischi"
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false
+        },
+        {
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_compito",
+            "key": "codice_compito",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "insertUpdateFunct": "'£codice_azienda£'||'#'||£id_presidio£",
+            "isPrimary": false,
+            "key": "object_key",
+            "label": "Codice GAP",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "insertUpdateFunct": "'presidi'",
+            "isPrimary": false,
+            "key": "object_name",
+            "label": "object_name",
+            "newLine": false,
+            "readOnly": true,
+            "size": 1
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "3%",
+            "key": "dissocia_segnalazione",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "close",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "sondaggi_sub_of_compiti",
+                "viewType": "form",
+                "action": "query",
+                "query": "delete from entrasp.compiti_rif_bo where codice_azienda='£codice_azienda£' and codice_compito='£codice_compito£' and id_somministrazione=£id_somministrazione£ and id_sondaggio=£id_sondaggio£ and object_name='sondaggiSomministrati'",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_compito",
+                        "destination": "codice_compito"
+                    },
+                    {
+                        "source": "id_somministrazione",
+                        "destination": "id_somministrazione"
+                    },
+                    {
+                        "source": "id_sondaggio",
+                        "destination": "id_sondaggio"
+                    }
+                ],
+                "confirmAction": true,
+                "confirmMessage": {
+                    "title": "Dissocia presidio",
+                    "text": "Dissociare il presidio selezionata dalla segnalazione?"
+                },
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.codice_azienda_somministrazioni_sub_of_compiti"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_presidio",
+            "label": "id_presidio"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "codice_compito",
+            "label": "codice_compito"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "cliente",
+            "queryFunct": "entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_societa)",
+            "width": "12%",
+            "label": "Società/Cliente",
+            "translate": "RESOURCES.societcliente_presidi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "8%",
+            "key": "codice",
+            "label": "Codice",
+            "translate": "RESOURCES.codice_presidi"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "6%",
+            "key": "id_presidio_parent",
+            "label": "id_presidio_parent",
+            "translate": "RESOURCES.id_presidio_parent_presidi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "32%",
+            "isPrimary": false,
+            "key": "descrizione_breve",
+            "label": "Titolo",
+            "style": [
+                {
+                    "value": "*",
+                    "font_weight": "600",
+                    "font_size": "medium"
+                }
+            ],
+            "translate": "RESOURCES.titolo_presidi"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "width": "6%",
+            "key": "id_tipo_presidio",
+            "label": "Tipo",
+            "translate": "RESOURCES.tipo_presidi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "6%",
+            "key": "tipo_presidio",
+            "queryFunct": "entrasp.tipo_processo_descr(id_tipo_presidio, codice_azienda)",
+            "label": "Tipo",
+            "translate": "RESOURCES.tipo_presidi"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "18%",
+            "key": "centro_gest",
+            "label": "Centro Gestionale",
+            "queryFunct": "entrasp.centri_gestionali_descr(codice_part, id_centro_gest)",
+            "translate": "RESOURCES.centro_gestionale_presidi"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "10%",
+            "isPrimary": false,
+            "key": "stato_attuazione",
+            "queryFunct": "entrasp.transcodifiche_transcodifica('STATO_ATTUAZIONE', stato_attuazione)",
+            "label": "Stato",
+            "style": [
+                {
+                    "value": "Attivo - 100%",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In Implementazione - 33%",
+                    "font_color": "DarkRed",
+                    "font_weight": "500",
+                    "background_color": "orange",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Migliorabile - 66%",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "#e6e600",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Auspicabile - 0%",
+                    "font_color": "black",
+                    "font_weight": "500",
+                    "background_color": "red",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Non Applicabile - 0%",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "grey",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ],
+            "translate": "RESOURCES.stato_presidi"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "10%",
+            "key": "id_argomento_stato_automazione",
+            "queryFunct": "entrasp.argomenti_descr_breve(id_argomento_stato_automazione)",
+            "label": "Automazione",
+            "style": [
+                {
+                    "value": "48083 - Automated",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#0004e6",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "48085 - Semi-Automated",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#003de6",
+                    "font_size": "medium",
+                    "text_align": "center"
+                },
+                {
+                    "value": "48084 - Manual",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "#008ae6",
+                    "font_size": "medium",
+                    "text_align": "center"
+                }
+            ],
+            "translate": "RESOURCES.automazione_presidi"
+        }
+    ]
+}

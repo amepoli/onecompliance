@@ -47,6 +47,15 @@
                     "reloadOnSuccess": true,
                     "customDialogEntryName": "dialog_sharing_presidi",
                     "customDialogTitle": "Condivisione Presidi"
+                },
+                {
+                    "key": "attiva_con_compiti_chiusi",
+                    "icon": "switches",
+                    "label": "Attiva se compiti chiusi",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "query": "update entrasp.presidi set stato='A' where codice_azienda||'~'||id_presidio=any(array[$selected_rows_data$]) returning 1",
+                    "confirmActionMessage": "Attivare tutti i presidi selezionati che abbiano tutti i compiti chiusi?"
                 }
             ]
         }
@@ -544,6 +553,22 @@
             ],
             "label": "Domande Associate",
             "translate": "RESOURCES.domande_associate_al_presidio_domande_sub_of_presidi"
+        },
+        {
+            "entryKey": "compiti_sub_of_presidi",
+            "type": "table",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_presidio",
+                    "son": "id_presidio"
+                }
+            ],
+            "label": "Gap associati",
+            "renderingOrder": 10
         },
         {
             "entryKey": "trattamenti_dati_sub_of_presidi",
@@ -1186,6 +1211,17 @@
             "size": 1,
             "queryCond": "stato_attuazione!='A'",
             "translate": "RESOURCES.diverso_da_attivo_presidi"
+        },
+        {
+            "fieldName": "diverso_attivo_e_no_compiti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Non attivo e senza compiti associati",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "(stato_attuazione not in('A', 'N') and id_presidio not in (select crb.id_presidio from entrasp.compiti_rif_bo crb where crb.id_presidio is not null and crb.codice_azienda=$codice_azienda$))"
         }
     ],
     "inputEvents": [
