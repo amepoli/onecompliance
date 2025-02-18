@@ -53,8 +53,8 @@
                     "icon": "switches",
                     "label": "Attiva se compiti chiusi",
                     "confirmAction": true,
-                    "query": "update entrasp.presidi set stato='A' where codice_azienda||''array[$selected_rows_data$] returning 1",
                     "reloadOnSuccess": true,
+                    "query": "update entrasp.presidi set stato='A' where codice_azienda||'~'||id_presidio=any(array[$selected_rows_data$]) returning 1",
                     "confirmActionMessage": "Attivare tutti i presidi selezionati che abbiano tutti i compiti chiusi?"
                 }
             ]
