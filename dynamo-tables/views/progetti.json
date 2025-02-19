@@ -331,13 +331,7 @@
                         "outputEventName": "progetto_duplica",
                         "translate": "RESOURCES.duplica_progetti"
                     },
-                    {
-                        "icon": "copy_all",
-                        "label": "Duplica (CON risposte)",
-                        "outputEventName": "progetto_duplica_con_risposte",
-                        "key": "progetto_duplica_con_risposte",
-                        "translate": "RESOURCES.duplica_con_risposte_progetti"
-                    },
+                
                     {
                         "icon": "sync_alt",
                         "label": "All. date e centri gest",
@@ -428,40 +422,14 @@
                 },
                 {
                     "eventName": "progetto_duplica",
-                    "actionType": "show_message",
+                    "actionType": "dialog",
                     "condition": "none",
                     "values": [],
-                    "message": {
-                        "messageText": "Sei sicuro di voler duplicare questo progetto e relativi sondaggio SENZA risposte? (si verrà automaticamente trasferiti nel nuovo)",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select id_progetto from entrasp.progetti_duplica($codice_azienda$, $id_progetto$, true, '1 year', 1::integer)as id_progetto;"
-                        }
-                    },
-                    "outputEventWhenComplete": "navigate_to_new_progetto"
+                    "customDialogEntryName": "dialog_progetto_duplica",
+                    "customDialogTitle": "Duplica progetto"
                 },
-                {
-                    "eventName": "progetto_duplica_con_risposte",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageText": "Sei sicuro di voler duplicare questo progetto e relativi sondaggo e domande? (si verrà automaticamente trasferiti nel nuovo)",
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select id_progetto from entrasp.progetti where codice_azienda=$codice_azienda$ and id_progetto=$id_progetto$;"
-                        },
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select id_progetto from entrasp.progetti_duplica($codice_azienda$, $id_progetto$, false, '1 year', 1::integer) as id_progetto;"
-                        }
-                    },
-                    "outputEventWhenComplete": "navigate_to_new_progetto"
-                },
+               
+                
                 {
                     "eventName": "allinea_date",
                     "actionType": "query",

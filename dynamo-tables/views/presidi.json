@@ -54,7 +54,16 @@
                     "label": "Attiva se compiti chiusi",
                     "confirmAction": true,
                     "reloadOnSuccess": true,
-                    "query": "update entrasp.presidi set stato='A' where codice_azienda||'~'||id_presidio=any(array[$selected_rows_data$]) returning 1",
+                    "query": "UPDATE entrasp.presidi p SET stato_attuazione = 'A' WHERE EXISTS (SELECT 1 FROM entrasp.compiti_rif_bo crb WHERE crb.codice_azienda = p.codice_azienda AND crb.id_presidio = p.id_presidio GROUP BY crb.codice_azienda, crb.id_presidio HAVING COUNT(*) = COUNT(CASE WHEN (SELECT stato FROM entrasp.compiti c WHERE c.codice_azienda = crb.codice_azienda AND c.codice_compito = crb.codice_compito) = 'C' THEN 1 END)) AND EXISTS (SELECT 1 FROM entrasp.compiti_rif_bo crb INNER JOIN entrasp.compiti c USING (codice_azienda, codice_compito) WHERE crb.codice_azienda = p.codice_azienda AND crb.id_presidio = p.id_presidio) and codice_azienda||'~'||id_presidio=any(array[$selected_rows_data$]) returning 1",
+                    "confirmActionMessage": "Attivare tutti i presidi selezionati che abbiano tutti i compiti chiusi?"
+                },
+                {
+                    "key": "migliorabile_con_compiti_aperti",
+                    "icon": "switches",
+                    "label": "Rendi migliorabili se compiti aperti",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "query": "UPDATE entrasp.presidi p SET stato_attuazione = 'M' WHERE EXISTS (SELECT 1 FROM entrasp.compiti_rif_bo crb INNER JOIN entrasp.compiti c USING (codice_azienda, codice_compito) WHERE crb.codice_azienda = p.codice_azienda AND crb.id_presidio = p.id_presidio AND c.stato = 'A') and codice_azienda||'~'||id_presidio=any(array[$selected_rows_data$]) returning 1",
                     "confirmActionMessage": "Attivare tutti i presidi selezionati che abbiano tutti i compiti chiusi?"
                 }
             ]
