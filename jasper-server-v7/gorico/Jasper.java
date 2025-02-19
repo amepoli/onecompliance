@@ -144,6 +144,7 @@ public class Jasper {
         } catch (Exception ex) {
             String connectMsg = "Could not create the report " + ex.getMessage() + " " + ex.getLocalizedMessage();
             System.out.println(connectMsg);
+            ex.printStackTrace();
         }
     }
 
@@ -170,6 +171,8 @@ public class Jasper {
             HashMap<String, Object> reportMap = new HashMap<String, Object>();
 
             for (ReportInfo subReport : data.subReports) {
+                System.out.println("Loading sub report: " + subReport.name);
+
                 JasperDesign reportDesign = JRXmlLoader.load(Constants.REPORTS_DIR + subReport.name + ".jrxml");
                 JasperReport report = JasperCompileManager.compileReport(reportDesign);
                 // ResultSet reportResultSet = jdbcConnection
@@ -236,14 +239,39 @@ public class Jasper {
             // String connectString =
             // "jdbc:postgresql://goricotest-new.caxbbckt9xen.eu-central-1.rds.amazonaws.com:5432/Gorico";
             String connectString = "jdbc:postgresql://" + db.getHost() + ":" + db.getPort() + "/" + db.getDatabase();
-            Connection jdbcConnection = Database.getInstance().connectPgDB(connectString, db.getUsername(),
-                    db.getPassword());
+            // Connection jdbcConnection = Database.getInstance().connectPgDB(connectString,
+            // db.getUsername(),
+            // db.getPassword());
 
-            JasperDesign mainReportDesign = JRXmlLoader.load(Constants.REPORTS_DIR + data.mainReport.name + ".jrxml");
+            Connection jdbcConnection = null;
+
+            String reportsPath = Paths.get(Constants.REPORTS_DIR).toAbsolutePath().normalize().toString() + "/";
+
+            String reportFilePath = reportsPath + data.mainReport.name + ".jrxml";
+            System.out.println("Loading report file: " + reportFilePath);
+            JasperDesign mainReportDesign = null;
+            File reportFile = new File(reportFilePath);
+            if (!reportFile.exists()) {
+                System.out.println("Report file not found: " + reportFilePath);
+                throw new Exception("Report file not found: " + reportFilePath);
+            }
+            try {
+                // mainReportDesign = JRXmlLoader.load(Constants.REPORTS_DIR +
+                // data.mainReport.name + ".jrxml");
+                // mainReportDesign =
+                // JRXmlLoader.load(getClass().getResourceAsStream(reportFilePath));
+                mainReportDesign = JRXmlLoader.load(reportFile);
+
+            } catch (Exception e) {
+                System.out.println("JRXmlLoader error: " + e.getMessage());
+                e.printStackTrace();
+
+            }
+
             JasperReport mainReport = JasperCompileManager.compileReport(mainReportDesign);
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(mainReport, params, jdbcConnection);
-            jdbcConnection.close();
+            // jdbcConnection.close();
 
             /* Bean filling */
             // ArrayList<Employee> employees = new ArrayList<Employee>();
@@ -270,6 +298,7 @@ public class Jasper {
         } catch (Exception ex) {
             String connectMsg = "Could not create the report " + ex.getMessage() + " " + ex.getLocalizedMessage();
             System.out.println(connectMsg);
+            ex.printStackTrace();
             return null;
         }
     }
