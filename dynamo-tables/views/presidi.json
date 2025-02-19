@@ -47,6 +47,24 @@
                     "reloadOnSuccess": true,
                     "customDialogEntryName": "dialog_sharing_presidi",
                     "customDialogTitle": "Condivisione Presidi"
+                },
+                {
+                    "key": "attiva_con_compiti_chiusi",
+                    "icon": "switches",
+                    "label": "Attiva se compiti chiusi",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "query": "UPDATE entrasp.presidi p SET stato_attuazione = 'A' WHERE EXISTS (SELECT 1 FROM entrasp.compiti_rif_bo crb WHERE crb.codice_azienda = p.codice_azienda AND crb.id_presidio = p.id_presidio GROUP BY crb.codice_azienda, crb.id_presidio HAVING COUNT(*) = COUNT(CASE WHEN (SELECT stato FROM entrasp.compiti c WHERE c.codice_azienda = crb.codice_azienda AND c.codice_compito = crb.codice_compito) = 'C' THEN 1 END)) AND EXISTS (SELECT 1 FROM entrasp.compiti_rif_bo crb INNER JOIN entrasp.compiti c USING (codice_azienda, codice_compito) WHERE crb.codice_azienda = p.codice_azienda AND crb.id_presidio = p.id_presidio) and codice_azienda||'~'||id_presidio=any(array[$selected_rows_data$]) returning 1",
+                    "confirmActionMessage": "Attivare tutti i presidi selezionati che abbiano tutti i compiti chiusi?"
+                },
+                {
+                    "key": "migliorabile_con_compiti_aperti",
+                    "icon": "switches",
+                    "label": "Rendi migliorabili se compiti aperti",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "query": "UPDATE entrasp.presidi p SET stato_attuazione = 'M' WHERE EXISTS (SELECT 1 FROM entrasp.compiti_rif_bo crb INNER JOIN entrasp.compiti c USING (codice_azienda, codice_compito) WHERE crb.codice_azienda = p.codice_azienda AND crb.id_presidio = p.id_presidio AND c.stato = 'A') and codice_azienda||'~'||id_presidio=any(array[$selected_rows_data$]) returning 1",
+                    "confirmActionMessage": "Attivare tutti i presidi selezionati che abbiano tutti i compiti chiusi?"
                 }
             ]
         }
@@ -1202,6 +1220,17 @@
             "size": 1,
             "queryCond": "stato_attuazione!='A'",
             "translate": "RESOURCES.diverso_da_attivo_presidi"
+        },
+        {
+            "fieldName": "diverso_attivo_e_no_compiti",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Non attivo e senza compiti associati",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "(stato_attuazione not in('A', 'N') and id_presidio not in (select crb.id_presidio from entrasp.compiti_rif_bo crb where crb.id_presidio is not null and crb.codice_azienda=$codice_azienda$))"
         }
     ],
     "inputEvents": [
