@@ -8,7 +8,13 @@
             "operation": "selectTable",
             "type": "main",
             "queryString": "select id_report,codice_azienda,interval_multiplier||' '||interval_value as frequenza,lista_email_destinatari from entrasp.destinatari_report where codice_azienda in(€global_user_companies€) and id_report=$id_report$"
+        },
+        {
+            "operation": "insert",
+            "type": "main",
+            "queryString": " INSERT INTO entrasp.destinatari_report ($codice_azienda$, $id_report$, $lista_email_destinatari$,(select interval_value from entrasp.intervalli_temporali where intervallo=interval), (select interval_multiplier from entrasp.intervalli_temporali where intervallo=interval));"
         }
+
     ],
     "form_keys": [
         {
@@ -62,36 +68,17 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='time_interval' and codice in ('Days','Weeks','Months','Years');",
+                "comboQuery": "SELECT DISTINCT intervallo as id , frequenza as name FROM entrasp.intervalli_temporali ORDER BY intervallo",
                 "options": [],
-                "viewType": "combobox",
-                "dataType": "text",
-                "value": "Weeks"
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": true,
-            "key": "interval_value",
-            "label": "Unità di misura intervalli",
-            "newLine": false,
+            "key": "interval",
+            "label": "Intervallo",
             "readOnly": false,
-            "size": 1.66,
-            "translate": "RESOURCES.unit_di_misura_intervalli_destinatari_report"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input",
-                "value": "1"
-            },
-            "isHidden": false,
-            "isPrimary": true,
-            "key": "interval_multiplier",
-            "label": "Numero intervalli",
             "newLine": false,
-            "readOnly": false,
-            "size": 1.67,
-            "translate": "RESOURCES.numero_intervalli_destinatari_report"
+            "size":4
         }
     ],
     "addElementSettings": {
@@ -132,9 +119,12 @@
             "label": "Email destinatari",
             "translate": "RESOURCES.email_destinatari_destinatari_report"
         },
+     
+        
         {
             "format": {
                 "dataType": "text"
+                
             },
             "isHidden": false,
             "isPrimary": false,
