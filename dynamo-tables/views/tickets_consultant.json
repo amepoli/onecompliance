@@ -490,6 +490,101 @@
             "translate": "RESOURCES.descrizione_estesa_tickets_consultant"
         }
     ],
+    "search_keys": [
+        {
+            "fieldName": "codice_azienda",
+            "format": {
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende WHERE codice_azienda in(€global_user_companies€) order by codice_azienda;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "label": "Azienda",
+            "newLine": false,
+            "queryCond": "cmp.codice_azienda='€codice_azienda€'"
+        },
+        {
+            "fieldName": "stato",
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_COMPITI';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Stato",
+            "newLine": false,
+            "queryCond": "stato='€stato€'",
+            "translate": "RESOURCES.stato_data_breach"
+        },
+        {
+            "fieldName": "id_anagrafica_s",
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€' order by entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) asc;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Cliente/Fornitore/Dipendente",
+            "newLine": true,
+            "queryCond": "codice_azienda||'-'||codice_compito in(select codice_azienda||'-'||codice_compito from entrasp.compiti_anagrafiche where id_anagrafica=$id_anagrafica_s$ and codice_part='€global_codice_part€' and codice_azienda='€global_codice_azienda€')",
+            "translate": "RESOURCES.clientefornitoredipendente_data_breach"
+        },
+        {
+            "fieldName": "note_search",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Note",
+            "newLine": false,
+            "size": 3,
+            "queryCond": "(note ilike '%'||'€note_search€'||'%' or titolo ilike '%'||'€note_search€'||'%' or note_tecniche ilike '%'||'€note_search€'||'%')",
+            "translate": "RESOURCES.note_data_breach"
+        },
+        {
+            "fieldName": "codice_compito",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "label": "Codice",
+            "newLine": false,
+            "size": 1.5,
+            "queryCond": "codice_compito=$codice_compito$",
+            "translate": "RESOURCES.codice_data_breach"
+        },
+        {
+            "fieldName": "id_centro_gest",
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_azienda,id_centro_gest) AS name  FROM entrasp.compiti WHERE codice_azienda=$codice_azienda$;",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Centro Gestionale",
+            "newLine": false,
+            "size": 2,
+            "queryCond": "id_centro_gest=$id_centro_gest$",
+            "translate": "RESOURCES.centro_gestionale_data_breach"
+        },
+        {
+            "fieldName": "flag_solo_principali",
+            "format": {
+                "viewType": "checkbox"
+            },
+            "label": "Solo Principali",
+            "newLine": false,
+            "queryCond": "codice_compito_parent IS null",
+            "translate": "RESOURCES.solo_principali_data_breach"
+        },
+        {
+            "fieldName": "toggle_aperti",
+            "format": {
+                "value": "0",
+                "viewType": "toggle"
+            },
+            "label": "Solo aperti",
+            "newLine": false,
+            "queryCond": "stato!='C'"
+        }
+    ],
     "subTables": [
         {
             "entryKey": "consuntivazioni_sub_of_tickets",
