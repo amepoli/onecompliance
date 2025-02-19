@@ -95,6 +95,8 @@ public class Server {
             URI uri = t.getRequestURI();
             String reportName = getReportsNameFromQueryParams(uri);
 
+            System.out.println("Loading Jasper report..." + reportName);
+
             String data = new String(bos.toByteArray(), Charset.forName("UTF-8"));
             // System.out.print("Request: \n " + data);
             // pass the data to the handler and receive a response

@@ -1,9 +1,10 @@
-FROM java:8
+FROM openjdk:23-jdk
 WORKDIR /var/www/java
 
 #ADD gorico.jar gorico.jar
 # copy everything else and build
-COPY gorico.jar ./var/www/java
+COPY ./build/gorico.jar /var/www/java
+COPY ./build/libs/* /var/www/java/libs/
 
 EXPOSE 8080
-CMD java -jar gorico.jar
+CMD java -jar ./gorico.jar
