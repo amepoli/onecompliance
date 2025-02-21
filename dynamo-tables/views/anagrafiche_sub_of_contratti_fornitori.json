@@ -1,0 +1,313 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "anagrafiche_sub_of_contratti_fornitori",
+    "origin": "entrasp.contratti_anagrafiche_id",
+    "addElementSettings": {
+        "labelQuickAdd": "Nuovo Soggetto",
+        "navigateOnSuccess": true
+    },
+    "predefinedQueries": [
+        {
+            "type": "main",
+            "operation": "selectTable",
+            "queryString": "SELECT *, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) as anagrafiche_descr, entrasp.ruolo_descr(codice_ruolo) as codice_ruolo FROM entrasp.contratti_anagrafiche_id WHERE codice_azienda=$codice_azienda$ AND id_contratto=$id_contratto$ AND codice_ruolo in ('SUBF')"
+        }
+    ],
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "readOnly": true,
+            "translate": "RESOURCES.codice_azienda_anagrafiche_sub_of_contracts"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": "codice_part",
+            "readOnly": true,
+            "translate": "RESOURCES.codice_part_anagrafiche_sub_of_contracts"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, COALESCE(nome || ' ' || cognome, ragione_sociale) AS name FROM entrasp.anagrafiche_id an INNER JOIN entrasp.anagrafiche_vr avr ON an.id_anagrafica = avr.id_anagrafica AND an.codice_part = avr.codice_part WHERE an.codice_part = '€global_codice_part€'",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "Soggetto",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_ruolo",
+            "label": "Ruolo",
+            "size": 2,
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.ruolo_connessioni_anagrafiche"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_iso AS id, concat(codice_iso, ' - ' ,descrizione) AS name FROM entrasp.nazioni where codice_iso is not null order by descrizione asc"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_paese_mem_dati_subforn",
+            "label": "Paese di memorizzazione dei dati del subfornitore",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_iso AS id, concat(codice_iso, ' - ' ,descrizione) AS name FROM entrasp.nazioni where codice_iso is not null order by descrizione asc"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_paese_erog_serv_subforn",
+            "label": "Paese di erogazione dei servizi del subfornitore",
+            "newLine": true,
+            "readOnly": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_contratto",
+            "label": "id_contratto",
+            "readOnly": true,
+            "newLine": false,
+            "translate": "RESOURCES.id_contratto_anagrafiche_sub_of_contracts"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date",
+                "validations": [
+                    {
+                        "message": "Data inizio valitià richiesta",
+                        "name": "required",
+                        "validator": "Validators.required"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "data_inizio_validita",
+            "label": "Data inizio validità",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_fine_validita",
+            "label": "Data fine validità",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trattamenti_subfornitore",
+            "tooltip": "Flaggare qualora il contratto del subfornitore preveda trattamenti di dati personali",
+            "label": "Trattamenti Dati Subfornitore",
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note",
+            "label": "Note",
+            "readOnly": false,
+            "newLine": true
+        }
+    ],
+    "table_keys": [
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.codice_azienda_anagrafiche_sub_of_contracts"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "4%",
+            "queryFunct": "select true",
+            "key": "delete_anagrafiche_contratto",
+            "label": "",
+            "style": [
+                {
+                    "button_icon": "delete",
+                    "value": "*"
+                }
+            ],
+            "isButton": true,
+            "buttonAction": {
+                "target": "anagrafiche_sub_of_contracts",
+                "viewType": "form",
+                "query": "delete from entrasp.contratti_anagrafiche_id where codice_azienda='£codice_azienda£' AND codice_part='£codice_part£' AND id_contratto=£id_contratto£ AND id_anagrafica=£id_anagrafica£",
+                "action": "query",
+                "keymap": [
+                    {
+                        "source": "codice_azienda",
+                        "destination": "codice_azienda"
+                    },
+                    {
+                        "source": "codice_part",
+                        "destination": "codice_part"
+                    },
+                    {
+                        "source": "id_contratto",
+                        "destination": "id_contratto"
+                    },
+                    {
+                        "source": "id_anagrafica",
+                        "destination": "id_anagrafica"
+                    }
+                ],
+                "onSuccessAction": "reload"
+            }
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_contratto",
+            "label": "Contratto",
+            "translate": "RESOURCES.contratto_anagrafiche_sub_of_contracts"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "30%",
+            "queryFunct": "",
+            "key": "anagrafiche_descr",
+            "label": "Soggetti"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_ruolo",
+            "width": "15%",
+            "label": "Ruolo"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "id_anagrafica",
+            "label": "ID",
+            "translate": "RESOURCES.id_anagrafiche_sub_of_contracts"
+        },
+        {
+            "format": {
+                "dataType": "date"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "8%",
+            "key": "data_inizio_validita",
+            "label": "Data inizio valid."
+        },
+        {
+            "format": {
+                "dataType": "boolean"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trattamenti_subfornitore",
+            "isCheckbox": true,
+            "width": "8%",
+            "label": "Trattamenti"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_part",
+            "label": " "
+        }
+    ],
+    "hideActions": [
+        {
+            "tableActionType": "add",
+            "viewType": "table"
+        }
+    ]
+}

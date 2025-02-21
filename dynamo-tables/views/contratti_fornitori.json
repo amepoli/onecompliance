@@ -13,7 +13,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select *,(select a.descrizione from entrasp.asset a where a.id_asset = c.id_asset and codice_azienda=$codice_azienda$ and a.id_asset is not null) as descr_asset,c.codice_azienda||'|'||c.id_contratto as object_key, (select id_modello_test from entrasp.modelli_test where codice_azienda=$codice_azienda$ and id_tipo_modello_test=54 limit 1), true as create_somministrazione, entrasp.argomenti_descr(c.id_argomento_contratto) as tipo_contratto, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as id_cliente,entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) as fornitore, entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) as id_strumento_finanziario from entrasp.contratti c left join entrasp.ruoli_anagrafiche ra on c.codice_part=ra.codice_part and c.id_cliente=ra.id_anagrafica where ra.codice_ruolo='FOR' and c.codice_azienda=$codice_azienda$"
+            "queryString": "SELECT c.*,    (SELECT a.descrizione      FROM entrasp.asset a      WHERE a.id_asset = c.id_asset        AND a.codice_azienda = $codice_azienda$        AND a.id_asset IS NOT NULL) AS descr_asset,           c.codice_azienda || '|' || c.id_contratto AS object_key,     (SELECT id_modello_test      FROM entrasp.modelli_test      WHERE codice_azienda = $codice_azienda$         AND id_tipo_modello_test = 54      LIMIT 1) AS id_modello_test,          TRUE AS create_somministrazione,     entrasp.argomenti_descr(c.id_argomento_contratto) AS tipo_contratto,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS id_cliente,    entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS fornitore,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) AS id_strumento_finanziario FROM entrasp.contratti c WHERE c.id_tipo_contratto = 2   AND c.codice_azienda = $codice_azienda$    AND EXISTS (      SELECT 1       FROM entrasp.ruoli_anagrafiche ra      WHERE ra.codice_azienda = $codice_azienda$         AND ra.id_anagrafica = c.id_cliente        AND ra.codice_part = c.codice_part  );"
         }
     ],
     "outputEvents": [
@@ -39,6 +39,1049 @@
         "codice_ruolo": "FOR",
         "is_hidden_esternalizzazioni": "false"
     },
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "value": "$P{codice_ruolo}"
+            },
+            "label": "codice_ruolo",
+            "key": "codice_ruolo",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": false,
+            "newLine": false,
+            "translate": "RESOURCES.codice_ruolo_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "codice_azienda",
+            "key": "codice_azienda",
+            "readOnly": false,
+            "isHidden": true,
+            "isPrimary": true,
+            "newLine": false,
+            "translate": "RESOURCES.codice_azienda_contracts_investment"
+        },
+        {
+            "autoGenerate": true,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "# Contratto",
+            "key": "id_contratto",
+            "readOnly": true,
+            "isHidden": false,
+            "isPrimary": true,
+            "newLine": false,
+            "size": 1,
+            "inputEvents": [
+                {
+                    "eventName": "contratto_duplica",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.duplica_contratto ($codice_azienda$, $id_contratto$) as id_contratto"
+                }
+            ],
+            "translate": "RESOURCES._contratto_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input",
+                "validations": [
+                    {
+                        "message": "Inserire il giorno di stipula del contratto",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_il_giorno_di_stipula_del_contratto_contracts_investment"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_stipulazione",
+            "label": "Data Stipula",
+            "size": 1.5,
+            "readOnly": false,
+            "newLine": false,
+            "tooltip": "La data nella quale la controparte ha sottoscritto il contratto",
+            "translate": "RESOURCES.data_stipula_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select distinct arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in(5408,5402,3526) order by arg.id_argomento||'-'||arg.descrizione_breve",
+                "options": [],
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Tipologia contratto necessaria!",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.tipologia_contratto_necessaria_contracts_investment"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_argomento_contratto",
+            "label": "Tipo Contratto",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.9,
+            "translate": "RESOURCES.tipo_contratto_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text",
+                "validations": [
+                    {
+                        "message": "Numero contratto necessario",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.numero_contratto_necessario_contracts_investment"
+                    }
+                ]
+            },
+            "label": "Codice Contratto",
+            "key": "numero_contratto",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT codice AS id, transcodifica AS name  FROM entrasp.transcodifiche WHERE tipo_dato='STATO_CONTRATTI';",
+                "options": [],
+                "viewType": "combobox",
+                "dataType": "text",
+                "value": "A",
+                "validations": [
+                    {
+                        "message": "Inserire uno stato",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_uno_stato_contracts_investment"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "stato",
+            "label": "Stato",
+            "outputEvent": {
+                "eventName": "stato_load",
+                "eventTrigger": "load"
+            },
+            "newLine": false,
+            "readOnly": false,
+            "size": 2,
+            "translate": "RESOURCES.stato_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number",
+                "value": "2"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "key": "id_tipo_contratto",
+            "label": "",
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "menu",
+                "menuOptions": [
+                    {
+                        "icon": "stacked_line_chart",
+                        "label": "Crea progetto",
+                        "outputEventName": "progetto_create",
+                        "translate": "RESOURCES.crea_progetto_contracts_investment"
+                    },
+                    {
+                        "icon": "stacked_line_chart",
+                        "label": "Duplica contratto",
+                        "outputEventName": "contratto_duplica",
+                        "translate": "RESOURCES.duplica_contratto_contracts_investment"
+                    },
+                    {
+                        "icon": "warning",
+                        "label": "Gestisci conflitto/attività",
+                        "outputEventName": "compito_create_from_contratto",
+                        "translate": "RESOURCES.gestisci_conflittoattivit_contracts_investment"
+                    },
+                    {
+                        "icon": "lock",
+                        "label": "Chiudi Contratto",
+                        "outputEventName": "close_contract",
+                        "tooltip": "E' possibile chiudere il contratto solo se è definita la data cessazione",
+                        "translate": "RESOURCES.chiudi_contratto_contracts_investment"
+                    }
+                ]
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "buttonIcon": "more_vert",
+            "key": "contratti_actions",
+            "newLine": true,
+            "readOnly": false,
+            "sameOrigin": false,
+            "size": 0.6,
+            "inputEvents": [
+                {
+                    "eventName": "progetto_create",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query",
+                    "queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
+                    "outputEventWhenComplete": "navigate_to_new_progetto"
+                },
+                {
+                    "eventName": "compito_create_from_contratto",
+                    "actionType": "query",
+                    "queryFunct": "select entrasp.compiti_rif_bo_insert('contratti', coalesce($descrizione$,entrasp.argomenti_codice_descr_breve($id_argomento_contratto$)||entrasp.anagrafiche_vr_dati_identificativi('€codice_part€', $id_cliente$), 'cnt'||$id_contratto$,'' ), $codice_azienda$, idcontratto=>$id_contratto$) as codice_compito_created",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "to_compito_created"
+                },
+                {
+                    "eventName": "close_rapporto_aui",
+                    "actionType": "show_message",
+                    "condition": "none",
+                    "values": [],
+                    "message": {
+                        "messageTitle": "Registrare chiusura rapporto in AUI?",
+                        "actionOnYes": {
+                            "actionType": "query",
+                            "queryFunct": "select entrasp.aui_registra_chiusura_rapporto($codice_azienda$, $id_contratto$, '€global_username€')"
+                        },
+                        "actionOnNo": {
+                            "actionType": "query",
+                            "queryFunct": "select true"
+                        }
+                    },
+                    "successMessage": "Operazione eseguita con successo",
+                    "outputEventWhenComplete": "survey_reload"
+                },
+                {
+                    "eventName": "close_contract",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "queryFunct": "UPDATE entrasp.contratti SET data_cessazione=coalesce('£data_cessazione£',current_date), stato='C' WHERE id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$ RETURNING (SELECT case when count(*) >  0 then 'true' else 'false' end FROM entrasp.contratti cnt INNER JOIN entrasp.registrazioni_rapporti_aui rra  ON cnt.numero_contratto=trim(rra.identificativo_rapporto) and cnt.codice_azienda=rra.codice_azienda WHERE cnt.id_contratto=$id_contratto$ and cnt.codice_azienda=$codice_azienda$)",
+                    "successMessage": "Contratto chiuso",
+                    "outputEventWhenComplete": "survey_reload"
+                }
+            ]
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_contratto_da",
+            "label": "Data Inizio",
+            "size": 1.83,
+            "readOnly": false,
+            "newLine": false,
+            "tooltip": "La data dalla quale il contratto decorre"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_contratto_a",
+            "label": "Data Scadenza",
+            "size": 1.82,
+            "newLine": false,
+            "readOnly": false,
+            "tooltip": "La data di termine del contratto"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "label": "Data Cessazione",
+            "key": "data_cessazione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 1.83,
+            "tooltip": "La data nella quale il contratto è cessato (se il contratto si chiuderà alla data di prevista fine coinciderà con la stessa)"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "date"
+            },
+            "label": "Data Rinnovo",
+            "key": "data_rinnovo",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Note",
+            "key": "note",
+            "readOnly": false,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.note_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Descrizione",
+            "key": "descrizione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "size": 6,
+            "newLine": false,
+            "translate": "RESOURCES.descrizione_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "tariffa_mensile",
+            "label": "Costo mensile",
+            "size": 2.5,
+            "tooltip": "il costo mensile stimato nell’accordo di esternalizzazione",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.costo_mensile_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_valuta AS id, sigla as name from entrasp.valute WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox",
+                "value": "0",
+                "dataType": "number"
+            },
+            "label": "Valuta",
+            "key": "id_valuta",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 1.5,
+            "translate": "RESOURCES.valuta_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_controparti",
+            "label": "Controparti Coinvolte",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_style": "normal",
+                "font_weight": "500",
+                "font_size": "1.5em"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox",
+                "validations": [
+                    {
+                        "message": "Inserire il nome della controparte",
+                        "name": "required",
+                        "validator": "Validators.required",
+                        "translate": "RESOURCES.inserire_il_nome_della_controparte_contracts_investment"
+                    }
+                ]
+            },
+            "label": "Fornitore",
+            "key": "id_cliente",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$);",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_anagrafica_approvatore",
+            "label": "Responsabile",
+            "newLine": false,
+            "tooltip": "La persona fisica all’interno dell’impresa, che ha approvato l’accordo di esternalizzazione nel cloud",
+            "readOnly": false,
+            "size": 2.5,
+            "translate": "RESOURCES.responsabile_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52183"
+            },
+            "label": "Organo Decisionale",
+            "key": "organo_decisionale",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "tooltip": "Organo Decisionale",
+            "translate": "RESOURCES.organo_decisionale_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select ai.id_anagrafica as id, entrasp.anagrafiche_cognnome(ai.codice_part, ai.id_anagrafica) as name from entrasp.anagrafiche_id ai  where ai.codice_part = '€global_codice_part€'"
+            },
+            "label": "Firmatario",
+            "key": "firmatario",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 2.5,
+            "tooltip": "Firmatario",
+            "translate": "RESOURCES.firmatario_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select ai.id_anagrafica as id, entrasp.anagrafiche_cognnome(ai.codice_part, ai.id_anagrafica) as name from entrasp.anagrafiche_id ai  where ai.codice_part = '€global_codice_part€'"
+            },
+            "label": "Utilizzatore",
+            "key": "utilizzatore",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "tooltip": "Utilizzatore",
+            "translate": "RESOURCES.utilizzatore_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, concat(codice, ' - ', ragione_sociale) as name from entrasp.anagrafiche_vr an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€' and ra.codice_ruolo= 'FONDO';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Fondo Gestito",
+            "key": "id_strumento_finanziario",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "translate": "RESOURCES.fondo_gestito_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an WHERE an.codice_part='€global_codice_part€';"
+            },
+            "label": "Fornitore Cloud",
+            "key": "id_fornitore_cloud",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Fornitore Alternativo",
+            "key": "fornitore_alternativo",
+            "readOnly": false,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_esternalizzazione",
+            "label": "Esternalizzazione e Rischi",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_style": "normal",
+                "font_weight": "500",
+                "font_size": "1.5em"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 10
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_esternalizzazione",
+            "tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione",
+            "size": 2.5,
+            "label": "Esternalizzazione Infragruppo",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_essenziale",
+            "tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione essenziale",
+            "size": 2.5,
+            "label": "Essenziale",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.essenziale_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_urgente",
+            "tooltip": "Flaggare qualora si tratti di funzione la cui inattività deve essere gestita con urgenza",
+            "size": 2.5,
+            "label": "Funzione critica in termini di tempo",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.urgente_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sub_estern",
+            "tooltip": "Flaggare qualora la sub esternalizzazione sia ammessa",
+            "size": 2.5,
+            "label": "SubFornitura Ammessa",
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "giurisdizione",
+            "label": "Giurisdizione",
+            "size": 2.5,
+            "tooltip": "Indicare la giurisdizione di riferimento",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.giurisdizione_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note_essenzialità",
+            "label": "Note essenzialità",
+            "size": 2.5,
+            "tooltip": "Illustrare i motivi per cui si ritiene la funzione essenziale o meno",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.note_essenzialit_contracts_investment"
+        },
+
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale Responsabile",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.5,
+            "translate": "RESOURCES.centro_gestionale_responsabile_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53920"
+            },
+            "label": "Impatto Interruzione",
+            "key": "id_argomento_impatto_interruzione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53923"
+            },
+            "label": "Reinternalizzazione",
+            "key": "id_argomento_reinternalizzazione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53920"
+            },
+            "label": "Valutazione Rischi",
+            "key": "id_argomento_valutazione_rischi",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53923"
+            },
+            "label": "Sostituibilità",
+            "key": "id_argomento_sostituibilita",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_termini",
+            "label": "Termini, Condizioni e Compliance",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_style": "normal",
+                "font_weight": "500",
+                "font_size": "1.5em"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 10
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "termini_preavviso",
+            "label": "Periodo Preavviso Fornitore",
+            "tooltip": "Giorni di Preavviso",
+            "size": 2,
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.periodo_preavviso_fornitore_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "preavviso_intermediario",
+            "label": "Periodo Preavviso Intermediario",
+            "tooltip": "Giorni di Preavviso",
+            "size": 2,
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.periodo_preavviso_intermediario_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "normativa_applicabile",
+            "label": "Normativa Applicabile",
+            "size": 2,
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "autorita_vigilanza",
+            "label": "Autorità di Vigilanza",
+            "size": 2,
+            "newLine": false,
+            "tooltip": "Denominazione dell'autorità di vigilanza del fornitore",
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_valutazione_rischi",
+            "label": "Ultima Valutazione Rischi",
+            "size": 2,
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_valutazione_fei",
+            "label": "Ultima Valutazione FEI",
+            "size": 2,
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=54005"
+            },
+            "label": "Classificazione FEI",
+            "key": "id_argomento_classificazione_fei",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_ultimo_audit",
+            "label": "Ultimo Audit Effettuato",
+            "size": 2,
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_audit_succ",
+            "label": "Data Prossimo Audit",
+            "size": 2,
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "conformita",
+            "tooltip": "Flaggare qualora il contratto sia stato sottoposto a verifica di conformità",
+            "size": 2,
+            "label": "Valutazione Conformità Effettuata",
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_dati",
+            "label": "Dati e Cloud",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_style": "normal",
+                "font_weight": "500",
+                "font_size": "1.5em"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 10
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "natura_dati_cloud",
+            "label": "Natura dei dati in Cloud",
+            "size": 2.5,
+            "newLine": false,
+            "tooltip": "Denominazione dell'autorità di vigilanza del fornitore",
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_iso AS id, concat(codice_iso, ' - ' ,descrizione) AS name FROM entrasp.nazioni where codice_iso is not null order by descrizione asc"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_paese_mem_dati_forn",
+            "label": "Paese di memorizzazione dei dati del fornitore",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.5
+        },
+
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53918"
+            },
+            "label": "Tipologia di Servizio Cloud",
+            "key": "id_argomento_mod_esternalizzazione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=48362"
+            },
+            "label": "Tipologia di Cloud",
+            "key": "id_argomento_serv_cloud",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53909"
+            },
+            "label": "Categoria",
+            "key": "id_argomento_categoria",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "trattamenti_fornitore",
+            "tooltip": "Flaggare qualora il contratto del fornitore preveda trattamenti di dati personali",
+            "size": 2.5,
+            "label": "Trattamenti Dati Fornitore",
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "number"
+            },
+            "label": "id_progetto",
+            "key": "id_progetto",
+            "readOnly": false,
+            "isHidden": true,
+            "sameOrigin": false,
+            "isPrimary": false,
+            "newLine": true,
+            "translate": "RESOURCES.id_progetto_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "codice_compito_created",
+            "label": "codice_compito_created",
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.codice_compito_created_contracts_investment"
+        }
+    ],
     "table_keys": [
         {
             "format": {
@@ -298,7 +1341,23 @@
                 }
             ],
             "label": "Valutazioni contratti",
+            "renderingOrder": 1,
             "translate": "RESOURCES.valutazioni_contratti_sondaggi_somministrati_sub_of_contratti_fornitori"
+        },
+        {
+            "entryKey": "anagrafiche_sub_of_contratti_fornitori",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                }
+            ],
+            "renderingOrder": 2,
+            "label": "Soggetti Coinvolti"
         }
     ]
 }
