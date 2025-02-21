@@ -152,17 +152,42 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "input"
+                "comboQuery": "select id_argomento as id, descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=6614 order by id_argomento;",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "codice",
-            "label": "Codice",
-            "newLine": false,
+            "key": "id_argomento_priorita",
+            "size": 1.5,
+            "label": "Priorità",
             "readOnly": false,
-            "size": 1
+            "newLine": false,
+            "outputEvent": {
+                "eventName": "codice_colore_priorita",
+                "eventTrigger": "load"
+            },
+            "inputEvents": [
+                {
+                    "eventName": "codice_colore_priorita",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "background_color",
+                    "queryFunct": "select case when id_argomento_priorita=2484 then 'White' when id_argomento_priorita=6615 then 'Green' when id_argomento_priorita=6616 then 'yellow' when id_argomento_priorita=45115 then 'fireBrick' end as id_argomento_priorita_background_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                },
+                {
+                    "eventName": "codice_colore_testo_priorita",
+                    "condition": "none",
+                    "values": [],
+                    "actionType": "query_style",
+                    "styleAttribute": "font_color",
+                    "queryFunct": "select case when id_argomento_priorita=2484 then 'DarkBlue' when id_argomento_priorita=6615 then 'PaleGreen' when id_argomento_priorita=6616 then 'black' when id_argomento_priorita=45115 then 'DarkRed' end as id_argomento_priorita_font_color from entrasp.compiti where codice_azienda=$codice_azienda$ and codice_compito=$codice_compito$"
+                }
+            ],
+            "translate": "RESOURCES.priorit_compiti"
         },
+       
         {
             "autoGenerate": false,
             "format": {
@@ -199,7 +224,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.63,
+            "size": 2,
             "translate": "RESOURCES.cliente_contracts_investment"
         },
         {
