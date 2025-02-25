@@ -2662,7 +2662,7 @@
                 "viewType": "checkbox"
             },
             "label": "Documenti scaduti",
-            "newLine": true,
+            "newLine": false,
             "size": 1,
             "queryCond": "(data_scadenza_documento<CURRENT_DATE and data_scadenza_documento is not null)",
             "translate": "RESOURCES.documenti_scaduti_anagrafiche_vr"
@@ -2678,6 +2678,17 @@
             "size": 1,
             "queryCond": "avr.id_anagrafica=(select max(id_anagrafica) from entrasp.anagrafiche_id where codice_part='€global_codice_part€')",
             "translate": "RESOURCES.max_id_anagr_anagrafiche_vr"
+        },
+        {
+            "fieldName": "codice_max",
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "label": "Max codice",
+            "newLine": false,
+            "size": 1,
+            "queryCond": "avr.codice=(SELECT codice FROM entrasp.anagrafiche_id WHERE codice ~ '^[0-9]+$' and codice_part='€global_codice_part€' ORDER BY codice::bigint DESC limit 1);"
         },
         {
             "fieldName": "soggetti_collegati_s",
