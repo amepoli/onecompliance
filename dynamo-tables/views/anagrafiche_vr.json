@@ -39,6 +39,12 @@
         {
             "operation": "insert",
             "type": "preCheck",
+            "queryString": "select coalesce(cf, piva) from (select $codice_fiscale$ as cf, $partita_iva$ as piva) tab where tab.cf is null and tab.piva is null",
+            "messageNotNull": "Attenzione è necessario valorizzare almeno la partita IVA o il codice fiscale!"
+        },
+        {
+            "operation": "insert",
+            "type": "preCheck",
             "queryString": "select codice from entrasp.anagrafiche_id where codice_part=$codice_part$ and codice=$codice$ and flag_duplicato!='1'",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice!"
         },
@@ -47,6 +53,12 @@
             "type": "preCheck",
             "queryString": "select avr.codice_fiscale from entrasp.anagrafiche_vr avr inner join entrasp.anagrafiche_id an on avr.codice_part=an.codice_part and avr.id_anagrafica=an.id_anagrafica  where avr.codice_part=$codice_part$  and avr.codice_fiscale=$codice_fiscale$ and an.flag_duplicato!='1'",
             "messageNotNull": "Attenzione esiste già un'anagrafica con lo stesso codice fiscale!"
+        },
+        {
+            "operation": "update",
+            "type": "preCheck",
+            "queryString": "select coalesce(cf, piva) from (select $codice_fiscale$ as cf, $partita_iva$ as piva) tab where tab.cf is null and tab.piva is null",
+            "messageNotNull": "Attenzione è necessario valorizzare almeno la partita IVA o il codice fiscale!"
         },
         {
             "operation": "update",
@@ -652,12 +664,6 @@
                         "validator": "Validators.maxLength(16)",
                         "value": 16,
                         "translate": "RESOURCES.lunghezza_massima_16_caratteri_anagrafiche_vr"
-                    },
-                    {
-                        "message": "Codice fiscale o identificativo univoco analogo obbligatorio",
-                        "name": "required",
-                        "validator": "Validators.required",
-                        "translate": "RESOURCES.codice_fiscale_o_identificativo_univoco_analogo_obbligatorio_anagrafiche_vr"
                     }
                 ]
             },
