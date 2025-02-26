@@ -5,13 +5,20 @@
         {
             "operation": "insert",
             "type": "main",
-            "queryString": "insert INTO entrasp.progetti_duplica(codice_azienda, id_progetto, false, (select interval_value from entrasp.intervalli_temporali where intervallo=interval), (select interval_multiplier from entrasp.intervalli_temporali where intervallo=interval)::integer);"
+            "queryString": "select entrasp.progetti_duplica('€global_codice_azienda€', £id_progetto£,$flag_con_risposta$::boolean , (select interval_value from entrasp.intervalli_temporali where intervallo=$interval$)::interval, (select interval_multiplier from entrasp.intervalli_temporali where intervallo=$interval$)::integer);"
+
+        },
+        {
+            "operation": "isInsert",
+            "type":"main",
+            "queryString": "select true as label"
         }
     ],
     "form_keys": [
         {
             "autoGenerate": false,
             "format": {
+                "dataType": "text",
                 "comboQuery": "SELECT DISTINCT intervallo as id , intervallo as name FROM entrasp.intervalli_temporali ORDER BY intervallo",
                 "options": [],
                 "viewType": "combobox",
@@ -24,6 +31,21 @@
             "readOnly": false,
             "newLine": false,
             "size": 6
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "key": "flag_con_risposta",
+            "label": "Duplica con risposta",
+            "newLine": false,
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false
+            
         }
+
     ]
 }
