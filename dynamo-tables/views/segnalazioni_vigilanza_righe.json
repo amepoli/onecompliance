@@ -2,6 +2,13 @@
     "$schema": "../views.schema.json",
     "entryKey": "segnalazioni_vigilanza_righe",
     "origin": "entrasp.segnalazioni_vigilanza_righe",
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "SELECT svr.id_valore, svr.codice_azienda, svr.id_voce_segnalazione, (entrasp.voci_descrizione(svr.id_voce_segnalazione)) AS voce_descr, (entrasp.attributi_descrizione(vs.attributo)) AS attributo_descr, svr.valore_testo, svr.valore_num, svr.valore_data, svr.valore_id_argomento, svr.id_risorsa, svr.prog_revisione, svr.invio, entrasp.argomenti_descr_breve_no_num (valore_id_argomento) as argomento_descr FROM entrasp.segnalazioni_vigilanza_righe svr INNER JOIN entrasp.voci_segnalazione vs ON svr.id_voce_segnalazione = vs.id_voce_segnalazione where svr.codice_azienda=$codice_azienda$ and svr.id_risorsa=$id_risorsa$ and svr.invio=$invio$ and prog_revisione=$prog_revisione$"
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": true,
@@ -258,6 +265,46 @@
         },
         {
             "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_voce_segnalazione",
+            "label": "ID"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "entrasp.voci_descrizione(id_voce_segnalazione)",
+            "key": "voce_descr",
+            "label": "voce"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "key": "attributo",
+            "label": "attributo"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "sameOrigin": false,
+            "queryFunct": "entrasp.attributi_descrizione(attributo)",
+            "key": "attributo_descr",
+            "label": "Attributo"
+        },
+        {
+            "format": {
                 "dataType": "text"
             },
             "isHidden": false,
@@ -287,45 +334,26 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "valore_id_argomento",
             "label": "Valore ID Argomento"
         },
         {
             "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_voce_segnalazione",
-            "label": "voce"
-        },
-        {
-            "format": {
-                "dataType": "text"
+                "dataType": "number"
             },
             "isHidden": false,
             "isPrimary": false,
             "sameOrigin": false,
-            "key": "sottovoce",
-            "label": "sottovoce"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "sameOrigin": false,
-            "key": "attributo",
-            "label": "attributo"
+            "key": "argomento_descr",
+            "label": "Valore ID Argomento"
         },
         {
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "id_risorsa",
             "label": "ID Risorsa"
@@ -334,7 +362,7 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": false,
+            "isHidden": true,
             "isPrimary": false,
             "key": "prog_revisione",
             "label": "Preg Revisione"
@@ -343,7 +371,7 @@
             "format": {
                 "dataType": "number"
             },
-            "isHidden": true,
+            "isHidden": false,
             "isPrimary": true,
             "key": "invio",
             "label": "Invio"

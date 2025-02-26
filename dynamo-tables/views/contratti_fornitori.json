@@ -526,9 +526,24 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.5,
+            "size": 2.0,
             "tooltip": "Utilizzatore",
             "translate": "RESOURCES.utilizzatore_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';"
+            },
+            "label": "Capogruppo",
+            "key": "id_capogruppo_forn",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.0
         },
         {
             "autoGenerate": false,
@@ -543,7 +558,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.5,
+            "size": 2.0,
             "translate": "RESOURCES.fondo_gestito_contracts_investment"
         },
         {
@@ -559,7 +574,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.5
+            "size": 2.0
         },
         {
             "autoGenerate": false,
@@ -570,7 +585,7 @@
             "label": "Fornitore Alternativo",
             "key": "fornitore_alternativo",
             "readOnly": false,
-            "size": 2.5,
+            "size": 2.0,
             "isHidden": false,
             "isPrimary": false,
             "newLine": true
@@ -990,7 +1005,22 @@
             "readOnly": false,
             "size": 2.5
         },
-
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "SELECT codice_iso AS id, concat(codice_iso, ' - ' ,descrizione) AS name FROM entrasp.nazioni where codice_iso is not null order by descrizione asc"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "id_paese_erog_serv_forn",
+            "label": "Paese di erogazione dei servizi del fornitore",
+            "newLine": false,
+            "readOnly": false,
+            "size": 2.5
+        },
         {
             "autoGenerate": false,
             "format": {
@@ -1003,7 +1033,7 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
+            "newLine": true,
             "size": 2.5
         },
         {
@@ -1359,5 +1389,25 @@
             "renderingOrder": 2,
             "label": "Soggetti Coinvolti"
         }
-    ]
+    ],
+    "importQueries": {
+        "tableQueries": [
+            {
+                "label": "Importa contratti",
+                "queryString": "select entrasp.contratti_import($codice_azienda$, $nome_file$)"
+            }
+        ]
+    },
+    "exportQueries": {
+        "tableQueries": [
+            {
+                "label": "Template per import",
+                "queryString": "SELECT CURRENT_DATE::varchar AS data_stipula,5402 AS tipo_contratto,'n.15/23' as numero_contratto,14 as id_cliente,'contratto di leasing' as descrizione,'A' as stato,(CURRENT_DATE + interval '18 months')::varchar as data_cessazione"
+            },
+            {
+                "label": "Segnalazione Esternalizzazioni",
+                "queryString": "SELECT * from entrasp.segnalazione_esternalizzazioni('€global_codice_azienda€')"
+            }
+        ]
+    }
 }
