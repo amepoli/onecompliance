@@ -192,7 +192,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
         _this.subscriptions.push(_this.pubSubService.subscribe(_this.subMsgCmdTopic,
             msg => {
                 // if (msg.type === 'print_list') {   // toolbar asking for the list of possible reports in current view
-                //     _this.backendService.getReportList(_this.tableName, _this.authService.getCurrentCompany(), _this.currentTableKeys).subscribe(
+                //     _this.backendService.getReportList(_this.tableName, _this.authService.getCurrentCompany(), this.authService.getLastLanguage(), _this.authService.getLastLanguage(), _this.currentTableKeys).subscribe(
                 //         response => {
                 //             _this._console.log(response);
                 //             if (response.result === 'OK') {
@@ -205,7 +205,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 //             }
                 //         });
                 // } else if (msg.type === 'print_item') {  // toolbar asking for producing a specific report 
-                //     _this.backendService.getReport(_this.tableName, _this.authService.getCurrentCompany(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
+                //     _this.backendService.getReport(_this.tableName, _this.authService.getCurrentCompany(), this.authService.getLastLanguage(), _this.authService.getLastLanguage(), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, msg.value, (_this.tableType === 'form'), _this.searchKeys).subscribe(
                 //         response => {
                 //             _this._console.log(response);
                 //             if (response.result === 'OK') {
@@ -244,7 +244,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     // Show loading Dialog
                     _this._dialogService.showLoadingDialog("Preparing Excel Sheet", "Please wait...");
 
-                    const subscription = _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), (_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
+                    const subscription = _this.backendService.getData(_this.tableName, _this.authService.getCurrentCompany(_this.currentTableKeys), _this.authService.getLastLanguage(),(_this.tableType === 'table') ? _this.currentTableKeys : _this.formParams.keys, _this.searchKeys,
                         (_this.tableType === 'form'), false, null, true).subscribe(
                             response => {
                                 _this._dialogService.closeDialog();
@@ -531,7 +531,7 @@ export class MainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     async syncGoogleS3Files() {
         let _this = this;
-        _this.backendService.getS3GoogleSyncFilesList(_this.authService.getCurrentCompany(_this.currentTableKeys)).subscribe(
+        _this.backendService.getS3GoogleSyncFilesList(_this.authService.getCurrentCompany(_this.currentTableKeys), _this.authService.getLastLanguage(),).subscribe(
             async getS3GoogleSyncFilesListResponse => {
                 console.table(getS3GoogleSyncFilesListResponse);
                 if (getS3GoogleSyncFilesListResponse.result === 'OK' && getS3GoogleSyncFilesListResponse.response && getS3GoogleSyncFilesListResponse.response.rows && getS3GoogleSyncFilesListResponse.response.rows.length > 0) {

@@ -7,6 +7,7 @@ import { ConsoleLoggerService } from './console_logger.service';
 import { DialogService } from './dialog.service';
 import { TimeTrackerService } from './time_tracker.service';
 import { ToastService } from './toast.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -19,7 +20,8 @@ export class ActionsService {
         private backendService: BackendService, 
         private _toastService: ToastService,
         private _console: ConsoleLoggerService,
-        private _timeTrackerService: TimeTrackerService) {
+        private _timeTrackerService: TimeTrackerService,
+        private _authService: AuthService) {
     }
     public getFormActionMessage(actionType: FormActionType, messages: MessageElement[]) {
         let result: MessageItem = null;
@@ -46,7 +48,7 @@ export class ActionsService {
             }
         }
 
-        const subscription = _this.backendService.performFormAction(actionType, entryName, company, keys ).subscribe(
+        const subscription = _this.backendService.performFormAction(actionType, entryName, company, _this._authService.getLastLanguage(), keys ).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {

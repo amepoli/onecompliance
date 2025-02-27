@@ -49,7 +49,7 @@ export class HomepageComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.tiles = [];
         
-        _this.backendService.loadHomePage('default', _this.authService.getCurrentCompany({})).subscribe(
+        _this.backendService.loadHomePage('default', _this.authService.getCurrentCompany({}), _this.authService.getLastLanguage()).subscribe(
             result => {
                 _this.tabs = result.response.tabs;
             },

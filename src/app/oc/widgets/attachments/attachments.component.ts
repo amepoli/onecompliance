@@ -99,7 +99,7 @@ export class AttachmentsComponent implements OnInit, AfterViewInit, OnChanges {
         }
         else {
             if (_this.keys && _this.entryName) {
-                const subscription = _this.backendService.getAttachList(_this.entryName, _this.authService.getCurrentCompany(_this.keys), _this.keys, _this.businessObjectName).subscribe(
+                const subscription = _this.backendService.getAttachList(_this.entryName, _this.authService.getCurrentCompany(_this.keys), _this.authService.getLastLanguage(), _this.keys, _this.businessObjectName).subscribe(
                     result => {
                         _this._console.log(result);
                         if (result.result === 'OK') {

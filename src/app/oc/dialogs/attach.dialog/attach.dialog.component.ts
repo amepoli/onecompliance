@@ -87,7 +87,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
             if (_this.newTypeParams.keys.codice_azienda == null) { // hack, tipi_allegati requires this field
-                _this.newTypeParams.keys.codice_azienda = _this.authService.getCurrentCompany();
+                _this.newTypeParams.keys.codice_azienda = _this.authService.getCurrentCompany(), this.authService.getLastLanguage(), _this.authService.getLastLanguage();
             }
             _this.attach = true;
         });
@@ -98,7 +98,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    _this.backendService.getFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, fileDesc.file_id).subscribe(
+                    _this.backendService.getFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), this.authService.getLastLanguage(), _this.data.keys, fileDesc.file_id).subscribe(
                         url => {
                             if (url != null) {
                                 _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
@@ -118,7 +118,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), selected.id_risorsa, selected.file_id, selected.prog_revisione, _this.data.keys).subscribe(
+                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), this.authService.getLastLanguage(), selected.id_risorsa, selected.file_id, selected.prog_revisione, _this.data.keys).subscribe(
                         urlResponse => {
                             if (urlResponse.result == 'OK') {
                                 _this._console.table(urlResponse);
@@ -148,7 +148,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 const element = _this.data.keys[key];
                 // hack, fe_attachment_form needs this field
                 if (key === 'codice_part') {
-                    _this.formParams.keys['codice_azienda'] = _this.authService.getCurrentCompany(); //element;
+                    _this.formParams.keys['codice_azienda'] = _this.authService.getCurrentCompany(), this.authService.getLastLanguage(), _this.authService.getLastLanguage(); //element;
                     // hack, fe_attachment_form pick up the value of 'descrizione' if we attach from domande(incorrect) [maybe because they have the same name_key ('descrizione' in fe_att and domande) ]
                 } else if (key === 'descrizione') {
                     _this.formParams.keys[key] = '';
@@ -206,7 +206,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     getAttachList() {
-        const subscription = this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(this.data.keys), this.data.keys, this.data.businessObjectName).subscribe(
+        const subscription = this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(this.data.keys), this.authService.getLastLanguage(), this.data.keys, this.data.businessObjectName).subscribe(
             result => {
                 this._console.log(result);
                 if (result.result === 'OK') {
@@ -314,7 +314,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
             _this._console.log(hash);
             _this._console.log(md5hash);
 
-            _this.backendService.loadFileDataIfExists(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash).subscribe(
+            _this.backendService.loadFileDataIfExists(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.authService.getLastLanguage(), _this.data.keys, hash, md5hash).subscribe(
                 responseCheck => {
                     if (responseCheck.result === 'OK') {
                         let data = responseCheck.data;
@@ -438,7 +438,7 @@ export class AttachDialogComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
-        const subscription = this.backendService.updateData(this.newTypeParams.entryName, this.authService.getCurrentCompany(this.data.keys), this.currentKeys, [values]).subscribe(  // backend expects an array of data
+        const subscription = this.backendService.updateData(this.newTypeParams.entryName, this.authService.getCurrentCompany(this.data.keys), this.authService.getLastLanguage(), this.currentKeys, [values]).subscribe(  // backend expects an array of data
             result => {
                 this.newTypeParams.isVisible = false; // hide the view 
                 setTimeout(() => {

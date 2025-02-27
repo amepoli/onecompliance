@@ -52,7 +52,7 @@ export class S3ExplorerComponent implements AfterViewInit{
     getContents() {
         let _this = this;
         _this.isLoading = true;
-        _this._backendService.getContents('attachments',  _this._authService.getCurrentCompany(), {}, _this.contentsPrefix)
+        _this._backendService.getContents('attachments',  _this._authService.getCurrentCompany(), _this._authService.getLastLanguage(), {}, _this.contentsPrefix)
         .subscribe( result => {
             _this.folders = result.contents.CommonPrefixes.map( x => x.Prefix);
             _this.files = result.contents.Contents.map( x => { return x.Key.split('/').at(-1)});

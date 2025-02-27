@@ -184,6 +184,7 @@ export class EmailService {
                     data.header,
                     data.footer,
                     data.company,
+                    _this.authService.getLastLanguage(),
                     data.sender,
                     data.to,
                     data.cc,

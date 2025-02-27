@@ -72,7 +72,7 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                             selected_rows_data: data
                         }
                     }
-                    let subscription = _this._backendService.runTableMultiSelectionActionQuery(_this.entryKey, _this._authService.getCurrentCompany(), selectionParams).subscribe(
+                    let subscription = _this._backendService.runTableMultiSelectionActionQuery(_this.entryKey, _this._authService.getCurrentCompany(), _this._authService.getLastLanguage(), selectionParams).subscribe(
                         result => {
                             if(result.result == 'OK') {
                                 _this._toastService.showSuccessToast('Success!');
@@ -172,7 +172,7 @@ export class TableMultiselectToolbarComponent implements DoCheck {
                             selected_rows_data: data
                         }
                     }
-                    let subscription = _this._backendService.runTableMultiSelectionActionQuery(_this.entryKey, _this._authService.getCurrentCompany(), selectionParams).subscribe(
+                    let subscription = _this._backendService.runTableMultiSelectionActionQuery(_this.entryKey, _this._authService.getCurrentCompany(), _this._authService.getLastLanguage(), selectionParams).subscribe(
                         result => {
                             if(result.result == 'OK') {
                                 _this._toastService.showSuccessToast('Success!');

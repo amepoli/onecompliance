@@ -142,6 +142,7 @@ export class ButtonComponent implements OnInit, OnDestroy {
                     _this.authService.getCurrentCompany(
                         _this.field.fullValueSet,
                     ),
+                    _this.authService.getLastLanguage(),
                     {},
                     file_id,
                 )
