@@ -56,7 +56,7 @@ export class TimeTrackerService {
                         if (isTrDayCompleteResponse.result === 'OK' && isTrDayCompleteResponse.data && isTrDayCompleteResponse.data[0] && isTrDayCompleteResponse.data[0]['is_tr_day_complete']) {
                             let color = isTrDayCompleteResponse.data[0]['is_tr_day_complete'];
                             _this.descriptionColorUpdated.emit(color);
-                            let subscription = _this._backendService.checkTimerStatus(company).subscribe(
+                            let subscription = _this._backendService.checkTimerStatus(company, _this._authService.getLastLanguage(),).subscribe(
                                 result => {
                                     if (result.result === 'OK' && result.data) {
                                         let status: TimeTrackerStatus = { data: null, elapsedTime: null };
@@ -116,7 +116,7 @@ export class TimeTrackerService {
     startTimer(data: any) {
         let _this = this;
         if (data) {
-            let subscription = _this._backendService.startTimer(data.codice_azienda, data.codice_compito).subscribe(
+            let subscription = _this._backendService.startTimer(data.codice_azienda, _this._authService.getLastLanguage(), data.codice_compito).subscribe(
                 result => {
                     let status = false;
                     if (result.result === 'OK' && result.data) {
@@ -154,7 +154,7 @@ export class TimeTrackerService {
     stopTimer(data: any) {
         let _this = this;
         if (data) {
-            let subscription = _this._backendService.stopTimer(data.codice_azienda).subscribe(
+            let subscription = _this._backendService.stopTimer(data.codice_azienda, _this._authService.getLastLanguage()).subscribe(
                 result => {
                     let status = false;
                     if (result.result === 'OK' && result.data) {

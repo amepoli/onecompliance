@@ -63,7 +63,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         const company = _this.authService.getCurrentCompany();
         _this.child.webDataRocks.off('reportcomplete');
 
-        const subscription = _this.backendService.getView(_this.tableParams.entryName, company, _this.tableParams.keys).subscribe(
+        const subscription = _this.backendService.getView(_this.tableParams.entryName, company, _this.authService.getLastLanguage(), _this.tableParams.keys).subscribe(
             viewResults => {
                 try{
                     if (viewResults.result === 'OK' && viewResults.data.table_keys != null) {
@@ -71,13 +71,13 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
                         // keep only relevant global keys
                         _this.tableParams.keys = _this.getCurrentKeys(viewResults.table_keys, _this.tableParams.keys);
                         // recover the dashboard labels
-                        const inner_subscription = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
+                        const inner_subscription = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), this.authService.getLastLanguage(), _this.tableParams.keys, null, false, false, _this.tableParams.entryIndex, false).subscribe(
                             response => {
                                 _this._console.log(response);
                                 if (response.result === 'OK') {
                                     const labels = response.data;
                                     // now recover the dashboard data
-                                    const inner_subscription2 = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), _this.tableParams.keys, null, false, false, null, false).subscribe(
+                                    const inner_subscription2 = _this.backendService.getData(_this.tableParams.entryName, _this.authService.getCurrentCompany(), this.authService.getLastLanguage(), _this.tableParams.keys, null, false, false, null, false).subscribe(
                                         results => {
                                             _this._console.log(results);
                                             if (results.result === 'OK') {

@@ -285,7 +285,7 @@ export class FileManagerService // implements Resolve<any>
         const loadingToastId = _this._toastService.showLoadingToast("Saving", "Please wait...");
         try {
             // get the S3 URL 
-            let responseURL: any = await _this.backendService.createFileURL(data.entryName, _this.authService.getCurrentCompany(data.keys), data.keys).toPromise();
+            let responseURL: any = await _this.backendService.createFileURL(data.entryName, _this.authService.getCurrentCompany(data.keys), _this.authService.getLastLanguage(), data.keys).toPromise();
             _this._console.log(responseURL);
             if (responseURL != null && responseURL.result === 'OK') {
                 const blob = new Blob([file]);
@@ -302,11 +302,11 @@ export class FileManagerService // implements Resolve<any>
                 // check that the file has been correctly uploaded and pass file params to the backend
                 var mime = require('mime-types');
                 
-                let responseCheck: any = await _this.backendService.checkFile(data.entryName, _this.authService.getCurrentCompany(data.keys), data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
+                let responseCheck: any = await _this.backendService.checkFile(data.entryName, _this.authService.getCurrentCompany(data.keys), _this.authService.getLastLanguage(), data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
                 _this._console.log(responseCheck);
                 if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
                     if (_this.authService.getSyncMode() === 'google') {
-                        const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(data.keys), hash).toPromise();
+                        const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(data.keys), _this.authService.getLastLanguage(), hash).toPromise();
                         _this._console.log(googleDriveFileCopyParamsResponse);
                         _this._console.log('Uploading to google');
                         try {

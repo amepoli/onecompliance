@@ -396,7 +396,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
 
 
             _this.savingState = 'saving';
-            const subscription = _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
+            const subscription = _this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), _this.currentKeys, [values]).subscribe(   // backend expects an array of data
                 result => {
                     _this._console.log(result);
                     if (result) {
@@ -531,7 +531,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
         _this._dialogService.showConfimationDialog(deleteMessage.title, deleteMessage.text, "Yes", "No", "warning").then((result) => {
             if (result.value === true) {
                 // User said yes so let's delete form
-                const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys).subscribe(
+                const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), _this.currentKeys).subscribe(
                     result => {
                         _this._console.log(result);
                         if (result.result === 'OK') {
@@ -626,7 +626,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
     getAttachList() {
         const _this = this;
         //console.table(_this.currentKeys);
-        const subscription = _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, _this.formGetter.businessObjectName).subscribe(
+        const subscription = _this.backendService.getAttachList(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), _this.currentKeys, _this.formGetter.businessObjectName).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {

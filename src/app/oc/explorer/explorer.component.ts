@@ -342,7 +342,7 @@ export class ExplorerComponent
             _this.backendService
                 .getView(
                     _this.tableData.entryName,
-                    _this.authService.getCurrentCompany(_this.currentKeys),
+                    _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(),
                     _this.tableData.keys,
                 )
                 .subscribe(
@@ -519,7 +519,7 @@ export class ExplorerComponent
             _this.backendService
                 .getData(
                     _this.tableData.entryName,
-                    _this.authService.getCurrentCompany(_this.currentKeys),
+                    _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(),
                     _this.currentKeys,
                     null,
                     false,
@@ -563,7 +563,7 @@ export class ExplorerComponent
             _this.backendService
                 .getData(
                     _this.tableData.entryName,
-                    _this.authService.getCurrentCompany(_this.currentKeys),
+                    _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(),
                     _this.currentKeys,
                     search_keys,
                     false,
@@ -1175,7 +1175,7 @@ export class ExplorerComponent
         const subscription = _this.backendService
             .deleteData(
                 _this.tableData.entryName,
-                _this.authService.getCurrentCompany(_this.currentKeys),
+                _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(),
                 [keys],
             )
             .subscribe(
@@ -1206,7 +1206,7 @@ export class ExplorerComponent
         _this.backendService
             .runCustomQuery(
                 _this.tableData.entryName,
-                _this.authService.getCurrentCompany(_this.currentKeys),
+                _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(),
                 keys,
                 selectedViewKey.key,
             )
@@ -1245,7 +1245,7 @@ export class ExplorerComponent
             const subscription = _this.backendService
                 .getFileURL(
                     null,
-                    _this.authService.getCurrentCompany(_this.currentKeys),
+                    _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(),
                     {},
                     file_id,
                 )

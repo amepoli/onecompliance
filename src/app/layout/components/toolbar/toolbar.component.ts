@@ -269,7 +269,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 this.router.navigate(['/login']);
             }
     
-            let runCompanyChangeQuerySubscription = _this._backendService.runCompanyChangeQuery(company).subscribe( response => {
+            let runCompanyChangeQuerySubscription = _this._backendService.runCompanyChangeQuery(company, _this._authService.getLastLanguage()).subscribe( response => {
                 runCompanyChangeQuerySubscription.unsubscribe();
                 setTimeout(() => _this._timeTrackerService.checkStatus(), 1000);
             }, error => {
