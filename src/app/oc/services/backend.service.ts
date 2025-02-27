@@ -67,27 +67,27 @@ export class BackendService {
     return value;
   }
 
-  getView(entryName: string, company: string, keys: any): Observable<any> {
+  getView(entryName: string, company: string, language: string, keys: any): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys) }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys) }
     }
     return from(this.awsService.api().get(this.apiName, this.viewsApiName, getReq));
   }
 
-  getProfileData(company: string): Observable<any> {
+  getProfileData(company: string, language: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: '', company: company, get_profile_data_only: 1 }
+      queryStringParameters: { entry_name: '', company: company, language: language, get_profile_data_only: 1 }
     }
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
-  getData(entryName: string, company: string, keys: any, search_keys: any, isForm: boolean, isNew: boolean, dashboardIndex: number, isExcel: boolean): Observable<any> {
+  getData(entryName: string, company: string, language: string, keys: any, search_keys: any, isForm: boolean, isNew: boolean, dashboardIndex: number, isExcel: boolean): Observable<any> {
     this.awsService.auth();
 
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), form: isForm ? 1 : 0, new: isNew ? 1 : 0, excel: isExcel ? 1 : 0 }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), form: isForm ? 1 : 0, new: isNew ? 1 : 0, excel: isExcel ? 1 : 0 }
     }
 
     if (dashboardIndex != null) {
@@ -101,188 +101,188 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
-  postEvent(entryName: string, company: string, keys: any, field: string, data: any, event: string, actionType: string, isMessage: boolean = false): Observable<any> {
+  postEvent(entryName: string, company: string, language: string, keys: any, field: string, data: any, event: string, actionType: string, isMessage: boolean = false): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
       body: data,
       headers: {},
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), event: JSON.stringify({ name: event, type: actionType, field: field, isMessage: isMessage }) }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), event: JSON.stringify({ name: event, type: actionType, field: field, isMessage: isMessage }) }
     };
 
     return from(this.awsService.api().post(this.apiName, this.tablesApiName, putPostReq));
   }
 
-  deleteData(entryName: string, company: string, keys: any): Observable<any> {
+  deleteData(entryName: string, company: string, language: string, keys: any): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys) }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys) }
     }
     return from(this.awsService.api().del(this.apiName, this.tablesApiName, getReq));
   }
 
-  performFormAction(formActionType: FormActionType, entryName: string, company: string, keys: any): Observable<any> {
+  performFormAction(formActionType: FormActionType, entryName: string, company: string, language: string, keys: any): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, isFormAction: 1, formActionType: formActionType, company: company, keys: JSON.stringify(keys) }
+      queryStringParameters: { entry_name: entryName, isFormAction: 1, formActionType: formActionType, company: company, language: language, keys: JSON.stringify(keys) }
     }
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
-  updateData(entryName: string, company: string, keys: any, data: any): Observable<any> {
+  updateData(entryName: string, company: string, language: string, keys: any, data: any): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
 
       body: JSON.parse(JSON.stringify(data, this.replacer)),
       headers: {},
-      queryStringParameters: { entry_name: entryName, company: company, form: 1, keys: JSON.stringify(keys) }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, form: 1, keys: JSON.stringify(keys) }
     };
 
     return from(this.awsService.api().post(this.apiName, this.tablesApiName, putPostReq));
   }
 
-  runCustomQuery(entryName: string, company: string, keys: any, buttonKey: string): Observable<any> {
+  runCustomQuery(entryName: string, company: string, language: string, keys: any, buttonKey: string): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
 
       body: keys,
       headers: {},
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify({}), custom_query: 1, custom_query_key: buttonKey }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify({}), custom_query: 1, custom_query_key: buttonKey }
     };
     return from(this.awsService.api().post(this.apiName, this.tablesApiName, putPostReq));
   }
 
-  runTableMultiSelectionActionQuery(entryName: string, company: string, selection_params: any): Observable<any> {
+  runTableMultiSelectionActionQuery(entryName: string, company: string, language: string, selection_params: any): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
 
       body: selection_params,
       headers: {},
-      queryStringParameters: { entry_name: entryName, company: company, table_multi_selection_action_query: 1 },
+      queryStringParameters: { entry_name: entryName, company: company, language: language, table_multi_selection_action_query: 1 },
     };
     return from(this.awsService.api().post(this.apiName, this.tablesApiName, putPostReq));
   }
 
-  runCompanyChangeQuery(company: string): Observable<any> {
+  runCompanyChangeQuery(company: string, language: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { company_change_query: 1, company: company }
+      queryStringParameters: { company_change_query: 1, company: company, language: language }
     }
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
-  getDomandeRisposte(company: string, entryName: string, keys: object): Observable<any> {
+  getDomandeRisposte(company: string, language: string, entryName: string, keys: object): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), is_domande_risposte_get_request: 1 }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), is_domande_risposte_get_request: 1 }
     }
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
   
-  updateDomandeRisposte(company: string, entryName: string, keys: object, data: any): Observable<any> {
+  updateDomandeRisposte(company: string, language: string, entryName: string, keys: object, data: any): Observable<any> {
     this.awsService.auth();    
     const putPostReq: PostRequest = {
       body: {data: data},
       headers: {},
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), is_domande_risposte_update_request: 1 }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), is_domande_risposte_update_request: 1 }
     };
     return from(this.awsService.api().post(this.apiName, this.tablesApiName, putPostReq));
   }
 
-  getAttachList(entryName: string, company: string, keys: any, businessObjectName: string): Observable<any> {
+  getAttachList(entryName: string, company: string, language: string, keys: any, businessObjectName: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), businessObjectName: businessObjectName }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), businessObjectName: businessObjectName }
     }
     return from(this.awsService.api().get(this.apiName, this.attachApiName, getReq));
   }
 
-  getFileURL(entryName: string, company: string, keys: any, filename: string): Observable<any> {
+  getFileURL(entryName: string, company: string, language: string, keys: any, filename: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), filename: filename }
     }
     return from(this.awsService.api().get(this.apiName, this.attachApiName, getReq));
   }
 
-  loadFileDataIfExists(entryName: string, company: string, keys: any, checksum: string, md5Checksum: string): Observable<any> {
+  loadFileDataIfExists(entryName: string, company: string, language: string, keys: any, checksum: string, md5Checksum: string): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
       body: null,
       headers: {},
-      queryStringParameters: { entry_name: entryName, company: company, request_type: 'loadFileDataIfExists', keys: JSON.stringify(keys), checksum: checksum, md5_checksum: md5Checksum }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, request_type: 'loadFileDataIfExists', keys: JSON.stringify(keys), checksum: checksum, md5_checksum: md5Checksum }
     };
     return from(this.awsService.api().post(this.apiName, this.attachApiName, putPostReq));
   }
 
-  createFileURL(entryName: string, company: string, keys: any): Observable<any> {
+  createFileURL(entryName: string, company: string, language: string, keys: any): Observable<any> {
 
     this.awsService.auth();
     const putPostReq: PostRequest = {
       body: null,
       headers: {},
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys) }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys) }
     };
     return from(this.awsService.api().post(this.apiName, this.attachApiName, putPostReq));
   }
 
-  checkFile(entryName: string, company: string, keys: any, checksum: string, md5Checksum: string, filename: string, data: any): Observable<any> {
+  checkFile(entryName: string, company: string, language: string, keys: any, checksum: string, md5Checksum: string, filename: string, data: any): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
 
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), filename: filename, checksum: checksum, md5_checksum: md5Checksum },
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), filename: filename, checksum: checksum, md5_checksum: md5Checksum },
       body: data,
       headers: {},
     };
     return from(this.awsService.api().post(this.apiName, this.attachApiName, putPostReq));
   }
 
-  deleteFile(entryName: string, company: string, id_risorsa: string, filename: string, prog_revisione: string, keys: any): Observable<any> {
+  deleteFile(entryName: string, company: string, language: string, id_risorsa: string, filename: string, prog_revisione: string, keys: any): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, id_risorsa: id_risorsa, filename: filename, prog_revisione: prog_revisione, keys: JSON.stringify(keys) }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, id_risorsa: id_risorsa, filename: filename, prog_revisione: prog_revisione, keys: JSON.stringify(keys) }
     }
     return from(this.awsService.api().del(this.apiName, this.attachApiName, getReq));
   }
 
-  getGoogleDriveFileCopyParams(company: string, checksum: string): Observable<any> {
+  getGoogleDriveFileCopyParams(company: string, language: string, checksum: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'getGoogleDriveFileCopyParams', company: company, checksum: checksum }
+      queryStringParameters: { request_type: 'getGoogleDriveFileCopyParams', company: company, language: language, checksum: checksum }
     }
     return from(this.awsService.api().get(this.apiName, this.attachApiName, getReq));
   }
 
-  getS3GoogleSyncFilesList(company: string): Observable<any> {
+  getS3GoogleSyncFilesList(company: string, language: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'getS3GoogleSyncFilesList', company: company }
+      queryStringParameters: { request_type: 'getS3GoogleSyncFilesList', company: company, language: language }
     }
     return from(this.awsService.api().get(this.apiName, this.attachApiName, getReq));
   }
 
-  getContents(entryName: string, company: string, keys: any, contentsPrefix: string): Observable<any> {
+  getContents(entryName: string, company: string, language: string, keys: any, contentsPrefix: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), request_type: 'getContents', contents_prefix: contentsPrefix }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), request_type: 'getContents', contents_prefix: contentsPrefix }
     }
     return from(this.awsService.api().get(this.apiName, this.attachApiName, getReq));
   }
 
-  getReportList(entryName: string, company: string, keys: any, isFormView: boolean): Observable<any> {
+  getReportList(entryName: string, company: string, language: string, keys: any, isFormView: boolean): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), list: '1', form: isFormView ? 1 : 0 }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), list: '1', form: isFormView ? 1 : 0 }
     }
     return from(this.awsService.api().get(this.apiName, this.reportsApiName, getReq));
   }
 
-  getReport(entryName: string, company: string, keys: any, reportName: string, isFormView: boolean, search_keys: any): Observable<any> {
+  getReport(entryName: string, company: string, language: string, keys: any, reportName: string, isFormView: boolean, search_keys: any): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
 
       body: reportName,
       headers: {},
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), form: isFormView ? 1 : 0 },
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), form: isFormView ? 1 : 0 },
     };
     if (search_keys != null) {
       putPostReq.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
@@ -431,12 +431,12 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.authApiName, putPostReq));
   }
 
-  inviteUser(username: string, company: string, associated_user: string, registry: string, tax_code: string, temporaryPassword: string, profile: string) {
+  inviteUser(username: string, company: string, language: string, associated_user: string, registry: string, tax_code: string, temporaryPassword: string, profile: string) {
     this.awsService.auth();
     const putPostReq: PostRequest = {
       body: null,
       headers: {},
-      queryStringParameters: { invite_user: 1, username: username, company: company, associated_user: associated_user, registry: registry, tax_code: tax_code, temporary_password: temporaryPassword, profile: profile },
+      queryStringParameters: { invite_user: 1, username: username, company: company, language: language, associated_user: associated_user, registry: registry, tax_code: tax_code, temporary_password: temporaryPassword, profile: profile },
     };
     return from(this.awsService.api().post(this.apiName, this.usersApiName, putPostReq));
   }
@@ -509,7 +509,7 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.importApiName, putPostReq));
   }
 
-  importFileFromS3(company: string, fileName: string, entryName: string, columns: string, fileType: string = 'CSV'): Observable<any> {
+  importFileFromS3(company: string, language: string, fileName: string, entryName: string, columns: string, fileType: string = 'CSV'): Observable<any> {
     this.awsService.auth();
 
     // Test data:
@@ -517,12 +517,12 @@ export class BackendService {
     const putPostReq: PostRequest = {
       body: null,
       headers: {},
-      queryStringParameters: { request_type: 'importFile', company: company, filename: fileName, entry_name: entryName, columns: columns, file_type: fileType }
+      queryStringParameters: { request_type: 'importFile', company: company, language: language, filename: fileName, entry_name: entryName, columns: columns, file_type: fileType }
     };
     return from(this.awsService.api().post(this.apiName, this.importApiName, putPostReq));
   }
 
-  importAdvancedFileFromS3(entryName: string, company: string, keys: any, fileName: string, is_form: boolean, advanced_query_label: string = null): Observable<any> {
+  importAdvancedFileFromS3(entryName: string, company: string, language: string, keys: any, fileName: string, is_form: boolean, advanced_query_label: string = null): Observable<any> {
     this.awsService.auth();
 
     // Test data:
@@ -531,7 +531,7 @@ export class BackendService {
     const putPostReq: PostRequest = {
       body: null,
       headers: {},
-      queryStringParameters: { entry_name: entryName, request_type: 'importAdvancedFile', company: company, keys: JSON.stringify(keys), filename: fileName, is_form: is_form ? 1 : 0, advanced_query_label: advanced_query_label }
+      queryStringParameters: { entry_name: entryName, request_type: 'importAdvancedFile', company: company, language: language, keys: JSON.stringify(keys), filename: fileName, is_form: is_form ? 1 : 0, advanced_query_label: advanced_query_label }
     };
     return from(this.awsService.api().post(this.apiName, this.importApiName, putPostReq));
   }
@@ -556,12 +556,12 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.importApiName, putPostReq));
   }
 
-  getCSV(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, formValues: any, advanced_query_label: string = null): Observable<any> {
+  getCSV(entryName: string, company: string, language: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, formValues: any, advanced_query_label: string = null): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
 
       headers: {},
-      queryStringParameters: { entry_name: entryName, request_type: 'getCSV', company: company, keys: JSON.stringify(keys), is_form: is_form ? 1 : 0, is_csv: 1, is_advanced: is_advanced ? 1 : 0, advanced_query_label: advanced_query_label },
+      queryStringParameters: { entry_name: entryName, request_type: 'getCSV', company: company, language: language, keys: JSON.stringify(keys), is_form: is_form ? 1 : 0, is_csv: 1, is_advanced: is_advanced ? 1 : 0, advanced_query_label: advanced_query_label },
       body: JSON.parse(JSON.stringify(formValues, this.replacer))
     };
     if (search_keys != null) {
@@ -571,12 +571,12 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.importApiName, putPostReq));
   }
 
-  getExcel(entryName: string, company: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, formValues: any, advanced_query_label: string = null): Observable<any> {
+  getExcel(entryName: string, company: string, language: string, keys: any, search_keys: any, is_form: boolean, is_advanced: boolean, formValues: any, advanced_query_label: string = null): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
 
       headers: {},
-      queryStringParameters: { entry_name: entryName, request_type: 'getCSV', company: company, keys: JSON.stringify(keys), is_form: is_form ? 1 : 0, is_csv: 0, is_advanced: is_advanced ? 1 : 0, advanced_query_label: advanced_query_label },
+      queryStringParameters: { entry_name: entryName, request_type: 'getCSV', company: company, language: language, keys: JSON.stringify(keys), is_form: is_form ? 1 : 0, is_csv: 0, is_advanced: is_advanced ? 1 : 0, advanced_query_label: advanced_query_label },
       body: JSON.parse(JSON.stringify(formValues, this.replacer))
     };
     if (search_keys != null) {
@@ -609,12 +609,12 @@ export class BackendService {
   }
 
 
-  sendEmail(subject: string, header: string, footer: string, company: string, sender: string, to: string, cc: string, ccn: string): Observable<any> {
+  sendEmail(subject: string, header: string, footer: string, company: string, language: string, sender: string, to: string, cc: string, ccn: string): Observable<any> {
     this.awsService.auth();
     const putPostReq: PostRequest = {
 
       headers: {},
-      queryStringParameters: { company: company },
+      queryStringParameters: { company: company, language: language },
       body: JSON.parse(JSON.stringify({
         sender: sender,
         subject: subject,
@@ -622,7 +622,7 @@ export class BackendService {
           header: header,
           footer: footer
         },
-        company: company,
+        company: company, language: language,
         to: { list: to },
         cc: { list: cc },
         ccn: { list: ccn }
@@ -640,26 +640,26 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.timeTrackerApiName, getReq));
   }
 
-  checkTimerStatus(company: string): Observable<any> {
+  checkTimerStatus(company: string, language: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'checkStatus', company: company }
+      queryStringParameters: { request_type: 'checkStatus', company: company, language: language }
     }
     return from(this.awsService.api().get(this.apiName, this.timeTrackerApiName, getReq));
   }
 
-  startTimer(company: string, codice_compito: string): Observable<any> {
+  startTimer(company: string, language: string, codice_compito: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'startTime', company: company, codice_compito: codice_compito }
+      queryStringParameters: { request_type: 'startTime', company: company, language: language, codice_compito: codice_compito }
     }
     return from(this.awsService.api().get(this.apiName, this.timeTrackerApiName, getReq));
   }
 
-  stopTimer(company: string): Observable<any> {
+  stopTimer(company: string, language: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'stopTime', company: company }
+      queryStringParameters: { request_type: 'stopTime', company: company, language: language }
     }
     return from(this.awsService.api().get(this.apiName, this.timeTrackerApiName, getReq));
   }
@@ -872,10 +872,10 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.googleApiName, putPostReq));
   }
 
-  getGoogleDriveFolderNameByAnagrafica(company: string, id_anagrafica: string, username: string, id_risorsa: string, id_sondaggio: string, codice_part: string): Observable<any> {
+  getGoogleDriveFolderNameByAnagrafica(company: string, language: string, id_anagrafica: string, username: string, id_risorsa: string, id_sondaggio: string, codice_part: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'getGoogleDriveFolderNameByAnagrafica', company: company, id_anagrafica: id_anagrafica, username: username, id_risorsa: id_risorsa, id_sondaggio: id_sondaggio, codice_part: codice_part }
+      queryStringParameters: { request_type: 'getGoogleDriveFolderNameByAnagrafica', company: company, language: language, id_anagrafica: id_anagrafica, username: username, id_risorsa: id_risorsa, id_sondaggio: id_sondaggio, codice_part: codice_part }
     }
     return from(this.awsService.api().get(this.apiName, this.attachApiName, getReq));
   }
@@ -913,40 +913,40 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.attachApiName, putPostReq));
   }
 
-  getConnectedRegistries(company: string, registry: string): Observable<any> {
+  getConnectedRegistries(company: string, language: string, registry: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'getConnectedRegistries', company: company, registry: registry }
+      queryStringParameters: { request_type: 'getConnectedRegistries', company: company, language: language, registry: registry }
     }
     return from(this.awsService.api().get(this.apiName, this.regulatVPCApiName, getReq));
   }
 
-  getConnectedRegistriesFromCheck(company: string, check: string): Observable<any> {
+  getConnectedRegistriesFromCheck(company: string, language: string, check: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'getConnectedRegistriesFromCheck', company: company, check: check }
+      queryStringParameters: { request_type: 'getConnectedRegistriesFromCheck', company: company, language: language, check: check }
     }
     return from(this.awsService.api().get(this.apiName, this.regulatVPCApiName, getReq));
   }
 
-  getConnectedChecks(company: string, survey: string): Observable<any> {
+  getConnectedChecks(company: string, language: string, survey: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { request_type: 'getConnectedChecks', company: company, survey: survey }
+      queryStringParameters: { request_type: 'getConnectedChecks', company: company, language: language, survey: survey }
     }
     return from(this.awsService.api().get(this.apiName, this.regulatVPCApiName, getReq));
   }
 
-  getAmlScan(company: string, connected_registries: any, checkId: string, dynamoUser: string, isLightScan: boolean): Observable<any> {
+  getAmlScan(company: string, language: string, connected_registries: any, checkId: string, dynamoUser: string, isLightScan: boolean): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { company: company, connected_registries: JSON.stringify(connected_registries), checkId: checkId, dynamoUser: dynamoUser, isLightScan: isLightScan }
+      queryStringParameters: { company: company, language: language, connected_registries: JSON.stringify(connected_registries), checkId: checkId, dynamoUser: dynamoUser, isLightScan: isLightScan }
     }
     return from(this.awsService.api().get(this.apiName, this.regulatApiName, getReq));
   }
 
 
-  createFattureInCloudInvoice(company: string, entity: any) {
+  createFattureInCloudInvoice(company: string, language: string, entity: any) {
     this.awsService.auth();
     const postReq: PostRequest = {
       queryStringParameters: { company },
@@ -970,18 +970,18 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.fattureincloudApiName, postReq));
   }
 
-  loadHomePage(entryName: string, company: string): Observable<any> {
+  loadHomePage(entryName: string, company: string, language: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, homepage: 1 }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, homepage: 1 }
     }
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
-  loadHomePageTab(entryName: string, company: string, search_keys: any): Observable<any> {
+  loadHomePageTab(entryName: string, company: string, language: string, search_keys: any): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, homepagetab: 1 }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, homepagetab: 1 }
     }
     if (search_keys != null) {
       getReq.queryStringParameters['search_keys'] = JSON.stringify(search_keys);
@@ -989,18 +989,18 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.tablesApiName, getReq));
   }
 
-  getCalendarEvents(company: string): Observable<any> {
+  getCalendarEvents(company: string, language: string): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { company: company }
+      queryStringParameters: { company: company, language: language }
     }
     return from(this.awsService.api().get(this.apiName, this.calendarApiName, getReq));
   }
 
-  getSearchKeys(entryName: string, company: string, keys: any): Observable<any> {
+  getSearchKeys(entryName: string, company: string, language: string, keys: any): Observable<any> {
     this.awsService.auth();
     const getReq: GetRequest = {
-      queryStringParameters: { entry_name: entryName, company: company, keys: JSON.stringify(keys), isSearchKeyRequest: 1 }
+      queryStringParameters: { entry_name: entryName, company: company, language: language, keys: JSON.stringify(keys), isSearchKeyRequest: 1 }
     }
     return from(this.awsService.api().get(this.apiName, this.viewsApiName, getReq));
   }

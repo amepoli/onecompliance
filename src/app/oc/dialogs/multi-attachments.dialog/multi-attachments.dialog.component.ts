@@ -87,7 +87,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 }
             }
             if (_this.newTypeParams.keys.codice_azienda == null) { // hack, tipi_allegati requires this field
-                _this.newTypeParams.keys.codice_azienda = _this.authService.getCurrentCompany();
+                _this.newTypeParams.keys.codice_azienda = _this.authService.getCurrentCompany(), this.authService.getLastLanguage(), _this.authService.getLastLanguage();
                 //_this.newTypeParams.keys.codice_part;
             }
             _this.attach = true;
@@ -99,7 +99,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    _this.backendService.getFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, fileDesc.file_id).subscribe(
+                    _this.backendService.getFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.authService.getLastLanguage(), _this.data.keys, fileDesc.file_id).subscribe(
                         url => {
                             if (url != null) {
                                 _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
@@ -119,7 +119,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
             if (_this.listFiles != null) {
                 const fileDesc = _this.listFiles.find(e => e.client_file_name === selected.name);
                 if (fileDesc != null) {
-                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), selected.id_risorsa, selected.file_id, selected.prog_revisione, _this.data.keys).subscribe(
+                    _this.backendService.deleteFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.authService.getLastLanguage(), selected.id_risorsa, selected.file_id, selected.prog_revisione, _this.data.keys).subscribe(
                         urlResponse => {
                             if (urlResponse.result == 'OK') {
                                 _this._console.table(urlResponse);
@@ -149,7 +149,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 const element = _this.data.keys[key];
                 // hack, fe_attachment_form needs this field
                 if (key === 'codice_part') {
-                    _this.formParams.keys['codice_azienda'] = _this.authService.getCurrentCompany(); //element;
+                    _this.formParams.keys['codice_azienda'] = _this.authService.getCurrentCompany(), this.authService.getLastLanguage(), _this.authService.getLastLanguage(); //element;
                     // hack, fe_attachment_form pick up the value of 'descrizione' if we attach from domande(incorrect) [maybe because they have the same name_key ('descrizione' in fe_att and domande) ]
                 } else if (key === 'descrizione') {
                     _this.formParams.keys[key] = '';
@@ -207,7 +207,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
     }
 
     getAttachList() {
-        const subscription = this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(this.data.keys), this.data.keys, this.data.businessObjectName).subscribe(
+        const subscription = this.backendService.getAttachList(this.data.entryName, this.authService.getCurrentCompany(this.data.keys), this.authService.getLastLanguage(), this.data.keys, this.data.businessObjectName).subscribe(
             result => {
                 this._console.log(result);
                 if (result.result === 'OK') {
@@ -341,7 +341,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
         let _this = this;
         try {
             // get the S3 URL 
-            let responseURL: any = await _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys).toPromise();
+            let responseURL: any = await _this.backendService.createFileURL(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.authService.getLastLanguage(), _this.data.keys).toPromise();
             _this._console.log(responseURL);
             if (responseURL != null && responseURL.result === 'OK') {
                 const blob = new Blob([_this.files[i]]);
@@ -383,11 +383,11 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                     autore: _this.authService.getUsername(),
                     businessObjectName: _this.data.businessObjectName
                 };
-                let responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
+                let responseCheck: any = await _this.backendService.checkFile(_this.data.entryName, _this.authService.getCurrentCompany(_this.data.keys), _this.authService.getLastLanguage(), _this.data.keys, hash, md5hash, responseURL.filename, fileParams).toPromise();
                 _this._console.log(responseCheck);
                 if (responseCheck.result === 'OK' || responseCheck.reason == 'File already loaded!') {
                     if (_this.authService.getSyncMode() === 'google') {
-                        const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), hash).toPromise();
+                        const googleDriveFileCopyParamsResponse: any = await _this.backendService.getGoogleDriveFileCopyParams(_this.authService.getCurrentCompany(_this.data.keys), _this.authService.getLastLanguage(), hash).toPromise();
                         _this._console.log(googleDriveFileCopyParamsResponse);
                         _this._console.log('Uploading to google');
                         try {
@@ -596,7 +596,7 @@ export class MultiAttachmentsDialogComponent implements OnInit, AfterViewInit, O
                 }
             }
         }
-        const subscription = this.backendService.updateData(this.newTypeParams.entryName, this.authService.getCurrentCompany(this.data.keys), this.currentKeys, [values]).subscribe(  // backend expects an array of data
+        const subscription = this.backendService.updateData(this.newTypeParams.entryName, this.authService.getCurrentCompany(this.data.keys), this.authService.getLastLanguage(), this.currentKeys, [values]).subscribe(  // backend expects an array of data
             result => {
                 this.newTypeParams.isVisible = false; // hide the view 
                 setTimeout(() => {

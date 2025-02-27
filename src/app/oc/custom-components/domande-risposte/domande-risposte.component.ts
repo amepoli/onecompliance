@@ -83,7 +83,7 @@ export class DomandeRisposteComponent implements OnChanges
     loadData() {
         const _this = this;
         _this.isLoading = true;
-        const subscription = _this.backendService.getDomandeRisposte(_this.domandeRisposteParams.keys.codice_azienda, this.domandeRisposteParams.entryName, _this.domandeRisposteParams.keys).subscribe(result => {
+        const subscription = _this.backendService.getDomandeRisposte(_this.domandeRisposteParams.keys.codice_azienda, _this.authService.getLastLanguage(), _this.domandeRisposteParams.entryName, _this.domandeRisposteParams.keys).subscribe(result => {
             if(result && result.data && result.data.crea_json_verifica) {
                 const results: DomandaRispostaElement[] = JSON.parse(result.data.crea_json_verifica);
                 _this.data = results.map(x => (
@@ -1247,6 +1247,7 @@ export class DomandeRisposteComponent implements OnChanges
                                 .postEvent(
                                     _this.domandeRisposteParams.entryName,
                                     _this.authService.getCurrentCompany(this.domandaKeys[index]),
+                                    _this.authService.getLastLanguage(), 
                                     {
                                         ...this.domandaKeys[index],
                                         ..._this.externalKeys,
@@ -1358,6 +1359,7 @@ export class DomandeRisposteComponent implements OnChanges
                     .postEvent(
                         _this.formParams[index].entryName,
                         _this.authService.getCurrentCompany(this.domandaKeys[index]),
+                        _this.authService.getLastLanguage(),
                         { ..._this.domandaKeys[index], ..._this.externalKeys },
                         keyListener,
                         chiavi,
@@ -1604,7 +1606,7 @@ export class DomandeRisposteComponent implements OnChanges
         }
 
 
-        _this.backendService.updateDomandeRisposte(_this.data[index].keys.codice_azienda, _this.domandeRisposteParams.entryName, _this.data[index].keys, data).subscribe(
+        _this.backendService.updateDomandeRisposte(_this.data[index].keys.codice_azienda, _this.authService.getLastLanguage(), _this.domandeRisposteParams.entryName, _this.data[index].keys, data).subscribe(
             result => {
                 if(result.result == "OK") {
                     _this._toastService.showInfoToast('Saved!');

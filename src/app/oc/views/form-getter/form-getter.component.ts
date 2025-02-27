@@ -338,7 +338,7 @@ export class FormGetterComponent
         const subscription = _this.backendService
             .getView(
                 _this.formParams.entryName,
-                _this.authService.getCurrentCompany(_this.currentKeys),
+                _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(),
                 _this.formParams.keys,
             )
             .subscribe((results) => {
@@ -893,7 +893,7 @@ export class FormGetterComponent
         const _this = this; // useful to debug
         _this.isLoading = true;
 
-        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), { ..._this.currentKeys, ..._this.externalKeys }, null, true, _this.formParams.isNew, null, false)
+        const subscription = _this.backendService.getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), { ..._this.currentKeys, ..._this.externalKeys }, null, true, _this.formParams.isNew, null, false)
             .subscribe(
                 (results) => {
                     _this._console.log(results);
@@ -1010,7 +1010,7 @@ export class FormGetterComponent
         const _this = this;
         _this.isAddingNew = true;
         const subscription = _this.backendService
-            .getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), { ..._this.currentKeys, ..._this.externalKeys }, null, true, true, null, false)
+            .getData(_this.formParams.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), { ..._this.currentKeys, ..._this.externalKeys }, null, true, true, null, false)
             .subscribe(
                 (result) => {
                     _this._console.log(result);
@@ -1608,7 +1608,7 @@ export class FormGetterComponent
                 const subscription = _this.backendService
                     .postEvent(
                         _this.formParams.entryName,
-                        _this.authService.getCurrentCompany(_this.currentKeys),
+                        _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(),
                         { ..._this.currentKeys, ..._this.externalKeys },
                         keyListener,
                         chiavi,
@@ -2155,6 +2155,7 @@ export class FormGetterComponent
                                         _this.authService.getCurrentCompany(
                                             _this.currentKeys,
                                         ),
+                                        _this.authService.getLastLanguage(),
                                         {
                                             ..._this.currentKeys,
                                             ..._this.externalKeys,
@@ -2988,6 +2989,7 @@ export class FormGetterComponent
                         let connected_registries = await _this.backendService
                             .getConnectedRegistries(
                                 codiceAziendaAML,
+                                _this.authService.getLastLanguage(),
                                 idAnagraficaAML,
                             )
                             .toPromise();
@@ -3006,6 +3008,7 @@ export class FormGetterComponent
                             let scan_contents = await _this.backendService
                                 .getAmlScan(
                                     codiceAziendaAML,
+                                    _this.authService.getLastLanguage(),
                                     connectedRegistries,
                                     idSomministrazioneAML,
                                     dynamoUserAML,
@@ -3053,6 +3056,7 @@ export class FormGetterComponent
                         let connected_checks = await _this.backendService
                             .getConnectedChecks(
                                 codiceAziendaAML,
+                                _this.authService.getLastLanguage(),
                                 idSondaggioAML,
                             )
                             .toPromise();
@@ -3076,6 +3080,7 @@ export class FormGetterComponent
                                     await _this.backendService
                                         .getConnectedRegistriesFromCheck(
                                             codiceAziendaAML,
+                                            _this.authService.getLastLanguage(),
                                             connectedChecks[i]
                                                 .id_somministrazione,
                                         )
@@ -3103,6 +3108,7 @@ export class FormGetterComponent
                                         await _this.backendService
                                             .getAmlScan(
                                                 codiceAziendaAML,
+                                                _this.authService.getLastLanguage(),
                                                 connectedRegistries,
                                                 connectedChecks[i]
                                                     .id_somministrazione,
@@ -3168,6 +3174,7 @@ export class FormGetterComponent
                     .inviteUser(
                         username,
                         company,
+                        _this.authService.getLastLanguage(),
                         associated_user,
                         registry,
                         tax_code,

@@ -239,7 +239,7 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
           }
         }
       }
-      _this.subscriptions.push(_this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.tableData.keys), _this.tableData.keys, values).subscribe(   // backend expects an array of data
+      _this.subscriptions.push(_this.backendService.updateData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.tableData.keys), _this.authService.getLastLanguage(), _this.tableData.keys, values).subscribe(   // backend expects an array of data
         result => {
           _this._console.log(result);
           if (result.result === 'OK') {

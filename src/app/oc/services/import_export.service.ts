@@ -274,7 +274,7 @@ export class ImportExportService {
         let preparingToast = this._toastService.showLoadingToast('Preparing Excel sheet', 'Please wait...');
         // _this._dialogService.showLoadingDialog('Preparing Excel sheet', 'Please wait...');
 
-        _this._backendService.getExcel(entryName, company, keys, search_keys, is_form, advanced_query_label !== null, formValues, advanced_query_label)
+        _this._backendService.getExcel(entryName, company, _this._authService.getLastLanguage(), keys, search_keys, is_form, advanced_query_label !== null, formValues, advanced_query_label)
             .subscribe(
                 response => {
                     this._toastService.hideLoadingToast(preparingToast);
@@ -393,7 +393,7 @@ export class ImportExportService {
 
                                 // Import CSV in Postgres
                                 if(isImportAdvanced){
-                                    this._backendService.importAdvancedFileFromS3(tableName, this._authService.getCurrentCompany(), keys, createURLResponse.fileName, isForm, label).subscribe(
+                                    this._backendService.importAdvancedFileFromS3(tableName, this._authService.getCurrentCompany(), this._authService.getLastLanguage(), keys, createURLResponse.fileName, isForm, label).subscribe(
                                         importFileFromS3Response => {
                                             this._console.log(importFileFromS3Response);
                                             if (importFileFromS3Response != null && importFileFromS3Response.result === 'OK') {

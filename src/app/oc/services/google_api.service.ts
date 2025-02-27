@@ -68,7 +68,7 @@ export class GoogleAPIService {
   public async syncGoogleDrive(googleAuth, syncMode, codiceAzienda, idAnagrafica, idProgetto, idRisorsa, idSondaggio, codicePart) {
 
     let _this = this;
-    let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, idAnagrafica, _this.authService.getUsername(), idRisorsa, idSondaggio, codicePart ).toPromise();
+    let anagrafica_contents =  await _this.backendService.getGoogleDriveFolderNameByAnagrafica(codiceAzienda, _this.authService.getLastLanguage(), idAnagrafica, _this.authService.getUsername(), idRisorsa, idSondaggio, codicePart ).toPromise();
     _this._console.log(anagrafica_contents);
     if(anagrafica_contents && anagrafica_contents.response && anagrafica_contents.response.length > 0) {
       let anagraficaFolders = anagrafica_contents.response[0]['anagrafica_folder_name_and_sub_folders'];

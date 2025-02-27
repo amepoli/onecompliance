@@ -63,7 +63,8 @@ export class ReportService // implements Resolve<any>
         private _backendService: BackendService,
         private _toastService: ToastService,
         private _dialogService: DialogService,
-        private _console: ConsoleLoggerService
+        private _console: ConsoleLoggerService,
+        private _authService: AuthService
 
     ) {
         // Set the defaults
@@ -75,7 +76,7 @@ export class ReportService // implements Resolve<any>
         let _this = this;
         _this._dialogService.showLoadingDialog("Getting report", "Please wait...");
 
-        _this._backendService.getReport(entryName, company, keys, alias, isForm, searchKeys).subscribe(
+        _this._backendService.getReport(entryName, company, _this._authService.getLastLanguage(), keys, alias, isForm, searchKeys).subscribe(
             response => {
                 _this._console.log(response);
                 if (response.result === 'OK') {
@@ -139,7 +140,7 @@ export class ReportService // implements Resolve<any>
                 _this.onReportsLoaded.next(_this._currentData);
             }
             else {
-                _this._backendService.getReportList(entryName, company, keys, isForm).subscribe(
+                _this._backendService.getReportList(entryName, company, _this._authService.getLastLanguage(), keys, isForm).subscribe(
                     response => {
                         _this._console.log(response);
                         if (response.result === 'OK') {

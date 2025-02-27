@@ -335,7 +335,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         _this.resetView(search_keys);
         _this.resetSelection();
         _this.isLoading = true;
-        _this.subscriptions.push(_this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
+        _this.subscriptions.push(_this.backendService.getView(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), _this.tableData.keys).subscribe(
             result => {
                 if (result.result === 'OK' && result.data != null && result.data.table_keys != null) {
                     _this.showImportDataButton = result.externalUpdate != null;
@@ -484,7 +484,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     public loadSearchKeys() {
         const _this = this;
-        _this.subscriptions.push(_this.backendService.getSearchKeys(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.tableData.keys).subscribe(
+        _this.subscriptions.push(_this.backendService.getSearchKeys(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), _this.tableData.keys).subscribe(
             result => {
                 if (result.result === 'OK' && result.data) {
                     const search_keys = result.data;
@@ -525,7 +525,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             No need to use this function anymore since I (Zee) fixed the search keys stuff in SearchRequest. 
         */
 
-        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, null, false, false, null, false).subscribe(
+        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), _this.currentKeys, null, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -554,7 +554,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         search_keys = _this.applySearchToggles(search_keys);
         search_keys = _this.applyHomepageKeys(search_keys);
 
-        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.currentKeys, search_keys, false, false, null, false).subscribe(
+        _this.subscriptions.push(_this.backendService.getData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), _this.currentKeys, search_keys, false, false, null, false).subscribe(
             results => {
                 _this._console.log(results);
                 if (results.result === 'OK') {
@@ -1327,7 +1327,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     deleteRow(selectedViewKey: TableViewKey, keys: any) {
         var _this = this;
-        const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), [keys]).subscribe(
+        const subscription = _this.backendService.deleteData(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), [keys]).subscribe(
             result => {
                 _this._console.log(result);
                 if (result.result === 'OK') {
@@ -1352,7 +1352,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         const loadingToast = _this._toastService.showLoadingToast('Loading', 'Please wait...');
         
-        _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
+        _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), keys, selectedViewKey.key).subscribe(
             response => {
                 _this._toastService.hideLoadingToast(loadingToast);
                 if (response.result == 'OK') {
@@ -1380,7 +1380,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         const filename = data[1];
         if (file_id && filename) {
             _this._dialogService.showLoadingDialog('Downloading attachment', 'Please wait...');
-            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
+            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), {}, file_id).subscribe(
                 url => {
                     if (url != null) {
                         _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
@@ -1419,7 +1419,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         /*const filename = data[1];
         if (file_id && filename) {
             _this._dialogService.showLoadingDialog('Downloading report', 'Please wait...');
-            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
+            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), {}, file_id).subscribe(
                 url => {
                     if (url != null) {
                         _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(
@@ -1456,7 +1456,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
         let isForm = selectedViewKey.buttonAction.reportQueryType === 'form';
         _this._dialogService.showLoadingDialog('Uploading draft', 'Please wait...');
         try {
-            _this.backendService.createFattureInCloudInvoice(_this._authService.getCurrentCompany(), row).subscribe(
+            _this.backendService.createFattureInCloudInvoice(_this._authService.getCurrentCompany(), _this._authService.getLastLanguage(), row).subscribe(
                 (response: any) => {
                     if (response && response.data) {
                         let keys = {};
@@ -1465,7 +1465,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                                 keys[map.destination] = response.data[map.source];
                             })
                         }
-                        _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, selectedViewKey.key).subscribe(
+                        _this.backendService.runCustomQuery(_this.tableData.entryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), keys, selectedViewKey.key).subscribe(
                             response => {
                                 if (response.result == 'OK') {
                                     if (selectedViewKey.buttonAction.onSuccessAction != null) {
@@ -1504,11 +1504,11 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             console.log(e);
 
         };
-        //_this._importExportService.downloadExcel(this.targetEntryName, _this.authService.getCurrentCompany(_this.currentKeys), keys, null, isForm, row, reportName);   
+        //_this._importExportService.downloadExcel(this.targetEntryName, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), keys, null, isForm, row, reportName);   
         /*const filename = data[1];
         if (file_id && filename) {
             _this._dialogService.showLoadingDialog('Downloading report', 'Please wait...');
-            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), {}, file_id).subscribe(
+            const subscription = _this.backendService.getFileURL(null, _this.authService.getCurrentCompany(_this.currentKeys), _this.authService.getLastLanguage(), {}, file_id).subscribe(
                 url => {
                     if (url != null) {
                         _this.subscriptions.push(_this.httpClient.get(url.url, { responseType: 'blob' }).subscribe(

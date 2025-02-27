@@ -28,7 +28,7 @@ export class MainDashboardsComponent implements OnInit {
       const tables = params.get('table');
       _this.tables = tables.split(',');
       _this.tables.forEach(table => {
-      const subscription = _this.backendService.getView(table, _this.authService.getCurrentCompany(null), {}).subscribe(
+      const subscription = _this.backendService.getView(table, _this.authService.getCurrentCompany(null), _this.authService.getLastLanguage(), {}).subscribe(
         result => {
             if (result.result === 'OK' && result.data != null) {
                 const data = result.data;

@@ -476,6 +476,7 @@ export class FormsService {
                         let connected_registries = await _this.backendService
                             .getConnectedRegistries(
                                 keys.codiceAziendaAML,
+                                _this.authService.getLastLanguage(),
                                 keys.idAnagraficaAML,
                             )
                             .toPromise();
@@ -494,6 +495,7 @@ export class FormsService {
                             let scan_contents = await _this.backendService
                                 .getAmlScan(
                                     keys.codiceAziendaAML,
+                                    _this.authService.getLastLanguage(),
                                     connectedRegistries,
                                     keys.idSomministrazioneAML,
                                     keys.dynamoUserAML,
@@ -540,6 +542,7 @@ export class FormsService {
                         let connected_checks = await _this.backendService
                             .getConnectedChecks(
                                 codiceAziendaAML,
+                                _this.authService.getLastLanguage(),
                                 idSondaggioAML,
                             )
                             .toPromise();
@@ -563,6 +566,7 @@ export class FormsService {
                                     await _this.backendService
                                         .getConnectedRegistriesFromCheck(
                                             codiceAziendaAML,
+                                            _this.authService.getLastLanguage(),
                                             connectedChecks[i]
                                                 .id_somministrazione,
                                         )
@@ -590,6 +594,7 @@ export class FormsService {
                                         await _this.backendService
                                             .getAmlScan(
                                                 codiceAziendaAML,
+                                                _this.authService.getLastLanguage(),
                                                 connectedRegistries,
                                                 connectedChecks[i]
                                                     .id_somministrazione,

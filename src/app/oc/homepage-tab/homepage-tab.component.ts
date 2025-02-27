@@ -103,7 +103,7 @@ export class HomepageTabComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (_this.entry) {
             _this.isLoading = true;
-            _this.backendService.loadHomePageTab(_this.entry, _this.authService.getCurrentCompany({}), keys).subscribe(
+            _this.backendService.loadHomePageTab(_this.entry, _this.authService.getCurrentCompany({}), _this.authService.getLastLanguage(), keys).subscribe(
                 response => {
                     if (response.result === 'OK') {
                         _this.entryKey = _this.entry;
