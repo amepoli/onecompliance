@@ -13,7 +13,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT c.*,    (SELECT a.descrizione      FROM entrasp.asset a      WHERE a.id_asset = c.id_asset        AND a.codice_azienda = $codice_azienda$        AND a.id_asset IS NOT NULL) AS descr_asset,           c.codice_azienda || '|' || c.id_contratto AS object_key,     (SELECT id_modello_test      FROM entrasp.modelli_test      WHERE codice_azienda = $codice_azienda$         AND id_tipo_modello_test = 54      LIMIT 1) AS id_modello_test,          TRUE AS create_somministrazione,     entrasp.argomenti_descr(c.id_argomento_contratto) AS tipo_contratto,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS id_cliente,    entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS fornitore,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) AS id_strumento_finanziario FROM entrasp.contratti c WHERE c.id_tipo_contratto = 2   AND c.codice_azienda = $codice_azienda$    AND EXISTS (      SELECT 1       FROM entrasp.ruoli_anagrafiche ra      WHERE ra.codice_azienda = $codice_azienda$         AND ra.id_anagrafica = c.id_cliente        AND ra.codice_part = c.codice_part  );"
+            "queryString": "SELECT c.*, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', c.stato) as descr_stato,   (SELECT a.descrizione      FROM entrasp.asset a      WHERE a.id_asset = c.id_asset        AND a.codice_azienda = $codice_azienda$        AND a.id_asset IS NOT NULL) AS descr_asset,           c.codice_azienda || '|' || c.id_contratto AS object_key,     (SELECT id_modello_test      FROM entrasp.modelli_test      WHERE codice_azienda = $codice_azienda$         AND id_tipo_modello_test = 54      LIMIT 1) AS id_modello_test,          TRUE AS create_somministrazione,     entrasp.argomenti_descr(c.id_argomento_contratto) AS tipo_contratto,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS id_cliente,    entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS fornitore,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) AS id_strumento_finanziario FROM entrasp.contratti c WHERE c.id_tipo_contratto = 2   AND c.codice_azienda = $codice_azienda$    AND EXISTS (      SELECT 1       FROM entrasp.ruoli_anagrafiche ra      WHERE ra.codice_azienda = $codice_azienda$         AND ra.id_anagrafica = c.id_cliente        AND ra.codice_part = c.codice_part  );"
         }
     ],
     "outputEvents": [
@@ -465,7 +465,7 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_id_codcognnome(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$);",
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi_nom1(codice_part,id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part=(select codice_part from entrasp.aziende where codice_azienda=$codice_azienda$);",
                 "options": [],
                 "viewType": "combobox"
             },
@@ -501,7 +501,7 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "select ai.id_anagrafica as id, entrasp.anagrafiche_cognnome(ai.codice_part, ai.id_anagrafica) as name from entrasp.anagrafiche_id ai  where ai.codice_part = '€global_codice_part€'"
+                "comboQuery": "select ai.id_anagrafica as id, entrasp.anagrafiche_vr_dati_identificativi_nom1(ai.codice_part, ai.id_anagrafica) as name from entrasp.anagrafiche_id ai  where ai.codice_part = '€global_codice_part€'"
             },
             "label": "Firmatario",
             "key": "firmatario",
@@ -518,7 +518,7 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "select ai.id_anagrafica as id, entrasp.anagrafiche_cognnome(ai.codice_part, ai.id_anagrafica) as name from entrasp.anagrafiche_id ai  where ai.codice_part = '€global_codice_part€'"
+                "comboQuery": "select ai.id_anagrafica as id, entrasp.anagrafiche_vr_dati_identificativi_nom1(ai.codice_part, ai.id_anagrafica) as name from entrasp.anagrafiche_id ai  where ai.codice_part = '€global_codice_part€'"
             },
             "label": "Utilizzatore",
             "key": "utilizzatore",
@@ -535,7 +535,7 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';"
+                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';"
             },
             "label": "Capogruppo",
             "key": "id_capogruppo_forn",
@@ -1041,7 +1041,7 @@
             "format": {
                 "viewType": "combobox",
                 "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=48362"
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53919"
             },
             "label": "Tipologia di Cloud",
             "key": "id_argomento_serv_cloud",
@@ -1204,6 +1204,53 @@
             "width": "10%",
             "label": "Data Stipula",
             "translate": "RESOURCES.data_stipula_contratti_fornitori"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "descr_stato",
+            "width": "8%",
+            "style": [
+                {
+                    "value": "Cessato",
+                    "font_color": "PaleGreen",
+                    "font_weight": "500",
+                    "background_color": "Green",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Offerta rifiutata",
+                    "font_color": "Black",
+                    "font_weight": "500",
+                    "background_color": "#C0C0C0",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In Scadenza",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "In attesa di firma",
+                    "font_color": "MistyRose",
+                    "font_weight": "500",
+                    "background_color": "MediumPurple",
+                    "text_align": "center"
+                },
+                {
+                    "value": "Attivo",
+                    "font_color": "white",
+                    "font_weight": "500",
+                    "background_color": "royalblue",
+                    "text_align": "center"
+                }
+            ],
+            "label": "Stato"
         },
         {
             "format": {
