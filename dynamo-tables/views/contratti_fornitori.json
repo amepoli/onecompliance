@@ -13,7 +13,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT c.*, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', c.stato) as descr_stato,   (SELECT a.descrizione      FROM entrasp.asset a      WHERE a.id_asset = c.id_asset        AND a.codice_azienda = $codice_azienda$        AND a.id_asset IS NOT NULL) AS descr_asset,           c.codice_azienda || '|' || c.id_contratto AS object_key,     (SELECT id_modello_test      FROM entrasp.modelli_test      WHERE codice_azienda = $codice_azienda$         AND id_tipo_modello_test = 54      LIMIT 1) AS id_modello_test,          TRUE AS create_somministrazione,     entrasp.argomenti_descr(c.id_argomento_contratto) AS tipo_contratto,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS id_cliente,    entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS fornitore,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) AS id_strumento_finanziario FROM entrasp.contratti c WHERE c.id_tipo_contratto = 2   AND c.codice_azienda = $codice_azienda$    AND EXISTS (      SELECT 1       FROM entrasp.ruoli_anagrafiche ra      WHERE ra.codice_azienda = $codice_azienda$         AND ra.id_anagrafica = c.id_cliente        AND ra.codice_part = c.codice_part  );"
+            "queryString": "SELECT c.*, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', c.stato) as descr_stato,   (SELECT a.descrizione      FROM entrasp.asset a      WHERE a.id_asset = c.id_asset        AND a.codice_azienda = $codice_azienda$        AND a.id_asset IS NOT NULL) AS descr_asset,           c.codice_azienda || '|' || c.id_contratto AS object_key,     (SELECT id_modello_test      FROM entrasp.modelli_test      WHERE codice_azienda = $codice_azienda$         AND id_tipo_modello_test = 54      LIMIT 1) AS id_modello_test,          TRUE AS create_somministrazione,     entrasp.argomenti_descr(c.id_argomento_contratto) AS tipo_contratto,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS id_cliente,    entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS fornitore,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) AS id_strumento_finanziario FROM entrasp.contratti c WHERE c.id_tipo_contratto in (2,4)   AND c.codice_azienda = $codice_azienda$    AND EXISTS (      SELECT 1       FROM entrasp.ruoli_anagrafiche ra      WHERE ra.codice_azienda = $codice_azienda$         AND ra.id_anagrafica = c.id_cliente        AND ra.codice_part = c.codice_part  );"
         }
     ],
     "outputEvents": [
@@ -159,6 +159,7 @@
             "key": "numero_contratto",
             "readOnly": false,
             "isHidden": false,
+            "tooltip": "CNTRCT_ID - Codice di riferimento del contratto di esternalizzazione, assegnato in autonomia dal soggetto firmatario del contratto",
             "isPrimary": false,
             "newLine": false,
             "size": 2
@@ -307,7 +308,7 @@
             "size": 1.83,
             "readOnly": false,
             "newLine": false,
-            "tooltip": "La data dalla quale il contratto decorre"
+            "tooltip": "DATA_INIZ: La data dalla quale il contratto decorre"
         },
         {
             "autoGenerate": false,
@@ -322,7 +323,7 @@
             "size": 1.82,
             "newLine": false,
             "readOnly": false,
-            "tooltip": "La data di termine del contratto"
+            "tooltip": "DATA_FINE: La presunta data di termine del contratto"
         },
         {
             "autoGenerate": false,
@@ -350,6 +351,7 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
+            "tooltip": "DATA_RINN: La data del prossimo rinnovo",
             "newLine": false,
             "size": 2
         },
@@ -366,6 +368,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": true,
+            "tooltip": "NOTE - Campo di testo libero, riservato alle informazioni aggiuntive ulteriori e diverse da quelle già indicate in altri campi della segnalazione che il soggetto segnalante ritenga opportuno fornire in relazione al contratto di esternalizzazione",
             "translate": "RESOURCES.note_contracts_investment"
         },
         {
@@ -378,8 +381,9 @@
             "key": "descrizione",
             "readOnly": false,
             "isHidden": false,
+            "tooltip": "DESCR_ESTERNALIZ - Descrizione sintetica dell’esternalizzazione oggetto del contratto",
             "isPrimary": false,
-            "size": 6,
+            "size": 4,
             "newLine": false,
             "translate": "RESOURCES.descrizione_contracts_investment"
         },
@@ -391,10 +395,42 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "termini_preavviso",
+            "label": "Periodo Preavviso Fornitore",
+            "tooltip": "PREAVVISO_FORNITORE - Numero minimo di giorni di preavviso che l’intermediario è tenuto a dare al fornitore di servizi quando intende porre fine al contratto di esternalizzazione.",
+            "size": 1.5,
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.periodo_preavviso_fornitore_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "preavviso_intermediario",
+            "label": "Periodo Preavviso Intermediario",
+            "tooltip": "PREAVVISO_INT - Numero minimo di giorni di preavviso che il fornitore è tenuto a dare all’intermediario quando intende porre fine al contratto di esternalizzazione.",
+            "size": 1.5,
+            "newLine": false,
+            "readOnly": false,
+            "translate": "RESOURCES.periodo_preavviso_intermediario_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "tariffa_mensile",
             "label": "Costo mensile",
-            "size": 2.5,
-            "tooltip": "il costo mensile stimato nell’accordo di esternalizzazione",
+            "size": 2,
+            "tooltip": "COSTO - Costo mensile per la prestazione dei servizi esternalizzati, depurato dall’IVA, di competenza dell’anno di riferimento. Inoltre, nel caso in cui il contratto preveda anche lo svolgimento di attività diverse dai servizi esternalizzati oggetto della segnalazione, andrà indicato il costo mensile stimato riferibile alle sole attività esternalizzate.",
             "newLine": false,
             "readOnly": false,
             "translate": "RESOURCES.costo_mensile_contracts_investment"
@@ -457,6 +493,7 @@
             "label": "Fornitore",
             "key": "id_cliente",
             "readOnly": false,
+            "tooltip": "COBI_FORNITORE/CODLEI_FORNITORE - a fronte della segnalazione inserire i codici AS e LEI del fornitore nell'anagrafica",
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
@@ -474,28 +511,12 @@
             "key": "id_anagrafica_approvatore",
             "label": "Responsabile",
             "newLine": false,
-            "tooltip": "La persona fisica all’interno dell’impresa, che ha approvato l’accordo di esternalizzazione nel cloud",
+            "tooltip": "La persona fisica all’interno dell’impresa, che ha in carico l’accordo di esternalizzazione nel cloud",
             "readOnly": false,
             "size": 2.5,
             "translate": "RESOURCES.responsabile_contracts_investment"
         },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52183"
-            },
-            "label": "Organo Decisionale",
-            "key": "organo_decisionale",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 2.5,
-            "tooltip": "Organo Decisionale",
-            "translate": "RESOURCES.organo_decisionale_contracts_investment"
-        },
+
         {
             "autoGenerate": false,
             "format": {
@@ -508,9 +529,9 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": true,
+            "newLine": false,
+            "tooltip": "COBI_FIRMATARIO/CODLEI_FIRMATARIO - a fronte della segnalazione inserire i codici AS e LEI del soggetto nell'anagrafica. Soggetto, diverso dal fornitore di servizi, firmatario del contratto di esternalizzazione. Il soggetto firmatario può coincidere o essere diverso dal soggetto o dai soggetti che esternalizzano le proprie funzioni nell’ambito del contratto (c.d. utilizzatore/i). Qualora il firmatario e l’utilizzatore del contratto coincidano, il segnalante è tenuto comunque a compilare entrambi i campi della segnalazione",
             "size": 2.5,
-            "tooltip": "Firmatario",
             "translate": "RESOURCES.firmatario_contracts_investment"
         },
         {
@@ -525,9 +546,9 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
-            "newLine": false,
-            "size": 2.0,
-            "tooltip": "Utilizzatore",
+            "newLine": true,
+            "size": 2.5,
+            "tooltip": "COBI_UTILIZZATORE/CODLEI_UTILIZZATORE - a fronte della segnalazione inserire i codici AS e LEI del soggetto nell'anagrafica. Intermediario vigilato che utilizza i servizi forniti dal fornitore di servizi nell’ambito del contratto di esternalizzazione. L’utilizzatore può coincidere o essere diverso dal soggetto firmatario delcontratto (c.d. utilizzatore/i). Qualora l’utilizzatore e il firmatario del contratto coincidano, il segnalante è tenuto comunque a compilare entrambi i campi della segnalazione",
             "translate": "RESOURCES.utilizzatore_contracts_investment"
         },
         {
@@ -537,13 +558,14 @@
                 "options": [],
                 "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi_nom1(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';"
             },
-            "label": "Capogruppo",
+            "label": "Capogruppo del Fornitore",
             "key": "id_capogruppo_forn",
             "readOnly": false,
             "isHidden": false,
+            "tooltip": "COBI_CAPOGRUFORN - a fronte della segnalazione inserire il codice AS del soggetto nell'anagrafica",
             "isPrimary": false,
             "newLine": false,
-            "size": 2.0
+            "size": 2.5
         },
         {
             "autoGenerate": false,
@@ -558,7 +580,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.0,
+            "size": 2.5,
             "translate": "RESOURCES.fondo_gestito_contracts_investment"
         },
         {
@@ -570,109 +592,43 @@
             },
             "label": "Fornitore Cloud",
             "key": "id_fornitore_cloud",
+            "tooltip": "COBI_FORNCLOUD - a fronte della segnalazione inserire il codice AS del soggetto nell'anagrafica. Soggetto terzo che offre al fornitore o al subfornitore di servizi i servizi cloud per le funzioni esternalizzate",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.0
+            "size": 2.5
         },
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "input",
-                "dataType": "text"
-            },
-            "label": "Fornitore Alternativo",
-            "key": "fornitore_alternativo",
-            "readOnly": false,
-            "size": 2.0,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "label",
-                "dataType": "text"
+                "dataType": "text",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "label_esternalizzazione",
-            "label": "Esternalizzazione e Rischi",
-            "style": {
-                "background_color": "#03a9f4",
-                "font_color": "white",
-                "font_style": "normal",
-                "font_weight": "500",
-                "font_size": "1.5em"
-            },
+            "key": "autorita_vigilanza",
+            "label": "Autorità di Vigilanza",
+            "size": 2,
             "newLine": true,
-            "sameOrigin": false,
-            "readOnly": false,
-            "size": 10
+            "tooltip": "AUTORITA_VIGIL - Denominazione dell'autorità di vigilanza del fornitore",
+            "readOnly": false
         },
         {
             "autoGenerate": false,
             "format": {
-                "value": "0",
-                "viewType": "checkbox"
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "flag_esternalizzazione",
-            "tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione",
-            "size": 2.5,
-            "label": "Esternalizzazione Infragruppo",
-            "readOnly": false,
-            "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "flag_essenziale",
-            "tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione essenziale",
-            "size": 2.5,
-            "label": "Essenziale",
-            "readOnly": false,
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale Responsabile",
             "newLine": false,
-            "translate": "RESOURCES.essenziale_contracts_investment"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "flag_urgente",
-            "tooltip": "Flaggare qualora si tratti di funzione la cui inattività deve essere gestita con urgenza",
-            "size": 2.5,
-            "label": "Funzione critica in termini di tempo",
             "readOnly": false,
-            "newLine": false,
-            "translate": "RESOURCES.urgente_contracts_investment"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "value": "0",
-                "viewType": "checkbox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "sub_estern",
-            "tooltip": "Flaggare qualora la sub esternalizzazione sia ammessa",
             "size": 2.5,
-            "label": "SubFornitura Ammessa",
-            "readOnly": false,
-            "newLine": true
+            "translate": "RESOURCES.centro_gestionale_responsabile_contracts_investment"
         },
         {
             "autoGenerate": false,
@@ -693,247 +649,15 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "input"
+                "value": "0",
+                "viewType": "checkbox"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "note_essenzialità",
-            "label": "Note essenzialità",
+            "key": "flag_esternalizzazione",
+            "tooltip": "INFRA_GRUPPO - Flaggare qualora si tratti di esternalizzazione di funzione ad una società del Gruppo",
             "size": 2.5,
-            "tooltip": "Illustrare i motivi per cui si ritiene la funzione essenziale o meno",
-            "newLine": false,
-            "readOnly": false,
-            "translate": "RESOURCES.note_essenzialit_contracts_investment"
-        },
-
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part,id_centro_gest) AS name  FROM entrasp.centri_gestionali WHERE codice_part='€global_codice_part€';",
-                "options": [],
-                "viewType": "combobox"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_centro_gest",
-            "label": "Centro Gestionale Responsabile",
-            "newLine": false,
-            "readOnly": false,
-            "size": 2.5,
-            "translate": "RESOURCES.centro_gestionale_responsabile_contracts_investment"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53920"
-            },
-            "label": "Impatto Interruzione",
-            "key": "id_argomento_impatto_interruzione",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53923"
-            },
-            "label": "Reinternalizzazione",
-            "key": "id_argomento_reinternalizzazione",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53920"
-            },
-            "label": "Valutazione Rischi",
-            "key": "id_argomento_valutazione_rischi",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53923"
-            },
-            "label": "Sostituibilità",
-            "key": "id_argomento_sostituibilita",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "label",
-                "dataType": "text"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "label_termini",
-            "label": "Termini, Condizioni e Compliance",
-            "style": {
-                "background_color": "#03a9f4",
-                "font_color": "white",
-                "font_style": "normal",
-                "font_weight": "500",
-                "font_size": "1.5em"
-            },
-            "newLine": true,
-            "sameOrigin": false,
-            "readOnly": false,
-            "size": 10
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "termini_preavviso",
-            "label": "Periodo Preavviso Fornitore",
-            "tooltip": "Giorni di Preavviso",
-            "size": 2,
-            "newLine": false,
-            "readOnly": false,
-            "translate": "RESOURCES.periodo_preavviso_fornitore_contracts_investment"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "number",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "preavviso_intermediario",
-            "label": "Periodo Preavviso Intermediario",
-            "tooltip": "Giorni di Preavviso",
-            "size": 2,
-            "newLine": false,
-            "readOnly": false,
-            "translate": "RESOURCES.periodo_preavviso_intermediario_contracts_investment"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "normativa_applicabile",
-            "label": "Normativa Applicabile",
-            "size": 2,
-            "newLine": false,
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "autorita_vigilanza",
-            "label": "Autorità di Vigilanza",
-            "size": 2,
-            "newLine": false,
-            "tooltip": "Denominazione dell'autorità di vigilanza del fornitore",
-            "readOnly": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_valutazione_rischi",
-            "label": "Ultima Valutazione Rischi",
-            "size": 2,
-            "readOnly": false,
-            "newLine": true
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_valutazione_fei",
-            "label": "Ultima Valutazione FEI",
-            "size": 2,
-            "readOnly": false,
-            "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=54005"
-            },
-            "label": "Classificazione FEI",
-            "key": "id_argomento_classificazione_fei",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": false,
-            "size": 2
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_ultimo_audit",
-            "label": "Ultimo Audit Effettuato",
-            "size": 2,
-            "readOnly": false,
-            "newLine": false
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_audit_succ",
-            "label": "Data Prossimo Audit",
-            "size": 2,
+            "label": "Esternalizzazione Infragruppo",
             "readOnly": false,
             "newLine": false
         },
@@ -946,7 +670,7 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "conformita",
-            "tooltip": "Flaggare qualora il contratto sia stato sottoposto a verifica di conformità",
+            "tooltip": "CONFORM_NORM - Flaggare qualora il contratto sia stato sottoposto a verifica di conformità",
             "size": 2,
             "label": "Valutazione Conformità Effettuata",
             "readOnly": false,
@@ -985,8 +709,8 @@
             "key": "natura_dati_cloud",
             "label": "Natura dei dati in Cloud",
             "size": 2.5,
+            "tooltip": "DATI_INCLOUD - Breve descrizione della natura dei dati memorizzati nel cloud. ",
             "newLine": false,
-            "tooltip": "Denominazione dell'autorità di vigilanza del fornitore",
             "readOnly": false
         },
         {
@@ -1001,6 +725,7 @@
             "isPrimary": false,
             "key": "id_paese_mem_dati_forn",
             "label": "Paese di memorizzazione dei dati del fornitore",
+            "tooltip": "STATO_MEMORIZ - Paese dove il fornitore di servizi memorizza i dati relativi ai servizi esternalizzati.",
             "newLine": false,
             "readOnly": false,
             "size": 2.5
@@ -1017,6 +742,7 @@
             "isPrimary": false,
             "key": "id_paese_erog_serv_forn",
             "label": "Paese di erogazione dei servizi del fornitore",
+            "tooltip": "STATO_EROG - Paese dal quale il fornitore di servizi eroga i servizi esternalizzati",
             "newLine": false,
             "readOnly": false,
             "size": 2.5
@@ -1032,6 +758,7 @@
             "key": "id_argomento_mod_esternalizzazione",
             "readOnly": false,
             "isHidden": false,
+            "tooltip": "CLOUD_SERVICE - I servizi cloud si distinguono in tre modelli, a seconda di quanta parte dello stack tecnologico è offerta e controllata dal fornitore (ad es. la sola infrastruttura, i servizi di piattaforma software di base, l’intero software, altri componenti o combinazioni): “IaaS (Infrastructure as a Service)”, “PaaS (Platform as a Service)” e “Saas (Software as a Service)”. Da valorizzare con “Altro” se il cloud service model non ricade in nessuno dei tre modellielencati",
             "isPrimary": false,
             "newLine": true,
             "size": 2.5
@@ -1045,6 +772,7 @@
             },
             "label": "Tipologia di Cloud",
             "key": "id_argomento_serv_cloud",
+            "tooltip": "CLOUD_DEPLOYMENT - Il deployment model definisce l’accessibilità e la proprietà dei servizi cloud, ovvero chi li controlla e dove sono collocati (ad es. servizi cloud accessibili a tutti, esclusivi per singola organizzazione o per un insieme di organizzazioni, misti) secondo le seguenti classificazioni: “Public Cloud”, “Private Cloud”, “Hybrid Cloud”, “Community Cloud”.",
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
@@ -1063,8 +791,24 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
+            "tooltip": "CATEG_ESTERNALIZ - Categoria alla quale è riconducibile l’attività esternalizzata",
             "newLine": false,
             "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_valutazione_fei",
+            "tooltip": "DATVAL_FEI - La data più recente nella quale è stata effettuata la valutazione della essenzialità o importanza della funzione esternalizzata",
+            "label": "Ultima Valutazione FEI",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -1075,11 +819,264 @@
             "isHidden": false,
             "isPrimary": false,
             "key": "trattamenti_fornitore",
-            "tooltip": "Flaggare qualora il contratto del fornitore preveda trattamenti di dati personali",
+            "tooltip": "TRATT_DATIPER - Indica se il fornitore tratta dati personali nell’ambito di o per la prestazione delle funzioni esternalizzate.",
             "size": 2.5,
             "label": "Trattamenti Dati Fornitore",
             "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "label",
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "label_esternalizzazione",
+            "label": "Informazioni FEI (Funzione Essenziale e Importante)",
+            "style": {
+                "background_color": "#03a9f4",
+                "font_color": "white",
+                "font_style": "normal",
+                "font_weight": "500",
+                "font_size": "1.5em"
+            },
+            "newLine": true,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 10
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_essenziale",
+            "tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione essenziale",
+            "size": 2.5,
+            "label": "Essenziale",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.essenziale_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "flag_urgente",
+            "tooltip": "CRITICITA - Flaggare qualora si tratti di funzione la cui inattività deve essere gestita con urgenza",
+            "size": 2.5,
+            "label": "Funzione critica in termini di tempo",
+            "readOnly": false,
+            "newLine": false,
+            "translate": "RESOURCES.urgente_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "value": "0",
+                "viewType": "checkbox"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "sub_estern",
+            "tooltip": "SUB_ESTERNALIZ - Flaggare qualora la sub esternalizzazione sia ammessa",
+            "size": 2.5,
+            "label": "SubFornitura Ammessa",
+            "readOnly": false,
+            "newLine": true
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_valutazione_rischi",
+            "label": "Ultima Valutazione Rischi",
+            "tooltip": "DATVAL_RISCHI - La data più recente in cui è stata effettuata la valutazione dei rischi derivanti dall’esternalizzazione cui il contratto si riferisce.",
+            "size": 2.5,
+            "readOnly": false,
             "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53920"
+            },
+            "label": "Valutazione Rischi",
+            "key": "id_argomento_valutazione_rischi",
+            "readOnly": false,
+            "isHidden": false,
+            "tooltip": "LIV_RISCHIO - Livello di rischio di esternalizzazione risultante dalla valutazione più recente. Nell’individuazione del livello, i soggetti segnalanti tengono conto, tra l’altro, dell’impatto dell’accordo di esternalizzazione in termini di: rischi operativi, compresi rischi legali e reputazionali; rischi di concentrazione; rischi derivanti dalla facoltà di subesternalizzare e dall’utilizzo di complesse catene di subfornitori; rischi connessi con il paese in cui ha sede il fornitore o dove sono conservati i dati o da cui sono erogati i servizi. ",
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=54005"
+            },
+            "label": "Classificazione FEI",
+            "key": "id_argomento_classificazione_fei",
+            "tooltip": "MOTIVAZIONE_FEI - Motivazione che ha determinato la classificazione della funzione come essenziale o importante;",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_ultimo_audit",
+            "label": "Ultimo Audit Effettuato",
+            "tooltip": "DAT_LASTAUDIT - Data nella quale ha avuto luogo la verifica di audit più recente sulle funzioni svolte dai fornitori di servizi. Ci si riferisce alle verifiche di audit condotte da personale qualificato dell’utilizzatore, da un team congiunto con altri utilizzatori dello stesso fornitore di servizi o da terze parti incaricate dall’utilizzatore. Non ci si riferisce, quindi, alle verifiche condotte dall’internal audit del fornitore di servizi stesso o da auditor o certificatori da esso incaricati,né al monitoraggio periodico o alla revisione della valutazione dei rischi derivanti dall’esternalizzazione da parte dell’utilizzatore. È possibile indicare la data della fine del trimestre o dell’anno in cui è stata effettuatal’ultima verifica di audit.",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "data_audit_succ",
+            "tooltip": "DAT_NEXTAUDIT - Data in cui è pianificata la prossima verifica di audit sulle funzioni svolte dal fornitore di servizi. Ci si riferisce alle verifiche di audit condotte da personale qualificato dell’utilizzatore,da un team congiunto con altri utilizzatori dello stesso fornitore di servizi o da terze parti incaricate dall’utilizzatore. Non ci si riferisce, quindi, alle verifiche condotte dall’internala udit del fornitore di servizi stesso o da auditor o certificatori da esso incaricati, né al monitoraggio periodico o alla revisione della valutazione dei rischi dell’esternalizzazione da parte dell’utilizzatore. È possibile segnalare la data della fine del trimestre o dell’anno in cui è pianificata la prossima verifica di audit.",
+            "label": "Data Prossimo Audit",
+            "size": 2.5,
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53920"
+            },
+            "label": "Impatto Interruzione",
+            "key": "id_argomento_impatto_interruzione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53923"
+            },
+            "label": "Reinternalizzazione",
+            "key": "id_argomento_reinternalizzazione",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53923"
+            },
+            "label": "Sostituibilità",
+            "key": "id_argomento_sostituibilita",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "label": "Fornitore Alternativo",
+            "key": "fornitore_alternativo",
+            "readOnly": false,
+            "size": 2.5,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=52183"
+            },
+            "label": "Organo Decisionale",
+            "key": "organo_decisionale",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false,
+            "size": 2.5,
+            "tooltip": "ORG_APPROVAT - Organo Decisionale che ha approvato il contratto di esternalizzazione",
+            "translate": "RESOURCES.organo_decisionale_contracts_investment"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "normativa_applicabile",
+            "label": "Normativa Applicabile",
+            "size": 2.5,
+            "newLine": true,
+            "readOnly": false
+        },
+
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "note_essenzialità",
+            "label": "Note essenzialità",
+            "size": 10,
+            "tooltip": "Illustrare i motivi per cui si ritiene la funzione essenziale o meno",
+            "newLine": true,
+            "readOnly": false,
+            "translate": "RESOURCES.note_essenzialit_contracts_investment"
         },
         {
             "autoGenerate": false,
