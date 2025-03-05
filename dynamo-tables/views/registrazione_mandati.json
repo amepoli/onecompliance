@@ -1,0 +1,93 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "registrazione_mandati",
+    "origin": "entrasp.mandati",
+    "label": "Registrazione Mandati",
+    "inheritsFrom": "mandati",
+    
+    "addElementSettings": {
+        "labelAdd": "Nuovo Mandato",
+        "navigateOnSuccess": false
+    },
+
+    "form_keys": [
+        {
+            "key": "mandante",
+            "label": "Mandante",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id  WHERE codice_part='€global_codice_part€'  ORDER BY entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
+                "viewType": "combobox"
+            },
+            "isPrimary": false,
+            "isHidden": false,
+            "newLine": false,
+            "size": 3
+        },
+        {
+            "key": "cedente",
+            "label": "Cedente",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) AS name  FROM entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€' ORDER BY entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica);",
+                "viewType": "combobox"
+            },
+            "isPrimary": false,
+            "isHidden": false,
+            "newLine": false,
+            "size": 3
+        },
+        {
+            "key": "file_upload",
+            "label": "Seleziona File",
+            "format": {
+                "viewType": "filePicker",
+                "accept": ["application/pdf", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"],
+                "multiple": true
+            },
+            "isPrimary": false,
+            "isHidden": false,
+            "newLine": false,
+            "size": 6
+        },
+        {
+            "key": "carica_file",
+            "label": "Carica File",
+            "format": {
+                "viewType": "button",
+                "buttonAction": {
+                    "action": "uploadFile",
+                    "targetLambda": "upload_mandati_lambda",
+                    "source": "file_upload"
+                }
+            },
+            "isPrimary": false,
+            "isHidden": false,
+            "newLine": false,
+            "size": 2
+        },
+        {
+            "key": "esegui_estrazione",
+            "label": "Esegui Estrazione",
+            "format": {
+                "viewType": "button",
+                "buttonAction": {
+                    "action": "executeExtraction"
+                }
+            },
+            "isPrimary": false,
+            "isHidden": false,
+            "newLine": false,
+            "size": 2
+        }
+    ],
+
+    "customActions": [
+        {
+            "viewType": "table",
+            "tableActionType": "add",
+            "label": "Nuovo Mandato",
+            "action": "navigate",
+            "target": "registrazione_mandati",
+            "viewType": "form"
+        }
+    ]
+}
