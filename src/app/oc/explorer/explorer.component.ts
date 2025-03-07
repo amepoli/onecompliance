@@ -67,6 +67,10 @@ export class ExplorerComponent
 
     // is Current Tab
     isTabMode: boolean = false;
+
+    // Is form-getter inside a dialog
+    isDialog: boolean = false;
+    
     isCurTab: boolean = true;
 
     private tableName: string = "";
@@ -821,7 +825,8 @@ export class ExplorerComponent
                 validations: [],
                 isVisible: true,
                 width: null,
-                isTabMode: _this.isTabMode
+                isTabMode: _this.isTabMode,
+                isDialog: _this.isDialog
             };
             fieldValues.push(fieldValue);
         });

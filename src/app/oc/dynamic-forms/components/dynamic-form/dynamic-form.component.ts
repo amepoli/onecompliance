@@ -34,6 +34,9 @@ export class DynamicFormComponent implements OnInit, OnChanges {
     // Is form-getter inside a tab
     @Input() isTabMode: boolean = false;
 
+    // Is form-getter inside a dialog
+    @Input() isDialog: boolean = false;
+
     @ViewChildren(DynamicFieldDirective)
     public dynamicFields: QueryList<DynamicFieldDirective>;
 

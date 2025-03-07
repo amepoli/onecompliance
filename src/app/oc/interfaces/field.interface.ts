@@ -121,4 +121,6 @@ export interface FieldConfig {
     onClick?: Function;
     onBlur?: Function;
     isTabMode: boolean;
+    isDialog: boolean;
+    
 }
