@@ -6,11 +6,6 @@
     "inheritsFrom": "contracts_investment",
     "predefinedQueries": [
         {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
-        },
-        {
             "operation": "selectTable",
             "type": "main",
             "queryString": "SELECT c.*, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', c.stato) as descr_stato,   (SELECT a.descrizione      FROM entrasp.asset a      WHERE a.id_asset = c.id_asset        AND a.codice_azienda = $codice_azienda$        AND a.id_asset IS NOT NULL) AS descr_asset,           c.codice_azienda || '|' || c.id_contratto AS object_key,     (SELECT id_modello_test      FROM entrasp.modelli_test      WHERE codice_azienda = $codice_azienda$         AND id_tipo_modello_test = 54      LIMIT 1) AS id_modello_test,          TRUE AS create_somministrazione,     entrasp.argomenti_descr(c.id_argomento_contratto) AS tipo_contratto,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS id_cliente,    entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS fornitore,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) AS id_strumento_finanziario FROM entrasp.contratti c WHERE c.id_tipo_contratto in (2,4)   AND c.codice_azienda = $codice_azienda$    AND EXISTS (      SELECT 1       FROM entrasp.ruoli_anagrafiche ra      WHERE ra.codice_azienda = $codice_azienda$         AND ra.id_anagrafica = c.id_cliente        AND ra.codice_part = c.codice_part  );"
@@ -39,6 +34,25 @@
         "codice_ruolo": "FOR",
         "is_hidden_esternalizzazioni": "false"
     },
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "aggiorna_valutazioni",
+                    "icon": "refresh",
+                    "label": "Aggiorna Valutazioni",
+                    "query": "select entrasp.aggiorna_giudizi_contratto(codice_azienda, id_contratto) FROM (SELECT split_part(arr,'~',1)::varchar AS codice_azienda,split_part(arr,'~',2)::numeric AS id_contratto FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s;",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Aggiornale le valutazioni dei contratti selezionati?"
+                }
+            ]
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -214,22 +228,9 @@
                 "viewType": "menu",
                 "menuOptions": [
                     {
-                        "icon": "stacked_line_chart",
-                        "label": "Crea progetto",
-                        "outputEventName": "progetto_create",
-                        "translate": "RESOURCES.crea_progetto_contracts_investment"
-                    },
-                    {
-                        "icon": "stacked_line_chart",
-                        "label": "Duplica contratto",
-                        "outputEventName": "contratto_duplica",
-                        "translate": "RESOURCES.duplica_contratto_contracts_investment"
-                    },
-                    {
-                        "icon": "warning",
-                        "label": "Gestisci conflitto/attività",
-                        "outputEventName": "compito_create_from_contratto",
-                        "translate": "RESOURCES.gestisci_conflittoattivit_contracts_investment"
+                        "icon": "refresh",
+                        "label": "Aggiornamento Valutazioni",
+                        "outputEventName": "valutazioni_refresh"
                     },
                     {
                         "icon": "lock",
@@ -250,38 +251,12 @@
             "size": 0.6,
             "inputEvents": [
                 {
-                    "eventName": "progetto_create",
+                    "eventName": "valutazioni_refresh",
                     "condition": "none",
                     "values": [],
                     "actionType": "query",
-                    "queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
-                    "outputEventWhenComplete": "navigate_to_new_progetto"
-                },
-                {
-                    "eventName": "compito_create_from_contratto",
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.compiti_rif_bo_insert('contratti', coalesce($descrizione$,entrasp.argomenti_codice_descr_breve($id_argomento_contratto$)||entrasp.anagrafiche_vr_dati_identificativi('€codice_part€', $id_cliente$), 'cnt'||$id_contratto$,'' ), $codice_azienda$, idcontratto=>$id_contratto$) as codice_compito_created",
-                    "condition": "none",
-                    "values": [],
-                    "outputEventWhenComplete": "to_compito_created"
-                },
-                {
-                    "eventName": "close_rapporto_aui",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageTitle": "Registrare chiusura rapporto in AUI?",
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.aui_registra_chiusura_rapporto($codice_azienda$, $id_contratto$, '€global_username€')"
-                        },
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        }
-                    },
-                    "successMessage": "Operazione eseguita con successo",
+                    "queryFunct": "select entrasp.aggiorna_giudizi_contratto($codice_azienda$, $id_contratto$)",
+                    "successMessage": "Valutazioni aggiornate",
                     "outputEventWhenComplete": "survey_reload"
                 },
                 {
@@ -289,7 +264,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "UPDATE entrasp.contratti SET data_cessazione=coalesce('£data_cessazione£',current_date), stato='C' WHERE id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$ RETURNING (SELECT case when count(*) >  0 then 'true' else 'false' end FROM entrasp.contratti cnt INNER JOIN entrasp.registrazioni_rapporti_aui rra  ON cnt.numero_contratto=trim(rra.identificativo_rapporto) and cnt.codice_azienda=rra.codice_azienda WHERE cnt.id_contratto=$id_contratto$ and cnt.codice_azienda=$codice_azienda$)",
+                    "queryFunct": "UPDATE entrasp.contratti SET data_cessazione = CASE WHEN £data_cessazione£ IS NULL OR £data_cessazione£ = '' THEN current_date ELSE £data_cessazione£::DATE END, stato = 'C' WHERE id_contratto = $id_contratto$ AND codice_azienda = $codice_azienda$;",
                     "successMessage": "Contratto chiuso",
                     "outputEventWhenComplete": "survey_reload"
                 }
@@ -906,7 +881,7 @@
             "label": "Ultima Valutazione Rischi",
             "tooltip": "DATVAL_RISCHI - La data più recente in cui è stata effettuata la valutazione dei rischi derivanti dall’esternalizzazione cui il contratto si riferisce.",
             "size": 2.5,
-            "readOnly": false,
+            "readOnly": true,
             "newLine": false
         },
         {
@@ -928,19 +903,20 @@
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=54005"
+                "dataType": "text",
+                "viewType": "input"
             },
-            "label": "Classificazione FEI",
-            "key": "id_argomento_classificazione_fei",
-            "tooltip": "MOTIVAZIONE_FEI - Motivazione che ha determinato la classificazione della funzione come essenziale o importante;",
-            "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
+            "key": "note_essenzialità",
+            "label": "Note essenzialità",
+            "size": 5,
+            "tooltip": "Illustrare i motivi per cui si ritiene la funzione essenziale o meno",
             "newLine": true,
-            "size": 2.5
+            "readOnly": false,
+            "translate": "RESOURCES.note_essenzialit_contracts_investment"
         },
+
         {
             "autoGenerate": false,
             "format": {
@@ -997,7 +973,6 @@
             "key": "id_argomento_reinternalizzazione",
             "readOnly": false,
             "isHidden": false,
-            "insertUpdateFunct": "",
             "isPrimary": false,
             "newLine": true,
             "size": 2.5
@@ -1062,23 +1037,43 @@
             "newLine": true,
             "readOnly": false
         },
-
         {
-            "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "input"
+                "viewType": "label"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "note_essenzialità",
-            "label": "Note essenzialità",
-            "size": 10,
-            "tooltip": "Illustrare i motivi per cui si ritiene la funzione essenziale o meno",
+            "key": "classificazione_fei",
+            "label": "Classificazione FEI",
+            "style": {
+                "font_color": "black",
+                "font_size": "1.1em",
+                "font_style": "italic",
+                "font_weight": "500"
+            },
             "newLine": true,
-            "readOnly": false,
-            "translate": "RESOURCES.note_essenzialit_contracts_investment"
+            "readOnly": true,
+            "size": 3.4,
+            "sameOrigin": false
         },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=54005"
+            },
+            "label": "Classificazione FEI",
+            "key": "id_argomento_classificazione_fei",
+            "tooltip": "MOTIVAZIONE_FEI - Motivazione che ha determinato la classificazione della funzione come essenziale o importante;",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 5
+        },
+
         {
             "autoGenerate": false,
             "format": {
@@ -1113,6 +1108,16 @@
     "table_keys": [
         {
             "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.codice_azienda_contratti_fornitori"
+        },
+        {
+            "format": {
                 "dataType": "number"
             },
             "isHidden": false,
@@ -1121,16 +1126,6 @@
             "key": "id_contratto",
             "label": "#",
             "translate": "RESOURCES._contratti_fornitori"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.codice_azienda_contratti_fornitori"
         },
         {
             "format": {
@@ -1314,7 +1309,7 @@
                 "dataType": "text"
             },
             "isHidden": false,
-            "isPrimary": true,
+            "isPrimary": false,
             "width": "23%",
             "key": "descr_asset",
             "label": "Asset",
@@ -1433,6 +1428,12 @@
             ],
             "renderingOrder": 2,
             "label": "Soggetti Coinvolti"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "survey_reload"
         }
     ],
     "importQueries": {
