@@ -683,7 +683,7 @@
             "isPrimary": false,
             "key": "natura_dati_cloud",
             "label": "Natura dei dati in Cloud",
-            "size": 2.5,
+            "size": 2,
             "tooltip": "DATI_INCLOUD - Breve descrizione della natura dei dati memorizzati nel cloud. ",
             "newLine": false,
             "readOnly": false
@@ -691,36 +691,20 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT codice_iso AS id, concat(codice_iso, ' - ' ,descrizione) AS name FROM entrasp.nazioni where codice_iso is not null order by descrizione asc"
+                "dataType": "date",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_paese_mem_dati_forn",
-            "label": "Paese di memorizzazione dei dati del fornitore",
-            "tooltip": "STATO_MEMORIZ - Paese dove il fornitore di servizi memorizza i dati relativi ai servizi esternalizzati.",
-            "newLine": false,
-            "readOnly": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT codice_iso AS id, concat(codice_iso, ' - ' ,descrizione) AS name FROM entrasp.nazioni where codice_iso is not null order by descrizione asc"
+            "key": "data_valutazione_fei",
+            "tooltip": "DATVAL_FEI - La data più recente nella quale è stata effettuata la valutazione della essenzialità o importanza della funzione esternalizzata",
+            "label": "Ultima Valutazione FEI",
+            "size": 2,
+            "style": {
+                "background_color": "#B3E5FC"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_paese_erog_serv_forn",
-            "label": "Paese di erogazione dei servizi del fornitore",
-            "tooltip": "STATO_EROG - Paese dal quale il fornitore di servizi eroga i servizi esternalizzati",
-            "newLine": false,
             "readOnly": false,
-            "size": 2.5
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -735,8 +719,8 @@
             "isHidden": false,
             "tooltip": "CLOUD_SERVICE - I servizi cloud si distinguono in tre modelli, a seconda di quanta parte dello stack tecnologico è offerta e controllata dal fornitore (ad es. la sola infrastruttura, i servizi di piattaforma software di base, l’intero software, altri componenti o combinazioni): “IaaS (Infrastructure as a Service)”, “PaaS (Platform as a Service)” e “Saas (Software as a Service)”. Da valorizzare con “Altro” se il cloud service model non ricade in nessuno dei tre modellielencati",
             "isPrimary": false,
-            "newLine": true,
-            "size": 2.5
+            "newLine": false,
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -752,38 +736,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53909"
-            },
-            "label": "Categoria",
-            "key": "id_argomento_categoria",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "tooltip": "CATEG_ESTERNALIZ - Categoria alla quale è riconducibile l’attività esternalizzata",
-            "newLine": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_valutazione_fei",
-            "tooltip": "DATVAL_FEI - La data più recente nella quale è stata effettuata la valutazione della essenzialità o importanza della funzione esternalizzata",
-            "label": "Ultima Valutazione FEI",
-            "size": 2.5,
-            "readOnly": false,
-            "newLine": false
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -795,11 +748,12 @@
             "isPrimary": false,
             "key": "trattamenti_fornitore",
             "tooltip": "TRATT_DATIPER - Indica se il fornitore tratta dati personali nell’ambito di o per la prestazione delle funzioni esternalizzate.",
-            "size": 2.5,
+            "size": 2,
             "label": "Trattamenti Dati Fornitore",
             "readOnly": false,
             "newLine": true
         },
+
         {
             "autoGenerate": false,
             "format": {
@@ -834,6 +788,9 @@
             "tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione essenziale",
             "size": 2.5,
             "label": "Essenziale",
+            "style": {
+                "background_color": "#81D4FA"
+            },
             "readOnly": false,
             "newLine": false,
             "translate": "RESOURCES.essenziale_contracts_investment"
@@ -881,7 +838,10 @@
             "label": "Ultima Valutazione Rischi",
             "tooltip": "DATVAL_RISCHI - La data più recente in cui è stata effettuata la valutazione dei rischi derivanti dall’esternalizzazione cui il contratto si riferisce.",
             "size": 2.5,
-            "readOnly": true,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
+            "readOnly": false,
             "newLine": false
         },
         {
@@ -897,6 +857,9 @@
             "isHidden": false,
             "tooltip": "LIV_RISCHIO - Livello di rischio di esternalizzazione risultante dalla valutazione più recente. Nell’individuazione del livello, i soggetti segnalanti tengono conto, tra l’altro, dell’impatto dell’accordo di esternalizzazione in termini di: rischi operativi, compresi rischi legali e reputazionali; rischi di concentrazione; rischi derivanti dalla facoltà di subesternalizzare e dall’utilizzo di complesse catene di subfornitori; rischi connessi con il paese in cui ha sede il fornitore o dove sono conservati i dati o da cui sono erogati i servizi. ",
             "isPrimary": false,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "newLine": false,
             "size": 2.5
         },
@@ -929,6 +892,9 @@
             "label": "Ultimo Audit Effettuato",
             "tooltip": "DAT_LASTAUDIT - Data nella quale ha avuto luogo la verifica di audit più recente sulle funzioni svolte dai fornitori di servizi. Ci si riferisce alle verifiche di audit condotte da personale qualificato dell’utilizzatore, da un team congiunto con altri utilizzatori dello stesso fornitore di servizi o da terze parti incaricate dall’utilizzatore. Non ci si riferisce, quindi, alle verifiche condotte dall’internal audit del fornitore di servizi stesso o da auditor o certificatori da esso incaricati,né al monitoraggio periodico o alla revisione della valutazione dei rischi derivanti dall’esternalizzazione da parte dell’utilizzatore. È possibile indicare la data della fine del trimestre o dell’anno in cui è stata effettuatal’ultima verifica di audit.",
             "size": 2.5,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "readOnly": false,
             "newLine": false
         },
@@ -944,6 +910,9 @@
             "tooltip": "DAT_NEXTAUDIT - Data in cui è pianificata la prossima verifica di audit sulle funzioni svolte dal fornitore di servizi. Ci si riferisce alle verifiche di audit condotte da personale qualificato dell’utilizzatore,da un team congiunto con altri utilizzatori dello stesso fornitore di servizi o da terze parti incaricate dall’utilizzatore. Non ci si riferisce, quindi, alle verifiche condotte dall’internala udit del fornitore di servizi stesso o da auditor o certificatori da esso incaricati, né al monitoraggio periodico o alla revisione della valutazione dei rischi dell’esternalizzazione da parte dell’utilizzatore. È possibile segnalare la data della fine del trimestre o dell’anno in cui è pianificata la prossima verifica di audit.",
             "label": "Data Prossimo Audit",
             "size": 2.5,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "readOnly": false,
             "newLine": false
         },
@@ -959,6 +928,9 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "newLine": false,
             "size": 2.5
         },
@@ -973,6 +945,9 @@
             "key": "id_argomento_reinternalizzazione",
             "readOnly": false,
             "isHidden": false,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "isPrimary": false,
             "newLine": true,
             "size": 2.5
@@ -988,6 +963,9 @@
             "key": "id_argomento_sostituibilita",
             "readOnly": false,
             "isHidden": false,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "isPrimary": false,
             "newLine": false,
             "size": 2.5
@@ -1049,6 +1027,7 @@
             "style": {
                 "font_color": "black",
                 "font_size": "1.1em",
+                "background_color": "#B3E5FC",
                 "font_style": "italic",
                 "font_weight": "500"
             },
@@ -1353,7 +1332,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "label": "ID Cliente",
+            "label": "ID Fornitore",
             "newLine": false,
             "queryCond": "avr.id_cliente=$id_anagrafica_s$",
             "translate": "RESOURCES.id_cliente_contratti_fornitori"
@@ -1428,6 +1407,21 @@
             ],
             "renderingOrder": 2,
             "label": "Soggetti Coinvolti"
+        },
+        {
+            "entryKey": "categorie_sub_of_contratti_fornitori",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                }
+            ],
+            "renderingOrder": 2,
+            "label": "Categorie Contratto"
         }
     ],
     "inputEvents": [
