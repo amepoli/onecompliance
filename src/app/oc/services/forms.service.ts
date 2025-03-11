@@ -101,7 +101,8 @@ export class FormsService {
         currentKeys: any,
         isReadOnly: boolean,
         startingIndex: number,
-        isTabMode: boolean
+        isTabMode: boolean,
+        isDialog: boolean
     ): FieldConfig[][] {
         const fieldValuesArray: FieldConfig[][] = [[]];
 
@@ -114,7 +115,8 @@ export class FormsService {
                 currentKeys,
                 values,
                 index + startingIndex,
-                isTabMode
+                isTabMode,
+                isDialog
             );
         }
         return fieldValuesArray;
@@ -128,7 +130,8 @@ export class FormsService {
         currentKeys: any,
         values: any,
         index: number,
-        isTabMode: boolean
+        isTabMode: boolean,
+        isDialog: boolean
     ): FieldConfig[] {
         const _this = this;
         const fieldValues = new Array();
@@ -167,7 +170,8 @@ export class FormsService {
                         element,
                         values,
                         index,
-                        isTabMode
+                        isTabMode,
+                        isDialog
                     );
                     fieldValues.push(fieldValue);
                 }
@@ -228,7 +232,8 @@ export class FormsService {
         element: any,
         values: any,
         index: number,
-        isTabMode: boolean
+        isTabMode: boolean,
+        isDialog: boolean
     ): FieldConfig {
         const _this = this;
         let fieldValue: FieldConfig;
@@ -351,7 +356,8 @@ export class FormsService {
                             currentKeys,
                             values,
                             index,
-                            isTabMode
+                            isTabMode,
+                            isDialog
                         )
                         : null,
                 isMultiSelect:
@@ -359,7 +365,8 @@ export class FormsService {
                 showTagsView:
                     field.showTagsView != null ? field.showTagsView : false,
                 onChangeResetKey: field.onChangeResetKey ?? [],
-                isTabMode
+                isTabMode,
+                isDialog
             };
         }
         /*
@@ -704,7 +711,7 @@ export class FormsService {
 
     performAutoSave(field: FieldConfig){
         const _this = this;
-        if(!field.isTabMode) {
+        if(!field.isTabMode && !field.isDialog) {
             const formAutoSave = _this._authService.userinfo?.value?.formAutoSave ?? false;
             if(formAutoSave){
                 _this._pubSubService.publishEvent("perform_form_auto_save", null)
