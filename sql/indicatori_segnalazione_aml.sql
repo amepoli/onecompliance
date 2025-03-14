@@ -577,3 +577,88 @@ where
                            AND (date_trunc('year', CURRENT_DATE) + INTERVAL '1 year - 1 day');
 
 
+--clienti con adeguata verifica non aggiornata
+select
+	ss.id_somministrazione,
+	mt.id_modello_test,
+	snd.titolo,
+	ss.object_description as verifica_su,
+	snd.data_prevista as scaduto_il
+from
+	entrasp.sondaggi_somministrati ss
+	inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda
+	and ss.id_sondaggio=snd.id_sondaggio
+	inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda
+	and snd.id_modello_test=mt.id_modello_test
+	and SPLIT_PART(ss.object_key, '|', 2)::NUMERIC in (
+		select
+			cnt.id_cliente
+		from
+			entrasp.contratti cnt
+		where
+			cnt.codice_azienda='FINAFARM'
+			and cnt.stato!='C'
+	)
+where
+	snd.codice_azienda='FINAFARM'
+	and mt.id_tipo_modello_test=50
+	and snd.data_prevista<current_date
+	and ss.stato not in ('C', 'N')
+	and id_argomento!=45421
+	and mt.id_argomento in (48339,48338)
+	and ss.object_name='anagraficheId';
+
+--clienti con rafforzata e con adeguata verifica non aggiornata
+select
+	ss.id_somministrazione,
+	mt.id_modello_test,
+	snd.titolo,
+	ss.object_description as verifica_su,
+	snd.data_prevista as scaduto_il
+from
+	entrasp.sondaggi_somministrati ss
+	inner join entrasp.sondaggi snd on ss.codice_azienda=snd.codice_azienda
+	and ss.id_sondaggio=snd.id_sondaggio
+	inner join entrasp.modelli_test mt on snd.codice_azienda=mt.codice_azienda
+	and snd.id_modello_test=mt.id_modello_test
+	and SPLIT_PART(ss.object_key, '|', 2)::NUMERIC in (
+		select
+			cnt.id_cliente
+		from
+			entrasp.contratti cnt
+		where
+			cnt.codice_azienda='FINAFARM'
+			and cnt.stato!='C'
+	)
+where
+	snd.codice_azienda='FINAFARM'
+	and mt.id_tipo_modello_test=50
+	and snd.data_prevista<current_date
+	and ss.stato not in ('C', 'N')
+	and id_argomento!=45421
+	and mt.id_argomento in (48339,48338)
+	and ss.object_name='anagraficheId'
+	and (ss.codice_azienda, SPLIT_PART(ss.object_key, '|', 2)::NUMERIC) in (
+	select distinct sdr.codice_azienda, split_part (sdr.object_key, '|',2)::numeric
+from entrasp.select_domande_delle_risposte sdr
+inner join entrasp.aziende az on sdr.codice_azienda=az.codice_azienda
+WHERE sdr.id_argomento = 47504 and argomento_risposte_previste=6765 and sdr.codice_azienda='FINAFARM' and sdr.id_risposta_prev is not null and split_part(sdr.object_key, '|', 2)::numeric in (
+
+select distinct
+	an.id_anagrafica
+from
+	entrasp.anagrafiche_id an
+	inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part
+	and an.id_anagrafica=avr.id_anagrafica
+	inner join entrasp.contratti cnt on an.codice_part=cnt.codice_part
+	and an.id_anagrafica=cnt.id_cliente
+	inner join entrasp.ruoli_anagrafiche ru on an.codice_part=ru.codice_part
+	and an.id_anagrafica=ru.id_anagrafica
+where
+	an.codice_part='FINAFARM'
+	and ru.codice_ruolo='CLI'
+	and cnt.data_stipulazione<date_trunc('year', current_date)
+	and (coalesce (cnt.data_cessazione, cnt.data_contratto_a) IS NULL OR coalesce (cnt.data_cessazione, cnt.data_contratto_a) >= date_trunc('year', current_date))
+	and avr.prog_vr=entrasp.anagrafiche_vr_max (avr.codice_part, avr.id_anagrafica)
+	and cnt.id_argomento_contratto!=49580 and an.tipo_soggetto in ('P','C')
+));
