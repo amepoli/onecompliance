@@ -32,7 +32,7 @@ export class BackendService {
   private insert_user_to_dynamoApiName = appData.lambdas.insert_user_to_dynamo.apiName;
   private fattureincloudApiName = appData.lambdas.fatture_in_cloud.apiName;
   private emailSenderApiName = appData.lambdas.email_sender.apiName;
-  private uploadToS3ApiName = appData.lambdas.upload_to_s3.apiName;
+  private textractApiName = appData.lambdas.textract.apiName;
 
 
   // private myGetInit = { // OPTIONAL
@@ -1025,7 +1025,7 @@ export class BackendService {
     return from(this.awsService.api().post(this.apiName, this.emailApiName, putPostReq));
   }
 
-  uploadToS3(bucketName: string, fileName: string, folderName: string, fileData: string) {
+  textract(bucketName: string, fileName: string, folderName: string, fileData: string) {
     this.awsService.auth();
 
     const putPostReq: PostRequest = {
@@ -1038,7 +1038,7 @@ export class BackendService {
       }
     }
     
-    return from(this.awsService.api().get(this.apiName, this.uploadToS3ApiName, putPostReq));
+    return from(this.awsService.api().get(this.apiName, this.textractApiName, putPostReq));
   }
 
 }
