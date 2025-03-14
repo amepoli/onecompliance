@@ -29,11 +29,11 @@ export class FormGetterComponent
     // Is form-getter inside a tab
     @Input() isTabMode: boolean = false;
 
+    // Is form-view part of dialog
+    @Input() isDialog: boolean = false;
+
     // Is form-getter part of form-view
     @Input() isFormView: boolean = false;
-
-    // Is form-getter part of dialog form-view
-    @Input() isDialog: boolean = false;
 
     @Input() filter: string;
     @Input() formParams: FormGetterParams = null;
@@ -992,7 +992,7 @@ export class FormGetterComponent
         });
 
         // prepare the form
-        _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this._formsService.getFormData(_this.viewKeys, results, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly, 0, _this.isTabMode)));
+        _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this._formsService.getFormData(_this.viewKeys, results, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly, 0, _this.isTabMode, _this.isDialog)));
         _this.quickAddData = _this.filteredFormData.map((x) => false);
         _this.resetPagination(this.filteredFormData);
 
@@ -1026,7 +1026,7 @@ export class FormGetterComponent
                         // update the status to prevent the whole table refresh
                         _this.addingNew = true;
                         // process the new row
-                        const filteredFormData = _this._formsService.getFormData(_this.viewKeys, result, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly, 0, _this.isTabMode);
+                        const filteredFormData = _this._formsService.getFormData(_this.viewKeys, result, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly, 0, _this.isTabMode, _this.isDialog);
                         _this.process_form(filteredFormData);
 
 

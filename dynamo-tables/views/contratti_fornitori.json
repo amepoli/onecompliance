@@ -6,11 +6,6 @@
     "inheritsFrom": "contracts_investment",
     "predefinedQueries": [
         {
-            "operation": "update",
-            "type": "postProcessing",
-            "queryString": "select entrasp.sondaggi_delete_after_contract_end($codice_azienda$, $id_contratto$)"
-        },
-        {
             "operation": "selectTable",
             "type": "main",
             "queryString": "SELECT c.*, entrasp.transcodifiche_transcodifica('STATO_CONTRATTI', c.stato) as descr_stato,   (SELECT a.descrizione      FROM entrasp.asset a      WHERE a.id_asset = c.id_asset        AND a.codice_azienda = $codice_azienda$        AND a.id_asset IS NOT NULL) AS descr_asset,           c.codice_azienda || '|' || c.id_contratto AS object_key,     (SELECT id_modello_test      FROM entrasp.modelli_test      WHERE codice_azienda = $codice_azienda$         AND id_tipo_modello_test = 54      LIMIT 1) AS id_modello_test,          TRUE AS create_somministrazione,     entrasp.argomenti_descr(c.id_argomento_contratto) AS tipo_contratto,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS id_cliente,    entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_cliente) AS fornitore,     entrasp.anagrafiche_vr_dati_identificativi('€global_codice_part€', c.id_strumento_finanziario) AS id_strumento_finanziario FROM entrasp.contratti c WHERE c.id_tipo_contratto in (2,4)   AND c.codice_azienda = $codice_azienda$    AND EXISTS (      SELECT 1       FROM entrasp.ruoli_anagrafiche ra      WHERE ra.codice_azienda = $codice_azienda$         AND ra.id_anagrafica = c.id_cliente        AND ra.codice_part = c.codice_part  );"
@@ -39,6 +34,25 @@
         "codice_ruolo": "FOR",
         "is_hidden_esternalizzazioni": "false"
     },
+    "table_multiselection_actions": [
+        {
+            "viewType": "menu",
+            "key": "menuanag",
+            "label": "Actions",
+            "icon": "more_vert",
+            "menuOptions": [
+                {
+                    "key": "aggiorna_valutazioni",
+                    "icon": "refresh",
+                    "label": "Aggiorna Valutazioni",
+                    "query": "select entrasp.aggiorna_giudizi_contratto(codice_azienda, id_contratto) FROM (SELECT split_part(arr,'~',1)::varchar AS codice_azienda,split_part(arr,'~',2)::numeric AS id_contratto FROM unnest(ARRAY[$selected_rows_data$]) arr) AS s;",
+                    "confirmAction": true,
+                    "reloadOnSuccess": true,
+                    "confirmActionMessage": "Aggiornale le valutazioni dei contratti selezionati?"
+                }
+            ]
+        }
+    ],
     "form_keys": [
         {
             "autoGenerate": false,
@@ -214,22 +228,9 @@
                 "viewType": "menu",
                 "menuOptions": [
                     {
-                        "icon": "stacked_line_chart",
-                        "label": "Crea progetto",
-                        "outputEventName": "progetto_create",
-                        "translate": "RESOURCES.crea_progetto_contracts_investment"
-                    },
-                    {
-                        "icon": "stacked_line_chart",
-                        "label": "Duplica contratto",
-                        "outputEventName": "contratto_duplica",
-                        "translate": "RESOURCES.duplica_contratto_contracts_investment"
-                    },
-                    {
-                        "icon": "warning",
-                        "label": "Gestisci conflitto/attività",
-                        "outputEventName": "compito_create_from_contratto",
-                        "translate": "RESOURCES.gestisci_conflittoattivit_contracts_investment"
+                        "icon": "refresh",
+                        "label": "Aggiornamento Valutazioni",
+                        "outputEventName": "valutazioni_refresh"
                     },
                     {
                         "icon": "lock",
@@ -250,38 +251,12 @@
             "size": 0.6,
             "inputEvents": [
                 {
-                    "eventName": "progetto_create",
+                    "eventName": "valutazioni_refresh",
                     "condition": "none",
                     "values": [],
                     "actionType": "query",
-                    "queryFunct": "select id_progetto from entrasp.progetti_insert_da_attivita($codice_azienda$, '', null, $id_contratto$, $id_cliente$);",
-                    "outputEventWhenComplete": "navigate_to_new_progetto"
-                },
-                {
-                    "eventName": "compito_create_from_contratto",
-                    "actionType": "query",
-                    "queryFunct": "select entrasp.compiti_rif_bo_insert('contratti', coalesce($descrizione$,entrasp.argomenti_codice_descr_breve($id_argomento_contratto$)||entrasp.anagrafiche_vr_dati_identificativi('€codice_part€', $id_cliente$), 'cnt'||$id_contratto$,'' ), $codice_azienda$, idcontratto=>$id_contratto$) as codice_compito_created",
-                    "condition": "none",
-                    "values": [],
-                    "outputEventWhenComplete": "to_compito_created"
-                },
-                {
-                    "eventName": "close_rapporto_aui",
-                    "actionType": "show_message",
-                    "condition": "none",
-                    "values": [],
-                    "message": {
-                        "messageTitle": "Registrare chiusura rapporto in AUI?",
-                        "actionOnYes": {
-                            "actionType": "query",
-                            "queryFunct": "select entrasp.aui_registra_chiusura_rapporto($codice_azienda$, $id_contratto$, '€global_username€')"
-                        },
-                        "actionOnNo": {
-                            "actionType": "query",
-                            "queryFunct": "select true"
-                        }
-                    },
-                    "successMessage": "Operazione eseguita con successo",
+                    "queryFunct": "select entrasp.aggiorna_giudizi_contratto($codice_azienda$, $id_contratto$)",
+                    "successMessage": "Valutazioni aggiornate",
                     "outputEventWhenComplete": "survey_reload"
                 },
                 {
@@ -289,7 +264,7 @@
                     "actionType": "query",
                     "condition": "none",
                     "values": [],
-                    "queryFunct": "UPDATE entrasp.contratti SET data_cessazione=coalesce('£data_cessazione£',current_date), stato='C' WHERE id_contratto=$id_contratto$ and codice_azienda=$codice_azienda$ RETURNING (SELECT case when count(*) >  0 then 'true' else 'false' end FROM entrasp.contratti cnt INNER JOIN entrasp.registrazioni_rapporti_aui rra  ON cnt.numero_contratto=trim(rra.identificativo_rapporto) and cnt.codice_azienda=rra.codice_azienda WHERE cnt.id_contratto=$id_contratto$ and cnt.codice_azienda=$codice_azienda$)",
+                    "queryFunct": "UPDATE entrasp.contratti SET data_cessazione = CASE WHEN £data_cessazione£ IS NULL OR £data_cessazione£ = '' THEN current_date ELSE £data_cessazione£::DATE END, stato = 'C' WHERE id_contratto = $id_contratto$ AND codice_azienda = $codice_azienda$;",
                     "successMessage": "Contratto chiuso",
                     "outputEventWhenComplete": "survey_reload"
                 }
@@ -708,7 +683,7 @@
             "isPrimary": false,
             "key": "natura_dati_cloud",
             "label": "Natura dei dati in Cloud",
-            "size": 2.5,
+            "size": 2,
             "tooltip": "DATI_INCLOUD - Breve descrizione della natura dei dati memorizzati nel cloud. ",
             "newLine": false,
             "readOnly": false
@@ -716,36 +691,20 @@
         {
             "autoGenerate": false,
             "format": {
-                "dataType": "text",
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT codice_iso AS id, concat(codice_iso, ' - ' ,descrizione) AS name FROM entrasp.nazioni where codice_iso is not null order by descrizione asc"
+                "dataType": "date",
+                "viewType": "input"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "id_paese_mem_dati_forn",
-            "label": "Paese di memorizzazione dei dati del fornitore",
-            "tooltip": "STATO_MEMORIZ - Paese dove il fornitore di servizi memorizza i dati relativi ai servizi esternalizzati.",
-            "newLine": false,
-            "readOnly": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "text",
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT codice_iso AS id, concat(codice_iso, ' - ' ,descrizione) AS name FROM entrasp.nazioni where codice_iso is not null order by descrizione asc"
+            "key": "data_valutazione_fei",
+            "tooltip": "DATVAL_FEI - La data più recente nella quale è stata effettuata la valutazione della essenzialità o importanza della funzione esternalizzata",
+            "label": "Ultima Valutazione FEI",
+            "size": 2,
+            "style": {
+                "background_color": "#B3E5FC"
             },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "id_paese_erog_serv_forn",
-            "label": "Paese di erogazione dei servizi del fornitore",
-            "tooltip": "STATO_EROG - Paese dal quale il fornitore di servizi eroga i servizi esternalizzati",
-            "newLine": false,
             "readOnly": false,
-            "size": 2.5
+            "newLine": false
         },
         {
             "autoGenerate": false,
@@ -760,8 +719,8 @@
             "isHidden": false,
             "tooltip": "CLOUD_SERVICE - I servizi cloud si distinguono in tre modelli, a seconda di quanta parte dello stack tecnologico è offerta e controllata dal fornitore (ad es. la sola infrastruttura, i servizi di piattaforma software di base, l’intero software, altri componenti o combinazioni): “IaaS (Infrastructure as a Service)”, “PaaS (Platform as a Service)” e “Saas (Software as a Service)”. Da valorizzare con “Altro” se il cloud service model non ricade in nessuno dei tre modellielencati",
             "isPrimary": false,
-            "newLine": true,
-            "size": 2.5
+            "newLine": false,
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -777,38 +736,7 @@
             "isHidden": false,
             "isPrimary": false,
             "newLine": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=53909"
-            },
-            "label": "Categoria",
-            "key": "id_argomento_categoria",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "tooltip": "CATEG_ESTERNALIZ - Categoria alla quale è riconducibile l’attività esternalizzata",
-            "newLine": false,
-            "size": 2.5
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "dataType": "date",
-                "viewType": "input"
-            },
-            "isHidden": false,
-            "isPrimary": false,
-            "key": "data_valutazione_fei",
-            "tooltip": "DATVAL_FEI - La data più recente nella quale è stata effettuata la valutazione della essenzialità o importanza della funzione esternalizzata",
-            "label": "Ultima Valutazione FEI",
-            "size": 2.5,
-            "readOnly": false,
-            "newLine": false
+            "size": 2
         },
         {
             "autoGenerate": false,
@@ -820,11 +748,12 @@
             "isPrimary": false,
             "key": "trattamenti_fornitore",
             "tooltip": "TRATT_DATIPER - Indica se il fornitore tratta dati personali nell’ambito di o per la prestazione delle funzioni esternalizzate.",
-            "size": 2.5,
+            "size": 2,
             "label": "Trattamenti Dati Fornitore",
             "readOnly": false,
             "newLine": true
         },
+
         {
             "autoGenerate": false,
             "format": {
@@ -859,6 +788,9 @@
             "tooltip": "Flaggare qualora si tratti di esternalizzazione di funzione essenziale",
             "size": 2.5,
             "label": "Essenziale",
+            "style": {
+                "background_color": "#81D4FA"
+            },
             "readOnly": false,
             "newLine": false,
             "translate": "RESOURCES.essenziale_contracts_investment"
@@ -906,6 +838,9 @@
             "label": "Ultima Valutazione Rischi",
             "tooltip": "DATVAL_RISCHI - La data più recente in cui è stata effettuata la valutazione dei rischi derivanti dall’esternalizzazione cui il contratto si riferisce.",
             "size": 2.5,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "readOnly": false,
             "newLine": false
         },
@@ -922,25 +857,29 @@
             "isHidden": false,
             "tooltip": "LIV_RISCHIO - Livello di rischio di esternalizzazione risultante dalla valutazione più recente. Nell’individuazione del livello, i soggetti segnalanti tengono conto, tra l’altro, dell’impatto dell’accordo di esternalizzazione in termini di: rischi operativi, compresi rischi legali e reputazionali; rischi di concentrazione; rischi derivanti dalla facoltà di subesternalizzare e dall’utilizzo di complesse catene di subfornitori; rischi connessi con il paese in cui ha sede il fornitore o dove sono conservati i dati o da cui sono erogati i servizi. ",
             "isPrimary": false,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "newLine": false,
             "size": 2.5
         },
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=54005"
+                "dataType": "text",
+                "viewType": "input"
             },
-            "label": "Classificazione FEI",
-            "key": "id_argomento_classificazione_fei",
-            "tooltip": "MOTIVAZIONE_FEI - Motivazione che ha determinato la classificazione della funzione come essenziale o importante;",
-            "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
+            "key": "note_essenzialità",
+            "label": "Note essenzialità",
+            "size": 5,
+            "tooltip": "Illustrare i motivi per cui si ritiene la funzione essenziale o meno",
             "newLine": true,
-            "size": 2.5
+            "readOnly": false,
+            "translate": "RESOURCES.note_essenzialit_contracts_investment"
         },
+
         {
             "autoGenerate": false,
             "format": {
@@ -953,6 +892,9 @@
             "label": "Ultimo Audit Effettuato",
             "tooltip": "DAT_LASTAUDIT - Data nella quale ha avuto luogo la verifica di audit più recente sulle funzioni svolte dai fornitori di servizi. Ci si riferisce alle verifiche di audit condotte da personale qualificato dell’utilizzatore, da un team congiunto con altri utilizzatori dello stesso fornitore di servizi o da terze parti incaricate dall’utilizzatore. Non ci si riferisce, quindi, alle verifiche condotte dall’internal audit del fornitore di servizi stesso o da auditor o certificatori da esso incaricati,né al monitoraggio periodico o alla revisione della valutazione dei rischi derivanti dall’esternalizzazione da parte dell’utilizzatore. È possibile indicare la data della fine del trimestre o dell’anno in cui è stata effettuatal’ultima verifica di audit.",
             "size": 2.5,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "readOnly": false,
             "newLine": false
         },
@@ -968,6 +910,9 @@
             "tooltip": "DAT_NEXTAUDIT - Data in cui è pianificata la prossima verifica di audit sulle funzioni svolte dal fornitore di servizi. Ci si riferisce alle verifiche di audit condotte da personale qualificato dell’utilizzatore,da un team congiunto con altri utilizzatori dello stesso fornitore di servizi o da terze parti incaricate dall’utilizzatore. Non ci si riferisce, quindi, alle verifiche condotte dall’internala udit del fornitore di servizi stesso o da auditor o certificatori da esso incaricati, né al monitoraggio periodico o alla revisione della valutazione dei rischi dell’esternalizzazione da parte dell’utilizzatore. È possibile segnalare la data della fine del trimestre o dell’anno in cui è pianificata la prossima verifica di audit.",
             "label": "Data Prossimo Audit",
             "size": 2.5,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "readOnly": false,
             "newLine": false
         },
@@ -983,6 +928,9 @@
             "readOnly": false,
             "isHidden": false,
             "isPrimary": false,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "newLine": false,
             "size": 2.5
         },
@@ -997,6 +945,9 @@
             "key": "id_argomento_reinternalizzazione",
             "readOnly": false,
             "isHidden": false,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "isPrimary": false,
             "newLine": true,
             "size": 2.5
@@ -1012,6 +963,9 @@
             "key": "id_argomento_sostituibilita",
             "readOnly": false,
             "isHidden": false,
+            "style": {
+                "background_color": "#B3E5FC"
+            },
             "isPrimary": false,
             "newLine": false,
             "size": 2.5
@@ -1061,23 +1015,44 @@
             "newLine": true,
             "readOnly": false
         },
-
         {
-            "autoGenerate": false,
             "format": {
                 "dataType": "text",
-                "viewType": "input"
+                "viewType": "label"
             },
             "isHidden": false,
             "isPrimary": false,
-            "key": "note_essenzialità",
-            "label": "Note essenzialità",
-            "size": 10,
-            "tooltip": "Illustrare i motivi per cui si ritiene la funzione essenziale o meno",
+            "key": "classificazione_fei",
+            "label": "Classificazione FEI",
+            "style": {
+                "font_color": "black",
+                "font_size": "1.1em",
+                "background_color": "#B3E5FC",
+                "font_style": "italic",
+                "font_weight": "500"
+            },
             "newLine": true,
-            "readOnly": false,
-            "translate": "RESOURCES.note_essenzialit_contracts_investment"
+            "readOnly": true,
+            "size": 3.4,
+            "sameOrigin": false
         },
+        {
+            "autoGenerate": false,
+            "format": {
+                "viewType": "checkboxgroup",
+                "options": [],
+                "comboQuery": "select arg.id_argomento as id, arg.id_argomento||'-'||arg.descrizione_breve as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=54005"
+            },
+            "label": "Classificazione FEI",
+            "key": "id_argomento_classificazione_fei",
+            "tooltip": "MOTIVAZIONE_FEI - Motivazione che ha determinato la classificazione della funzione come essenziale o importante;",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": true,
+            "size": 5
+        },
+
         {
             "autoGenerate": false,
             "format": {
@@ -1112,6 +1087,16 @@
     "table_keys": [
         {
             "format": {
+                "dataType": "text"
+            },
+            "isHidden": true,
+            "isPrimary": true,
+            "key": "codice_azienda",
+            "label": "codice_azienda",
+            "translate": "RESOURCES.codice_azienda_contratti_fornitori"
+        },
+        {
+            "format": {
                 "dataType": "number"
             },
             "isHidden": false,
@@ -1120,16 +1105,6 @@
             "key": "id_contratto",
             "label": "#",
             "translate": "RESOURCES._contratti_fornitori"
-        },
-        {
-            "format": {
-                "dataType": "text"
-            },
-            "isHidden": true,
-            "isPrimary": true,
-            "key": "codice_azienda",
-            "label": "codice_azienda",
-            "translate": "RESOURCES.codice_azienda_contratti_fornitori"
         },
         {
             "format": {
@@ -1313,7 +1288,7 @@
                 "dataType": "text"
             },
             "isHidden": false,
-            "isPrimary": true,
+            "isPrimary": false,
             "width": "23%",
             "key": "descr_asset",
             "label": "Asset",
@@ -1357,7 +1332,7 @@
                 "dataType": "number",
                 "viewType": "input"
             },
-            "label": "ID Cliente",
+            "label": "ID Fornitore",
             "newLine": false,
             "queryCond": "avr.id_cliente=$id_anagrafica_s$",
             "translate": "RESOURCES.id_cliente_contratti_fornitori"
@@ -1432,6 +1407,27 @@
             ],
             "renderingOrder": 2,
             "label": "Soggetti Coinvolti"
+        },
+        {
+            "entryKey": "categorie_sub_of_contratti_fornitori",
+            "keys": [
+                {
+                    "parent": "codice_azienda",
+                    "son": "codice_azienda"
+                },
+                {
+                    "parent": "id_contratto",
+                    "son": "id_contratto"
+                }
+            ],
+            "renderingOrder": 2,
+            "label": "Categorie Contratto"
+        }
+    ],
+    "inputEvents": [
+        {
+            "actionType": "reload",
+            "eventName": "survey_reload"
         }
     ],
     "importQueries": {

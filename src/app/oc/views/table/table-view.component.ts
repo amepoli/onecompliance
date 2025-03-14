@@ -36,6 +36,10 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     // is Current Tab
     @Input() isTabMode: boolean = false;
+
+    // Is form-view part of dialog
+    @Input() isDialog: boolean = false;
+
     @Input() isCurTab: boolean = false;
 
     @Input() tableData: TableViewParams;
@@ -901,7 +905,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 validations: [],
                 isVisible: true,
                 width: (field.size != null) ? (field.size * 10) : null, // leave a 0.5% margin left and right   
-                isTabMode: _this.isTabMode
+                isTabMode: _this.isTabMode,
+                isDialog: _this.isDialog
             };
             fieldValues.push(fieldValue);
         });

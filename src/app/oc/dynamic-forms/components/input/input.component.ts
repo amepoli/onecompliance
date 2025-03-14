@@ -34,6 +34,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   timeValue: string;
 
+  showCustomElement =  true;
+
   // For future use
   // @HostBinding('style.margin-right') marginRight = '0.5%';
 
@@ -134,6 +136,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
       
     _this._formsService.performAutoSave(_this.field);
+
+    _this.showCustomElement = true;
   }
 
   onFocus(): void {
@@ -141,6 +145,8 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     if (_this.field.eventName !== null && _this.field.eventTrigger != null && _this.field.eventTrigger === 'focus') {
       _this.pubSubService.publishEvent(_this.field.eventName, { origin: _this.field.name, index: _this.field.index, data: _this.field.value, type: 'focus' });
     }
+
+    _this.showCustomElement = false;
   }
 
   onPress(): void {

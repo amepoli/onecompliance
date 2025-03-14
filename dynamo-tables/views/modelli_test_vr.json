@@ -283,10 +283,28 @@
                         "translate": "RESOURCES.crea_sondaggio_multiplo_modelli_test_vr"
                     },
                     {
+                        "icon": "poll",
+                        "label": "Criterio di analisi",
+                        "outputEventName": "navigate_to_criterio_analisi",
+                        "translate": "RESOURCES.criterio_di_analisi_modelli_test_vr"
+                    },
+                    {
+                        "icon": "sync",
+                        "label": "Ricalcola punteggi",
+                        "outputEventName": "ricalcola_punteggi",
+                        "translate": "RESOURCES.ricalcola_punteggi_modelli_test_vr"
+                    },
+                    {
                         "icon": "add_circle_",
                         "label": "Nuova versione",
                         "outputEventName": "modelli_test_button_nuova_versione",
                         "translate": "RESOURCES.nuova_versione_modelli_test_vr"
+                    },
+                    {
+                        "icon": "delete",
+                        "label": "Elimina versione corrente",
+                        "outputEventName": "elimina_ver_corrente_mdt",
+                        "translate": "RESOURCES.elimina_versione_corrente_modelli_test_vr"
                     },
                     {
                         "icon": "content_copy",
@@ -308,18 +326,6 @@
                         "translate": "RESOURCES.sposta_ver_corrente_in_altro_template_modelli_test_vr"
                     },
                     {
-                        "icon": "poll",
-                        "label": "Criterio di analisi",
-                        "outputEventName": "navigate_to_criterio_analisi",
-                        "translate": "RESOURCES.criterio_di_analisi_modelli_test_vr"
-                    },
-                    {
-                        "icon": "sync",
-                        "label": "Ricalcola punteggi",
-                        "outputEventName": "ricalcola_punteggi",
-                        "translate": "RESOURCES.ricalcola_punteggi_modelli_test_vr"
-                    },
-                    {
                         "key": "crea_associa_argomento",
                         "icon": "class",
                         "label": "Crea e associa argomento",
@@ -327,10 +333,11 @@
                         "translate": "RESOURCES.crea_e_associa_argomento_modelli_test_vr"
                     },
                     {
-                        "icon": "delete",
-                        "label": "Elimina versione corrente",
-                        "outputEventName": "elimina_ver_corrente_mdt",
-                        "translate": "RESOURCES.elimina_versione_corrente_modelli_test_vr"
+                        "key": "associa_tag",
+                        "icon": "label",
+                        "label": "Associa Tag ",
+                        "outputEventName": "dialog_associa_tag_mdvr"
+                        
                     },
                     {
                         "key": "tagga_tutte_domande",
@@ -354,12 +361,6 @@
                         "translate": "RESOURCES.tagga_le_risposte_di_ogni_versione_del_mt_modelli_test_vr"
                     },
                     {
-                        "icon": "tag",
-                        "label": "Gestione Tag",
-                        "outputEventName": "navigate_to_tagging",
-                        "translate": "RESOURCES.gestione_tag_modelli_test_vr"
-                    },
-                    {
                         "icon": "content_copy",
                         "label": "Rendi Discorsiva",
                         "outputEventName": "check_disc",
@@ -367,9 +368,8 @@
                     },
                     {
                         "icon": "edit",
-                        "label": "Modifica massivamente",
-                        "outputEventName": "dialog_form_mt",
-                        "translate": "RESOURCES.modifica_massivamente_modelli_test_vr"
+                        "label": "Modifica massivamente domande",
+                        "outputEventName": "dialog_form_mt"
                     }
                 ]
             },
@@ -379,14 +379,6 @@
                     "eventName": "flag_applicazione_singola",
                     "condition": "equalTo",
                     "values": ["0"]
-                },
-                {
-                    "eventName": "create_associate_argomento",
-                    "actionType": "query",
-                    "condition": "none",
-                    "values": [],
-                    "outputEventWhenComplete": "modelli_test_vr_reload",
-                    "queryFunct": "select entrasp.argomenti_create_and_update($codice_azienda$, $id_modello_test$, $titolo$, $descrizione$ , $codice$, 45)"
                 },
                 {
                     "eventName": "elimina_ver_corrente_mdt",
@@ -403,6 +395,14 @@
                     "successMessage": "Allineamento effettuato",
                     "values": [],
                     "queryFunct": "select entrasp.modelli_test_new_version_same_argomento($codice_azienda$,$id_modello_test$, $id_modello_test_vr$, $id_argomento$, false);"
+                },
+                {
+                    "eventName": "create_associate_argomento",
+                    "actionType": "query",
+                    "condition": "none",
+                    "values": [],
+                    "outputEventWhenComplete": "modelli_test_vr_reload",
+                    "queryFunct": "select entrasp.argomenti_create_and_update($codice_azienda$, $id_modello_test$, $titolo$, $descrizione$ , $codice$, 45)"
                 },
                 {
                     "eventName": "tagga_domande",
@@ -449,6 +449,14 @@
                     "actionType": "dialog",
                     "customDialogEntryName": "dialog_modelli_test_vr",
                     "customDialogTitle": "Modifica elementi coll. del template",
+                    "condition": "none",
+                    "values": []
+                },
+                {
+                    "eventName": "dialog_associa_tag_mdvr",
+                    "actionType": "dialog",
+                    "customDialogEntryName": "dialog_associa_tag_mdvr",
+                    "customDialogTitle": "Associa Tag",
                     "condition": "none",
                     "values": []
                 }
@@ -782,28 +790,6 @@
             "size": 3.33,
             "readOnly": false,
             "translate": "RESOURCES.seleziona_popolazione_modelli_test_vr"
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "viewType": "button"
-            },
-            "isHidden": true,
-            "isPrimary": false,
-            "key": "tag",
-            "label": "#",
-            "newLine": false,
-            "outputEvent": {
-                "eventName": "navigate_to_tagging",
-                "eventTrigger": "press"
-            },
-            "style": {
-                "background_color": "#25599C",
-                "font_color": "white"
-            },
-            "readOnly": false,
-            "sameOrigin": false,
-            "translate": "RESOURCES._modelli_test_vr"
         },
         {
             "format": {
@@ -2512,20 +2498,6 @@
         {
             "actionType": "reload",
             "eventName": "modelli_test_vr_reload"
-        },
-        {
-            "actionTarget": {
-                "name": "tag_oggetti",
-                "type": "form",
-                "keymap": [
-                    {
-                        "source": "id_argomento",
-                        "destination": "id_argomento"
-                    }
-                ]
-            },
-            "actionType": "navigate",
-            "eventName": "navigate_to_tagging"
         }
     ],
     "exportQueries": {

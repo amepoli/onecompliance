@@ -16,6 +16,10 @@ export class FormTableViewComponent implements OnChanges, OnInit, AfterViewInit,
 
   // is Current Tab
   @Input() isTabMode: boolean = false;
+
+  // Is form-view part of dialog
+  @Input() isDialog: boolean = false;
+  
   @Input() isCurTab: boolean = false;
 
   @ViewChild(FormGetterComponent, { static: true }) formGetter: FormGetterComponent;

@@ -48,12 +48,13 @@
             (click)="onPress()">
             <mat-label style="font-size: large;">{{field | octranslate}}</mat-label>
             <span *ngIf="field.prefix" matPrefix>{{field.prefix}}</span>
-            <input [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name"
+            <input [style.display]="showCustomElement?'none':''" [required]="isRequired" matInput [value]="field.value" [formControlName]="field.name"
                 [placeholder]="field | octranslate" [type]="field.inputType" [readonly]="field.readonly || readOnlyPage"
                 (blur)="onBlur()" (focus)="onFocus()" (change)="updateValue()" [style.padding]="'4px'"
                 [style.border-radius]="'4px'" [style.background-color]="field.style.background_color"
                 [style.font-weight]="field.style.font_weight" [style.font-size]="field.style.font_size"
                 [style.text-decoration]="field.style.text_decoration" [style.color]="field.style.font_color" [ocTooltip]="field.tooltip">
+            <span [style.display]="showCustomElement?'':'none'" (click)="showCustomElement=false">{{field.value | number:'.'}}</span>
             <span *ngIf="field.suffix" matSuffix>{{field.suffix}}</span>
             <ng-container *ngFor="let validation of field.validations;" ngProjectAs="mat-error">
                 <mat-error *ngIf="group.get(field.name).hasError(validation.name)">{{validation | octranslate}}</mat-error>
