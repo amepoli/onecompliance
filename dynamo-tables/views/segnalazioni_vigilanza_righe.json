@@ -389,7 +389,7 @@
         "tableQueries": [
             {
                 "label": "Estrai Segnalazione",
-                "queryString": "SELECT svr.id_valore, svr.codice_azienda, svr.id_voce_segnalazione, entrasp.voci_descrizione(svr.id_voce_segnalazione) AS voce_descr, entrasp.attributi_descrizione(vs.attributo) AS attributo_descr, COALESCE(svr.valore_testo, svr.valore_num::TEXT, TO_CHAR(svr.valore_data, 'YYYYMMDD'), entrasp.argomenti_descr_breve_codice_est(svr.valore_id_argomento)) AS valore_finale, svr.id_contratto, svr.row_contratto FROM entrasp.segnalazioni_vigilanza_righe svr INNER JOIN entrasp.voci_segnalazione vs ON svr.id_voce_segnalazione = vs.id_voce_segnalazione WHERE svr.codice_azienda=$codice_azienda$ AND svr.id_risorsa=$id_risorsa$ AND svr.invio=$invio$ AND svr.prog_revisione=$prog_revisione$;"
+                "queryString": "SELECT svr.id_valore, svr.codice_azienda, svr.id_voce_segnalazione, entrasp.voci_descrizione(svr.id_voce_segnalazione) AS voce_descr, entrasp.attributi_descrizione(vs.attributo) AS attributo_descr, COALESCE(svr.valore_testo, svr.valore_num::TEXT, TO_CHAR(svr.valore_data, 'YYYYMMDD'), entrasp.argomenti_descr_breve_codice_est(svr.valore_id_argomento)) AS valore_finale, svr.id_contratto, coalesce (svr.id_subtable_liv1, id_anagrafica) as id_riga, id_subtable_liv2 FROM entrasp.segnalazioni_vigilanza_righe svr INNER JOIN entrasp.voci_segnalazione vs ON svr.id_voce_segnalazione = vs.id_voce_segnalazione WHERE svr.codice_azienda=$codice_azienda$ AND svr.id_risorsa=$id_risorsa$ AND svr.invio=$invio$ AND svr.prog_revisione=$prog_revisione$;"
             }
         ]
     },
