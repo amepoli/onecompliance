@@ -476,4 +476,17 @@ export class FileManagerService // implements Resolve<any>
             await this.uploadFile(file, data, fileParams, i === filesData.length);
         }
     }
+
+    public convertFileToBase64(file: File): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                const base64String = (reader.result as string).split(',')[1]; // Remove metadata
+                resolve(base64String);
+            };
+            reader.onerror = (error) => reject(error);
+        });
+    }
+
 }
