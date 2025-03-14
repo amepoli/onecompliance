@@ -1,0 +1,17 @@
+<div class="s3-upload-container">
+    <input type="file" (change)="onFileSelected($event)" hidden #fileInput />
+    <button mat-raised-button color="primary"
+        [disabled]="field.readonly"
+        [ocTooltip]="field.tooltip"
+        (click)="fileInput.click()">
+        <mat-icon>upload</mat-icon> Upload File
+    </button>
+
+    <mat-progress-bar *ngIf="isUploading" mode="indeterminate"></mat-progress-bar>
+    <div *ngIf="uploadedUrl" class="uploaded-file">
+        <a [href]="uploadedUrl" target="_blank">View Uploaded File</a>
+        <button mat-icon-button color="warn" (click)="group.get(field.key)?.setValue('')">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </div>
+</div>

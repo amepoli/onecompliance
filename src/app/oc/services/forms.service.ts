@@ -18,6 +18,7 @@ import { LabelComponent } from "../dynamic-forms/components/label/label.componen
 import { MenuComponent } from "../dynamic-forms/components/menu/menu.component";
 import { InvisibleComponent } from "../dynamic-forms/components/invisible/invisible.component";
 import { WidgetComponent } from "../dynamic-forms/components/widget/widget.component";
+import { S3UploadComponent } from "../dynamic-forms/components/s3-upload/s3-upload.component";
 import { FieldConfig, FormGetterParams, FormViewKey, MarkerReplacer, RegulatAPIParams } from "../interfaces";
 import { FormDataType } from "../types";
 import { ConsoleLoggerService } from "./console_logger.service";
@@ -57,6 +58,7 @@ export class FormsService {
         widget: WidgetComponent,
         label: LabelComponent,
         subform: SubformComponent,
+        s3Upload: S3UploadComponent,
     };
 
     @memoize()
