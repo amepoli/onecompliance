@@ -32,7 +32,7 @@ export class BackendService {
   private insert_user_to_dynamoApiName = appData.lambdas.insert_user_to_dynamo.apiName;
   private fattureincloudApiName = appData.lambdas.fatture_in_cloud.apiName;
   private emailSenderApiName = appData.lambdas.email_sender.apiName;
-  private uploadToS3ApiName = appData.lambdas.textract.apiName;
+  private uploadToS3ApiName = appData.lambdas.upload_to_s3.apiName;
 
 
   // private myGetInit = { // OPTIONAL
