@@ -1,0 +1,116 @@
+
+
+
+	ALTER TABLE IF EXISTS entrasp.report
+    ADD CONSTRAINT mdt__agmt__fk FOREIGN KEY (id_argomento)
+    REFERENCES entrasp.argomenti (id_argomento) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    DEFERRABLE;
+
+
+	ALTER TABLE IF EXISTS entrasp.report
+    ADD COLUMN id_argomento_mod_estr numeric(12,0);
+
+
+	ALTER TABLE IF EXISTS entrasp.report
+    ADD CONSTRAINT mdt__agmt_mod_estr__fk FOREIGN KEY (id_argomento_mod_estr)
+    REFERENCES entrasp.argomenti (id_argomento) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    DEFERRABLE;
+
+	ALTER TABLE IF EXISTS entrasp.modelli_test
+    ADD COLUMN id_argomento_mod_estr numeric(12,0);
+
+
+	ALTER TABLE IF EXISTS entrasp.modelli_test
+    ADD CONSTRAINT mdt__agmt_mod_estr__fk FOREIGN KEY (id_argomento_mod_estr)
+    REFERENCES entrasp.argomenti (id_argomento) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    DEFERRABLE;
+
+	update entrasp.report -- da report
+	set id_argomento_mod_estr=56015
+
+	update entrasp.report -- da progetti
+	set id_argomento_mod_estr=56017
+	where id_report=64
+
+	update entrasp.report  -- sondaggi
+	set id_argomento_mod_estr=56016
+	where id_report in (30, 31, 32, 33)
+
+		update entrasp.report -- contratti
+	set id_argomento_mod_estr=56018
+	where id_report in (58, 62, 68)
+
+
+	--REPORT
+	select id_report as id, descrizione as name  
+	from entrasp.report where (codice_azienda='DEMO' or codice_azienda is null) and id_argomento_mod_estr=56015
+	-- REPORT PROGETTI
+	select id_report as id, descrizione as name  
+	from entrasp.report where (codice_azienda='DEMO' or codice_azienda is null) and id_argomento_mod_estr=56017
+	-- REPORT SONDAGGI
+	select id_report as id, descrizione as name  
+	from entrasp.report where (codice_azienda='DEMO' or codice_azienda is null) and id_argomento_mod_estr=56016
+	-- REPORT CONTRATTI (TO BE ADDED)
+	select id_report as id, descrizione as name  
+	from entrasp.report where (codice_azienda='DEMO' or codice_azienda is null) and id_argomento_mod_estr=56018
+	
+
+select * from entrasp.argomenti
+where id_argomento>=56014
+
+
+	ALTER TABLE IF EXISTS entrasp.attivita
+    ADD COLUMN id_argomento_mod_estr numeric(12,0);
+
+
+	ALTER TABLE IF EXISTS entrasp.attivita
+    ADD CONSTRAINT mdt__agmt_mod_estr__fk FOREIGN KEY (id_argomento_mod_estr)
+    REFERENCES entrasp.argomenti (id_argomento) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    DEFERRABLE;
+
+
+
+select prg.codice_azienda, prg.codice_attivita, titolo, prg.id_progetto, prg.codice_attivita, att.id_argomento_mod_estr
+from entrasp.progetti prg
+inner join entrasp.attivita att
+on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita
+where prg.codice_azienda in('IREN', 'ADMIRALPAY', 'AXACTOR')
+
+
+update entrasp.attivita
+set id_argomento_mod_estr=56017
+where (codice_azienda, codice_attivita) in (select prg.codice_azienda, prg.codice_attivita
+from entrasp.progetti prg
+inner join entrasp.attivita att
+on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita
+where prg.codice_azienda in('IREN', 'ADMIRALPAY', 'AXACTOR', 'PACCAR')
+)
+
+
+select prg.codice_azienda, prg.codice_attivita, titolo, prg.id_progetto, prg.codice_attivita, att.id_argomento_mod_estr
+from entrasp.progetti prg
+inner join entrasp.attivita att
+on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita
+where prg.codice_azienda in('IREN', 'ADMIRALPAY', 'AXACTOR')
+
+select prg.id_progetto as id, prg.titolo as name
+from entrasp.progetti prg
+inner join entrasp.attivita att
+on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita
+where att.id_argomento_mod_estr=56017 and prg.codice_azienda='PACCAR'
+
+
+	ALTER TABLE IF EXISTS entrasp.attivita
+    ADD COLUMN available_report_list numeric[];
+
+	
+
+
