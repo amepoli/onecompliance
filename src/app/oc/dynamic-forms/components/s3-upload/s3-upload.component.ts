@@ -1,13 +1,13 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BackendService } from '../../../../oc/services/backend.service';
 import { FieldConfig } from 'app/oc/interfaces';
 import { AuthService, ToastService } from 'app/oc/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
-
 import { environment } from 'environments/environment';
-const appData = (environment.appData as any).default; //appData contains gorico_dev.json or gorico_prod.json
+
+const appData = (environment.appData as any).default;
 
 @Component({
     selector: 's3-upload',
@@ -15,8 +15,6 @@ const appData = (environment.appData as any).default; //appData contains gorico_
     styleUrls: ['./s3-upload.component.scss']
 })
 export class S3UploadComponent {
-    
-    
     field: FieldConfig;
     group: UntypedFormGroup;
     @Output() fileUploaded = new EventEmitter<string>();
@@ -24,9 +22,13 @@ export class S3UploadComponent {
     isUploading: boolean = false;
     uploadedUrl: string | null = null;
 
-    constructor(private backendService: BackendService, private toastService: ToastService, private authService: AuthService, private httpClient: HttpClient, private fileManagerService: FileManagerService) {
-        console.log('Hi!')
-    }
+    constructor(
+        private backendService: BackendService,
+        private toastService: ToastService,
+        private authService: AuthService,
+        private httpClient: HttpClient,
+        private fileManagerService: FileManagerService
+    ) {}
 
     onFileSelected(event: any) {
         const file = event.target.files[0];
@@ -36,21 +38,27 @@ export class S3UploadComponent {
     }
 
     async uploadFileToS3(file: File) {
-        const _this = this;
-        _this.isUploading = true;
+        this.isUploading = true;
         try {
             const base64File = await this.fileManagerService.convertFileToBase64(file);
-            _this.backendService.uploadToS3(appData.lambdas.upload_to_s3.s3.bucket, file.name, 'test', base64File).subscribe(
-                (response: any) => {
-                    console.log(response);
-                    this.isUploading = false;
-                },
-                (error) => {
-                    _this.toastService.showErrorToast(error);
-                    this.isUploading = false;
-                }
-            );
+            const requestBody = {
+                bucketName: appData.lambdas.upload_to_s3.s3.bucket,
+                fileName: file.name,
+                fileBase64Data: base64File.split(',')[1],
+            };
 
+            // Costruisce dinamicamente l'URL dell'API Gateway basato su API Name
+            const apiGatewayUrl = `https://api.onecompliance.cloud/${appData.lambdas.upload_to_s3.apiName}`;
+
+            const response = await this.httpClient.post(apiGatewayUrl, requestBody).toPromise();
+
+            if (response && (response as any).result === 'OK') {
+                this.uploadedUrl = `s3://${requestBody.bucketName}/${requestBody.fileName}`;
+                this.fileUploaded.emit(this.uploadedUrl);
+                this.toastService.showSuccessToast('File uploaded successfully!');
+            } else {
+                throw new Error('Unexpected response from server');
+            }
             // const keys = {
             //         nickname: _this.files[i].name,// _this.form.value.fileName != null ? _this.form.value.fileName : null,
             //         descrizione: _this.form.value.descrizione != null ? _this.form.value.descrizione : null,
@@ -97,7 +105,10 @@ export class S3UploadComponent {
             // }
         } catch (error) {
             console.error('File upload failed', error);
+            this.toastService.showErrorToast('File upload failed. Please try again.');
+        } finally {
             this.isUploading = false;
         }
     }
 }
+
