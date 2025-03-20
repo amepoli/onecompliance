@@ -7,7 +7,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "select * from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and (position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse)=0) and (codice_azienda is null or codice_azienda in(€global_user_companies€))"
+            "queryString": "select *, entrasp.argomenti_descr_breve(id_argomento_mod_estr) as mod_download from entrasp.report where (lista_aziende_autorizzate is null or (position('€global_codice_azienda€' in lista_aziende_autorizzate)is not null and (position('€global_codice_azienda€' in lista_aziende_autorizzate)!=0)) or position('€global_codice_azienda€' in lista_aziende_escluse)=0) and (codice_azienda is null or codice_azienda in(€global_user_companies€))"
         }
     ],
     "querySuffixes": {
@@ -186,6 +186,20 @@
             "isPrimary": false,
             "newLine": false,
             "translate": "RESOURCES.argomento_reports"
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "comboQuery": "select arg.id_argomento as id, concat (arg.id_argomento, ' - ', arg.descrizione_breve) as name from entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father=56014 and (arg.codice_azienda is null or arg.codice_azienda='€global_codice_azienda€')",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Modalità estrazione",
+            "key": "id_argomento_mod_estr",
+            "readOnly": false,
+            "isHidden": false,
+            "isPrimary": false,
+            "newLine": false
         }
     ],
     "exportQueries": {
@@ -310,7 +324,18 @@
             "isPrimary": false,
             "key": "descrizione",
             "label": "Report",
+            "width": "30%",
             "translate": "RESOURCES.report_reports"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "width": "15%",
+            "isPrimary": false,
+            "key": "mod_download",
+            "label": "Mod.download"
         },
         {
             "format": {

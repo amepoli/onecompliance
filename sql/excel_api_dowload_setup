@@ -66,7 +66,11 @@ where id_argomento>=56014
 
 
 	ALTER TABLE IF EXISTS entrasp.attivita
-    ADD COLUMN id_argomento_mod_estr numeric(12,0);
+    ADD COLUMN enabled_report_list numeric(12,0)[];
+
+	ALTER TABLE IF EXISTS entrasp.modelli_test
+    ADD COLUMN enabled_report_list numeric(12,0)[];
+ 
 
 
 	ALTER TABLE IF EXISTS entrasp.attivita
@@ -101,16 +105,40 @@ inner join entrasp.attivita att
 on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita
 where prg.codice_azienda in('IREN', 'ADMIRALPAY', 'AXACTOR')
 
-select prg.id_progetto as id, prg.titolo as name
+
+
+ALTER TABLE IF EXISTS entrasp.attivita
+ ADD COLUMN available_report_list numeric[];
+
+	
+update entrasp.attivita
+set enabled_report_list= array[64]
+where (codice_azienda, codice_attivita) in (select prg.codice_azienda, prg.codice_attivita
 from entrasp.progetti prg
 inner join entrasp.attivita att
 on prg.codice_azienda=att.codice_azienda and prg.codice_attivita=att.codice_attivita
-where att.id_argomento_mod_estr=56017 and prg.codice_azienda='PACCAR'
+where prg.codice_azienda in('IREN', 'ADMIRALPAY', 'AXACTOR', 'PACCAR')
+)
+
+SELECT prg.id_progetto AS id, prg.titolo AS name
+FROM entrasp.progetti prg
+INNER JOIN entrasp.attivita att
+    ON prg.codice_azienda = att.codice_azienda 
+    AND prg.codice_attivita = att.codice_attivita
+WHERE 64 = ANY(att.enabled_report_list)
+  AND prg.codice_azienda = 'PACCAR';
 
 
-	ALTER TABLE IF EXISTS entrasp.attivita
-    ADD COLUMN available_report_list numeric[];
+update entrasp.modelli_test
+set enabled_report_list= array[30, 31, 32, 33]
+where --id_argomento_mod_estr=56016 da trovare condizione
 
-	
 
+SELECT snd.id_sondaggio AS id, snd.titolo AS name
+FROM entrasp.sondaggi snd
+INNER JOIN entrasp.modelli_test mt
+    ON snd.codice_azienda = mt.codice_azienda 
+    AND snd.id_modello_test =mt.id_modello_test
+WHERE 30 = ANY(mt.enabled_report_list)
+  AND snd.codice_azienda = 'PACCAR';
 
