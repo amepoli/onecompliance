@@ -1041,4 +1041,36 @@ export class BackendService {
     return from(this.awsService.api().get(this.apiName, this.uploadToS3ApiName, putPostReq));
   }
 
+  //incapsultion method for upload_to_s3 lambda
+  uploadFileToS3Wrapped( fileName: string, folderName: string, bucketName: string, fileBase64Data: string, company: string, dynamoUser: string): Promise<any> {
+    this.awsService.auth();
+  
+    const putPostReq = {
+      body: { fileBase64Data },
+      headers: {},
+      queryStringParameters: {
+        bucketName,
+        fileName,
+        folderName,
+        company,
+        dynamoUser
+      }
+    };
+  
+    console.log("Calling Lambda with:", putPostReq);
+
+    return this.awsService.api().post(
+      appData.apiName,
+      appData.lambdas.upload_to_s3.apiName,
+      putPostReq
+    ).then(res => {
+      console.log("RESPONSE from Lambda:", res);
+      return res;
+    }).catch(err => {
+      console.error("ERROR from Lambda:", err);
+      throw err;
+    });
+
+  }
+  
 }
