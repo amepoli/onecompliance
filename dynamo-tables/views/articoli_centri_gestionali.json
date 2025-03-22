@@ -19,7 +19,7 @@
         },
         {
             "viewType": "table",
-            "tableActionType": "add"
+            "tableActionType": "quick-add"
         }
     ],
     "form_keys": [
@@ -127,6 +127,80 @@
                 "dataType": "date",
                 "viewType": "input"
             },
+            "newLine": true
+        }, {
+            "key": "liv_criticita",
+            "label": "Valutazione essenzialità/importanza",
+            "tooltip": "Indicare se la funzione è essenziale o importante secondo la valutazione dell'entità finanziaria",
+            "isPrimary": false,
+            "isHidden": false,
+            "readOnly": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "combobox",
+                "comboQuery": "SELECT '1' AS id, 'Essenziale' AS name UNION SELECT '2' AS id, 'Importante' AS name"
+            },
+            "newLine": false
+        }, {
+            "key": "data_ultima_verifica",
+            "label": "Data ultimo assestment",
+            "isPrimary": false,
+            "isHidden": false,
+            "readOnly": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "newLine": true
+        }, {
+            "key": "recovery_time",
+            "label": "Tempo di ripristino",
+            "isPrimary": false,
+            "isHidden": false,
+            "readOnly": false,
+            "tooltip": "In numero di ore. Se l'obiettivo di tempo di ripristino è inferiore a un'ora, inserire «1». Se l'obiettivo di tempo di ripristino della funzione non è definito, inserire «0».",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "newLine": false
+        }, {
+            "key": "recovery_point",
+            "label": "Punto di ripristino",
+            "isPrimary": false,
+            "isHidden": false,
+            "tooltip": "In numero di ore. Se l'obiettivo di punto di ripristino è inferiore a un'ora, inserire «1». Se l'obiettivo di punto di ripristino della funzione non è definito, inserire «0».",
+            "readOnly": false,
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "newLine": false
+        }, {
+            "key": "impatto_interruzione",
+            "label": "Impatto dell'interruzione",
+            "isPrimary": false,
+            "isHidden": false,
+            "tooltip": "Indicare l'impatto dell'interruzione della funzione secondo la valutazione dell'entità finanziaria.",
+            "readOnly": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "newLine": true
+            
+        },
+        {
+            "key": "rag_criticita",
+            "label": "Motivi essenzialità/importanza",
+            "tooltip": "Breve spiegazione dei motivi per cui la funzione è stata classificata come essenziale o importante (massimo 300 caratteri)",
+            "isPrimary": false,
+            "isHidden": false,
+            "readOnly": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
             "newLine": false
         }
     ],
@@ -212,7 +286,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "SELECT *, entrasp.articoli_titolo(codice_azienda, id_articolo) as articolo FROM entrasp.articoli_centri_gestionali WHERE codice_part = $codice_part$ and id_centro_gest = $id_centro_gest$"
+            "queryString": "SELECT *, entrasp.articoli_titolo(codice_azienda, id_articolo) as articolo,'F'||prog_codice_part as codice_dora FROM entrasp.articoli_centri_gestionali WHERE codice_part = $codice_part$ and id_centro_gest = $id_centro_gest$"
         }
     ]
 }
