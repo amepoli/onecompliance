@@ -10,7 +10,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT *, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) as anagrafiche_descr, entrasp.ruolo_descr(codice_ruolo) as codice_ruolo FROM entrasp.contratti_anagrafiche_id WHERE codice_azienda=$codice_azienda$ AND id_contratto=$id_contratto$ AND codice_ruolo in ('SUBF')"
+            "queryString": "SELECT *, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) as anagrafiche_descr, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_subfornitore_servito) as subfornitore_descr, entrasp.ruolo_descr(codice_ruolo) as codice_ruolo FROM entrasp.contratti_anagrafiche_id WHERE codice_azienda=$codice_azienda$ AND id_contratto=$id_contratto$ AND codice_ruolo in ('SUBF')"
         }
     ],
     "form_keys": [
@@ -103,6 +103,21 @@
         {
             "autoGenerate": false,
             "format": {
+                "comboQuery": "SELECT an.id_anagrafica AS id, COALESCE(nome || ' ' || cognome, ragione_sociale) AS name FROM entrasp.anagrafiche_id an INNER JOIN entrasp.anagrafiche_vr avr ON an.id_anagrafica = avr.id_anagrafica AND an.codice_part = avr.codice_part WHERE an.codice_part = '€global_codice_part€'",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "isHidden": false,
+            "isPrimary": true,
+            "key": "id_anagrafica_subfornitore_servito",
+            "label": "Subfornitore servito",
+            "readOnly": false,
+            "newLine": false,
+            "size": 4.0
+        },
+        {
+            "autoGenerate": false,
+            "format": {
                 "viewType": "input",
                 "dataType": "date",
                 "validations": [
@@ -118,6 +133,7 @@
             "key": "data_inizio_validita",
             "label": "Data inizio validità",
             "readOnly": false,
+            "size": 1.5,
             "newLine": false
         },
         {
@@ -130,6 +146,7 @@
             "isPrimary": false,
             "key": "data_fine_validita",
             "label": "Data fine validità",
+            "size": 1.5,
             "readOnly": false,
             "newLine": false
         },
@@ -231,10 +248,21 @@
             },
             "isHidden": false,
             "isPrimary": false,
-            "width": "30%",
+            "width": "20%",
             "queryFunct": "",
             "key": "anagrafiche_descr",
             "label": "Soggetti"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "20%",
+            "queryFunct": "",
+            "key": "subfornitore_descr",
+            "label": "Subfornitore servito"
         },
         {
             "format": {
