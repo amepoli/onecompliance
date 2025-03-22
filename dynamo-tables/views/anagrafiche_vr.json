@@ -9,6 +9,7 @@
         "is_hidden_ruolo_privacy": "false",
         "is_hidden_validita": "true",
         "is_hidden_ruolo": "false",
+        "isHiddenEntita": "true",
         "is_hidden_ruolo2": "false",
         "is_hidden_contratti_sottoscritti": "true",
         "not_is_hidden_contratti_sottoscritti": "false",
@@ -1195,7 +1196,7 @@
                         "readOnly": false,
                         "translate": "RESOURCES.ragione_sociale_anagrafiche_vr"
                     },
-                   
+
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1327,7 +1328,7 @@
                         "readOnly": false,
                         "translate": "RESOURCES.cointestatari_anagrafiche_vr"
                     },
-                    
+
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1740,7 +1741,7 @@
                         "queryFunct": "select default_invoicing_codice_azienda from entrasp.anagrafiche_id where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$",
                         "label": "Azienda Fatturante Di Default",
                         "newLine": false,
-                        "size": 3.33,
+                        "size": 2.5,
                         "readOnly": false,
                         "inputEvents": [
                             {
@@ -1757,6 +1758,37 @@
                             }
                         ],
                         "translate": "RESOURCES.azienda_fatturante_di_default_anagrafiche_vr"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "dataType": "text",
+                            "viewType": "input"
+                        },
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "key": "autorita_competente",
+                        "label": "Autorità Competente per messa a disposizione del registro",
+                        "size": 3,
+                        "newLine": false,
+                        "readOnly": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (56013) order by id_argomento||'-'||descrizione_breve",
+                            "options": [],
+                            "viewType": "combobox"
+                        },
+                        "isHidden": "$Q{isHiddenEntita}",
+                        "isPrimary": false,
+                        "key": "id_argomento_entita",
+                        "label": "Attività EBA",
+                        "tooltip": "Tipo Entità (B01.01.0040) con (id_argomento_father 56013)",
+                        "readOnly": false,
+                        "size": 3,
+                        "newLine": false,
+                        "translate": "RESOURCES.tipo_attivit_articoli"
                     },
                     {
                         "autoGenerate": false,
