@@ -1,0 +1,218 @@
+{
+    "$schema": "../views.schema.json",
+    "origin": "entrasp.articoli_centri_gestionali",
+    "entryKey": "articoli_centri_gestionali",
+    "label": "Associazione Articoli Centri Gestionali",
+    "addElementSettings": {
+        "labelAdd": "Associa servizio",
+        "labelQuickAdd": "Associa servizio",
+        "navigateOnSuccess": false
+    },
+    "hideActions": [
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "form",
+            "formActionType": "attachments"
+        },
+        {
+            "viewType": "table",
+            "tableActionType": "add"
+        }
+    ],
+    "form_keys": [
+        {
+            "key": "codice_part",
+            "label": "Codice Partizione",
+            "isPrimary": true,
+            "isHidden": true,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "readOnly": true,
+            "newLine": true
+        },
+        {
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "readOnly": true,
+            "isPrimary": true,
+            "isHidden": true,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT id_centro_gest AS id, entrasp.centri_gestionali_descr(codice_part, id_centro_gest) AS name FROM entrasp.centri_gestionali WHERE codice_part = '€global_codice_part€';",
+                "options": []
+            },
+            "newLine": false
+        },
+        {
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "isPrimary": true,
+            "isHidden": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT codice_azienda AS id, codice_azienda AS name FROM entrasp.aziende where codice_part = '€global_codice_part€';",
+                "options": [],
+                "dataType": "text",
+                "validations": [
+                    {
+                        "type": "required",
+                        "message": "Il servizio/prodotto è obbligatorio",
+                        "validator": "requiredValidator",
+                        "name": "required"
+                    }
+                ]
+            },
+            "readOnly": false,
+            "newLine": false
+        },
+        {
+            "key": "id_articolo",
+            "label": "Servizio/Articolo",
+            "isPrimary": true,
+            "isHidden": false,
+            "tooltip": "Seleziona il servizio/prodotto aziendale gestito/impattato dal centro gestionale",
+            "readOnly": false,
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT id_articolo AS id, entrasp.articoli_titolo(codice_azienda, id_articolo) AS name FROM entrasp.articoli WHERE codice_azienda = '€global_codice_azienda€';",
+                "options": [],
+                "validations": [
+                    {
+                        "type": "required",
+                        "message": "Il servizio/prodotto è obbligatorio",
+                        "validator": "requiredValidator",
+                        "name": "required"
+                    }
+                ]
+            },
+            "newLine": false
+        },
+        {
+            "key": "codice_dora",
+            "label": "Codice DORA",
+            "readOnly": true,
+            "isPrimary": false,
+            "isHidden": false,
+            "queryFunct": "'F'||prog_codice_part",
+            "format": {
+                "viewType": "input",
+                "dataType": "text"
+            },
+            "newLine": false
+        },
+        {
+            "key": "data_inizio_validita",
+            "label": "Inizio Validità",
+            "isPrimary": false,
+            "isHidden": false,
+            "readOnly": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "newLine": false
+        },
+        {
+            "key": "data_fine_validita",
+            "label": "Fine Validità",
+            "isPrimary": false,
+            "isHidden": false,
+            "readOnly": false,
+            "format": {
+                "dataType": "date",
+                "viewType": "input"
+            },
+            "newLine": false
+        }
+    ],
+    "table_keys": [
+        {
+            "key": "id_articolo",
+            "label": "#",
+            "isHidden": false,
+            "isPrimary": true,
+            "width": "5%",
+            "format": {
+                "dataType": "number"
+            }
+        },
+        {
+            "key": "codice_azienda",
+            "label": "Azienda gestita",
+            "isPrimary": true,
+            "isHidden": false,
+            "format": {
+                "dataType": "text"
+            }
+        },
+        {
+            "key": "articolo",
+            "label": "Servizio/prodotto gestito",
+            "isHidden": false,
+            "isPrimary": false,
+            "queryFunct": "entrasp.articoli_titolo(codice_azienda, id_articolo)",
+            "format": {
+                "dataType": "text"
+            }
+        },
+        {
+            "key": "codice_dora",
+            "label": "Codice DORA",
+            "isPrimary": false,
+            "isHidden": false,
+            "queryFunct": "'F'||prog_codice_part",
+            "width": "10%",
+            "format": {
+                "dataType": "text"
+            }
+        },
+        {
+            "key": "codice_part",
+            "label": "Partizione",
+            "isPrimary": true,
+            "isHidden": true,
+            "format": {
+                "dataType": "text"
+            }
+        },
+        {
+            "key": "id_centro_gest",
+            "label": "Centro Gestionale",
+            "isPrimary": true,
+            "isHidden": true,
+            "format": {
+                "dataType": "number"
+            }
+        },
+        {
+            "key": "data_inizio_validita",
+            "label": "Inizio Validità",
+            "isPrimary": false,
+            "isHidden": false,
+            "format": {
+                "dataType": "date"
+            }
+        },
+        {
+            "key": "data_fine_validita",
+            "label": "Fine Validità",
+            "isPrimary": false,
+            "isHidden": false,
+            "format": {
+                "dataType": "date"
+            }
+        }
+    ],
+    "predefinedQueries": [
+        {
+            "operation": "selectTable",
+            "type": "main",
+            "queryString": "SELECT *, entrasp.articoli_titolo(codice_azienda, id_articolo) as articolo FROM entrasp.articoli_centri_gestionali WHERE codice_part = $codice_part$ and id_centro_gest = $id_centro_gest$"
+        }
+    ]
+}
