@@ -4,7 +4,7 @@
 DB_ENDPOINT=`cat /home/ec2-user/db_endpoint.donotremove`
 UTF_ENCODER=`jq -r '.UTF_ENCODER' lambda_names.json`
 DBF_TO_CSV_CONVERTER=`jq -r '.DBF_TO_CSV_CONVERTER' lambda_names.json`
-BACKUP_FILE="/home/ec2-user/sftp/customers/backups/gorico_prod-2_last.backup"
+BACKUP_FILE="/home/ec2-user/sftp/customers/backups/gorico_prod-1_last.backup"
 
 # Calcola il nome del database basato sulla data del giorno precedente
 DB_NAME="r$(date -d "yesterday" +%Y%m%d)"
