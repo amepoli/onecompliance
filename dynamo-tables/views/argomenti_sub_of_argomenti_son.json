@@ -13,7 +13,7 @@
         {
             "operation": "selectTable",
             "type": "main",
-            "queryString": "select *, true as delete_argomenti_son, entrasp.argomenti_descr_breve(id_argomento_son) as titolo, entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento,  true as button_argomento from entrasp.argomenti_argomenti aa inner join entrasp.argomenti arg on aa.id_argomento_father=arg.id_argomento where id_argomento_father=$id_argomento_father$"
+            "queryString": "select *, true as delete_argomenti_son, entrasp.argomenti_descr_breve(id_argomento_son) as titolo,  entrasp.argomenti_codice(id_argomento_son) as codice, entrasp.argomenti_descr(id_argomento_son) as argomento, arg.codice_esterno, arg.codice_esterno_2, true as button_argomento from entrasp.argomenti_argomenti aa inner join entrasp.argomenti arg on aa.id_argomento_father=arg.id_argomento where id_argomento_father=$id_argomento_father$"
         }
     ],
     "form_keys": [
@@ -72,6 +72,38 @@
             },
             "isHidden": false,
             "isPrimary": false,
+            "key": "codice_esterno",
+            "label": "Codice Esterno",
+            "sameOrigin": false,
+            "queryFunct": "select codice_esterno from entrasp.argomenti where id_argomento=$id_argomento_son$",
+            "newLine": false,
+            "readOnly": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_esterno_2",
+            "label": "Codice Eba",
+            "queryFunct": "select codice_esterno_2 from entrasp.argomenti where id_argomento=$id_argomento_son$",
+            "newLine": false,
+            "sameOrigin": false,
+            "readOnly": false,
+            "size": 1.5
+        },
+        {
+            "autoGenerate": false,
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isHidden": false,
+            "isPrimary": false,
             "key": "descrizione_breve",
             "label": "Descrizione Breve",
             "queryFunct": "select descrizione_breve from entrasp.argomenti where id_argomento=$id_argomento_son$",
@@ -80,6 +112,7 @@
             "size": 1.5,
             "translate": "RESOURCES.descrizione_breve_argomenti_sub_of_argomenti_son"
         },
+        
         {
             "autoGenerate": false,
             "format": {
@@ -193,6 +226,31 @@
                 ]
             },
             "translate": "RESOURCES.titolo_argomento_argomenti_sub_of_argomenti_son"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_esterno",
+            "label": "Codice esterno",
+            "sameOrigin": false,
+            "queryFunct": "select codice_esterno from entrasp.argomenti where id_argomento=$id_argomento_son$",
+
+            "width": "20%"
+        },
+        {
+            "format": {
+                "dataType": "text"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "key": "codice_esterno_2",
+            "sameOrigin": false,
+            "queryFunct": "select codice_esterno_2 from entrasp.argomenti where id_argomento=$id_argomento_son$",
+            "label": "Codice Eba",
+            "width": "20%"
         },
         {
             "format": {

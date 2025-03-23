@@ -10,7 +10,7 @@
         {
             "type": "main",
             "operation": "selectTable",
-            "queryString": "SELECT *, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) as anagrafiche_descr, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_subfornitore_servito) as subfornitore_descr, entrasp.ruolo_descr(codice_ruolo) as codice_ruolo FROM entrasp.contratti_anagrafiche_id WHERE codice_azienda=$codice_azienda$ AND id_contratto=$id_contratto$ AND codice_ruolo in ('SUBF')"
+            "queryString": "SELECT *, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica) as anagrafiche_descr, entrasp.anagrafiche_vr_dati_identificativi(codice_part, id_anagrafica_subfornitore_servito) as subfornitore_descr, entrasp.calcola_rank(codice_part, id_anagrafica, codice_azienda, id_contratto, data_inizio_validita) as rank, data_inizio_validita, entrasp.ruolo_descr(codice_ruolo) as codice_ruolo FROM entrasp.contratti_anagrafiche_id WHERE codice_azienda=$codice_azienda$ AND id_contratto=$id_contratto$ AND codice_ruolo in ('SUBF')"
         }
     ],
     "form_keys": [
@@ -43,14 +43,14 @@
         {
             "autoGenerate": false,
             "format": {
-                "comboQuery": "SELECT an.id_anagrafica AS id, COALESCE(nome || ' ' || cognome, ragione_sociale) AS name FROM entrasp.anagrafiche_id an INNER JOIN entrasp.anagrafiche_vr avr ON an.id_anagrafica = avr.id_anagrafica AND an.codice_part = avr.codice_part WHERE an.codice_part = '€global_codice_part€'",
+                "comboQuery": "SELECT an.id_anagrafica AS id, COALESCE(nome || ' ' || cognome, ragione_sociale) AS name FROM entrasp.anagrafiche_id an INNER JOIN entrasp.anagrafiche_vr avr ON an.id_anagrafica = avr.id_anagrafica AND an.codice_part = avr.codice_part WHERE an.codice_part = '€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica)",
                 "options": [],
                 "viewType": "combobox"
             },
             "isHidden": false,
             "isPrimary": true,
             "key": "id_anagrafica",
-            "label": "Soggetto",
+            "label": "Subfornitore",
             "readOnly": false,
             "newLine": false
         },
@@ -60,7 +60,8 @@
                 "comboQuery": "select codice_ruolo AS id, descrizione AS name from entrasp.ruoli;",
                 "options": [],
                 "viewType": "combobox",
-                "dataType": "text"
+                "dataType": "text",
+                "value": "SUBF"
             },
             "isHidden": false,
             "isPrimary": false,
@@ -82,33 +83,18 @@
             "key": "id_contratto",
             "label": "id_contratto",
             "readOnly": true,
-            "newLine": false,
+            "newLine": true,
             "translate": "RESOURCES.id_contratto_anagrafiche_sub_of_contracts"
         },
         {
             "autoGenerate": false,
             "format": {
-                "viewType": "combobox",
-                "options": [],
-                "comboQuery": "SELECT distinct an.id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(an.codice_part, an.id_anagrafica) as name from entrasp.anagrafiche_id an join  entrasp.ruoli_anagrafiche  ra on an.codice_part=ra.codice_part and an.id_anagrafica=ra.id_anagrafica  WHERE an.codice_part='€global_codice_part€';"
-            },
-            "label": "Capogruppo",
-            "key": "id_capogruppo_forn",
-            "readOnly": false,
-            "isHidden": false,
-            "isPrimary": false,
-            "newLine": true,
-            "size": 2.0
-        },
-        {
-            "autoGenerate": false,
-            "format": {
-                "comboQuery": "SELECT an.id_anagrafica AS id, COALESCE(nome || ' ' || cognome, ragione_sociale) AS name FROM entrasp.anagrafiche_id an INNER JOIN entrasp.anagrafiche_vr avr ON an.id_anagrafica = avr.id_anagrafica AND an.codice_part = avr.codice_part WHERE an.codice_part = '€global_codice_part€'",
+                "comboQuery": "SELECT an.id_anagrafica AS id, COALESCE(nome || ' ' || cognome, ragione_sociale) AS name FROM entrasp.anagrafiche_id an INNER JOIN entrasp.anagrafiche_vr avr ON an.id_anagrafica = avr.id_anagrafica AND an.codice_part = avr.codice_part inner join entrasp.contratti_anagrafiche_id can on an.codice_part=can.codice_part and an.id_anagrafica=can.id_anagrafica WHERE an.codice_part = '€global_codice_part€' and avr.prog_vr=entrasp.anagrafiche_vr_max(an.codice_part, an.id_anagrafica) and an.id_anagrafica!=$id_anagrafica$",
                 "options": [],
                 "viewType": "combobox"
             },
             "isHidden": false,
-            "isPrimary": true,
+            "isPrimary": false,
             "key": "id_anagrafica_subfornitore_servito",
             "label": "Subfornitore servito",
             "readOnly": false,
@@ -263,6 +249,17 @@
             "queryFunct": "",
             "key": "subfornitore_descr",
             "label": "Subfornitore servito"
+        },
+        {
+            "format": {
+                "dataType": "number"
+            },
+            "isHidden": false,
+            "isPrimary": false,
+            "width": "5%",
+            "queryFunct": "",
+            "key": "rank",
+            "label": "Rank"
         },
         {
             "format": {
