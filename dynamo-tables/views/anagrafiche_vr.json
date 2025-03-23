@@ -1683,10 +1683,41 @@
                     {
                         "autoGenerate": false,
                         "format": {
+                            "comboQuery": "SELECT codice AS id, descrizione as name from entrasp.currency;",
+                            "options": [],
+                            "viewType": "combobox",
+                            "dataType": "text"
+                        },
+                        "label": "Valuta",
+                        "key": "codice_valuta",
+                        "readOnly": false,
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "size": 1.5,
+                        "translate": "RESOURCES.valuta_contracts_investment"
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "viewType": "input",
+                            "dataType": "text"
+                        },
+                        "label": "Totale Attività",
+                        "key": "importo_attivita",
+                        "readOnly": false,
+                        "isHidden": false,
+                        "isPrimary": false,
+                        "newLine": false,
+                        "size": 1.5
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
                             "dataType": "text",
                             "viewType": "input"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_ruolo2}",
                         "isPrimary": false,
                         "key": "codice_comune",
                         "label": "Cod.com.resid",
@@ -1700,7 +1731,7 @@
                             "dataType": "text",
                             "viewType": "input"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_ruolo2}",
                         "isPrimary": false,
                         "key": "cab_comune",
                         "label": "CAB Comune di residenza",
@@ -1717,7 +1748,7 @@
                             "options": [],
                             "comboQuery": "SELECT cod_banca_italia AS id, concat(coalesce(cod_banca_italia::varchar,codice_nazione), ' - ' ,descrizione) AS name FROM entrasp.nazioni where cod_banca_italia is not null order by descrizione asc"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_ruolo2}",
                         "isPrimary": false,
                         "key": "codice_nazione",
                         "queryFunct": "codice_nazione",
@@ -1735,7 +1766,7 @@
                             "viewType": "combobox",
                             "dataType": "text"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_ruolo2}",
                         "isPrimary": false,
                         "key": "default_invoicing_codice_azienda",
                         "queryFunct": "select default_invoicing_codice_azienda from entrasp.anagrafiche_id where codice_part=$codice_part$ and id_anagrafica=$id_anagrafica$",
@@ -1765,7 +1796,7 @@
                             "dataType": "text",
                             "viewType": "input"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{isHiddenEntita}",
                         "isPrimary": false,
                         "key": "autorita_competente",
                         "label": "Autorità Competente per messa a disposizione del registro",
@@ -1787,8 +1818,23 @@
                         "tooltip": "Tipo Entità (B01.01.0040) con (id_argomento_father 56013)",
                         "readOnly": false,
                         "size": 3,
-                        "newLine": false,
-                        "translate": "RESOURCES.tipo_attivit_articoli"
+                        "newLine": false
+                    },
+                    {
+                        "autoGenerate": false,
+                        "format": {
+                            "comboQuery": "SELECT distinct id_argomento AS id, id_argomento||'-'||descrizione_breve AS name  FROM entrasp.argomenti arg inner join entrasp.argomenti_argomenti aa on arg.id_argomento=aa.id_argomento_son where aa.id_argomento_father in (56042) order by id_argomento||'-'||descrizione_breve",
+                            "options": [],
+                            "viewType": "combobox"
+                        },
+                        "isHidden": "$Q{isHiddenEntita}",
+                        "isPrimary": false,
+                        "key": "id_argomento_gerarchia",
+                        "label": "Gerarchia nel gruppo",
+                        "tooltip": "Tipo Entità (B01.02.0050) con (id_argomento_father 56042)",
+                        "readOnly": false,
+                        "size": 3,
+                        "newLine": false
                     },
                     {
                         "autoGenerate": false,
