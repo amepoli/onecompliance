@@ -120,16 +120,28 @@
       "key": "prog_codice_part",
       "label": "Progressivo",
       "isPrimary": true,
+      "width": "10%",
       "isHidden": false,
       "format": {
         "dataType": "number"
       }
     },
     {
+        "key": "funzione_servizio",
+        "label": "Funzione/servizio",
+        "isPrimary": true,
+        "isHidden": false,
+        "width": "30%",
+        "format": {
+          "dataType": "text"
+        }
+      },
+    {
       "key": "data_inizio_validita",
       "label": "Inizio Validità",
       "isPrimary": false,
       "isHidden": false,
+      "width": "10%",        
       "format": {
         "dataType": "date"
       }
@@ -138,6 +150,7 @@
       "key": "data_fine_validita",
       "label": "Fine Validità",
       "isPrimary": false,
+      "width": "10%",        
       "isHidden": false,
       "format": {
         "dataType": "date"
@@ -162,27 +175,7 @@
     {
       "type": "main",
       "operation": "selectTable",
-      "queryString": "SELECT * FROM entrasp.contratti_articoli_centri_gestionali WHERE codice_azienda='€global_codice_azienda€'"
-    },
-    {
-      "type": "main",
-      "operation": "selectForm",
-      "queryString": "SELECT * FROM entrasp.contratti_articoli_centri_gestionali WHERE codice_azienda=$codice_azienda$ AND id_contratto=$id_contratto$ AND codice_part=$codice_part$ AND prog_codice_part=$prog_codice_part$"
-    },
-    {
-      "type": "main",
-      "operation": "insert",
-      "queryString": "INSERT INTO entrasp.contratti_articoli_centri_gestionali (codice_azienda, id_contratto, codice_part, prog_codice_part, data_inizio_validita, data_fine_validita, note) VALUES ($codice_azienda$, $id_contratto$, $codice_part$, $prog_codice_part$, $data_inizio_validita$, $data_fine_validita$, $note$)"
-    },
-    {
-      "type": "main",
-      "operation": "update",
-      "queryString": "UPDATE entrasp.contratti_articoli_centri_gestionali SET data_inizio_validita=$data_inizio_validita$, data_fine_validita=$data_fine_validita$, note=$note$ WHERE codice_azienda=$codice_azienda$ AND id_contratto=$id_contratto$ AND codice_part=$codice_part$ AND prog_codice_part=$prog_codice_part$"
-    },
-    {
-      "type": "main",
-      "operation": "delete",
-      "queryString": "DELETE FROM entrasp.contratti_articoli_centri_gestionali WHERE codice_azienda=$codice_azienda$ AND id_contratto=$id_contratto$ AND codice_part=$codice_part$ AND prog_codice_part=$prog_codice_part$"
+      "queryString": "SELECT *, entrasp.centri_gestionali_descr(cacg.codice_part, acg.id_centro_gest)||'-'||entrasp.articoli_titolo_no_id(cacg.codice_azienda, acg.id_articolo) as funzione_servizio FROM entrasp.contratti_articoli_centri_gestionali cacg inner join entrasp.articoli_centri_gestionali acg on cacg.codice_part=acg.codice_part and cacg.prog_codice_part=acg.prog_codice_part WHERE cacg.codice_azienda=$codice_azienda$ and cacg.id_contratto=$id_contratto$"
     }
   ],
   "hideActions": [
