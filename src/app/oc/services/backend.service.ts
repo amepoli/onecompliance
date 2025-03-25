@@ -4,7 +4,7 @@ import { FormActionType } from '../types';
 import axios from 'axios';
 import { environment } from 'environments/environment';
 import { AwsService } from './aws.service';
-import { GetRequest, PostRequest } from '../interfaces';
+import { GetRequest, PostRequest, TextractFile } from '../interfaces';
 
 const appData = (environment.appData as any).default; //appData contains gorico_dev.json or gorico_prod.json
 @Injectable({
@@ -33,7 +33,8 @@ export class BackendService {
   private fattureincloudApiName = appData.lambdas.fatture_in_cloud.apiName;
   private emailSenderApiName = appData.lambdas.email_sender.apiName;
   private uploadToS3ApiName = appData.lambdas.upload_to_s3.apiName;
-
+  private textractApiName = appData.lambdas.textract.apiName;
+  private textractS3Bucket = appData.lambdas.textract.s3.bucket;
 
   // private myGetInit = { // OPTIONAL
   //   headers: {
@@ -1070,6 +1071,26 @@ export class BackendService {
       console.error("ERROR from Lambda:", err);
       throw err;
     });
+
+  }
+
+  //incapsultion method for upload_to_s3 lambda
+  uploadUsingTextract(company: string, folderName: string, fileList: TextractFile[]) {
+    this.awsService.auth();
+  
+    const putPostReq = {
+      body: { fileList: fileList },
+      headers: {},
+      queryStringParameters: {
+        bucketName: this.textractS3Bucket,
+        folderName,
+        company
+      }
+    };
+  
+    console.log("Calling Lambda with:", putPostReq);
+
+    return from(this.awsService.api().post(this.apiName, this.textractApiName, putPostReq));
 
   }
   
