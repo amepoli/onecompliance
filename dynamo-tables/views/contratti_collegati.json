@@ -1,0 +1,104 @@
+{
+    "$schema": "../views.schema.json",
+    "entryKey": "contratti_collegati",
+    "origin": "entrasp.contratti_contratti",
+    "businessObjectName": "contratti_contratti",
+    "label": "Contratti Collegati",
+    "form_keys": [
+        {
+            "autoGenerate": false,
+            "key": "codice_azienda",
+            "label": "Codice Azienda",
+            "format": {
+                "dataType": "text",
+                "viewType": "input"
+            },
+            "isPrimary": true,
+            "isHidden": true,
+            "readOnly": true
+        },
+        {
+            "autoGenerate": false,
+            "key": "id_contratto",
+            "label": "Contratto Padre",
+            "format": {
+                "dataType": "number",
+                "viewType": "input"
+            },
+            "isPrimary": true,
+            "readOnly": true,
+            "isHidden": true
+        },
+        {
+            "autoGenerate": false,
+            "key": "codice_azienda_collegata",
+            "label": "Azienda Impattata",
+            "format": {
+                "viewType": "combobox",
+                "options": [],
+                "comboQuery": "select codice_azienda as id, codice_azienda as name from entrasp.aziende where codice_azienda in(€global_user_companies€) order by codice_azienda"
+            },
+            "isPrimary": true,
+            "isHidden": false,
+            "newLine": false,
+            "readOnly": false
+        },
+        {
+            "autoGenerate": false,
+            "key": "id_contratto_collegato",
+            "label": "Contratto Collegato",
+            "format": {
+                "viewType": "combobox",
+                "comboQuery": "SELECT id_contratto AS id, numero_contratto||' - '||entrasp.anagrafiche_vr_dati_identificativi_nom1 (codice_part, id_cliente) AS name FROM entrasp.contratti WHERE codice_azienda='€global_codice_azienda€'",
+                "dataType": "number",
+                "options": []
+            },
+            "isPrimary": true,
+            "readOnly": false,
+            "newLine": true,
+            "isHidden": false
+        },
+        {
+            "autoGenerate": false,
+            "key": "note",
+            "label": "Note",
+            "format": {
+                "dataType": "text",
+                "viewType": "textarea"
+            },
+            "isPrimary": false,
+            "readOnly": false,
+            "isHidden": false
+        }
+    ],
+    "table_keys": [
+        {
+            "key": "id_contratto_collegato",
+            "label": "Contratto Collegato",
+            "format": {
+                "dataType": "number"
+            },
+            "isPrimary": true,
+            "isHidden": false
+        },
+        {
+            "key": "note",
+            "label": "Note",
+            "format": {
+                "dataType": "text"
+            },
+            "isPrimary": false,
+            "isHidden": false
+        }
+    ],
+    "addElementSettings": {
+        "labelAdd": "Collega contratto",
+        "navigateOnSuccess": false
+    },
+    "hideActions": [
+        {
+            "viewType": "table",
+            "tableActionType": "quick-add"
+        }
+    ]
+}
