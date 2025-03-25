@@ -50,3 +50,4 @@ export * from './domanda_risposta_element.interface';
 export * from './domanda_risposta_response.interface';
 export * from './domande_risposte_params.interface';
 export * from './domanda_risposta_condition.interface';
+export * from './textract_file.interface';

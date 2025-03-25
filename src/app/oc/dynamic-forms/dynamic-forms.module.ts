@@ -21,6 +21,7 @@ import { LabelComponent } from "./components/label/label.component";
 import { SubformComponent } from "./components/subform/subform.component";
 import { WidgetComponent } from "./components/widget/widget.component";
 import { S3UploadComponent } from "./components/s3-upload/s3-upload.component";
+import { TextractComponent } from "./components/textract/textract.component";
 
 import { OneCompliancePipesModule } from "../pipes/pipes.module";
 import { SubFormDynamicFieldDirective } from "../directives/subform-dynamic-field.directive";
@@ -57,7 +58,8 @@ import { OneComplianceDirectivesModule } from "../directives/directives.module";
         WidgetComponent,
         LabelComponent,
         SubformComponent,
-        S3UploadComponent 
+        S3UploadComponent,
+        TextractComponent,
     ],
     imports: [
         BrowserModule,
@@ -96,7 +98,8 @@ import { OneComplianceDirectivesModule } from "../directives/directives.module";
         WidgetComponent,
         LabelComponent,
         SubformComponent,
-        S3UploadComponent
+        S3UploadComponent,
+        TextractComponent,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: "it-IT" }],
 })
