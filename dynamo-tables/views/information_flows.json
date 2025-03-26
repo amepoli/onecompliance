@@ -279,7 +279,7 @@
             "label": "Descrizione",
             "newLine": false,
             "readOnly": false,
-            "size": 7,
+            "size": 6,
             "translate": "RESOURCES.descrizione_information_flows"
         },
         {
@@ -290,7 +290,7 @@
                 "viewType": "combobox"
             },
             "label": "Anagrafica",
-            "newLine": true,
+            "newLine": false,
             "readOnly": false,
             "isPrimary": false,
             "isHidden": false,
@@ -307,8 +307,21 @@
                     "queryFunct": "select count (*) FROM (select entrasp.unifica_risorse(cd1.id_risorsa,cd2.id_risorsa,cd1.codice_azienda,true) from entrasp.cdms_risorse cd1 inner join entrasp.cdms_risorse cd2 on cd1.id_anagrafica=cd2.id_anagrafica and cd1.codice_azienda= cd2.codice_azienda and cd1.id_argomento_tipo_allegato= cd2.id_argomento_tipo_allegato where cd1.id_risorsa != cd2.id_risorsa and cd1.id_risorsa < cd2.id_risorsa and cd1.codice_azienda=$codice_azienda$ group by cd1.codice_azienda, cd1.id_risorsa,cd2.id_risorsa) as pd;"
                 }
             ],
-            "size": 3,
-            "translate": "RESOURCES.anagrafica_information_flows"
+            "size": 2
+        },
+        {
+            "key": "id_anagrafica_registro",
+            "format": {
+                "comboQuery": "SELECT id_anagrafica AS id, entrasp.anagrafiche_vr_dati_identificativi(codice_part,id_anagrafica) as name from entrasp.anagrafiche_id WHERE codice_part='€global_codice_part€';",
+                "options": [],
+                "viewType": "combobox"
+            },
+            "label": "Entità che mantiene il registro",
+            "newLine": true,
+            "readOnly": false,
+            "isPrimary": false,
+            "isHidden": "$Q{is_hidden_segnalazione_crea}",
+            "size": 2
         },
         {
             "format": {
