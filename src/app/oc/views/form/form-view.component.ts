@@ -334,58 +334,7 @@ export class FormViewComponent implements OnChanges, OnInit, OnDestroy {
             // get the form data, assuming there is only one form
             let values = _this.formGetter.formArray.first.form.value;
 
-            // process the booleans (1/0 instead of true/false)
-            Object.keys(values).forEach(value => {
-                if (values.hasOwnProperty(value)) {
-                    const element = values[value];
-                    if (element === null) {
-                        // continue; // skip null entries
-                    }
-                    // To make all checkboxgroup empty arrays as "null"
-                    // else if(Array.isArray(element) && element.length == 0) {
-                    //     const targetKey = _this.formGetter.viewKeys.filter(x => x.key === value)[0];
-                    //     if (targetKey.format.viewType === 'checkboxgroup') {
-                    //         values[value] = "null";
-                    //     }
-                    // }
-                    else {
-                        // make '' -> null
-                        if (element === '') {
-                            const targetKey = _this._formsService.findViewKey(_this.formGetter.viewKeys, value);
-                            if (targetKey && targetKey.format.dataType === 'text' && (targetKey.format.viewType === 'input' || targetKey.format.viewType === 'textarea') && targetKey.format.value !== undefined) {
-                                values[value] = targetKey.format.value;
-                            }
-                        }
-                        else if (Array.isArray(element)) {
-                            if((element.length === 0 || (element.length === 1 && element[0] === null))) {
-                                const targetKey = _this._formsService.findViewKey(_this.formGetter.viewKeys, value);
-                                if (targetKey && targetKey.format.value !== undefined) {
-                                    values[value] = targetKey.format.value;
-                                }
-                                // To force null in case no default value is provided
-                                // else {
-                                //     values[value] = null;
-                                // }
-                            }
-                        }
-                        // decode combos
-                        else if (element['id'] != null) {
-                            values[value] = element['id'];
-                        }
-                        // encode boolean
-                        else if (element === true) {
-                            values[value] = '1';
-                        }
-                        else if (element === false) {
-                            values[value] = '0';
-                        }
-                        // To keep the same datetime but add timezone in the end
-                        // else if(element.includes('.000' + _this._timezoneService.timezoneInfo.utc_offset)) {
-                        // values[value] = element.replace('.000' + _this._timezoneService.timezoneInfo.utc_offset, '.000Z');
-                        // }
-                    }
-                }
-            });
+            values = _this._formsService.processForm(values, _this.formGetter.viewKeys);
 
             if (_this.externalKeys) {
                 Object.keys(_this.externalKeys).forEach(externalKey => {

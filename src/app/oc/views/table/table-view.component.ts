@@ -6,7 +6,7 @@ import { AddElementSettings, ExportItem, FieldConfig, FormViewParams, ImportItem
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SelectionModel } from '@angular/cdk/collections';
-import { AuthService, BackendService, ConsoleLoggerService, DialogService, GoogleAPIService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
+import { AuthService, BackendService, ConsoleLoggerService, DialogService, FormsService, GoogleAPIService, HelperService, ImportExportService, MessagesService, NavigationService, PubSubService, ReportService, TimeTrackerService, ToastService } from 'app/oc/services';
 import { DataSharingService } from 'app/oc/services/data_sharing.service';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { QuickAddDialogComponent } from 'app/oc/dialogs/quickadd.dialog/quickadd.dialog.component';
@@ -885,6 +885,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
             return fieldValues;
         }
 
+        const formId = FormsService.getNewFormId();
+
         searchKeys.forEach(field => {
             let fieldValue: FieldConfig;
             let searchEntry = _this.searchOptions ? _this.searchOptions.find(e => e.fieldName === field.fieldName) : null;
@@ -907,7 +909,7 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 width: (field.size != null) ? (field.size * 10) : null, // leave a 0.5% margin left and right   
                 isTabMode: _this.isTabMode,
                 isDialog: _this.isDialog,
-                formArray: null
+                formId
             };
             fieldValues.push(fieldValue);
         });

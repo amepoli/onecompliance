@@ -40,6 +40,7 @@ import {
     BackendService,
     ConsoleLoggerService,
     DialogService,
+    FormsService,
     GoogleAPIService,
     HelperService,
     ImportExportService,
@@ -802,6 +803,8 @@ export class ExplorerComponent
             return fieldValues;
         }
 
+        const formId = FormsService.getNewFormId();
+
         searchKeys.forEach((field) => {
             let fieldValue: FieldConfig;
             let searchEntry = _this.searchOptions
@@ -827,7 +830,7 @@ export class ExplorerComponent
                 width: null,
                 isTabMode: _this.isTabMode,
                 isDialog: _this.isDialog,
-                formArray: null,
+                formId
             };
             fieldValues.push(fieldValue);
         });
