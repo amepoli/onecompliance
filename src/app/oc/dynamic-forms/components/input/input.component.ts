@@ -135,6 +135,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     _this.field.onBlur && _this.field.onBlur(this.field.value, this.field);
       
+    this._formsService.setFormDataValueByFormId(this.field.formId, this.field.name, this.field.value);
     _this._formsService.performAutoSave(_this.field);
 
     _this.showCustomElement = true;
@@ -221,6 +222,7 @@ export class InputComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateDateTimeValue() {
     this.updateValue();
+    this._formsService.setFormDataValueByFormId(this.field.formId, this.field.name, this.field.value);
     this._formsService.performAutoSave(this.field);
   }
   

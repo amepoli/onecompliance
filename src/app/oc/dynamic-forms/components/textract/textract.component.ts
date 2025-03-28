@@ -3,7 +3,7 @@ import { UntypedFormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BackendService } from '../../../../oc/services/backend.service';
 import { FieldConfig, TextractFile } from 'app/oc/interfaces';
-import { AuthService, ToastService } from 'app/oc/services';
+import { AuthService, FormsService, ToastService } from 'app/oc/services';
 import { FileManagerService } from 'app/main/apps/file-manager/file-manager.service';
 import { environment } from 'environments/environment';
 
@@ -27,7 +27,8 @@ export class TextractComponent {
         private toastService: ToastService,
         private authService: AuthService,
         private httpClient: HttpClient,
-        private fileManagerService: FileManagerService
+        private fileManagerService: FileManagerService,
+        private formsService: FormsService
     ) {}
 
     onFileSelected(event: any) {
@@ -53,7 +54,9 @@ export class TextractComponent {
                     base64Data: await _this.fileManagerService.convertFileToBase64(file)
                 });
             }
-            console.log(_this.field.formArray.toArray()[_this.field.index].value);
+        console.log(_this.field.formId);
+        const values: any = _this.formsService.getFormDataByFormId(_this.field.formId);
+        console.log(values);
         _this.backendService.uploadUsingTextract(_this.authService.getCurrentCompany(), 'test', fileList).subscribe(
         (response: any) => {
             console.log(response);

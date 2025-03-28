@@ -124,5 +124,5 @@ export interface FieldConfig {
     onBlur?: Function;
     isTabMode: boolean;
     isDialog: boolean;
-    formArray: QueryList<DynamicFormComponent>
+    formId: string;
 }
