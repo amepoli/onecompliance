@@ -606,7 +606,7 @@ SELECT distinct
 			 cnt.codice_valuta,
 			 entrasp.somma_tariffe_mensili(cnt.codice_azienda, cnt.id_cliente) as spese_annue,
 			 case when an2.codice_lei is null then an.codice_lei Else an2.codice_lei end as lei_capogruppo_forn,
-			 'eba_qCO:qx2000' as tipo_codice				
+			 'eba_qCO:qx2000' as tipo_codice_lei				
 					FROM entrasp.contratti cnt
 					inner JOIN  entrasp.anagrafiche_id an ON cnt.codice_part = an.codice_part AND cnt.id_cliente = an.id_anagrafica
 					inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica
@@ -614,8 +614,56 @@ SELECT distinct
 					WHERE cnt.codice_azienda = 'DEMO' and id_tipo_contratto=2
 			LOOP
 
+			maxvalore := maxvalore + 10;
 					
+			INSERT INTO entrasp.segnalazioni_vigilanza_righe(
+				                    id_valore, valore_testo, valore_num, valore_data, valore_id_argomento, 
+				                    id_risorsa, codice_azienda, prog_revisione, id_voce_segnalazione, invio, id_contratto
+				                ) 
+							SELECT
+												maxvalore-9, fornitori_rec.codice_fornitore::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 580, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore-8, fornitori_rec.tipo_codice::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 581, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore-7, fornitori_rec.denominazione::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 584, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore-6, fornitori_rec.denominazione::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 585, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore-5, NULL::varchar, NULL::numeric, NULL::date, fornitori_rec.tipo_persona::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 586, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore-4, fornitori_rec.codice_nazione::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 587, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore-3, fornitori_rec.codice_valuta::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 588, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore-2, NULL::varchar, fornitori_rec.spese_annue::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 589, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore-1, fornitori_rec.lei_capogruppo_forn::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 590, maxinvio, fornitori_rec.id_contratto
+							UNION ALL
+							SELECT
+												maxvalore, fornitori_rec.tipo_codice_lei::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 591, maxinvio, fornitori_rec.id_contratto;
 
+					END LOOP;
+
+
+	-- (B_05.02) Catena di approvvigionamento dei servizi TIC
 
 
 
