@@ -135,7 +135,7 @@ export class DomandeRisposteComponent implements OnChanges
                 }
             });
 
-            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [newKeys], _this.attributes, _this.formParams[i], results[i].keys, results[i].readonly, 0, _this.isTabMode, _this.isDialog)[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
+            const curFormData = _this._formsService.getFormData(_this.viewKeys[i], [newKeys], _this.attributes, _this.formParams[i], results[i].keys, results[i].readonly, 0, _this.isTabMode, _this.isDialog, FormsService.getNewFormId())[0].map(x => (x.type === "combobox") ? {...x, value: null}: x);
             
             //  Funzioni di update racchiudibili in un'unica funzione con switch per i diversi casi, per migliorare leggibilità
             curFormData.forEach((_, j) => {

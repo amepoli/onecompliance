@@ -1,4 +1,4 @@
-import { Injectable, ViewContainerRef } from "@angular/core";
+import { Injectable, QueryList, ViewContainerRef } from "@angular/core";
 
 import { ValidationsService } from "./validations.service";
 import { memoize } from "../decorators/memoize";
@@ -29,6 +29,8 @@ import { DialogService } from "./dialog.service";
 import { AuthService } from "./auth.service";
 import { BackendService } from "./backend.service";
 import { PubSubService } from "./pubsub.service";
+import { DynamicFormComponent } from "../dynamic-forms/components/dynamic-form/dynamic-form.component";
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
     providedIn: "root",
@@ -60,7 +62,7 @@ export class FormsService {
         label: LabelComponent,
         subform: SubformComponent,
         s3Upload: S3UploadComponent,
-        textact: TextractComponent,
+        textract: TextractComponent,
     };
 
     @memoize()
@@ -106,7 +108,8 @@ export class FormsService {
         isReadOnly: boolean,
         startingIndex: number,
         isTabMode: boolean,
-        isDialog: boolean
+        isDialog: boolean,
+        formId: string
     ): FieldConfig[][] {
         const fieldValuesArray: FieldConfig[][] = [[]];
 
@@ -120,7 +123,8 @@ export class FormsService {
                 values,
                 index + startingIndex,
                 isTabMode,
-                isDialog
+                isDialog,
+                formId
             );
         }
         return fieldValuesArray;
@@ -135,7 +139,8 @@ export class FormsService {
         values: any,
         index: number,
         isTabMode: boolean,
-        isDialog: boolean
+        isDialog: boolean,
+        formId: string
     ): FieldConfig[] {
         const _this = this;
         const fieldValues = new Array();
@@ -175,7 +180,8 @@ export class FormsService {
                         values,
                         index,
                         isTabMode,
-                        isDialog
+                        isDialog,
+                        formId
                     );
                     fieldValues.push(fieldValue);
                 }
@@ -237,7 +243,8 @@ export class FormsService {
         values: any,
         index: number,
         isTabMode: boolean,
-        isDialog: boolean
+        isDialog: boolean,
+        formId: string
     ): FieldConfig {
         const _this = this;
         let fieldValue: FieldConfig;
@@ -361,7 +368,8 @@ export class FormsService {
                             values,
                             index,
                             isTabMode,
-                            isDialog
+                            isDialog,
+                            formId
                         )
                         : null,
                 isMultiSelect:
@@ -370,7 +378,8 @@ export class FormsService {
                     field.showTagsView != null ? field.showTagsView : false,
                 onChangeResetKey: field.onChangeResetKey ?? [],
                 isTabMode,
-                isDialog
+                isDialog,
+                formId
             };
         }
         /*
@@ -699,8 +708,16 @@ export class FormsService {
                     }
                 }
                 // decode combos
-                else if (element["id"] != null) {
-                    formValues[key] = element["id"];
+                else if(typeof element === 'object') {
+                    if (element["id"] != null) {
+                        formValues[key] = element["id"];
+                    }
+                    else if (element["value"] != null) {
+                        formValues[key] = element["value"];
+                    }
+                    else {
+                        formValues[key] = null;
+                    }
                 }
                 // encode boolean
                 else if (element === true) {
@@ -722,4 +739,87 @@ export class FormsService {
             }
         }
     }
+
+    public static getNewFormId(): string {
+        return uuidv4();
+    }
+
+    processForm(values: object, viewKeys: FormViewKey[]) {
+        const _this = this;
+
+        // process the booleans (1/0 instead of true/false)
+        Object.keys(values).forEach(value => {
+            if (values.hasOwnProperty(value)) {
+                const element = values[value];
+                if (element === null) {
+                    // continue; // skip null entries
+                }
+                // To make all checkboxgroup empty arrays as "null"
+                // else if(Array.isArray(element) && element.length == 0) {
+                //     const targetKey = _this.formGetter.viewKeys.filter(x => x.key === value)[0];
+                //     if (targetKey.format.viewType === 'checkboxgroup') {
+                //         values[value] = "null";
+                //     }
+                // }
+                else {
+                    // make '' -> null
+                    if (element === '') {
+                        const targetKey = _this.findViewKey(viewKeys, value);
+                        if (targetKey && targetKey.format.dataType === 'text' && (targetKey.format.viewType === 'input' || targetKey.format.viewType === 'textarea') && targetKey.format.value !== undefined) {
+                            values[value] = targetKey.format.value;
+                        }
+                    }
+                    else if (Array.isArray(element)) {
+                        if((element.length === 0 || (element.length === 1 && element[0] === null))) {
+                            const targetKey = _this.findViewKey(viewKeys, value);
+                            if (targetKey && targetKey.format.value !== undefined) {
+                                values[value] = targetKey.format.value;
+                            }
+                            // To force null in case no default value is provided
+                            // else {
+                            //     values[value] = null;
+                            // }
+                        }
+                    }
+                    // decode combos
+                    else if (element['id'] != null) {
+                        values[value] = element['id'];
+                    }
+                    // encode boolean
+                    else if (element === true) {
+                        values[value] = '1';
+                    }
+                    else if (element === false) {
+                        values[value] = '0';
+                    }
+                    // To keep the same datetime but add timezone in the end
+                    // else if(element.includes('.000' + _this._timezoneService.timezoneInfo.utc_offset)) {
+                    // values[value] = element.replace('.000' + _this._timezoneService.timezoneInfo.utc_offset, '.000Z');
+                    // }
+                }
+            }
+        });
+        return values;
+    }
+    formsData: any[] = [];
+
+    getFormDataByFormId(formId: string) {
+        return this.formsData[formId];
+    }
+
+    setFormDataByFormId(formId: string, formData: any) {
+        this.formsData[formId] = this.processFormValues(formData);
+    }
+
+    setFormDataValueByFormId(formId: string, key: string, value: any) {
+        if(this.formsData[formId]) {
+            this.formsData[formId][key] = value;
+        }
+    }
+
+    deleteFormDataByFormId(formId: string) {
+        if(this.formsData[formId]) {
+            delete this.formsData[formId];
+        }
+    }    
 }

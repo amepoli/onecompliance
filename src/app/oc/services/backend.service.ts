@@ -1079,12 +1079,32 @@ export class BackendService {
     this.awsService.auth();
   
     const putPostReq = {
-      body: { fileList: fileList },
+      body: { folderName: folderName, fileList: fileList },
       headers: {},
       queryStringParameters: {
         bucketName: this.textractS3Bucket,
-        folderName,
-        company
+        // company,
+        actionType: 'upload'
+      }
+    };
+  
+    console.log("Calling Lambda with:", putPostReq);
+
+    return from(this.awsService.api().post(this.apiName, this.textractApiName, putPostReq));
+
+  }
+
+  //incapsultion method for upload_to_s3 lambda
+  extractingUsingTextract(folderName: string, codice_azienda: string, id_mandante: string, id_cedente: string, codice_part: string, documentType: string) {
+    this.awsService.auth();
+  
+    const putPostReq = {
+      body: { folderName: folderName, codice_azienda: codice_azienda, id_mandante: id_mandante, id_cedente: id_cedente, codice_part: codice_part, documentType: documentType },
+      headers: {},
+      queryStringParameters: {
+        bucketName: this.textractS3Bucket,
+        // company,
+        actionType: 'extraction'
       }
     };
   

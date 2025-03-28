@@ -87,6 +87,8 @@ export class FormGetterComponent
 
     valueOverrides: any = {};
 
+    formId: string = FormsService.getNewFormId();
+
     private addingNew = false; // avoid to trigger a refresh (with related events) when adding a row
 
     private margins = 1; // % of margins, considering left and right
@@ -211,6 +213,8 @@ export class FormGetterComponent
         this.formSubscriptions.forEach((subscription) => {
             subscription.unsubscribe();
         });
+
+        this._formsService.deleteFormDataByFormId(this.formId);
     }
 
     @memoize()
@@ -992,7 +996,10 @@ export class FormGetterComponent
         });
 
         // prepare the form
-        _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this._formsService.getFormData(_this.viewKeys, results, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly, 0, _this.isTabMode, _this.isDialog)));
+        _this.filteredFormData = _this.numRows === 0 ? [] : JSON.parse(JSON.stringify(_this._formsService.getFormData(_this.viewKeys, results, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly, 0, _this.isTabMode, _this.isDialog, _this.formId)));
+        
+        _this._formsService.setFormDataByFormId(_this.formId, results[0]);
+
         _this.quickAddData = _this.filteredFormData.map((x) => false);
         _this.resetPagination(this.filteredFormData);
 
@@ -1026,7 +1033,9 @@ export class FormGetterComponent
                         // update the status to prevent the whole table refresh
                         _this.addingNew = true;
                         // process the new row
-                        const filteredFormData = _this._formsService.getFormData(_this.viewKeys, result, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly, 0, _this.isTabMode, _this.isDialog);
+                        const filteredFormData = _this._formsService.getFormData(_this.viewKeys, result, _this.attributes, _this.formParams, _this.currentKeys, _this.isReadOnly, 0, _this.isTabMode, _this.isDialog, _this.formId );
+                        _this._formsService.setFormDataByFormId(_this.formId, result[0]);
+
                         _this.process_form(filteredFormData);
 
 

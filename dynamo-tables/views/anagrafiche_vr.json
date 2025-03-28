@@ -6,20 +6,21 @@
     "label": "Anagrafiche",
     "define": {
         "is_hidden_codice_part": "true",
-        "is_hidden_ruolo_privacy": "false",
-        "is_hidden_validita": "true",
-        "is_hidden_ruolo": "false",
-        "isHiddenEntita": "true",
-        "is_hidden_ruolo2": "false",
-        "is_hidden_contratti_sottoscritti": "true",
-        "not_is_hidden_contratti_sottoscritti": "false",
-        "is_hidden_profilo_aml": "false",
-        "is_hidden_dettagli": "false",
-        "is_hidden_utente_tr": "true",
-        "is_hidden_menu": "false",
-        "is_hidden_questionario": "true",
         "is_hidden_conta_sondaggi": "true",
-        "is_hidden_dynamo": "false"
+        "is_hidden_contratti_sottoscritti": "true",
+        "is_hidden_dettagli": "false",
+        "is_hidden_dynamo": "false",
+        "is_hidden_entita_vr": "false",
+        "is_hidden_menu": "false",
+        "is_hidden_profilo_aml": "false",
+        "is_hidden_questionario": "true",
+        "is_hidden_ruolo": "false",
+        "is_hidden_ruolo2": "false",
+        "is_hidden_ruolo_privacy": "false",
+        "is_hidden_utente_tr": "true",
+        "is_hidden_validita": "true",
+        "isHiddenEntita": "true",
+        "not_is_hidden_contratti_sottoscritti": "false"
     },
     "predefinedQueries": [
         {
@@ -176,7 +177,9 @@
                     "actionType": "dialog",
                     "condition": "equalTo",
                     "valueKey": "consenti_invio",
-                    "values": ["1"],
+                    "values": [
+                        "1"
+                    ],
                     "customDialogEntryName": "dialog_anagrafiche_vr_invite_user",
                     "customDialogTitle": "Add User",
                     "customDialogGenericSave": false,
@@ -615,7 +618,10 @@
                     "eventName": "invite_user_api",
                     "actionType": "user_api",
                     "condition": "notEqualTo",
-                    "values": [null, ""],
+                    "values": [
+                        null,
+                        ""
+                    ],
                     "valueKey": "email_sender",
                     "conditionNotMetMessageTranslate": "RESOURCES.email_necessaria_whistleblowing",
                     "userAPIParams": {
@@ -1126,24 +1132,22 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["P"]
+                    "values": [
+                        "P"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["P"]
+                    "values": [
+                        "P"
+                    ]
                 },
                 {
                     "actionType": "hide",
                     "condition": "none",
                     "eventName": "activate_detail",
-                    "values": []
-                },
-                {
-                    "actionType": "show",
-                    "eventName": "hide_detail",
-                    "condition": "none",
                     "values": []
                 }
             ],
@@ -1196,7 +1200,6 @@
                         "readOnly": false,
                         "translate": "RESOURCES.ragione_sociale_anagrafiche_vr"
                     },
-
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1270,25 +1273,13 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["E"]
+                    "values": ["E", "S"]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["E"]
-                },
-                {
-                    "actionType": "show",
-                    "condition": "equalTo",
-                    "eventName": "combo_tipo_soggetto",
-                    "values": ["S"]
-                },
-                {
-                    "actionType": "show",
-                    "condition": "equalTo",
-                    "eventName": "tipo_soggetto_load",
-                    "values": ["S"]
+                    "values": ["E", "S"]
                 }
             ],
             "isHidden": false,
@@ -1340,7 +1331,6 @@
                         "readOnly": false,
                         "translate": "RESOURCES.cointestatari_anagrafiche_vr"
                     },
-
                     {
                         "autoGenerate": false,
                         "format": {
@@ -1471,13 +1461,17 @@
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "combo_tipo_soggetto",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 },
                 {
                     "actionType": "show",
                     "condition": "equalTo",
                     "eventName": "tipo_soggetto_load",
-                    "values": ["C"]
+                    "values": [
+                        "C"
+                    ]
                 }
             ],
             "isHidden": true,
@@ -1552,7 +1546,9 @@
                     "actionType": "show",
                     "eventName": "hide_detail",
                     "condition": "none",
-                    "values": ["P"]
+                    "values": [
+                        "P"
+                    ]
                 }
             ],
             "style": {
@@ -1612,7 +1608,7 @@
                             "options": [],
                             "comboQuery": "SELECT cod_sae AS id, concat (cod_sae, '-' ,descrizione) AS name FROM entrasp.sae"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "cod_sae",
                         "label": "SAE",
@@ -1631,7 +1627,7 @@
                             "options": [],
                             "comboQuery": "SELECT cod_rae AS id, concat (cod_rae, '-' ,descrizione) AS name FROM entrasp.rae"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "cod_rae",
                         "label": "RAE",
@@ -1649,7 +1645,7 @@
                             "options": [],
                             "comboQuery": "SELECT id_ateco AS id, descrizione AS name FROM entrasp.ateco"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "id_ateco",
                         "label": "ATECO",
@@ -1680,7 +1676,21 @@
                         "autoGenerate": false,
                         "format": {
                             "dataType": "text",
-                            "viewType": "input"
+                            "viewType": "input",
+                            "validations": [
+                                {
+                                    "message": "Lunghezza massima 20 caratteri",
+                                    "name": "maxlength",
+                                    "validator": "Validators.maxLength(20)",
+                                    "value": 20
+                                },
+                                {
+                                    "message": "Lunghezza minima 20 caratteri",
+                                    "name": "minlength",
+                                    "validator": "Validators.minLength(20)",
+                                    "value": 20
+                                }
+                            ]
                         },
                         "isHidden": false,
                         "isPrimary": false,
@@ -1703,7 +1713,7 @@
                         "label": "Valuta",
                         "key": "codice_valuta",
                         "readOnly": false,
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "newLine": false,
                         "size": 1.5,
@@ -1718,7 +1728,7 @@
                         "label": "Totale Attività",
                         "key": "importo_attivita",
                         "readOnly": false,
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "newLine": false,
                         "size": 1.5
@@ -1776,7 +1786,7 @@
                             "dataType": "date",
                             "viewType": "input"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "data_ins_reg",
                         "label": "Data inserimento registro",
@@ -1790,7 +1800,7 @@
                             "dataType": "date",
                             "viewType": "input"
                         },
-                        "isHidden": false,
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "data_delete_reg",
                         "label": "Data cancellazione registro",
@@ -1819,13 +1829,17 @@
                                 "actionType": "hide",
                                 "eventName": "combo_tipo_soggetto",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             },
                             {
                                 "actionType": "hide",
                                 "eventName": "tipo_soggetto_load",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             }
                         ],
                         "translate": "RESOURCES.azienda_fatturante_di_default_anagrafiche_vr"
@@ -1836,7 +1850,7 @@
                             "dataType": "text",
                             "viewType": "input"
                         },
-                        "isHidden": "$Q{isHiddenEntita}",
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "autorita_competente",
                         "label": "Autorità Competente per messa a disposizione del registro",
@@ -1851,7 +1865,7 @@
                             "options": [],
                             "viewType": "combobox"
                         },
-                        "isHidden": "$Q{isHiddenEntita}",
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "id_argomento_entita",
                         "label": "Attività EBA",
@@ -1867,7 +1881,7 @@
                             "options": [],
                             "viewType": "combobox"
                         },
-                        "isHidden": "$Q{isHiddenEntita}",
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "id_argomento_gerarchia",
                         "label": "Gerarchia nel gruppo",
@@ -1883,7 +1897,7 @@
                             "options": [],
                             "viewType": "combobox"
                         },
-                        "isHidden": "$Q{isHiddenEntita}",
+                        "isHidden": false,
                         "isPrimary": false,
                         "key": "id_anagrafica_capogruppo",
                         "label": "Capogruppo",
@@ -1898,7 +1912,7 @@
                             "options": [],
                             "viewType": "combobox"
                         },
-                        "isHidden": "$Q{isHiddenEntita}",
+                        "isHidden": "$Q{is_hidden_entita_vr}",
                         "isPrimary": false,
                         "key": "id_anagrafica_madre",
                         "label": "Società Madre",
@@ -1925,13 +1939,17 @@
                                 "actionType": "hide",
                                 "eventName": "combo_tipo_soggetto",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             },
                             {
                                 "actionType": "hide",
                                 "eventName": "tipo_soggetto_load",
                                 "condition": "equalTo",
-                                "values": ["E"]
+                                "values": [
+                                    "E"
+                                ]
                             }
                         ],
                         "translate": "RESOURCES.profilo_di_rischio_aml_anagrafiche_vr"
