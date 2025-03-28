@@ -2,6 +2,8 @@ import { GoogleAPIParams, RegulatAPIParams, MenuOption } from ".";
 import { FormWidgetType } from "../types";
 import { EmailActionParameters } from "./email_action_parameters";
 import { ContextMailParams } from "./context_mail_params.interface";
+import { QueryList } from "@angular/core";
+import { DynamicFormComponent } from "../dynamic-forms/components/dynamic-form/dynamic-form.component";
 export interface Validator {
     message: string;
     name: string;
@@ -122,5 +124,5 @@ export interface FieldConfig {
     onBlur?: Function;
     isTabMode: boolean;
     isDialog: boolean;
-    
+    formArray: QueryList<DynamicFormComponent>
 }

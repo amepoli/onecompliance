@@ -1,4 +1,4 @@
-import { Injectable, ViewContainerRef } from "@angular/core";
+import { Injectable, QueryList, ViewContainerRef } from "@angular/core";
 
 import { ValidationsService } from "./validations.service";
 import { memoize } from "../decorators/memoize";
@@ -29,6 +29,7 @@ import { DialogService } from "./dialog.service";
 import { AuthService } from "./auth.service";
 import { BackendService } from "./backend.service";
 import { PubSubService } from "./pubsub.service";
+import { DynamicFormComponent } from "../dynamic-forms/components/dynamic-form/dynamic-form.component";
 
 @Injectable({
     providedIn: "root",
@@ -60,7 +61,7 @@ export class FormsService {
         label: LabelComponent,
         subform: SubformComponent,
         s3Upload: S3UploadComponent,
-        textact: TextractComponent,
+        textract: TextractComponent,
     };
 
     @memoize()
@@ -106,7 +107,8 @@ export class FormsService {
         isReadOnly: boolean,
         startingIndex: number,
         isTabMode: boolean,
-        isDialog: boolean
+        isDialog: boolean,
+        formArray: QueryList<DynamicFormComponent>
     ): FieldConfig[][] {
         const fieldValuesArray: FieldConfig[][] = [[]];
 
@@ -120,7 +122,8 @@ export class FormsService {
                 values,
                 index + startingIndex,
                 isTabMode,
-                isDialog
+                isDialog,
+                formArray
             );
         }
         return fieldValuesArray;
@@ -135,7 +138,8 @@ export class FormsService {
         values: any,
         index: number,
         isTabMode: boolean,
-        isDialog: boolean
+        isDialog: boolean,
+        formArray: QueryList<DynamicFormComponent>
     ): FieldConfig[] {
         const _this = this;
         const fieldValues = new Array();
@@ -175,7 +179,8 @@ export class FormsService {
                         values,
                         index,
                         isTabMode,
-                        isDialog
+                        isDialog,
+                        formArray
                     );
                     fieldValues.push(fieldValue);
                 }
@@ -237,7 +242,8 @@ export class FormsService {
         values: any,
         index: number,
         isTabMode: boolean,
-        isDialog: boolean
+        isDialog: boolean,
+        formArray: QueryList<DynamicFormComponent>
     ): FieldConfig {
         const _this = this;
         let fieldValue: FieldConfig;
@@ -361,7 +367,8 @@ export class FormsService {
                             values,
                             index,
                             isTabMode,
-                            isDialog
+                            isDialog,
+                            formArray
                         )
                         : null,
                 isMultiSelect:
@@ -370,7 +377,8 @@ export class FormsService {
                     field.showTagsView != null ? field.showTagsView : false,
                 onChangeResetKey: field.onChangeResetKey ?? [],
                 isTabMode,
-                isDialog
+                isDialog,
+                formArray
             };
         }
         /*

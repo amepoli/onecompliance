@@ -40,28 +40,32 @@ export class TextractComponent {
     }
 
     async performOperation(files: FileList) {
+        const _this = this;
 
-        const loadingToastId = this.toastService.showLoadingToast('Uploading', 'Uploading files to Textract...');
+        const loadingToastId = _this.toastService.showLoadingToast('Uploading', 'Uploading files to Textract...');
 
         let fileList: TextractFile[] = [];
 
-        for(const file in files) {
-            if (file) {
+        for(let i = 0; i< files.length; i++) {
+            const file = files[i];
                 fileList.push({
-                    filename: files[file].name,
-                    fileBase64Data: await this.fileManagerService.convertFileToBase64(files[file])
+                    name: file.name,
+                    base64Data: await _this.fileManagerService.convertFileToBase64(file)
                 });
-            }            
-        }
-
-        this.backendService.uploadUsingTextract(this.authService.getCurrentCompany(), 'test', fileList).subscribe(
+            }
+            console.log(_this.field.formArray.toArray()[_this.field.index].value);
+        _this.backendService.uploadUsingTextract(_this.authService.getCurrentCompany(), 'test', fileList).subscribe(
         (response: any) => {
             console.log(response);
-            this.toastService.hideLoadingToast(loadingToastId);
+            if (response.result === 'OK') {
+                // this.backendService.extractingUsingTextract('test', this.authService.getUsername(),this.field.fullValueSet),
+                
+            }
+            _this.toastService.hideLoadingToast(loadingToastId);
         },
         (error) => {
             console.log(error);
-            this.toastService.hideLoadingToast(loadingToastId);
+            _this.toastService.hideLoadingToast(loadingToastId);
         });
     }
 

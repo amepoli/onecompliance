@@ -1,5 +1,5 @@
 export interface TextractFile {
-    filename: string;
-    fileBase64Data?: string;
+    name: string;
+    base64Data?: string;
     fileData?: string;
 };

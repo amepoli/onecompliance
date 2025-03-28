@@ -826,7 +826,8 @@ export class ExplorerComponent
                 isVisible: true,
                 width: null,
                 isTabMode: _this.isTabMode,
-                isDialog: _this.isDialog
+                isDialog: _this.isDialog,
+                formArray: null,
             };
             fieldValues.push(fieldValue);
         });

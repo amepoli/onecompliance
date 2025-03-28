@@ -906,7 +906,8 @@ export class TableViewComponent implements AfterViewInit, OnChanges, OnDestroy {
                 isVisible: true,
                 width: (field.size != null) ? (field.size * 10) : null, // leave a 0.5% margin left and right   
                 isTabMode: _this.isTabMode,
-                isDialog: _this.isDialog
+                isDialog: _this.isDialog,
+                formArray: null
             };
             fieldValues.push(fieldValue);
         });
