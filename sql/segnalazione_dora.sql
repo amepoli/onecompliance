@@ -30,6 +30,7 @@ DECLARE
 		codleireg varchar;
 		rag_soc varchar;
 		codnaz varchar;
+		entita_usante varchar;
 		arg_entita numeric;
 		autor_comp varchar;
 		succursali RECORD;
@@ -41,6 +42,8 @@ DECLARE
 		firmatari_infra_rec RECORD;
 		contr_succ RECORD;
 		fornitori_rec RECORD;
+		funzioni_rec RECORD;
+		contratti_valutazioni RECORD;
 
 		
 
@@ -52,6 +55,10 @@ select id_anagrafica_registro from entrasp.cdms_risorse
 where codice_azienda=codiceazienda and id_argomento_tipo_allegato=idargomentotipoallegato into entita_reg;
 
 select segn_consolidata::boolean from entrasp.aziende where codice_azienda=codiceazienda into flag_cons;
+
+select distinct utilizzatore from entrasp.contratti cnt
+inner join entrasp.anagrafiche_id an on cnt.codice_part=an.codice_part and cnt.utilizzatore=an.id_anagrafica
+where ccnt.codice_azienda=codiceazienda limit 1 into entita_usante;
 
 -- Recupera id_risorsa
     SELECT id_risorsa 
@@ -666,14 +673,165 @@ SELECT distinct
 	-- (B_05.02) Catena di approvvigionamento dei servizi TIC
 
 
+	-- (B_06.01) Identificazione delle funzioni
+	
+		FOR funzioni_rec in 
+		select distinct
+			concat('F',acg.prog_codice_part)as codice_funzione,
+			art.id_argomento_eba,
+			cg.descrizione,
+			entita_usante,
+			acg.liv_criticita,
+			acg.rag_criticita,
+			coalesce (acg.data_ultima_verifica, '9999-12-31') as data_ult_ver,
+			acg.recovery_time,
+			acg.recovery_point,
+			acg.impatto_interruzione
+		from entrasp.articoli_centri_gestionali acg
+		inner join entrasp.centri_gestionali cg on acg.codice_part=cg.codice_part and acg.id_centro_gest=cg.id_centro_gest
+		inner join entrasp.articoli art on acg.codice_azienda=art.codice_azienda and acg.id_articolo=art.id_articolo
+		where acg.codice_part='DEMO'
+	LOOP
 
+			maxvalore := maxvalore + 10;
+					
+			INSERT INTO entrasp.segnalazioni_vigilanza_righe(
+				                    id_valore, valore_testo, valore_num, valore_data, valore_id_argomento, 
+				                    id_risorsa, codice_azienda, prog_revisione, id_voce_segnalazione, invio
+				                ) 		
 
-
-
+									SELECT
+												maxvalore-9, funzioni_rec.codice_funzione::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 599, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore-8, NULL::varchar, NULL::numeric, NULL::date, funzioni_rec.id_argomento_eba::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 620, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore-7, funzioni_rec.descrizione::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 600, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore-6, funzioni_rec.entita_usante::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 601, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore-5, NULL::varchar, NULL::numeric, NULL::date, funzioni_rec.liv_criticita::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 602, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore-4, funzioni_rec.rag_criticita::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 603, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore-3, NULL::varchar, NULL::numeric, funzioni_rec.data_ult_ver::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 604, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore-2, NULL::varchar, funzioni_rec.recovery_time::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 605, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore-1, NULL::varchar, funzioni_rec.recovery_point::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 606, maxinvio
+									UNION ALL
+									SELECT
+												maxvalore, NULL::varchar, NULL::numeric, NULL::date, funzioni_rec.impatto_interruzione::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 607, maxinvio;
+								
+						END LOOP;
 
 	
+	-- (B_07.01) Valutazioni dei servizi TIC
 
+			FOR contratti_valutazioni in 
+						
+						select distinct
+						cnt.id_contratto,
+						cnt.numero_contratto,
+						coalesce (an.codice_lei, avr.partita_iva) as codice_fornitore,
+						CASE 
+						   WHEN an.codice_lei IS NOT NULL THEN 'eba_qCO:qx2000'
+						   ELSE 'eba_qCO:qx2004'
+						   END as tipo_codice,
+						CASE 
+							 WHEN cnt.id_argomento_mod_esternalizzazione IN (54076, 54077, 54078) 
+							 THEN cnt.id_argomento_mod_esternalizzazione
+							 ELSE cnt.id_argomento_servizio_eba
+						   END as servizio_tic,
+						cnt.id_argomento_sostituibilita,
+						cnt.id_argomento_motivo,
+						coalesce (cnt.data_ultimo_audit,'9999-12-31') as ultimo_audit,
+						cnt.flag_piano_uscita,
+						cnt.id_argomento_reinternalizzazione,
+						cnt.id_argomento_impatto_interruzione,
+						CASE
+							WHEN cnt.fornitore_alternativo is not null 
+							THEN 2372 ELSE 6765 END as indiv_forn_alt,
+						cnt.fornitore_alternativo
+						from entrasp.contratti cnt
+						inner join entrasp.anagrafiche_id an on cnt.codice_part=an.codice_part and cnt.id_cliente=an.id_anagrafica
+						inner join entrasp.anagrafiche_vr avr on an.codice_part=avr.codice_part and an.id_anagrafica=avr.id_anagrafica
+						where codice_azienda='DEMO' and id_tipo_contratto=2
 
+				LOOP
+
+			maxvalore := maxvalore + 12;
+					
+									INSERT INTO entrasp.segnalazioni_vigilanza_righe(
+				                    id_valore, valore_testo, valore_num, valore_data, valore_id_argomento, 
+				                    id_risorsa, codice_azienda, prog_revisione, id_voce_segnalazione, invio, id_contratto
+				                ) 
+									SELECT
+												maxvalore-11, contratti_valutazioni.numero_contratto::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 608, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-10, contratti_valutazioni.codice_fornitore::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 609, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-9, contratti_valutazioni.tipo_codice::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 610, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-8, NULL::varchar, NULL::numeric, NULL::date, contratti_valutazioni.servizio_tic::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 611, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-7, NULL::varchar, NULL::numeric, NULL::date, contratti_valutazioni.id_argomento_sostituibilita::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 612, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-6, NULL::varchar, NULL::numeric, NULL::date, contratti_valutazioni.id_argomento_motivo::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 613, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-5, NULL::varchar, NULL::numeric, contratti_valutazioni.ultimo_audit::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 614, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-4, NULL::varchar, NULL::numeric, NULL::date, CASE WHEN contratti_valutazioni.flag_piano_uscita = '0' THEN 2372 ELSE 6765 END,
+								        idrisorsa, codiceazienda, maxprogrev, 615, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-3, NULL::varchar, NULL::numeric, NULL::date, contratti_valutazioni.id_argomento_reinternalizzazione::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 616, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-2, NULL::varchar, NULL::numeric, NULL::date, contratti_valutazioni.id_argomento_impatto_interruzione::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 617, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore-1, NULL::varchar, NULL::numeric, NULL::date, contratti_valutazioni.indiv_forn_alt::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 618, maxinvio, contratti_valutazioni.id_contratto
+									UNION ALL
+									SELECT
+												maxvalore, contratti_valutazioni.fornitore_alternativo::varchar, NULL::numeric, NULL::date, NULL::numeric,
+								        idrisorsa, codiceazienda, maxprogrev, 619, maxinvio, contratti_valutazioni.id_contratto
+
+							END LOOP;
 END;
 $BODY$;
 
