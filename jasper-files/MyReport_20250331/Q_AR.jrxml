@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2020-01-19T08:26:23 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Q_AR" pageWidth="520" pageHeight="800" columnWidth="518" leftMargin="1" rightMargin="1" topMargin="6" bottomMargin="6" whenResourceMissingType="Empty" uuid="6510a332-ebdd-4951-bfbd-44344cdd47ae">
+	<property name="com.jasperassistant.designer.GridHeight" value="12"/>
+	<property name="com.jasperassistant.designer.GridWidth" value="12"/>
+	<property name="com.jasperassistant.designer.DataSource" value="FIMM"/>
+	<property name="com.jasperassistant.designer.SnapToGrid" value="false"/>
+	<property name="com.jasperassistant.designer.Units" value="Pixels"/>
+	<property name="com.jasperassistant.designer.Grid" value="false"/>
+	<property name="ireport.scriptlethandling" value="0"/>
+	<property name="ireport.encoding" value="UTF-8"/>
+	<property name="businessObjectName" value="riepilogoRisposte"/>
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="GoRiCoInRemoto"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="199"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="796"/>
+	<import value="net.sf.jasperreports.engine.*"/>
+	<import value="java.util.*"/>
+	
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<subDataset name="dataset1" uuid="b3320f2c-f06e-453c-a69f-d8acf061466c"/>
+	<parameter name="REPORTS_MAP" class="java.util.Map" isForPrompting="false"/>
+	<parameter name="PATH_IMG" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[new String ("http://localhost/core/images/SICC/")]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LOGO" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="codice_azienda" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["DEMO"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="id_sondaggio" class="java.math.BigDecimal" isForPrompting="false">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[new BigDecimal(77.0000)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select s.id_sondaggio, object_description, id_domanda, 
+entrasp.domande_ordinamento(r.codice_azienda, r.id_modello_test, r.id_modello_test_vr, r.id_domanda) as d_ordinamento , 
+entrasp.domande_sezione(r.codice_azienda, r.id_modello_test, r.id_modello_test_vr, r.id_domanda) as id_sezione,
+entrasp.domande_sezioni_ordinamento(r.codice_azienda, r.id_modello_test, r.id_modello_test_vr, entrasp.domande_sezione(r.codice_azienda, r.id_modello_test, r.id_modello_test_vr, r.id_domanda))as ds_ordinamento, 
+gf.giudizio, 
+descrizione_sezione, descrizione_domanda,
+coalesce(entrasp.risposte_previste_risposta(s.codice_azienda, r.id_modello_test, r.id_modello_test_vr, r.id_domanda, r.id_risposta_prev), descrizione_risposta) as risposta
+from entrasp.sondaggi_somministrati s, entrasp.riepilogo_risposte r 
+join entrasp.grc_punteggi_giudizi_finali(r.codice_azienda, s.id_somministrazione) gf on s.id_somministrazione=gf.id_somministrazione and s.codice_azienda=gf.codiceazienda 
+where r.id_somministrazione = s.id_somministrazione and r.codice_azienda = s.codice_azienda and s.codice_azienda= $P{codice_azienda}  and s.id_sondaggio= $P{id_sondaggio}  
+order by object_description, ds_ordinamento, d_ordinamento]]>
+	</queryString>
+	<field name="id_sondaggio" class="java.math.BigDecimal"/>
+	<field name="object_description" class="java.lang.String"/>
+	<field name="id_domanda" class="java.math.BigDecimal"/>
+	<field name="d_ordinamento" class="java.math.BigDecimal"/>
+	<field name="id_sezione" class="java.math.BigDecimal"/>
+	<field name="ds_ordinamento" class="java.math.BigDecimal"/>
+	<field name="giudizio" class="java.lang.String"/>
+	<field name="descrizione_sezione" class="java.lang.String"/>
+	<field name="descrizione_domanda" class="java.lang.String"/>
+	<field name="risposta" class="java.lang.String"/>
+	<group name="Oggetto">
+		<groupExpression><![CDATA[$F{object_description}]]></groupExpression>
+		<groupHeader>
+			<band height="34">
+				<line>
+					<reportElement x="2" y="27" width="510" height="1" uuid="241e8abd-1d66-4d9f-ae61-cd4d4553cd0c"/>
+				</line>
+				<staticText>
+					<reportElement positionType="Float" x="5" y="6" width="400" height="17" uuid="62b0f200-f617-4056-9bb2-ed2ecf2dde72"/>
+					<textElement>
+						<font size="12" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Somministrazioni: domande & risposte]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="sezione">
+		<groupExpression><![CDATA[$F{id_sezione}]]></groupExpression>
+		<groupHeader>
+			<band height="30">
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement mode="Opaque" x="37" y="7" width="474" height="18" isRemoveLineWhenBlank="true" backcolor="#E7E0E0" uuid="62b9d55b-a612-47b6-a62d-f9175bce9f3b"/>
+					<textElement>
+						<font size="11" isBold="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{descrizione_sezione}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="6" y="8" width="27" height="13" backcolor="#E7E0E0" uuid="3ce413c6-3e75-4457-9aef-e39570b0aff6"/>
+					<textElement textAlignment="Left" verticalAlignment="Top">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ds_ordinamento}+"."]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="domanda">
+		<groupExpression><![CDATA[$F{id_domanda}]]></groupExpression>
+		<groupHeader>
+			<band height="24">
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="35" y="5" width="448" height="16" uuid="6cef6c3b-8b78-4e24-9e2c-ae44e9d45b2f"/>
+					<textElement verticalAlignment="Top">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{descrizione_domanda}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="6" y="5" width="22" height="16" uuid="f0e3e540-a031-4beb-9f1c-46b08f3d4aa5"/>
+					<textElement textAlignment="Right" verticalAlignment="Top">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{d_ordinamento}+"."]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="70">
+			<line>
+				<reportElement x="97" y="67" width="324" height="1" uuid="6c9cd948-ac7c-4456-b5f4-1cdbb0dc6502"/>
+			</line>
+			<staticText>
+				<reportElement x="6" y="26" width="505" height="20" uuid="678b956e-1249-4b66-b9e1-d8f66a8e7049"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Classificazione ai fini antiriciclaggio e antiterrorismo]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="6" y="46" width="505" height="20" uuid="3a887197-634d-4f51-a7d8-cf641f6a1723"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{giudizio}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="97" y="42" width="324" height="1" uuid="3c982ece-5598-4863-80c5-19378e59d781"/>
+			</line>
+			<textField>
+				<reportElement mode="Opaque" x="97" y="2" width="292" height="20" backcolor="#D2D0D0" uuid="e829e81b-e33b-4dc7-9d4c-a830b244d770"/>
+				<textFieldExpression><![CDATA[$F{object_description}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="13" y="2" width="76" height="20" backcolor="#D2CDCD" uuid="2987e9b0-b50c-43f8-af37-02cc43781cfa"/>
+				<textElement textAlignment="Right">
+					<font isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Nome cliente]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="30" y="5" width="467" height="20" uuid="f97adf1a-95d9-4718-ae46-782c29a580d7"/>
+				<textFieldExpression><![CDATA[$F{risposta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
